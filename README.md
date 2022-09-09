@@ -1,15 +1,25 @@
-# SCM_SwimClubMeet-R
-SwimClubMeet (SCM) core application
-# SCM_BuildMeAClub RELEASE
+# SCM_SwimClubMeet RELEASE
 
-![Hero BuildMeAClub ICON](ASSETS/SCM_BMAC_100x100.bmp)
+![Hero SwimClubMeet ICON](ASSETS/SwimClubMeet_HeroIcon_100x100.png)
 
-### BuildMeAClub.exe (BMAC) is an application that creates the SwimClubMeet database in MS SQLEXPRESS and populates it with starter data
+### SwimClubMeet.exe (SCM) is an application that manages you members and runs your club-nights.
 
 ---
-BMAC is a 64bit application written in pascal. It's part of an eco system of applications that make up the SwimClubMeet project. SCM lets amateur swimming clubs manage members and run their club night's.
+SCM is a 32bit application written in C++ It's part of an eco system of applications that make up the SwimClubMeet project. 
 
 ![The eco system of SCM](ASSETS/SCM_GroupOfIcons.png)
+
+To get started all you need is a laptop and printer.
+
+SCM lets amateur swimming clubs store member data, create sessions, events, nominate members to events, auto-build heats (and manually), print marshal and timekeeper sheets, record race-times and create session reports. (Currently, over 20 reports can be printed.) And much more.
+
+With the addition of Wi-Fi and Marshal and TimeKeeper support applications, you can run paperless.
+
+Fix nomination bottle neck by adding more PC's or use the Nominate application for members to self nominate.
+
+SCM uses MS SQLEXPRESS. You have full ownership of your data. Use the SCM_BuildMeAClub utility to create your SwimClubMeet database in SQLEXPRESS.
+
+Included in the install is **Help for SCM**. It has a handy **Getting Started** section.
 
 To learn more about SCM view the [github pages](https://artanemus.github.io/index.html).
 
@@ -19,30 +29,18 @@ If you are interested in following a developer's blog and track my progress then
 
 ---
 
-### USING BMAC
+### USING SCM
 
-After install, by default an icon isn't placed on the desktop. Type **build** in the windows search bar to discover it. Else navigate to the **Artanemus** folder on the start bar. (All SCM applications and utilities are located in this folder.)
+After install, by default an icon is placed on the desktop. Type **swim** in the windows search bar to discover it. Else navigate to the **Artanemus** folder on the start bar. (All SCM applications and utilities are located in this folder.)
 
 ### ON START-UP
 
-The 'Build Me A Club' button will not be visible until a connection to the database server has been established. BMAC requires the SQL command utility, sqlcmd.exe. If you are using this application to create the database on a remote database server, then sqlcmd.exe must be correctly pathed.
-
-> Typically sqlcmd.exe is installed by default when you install MS SQLEXPRESS.
-
-BMAC will not overwrite an existing SwimClubMeet database.
-
-You would only ever need to run this application once. After a successful build the application can be removed. (Hence the reason, 'no icon on the desktop'😃)
+The application will ask you to login to the database. It's suggested that you first enter your members into SCM. Use the **Help for SCM** manual for the next steps.
 
 > Use Windows **Apps and Features** to remove the application.
 
-### ERRORS?
-
-Any errors created by sqlcmd.exe are displayed in BMAC's text window.
-
-A server side log file is also produced. This will be located in your documents folder with the filename **SCM_BuildMeAClub.log**. View this file should an error occur.
-
-> The log file is not removed on uninstall. This is intentional.
-
 ---
 
-![ScreenShot of BMAC after logging in.](ASSETS/BuildMeAClub%20Screenshot%202022-09-08%20090322.JPG)
+![SCM Tabsheet 1.](ASSETS/TabSheet1_Clean.png)
+![SCM Tabsheet 2.](ASSETS/TabSheet2_Clean.png)
+![SCM Tabsheet 3.](ASSETS/TabSheet3_Clean.png)
