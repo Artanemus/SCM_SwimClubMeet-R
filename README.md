@@ -1,2 +1,2 @@
-# SCM_SwimCLubMeet-R
+# SCM_SwimClubMeet-R
 SwimClubMeet (SCM) core application
