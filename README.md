@@ -31,7 +31,7 @@ If you are interested in following a developer's blog and track my progress then
 
 ### USING SCM
 
-After install, by default an icon is placed on the desktop. Type **swim** in the windows search bar to discover it. Else navigate to the **Artanemus** folder on the start bar. (All SCM applications and utilities are located in this folder.)
+After install, by default, an icon is placed on the desktop. If you elect to disabled this, type **swim** in the windows search bar to discover it. Else navigate to the **Artanemus** folder on the start bar. (All SCM applications and utilities are located in this folder.)
 
 ### ON START-UP
 
