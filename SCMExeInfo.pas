@@ -1,25 +1,8 @@
-{************************************************************************}
-{ TExeInfo component                                                     }
-{ for Delphi & C++Builder                                                }
-{                                                                        }
-{ written by TMS Software                                                }
-{           copyright © 2004 - 2015                                      }
-{           Email : info@tmssoftware.com                                 }
-{           Web : http://www.tmssoftware.com                             }
-{                                                                        }
-{ The source code is given as is. The author is not responsible          }
-{ for any possible damage done due to the use of this code.              }
-{ The component can be freely used in any application. The complete      }
-{ source code remains property of the author and may not be distributed, }
-{ published, given or sold in any form as such. No parts of the source   }
-{ code can be included in any other component or application without     }
-{ written authorization of the author.                                   }
-{************************************************************************}
+
 unit SCMExeInfo;
 
 interface
 
-//{$I TMSDEFS.INC}
 
 uses
   Windows, Messages, SysUtils, Classes, Forms, Graphics, Controls, Dialogs,
@@ -31,25 +14,9 @@ const
   REL_VER = 3; // Release nr.
   BLD_VER = 0; // Build nr.
 
-  // version history
-  // 1.2.0.0 : Added support for Windows 2003, Windows Vista
-  // 1.2.0.1 : Fixed : issue with memory allocation for Delphi 2009
-  // 1.2.1.0 : New : method GetVersionInfoOfApp() method added
-  // 1.2.2.0 : New : support for Windows 7
-  //         : New : exposes version number as integer
-  // 1.2.3.0 : Improved : FileCreation returns file age when version info resource doesn't include info
-  // 1.2.3.1 : Improved : Changed FileAge() call to avoid deprecated parameter list in newer Delphi versions
-  // 1.2.4.0 : New : Support for Windows 8 version detection
-  // 1.3.0.0 : New : Build, Release, Major, Minor version as separate functions exposed
-  // 1.3.1.0 : New : Windows 8.1 detection
-  // 1.3.2.0 : New : MyDocumentsDir property added
-  // 1.3.3.0 : New : Windows 10 detection
-  // 1.3.4.0 : New : Unmanisfested operating system version retrieval
 
 type
-//  {$IFDEF DELPHIXE2_LVL}
   [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
-//  {$ENDIF}
   TExeInfo = class(TComponent)
   private
     { Private declarations }
@@ -202,12 +169,7 @@ begin
       end
       else
       begin
-//        {$IFDEF DELPHI_UNICODE}
         FileAge(Application.ExeName, FFileCreation);
-//        {$ENDIF}
-//        {$IFNDEF DELPHI_UNICODE}
-//        FFileCreation := FileDateToDateTime(FileAge(Application.ExeName));
-//        {$ENDIF}
       end;
 
       VerQueryValue(pcBuf, PChar('\VarFileInfo\Translation'),
@@ -269,12 +231,7 @@ var
    dwCSize    : DWORD;
 begin
    dwCSize := MAX_COMPUTERNAME_LENGTH + 1;
-//   {$IFDEF DELPHI_UNICODE}
    GetMem( pcComputer, dwCSize * 2); // allocate memory for the string
-//   {$ENDIF}
-//   {$IFNDEF DELPHI_UNICODE}
-//   GetMem( pcComputer, dwCSize ); // allocate memory for the string
-//   {$ENDIF}
    try
       if Windows.GetComputerName( pcComputer, dwCSize ) then
          GetComputerName := StrPas(pcComputer);
@@ -329,36 +286,12 @@ begin
   Result := Path;
 end;
 
-(*
-procedure TExeInfo.SetComputerName(Name : String);
-var
-  pcComputer : PChar;
-  dwCSize    : DWORD;
-begin
-  dwCSize := MAX_COMPUTERNAME_LENGTH + 1;
-  {$IFDEF DELPHI_UNICODE}
-  GetMem( pcComputer, dwCSize * 2); // allocate memory for the string
-  {$ENDIF}
-  {$IFNDEF DELPHI_UNICODE}
-  GetMem( pcComputer, dwCSize ); // allocate memory for the string
-  {$ENDIF}
-  pcComputer := StrpCopy(pcComputer,Name);
-  try
-    Windows.SetComputerName(pcComputer)
-  finally
-    FreeMem( pcComputer ); // now free the memory allocated for the string
-  end;
-end;
-*)
-
 function TExeInfo.GetOperatingSystem : string;
 const
   SM_SERVERR2 = 89;
   VER_NT_WORKSTATION = $0000001;
-//{$IFDEF DELPHI_UNICODE}
 type
   pfnRtlGetVersion = function(var RTL_OSVERSIONINFOEXW): DWORD; stdcall;
-//{$ENDIF}
 type
   TOSVersionInfoEx = record
     dwOSVersionInfoSize:DWORD;
@@ -377,7 +310,6 @@ type
 var
   osVerInfo: TOSVersionInfoEx;
   majorVer, minorVer: Cardinal;
-//{$IFDEF DELPHI_UNICODE}
   ver: RTL_OSVERSIONINFOEXW;
   RtlGetVersion: pfnRtlGetVersion;
 
@@ -397,7 +329,6 @@ var
       end;
     end;
   end;
-//{$ENDIF}
 
 begin
   Result := 'Unknown';
@@ -437,9 +368,7 @@ begin
           end
           else if (majorVer = 6) and (minorVer = 2) then
           begin
-//            {$IFDEF DELPHI_UNICODE}
             GetUnmanistedVersion(majorVer, minorVer);
-//            {$ENDIF}
 
             if (majorVer = 6) and (minorVer = 2) then
             begin
@@ -514,12 +443,7 @@ var
    dwWDSize           : DWORD;
 begin
    dwWDSize := MAX_PATH + 1;
-//   {$IFDEF DELPHI_UNICODE}
    GetMem( pcWindowsDirectory, dwWDSize * 2); // allocate memory for the string
-//   {$ENDIF}
-//   {$IFNDEF DELPHI_UNICODE}
-//   GetMem( pcWindowsDirectory, dwWDSize ); // allocate memory for the string
-//   {$ENDIF}
    try
       if Windows.GetWindowsDirectory( pcWindowsDirectory, dwWDSize ) <> 0 then
          Result := StrPas(pcWindowsDirectory) + '\';
@@ -550,12 +474,7 @@ var
    dwSDSize          : DWORD;
 begin
    dwSDSize := MAX_PATH + 1;
-//   {$IFDEF DELPHI_UNICODE}
    GetMem( pcSystemDirectory, dwSDSize * 2); // allocate memory for the string
-//   {$ENDIF}
-//   {$IFNDEF DELPHI_UNICODE}
-//   GetMem( pcSystemDirectory, dwSDSize ); // allocate memory for the string
-//   {$ENDIF}
    try
       if Windows.GetSystemDirectory( pcSystemDirectory, dwSDSize ) <> 0 then
          Result := StrPas(pcSystemDirectory) + '\';
@@ -571,12 +490,7 @@ var
    dwSDSize          : DWORD;
 begin
    dwSDSize := MAX_PATH + 1;
-//   {$IFDEF DELPHI_UNICODE}
    GetMem( pcTempDirectory, dwSDSize * 2); // allocate memory for the string
-//   {$ENDIF}
-//   {$IFNDEF DELPHI_UNICODE}
-//   GetMem( pcTempDirectory, dwSDSize ); // allocate memory for the string
-//   {$ENDIF}
    try
       if Windows.GetTempPath( dwSDSize, pcTempDirectory ) <> 0 then
          Result := pcTempDirectory;
