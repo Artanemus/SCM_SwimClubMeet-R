@@ -2081,6 +2081,12 @@ end;
 
 procedure TSCM.qrySessionNewRecord(DataSet: TDataSet);
 begin
+(*
+The main difference between AfterInsert and NewRecord is that all changes
+you do in NewRecord don't set the modified flag for the dataset, so you can
+set your default values and before posting the record you can still check
+for the modified property to see if the user has actually changed the data.
+*)
 	DataSet.FieldByName('SessionStart').AsDateTime := Now;
 	DataSet.FieldByName('SessionStatusID').AsInteger := 1;
 end;

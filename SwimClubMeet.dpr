@@ -1,4 +1,4 @@
-program SwimClubMeet_P;
+program SwimClubMeet;
 
 uses
   Vcl.Forms,
