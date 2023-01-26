@@ -1,4 +1,4 @@
-object MemberReport: TMemberReport
+object MemberDetail: TMemberDetail
   OldCreateOrder = False
   Height = 533
   Width = 570
@@ -675,7 +675,7 @@ object MemberReport: TMemberReport
       
         #9'LEFT OUTER JOIN MembershipType ON Member.MembershipTypeID = Mem' +
         'bershipType.MembershipTypeID'
-      #9'WHERE (Member.SwimClubID = 1)'
+      #9'WHERE (Member.SwimClubID = @SwimClubID)'
       #9'ORDER BY Member.LastName;'
       'ELSE'
       #9'SELECT Member.MemberID'
@@ -708,7 +708,7 @@ object MemberReport: TMemberReport
       
         #9'LEFT OUTER JOIN MembershipType ON Member.MembershipTypeID = Mem' +
         'bershipType.MembershipTypeID'
-      #9'WHERE (Member.SwimClubID = 1)'
+      #9'WHERE (Member.SwimClubID = @SwimClubID)'
       #9#9'AND (MemberID = @MemberID)'
       #9'ORDER BY Member.LastName;'
       ''

@@ -10,7 +10,7 @@ uses
   frxClass, frxExportBaseDialog, frxExportHTML, frxDBSet;
 
 type
-  TMembersSummaryRpt = class(TDataModule)
+  TMembersSummary = class(TDataModule)
     frxReport1: TfrxReport;
     frxDSReport: TfrxDBDataset;
     frxHTMLExport1: TfrxHTMLExport;
@@ -26,7 +26,7 @@ type
   end;
 
 var
-  MembersSummaryRpt: TMembersSummaryRpt;
+  MembersSummary: TMembersSummary;
 
 implementation
 
@@ -36,7 +36,7 @@ implementation
 
 { TMemberSummaryRpt }
 
-procedure TMembersSummaryRpt.RunReport(AConnection: TFDConnection; ASwimClubID: integer);
+procedure TMembersSummary.RunReport(AConnection: TFDConnection; ASwimClubID: integer);
 begin
 	qryReport.Connection := AConnection;
 	qryReport.ParamByName('SWIMCLUBID').AsInteger := aSwimClubID;

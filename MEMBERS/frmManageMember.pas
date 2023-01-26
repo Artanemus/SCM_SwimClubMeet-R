@@ -124,6 +124,10 @@ type
     procedure DBNavigator1Click(Sender: TObject; Button: TNavigateBtn);
     procedure FormShow(Sender: TObject);
     procedure btnMemberDetailClick(Sender: TObject);
+    procedure btnMemberHistoryClick(Sender: TObject);
+    procedure btnClubMembersSummaryClick(Sender: TObject);
+    procedure btnClubMembersDetailedClick(Sender: TObject);
+    procedure btnClubMembersListClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -168,7 +172,8 @@ implementation
 
 uses SCMUtility, dlgBasicLogin, System.IniFiles, System.UITypes, dlgAbout,
   dlgDOBPicker, dlgFindMember, dlgGotoMember, dlgGotoMembership,
-  System.IOUtils, Winapi.ShellAPI, dlgDeleteMember, vcl.Themes, rptMemberReport;
+  System.IOUtils, Winapi.ShellAPI, dlgDeleteMember, vcl.Themes, rptMemberDetail,
+  rptMemberHistory, rptMembersList, rptMembersDetail, rptMembersSummary;
 
 procedure TManageMember.About2Click(Sender: TObject);
 var
@@ -207,6 +212,36 @@ begin
         ManageMemberData.qryMember.FieldByName('HouseID').Clear();
     end;
   end;
+end;
+
+procedure TManageMember.btnClubMembersDetailedClick(Sender: TObject);
+var
+rpt: TMembersDetail;
+begin
+  if not Assigned(ManageMemberData) then exit;
+    rpt := TMembersDetail.Create(self);
+    rpt.RunReport(FConnection, FSwimClubID);
+    rpt.Free;
+end;
+
+procedure TManageMember.btnClubMembersListClick(Sender: TObject);
+var
+rpt: TMembersList;
+begin
+  if not Assigned(ManageMemberData) then exit;
+    rpt := TMembersList.Create(self);
+    rpt.RunReport(FConnection, FSwimClubID);
+    rpt.Free;
+end;
+
+procedure TManageMember.btnClubMembersSummaryClick(Sender: TObject);
+var
+rpt: TMembersSummary;
+begin
+  if not Assigned(ManageMemberData) then exit;
+    rpt := TMembersSummary.Create(self);
+    rpt.RunReport(FConnection, FSwimClubID);
+    rpt.Free;
 end;
 
 procedure TManageMember.btnFindMemberClick(Sender: TObject);
@@ -264,13 +299,30 @@ end;
 
 procedure TManageMember.btnMemberDetailClick(Sender: TObject);
 var
-rpt: TMemberReport;
-MemberID: integer;
+  rpt: TMemberDetail;
+  MemberID: Integer;
 begin
-  if not Assigned(ManageMemberData) then exit;
-    MemberID := ManageMemberData.dsMember.DataSet.FieldByName('MemberID').AsInteger;
-    rpt := TMemberReport.Create(self);
-    rpt.RunReport(FConnection, FSwimClubID, MemberID);
+  if not Assigned(ManageMemberData) then
+    exit;
+  MemberID := ManageMemberData.dsMember.DataSet.FieldByName('MemberID')
+    .AsInteger;
+  rpt := TMemberDetail.Create(Self);
+  rpt.RunReport(FConnection, fSwimClubID, MemberID);
+  rpt.Free;
+end;
+
+procedure TManageMember.btnMemberHistoryClick(Sender: TObject);
+var
+  rpt: TMemberHistory;
+  MemberID: Integer;
+begin
+  if not Assigned(ManageMemberData) then
+    exit;
+  MemberID := ManageMemberData.dsMember.DataSet.FieldByName('MemberID')
+    .AsInteger;
+  rpt := TMemberHistory.Create(Self);
+  rpt.RunReport(FConnection, fSwimClubID, MemberID);
+  rpt.Free;
 end;
 
 procedure TManageMember.chkbHideArchivedClick(Sender: TObject);
@@ -310,21 +362,21 @@ procedure TManageMember.DBGrid3CellClick(Column: TColumn);
 begin
   if Assigned(Column.Field) and (Column.Field.DataType = ftBoolean) then
   begin
-    if (Column.Grid.DataSource.DataSet.State <> dsEdit) or
-      (Column.Grid.DataSource.DataSet.State <> dsInsert) then
-      Column.Grid.DataSource.DataSet.Edit;
+    Column.Grid.DataSource.DataSet.CheckBrowseMode;
+    Column.Grid.DataSource.DataSet.Edit;
     Column.Field.AsBoolean := not Column.Field.AsBoolean;
   end;
   if Assigned(Column.Field) and (Column.Field.FieldKind = fkLookup) then
   begin
-    if (Column.Grid.DataSource.DataSet.State <> dsEdit) or
-      (Column.Grid.DataSource.DataSet.State <> dsInsert) then
-      Column.Grid.DataSource.DataSet.Edit;
+    Column.Grid.DataSource.DataSet.CheckBrowseMode;
+    Column.Grid.DataSource.DataSet.Edit;
   end;
 end;
 
 procedure TManageMember.DBGrid3ColEnter(Sender: TObject);
 begin
+  // By default, two clicks on the same cell enacts the cell editing mode.
+  // The grid draws a TEditBox over the cell, killing the checkbox draw UI.
   with Sender as TDBGrid do
   begin
     if Assigned(SelectedField) and (SelectedField.DataType = ftBoolean) then

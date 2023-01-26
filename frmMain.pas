@@ -429,6 +429,7 @@ type
     procedure btnClearSearchClick(Sender: TObject);
     procedure Entrant_SwapLanesExecute(Sender: TObject);
     procedure Entrant_SwapLanesUpdate(Sender: TObject);
+    procedure Tools_MembershipTypeUpdate(Sender: TObject);
   private
     { Private declarations }
     // For scroll wheel tracking on mouse ...
@@ -4134,7 +4135,7 @@ begin
       [mbOK], 0);
     exit;
   end;
-  dlg := TDivision(self);
+  dlg := TDivision.Create(self);
   dlg.Connection := SCM.scmConnection;
   dlg.StartOfSwimSeason := dt;
   dlg.ShowModal;
@@ -4202,8 +4203,20 @@ var
 begin
   // display the membership type dialogue
   dlg := TMembershipType.Create(self);
+  dlg.Connection := SCM.scmConnection;
   dlg.ShowModal;
   dlg.Free;
+end;
+
+procedure TMain.Tools_MembershipTypeUpdate(Sender: TObject);
+var
+  DoEnable: boolean;
+begin
+  DoEnable := false;
+  // Are we connected?
+  if AssertConnection then
+    DoEnable := true;
+  (Sender as TAction).Enabled := DoEnable;
 end;
 
 procedure TMain.Tools_PreferencesExecute(Sender: TObject);

@@ -33,7 +33,7 @@ object Main: TMain
       Top = 0
       Width = 1414
       Height = 761
-      ActivePage = TabSheet1
+      ActivePage = TabSheet3
       Align = alClient
       Style = tsFlatButtons
       TabOrder = 0
@@ -1846,7 +1846,7 @@ object Main: TMain
             Height = 585
             Align = alLeft
             BorderStyle = bsNone
-            ItemCount = 921
+            ItemCount = 300
             ItemIndex = 0
             ItemMargins.Left = 0
             ItemMargins.Top = 0
@@ -2641,6 +2641,7 @@ object Main: TMain
       Category = 'Tools'
       Caption = 'Membership Type...'
       OnExecute = Tools_MembershipTypeExecute
+      OnUpdate = Tools_MembershipTypeUpdate
     end
     object Tools_ConnectionManager: TAction
       Category = 'Tools'

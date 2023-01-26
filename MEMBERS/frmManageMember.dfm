@@ -141,7 +141,7 @@ object ManageMember: TManageMember
     Top = 49
     Width = 1350
     Height = 709
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alClient
     MultiLine = True
     TabHeight = 40
@@ -802,6 +802,7 @@ object ManageMember: TManageMember
         Height = 38
         Caption = 'Club Members Summary'
         TabOrder = 1
+        OnClick = btnClubMembersSummaryClick
       end
       object btnMemberHistory: TButton
         Left = 3
@@ -810,6 +811,7 @@ object ManageMember: TManageMember
         Height = 38
         Caption = 'Member History'
         TabOrder = 2
+        OnClick = btnMemberHistoryClick
       end
       object btnClubMembersDetailed: TButton
         Left = 3
@@ -818,6 +820,7 @@ object ManageMember: TManageMember
         Height = 38
         Caption = 'Club Members Detailed'
         TabOrder = 3
+        OnClick = btnClubMembersDetailedClick
       end
       object btnClubMembersList: TButton
         Left = 3
@@ -826,6 +829,7 @@ object ManageMember: TManageMember
         Height = 38
         Caption = 'Club Members List'
         TabOrder = 4
+        OnClick = btnClubMembersListClick
       end
     end
   end

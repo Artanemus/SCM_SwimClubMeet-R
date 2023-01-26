@@ -54,9 +54,11 @@ uses
   UEnvVars in 'UEnvVars.pas',
   dlgEntrantPicker in 'dlgEntrantPicker.pas' {EntrantPicker},
   dlgEntrantPickerCTRL in 'dlgEntrantPickerCTRL.pas' {EntrantPickerCTRL},
-  rptMemberReport in 'MEMBERS\rptMemberReport.pas' {MemberReport: TDataModule},
-  rptMembersSummary in 'MEMBERS\rptMembersSummary.pas' {MembersSummaryRpt: TDataModule},
-  rptMembersDetail in 'MEMBERS\rptMembersDetail.pas' {MembersDetailRpt: TDataModule};
+  rptMemberDetail in 'MEMBERS\rptMemberDetail.pas' {MemberDetail: TDataModule},
+  rptMembersSummary in 'MEMBERS\rptMembersSummary.pas' {MembersSummary: TDataModule},
+  rptMembersDetail in 'MEMBERS\rptMembersDetail.pas' {MembersDetail: TDataModule},
+  rptMemberHistory in 'MEMBERS\rptMemberHistory.pas' {MemberHistory: TDataModule},
+  rptMembersList in 'MEMBERS\rptMembersList.pas' {MembersList: TDataModule};
 
 {$R *.res}
 

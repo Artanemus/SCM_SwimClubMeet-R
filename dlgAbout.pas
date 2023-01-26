@@ -30,6 +30,7 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure VirtualImage1Click(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { Private declarations }
   public
@@ -48,7 +49,7 @@ Winapi.ShellAPI;
 
 procedure TAbout.Button1Click(Sender: TObject);
 begin
-  Close;
+  ModalResult := mrOk;
 end;
 
 procedure TAbout.FormCreate(Sender: TObject);
@@ -60,6 +61,13 @@ end;
 procedure TAbout.FormDestroy(Sender: TObject);
 begin
 	ExeInfo1.Free;
+end;
+
+procedure TAbout.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if (Key = VK_ESCAPE) then
+    ModalResult := mrCancel;
 end;
 
 procedure TAbout.FormShow(Sender: TObject);

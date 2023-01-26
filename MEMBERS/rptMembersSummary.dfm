@@ -1,4 +1,4 @@
-object MembersSummaryRpt: TMembersSummaryRpt
+object MembersSummary: TMembersSummary
   OldCreateOrder = False
   Height = 468
   Width = 474

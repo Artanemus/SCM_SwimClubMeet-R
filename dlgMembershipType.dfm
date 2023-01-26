@@ -11,8 +11,13 @@ object MembershipType: TMembershipType
   Font.Height = -13
   Font.Name = 'Segoe UI'
   Font.Style = []
+  KeyPreview = True
   OldCreateOrder = False
   Position = poMainFormCenter
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnKeyDown = FormKeyDown
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 17
   object PageControl1: TPageControl
@@ -23,7 +28,6 @@ object MembershipType: TMembershipType
     ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
-    ExplicitTop = 8
     object TabSheet1: TTabSheet
       Caption = 'Details'
       object Panel2: TPanel
@@ -112,6 +116,10 @@ object MembershipType: TMembershipType
             TitleFont.Height = -13
             TitleFont.Name = 'Segoe UI'
             TitleFont.Style = []
+            OnCellClick = DBGrid1CellClick
+            OnColEnter = DBGrid1ColEnter
+            OnColExit = DBGrid1ColExit
+            OnDrawColumnCell = DBGrid1DrawColumnCell
             Columns = <
               item
                 Expanded = False
@@ -222,22 +230,25 @@ object MembershipType: TMembershipType
       Anchors = [akTop, akRight]
       Caption = 'Close'
       TabOrder = 0
+      OnClick = btnCloseClick
     end
   end
   object qryMembershipType: TFDQuery
-    Connection = SCM.scmConnection
+    ActiveStoredUsage = [auDesignTime]
     UpdateOptions.UpdateTableName = 'SwimClubMeet..MembershipType'
     UpdateOptions.KeyFields = 'MembershipTypeID'
     SQL.Strings = (
       'USE [SwimClubMeet]'
       ';'
       ''
-      'DECLARE @StartOfSwimSeason AS DATETIME'
+      'DECLARE @StartOfSwimSeason AS DATETIME;'
+      'DECLARE @SwimClubID AS INTEGER;'
       ''
+      'SET @SwimClubID = :SWIMCLUBID;'
       ''
       
         'SELECT @StartOfSwimSeason =  [StartOfSwimSeason] FROM SwimClub W' +
-        'HERE SwimClubID = 1;'
+        'HERE SwimClubID = @SwimClubID;'
       'IF (@StartOfSwimSeason IS NULL)'
       '   SET  @StartOfSwimSeason = GETDATE();'
       ''
@@ -254,6 +265,13 @@ object MembershipType: TMembershipType
       'ORDER BY Sort;')
     Left = 128
     Top = 296
+    ParamData = <
+      item
+        Name = 'SWIMCLUBID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = 1
+      end>
     object qryMembershipTypeMembershipTypeID: TFDAutoIncField
       DisplayLabel = 'ID'
       FieldName = 'MembershipTypeID'
