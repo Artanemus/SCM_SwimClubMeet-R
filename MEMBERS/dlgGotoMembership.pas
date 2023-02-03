@@ -60,7 +60,7 @@ begin
     qAssertMemberID.SQL.Clear;
     qAssertMemberID.SQL.Add
       ('SELECT MemberID, MembershipNum, SwimClubID FROM Member WHERE MembershipNum = '
-      + IntToStr(MembershipNum) + ' AND SwimClubID = ' + IntToStr(fSwimClubID));
+      + IntToStr(MembershipNum) + ' AND ((SwimClubID = ' + IntToStr(fSwimClubID)+ ') OR (SwimClubID IS NULL))');
     try
       qAssertMemberID.Open;
       if (qAssertMemberID.Active) then

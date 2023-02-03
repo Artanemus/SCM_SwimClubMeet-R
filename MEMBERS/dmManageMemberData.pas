@@ -230,6 +230,13 @@ begin
   begin
     fld.AsBoolean := True;
   end;
+
+  // CREATE LINK
+  // build many-to-many relationship with SwimClub and member.
+(*
+  SQL := 'INSERT lnkSwimClubMember Value ....
+*)
+
 end;
 
 procedure TManageMemberData.qryMemberAfterScroll(DataSet: TDataSet);
@@ -294,6 +301,15 @@ begin
     SQL := 'DELETE FROM [SwimClubMeet].[dbo].[Nominee] WHERE MemberID = ' +
       IntToStr(MemberID) + ';';
     FConnection.ExecSQL(SQL);
+
+    { TODO -oBen -cGeneral : Remove link }
+    (*
+    SQL := 'DELETE FROM [SwimClubMeet].[dbo].[lnkSwimClubMember] WHERE MemberID = '
+      + IntToStr(MemberID) + ' AND SwimClubID = ' +
+      IntToStr(qrySwimClub.FieldByName('SwimClubID').AsInteger) + ';';
+    FConnection.ExecSQL(SQL);
+    *)
+
     qryMember.EnableControls;
   end;
 end;

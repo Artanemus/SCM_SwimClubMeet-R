@@ -1846,7 +1846,7 @@ object Main: TMain
             Height = 585
             Align = alLeft
             BorderStyle = bsNone
-            ItemCount = 300
+            ItemCount = 1
             ItemIndex = 0
             ItemMargins.Left = 0
             ItemMargins.Top = 0
@@ -2336,6 +2336,9 @@ object Main: TMain
       object About1: TMenuItem
         Action = Help_About
       end
+      object Help_DBVerInfo: TMenuItem
+        Caption = 'DB Version Info...'
+      end
       object Help_Help: TMenuItem
         Caption = 'Help...'
         OnClick = Help_HelpClick
@@ -2755,6 +2758,10 @@ object Main: TMain
       ImageName = 'VisibilityOn'
       OnExecute = Session_ToggleVisibleExecute
       OnUpdate = Session_ToggleVisibleUpdate
+    end
+    object Help_DBVersionInfo: TAction
+      Category = 'Help'
+      Caption = 'DB Version Info...'
     end
   end
   object pumHeat: TPopupMenu

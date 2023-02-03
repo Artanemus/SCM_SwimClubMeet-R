@@ -303,6 +303,8 @@ type
     btnClearSearch: TButton;
     VirtualImageList3: TVirtualImageList;
     spbtnEntrantSort: TSpeedButton;
+    Help_DBVerInfo: TMenuItem;
+    Help_DBVersionInfo: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure SCM_RefreshExecute(Sender: TObject);
