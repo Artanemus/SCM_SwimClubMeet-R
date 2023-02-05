@@ -87,13 +87,14 @@ type
     procedure btnSaveClubLogoClick(Sender: TObject);
   private
     FConnection: TFDConnection;
+    fDBVersion, fDBMajor, fDBMinor: integer;
     { Private declarations }
     procedure WritePreferences(IniFileName: string);
     procedure ReadPreferences(IniFileName: string);
     procedure AssignClubLogoToImage(AImage: TImage);
     procedure AssignDTtoStartOfSwimSeason();
     procedure AssignStartOfSwimSeasonToDT();
-    function DBVersionOK(): Boolean;
+    function GetDBVerInfo(): Boolean;
 
   public
     { Public declarations }
@@ -303,7 +304,7 @@ begin
   if not(qrySwimClub.Active) then
     exit;
   // test if qrySwimClub is running 1.6 or greater
-  if not DBVersionOK then
+  if not GetDBVerInfo then
   begin
     MessageDlg('Your SCM database must be running v1.6 or greater' + sLineBreak
       + 'to support Club Logos. Use SCM_UpdateDataBase and version up.',
@@ -351,13 +352,17 @@ begin
   if Assigned(FConnection) then
   begin
     // test if qrySwimClub is running 1.6 or greater
-    if not DBVersionOK then
+    if GetDBVerInfo then
     begin
-      MessageDlg('Your SCM database must be running v1.6 or greater' +
-        sLineBreak +
-        'to set preferences. Use SCM_UpdateDataBase and version up.',
-        TMsgDlgType.mtInformation, [mbOk], 0);
-      abort;
+      // Version control v1,1,5,0 - v1,1,5,1
+      if (fDBMajor = 5) AND ((fDBMinor = 0) or (fDBMinor = 1)) then
+      begin
+        DBImage1.DataField := '';
+        TabSheet5.TabVisible := false;
+      end
+      // Version control v1,1,6,0
+      else
+        DBImage1.DataField := 'LogoImg';
     end;
     qrySwimClub.Connection := FConnection;
     qrySwimClub.Open;
@@ -390,10 +395,7 @@ begin
   end;
 end;
 
-function TPreferences.DBVersionOK: Boolean;
-var
-  DBVersion, Major: integer;
-  f: double;
+function TPreferences.GetDBVerInfo: Boolean;
 begin
   result := false;
   if Assigned(FConnection) then
@@ -402,11 +404,10 @@ begin
     tblSystem.Open;
     if tblSystem.Active then
     begin
-      DBVersion := tblSystem.FieldByName('DBVersion').AsInteger;
-      Major := tblSystem.FieldByName('Major').AsInteger;
-      f := DBVersion + (Major / 10.0);
-      if (f >= 1.6) then
-        result := true;
+      fDBVersion := tblSystem.FieldByName('DBVersion').AsInteger;
+      fDBMajor := tblSystem.FieldByName('Major').AsInteger;
+      fDBMinor := tblSystem.FieldByName('Minor').AsInteger;
+      result := true;
     end;
     tblSystem.Close;
   end;

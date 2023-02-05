@@ -61,6 +61,7 @@ type
     qryEntrantCount: TFDQuery;
     qryHeatCount: TFDQuery;
     qryFName: TFDQuery;
+    qrySCMSystem: TFDQuery;
     luFName: TDataSource;
     qryEvent: TFDQuery;
     qryEventEventID: TFDAutoIncField;
@@ -197,6 +198,9 @@ type
     function DeleteAllEvents(ADataSet: TDataSet;
       SafeMode: boolean = true): boolean;
 
+    // SCMSystem
+    function GetVerInfoMajor(): Integer;
+
     // SWIMCLUB
     procedure SwimClub_Locate(SwimClubID: Integer);
     function GetNumberOfLanes(): integer;
@@ -213,7 +217,9 @@ type
     function GetSessionStart(SessionID: integer): TDateTime; overload;
     function GetSessionID(): integer;
     function GetSessionCount(SwimClubID: integer;SDate, EDate: TDateTime): integer;
-    function IsLockedSession: boolean; // current session
+    function IsLockedSession: boolean;
+
+    // current session
     function IsSafeToDeleteSession(aSessionID: integer): boolean;
     function IsAllEventsClosed(aSessionID: integer): boolean;
     function Session_GetEntrantCount(aSessionID: integer): integer;
@@ -314,6 +320,8 @@ uses
 { TSCM }
 
 procedure TSCM.ActivateTable;
+var
+fld: TField;
 begin
   // -----------------------------------------------------------
   // 24/04/2020 Always ASSERT fSCMActive state.
@@ -362,6 +370,12 @@ begin
         begin
           // contact numbers - non critical
           qryContactNum.Open;
+          if (GetVerInfoMajor < 6) then
+          begin
+            // need to remove field name ScheduleDT
+            fld := qryEvent.Fields.FindField('ScheduleDT');
+            if Assigned(fld) then qryEvent.Fields.Remove(fld);
+          end;
           qryEvent.Open; // EVENT
           if (qryEvent.Active) then
           begin
@@ -1099,10 +1113,10 @@ begin
   ds.DisableControls;
   sl := TStringList.Create;
   // Legal, qryEvent has master..child relationship with dsSession.
-  sl.Add('USE [SwimClubMeet]');
-  sl.Add('SELECT [EventID], [EventNum] FROM [dbo].[Event]');
-  sl.Add('WHERE [SessionID] := ' + IntToStr(GetSessionID()));
-  sl.Add('ORDER BY [EventNum]');
+  sl.Add('USE [SwimClubMeet] ');
+  sl.Add('SELECT [EventID], [EventNum] FROM [dbo].[Event] ');
+  sl.Add('WHERE [SessionID] = ' + IntToStr(GetSessionID()));
+  sl.Add(' ORDER BY [EventNum]');
   // Find valid EventNum
   qry := TFDQuery.Create(self);
   qry.Connection := scmConnection;
@@ -1295,6 +1309,19 @@ begin
   if fSCMActive and dsSwimClub.DataSet.Active then
     if not dsSwimClub.DataSet.IsEmpty then
       result := dsSwimClub.DataSet.FieldByName('SwimClubID').AsInteger;
+end;
+
+function TSCM.GetVerInfoMajor: Integer;
+begin
+  Result := 0;
+  if scmConnection.Connected then
+  begin
+    qrySCMSystem.Connection := scmConnection;
+    qrySCMSystem.Open;
+    if qrySCMSystem.Active then
+      Result := qrySCMSystem.FieldByName('Major').AsInteger;
+    qrySCMSystem.Open;
+  end;
 end;
 
 function TSCM.HasClosedHeats(): Boolean;
@@ -1735,9 +1762,15 @@ begin
   if (MemberID > 0) then
   begin
     SearchOptions := [];
-    if (dsNominateMembers.DataSet.Active) then
-      result := dsNominateMembers.DataSet.Locate('MemberID', MemberID,
-        SearchOptions);
+    with dsNominateMembers.DataSet AS TFDQuery do
+    begin
+      if (Active) then
+      begin
+        indexName := 'idxMemberID';
+        result := dsNominateMembers.DataSet.Locate('MemberID', MemberID,
+          SearchOptions);
+      end;
+    end;
   end;
 end;
 
@@ -1772,7 +1805,9 @@ begin
   begin
     DisableControls;
     if (Active) then
-      // store the current selected member.
+      // Store the current selected member.
+      // Note: can't use bookmarks as the DB is re-queried.
+      // Query re-builds FName string. LASTNAME:FIRSTNAME or FIRSTNAME:LASTNAME
       MemberID := FieldByName('MemberID').AsInteger;
     Close;
     ParamByName('SESSIONSTART').AsDateTime := GetSessionStart;
@@ -1782,8 +1817,10 @@ begin
     if (Active) then
     begin
       if (MemberID > 0) then
+        // Note: locate memner on idxMemberID.
         result := Nominate_Locate(MemberID);
     end;
+    indexName := 'idxFName';  // Sort on FName.
     EnableControls;
   end;
 end;

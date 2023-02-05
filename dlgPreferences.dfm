@@ -31,7 +31,7 @@ object Preferences: TPreferences
     object DBText1: TDBText
       Left = 13
       Top = 9
-      Width = 163
+      Width = 60
       Height = 19
       AutoSize = True
       DataField = 'Caption'
@@ -71,7 +71,7 @@ object Preferences: TPreferences
     Top = 41
     Width = 654
     Height = 503
-    ActivePage = TabSheet4
+    ActivePage = TabSheet5
     Align = alClient
     TabOrder = 2
     OnChanging = PageControl1Changing
@@ -274,7 +274,6 @@ object Preferences: TPreferences
         Top = 24
         Width = 306
         Height = 306
-        DataField = 'LogoImg'
         DataSource = dsSwimClub
         Proportional = True
         Stretch = True
@@ -653,37 +652,64 @@ object Preferences: TPreferences
   end
   object qrySwimClub: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'SwimClubID'
     Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..SwimClub'
     UpdateOptions.KeyFields = 'SwimClubID'
     SQL.Strings = (
-      'USE [SwimClubMeet];'
-      'DECLARE @SwimClubID as INT;'
-      'SET @SwimClubID = 1;'
+      'Use SwimClubMeet;'
       ''
-      'SELECT '
-      #9#9' [SwimClubID]'
-      #9#9',[NickName]'
-      #9#9',[Caption]'
-      #9#9',[Email]'
-      #9#9',[ContactNum]'
-      #9#9',[WebSite]'
-      #9#9',[HeatAlgorithm]'
-      #9#9',[EnableTeamEvents]'
-      #9#9',[EnableSwimOThon]'
-      #9#9',[EnableExtHeatTypes]'
-      #9#9',[EnableMembershipStr]'
-      #9#9',[NumOfLanes]'
-      #9#9',[LenOfPool]'
-      #9#9',[StartOfSwimSeason]'
-      #9#9',[CreatedOn]'
-      #9#9',[LogoDir]'
-      #9#9',[LogoImg]'
-      #9#9',[LogoType]'
-      'FROM [SwimClubMeet].[dbo].[SwimClub]'
-      'WHERE [SwimClubID] = @SwimClubID ; ')
+      'DECLARE @SwimClubID AS INT;'
+      'SET @SwimClubID = 1; --:SWIMCLUBID'
+      ''
+      'DECLARE @Major AS INT;'
+      
+        'SET @Major = (SELECT Major FROM SwimClubMeet.dbo.SCMSystem WHERE' +
+        ' SCMSystemID = 1);'
+      'DECLARE @Minor AS INT;'
+      
+        'SET @Minor = (SELECT Major FROM SwimClubMeet.dbo.SCMSystem WHERE' +
+        ' SCMSystemID = 1);'
+      ''
+      '-- Drop a temporary table called '#39'#TableName'#39
+      '-- Drop the table if it already exists'
+      'IF OBJECT_ID('#39'tempDB..#TempSCMSwimClub'#39', '#39'U'#39') IS NOT NULL'
+      'DROP TABLE #TempSCMSwimClub'
+      ';'
+      ''
+      '/* Get the data into a temp table */'
+      '    SELECT * INTO #TempSCMSwimClub'
+      '    FROM '
+      '    SwimClub WHERE @SwimClubID = @SwimClubID;'
+      ''
+      '/*'
+      'VERSION 1,1,5,0 AND 1,1,5,1 COMPATABILITY'
+      '*/'
+      ''
+      'IF (@Major = 5) AND ((@Minor = 0) OR (@Minor = 1))'
+      'BEGIN'
+      #9'/* Drop the columns that are not needed */'
+      #9'IF COL_LENGTH('#39'SwimClub'#39','#39'LogoDir'#39') IS NOT NULL'
+      #9'BEGIN'
+      #9'/* Column does exist */'
+      #9#9'ALTER TABLE #TempSCMSwimClub'
+      #9#9'DROP COLUMN LogoDir'
+      #9'END'
+      #9'IF COL_LENGTH('#39'SwimClub'#39','#39'LogoImg'#39') IS NOT NULL'
+      #9'BEGIN'
+      #9'/* Column does exist */'
+      #9#9'ALTER TABLE #TempSCMSwimClub'
+      #9#9'DROP COLUMN LogoImg'
+      #9'END'
+      #9'IF COL_LENGTH('#39'SwimClub'#39','#39'LogoType'#39') IS NOT NULL'
+      #9'BEGIN'
+      #9'/* Column does exist */'
+      #9#9'ALTER TABLE #TempSCMSwimClub'
+      #9#9'DROP COLUMN LogoType'
+      #9'END'
+      'END'
+      ''
+      'SELECT * from #TempSCMSwimClub;')
     Left = 408
     Top = 448
   end

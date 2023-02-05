@@ -214,6 +214,7 @@ end;
 procedure TManageMemberData.qryMemberAfterInsert(DataSet: TDataSet);
 var
   fld: TField;
+  SwimClubID: integer;
 begin
   fld := DataSet.FieldByName('IsArchived');
   if (fld.IsNull) then
@@ -231,7 +232,14 @@ begin
     fld.AsBoolean := True;
   end;
 
-  // CREATE LINK
+  // DB : v1,1,5,0 v1,1,5,1 - required.
+  fld := DataSet.FieldByName('SwimClubID');
+  if (fld.IsNull) then
+  begin
+    fld.AsInteger := dsSwimClub.DataSet.FieldByName('SwimClubID').AsInteger;
+  end;
+
+  // DB : v1,1,6,0 - CREATE LINK
   // build many-to-many relationship with SwimClub and member.
 (*
   SQL := 'INSERT lnkSwimClubMember Value ....

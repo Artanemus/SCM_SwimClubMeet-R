@@ -834,9 +834,6 @@ Coordinates=1247,10,131,231
 [spbtnEventMoveDown]
 Coordinates=236,1017,124,33
 
-[Tools_CheckDataBase]
-Coordinates=923,1615,125,33
-
 [Session_Import]
 Coordinates=2272,606,91,33
 
@@ -1052,4 +1049,7 @@ Coordinates=1207,1135,89,33
 
 [sbtnMembers]
 Coordinates=121,1017,89,33
+
+[Tools_DBVerInfo]
+Coordinates=923,1615,125,33
 

@@ -563,36 +563,60 @@ object SCM: TSCM
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Event'
     UpdateOptions.KeyFields = 'EventID'
     SQL.Strings = (
+      'Use SwimClubMeet;'
       ''
-      'Use SwimClubMeet'
+      'DECLARE @Major AS INT;'
+      
+        'SET @Major = (SELECT Major FROM SwimClubMeet.dbo.SCMSystem WHERE' +
+        ' SCMSystemID = 1);'
+      'DECLARE @Minor AS INT;'
+      
+        'SET @Minor = (SELECT Major FROM SwimClubMeet.dbo.SCMSystem WHERE' +
+        ' SCMSystemID = 1);'
+      ''
+      '-- Drop a temporary table called '#39'#TableName'#39
+      '-- Drop the table if it already exists'
+      'IF OBJECT_ID('#39'tempDB..#TempSCMEvent'#39', '#39'U'#39') IS NOT NULL'
+      'DROP TABLE #TempSCMEvent'
+      ';'
+      ''
+      '/* Get the data into a temp table */'
+      '    SELECT * INTO #TempSCMEvent'
+      '    FROM '
+      '    Event'
+      ''
+      '/*'
+      'VERSION 1,1,5,0 AND 1,1,5,1 COMPATABILITY'
+      '*/'
+      ''
+      'IF (@Major = 5) AND ((@Minor = 0) OR (@Minor = 1))'
+      'BEGIN'
+      #9'/* Drop the columns that are not needed */'
+      #9'IF COL_LENGTH('#39'Event'#39','#39'ScheduleDT'#39') IS NOT NULL'
+      #9'BEGIN'
+      #9'/* Column does exist */'
+      #9#9'ALTER TABLE #TempSCMEvent'
+      #9#9'DROP COLUMN ScheduleDT'
+      #9'END'
+      'END'
       ''
       ''
-      '--DECLARE @EventID AS INT'
+      '--SELECT * from #TempSCMEvent;'
       ''
-      '--SET @EventID = 238;'
-      ''
-      ''
-      'SELECT Event.EventID,'
-      '       Event.EventNum,'
-      #9'  qryNom.NomCount AS NomineeCount,'
+      'SELECT #TempSCMEvent.*,'
+      '       qryNom.NomCount AS NomineeCount,'
       '       qryEntrants.EntrantCount AS EntrantCount,'
-      '       Event.SessionID,'
-      '       Event.EventTypeID,'
-      '       Event.StrokeID,'
-      '       Event.DistanceID,'
-      '       Event.EventStatusID,'
-      '       Event.ClosedDT, '
       
-        '       Concat('#39'#'#39', Event.EventNum, '#39' - '#39', Distance.Caption, '#39' '#39',' +
-        ' Stroke.Caption) AS EventStr,'
-      '       Event.Caption,'
-      '       Event.ScheduleDT,'
+        '       Concat('#39'#'#39', #TempSCMEvent.EventNum, '#39' - '#39', Distance.Capti' +
+        'on, '#39' '#39', Stroke.Caption) AS EventStr,'
       '       Distance.Meters'
-      'FROM Event'
-      '     LEFT OUTER JOIN Stroke ON Stroke.StrokeID = Event.StrokeID'
+      'FROM #TempSCMEvent'
       
-        '     LEFT OUTER JOIN Distance ON Distance.DistanceID = Event.Dis' +
-        'tanceID'
+        '     LEFT OUTER JOIN Stroke ON Stroke.StrokeID = #TempSCMEvent.S' +
+        'trokeID'
+      
+        '     LEFT OUTER JOIN Distance ON Distance.DistanceID = #TempSCME' +
+        'vent.DistanceID'
       #9
       
         '     LEFT JOIN (SELECT Count(Nominee.EventID) AS NomCount, Event' +
@@ -600,7 +624,7 @@ object SCM: TSCM
       '                FROM Nominee'
       
         '                GROUP BY  Nominee.EventID) qryNom ON qryNom.Even' +
-        'tID = Event.EventID '
+        'tID = #TempSCMEvent.EventID '
       '     LEFT JOIN (SELECT Count(Entrant.EntrantID) AS EntrantCount,'
       '                       HeatIndividual.EventID'
       '                FROM Entrant'
@@ -610,10 +634,10 @@ object SCM: TSCM
       '                WHERE        (Entrant.MemberID IS NOT NULL)'
       
         '                GROUP BY HeatIndividual.EventID) qryEntrants ON ' +
-        'qryEntrants.EventID = Event.EventID'
+        'qryEntrants.EventID = #TempSCMEvent.EventID'
       ''
       ''
-      'ORDER BY Event.EventNum')
+      'ORDER BY #TempSCMEvent.EventNum;')
     Left = 48
     Top = 256
     object qryEventEventID: TFDAutoIncField
@@ -1227,10 +1251,21 @@ object SCM: TSCM
   end
   object qryNominateMembers: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     AfterScroll = qryNominateMembersAfterScroll
     FilterOptions = [foCaseInsensitive]
-    IndexFieldNames = 'MemberID'
+    Indexes = <
+      item
+        Active = True
+        Selected = True
+        Name = 'idxFName'
+        Fields = 'FName'
+      end
+      item
+        Active = True
+        Name = 'idxMemberID'
+        Fields = 'MemberID'
+      end>
+    IndexName = 'idxFName'
     Connection = scmConnection
     UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
     UpdateOptions.EnableDelete = False
@@ -1299,7 +1334,7 @@ object SCM: TSCM
         Name = 'TOGGLE'
         DataType = ftBoolean
         ParamType = ptInput
-        Value = False
+        Value = True
       end>
     object qryNominateMembersMemberID: TFDAutoIncField
       FieldName = 'MemberID'
@@ -1469,7 +1504,6 @@ object SCM: TSCM
   end
   object qryHeat: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     AfterPost = qryHeatAfterPost
     AfterDelete = qryHeatAfterDelete
     AfterScroll = qryHeatAfterScroll
@@ -1698,31 +1732,60 @@ object SCM: TSCM
     UpdateOptions.UpdateTableName = 'SwimClubMeet..SwimClub'
     UpdateOptions.KeyFields = 'SwimClubID'
     SQL.Strings = (
-      'USE SwimClubMeet;'
+      'Use SwimClubMeet;'
       ''
       'DECLARE @SwimClubID AS INT;'
       'SET @SwimClubID = :SWIMCLUBID;'
       ''
-      'SELECT [SwimClubID]'
-      '     , [NickName]'
-      '     , [Caption]'
-      '     , [Email]'
-      '     , [ContactNum]'
-      '     , [WebSite]'
-      '     , [HeatAlgorithm]'
-      '     , [EnableTeamEvents]'
-      '     , [EnableSwimOThon]'
-      '     , [EnableExtHeatTypes]'
-      '     , [EnableMembershipStr]'
-      '     , [NumOfLanes]'
-      '     , [LenOfPool]'
-      '     , [StartOfSwimSeason]'
-      '     , [CreatedOn]'
-      '     , [LogoDir]'
-      '     , [LogoImg]'
-      '     , [LogoType]'
-      'FROM [SwimClubMeet].[dbo].[SwimClub]'
-      'WHERE [SwimClubID] = @SwimClubID;')
+      'DECLARE @Major AS INT;'
+      
+        'SET @Major = (SELECT Major FROM SwimClubMeet.dbo.SCMSystem WHERE' +
+        ' SCMSystemID = 1);'
+      'DECLARE @Minor AS INT;'
+      
+        'SET @Minor = (SELECT Major FROM SwimClubMeet.dbo.SCMSystem WHERE' +
+        ' SCMSystemID = 1);'
+      ''
+      '-- Drop a temporary table called '#39'#TableName'#39
+      '-- Drop the table if it already exists'
+      'IF OBJECT_ID('#39'tempDB..#TempSCMSwimClub'#39', '#39'U'#39') IS NOT NULL'
+      'DROP TABLE #TempSCMSwimClub'
+      ';'
+      ''
+      '/* Get the data into a temp table */'
+      '    SELECT * INTO #TempSCMSwimClub'
+      '    FROM '
+      '    SwimClub WHERE @SwimClubID = @SwimClubID;'
+      ''
+      '/*'
+      'VERSION 1,1,5,0 AND 1,1,5,1 COMPATABILITY'
+      '*/'
+      ''
+      'IF (@Major = 5) AND ((@Minor = 0) OR (@Minor = 1))'
+      'BEGIN'
+      #9'/* Drop the columns that are not needed */'
+      #9'IF COL_LENGTH('#39'SwimClub'#39','#39'LogoDir'#39') IS NOT NULL'
+      #9'BEGIN'
+      #9'/* Column does exist */'
+      #9#9'ALTER TABLE #TempSCMSwimClub'
+      #9#9'DROP COLUMN LogoDir'
+      #9'END'
+      #9'IF COL_LENGTH('#39'SwimClub'#39','#39'LogoImg'#39') IS NOT NULL'
+      #9'BEGIN'
+      #9'/* Column does exist */'
+      #9#9'ALTER TABLE #TempSCMSwimClub'
+      #9#9'DROP COLUMN LogoImg'
+      #9'END'
+      #9'IF COL_LENGTH('#39'SwimClub'#39','#39'LogoType'#39') IS NOT NULL'
+      #9'BEGIN'
+      #9'/* Column does exist */'
+      #9#9'ALTER TABLE #TempSCMSwimClub'
+      #9#9'DROP COLUMN LogoType'
+      #9'END'
+      'END'
+      ''
+      'SELECT * from #TempSCMSwimClub;'
+      '')
     Left = 48
     Top = 96
     ParamData = <
@@ -1922,8 +1985,8 @@ object SCM: TSCM
     SQL.Strings = (
       'USE SwimClubMeet;'
       ''
-      'DECLARE @MemberID as integer;'
-      'DECLARE @SessionID as integer;'
+      'DECLARE @MemberID AS integer;'
+      'DECLARE @SessionID AS integer;'
       ''
       'SET @SessionID = :SESSIONID; --100;'
       'SET @MemberID = :MEMBERID; --3;'
@@ -1936,7 +1999,19 @@ object SCM: TSCM
       '     , [Event].DistanceID'
       '     , [Event].EventStatusID'
       '     , [Event].Caption'
-      '     , dbo.IsMemberNominated(memberid, eventid) AS IsNominated'
+      '     , CAST(CASE'
+      '                WHEN (EXISTS'
+      '                      ('
+      '                          SELECT NomineeID'
+      '                          FROM Nominee'
+      '                          WHERE Memberid = @MemberID'
+      '                                AND EventID = [Event].EventID'
+      '                      )'
+      '                     ) THEN'
+      '                    1'
+      '                ELSE'
+      '                    0'
+      '            END AS BIT) AS IsNominated'
       
         '     , dbo.IsMemberQualified(memberid, GETDATE(), [Event].Distan' +
         'ceID, [Event].StrokeID) AS IsQualified'
@@ -1960,13 +2035,13 @@ object SCM: TSCM
         Name = 'SESSIONID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = Null
+        Value = 1
       end
       item
         Name = 'MEMBERID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = Null
+        Value = 78
       end>
     object qryNominateControlListEventID: TFDAutoIncField
       FieldName = 'EventID'
@@ -2026,5 +2101,15 @@ object SCM: TSCM
     DataSet = qryNominateControlList
     Left = 224
     Top = 536
+  end
+  object qrySCMSystem: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    Connection = scmConnection
+    SQL.Strings = (
+      'USE SwimClubMeet;'
+      ''
+      'SELECT * FROM SCMSystem WHERE SCMSystemID = 1;')
+    Left = 288
+    Top = 24
   end
 end

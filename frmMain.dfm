@@ -33,7 +33,7 @@ object Main: TMain
       Top = 0
       Width = 1414
       Height = 761
-      ActivePage = TabSheet3
+      ActivePage = TabSheet2
       Align = alClient
       Style = tsFlatButtons
       TabOrder = 0
@@ -1846,8 +1846,6 @@ object Main: TMain
             Height = 585
             Align = alLeft
             BorderStyle = bsNone
-            ItemCount = 1
-            ItemIndex = 0
             ItemMargins.Left = 0
             ItemMargins.Top = 0
             ItemMargins.Right = 0
@@ -1888,7 +1886,6 @@ object Main: TMain
               Height = 32
               Alignment = taCenter
               AutoSize = False
-              Caption = '1'
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWindowText
               Font.Height = -24
@@ -1993,7 +1990,6 @@ object Main: TMain
       Margins.Bottom = 10
       Anchors = []
       DataField = 'LogoImg'
-      DataSource = SCM.dsSwimClub
       Proportional = True
       Stretch = True
       TabOrder = 0
@@ -2321,8 +2317,7 @@ object Main: TMain
         Visible = False
       end
       object CleanMSSQL2: TMenuItem
-        Action = Tools_CheckDataBase
-        Visible = False
+        Action = Tools_DBVerInfo
       end
       object N12: TMenuItem
         Caption = '-'
@@ -2678,9 +2673,11 @@ object Main: TMain
       Caption = 'Clear event nominations... '
       Enabled = False
     end
-    object Tools_CheckDataBase: TAction
+    object Tools_DBVerInfo: TAction
       Category = 'Tools'
-      Caption = 'Check Database...'
+      Caption = 'DB Version Info...'
+      OnExecute = Tools_DBVerInfoExecute
+      OnUpdate = Tools_DBVerInfoUpdate
     end
     object Event_BuildFinals: TAction
       Category = 'Event'
@@ -6011,14 +6008,14 @@ object Main: TMain
   object BindSourceDB1: TBindSourceDB
     DataSet = SCM.qryNominateControlList
     ScopeMappings = <>
-    Left = 392
-    Top = 448
+    Left = 1208
+    Top = 112
   end
   object BindingsList1: TBindingsList
     Methods = <>
     OutputConverters = <>
-    Left = 396
-    Top = 397
+    Left = 1132
+    Top = 109
     object LinkGridToDataSourceBindSourceDB1: TLinkGridToDataSource
       Category = 'Quick Bindings'
       DataSource = BindSourceDB1
@@ -6076,14 +6073,14 @@ object Main: TMain
   object BindSourceDB2: TBindSourceDB
     DataSet = SCM.qryEvent
     ScopeMappings = <>
-    Left = 704
-    Top = 448
+    Left = 600
+    Top = 488
   end
   object BindSourceDB3: TBindSourceDB
     DataSet = SCM.qryHeat
     ScopeMappings = <>
-    Left = 704
-    Top = 520
+    Left = 600
+    Top = 560
   end
   object VirtualImageList3: TVirtualImageList
     DisabledGrayscale = False

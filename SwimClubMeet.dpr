@@ -58,7 +58,8 @@ uses
   rptMembersSummary in 'MEMBERS\rptMembersSummary.pas' {MembersSummary: TDataModule},
   rptMembersDetail in 'MEMBERS\rptMembersDetail.pas' {MembersDetail: TDataModule},
   rptMemberHistory in 'MEMBERS\rptMemberHistory.pas' {MemberHistory: TDataModule},
-  rptMembersList in 'MEMBERS\rptMembersList.pas' {MembersList: TDataModule};
+  rptMembersList in 'MEMBERS\rptMembersList.pas' {MembersList: TDataModule},
+  dlgDBVersionInfo in 'dlgDBVersionInfo.pas' {DBVersionInfo};
 
 {$R *.res}
 

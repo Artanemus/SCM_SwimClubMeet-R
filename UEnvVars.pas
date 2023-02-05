@@ -3,7 +3,7 @@ unit UEnvVars;
 interface
 
 {$IFDEF CONDITIONALEXPRESSIONS}
-  {$IF CompilerVersion >= 15.0} // >= Delphi 7
+  {$IF CompilerVersion >= 15.0}
     {$WARN UNSAFE_CODE OFF}
   {$IFEND}
 {$ENDIF}

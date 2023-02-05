@@ -193,7 +193,7 @@ type
     Tools_House: TAction;
     actnClearNominee: TAction;
     actnClearEventNominations: TAction;
-    Tools_CheckDataBase: TAction;
+    Tools_DBVerInfo: TAction;
     Event_BuildFinals: TAction;
     Event_BuildSemiFinals: TAction;
     Event_BuildQuarterFinals: TAction;
@@ -432,6 +432,8 @@ type
     procedure Entrant_SwapLanesExecute(Sender: TObject);
     procedure Entrant_SwapLanesUpdate(Sender: TObject);
     procedure Tools_MembershipTypeUpdate(Sender: TObject);
+    procedure Tools_DBVerInfoExecute(Sender: TObject);
+    procedure Tools_DBVerInfoUpdate(Sender: TObject);
   private
     { Private declarations }
     // For scroll wheel tracking on mouse ...
@@ -523,7 +525,8 @@ uses
   rptMarshallReportB, rptTimeKeeperReportA, rptTimeKeeperReportB, dlgHouse,
   dlgAutoBuild_Finals, dlgPointsScored, dlgDivision, dlgLeaderBoard,
   dlgSelectPrinter, ioutils, dlgBatchProgress, dlgAutoBuildPref, ShellAPI,
-  UEnvVars, dlgEntrantPicker, dlgEntrantPickerCTRL, dmSCMNom, dlgSwapLanes;
+  UEnvVars, dlgEntrantPicker, dlgEntrantPickerCTRL, dmSCMNom, dlgSwapLanes,
+  dlgDBVersionInfo;
 
 { TTSCMEvent }
 
@@ -631,8 +634,13 @@ begin
     // TSCMnom will post message SCM_LANEWASCLEANED
     nom.UnNominateMember(MemberID, EventID);
   nom.Free;
-  // REQUERY the database used by the controllist (and repaint)
-  BindSourceDB1.DataSet.Refresh;
+  // CLOSE, SET new PARMS and OPEN the database used by the controllist.
+  // This is needed for images in event Nominate_ControlListBeforeDrawItem
+  SCM.Nominate_UpdateControlList(SCM.GetSessionID, MemberID);
+  // CLOSE makes inactive the bind source, but DATASET connection name ok.
+  if not BindSourceDB1.DataSet.Active then
+    BindSourceDB1.DataSet.Active := true;
+
   fDoStatusBarUpdate := true;
 end;
 
@@ -1915,6 +1923,7 @@ var
   aBasicLogin: TBasicLogin; // 24/04/2020 uses simple INI access
   result: TModalResult;
   hf: NativeUInt;
+  fld: TField;
 begin
   bootprogress := nil;
   SCMEventList := nil;
@@ -2143,7 +2152,15 @@ begin
 
   dbtxtNominateFullName.DataSource := SCM.dsNominateMembers;
 
-  dbimgSwimClubLogo.DataSource := SCM.dsSwimClub;
+  { TODO -oBSA -cV1500 compatability : Deactivate extended database fields }
+  fld := SCM.dsSwimClub.DataSet.FindField('LogoDir');
+  if Assigned(fld) then
+  begin
+    dbimgSwimClubLogo.DataSource := SCM.dsSwimClub;
+    dbimgSwimClubLogo.DataField := 'LogoImg';
+  end
+  else
+    dbimgSwimClubLogo.Visible := false;
 
   // Assert binding - because it always fails!!!
   BindSourceDB1.DataSet := SCM.qryNominateControlList;
@@ -4120,6 +4137,27 @@ begin
       MessageDlg('It''s recommended you close and restart SCM', mtError,
         [mbOK], 0);
   end;
+end;
+
+procedure TMain.Tools_DBVerInfoExecute(Sender: TObject);
+var
+dlg: TDBVersionInfo;
+begin
+  // display the [SwimClubMeet].[dbo].SCMSystem version info
+  dlg := TDBVersionInfo.Create(self, SCM.scmConnection);
+  dlg.ShowModal;
+  dlg.Free;
+end;
+
+procedure TMain.Tools_DBVerInfoUpdate(Sender: TObject);
+var
+  DoEnable: boolean;
+begin
+  DoEnable := false;
+  // Are we connected?
+  if AssertConnection then
+    DoEnable := true;
+  (Sender as TAction).Enabled := DoEnable;
 end;
 
 procedure TMain.Tools_DivisionsExecute(Sender: TObject);
