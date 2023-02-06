@@ -152,6 +152,8 @@ object AutoBuildV2: TAutoBuildV2
         '    , dbo.PersonalBest(Nominee.MemberID, Event.DistanceID, Event' +
         '.StrokeID, @SessionStart) AS PB'
       '    , Member_CTE.TTB'
+      '-- SEEDTIME IS USED TO INJECT DATA INTO THE ENTRANT RESORD'
+      ', SeedTime'
       
         '-- If we use the TTB value below - it will not get evaluated ...' +
         '. '

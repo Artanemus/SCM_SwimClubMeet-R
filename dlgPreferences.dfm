@@ -71,7 +71,7 @@ object Preferences: TPreferences
     Top = 41
     Width = 654
     Height = 503
-    ActivePage = TabSheet5
+    ActivePage = TabSheet3
     Align = alClient
     TabOrder = 2
     OnChanging = PageControl1Changing
@@ -564,7 +564,6 @@ object Preferences: TPreferences
         Font.Name = 'Segoe UI'
         Font.Style = [fsUnderline]
         ParentFont = False
-        Visible = False
       end
       object Label1: TLabel
         Left = 27
@@ -582,9 +581,9 @@ object Preferences: TPreferences
       object prefImportSeedTime: TRadioGroup
         Left = 27
         Top = 223
-        Width = 297
-        Height = 128
-        Caption = 'Direct seed time too ...'
+        Width = 358
+        Height = 146
+        Caption = 'Direct Nominee'#39's SeedTime too Entrant'#39's...'
         ItemIndex = 0
         Items.Strings = (
           'Ignore'
@@ -592,7 +591,6 @@ object Preferences: TPreferences
           'Entrant'#39's TimeToBet'
           'Entrant'#39's RaceTime')
         TabOrder = 4
-        Visible = False
       end
       object prefUseWindowsDefTheme: TCheckBox
         Left = 27

@@ -40,6 +40,9 @@ type
     prefSeperateGender: boolean;
     prefSeedMethod: seedMethod; // enum defined in SCMDefines
     prefSeedDepth: integer;
+    // SEEDTIME IS USED TO INJECT DATA INTO THE ENTRANT TABLE
+    // use the preference dialog to enable and set options.
+    prefImportSeedTime: integer;
 
     { TODO -oBSA -cGeneral : Check order of params for calling procedures. }
 
@@ -345,19 +348,41 @@ begin
       tbl_ABEntrant.Edit;
       tbl_ABEntrant.FieldByName('MemberID').AsInteger :=
         DataSet.FieldByName('MemberID').AsInteger;
-      {
+      (*
         NOTE:
         The dataset is either qryNominees or qryNomineesExt.
         The default is to send the TimeToBeat to field 'TTB'.
         When a finals, semi and quarter is seeded then the TFDQuery dataset
         re-directs the RACETIME time value to 'TTB' ...
-      }
+      *)
       tbl_ABEntrant.FieldByName('TimeToBeat').AsDateTime :=
         DataSet.FieldByName('TTB').AsDateTime;
       tbl_ABEntrant.FieldByName('PersonalBest').AsDateTime :=
         DataSet.FieldByName('PB').AsDateTime;
-      tbl_ABEntrant.Post;
+
+      (*
+        INJECT the Nominee.SeedTime value into the designated Entrant field
+        To enable and set options use the prefence dialog.
+        Option IGNORE to disable. (The default).
+      *)
+      if prefImportSeedTime > 0 then
+      begin
+        case prefImportSeedTime of
+          1: // Personal Best
+            tbl_ABEntrant.FieldByName('PersonalBest').AsDateTime :=
+              DataSet.FieldByName('SeedTime').AsDateTime;
+          2: // TimeToBeat
+            tbl_ABEntrant.FieldByName('TimeToBeat').AsDateTime :=
+              DataSet.FieldByName('SeedTime').AsDateTime;
+          3: // RaceTime
+            tbl_ABEntrant.FieldByName('RaceTime').AsDateTime :=
+              DataSet.FieldByName('SeedTime').AsDateTime;
+        end;
+      end;
+
     end;
+
+    tbl_ABEntrant.Post;
   end;
 end;
 
@@ -969,6 +994,8 @@ begin
   prefSeedMethod := smSCMSeeding;
   prefSeedDepth := 3; // Base 1
 
+  prefImportSeedTime := 0;
+
   if not Assigned(SCM) then
     raise Exception.Create('SCM data module not assigned.');
 
@@ -1108,6 +1135,13 @@ begin
     Division
   }
   prefGroupBy := iFile.ReadInteger('Preferences', 'GroupBy', 0);
+
+  // defaullt - do nothing - ignore
+  // SEEDTIME IS USED TO INJECT DATA INTO ENTRANT TABLE
+  // use the preference dialog to enable and set options.
+  prefImportSeedTime := iFile.ReadInteger('Preferences',
+    'ImportSeedTime', 0);
+
   iFile.Free;
 end;
 
