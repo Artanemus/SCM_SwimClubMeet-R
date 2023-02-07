@@ -271,6 +271,8 @@ type
     function Entrant_NextAvailLaneNum(aHeatID, aSeedNumber: integer): integer;
     procedure Entrant_RenumberLanes(aHeatID: integer);
     procedure Entrant_PadWithEmptyLanes(aHeatID: integer);
+    procedure Entrant_InsertEmptyLanes(aHeatID: integer);
+    procedure Entrant_DeleteExcessLanes(aHeatID: integer);
 
     // NOMINATE
     function Nominate_Locate(MemberID: integer): Boolean;
@@ -661,6 +663,43 @@ begin
   tbl.Free;
 end;
 
+procedure TSCM.Entrant_DeleteExcessLanes(aHeatID: integer);
+var
+  NumOfLanes, CountLanesInHeat, i, LanesToBuild: integer;
+begin
+  if not fSCMActive then
+    exit;
+  // create empty lanes
+  NumOfLanes := GetNumberOfLanes;
+  with dsEntrant.DataSet do
+  begin
+    // TODO: Store current EntrantID for later locate
+    // (or let caller deal with it?)
+    DisableControls;
+    First;
+    i := 1;
+    while not Eof do
+    begin
+      i := i + 1;
+      Next;
+      if (i > NumOfLanes) then
+        break;
+    end;
+    if i > NumOfLanes then
+    begin
+      // Resynchronizes the dataset to make the next undeleted record active.
+      // If the record deleted was the last record in the dataset, then the
+      // previous record becomes the current record.
+      while not dsEntrant.DataSet.Eof do
+      begin
+        Entrant_EmptyLane;  // nomination remains alive.
+        dsEntrant.DataSet.Delete;
+      end;
+    end;
+    EnableControls;
+  end;
+end;
+
 function TSCM.Entrant_EmptyLane: Boolean;
 var
   EntrantID: integer;
@@ -687,6 +726,22 @@ begin
     Entrant_Locate(EntrantID);
     EnableControls;
   end;
+end;
+
+procedure TSCM.Entrant_InsertEmptyLanes(aHeatID: integer);
+var
+  i, LanesToBuild: integer;
+begin
+  // CALLED BY : qryHeat AfterInsert ...
+  // New heats, do not have any lanes assigned to them.
+  // BUILD POOL LANES in entrant table.
+  if not fSCMActive then
+    exit;
+  LanesToBuild := GetNumberOfLanes;
+  dsEntrant.DataSet.DisableControls;
+  for I := 1 to LanesToBuild do
+    Entrant_CreateEmptyLane(aHeatID, i);
+  dsEntrant.DataSet.EnableControls;
 end;
 
 function TSCM.Entrant_Locate(EntrantID: integer): Boolean;
@@ -739,23 +794,54 @@ end;
 
 procedure TSCM.Entrant_PadWithEmptyLanes(aHeatID: integer);
 var
-  NumOfLanes, HeatLaneCount, i, j, LanesToBuild: integer;
+  NumOfLanes, CountLanesInHeat, i, j, LanesToBuild: integer;
 begin
   if not fSCMActive then
     exit;
   j := 1;
   // create empty lanes
   NumOfLanes := GetNumberOfLanes;
-  HeatLaneCount := Entrant_CountLanes(aHeatID);
-  if (HeatLaneCount < NumOfLanes) then
+  CountLanesInHeat := Entrant_CountLanes(aHeatID);
+
+  if (CountLanesInHeat > NumOfLanes) then
   begin
+    // message - too many lanes.
+    // Store curr EntrantID
+    dsEntrant.DataSet.DisableControls;
+    dsEntrant.DataSet.First;
+    I := 1;
+    while not dsEntrant.DataSet.Eof do
+    begin
+        I := I + 1;
+        dsEntrant.DataSet.Next;
+        if (I > NumOfLanes ) then break;
+    end;
+    if i > NumOfLanes then
+    begin
+      // Resynchronizes the dataset to make the next undeleted record active.
+      // If the record deleted was the last record in the dataset, then the
+      // previous record becomes the current record.
+      while not dsEntrant.DataSet.Eof do
+      begin
+        Entrant_EmptyLane;
+        dsEntrant.DataSet.Delete;
+      end;
+    end;
+
+    dsEntrant.DataSet.EnableControls;
+  end;
+
+  if (CountLanesInHeat < NumOfLanes) then
+  begin
+    dsEntrant.DataSet.DisableControls;
     // test for correct number of lanes ...
-    LanesToBuild := NumOfLanes - HeatLaneCount;
+    LanesToBuild := NumOfLanes - CountLanesInHeat;
     for I := 1 to LanesToBuild do
     begin
       j := Entrant_NextAvailLaneNum(aHeatID, j);
       Entrant_CreateEmptyLane(aHeatID, j);
     end;
+    dsEntrant.DataSet.EnableControls;
   end;
 end;
 
@@ -896,7 +982,6 @@ begin
   result := false;
   with dsEntrant.DataSet do
   begin
-    DisableControls;
     CheckBrowseMode; // post any changes
     EntrantID := FieldByName('EntrantID').AsInteger;
     if (EntrantID > 0) then
@@ -904,14 +989,15 @@ begin
       nom := TSCMNom.CreateWithConnection(self, scmConnection);
       if Assigned(nom) then
       begin
+        DisableControls;
         nom.StrikeExecute(EntrantID, dsEntrant.DataSet);
         result := true;
+        { TODO -oBSA -cGeneral : Refresh required? }
+        Refresh;
+        EnableControls;
       end;
       nom.Free;
     end;
-    { TODO -oBSA -cGeneral : Requires a refresh of the entrant table ? }
-    Refresh();
-    EnableControls;
   end;
 end;
 
@@ -2054,9 +2140,35 @@ begin
 end;
 
 procedure TSCM.qryHeatAfterPost(DataSet: TDataSet);
+var
+HeatID, EntrantID, NumOfLanes, i: integer;
 begin
-	// will perform a refresh on dsEntrant ....
-	Entrant_PadWithEmptyLanes(DataSet.FieldByName('HeatID').AsInteger);
+  // AFTER every post to heats ...
+  // THIS ROUTINE ASSERTS CORRECT NUMBER OF LANES
+  HeatID := DataSet.FieldByName('HeatID').AsInteger;
+  NumOfLanes := GetNumberOfLanes;
+
+  if (HeatID > 0) then
+  begin
+    i := Entrant_CountLanes(HeatID); // current number of pool lanes
+    if (i = 0) then
+    begin
+      // new heats don't have lanes.
+      Entrant_InsertEmptyLanes(HeatID);
+      SCM.dsEntrant.DataSet.Refresh; // required
+    end
+    else
+    begin
+      EntrantID := dsEntrant.DataSet.FieldByName('EntrantID').AsInteger;
+      if (i < NumOfLanes) then
+        Entrant_PadWithEmptyLanes(HeatID)
+      else if (i > NumOfLanes) then
+        Entrant_DeleteExcessLanes(HeatID);
+      SCM.dsEntrant.DataSet.Refresh;  // required
+      SCM.Entrant_Locate(EntrantID);
+    end;
+  end;
+
 end;
 
 procedure TSCM.qryHeatAfterScroll(DataSet: TDataSet);

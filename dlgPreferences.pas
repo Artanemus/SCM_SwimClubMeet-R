@@ -77,6 +77,7 @@ type
     btnSaveClubLogo: TButton;
     DBImage1: TDBImage;
     qrySwimClub: TFDQuery;
+    Label9: TLabel;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);

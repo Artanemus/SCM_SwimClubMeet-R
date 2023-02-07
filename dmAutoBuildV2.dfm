@@ -219,7 +219,7 @@ object AutoBuildV2: TAutoBuildV2
         Name = 'EVENTID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = 835
+        Value = 1
       end
       item
         Name = 'SESSIONSTART'
@@ -684,7 +684,7 @@ object AutoBuildV2: TAutoBuildV2
         Name = 'EVENTID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = 135
+        Value = 1
       end>
   end
   object qryHeatMaxSeedNumber: TFDQuery

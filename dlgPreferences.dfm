@@ -578,12 +578,28 @@ object Preferences: TPreferences
         Font.Style = [fsUnderline]
         ParentFont = False
       end
+      object Label9: TLabel
+        Left = 27
+        Top = 384
+        Width = 358
+        Height = 33
+        Caption = 
+          'WARNING : When importing is enabled and an auto-build is perform' +
+          'ed - DateTime is set to today'#39's date.'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        ParentFont = False
+        WordWrap = True
+      end
       object prefImportSeedTime: TRadioGroup
         Left = 27
         Top = 223
         Width = 358
         Height = 146
-        Caption = 'Direct Nominee'#39's SeedTime too Entrant'#39's...'
+        Caption = 'Direct Nominee'#39's SeedTime too Entrant'#39's ...'
         ItemIndex = 0
         Items.Strings = (
           'Ignore'

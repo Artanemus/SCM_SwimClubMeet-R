@@ -248,6 +248,7 @@ begin
       // Specific queries need specific data prior to calling AssignNominees.
       if (SeperateGender) then
         fGenderID := ds.FieldByName('GENDERID').AsInteger;
+
       case (GroupBy) of
         1: // Group on age.
           fAge := ds.FieldByName('Age').AsInteger;
@@ -439,7 +440,14 @@ begin
   DataSet.ParamByName('MEMBERSHIPTYPEID').AsInteger := MembershipTypeID;
   { TODO -oBSA -cGeneral : dataset.ParamByName('DIVISIONID').AsInteger := DivisionID }
   DataSet.ParamByName('EVENTID').AsInteger := EventID;
-  DataSet.ParamByName('SESSIONSTART').AsDateTime := SCM.GetSessionStart;
+
+  // if you are injecting data - the session date will pre-date the DOB of
+  // most swimmers. So the SESSIONSTART should be set to Now()
+  if (prefImportSeedTime > 0) then
+    DataSet.ParamByName('SESSIONSTART').AsDateTime := Now
+  else
+    DataSet.ParamByName('SESSIONSTART').AsDateTime := SCM.GetSessionStart;
+
   DataSet.ParamByName('ALGORITHM').AsInteger := prefHeatAlgorithm;
   DataSet.ParamByName('CALCDEFAULT').AsInteger := integer(prefUseDefRaceTime);
   DataSet.ParamByName('PERCENT').AsFloat := double(prefRaceTimeTopPercent);
@@ -1139,6 +1147,7 @@ begin
   // defaullt - do nothing - ignore
   // SEEDTIME IS USED TO INJECT DATA INTO ENTRANT TABLE
   // use the preference dialog to enable and set options.
+  // NOTE: the session date used will be Now().
   prefImportSeedTime := iFile.ReadInteger('Preferences',
     'ImportSeedTime', 0);
 
