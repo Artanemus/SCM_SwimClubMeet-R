@@ -364,18 +364,12 @@ begin
       (*
         INJECT the Nominee.SeedTime value into the designated Entrant field
         To enable and set options use the prefence dialog.
-        Option IGNORE to disable. (The default).
+        The default : 0 = DISABLED.
       *)
       if prefImportSeedTime > 0 then
       begin
         case prefImportSeedTime of
-          1: // Personal Best
-            tbl_ABEntrant.FieldByName('PersonalBest').AsDateTime :=
-              DataSet.FieldByName('SeedTime').AsDateTime;
-          2: // TimeToBeat
-            tbl_ABEntrant.FieldByName('TimeToBeat').AsDateTime :=
-              DataSet.FieldByName('SeedTime').AsDateTime;
-          3: // RaceTime
+          1: // RaceTime
             tbl_ABEntrant.FieldByName('RaceTime').AsDateTime :=
               DataSet.FieldByName('SeedTime').AsDateTime;
         end;

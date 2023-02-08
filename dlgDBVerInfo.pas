@@ -1,4 +1,4 @@
-unit dlgDBVersionInfo;
+unit dlgDBVerInfo;
 
 interface
 
@@ -8,26 +8,36 @@ uses
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, Data.DB,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.VirtualImage,
-  Vcl.BaseImageCollection, Vcl.ImageCollection;
+  Vcl.BaseImageCollection, Vcl.ImageCollection, Vcl.ExtCtrls;
 
 type
-  TDBVersionInfo = class(TForm)
+  TDBVerInfo = class(TForm)
     qrySCMSystem: TFDQuery;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
     btnClose: TButton;
-    ImageCollection1: TImageCollection;
-    VirtualImage1: TVirtualImage;
     dsSCMSystem: TDataSource;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    Shape1: TShape;
+    Shape2: TShape;
+    Shape3: TShape;
+    Shape4: TShape;
+    Shape5: TShape;
+    Shape6: TShape;
+    Shape7: TShape;
+    Shape8: TShape;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure btnCloseClick(Sender: TObject);
   private
     { Private declarations }
     fConnection: TFDConnection;
-    fDBVersion, fDBMajor, fDBMinor: integer;
+    fDBModel, fDBVersion, fDBMajor, fDBMinor: integer;
     function GetDBVerInfo(): Boolean;
 
   public
@@ -39,7 +49,7 @@ type
   end;
 
 var
-  DBVersionInfo: TDBVersionInfo;
+  DBVerInfo: TDBVerInfo;
 
 implementation
 
@@ -47,12 +57,12 @@ implementation
 
 { TDBVersionInfo }
 
-procedure TDBVersionInfo.btnCloseClick(Sender: TObject);
+procedure TDBVerInfo.btnCloseClick(Sender: TObject);
 begin
   ModalResult := mrOk;
 end;
 
-constructor TDBVersionInfo.Create(AOwner: TComponent;
+constructor TDBVerInfo.Create(AOwner: TComponent;
   AConnection: TFDConnection);
 begin
   inherited Create(AOwner);
@@ -62,7 +72,7 @@ begin
     FConnection := nil;
 end;
 
-procedure TDBVersionInfo.FormCreate(Sender: TObject);
+procedure TDBVerInfo.FormCreate(Sender: TObject);
 begin
   if Assigned(FConnection) then
   begin
@@ -72,7 +82,7 @@ begin
       // Version control v1,1,5,0 - v1,1,5,1
       if (fDBMajor = 5) AND ((fDBMinor = 0) or (fDBMinor = 1)) then
       begin
-        Label1.Caption := '1';
+        Label1.Caption := IntToStr(fDBModel);
         Label2.Caption := IntToStr(fDBVersion);
         Label3.Caption := IntToStr(fDBMajor);
         Label4.Caption := IntToStr(fDBMinor);
@@ -85,28 +95,32 @@ begin
   end;
 end;
 
-procedure TDBVersionInfo.FormKeyDown(Sender: TObject; var Key: Word;
+procedure TDBVerInfo.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   if (Key = VK_ESCAPE) then
     ModalResult := mrClose;
 end;
 
-function TDBVersionInfo.GetDBVerInfo: Boolean;
+function TDBVerInfo.GetDBVerInfo: Boolean;
 begin
   result := false;
-  if Assigned(FConnection) then
+  if Assigned(fConnection) then
   begin
-    qrySCMSystem.Connection := FConnection;
-    qrySCMSystem.Open;
-    if qrySCMSystem.Active then
+    with qrySCMSystem do
     begin
-      fDBVersion := qrySCMSystem.FieldByName('DBVersion').AsInteger;
-      fDBMajor := qrySCMSystem.FieldByName('Major').AsInteger;
-      fDBMinor := qrySCMSystem.FieldByName('Minor').AsInteger;
-      result := true;
+      Connection := fConnection;
+      Open;
+      if Active then
+      begin
+        fDBModel := FieldByName('SCMSystemID').AsInteger;
+        fDBVersion := FieldByName('DBVersion').AsInteger;
+        fDBMajor := FieldByName('Major').AsInteger;
+        fDBMinor := FieldByName('Minor').AsInteger;
+        result := true;
+      end;
+      Close;
     end;
-    qrySCMSystem.Close;
   end;
 end;
 

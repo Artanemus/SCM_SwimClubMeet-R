@@ -11,7 +11,7 @@ object MemberDetail: TMemberDetail
     PrintOptions.Printer = 'Default'
     PrintOptions.PrintOnSheet = 0
     ReportOptions.CreateDate = 43429.469572048600000000
-    ReportOptions.LastChange = 43660.481920925900000000
+    ReportOptions.LastChange = 44965.676899722200000000
     ScriptLanguage = 'PascalScript'
     ScriptText.Strings = (
       ''
@@ -43,7 +43,7 @@ object MemberDetail: TMemberDetail
       RightMargin = 10.000000000000000000
       TopMargin = 10.000000000000000000
       BottomMargin = 10.000000000000000000
-      ColumnWidth = 63.333333333333300000
+      ColumnWidth = 63.300000000000000000
       Frame.Typ = []
       MirrorMode = []
       object PageHeader1: TfrxPageHeader
@@ -65,6 +65,7 @@ object MemberDetail: TMemberDetail
           Top = 22.677180000000000000
           Width = 400.630180000000000000
           Height = 18.897650000000000000
+          DataField = 'ClubNickName'
           DataSet = frxDSReport
           DataSetName = 'frxDS'
           Frame.Typ = []
@@ -76,6 +77,7 @@ object MemberDetail: TMemberDetail
           Left = 3.779530000000000000
           Width = 400.630180000000000000
           Height = 18.897650000000000000
+          DataField = 'ClubName'
           DataSet = frxDSReport
           DataSetName = 'frxDS'
           Font.Charset = DEFAULT_CHARSET
@@ -121,7 +123,7 @@ object MemberDetail: TMemberDetail
         FillType = ftBrush
         Frame.Typ = []
         Height = 22.677180000000000000
-        Top = 521.575140000000000000
+        Top = 589.606680000000000000
         Width = 718.110700000000000000
         object Page: TfrxMemoView
           AllowVectorExport = True
@@ -156,7 +158,7 @@ object MemberDetail: TMemberDetail
         Font.Height = -13
         Font.Name = 'Segoe UI'
         Font.Style = []
-        Height = 188.976500000000000000
+        Height = 166.976500000000000000
         ParentFont = False
         Top = 181.417440000000000000
         Width = 718.110700000000000000
@@ -339,7 +341,7 @@ object MemberDetail: TMemberDetail
         end
         object frxDSEmail: TfrxMemoView
           AllowVectorExport = True
-          Left = 154.960730000000000000
+          Left = 155.460730000000000000
           Top = 117.944960000000000000
           Width = 400.630180000000000000
           Height = 18.897650000000000000
@@ -390,42 +392,6 @@ object MemberDetail: TMemberDetail
             'Date joined')
           ParentFont = False
         end
-        object frxDSMembershipDue: TfrxMemoView
-          AllowVectorExport = True
-          Left = 155.181200000000000000
-          Top = 161.299320000000000000
-          Width = 272.126160000000000000
-          Height = 18.897650000000000000
-          DataField = 'MembershipDue'
-          DataSet = frxDSReport
-          DataSetName = 'frxDS'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'segoe UI'
-          Font.Style = []
-          Frame.Typ = []
-          Memo.UTF8W = (
-            '[frxDS."MembershipDue"]')
-          ParentFont = False
-        end
-        object Memo11: TfrxMemoView
-          AllowVectorExport = True
-          Left = 15.118120000000000000
-          Top = 161.299320000000000000
-          Width = 128.504020000000000000
-          Height = 18.897650000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'segoe UI'
-          Font.Style = []
-          Frame.Typ = []
-          HAlign = haRight
-          Memo.UTF8W = (
-            'Membership due')
-          ParentFont = False
-        end
         object frxDSAGE: TfrxMemoView
           AllowVectorExport = True
           Left = 245.669450000000000000
@@ -456,7 +422,7 @@ object MemberDetail: TMemberDetail
         KeepTogether = True
         object Memo6: TfrxMemoView
           AllowVectorExport = True
-          Left = 71.811070000000000000
+          Left = 72.311070000000000000
           Width = 400.630180000000000000
           Height = 18.897650000000000000
           DataField = 'FName'
@@ -477,6 +443,7 @@ object MemberDetail: TMemberDetail
           Top = 2.000000000000000000
           Width = 68.031540000000000000
           Height = 18.897650000000000000
+          DataField = 'MemberID'
           DataSet = frxDSReport
           DataSetName = 'frxDS'
           DisplayFormat.FormatStr = '0000'
@@ -493,63 +460,17 @@ object MemberDetail: TMemberDetail
           ParentFont = False
         end
       end
-      object DetailData1: TfrxDetailData
+      object GroupHeader2: TfrxGroupHeader
         FillType = ftBrush
         Frame.Typ = []
         Height = 22.677180000000000000
-        Top = 438.425480000000000000
+        Top = 370.393940000000000000
         Width = 718.110700000000000000
-        DataSet = frxDBContacts
-        DataSetName = 'frxDBContacts'
-        Filter = '<frxDS."MemberID"> = <frxDBContacts."MemberID">'
-        RowCount = 0
-        object frxDBContactsNumber: TfrxMemoView
+        Condition = 'frxDS."ContactNumID"'
+        object Memo11: TfrxMemoView
           AllowVectorExport = True
-          Left = 94.488250000000000000
-          Width = 143.622140000000000000
-          Height = 18.897650000000000000
-          DataField = 'Number'
-          DataSet = frxDBContacts
-          DataSetName = 'frxDBContacts'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Arial'
-          Font.Style = []
-          Frame.Typ = []
-          HAlign = haRight
-          Memo.UTF8W = (
-            '[frxDBContacts."Number"]')
-          ParentFont = False
-        end
-        object frxDBContactsCaption: TfrxMemoView
-          AllowVectorExport = True
-          Left = 241.889920000000000000
-          Width = 309.921460000000000000
-          Height = 18.897650000000000000
-          DataField = 'Caption'
-          DataSet = frxDBContacts
-          DataSetName = 'frxDBContacts'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Arial'
-          Font.Style = []
-          Frame.Typ = []
-          Memo.UTF8W = (
-            '[frxDBContacts."Caption"]')
-          ParentFont = False
-        end
-      end
-      object Header1: TfrxHeader
-        FillType = ftBrush
-        Frame.Typ = []
-        Height = 22.677180000000000000
-        Top = 393.071120000000000000
-        Width = 718.110700000000000000
-        object Memo8: TfrxMemoView
-          AllowVectorExport = True
-          Left = 18.897650000000000000
+          Left = 18.500000000000000000
+          Top = 1.106060000000000000
           Width = 136.063080000000000000
           Height = 18.897650000000000000
           Font.Charset = DEFAULT_CHARSET
@@ -564,6 +485,30 @@ object MemberDetail: TMemberDetail
           ParentFont = False
         end
       end
+      object GroupFooter1: TfrxGroupFooter
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 22.677180000000000000
+        Top = 506.457020000000000000
+        Width = 718.110700000000000000
+      end
+      object GroupFooter2: TfrxGroupFooter
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 22.677180000000000000
+        Top = 461.102660000000000000
+        Width = 718.110700000000000000
+      end
+      object MasterData2: TfrxMasterData
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 22.677180000000000000
+        Top = 415.748300000000000000
+        Width = 718.110700000000000000
+        DataSet = frxDSReport
+        DataSetName = 'frxDS'
+        RowCount = 0
+      end
     end
   end
   object frxDSReport: TfrxDBDataset
@@ -571,7 +516,7 @@ object MemberDetail: TMemberDetail
     CloseDataSource = False
     DataSet = qryReport
     BCDToCurrency = False
-    Left = 200
+    Left = 344
     Top = 312
   end
   object frxHTMLExport1: TfrxHTMLExport
@@ -586,8 +531,8 @@ object MemberDetail: TMemberDetail
     EmptyLines = True
     Print = False
     PictureType = gpPNG
-    Left = 192
-    Top = 144
+    Left = 152
+    Top = 160
   end
   object frxPDFExport1: TfrxPDFExport
     UseFileCache = True
@@ -613,8 +558,8 @@ object MemberDetail: TMemberDetail
     PdfA = False
     PDFStandard = psNone
     PDFVersion = pv17
-    Left = 192
-    Top = 80
+    Left = 152
+    Top = 72
   end
   object frxXLSExport1: TfrxXLSExport
     UseFileCache = True
@@ -629,14 +574,15 @@ object MemberDetail: TMemberDetail
     EmptyLines = True
     SuppressPageHeadersFooters = False
     Left = 264
-    Top = 80
+    Top = 72
   end
   object qryReport: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'MemberID'
     Connection = FDConnection1
     SQL.Strings = (
-      'USE SwimClubMeet'
+      'USE SwimClubMeet;'
       ''
       'DECLARE @MemberID AS INT'
       'DECLARE @SwimClubID AS INT'
@@ -644,77 +590,76 @@ object MemberDetail: TMemberDetail
       'SET @MemberID = :MEMBERID'
       'SET @SwimClubID = :SWIMCLUBID'
       ''
-      'IF (@MemberID IS NULL) OR (@MemberID = 0)'
-      #9'SELECT Member.MemberID'
-      #9#9',Member.MembershipNum'
-      #9#9',Member.FirstName'
-      #9#9',Member.LastName'
-      #9#9',CONCAT ('
-      #9#9#9'UPPER(Member.LastName)'
-      #9#9#9','#39', '#39
-      #9#9#9',Member.FirstName'
-      #9#9#9') AS FName'
-      #9#9',Member.DOB'
-      #9#9',Member.IsActive'
-      #9#9',Member.MembershipDue'
-      #9#9',Member.Email'
-      #9#9'-- , Member.DoEmailSessionReport'
-      #9#9',Gender.Caption AS GenderStr'
-      #9#9',Member.GenderID'
-      #9#9',Member.SwimClubID'
-      #9#9',Member.MembershipTypeID'
-      #9#9',MembershipType.Caption AS cMembershipTypeStr'
-      #9#9',SwimClub.Caption AS ClubName'
-      #9#9',SwimClub.NickName AS ClubNickName'
-      #9#9',dbo.SwimmerAge(GETDATE(), Member.DOB) AS AGE'
-      #9'FROM Member'
+      'IF (@MemberID IS NULL)'
+      '   OR (@MemberID = 0)'
+      '    SELECT Member.MemberID'
+      '         , Member.MembershipNum'
+      '         , Member.FirstName'
+      '         , Member.LastName'
       
-        #9'LEFT OUTER JOIN SwimClub ON Member.SwimClubID = SwimClub.SwimCl' +
-        'ubID'
-      #9'LEFT OUTER JOIN Gender ON Member.GenderID = Gender.GenderID'
+        '         , CONCAT(UPPER(Member.LastName), '#39', '#39', Member.FirstName' +
+        ') AS FName'
+      '         , Member.DOB'
+      '         , Member.IsActive'
+      '         , Member.MembershipDue'
+      '         , Member.Email'
+      '         -- , Member.DoEmailSessionReport'
+      '         , Gender.Caption AS GenderStr'
+      '         , Member.GenderID'
+      '         , Member.SwimClubID'
+      '         , Member.MembershipTypeID'
+      '         , MembershipType.Caption AS cMembershipTypeStr'
+      '         , SwimClub.Caption AS ClubName'
+      '         , SwimClub.NickName AS ClubNickName'
+      '         , dbo.SwimmerAge(GETDATE(), Member.DOB) AS AGE'
+      '    FROM Member'
+      '        LEFT OUTER JOIN SwimClub'
+      '            ON Member.SwimClubID = SwimClub.SwimClubID'
+      '        LEFT OUTER JOIN Gender'
+      '            ON Member.GenderID = Gender.GenderID'
+      '        LEFT OUTER JOIN MembershipType'
       
-        #9'LEFT OUTER JOIN MembershipType ON Member.MembershipTypeID = Mem' +
-        'bershipType.MembershipTypeID'
-      #9'WHERE (Member.SwimClubID = @SwimClubID)'
-      #9'ORDER BY Member.LastName;'
+        '            ON Member.MembershipTypeID = MembershipType.Membersh' +
+        'ipTypeID'
+      '        LEFT OUTER JOIN ContactNum'
+      '            ON Member.MemberID = ContactNUm.MemberID'
+      '    WHERE (Member.SwimClubID = @SwimClubID)'
+      '    ORDER BY Member.LastName;'
       'ELSE'
-      #9'SELECT Member.MemberID'
-      #9#9',Member.MembershipNum'
-      #9#9',Member.FirstName'
-      #9#9',Member.LastName'
-      #9#9',CONCAT ('
-      #9#9#9'UPPER(Member.LastName)'
-      #9#9#9','#39', '#39
-      #9#9#9',Member.FirstName'
-      #9#9#9') AS FName'
-      #9#9',Member.DOB'
-      #9#9',Member.IsActive'
-      #9#9',Member.MembershipDue'
-      #9#9',Member.Email'
-      #9#9'-- , Member.DoEmailSessionReport'
-      #9#9',Gender.Caption AS GenderStr'
-      #9#9',Member.GenderID'
-      #9#9',Member.SwimClubID'
-      #9#9',Member.MembershipTypeID'
-      #9#9',MembershipType.Caption AS cMembershipTypeStr'
-      #9#9',SwimClub.Caption AS ClubName'
-      #9#9',SwimClub.NickName AS ClubNickName'
-      #9#9',dbo.SwimmerAge(GETDATE(), Member.DOB) AS AGE'
-      #9'FROM Member'
+      '    SELECT Member.MemberID'
+      '         , Member.MembershipNum'
+      '         , Member.FirstName'
+      '         , Member.LastName'
       
-        #9'LEFT OUTER JOIN SwimClub ON Member.SwimClubID = SwimClub.SwimCl' +
-        'ubID'
-      #9'LEFT OUTER JOIN Gender ON Member.GenderID = Gender.GenderID'
+        '         , CONCAT(UPPER(Member.LastName), '#39', '#39', Member.FirstName' +
+        ') AS FName'
+      '         , Member.DOB'
+      '         , Member.IsActive'
+      '         , Member.MembershipDue'
+      '         , Member.Email'
+      '         -- , Member.DoEmailSessionReport'
+      '         , Gender.Caption AS GenderStr'
+      '         , Member.GenderID'
+      '         , Member.SwimClubID'
+      '         , Member.MembershipTypeID'
+      '         , MembershipType.Caption AS cMembershipTypeStr'
+      '         , SwimClub.Caption AS ClubName'
+      '         , SwimClub.NickName AS ClubNickName'
+      '         , dbo.SwimmerAge(GETDATE(), Member.DOB) AS AGE'
+      '    FROM Member'
+      '        LEFT OUTER JOIN SwimClub'
+      '            ON Member.SwimClubID = SwimClub.SwimClubID'
+      '        LEFT OUTER JOIN Gender'
+      '            ON Member.GenderID = Gender.GenderID'
+      '        LEFT OUTER JOIN MembershipType'
       
-        #9'LEFT OUTER JOIN MembershipType ON Member.MembershipTypeID = Mem' +
-        'bershipType.MembershipTypeID'
-      #9'WHERE (Member.SwimClubID = @SwimClubID)'
-      #9#9'AND (MemberID = @MemberID)'
-      #9'ORDER BY Member.LastName;'
-      ''
-      ''
-      ''
-      '')
+        '            ON Member.MembershipTypeID = MembershipType.Membersh' +
+        'ipTypeID'
+      '        LEFT OUTER JOIN ContactNum'
+      '            ON Member.MemberID = ContactNUm.MemberID'
+      '    WHERE (Member.SwimClubID = @SwimClubID)'
+      '    --AND (MemberID = @MemberID)'
+      '    ORDER BY Member.LastName;')
     Left = 72
     Top = 312
     ParamData = <
@@ -722,7 +667,7 @@ object MemberDetail: TMemberDetail
         Name = 'MEMBERID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = 0
+        Value = 4
       end
       item
         Name = 'SWIMCLUBID'
@@ -745,11 +690,14 @@ object MemberDetail: TMemberDetail
     UseMAPI = SMTP
     MAPISendFlag = 0
     Left = 264
-    Top = 144
+    Top = 168
   end
   object qryMemberContacts: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'MemberID'
+    MasterSource = dsReport
+    MasterFields = 'MemberID'
     Connection = FDConnection1
     SQL.Strings = (
       'USE SwimClubMeet'
@@ -776,15 +724,21 @@ object MemberDetail: TMemberDetail
     CloseDataSource = False
     DataSet = qryMemberContacts
     BCDToCurrency = False
-    Left = 200
+    Left = 344
     Top = 392
   end
   object FDConnection1: TFDConnection
     Params.Strings = (
       'ConnectionDef=MSSQL_SwimClubMeet')
+    ConnectedStoredUsage = [auDesignTime]
     Connected = True
     LoginPrompt = False
     Left = 64
     Top = 16
+  end
+  object dsReport: TDataSource
+    DataSet = qryReport
+    Left = 152
+    Top = 312
   end
 end

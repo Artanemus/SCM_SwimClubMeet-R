@@ -2316,9 +2316,6 @@ object Main: TMain
         Action = Tools_ConnectionManager
         Visible = False
       end
-      object CleanMSSQL2: TMenuItem
-        Action = Tools_DBVerInfo
-      end
       object N12: TMenuItem
         Caption = '-'
       end
@@ -2331,8 +2328,8 @@ object Main: TMain
       object About1: TMenuItem
         Action = Help_About
       end
-      object Help_DBVerInfo: TMenuItem
-        Caption = 'DB Version Info...'
+      object DBVersionInfo: TMenuItem
+        Action = Help_DBVerInfo
       end
       object Help_Help: TMenuItem
         Caption = 'Help...'
@@ -2673,11 +2670,11 @@ object Main: TMain
       Caption = 'Clear event nominations... '
       Enabled = False
     end
-    object Tools_DBVerInfo: TAction
-      Category = 'Tools'
+    object Help_DBVerInfo: TAction
+      Category = 'Help'
       Caption = 'DB Version Info...'
-      OnExecute = Tools_DBVerInfoExecute
-      OnUpdate = Tools_DBVerInfoUpdate
+      OnExecute = Help_DBVerInfoExecute
+      OnUpdate = Help_DBVerInfoUpdate
     end
     object Event_BuildFinals: TAction
       Category = 'Event'
@@ -2755,10 +2752,6 @@ object Main: TMain
       ImageName = 'VisibilityOn'
       OnExecute = Session_ToggleVisibleExecute
       OnUpdate = Session_ToggleVisibleUpdate
-    end
-    object Help_DBVersionInfo: TAction
-      Category = 'Help'
-      Caption = 'DB Version Info...'
     end
   end
   object pumHeat: TPopupMenu

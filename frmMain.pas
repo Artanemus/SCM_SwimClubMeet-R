@@ -137,7 +137,6 @@ type
     LeaderBoard1: TMenuItem;
     N12: TMenuItem;
     Options1: TMenuItem;
-    CleanMSSQL2: TMenuItem;
     Help1: TMenuItem;
     About1: TMenuItem;
     Help_Help: TMenuItem;
@@ -193,7 +192,7 @@ type
     Tools_House: TAction;
     actnClearNominee: TAction;
     actnClearEventNominations: TAction;
-    Tools_DBVerInfo: TAction;
+    Help_DBVerInfo: TAction;
     Event_BuildFinals: TAction;
     Event_BuildSemiFinals: TAction;
     Event_BuildQuarterFinals: TAction;
@@ -303,8 +302,7 @@ type
     btnClearSearch: TButton;
     VirtualImageList3: TVirtualImageList;
     spbtnEntrantSort: TSpeedButton;
-    Help_DBVerInfo: TMenuItem;
-    Help_DBVersionInfo: TAction;
+    DBVersionInfo: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure SCM_RefreshExecute(Sender: TObject);
@@ -432,8 +430,8 @@ type
     procedure Entrant_SwapLanesExecute(Sender: TObject);
     procedure Entrant_SwapLanesUpdate(Sender: TObject);
     procedure Tools_MembershipTypeUpdate(Sender: TObject);
-    procedure Tools_DBVerInfoExecute(Sender: TObject);
-    procedure Tools_DBVerInfoUpdate(Sender: TObject);
+    procedure Help_DBVerInfoExecute(Sender: TObject);
+    procedure Help_DBVerInfoUpdate(Sender: TObject);
   private
     { Private declarations }
     // For scroll wheel tracking on mouse ...
@@ -526,7 +524,7 @@ uses
   dlgAutoBuild_Finals, dlgPointsScored, dlgDivision, dlgLeaderBoard,
   dlgSelectPrinter, ioutils, dlgBatchProgress, dlgAutoBuildPref, ShellAPI,
   UEnvVars, dlgEntrantPicker, dlgEntrantPickerCTRL, dmSCMNom, dlgSwapLanes,
-  dlgDBVersionInfo;
+  dlgDBVerInfo;
 
 { TTSCMEvent }
 
@@ -2970,6 +2968,27 @@ begin
   (Sender as TAction).Enabled := DoEnable;
 end;
 
+procedure TMain.Help_DBVerInfoExecute(Sender: TObject);
+var
+dlg: TDBVerInfo;
+begin
+  // display the [SwimClubMeet].[dbo].SCMSystem version info
+  dlg := TDBVerInfo.Create(self, SCM.scmConnection);
+  dlg.ShowModal;
+  dlg.Free;
+end;
+
+procedure TMain.Help_DBVerInfoUpdate(Sender: TObject);
+var
+  DoEnable: boolean;
+begin
+  DoEnable := false;
+  // Are we connected?
+  if AssertConnection then
+    DoEnable := true;
+  (Sender as TAction).Enabled := DoEnable;
+end;
+
 procedure TMain.Help_AboutExecute(Sender: TObject);
 var
   dlg: TAbout;
@@ -4137,27 +4156,6 @@ begin
       MessageDlg('It''s recommended you close and restart SCM', mtError,
         [mbOK], 0);
   end;
-end;
-
-procedure TMain.Tools_DBVerInfoExecute(Sender: TObject);
-var
-dlg: TDBVersionInfo;
-begin
-  // display the [SwimClubMeet].[dbo].SCMSystem version info
-  dlg := TDBVersionInfo.Create(self, SCM.scmConnection);
-  dlg.ShowModal;
-  dlg.Free;
-end;
-
-procedure TMain.Tools_DBVerInfoUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  // Are we connected?
-  if AssertConnection then
-    DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
 end;
 
 procedure TMain.Tools_DivisionsExecute(Sender: TObject);

@@ -555,9 +555,9 @@ object Preferences: TPreferences
       object Label13: TLabel
         Left = 27
         Top = 200
-        Width = 52
+        Width = 162
         Height = 17
-        Caption = 'Import ...'
+        Caption = 'On Auto-Build, Inject Data ...'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -13
@@ -580,12 +580,31 @@ object Preferences: TPreferences
       end
       object Label9: TLabel
         Left = 27
-        Top = 384
+        Top = 359
         Width = 358
-        Height = 33
+        Height = 34
+        AutoSize = False
         Caption = 
-          'WARNING : When importing is enabled and an auto-build is perform' +
-          'ed - DateTime is set to today'#39's date.'
+          'WARNING : When this option is enabled and an auto-build is perfo' +
+          'rmed - param SessionStart TDateTime is set to today'#39's date.'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        ParentFont = False
+        WordWrap = True
+      end
+      object Label17: TLabel
+        Left = 27
+        Top = 311
+        Width = 358
+        Height = 50
+        AutoSize = False
+        Caption = 
+          'Typically this feature is used to automatically seed member'#39's pe' +
+          'rsonal bests into a session. A method to kick-start a newly buil' +
+          't SwimClubMeet database. '
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -598,14 +617,12 @@ object Preferences: TPreferences
         Left = 27
         Top = 223
         Width = 358
-        Height = 146
-        Caption = 'Direct Nominee'#39's SeedTime too Entrant'#39's ...'
+        Height = 82
+        Caption = 'Send dbo.Nominee.SeedTime too  ...'
         ItemIndex = 0
         Items.Strings = (
-          'Ignore'
-          'Member'#39's Personal Best'
-          'Entrant'#39's TimeToBet'
-          'Entrant'#39's RaceTime')
+          'DISABLED (Default)'
+          'dbo.Entrant.RaceTime')
         TabOrder = 4
       end
       object prefUseWindowsDefTheme: TCheckBox

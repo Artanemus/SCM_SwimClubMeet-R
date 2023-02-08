@@ -78,6 +78,7 @@ type
     DBImage1: TDBImage;
     qrySwimClub: TFDQuery;
     Label9: TLabel;
+    Label17: TLabel;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);

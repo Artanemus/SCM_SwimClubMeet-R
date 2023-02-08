@@ -23,6 +23,7 @@ type
     qryMemberContacts: TFDQuery;
     frxDBContacts: TfrxDBDataset;
     FDConnection1: TFDConnection;
+    dsReport: TDataSource;
   private
     { Private declarations }
   public
