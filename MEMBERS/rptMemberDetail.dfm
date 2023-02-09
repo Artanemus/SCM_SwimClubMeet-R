@@ -11,7 +11,7 @@ object MemberDetail: TMemberDetail
     PrintOptions.Printer = 'Default'
     PrintOptions.PrintOnSheet = 0
     ReportOptions.CreateDate = 43429.469572048600000000
-    ReportOptions.LastChange = 44965.676899722200000000
+    ReportOptions.LastChange = 44966.624022395800000000
     ScriptLanguage = 'PascalScript'
     ScriptText.Strings = (
       ''
@@ -24,6 +24,14 @@ object MemberDetail: TMemberDetail
       item
         DataSet = frxDBContacts
         DataSetName = 'frxDBContacts'
+      end
+      item
+        DataSet = frxDBHistory
+        DataSetName = 'frxDBHistory'
+      end
+      item
+        DataSet = frxDBPB
+        DataSetName = 'frxDBPB'
       end
       item
         DataSet = frxDSReport
@@ -39,11 +47,11 @@ object MemberDetail: TMemberDetail
       PaperWidth = 210.000000000000000000
       PaperHeight = 297.000000000000000000
       PaperSize = 9
-      LeftMargin = 10.000000000000000000
-      RightMargin = 10.000000000000000000
+      LeftMargin = 40.000000000000000000
+      RightMargin = 40.000000000000000000
       TopMargin = 10.000000000000000000
       BottomMargin = 10.000000000000000000
-      ColumnWidth = 63.300000000000000000
+      ColumnWidth = 95.000000000000000000
       Frame.Typ = []
       MirrorMode = []
       object PageHeader1: TfrxPageHeader
@@ -55,10 +63,10 @@ object MemberDetail: TMemberDetail
         Font.Height = -13
         Font.Name = 'segoe UI'
         Font.Style = []
-        Height = 56.692950000000000000
+        Height = 49.133890000000000000
         ParentFont = False
         Top = 18.897650000000000000
-        Width = 718.110700000000000000
+        Width = 491.338900000000000000
         object frxDSNickName: TfrxMemoView
           AllowVectorExport = True
           Left = 3.779530000000000000
@@ -91,44 +99,27 @@ object MemberDetail: TMemberDetail
           ParentFont = False
         end
         object Line1: TfrxLineView
+          Align = baWidth
           AllowVectorExport = True
-          Left = 1.779530000000000000
-          Top = 55.590600000000000000
-          Width = 714.331170000000000000
+          Top = 48.590600000000000000
+          Width = 491.338900000000000000
           StretchMode = smMaxHeight
           Color = clBlack
           Frame.Typ = [ftTop]
           Frame.TopLine.Width = 2.000000000000000000
           Frame.BottomLine.Width = 4.000000000000000000
         end
-        object Memo12: TfrxMemoView
-          AllowVectorExport = True
-          Left = 3.779530000000000000
-          Top = 35.015770000000000000
-          Width = 714.331170000000000000
-          Height = 18.897650000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -11
-          Font.Name = 'segoe UI'
-          Font.Style = []
-          Frame.Typ = []
-          HAlign = haCenter
-          Memo.UTF8W = (
-            'Member'#39's age is calcuated as of '#39'today'#39'.')
-          ParentFont = False
-        end
       end
       object PageFooter1: TfrxPageFooter
         FillType = ftBrush
         Frame.Typ = []
-        Height = 22.677180000000000000
-        Top = 589.606680000000000000
-        Width = 718.110700000000000000
+        Height = 18.897650000000000000
+        Top = 680.315400000000000000
+        Width = 491.338900000000000000
         object Page: TfrxMemoView
+          Align = baCenter
           AllowVectorExport = True
-          Left = 279.685220000000000000
-          Top = 1.889765000000010000
+          Left = 166.299320000000000000
           Width = 158.740260000000000000
           Height = 18.897650000000000000
           Frame.Typ = []
@@ -136,9 +127,11 @@ object MemberDetail: TMemberDetail
             '[Page#] of [TotalPages#]')
         end
         object Date: TfrxMemoView
+          Align = baLeft
           AllowVectorExport = True
-          Width = 226.771800000000000000
-          Height = 18.897650000000000000
+          Top = 2.000000000000000000
+          Width = 157.271800000000000000
+          Height = 14.897650000000000000
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
           Font.Height = -11
@@ -150,26 +143,144 @@ object MemberDetail: TMemberDetail
           ParentFont = False
         end
       end
+      object GroupHeader1: TfrxGroupHeader
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 49.456710000000000000
+        Top = 128.504020000000000000
+        Width = 491.338900000000000000
+        Condition = 'frxDS."MemberID"'
+        KeepTogether = True
+        object Shape1: TfrxShapeView
+          Align = baWidth
+          AllowVectorExport = True
+          Top = 12.436920000000000000
+          Width = 491.338900000000000000
+          Height = 21.397650000000000000
+          Fill.BackColor = cl3DLight
+          Frame.Color = clNone
+          Frame.Typ = []
+        end
+        object Memo7: TfrxMemoView
+          AllowVectorExport = True
+          Left = 2.153680000000000000
+          Top = 13.500000000000000000
+          Width = 68.031540000000000000
+          Height = 18.897650000000000000
+          DataField = 'MemberID'
+          DataSet = frxDSReport
+          DataSetName = 'frxDS'
+          DisplayFormat.FormatStr = '0000'
+          DisplayFormat.Kind = fkNumeric
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Segoe UI'
+          Font.Style = [fsBold]
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[frxDS."MemberID"]')
+          ParentFont = False
+        end
+        object Memo6: TfrxMemoView
+          AllowVectorExport = True
+          Left = 151.685220000000000000
+          Top = 10.500000000000000000
+          Width = 219.630180000000000000
+          Height = 26.456710000000000000
+          DataField = 'FName'
+          DataSet = frxDSReport
+          DataSetName = 'frxDS'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -16
+          Font.Name = 'segoe UI'
+          Font.Style = [fsBold]
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[frxDS."FName"]')
+          ParentFont = False
+        end
+      end
+      object Header1: TfrxHeader
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 29.677180000000000000
+        Top = 340.157700000000000000
+        Width = 491.338900000000000000
+        object Memo11: TfrxMemoView
+          AllowVectorExport = True
+          Left = 32.000000000000000000
+          Top = 7.751700000000000000
+          Width = 124.563080000000000000
+          Height = 18.897650000000000000
+          AutoWidth = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'segoe UI'
+          Font.Style = [fsBold]
+          Frame.Typ = []
+          Memo.UTF8W = (
+            'Contact numbers ...')
+          ParentFont = False
+        end
+      end
+      object Header2: TfrxHeader
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 30.677180000000000000
+        Top = 438.425480000000000000
+        Width = 491.338900000000000000
+        object Memo13: TfrxMemoView
+          AllowVectorExport = True
+          Left = 32.500000000000000000
+          Top = 7.000000000000000000
+          Width = 103.563080000000000000
+          Height = 22.677180000000000000
+          AutoWidth = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'segoe UI'
+          Font.Style = [fsBold]
+          Frame.Typ = []
+          Memo.UTF8W = (
+            'Personal Best ...')
+          ParentFont = False
+        end
+        object Memo14: TfrxMemoView
+          AllowVectorExport = True
+          Left = 290.000000000000000000
+          Top = 17.176870000000000000
+          Width = 61.988250000000000000
+          Height = 11.897650000000000000
+          AutoWidth = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -11
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = []
+          Memo.UTF8W = (
+            'Qualified')
+          ParentFont = False
+        end
+      end
       object MasterData1: TfrxMasterData
         FillType = ftBrush
         Frame.Typ = []
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
-        Font.Height = -13
-        Font.Name = 'Segoe UI'
-        Font.Style = []
-        Height = 166.976500000000000000
-        ParentFont = False
-        Top = 181.417440000000000000
-        Width = 718.110700000000000000
+        Height = 117.357760000000000000
+        Top = 200.315090000000000000
+        Width = 491.338900000000000000
         DataSet = frxDSReport
         DataSetName = 'frxDS'
         RowCount = 0
         object frxDSDOB: TfrxMemoView
           AllowVectorExport = True
-          Left = 154.960730000000000000
-          Top = 7.559060000000000000
-          Width = 90.708720000000000000
+          Left = 100.460730000000000000
+          Top = 20.334260000000000000
+          Width = 78.208720000000000000
           Height = 18.897650000000000000
           DataField = 'DOB'
           DataSet = frxDSReport
@@ -186,9 +297,9 @@ object MemberDetail: TMemberDetail
         end
         object Memo3: TfrxMemoView
           AllowVectorExport = True
-          Left = 75.590600000000000000
-          Top = 7.559060000000000000
-          Width = 68.031540000000000000
+          Left = 56.090600000000000000
+          Top = 20.334260000000000000
+          Width = 35.031540000000000000
           Height = 18.897650000000000000
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
@@ -203,9 +314,9 @@ object MemberDetail: TMemberDetail
         end
         object Memo1: TfrxMemoView
           AllowVectorExport = True
-          Left = 15.118120000000000000
-          Top = 28.976396670000000000
-          Width = 128.504020000000000000
+          Left = 49.618120000000000000
+          Top = 58.751596670000000000
+          Width = 41.504020000000000000
           Height = 18.897650000000000000
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
@@ -215,13 +326,13 @@ object MemberDetail: TMemberDetail
           Frame.Typ = []
           HAlign = haRight
           Memo.UTF8W = (
-            'Is active member')
+            'Active')
           ParentFont = False
         end
         object CheckBox1: TfrxCheckBoxView
           AllowVectorExport = True
-          Left = 154.960730000000000000
-          Top = 28.236240000000000000
+          Left = 100.460730000000000000
+          Top = 58.011440000000000000
           Width = 18.897650000000000000
           Height = 18.897650000000000000
           CheckColor = clBlack
@@ -233,9 +344,9 @@ object MemberDetail: TMemberDetail
         end
         object frxDSGenderStr: TfrxMemoView
           AllowVectorExport = True
-          Left = 154.960730000000000000
-          Top = 50.913420000000000000
-          Width = 158.740260000000000000
+          Left = 100.460730000000000000
+          Top = 38.688620000000000000
+          Width = 74.740260000000000000
           Height = 18.897650000000000000
           DataField = 'GenderStr'
           DataSet = frxDSReport
@@ -250,64 +361,11 @@ object MemberDetail: TMemberDetail
             '[frxDS."GenderStr"]')
           ParentFont = False
         end
-        object Memo2: TfrxMemoView
-          AllowVectorExport = True
-          Left = 7.559060000000000000
-          Top = 50.393733330000000000
-          Width = 136.063080000000000000
-          Height = 18.897650000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          Frame.Typ = []
-          HAlign = haRight
-          Memo.UTF8W = (
-            'Gender')
-          ParentFont = False
-        end
-        object frxDScMembershipTypeStr: TfrxMemoView
-          AllowVectorExport = True
-          Left = 154.960730000000000000
-          Top = 71.811070000000000000
-          Width = 400.630180000000000000
-          Height = 22.677180000000000000
-          DataField = 'cMembershipTypeStr'
-          DataSet = frxDSReport
-          DataSetName = 'frxDS'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          Frame.Typ = []
-          Memo.UTF8W = (
-            '[frxDS."cMembershipTypeStr"]')
-          ParentFont = False
-        end
-        object Memo4: TfrxMemoView
-          AllowVectorExport = True
-          Left = 3.779530000000000000
-          Top = 71.811070000000000000
-          Width = 139.842610000000000000
-          Height = 22.677180000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          Frame.Typ = []
-          HAlign = haRight
-          Memo.UTF8W = (
-            'Membership type')
-          ParentFont = False
-        end
         object frxDSMembershipNum: TfrxMemoView
           AllowVectorExport = True
-          Left = 154.960730000000000000
-          Top = 96.267780000000000000
-          Width = 109.606370000000000000
+          Left = 100.460730000000000000
+          Top = 1.042980000000000000
+          Width = 78.106370000000000000
           Height = 18.897650000000000000
           DataField = 'MembershipNum'
           DataSet = frxDSReport
@@ -324,9 +382,9 @@ object MemberDetail: TMemberDetail
         end
         object Memo5: TfrxMemoView
           AllowVectorExport = True
-          Left = 41.574830000000000000
-          Top = 96.267780000000000000
-          Width = 102.047310000000000000
+          Left = 1.074830000000000000
+          Top = 1.042980000000000000
+          Width = 90.047310000000000000
           Height = 18.897650000000000000
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
@@ -341,9 +399,9 @@ object MemberDetail: TMemberDetail
         end
         object frxDSEmail: TfrxMemoView
           AllowVectorExport = True
-          Left = 155.460730000000000000
-          Top = 117.944960000000000000
-          Width = 400.630180000000000000
+          Left = 100.960730000000000000
+          Top = 77.720160000000000000
+          Width = 227.130180000000000000
           Height = 18.897650000000000000
           DataField = 'Email'
           DataSet = frxDSReport
@@ -360,9 +418,9 @@ object MemberDetail: TMemberDetail
         end
         object Memo9: TfrxMemoView
           AllowVectorExport = True
-          Left = 94.488250000000000000
-          Top = 117.165430000000000000
-          Width = 49.133890000000000000
+          Left = 52.488250000000000000
+          Top = 77.720160000000000000
+          Width = 38.633890000000000000
           Height = 18.897650000000000000
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
@@ -377,9 +435,9 @@ object MemberDetail: TMemberDetail
         end
         object Memo10: TfrxMemoView
           AllowVectorExport = True
-          Left = 11.338590000000000000
-          Top = 139.842610000000000000
-          Width = 132.283550000000000000
+          Left = 16.838590000000000000
+          Top = 96.617810000000000000
+          Width = 74.283550000000000000
           Height = 18.897650000000000000
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
@@ -392,122 +450,209 @@ object MemberDetail: TMemberDetail
             'Date joined')
           ParentFont = False
         end
-        object frxDSAGE: TfrxMemoView
+        object frxDSCreatedOn: TfrxMemoView
+          IndexTag = 1
           AllowVectorExport = True
-          Left = 245.669450000000000000
-          Top = 7.559060000000000000
+          Left = 101.000000000000000000
+          Top = 96.617810000000000000
           Width = 79.370130000000000000
           Height = 18.897650000000000000
+          DataField = 'CreatedOn'
           DataSet = frxDSReport
           DataSetName = 'frxDS'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'segoe UI'
-          Font.Style = []
           Frame.Typ = []
           Memo.UTF8W = (
-            'AGE: [frxDS."AGE"]')
-          ParentFont = False
+            '[frxDS."CreatedOn"]')
         end
-      end
-      object GroupHeader1: TfrxGroupHeader
-        FillType = ftBrush
-        Fill.BackColor = 15329769
-        Frame.Typ = []
-        Height = 22.677180000000000000
-        Top = 136.063080000000000000
-        Width = 718.110700000000000000
-        Condition = 'frxDS."MemberID"'
-        KeepTogether = True
-        object Memo6: TfrxMemoView
+        object Line2: TfrxLineView
           AllowVectorExport = True
-          Left = 72.311070000000000000
-          Width = 400.630180000000000000
-          Height = 18.897650000000000000
-          DataField = 'FName'
-          DataSet = frxDSReport
-          DataSetName = 'frxDS'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -16
-          Font.Name = 'segoe UI'
-          Font.Style = [fsBold]
-          Frame.Typ = []
-          Memo.UTF8W = (
-            '[frxDS."FName"]')
-          ParentFont = False
+          Left = 97.000000000000000000
+          Top = 1.125850000000000000
+          Height = 114.381880000000000000
+          Color = clBlack
+          Frame.Typ = [ftLeft]
         end
-        object Memo7: TfrxMemoView
-          AllowVectorExport = True
-          Top = 2.000000000000000000
-          Width = 68.031540000000000000
-          Height = 18.897650000000000000
-          DataField = 'MemberID'
-          DataSet = frxDSReport
-          DataSetName = 'frxDS'
-          DisplayFormat.FormatStr = '0000'
-          DisplayFormat.Kind = fkNumeric
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Segoe UI'
-          Font.Style = [fsBold]
-          Frame.Typ = []
-          HAlign = haRight
-          Memo.UTF8W = (
-            '[frxDS."MemberID"]')
-          ParentFont = False
-        end
-      end
-      object GroupHeader2: TfrxGroupHeader
-        FillType = ftBrush
-        Frame.Typ = []
-        Height = 22.677180000000000000
-        Top = 370.393940000000000000
-        Width = 718.110700000000000000
-        Condition = 'frxDS."ContactNumID"'
-        object Memo11: TfrxMemoView
-          AllowVectorExport = True
-          Left = 18.500000000000000000
-          Top = 1.106060000000000000
-          Width = 136.063080000000000000
-          Height = 18.897650000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'segoe UI'
-          Font.Style = [fsBold]
-          Frame.Typ = []
-          HAlign = haRight
-          Memo.UTF8W = (
-            'Contact numbers ...')
-          ParentFont = False
-        end
-      end
-      object GroupFooter1: TfrxGroupFooter
-        FillType = ftBrush
-        Frame.Typ = []
-        Height = 22.677180000000000000
-        Top = 506.457020000000000000
-        Width = 718.110700000000000000
-      end
-      object GroupFooter2: TfrxGroupFooter
-        FillType = ftBrush
-        Frame.Typ = []
-        Height = 22.677180000000000000
-        Top = 461.102660000000000000
-        Width = 718.110700000000000000
       end
       object MasterData2: TfrxMasterData
         FillType = ftBrush
         Frame.Typ = []
         Height = 22.677180000000000000
-        Top = 415.748300000000000000
-        Width = 718.110700000000000000
-        DataSet = frxDSReport
-        DataSetName = 'frxDS'
+        Top = 393.071120000000000000
+        Width = 491.338900000000000000
+        DataSet = frxDBContacts
+        DataSetName = 'frxDBContacts'
         RowCount = 0
+        object frxDBContactsContactNumID: TfrxMemoView
+          IndexTag = 1
+          AllowVectorExport = True
+          Left = 130.500000000000000000
+          Top = 1.141620000000000000
+          Width = 222.370130000000000000
+          Height = 18.897650000000000000
+          DataField = 'Number'
+          DataSet = frxDBContacts
+          DataSetName = 'frxDBContacts'
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[frxDBContacts."Number"]')
+        end
+        object frxDBContactsCaption: TfrxMemoView
+          IndexTag = 1
+          AllowVectorExport = True
+          Left = 34.500000000000000000
+          Top = 1.141620000000000000
+          Width = 93.610390000000000000
+          Height = 18.897650000000000000
+          DataSet = frxDBContacts
+          DataSetName = 'frxDBContacts'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = []
+          HAlign = haRight
+          Memo.UTF8W = (
+            '[frxDBContacts."Caption"] :')
+          ParentFont = False
+        end
+      end
+      object MasterData3: TfrxMasterData
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 18.897650000000000000
+        Top = 491.338900000000000000
+        Width = 491.338900000000000000
+        DataSet = frxDBPB
+        DataSetName = 'frxDBPB'
+        RowCount = 0
+        object frxDBPBEventStr: TfrxMemoView
+          IndexTag = 1
+          AllowVectorExport = True
+          Left = 31.500000000000000000
+          Top = -0.000310000000000005
+          Width = 154.630180000000000000
+          Height = 18.897650000000000000
+          DataField = 'EventStr'
+          DataSet = frxDBPB
+          DataSetName = 'frxDBPB'
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[frxDBPB."EventStr"]')
+        end
+        object frxDBPBPB: TfrxMemoView
+          IndexTag = 1
+          AllowVectorExport = True
+          Left = 189.000000000000000000
+          Top = -0.000310000000000005
+          Width = 79.370130000000000000
+          Height = 18.897650000000000000
+          DataField = 'PB'
+          DataSet = frxDBPB
+          DataSetName = 'frxDBPB'
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[frxDBPB."PB"]')
+        end
+        object CheckBox2: TfrxCheckBoxView
+          AllowVectorExport = True
+          Left = 304.000000000000000000
+          Top = -0.236550000000000000
+          Width = 18.897650000000000000
+          Height = 18.897650000000000000
+          CheckColor = clBlack
+          CheckStyle = csCheck
+          DataField = 'IsQualified'
+          DataSet = frxDBPB
+          DataSetName = 'frxDBPB'
+          Frame.Typ = []
+        end
+      end
+      object Header4: TfrxHeader
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 42.177180000000000000
+        Top = 532.913730000000000000
+        Width = 491.338900000000000000
+        object Shape2: TfrxShapeView
+          AllowVectorExport = True
+          Left = 0.500000000000000000
+          Top = 18.645330000000000000
+          Width = 388.425170000000000000
+          Height = 21.397650000000000000
+          Fill.BackColor = cl3DLight
+          Frame.Color = clNone
+          Frame.Typ = []
+        end
+        object Memo15: TfrxMemoView
+          AllowVectorExport = True
+          Left = 2.500000000000000000
+          Top = 19.000000000000000000
+          Width = 103.563080000000000000
+          Height = 22.677180000000000000
+          AutoWidth = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'segoe UI'
+          Font.Style = [fsBold]
+          Frame.Typ = []
+          Memo.UTF8W = (
+            'History ...')
+          ParentFont = False
+        end
+      end
+      object MasterData4: TfrxMasterData
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 22.677180000000000000
+        Top = 597.165740000000000000
+        Width = 491.338900000000000000
+        DataSet = frxDBHistory
+        DataSetName = 'frxDBHistory'
+        RowCount = 0
+        object frxDBHistoryEventStr: TfrxMemoView
+          IndexTag = 1
+          AllowVectorExport = True
+          Left = 4.500000000000000000
+          Top = 1.495670000000000000
+          Width = 155.630180000000000000
+          Height = 18.897650000000000000
+          DataField = 'EventStr'
+          DataSet = frxDBHistory
+          DataSetName = 'frxDBHistory'
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[frxDBHistory."EventStr"]')
+        end
+        object frxDBHistoryRT: TfrxMemoView
+          IndexTag = 1
+          AllowVectorExport = True
+          Left = 163.500000000000000000
+          Top = 1.495670000000000000
+          Width = 94.488250000000000000
+          Height = 18.897650000000000000
+          DataField = 'RT'
+          DataSet = frxDBHistory
+          DataSetName = 'frxDBHistory'
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[frxDBHistory."RT"]')
+        end
+        object frxDBHistoryEventDate: TfrxMemoView
+          IndexTag = 1
+          AllowVectorExport = True
+          Left = 261.500000000000000000
+          Top = 1.495670000000000000
+          Width = 167.130180000000000000
+          Height = 18.897650000000000000
+          DataField = 'EventDate'
+          DataSet = frxDBHistory
+          DataSetName = 'frxDBHistory'
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[frxDBHistory."EventDate"]')
+        end
       end
     end
   end
@@ -516,8 +661,8 @@ object MemberDetail: TMemberDetail
     CloseDataSource = False
     DataSet = qryReport
     BCDToCurrency = False
-    Left = 344
-    Top = 312
+    Left = 216
+    Top = 264
   end
   object frxHTMLExport1: TfrxHTMLExport
     UseFileCache = True
@@ -590,15 +735,13 @@ object MemberDetail: TMemberDetail
       'SET @MemberID = :MEMBERID'
       'SET @SwimClubID = :SWIMCLUBID'
       ''
-      'IF (@MemberID IS NULL)'
-      '   OR (@MemberID = 0)'
       '    SELECT Member.MemberID'
       '         , Member.MembershipNum'
       '         , Member.FirstName'
       '         , Member.LastName'
       
-        '         , CONCAT(UPPER(Member.LastName), '#39', '#39', Member.FirstName' +
-        ') AS FName'
+        '         , CONCAT(Member.FirstName, '#39' '#39',  UPPER(Member.LastName)' +
+        ' ) AS FName'
       '         , Member.DOB'
       '         , Member.IsActive'
       '         , Member.MembershipDue'
@@ -607,67 +750,27 @@ object MemberDetail: TMemberDetail
       '         , Gender.Caption AS GenderStr'
       '         , Member.GenderID'
       '         , Member.SwimClubID'
-      '         , Member.MembershipTypeID'
-      '         , MembershipType.Caption AS cMembershipTypeStr'
       '         , SwimClub.Caption AS ClubName'
       '         , SwimClub.NickName AS ClubNickName'
       '         , dbo.SwimmerAge(GETDATE(), Member.DOB) AS AGE'
+      ', Member.CreatedOn'
       '    FROM Member'
       '        LEFT OUTER JOIN SwimClub'
       '            ON Member.SwimClubID = SwimClub.SwimClubID'
       '        LEFT OUTER JOIN Gender'
       '            ON Member.GenderID = Gender.GenderID'
-      '        LEFT OUTER JOIN MembershipType'
-      
-        '            ON Member.MembershipTypeID = MembershipType.Membersh' +
-        'ipTypeID'
-      '        LEFT OUTER JOIN ContactNum'
-      '            ON Member.MemberID = ContactNUm.MemberID'
-      '    WHERE (Member.SwimClubID = @SwimClubID)'
-      '    ORDER BY Member.LastName;'
-      'ELSE'
-      '    SELECT Member.MemberID'
-      '         , Member.MembershipNum'
-      '         , Member.FirstName'
-      '         , Member.LastName'
-      
-        '         , CONCAT(UPPER(Member.LastName), '#39', '#39', Member.FirstName' +
-        ') AS FName'
-      '         , Member.DOB'
-      '         , Member.IsActive'
-      '         , Member.MembershipDue'
-      '         , Member.Email'
-      '         -- , Member.DoEmailSessionReport'
-      '         , Gender.Caption AS GenderStr'
-      '         , Member.GenderID'
-      '         , Member.SwimClubID'
-      '         , Member.MembershipTypeID'
-      '         , MembershipType.Caption AS cMembershipTypeStr'
-      '         , SwimClub.Caption AS ClubName'
-      '         , SwimClub.NickName AS ClubNickName'
-      '         , dbo.SwimmerAge(GETDATE(), Member.DOB) AS AGE'
-      '    FROM Member'
-      '        LEFT OUTER JOIN SwimClub'
-      '            ON Member.SwimClubID = SwimClub.SwimClubID'
-      '        LEFT OUTER JOIN Gender'
-      '            ON Member.GenderID = Gender.GenderID'
-      '        LEFT OUTER JOIN MembershipType'
-      
-        '            ON Member.MembershipTypeID = MembershipType.Membersh' +
-        'ipTypeID'
-      '        LEFT OUTER JOIN ContactNum'
-      '            ON Member.MemberID = ContactNUm.MemberID'
-      '    WHERE (Member.SwimClubID = @SwimClubID)'
-      '    --AND (MemberID = @MemberID)'
+      '    WHERE '
+      ' -- (Member.SwimClubID = @SwimClubID) AND '
+      ' (Member.MemberID = @MemberID)'
       '    ORDER BY Member.LastName;')
     Left = 72
-    Top = 312
+    Top = 264
     ParamData = <
       item
         Name = 'MEMBERID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = 4
+        Value = 1
       end
       item
         Name = 'SWIMCLUBID'
@@ -695,16 +798,16 @@ object MemberDetail: TMemberDetail
   object qryMemberContacts: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     Active = True
-    IndexFieldNames = 'MemberID'
-    MasterSource = dsReport
-    MasterFields = 'MemberID'
+    IndexFieldNames = 'ContactNumID'
     Connection = FDConnection1
     SQL.Strings = (
       'USE SwimClubMeet'
       ''
       'DECLARE @MemberID AS INT'
+      'DECLARE @SwimClubID AS INT'
       ''
-      '-- SET @MemberID = :MEMBERID;'
+      'SET @MemberID = :MEMBERID'
+      'SET @SwimClubID = :SWIMCLUBID'
       ''
       'SELECT ContactNum.ContactNumID'
       #9',ContactNum.Number'
@@ -715,17 +818,30 @@ object MemberDetail: TMemberDetail
         'INNER JOIN ContactNumType ON ContactNum.ContactNumTypeID = Conta' +
         'ctNumType.ContactNumTypeID'
       ''
-      '-- WHERE MemberID = @MemberID')
+      'WHERE MemberID = @MemberID')
     Left = 72
-    Top = 392
+    Top = 320
+    ParamData = <
+      item
+        Name = 'MEMBERID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = 1
+      end
+      item
+        Name = 'SWIMCLUBID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = 1
+      end>
   end
   object frxDBContacts: TfrxDBDataset
     UserName = 'frxDBContacts'
     CloseDataSource = False
     DataSet = qryMemberContacts
     BCDToCurrency = False
-    Left = 344
-    Top = 392
+    Left = 216
+    Top = 320
   end
   object FDConnection1: TFDConnection
     Params.Strings = (
@@ -736,9 +852,178 @@ object MemberDetail: TMemberDetail
     Left = 64
     Top = 16
   end
-  object dsReport: TDataSource
-    DataSet = qryReport
-    Left = 152
-    Top = 312
+  object qryPB: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    Active = True
+    IndexFieldNames = 'MemberID'
+    Connection = FDConnection1
+    FormatOptions.AssignedValues = [fvFmtDisplayTime]
+    FormatOptions.FmtDisplayTime = 'nn:ss.zzz'
+    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
+    UpdateOptions.EnableDelete = False
+    UpdateOptions.EnableInsert = False
+    UpdateOptions.EnableUpdate = False
+    UpdateOptions.UpdateTableName = 'SwimClubMeet..Member'
+    UpdateOptions.KeyFields = 'MemberID'
+    SQL.Strings = (
+      'USE SwimClubMeet'
+      ';'
+      ''
+      'DECLARE @memberid as int'
+      'SET @memberid = :MEMBERID'
+      ''
+      'SELECT DISTINCT Member.MemberID'
+      #9',Distance.DistanceID'
+      #9',Stroke.StrokeID'
+      
+        #9',dbo.PersonalBest(MemberID, DistanceID, StrokeID, GETDATE()) AS' +
+        ' PB'
+      #9',('
+      #9#9'CONCAT ('
+      #9#9#9'distance.caption'
+      #9#9#9','#39' '#39
+      #9#9#9',stroke.caption'
+      #9#9#9')'
+      #9#9') AS EventStr'
+      
+        ', CAST(dbo.IsMemberQualified(Member.MemberID, GetDATE(),Distance' +
+        '.DistanceID,Stroke.StrokeID)AS BIT) AS IsQualified '
+      'FROM Distance'
+      'CROSS JOIN Stroke'
+      'CROSS JOIN Member'
+      
+        'WHERE Member.MemberID = @memberid AND dbo.PersonalBest(MemberID,' +
+        ' DistanceID, StrokeID, GETDATE()) IS NOT NULL'
+      'ORDER BY MemberID'
+      #9',DistanceID'
+      #9',StrokeID'
+      #9',PB ASC'
+      ';')
+    Left = 73
+    Top = 376
+    ParamData = <
+      item
+        Name = 'MEMBERID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = 1
+      end>
+    object qryPBEventStr: TWideStringField
+      FieldName = 'EventStr'
+      Origin = 'EventStr'
+      ReadOnly = True
+      Required = True
+      Size = 257
+    end
+    object qryPBPB: TTimeField
+      FieldName = 'PB'
+      Origin = 'PB'
+      ReadOnly = True
+      DisplayFormat = 'nn:ss.zzz'
+    end
+    object qryPBMemberID: TFDAutoIncField
+      FieldName = 'MemberID'
+      Origin = 'MemberID'
+      ProviderFlags = [pfInWhere, pfInKey]
+      ReadOnly = True
+      Visible = False
+    end
+    object qryPBDistanceID: TFDAutoIncField
+      FieldName = 'DistanceID'
+      Origin = 'DistanceID'
+      ReadOnly = True
+      Visible = False
+    end
+    object qryPBStrokeID: TFDAutoIncField
+      FieldName = 'StrokeID'
+      Origin = 'StrokeID'
+      ReadOnly = True
+      Visible = False
+    end
+    object qryPBIsQualified: TBooleanField
+      FieldName = 'IsQualified'
+      Origin = 'IsQualified'
+      ReadOnly = True
+    end
+  end
+  object frxDBPB: TfrxDBDataset
+    UserName = 'frxDBPB'
+    CloseDataSource = False
+    FieldAliases.Strings = (
+      'EventStr=EventStr'
+      'PB=PB'
+      'MemberID=MemberID'
+      'DistanceID=DistanceID'
+      'StrokeID=StrokeID'
+      'IsQualified=IsQualified')
+    DataSet = qryPB
+    BCDToCurrency = False
+    Left = 216
+    Top = 376
+  end
+  object qryHistory: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    Active = True
+    Connection = FDConnection1
+    SQL.Strings = (
+      'USE SwimClubMeet;'
+      'DECLARE @MemberID AS INTEGER'
+      'SET @MemberID = :MEMBERID'
+      'DECLARE @SwimClubID AS INTEGER'
+      'SET @SwimClubID = :SWIMCLUBID'
+      ''
+      'SELECT Member.MemberID'
+      '     , CONCAT(Distance.Caption, '#39' '#39', Stroke.Caption) AS EventStr'
+      '     , dbo.SwimTimeToString(RaceTime) AS RT'
+      
+        '     , FORMAT(Session.SessionStart, '#39'ddd dd MMM yyyy'#39') AS EventD' +
+        'ate'
+      'FROM Member'
+      '    LEFT JOIN Entrant'
+      '        ON Member.MemberID = Entrant.MemberID'
+      '    LEFT JOIN HeatIndividual'
+      '        ON Entrant.HeatID = HeatIndividual.HeatID'
+      '    LEFT JOIN [Event]'
+      '        ON HeatIndividual.EventID = [Event].[EventID]'
+      '    LEFT JOIN [Session]'
+      '        ON [Event].SessionID = [Session].SessionID'
+      '    LEFT JOIN Distance'
+      '        ON [Event].[DistanceID] = Distance.DistanceID'
+      '    LEFT JOIN Stroke'
+      '        ON [Event].[StrokeID] = Stroke.StrokeID'
+      'WHERE Member.MemberID = @MemberID'
+      '      AND RaceTime IS NOT NULL'
+      '      AND IsDisqualified <> 1'
+      '      AND IsScratched <> 1'
+      '      AND Session.SwimClubID = @SwimClubID'
+      '    ORDER BY SessionStart DESC')
+    Left = 72
+    Top = 440
+    ParamData = <
+      item
+        Name = 'MEMBERID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = 1
+      end
+      item
+        Name = 'SWIMCLUBID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = 1
+      end>
+  end
+  object frxDBHistory: TfrxDBDataset
+    UserName = 'frxDBHistory'
+    CloseDataSource = False
+    FieldAliases.Strings = (
+      'MemberID=MemberID'
+      'EventStr=EventStr'
+      'RT=RT'
+      'EventDate=EventDate')
+    DataSet = qryHistory
+    BCDToCurrency = False
+    Left = 216
+    Top = 440
   end
 end

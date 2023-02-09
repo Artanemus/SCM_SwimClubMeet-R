@@ -23,7 +23,16 @@ type
     qryMemberContacts: TFDQuery;
     frxDBContacts: TfrxDBDataset;
     FDConnection1: TFDConnection;
-    dsReport: TDataSource;
+    qryPB: TFDQuery;
+    qryPBEventStr: TWideStringField;
+    qryPBPB: TTimeField;
+    qryPBMemberID: TFDAutoIncField;
+    qryPBDistanceID: TFDAutoIncField;
+    qryPBStrokeID: TFDAutoIncField;
+    frxDBPB: TfrxDBDataset;
+    qryPBIsQualified: TBooleanField;
+    qryHistory: TFDQuery;
+    frxDBHistory: TfrxDBDataset;
   private
     { Private declarations }
   public
@@ -45,17 +54,31 @@ implementation
 procedure TMemberDetail.RunReport(AConnection: TFDConnection;
   ASwimClubID, AMemberID: integer);
 begin
-  qryMemberContacts.Connection := AConnection;
-  qryMemberContacts.Open;
 	qryReport.Connection := AConnection;
 	qryReport.ParamByName('SWIMCLUBID').AsInteger := aSwimClubID;
 	qryReport.ParamByName('MEMBERID').AsInteger := aMemberID;
 	qryReport.Prepare;
 	qryReport.Open;
+  qryMemberContacts.Connection := AConnection;
+	qryMemberContacts.ParamByName('SWIMCLUBID').AsInteger := aSwimClubID;
+	qryMemberContacts.ParamByName('MEMBERID').AsInteger := aMemberID;
+	qryMemberContacts.Prepare;
+  qryMemberContacts.Open;
+  qryPB.Connection := AConnection;
+	qryPB.ParamByName('MEMBERID').AsInteger := aMemberID;
+	qryPB.Prepare;
+  qryPB.Open;
+	qryHistory.Connection := AConnection;
+	qryHistory.ParamByName('SWIMCLUBID').AsInteger := aSwimClubID;
+	qryHistory.ParamByName('MEMBERID').AsInteger := aMemberID;
+	qryHistory.Prepare;
+	qryHistory.Open;
 	if qryReport.Active then
 		frxReport1.ShowReport();
 	qryReport.Close;
   qryMemberContacts.Close;
+  qryPB.Close;
+  qryHistory.Close;
 end;
 
 end.
