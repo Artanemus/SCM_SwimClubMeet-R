@@ -254,6 +254,7 @@ type
     procedure Heat_UpdateStatusBar();
     procedure Heat_NewRecord();
     procedure Heat_Delete(); // current heat
+    procedure Heat_DeleteALL(aEventID: integer); // for current event
     procedure Heat_ToggleStatus(); // current heat
 
     // ENTRANT
@@ -1480,7 +1481,6 @@ begin
     exit;
   dsEntrant.DataSet.DisableControls();
   dsHeat.DataSet.DisableControls();
-  // 11.10.2020
   SQL := 'DELETE FROM dbo.Entrant WHERE Entrant.HeatID = ' +
     IntToStr(dsHeat.DataSet.FieldByName('HeatID').AsInteger);
   scmConnection.ExecSQL(SQL);
@@ -1488,6 +1488,55 @@ begin
   Heat_Renumber();
   dsHeat.DataSet.EnableControls();
   dsEntrant.DataSet.EnableControls();
+end;
+
+procedure TSCM.Heat_DeleteALL(aEventID: integer);
+var
+SQL: string;
+aHeatID, id: integer;
+qry: TFDQuery;
+begin
+  // 11.10.2020
+  if not fSCMActive then
+    exit;
+  dsEntrant.DataSet.DisableControls;
+  dsHeat.DataSet.DisableControls;
+  dsEvent.DataSet.DisableControls;
+
+  qry := TFDQuery.Create(self);
+  qry.Connection := scmConnection;
+  qry.SQL.Text :=
+    'SELECT * FROM [SwimClubMeet].[dbo].[HeatIndividual] WHERE EventID = ' +
+    IntToStr(aEventID);
+  qry.IndexFieldNames := 'HeatID';
+  qry.Open;
+  if qry.Active then
+  begin
+    qry.First;
+    while not qry.Eof do
+    begin
+      id := qry.FieldByName('HeatID').AsInteger;
+      // only opened heats are deleted
+      if (qry.FieldByName('HeatStatusID').AsInteger < 2) then
+      begin
+        // delete entrant data
+        SQL := 'DELETE FROM dbo.Entrant WHERE Entrant.HeatID = ' + IntToStr(id);
+        scmConnection.ExecSQL(SQL);
+        qry.Delete; // after delete moves to next record
+      end
+      else
+        qry.Next;
+    end;
+  end;
+  qry.Close;
+  qry.Free;
+
+  // tidy up.
+  Heat_Renumber();
+  // Display
+  dsHeat.DataSet.EnableControls();
+  dsEntrant.DataSet.EnableControls();
+  dsEvent.DataSet.EnableControls;
 end;
 
 function TSCM.IsAllHeatsClosed(aEventID: integer): Boolean;
@@ -1753,6 +1802,7 @@ var
 begin
   // Uses different logic to IsClosedHeat.
   // By default, heat is assumed to be LOCKED.
+  // HEAT STATUS NOT 3
   // This routine asserts the state of heat dataset (connection, active and
   // not isempty) and if all checks pass, returns the record status.
   result := true;

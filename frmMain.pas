@@ -3470,6 +3470,9 @@ begin
         Next;
         continue;
       end;
+      // 2023.02.16
+      // DELETE HEATS ...  For current event. Only open heats are deleted.
+      SCM.Heat_DeleteALL(FieldByName('EventID').AsInteger) ;
       // QUICK TEST - Do we have NOMINEES?
       if not SCM.HasNominees(FieldByName('EventID').AsInteger) then
       begin
