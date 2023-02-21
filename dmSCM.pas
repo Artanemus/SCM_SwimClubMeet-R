@@ -288,7 +288,8 @@ type
       aStrokeID: integer; IsShortCourse: boolean): boolean;
 
     // UTILITY
-    function ScatterLanes(index, NumOfPoolLanes: integer): integer;
+    // DEPRECIATED: 2023.02.21 - NOW SHARED CODE FOUND IN SCMUtility
+    // function ScatterLanes(index, NumOfPoolLanes: integer): integer;
 
     // CONNECTION
     procedure SimpleLoadSettingString(Section, Name: string; var Value: string);
@@ -916,10 +917,10 @@ begin
 			exit;
 		end;
     qrySortHeat.First;
-    i := 0; // ScatterLanes is based 0
+    i := 0; // NOTE: ScatterLanes is based 0
     while not qrySortHeat.Eof do
     begin
-			lane := ScatterLanes(i, NumOfLanes);
+			lane := SCMUtility.ScatterLanes(i, NumOfLanes);
 			qrySortHeat.Edit;
 			qrySortHeat.FieldByName('Lane').AsInteger := lane;
 			qrySortHeat.Post;
@@ -942,7 +943,7 @@ begin
     begin
 			if (i < NumOfLanes) then
       begin
-				lane := ScatterLanes(i, NumOfLanes);
+				lane := SCMUtility.ScatterLanes(i, NumOfLanes);
 				qrySortHeat_EmptyLanes.Edit;
 				qrySortHeat_EmptyLanes.FieldByName('Lane').AsInteger := lane;
 				qrySortHeat_EmptyLanes.Post;
@@ -2438,42 +2439,50 @@ begin
   iFile.Free;
 end;
 
-function TSCM.ScatterLanes(index, NumOfPoolLanes: integer): integer;
-// ---------------------------------------------------------------------------
-// the scatter algorithm no longer requires even pool-lane count
-// the scatter algorithm will process all pool-lane counts > 1.
-// ---------------------------------------------------------------------------
-var
-	Lanes: Array of integer;
-	IsEven: boolean ;
-	i: integer ;
-begin
-	result := 0;
-	// NumOfPoolLanes must be 2 or greater
-	if (NumOfPoolLanes < 2) then exit;
-	// index passed is base 0
-	// test for out-of-bounds
-	if ((index + 1) > NumOfPoolLanes) then exit;
-	SetLength(Lanes, NumOfPoolLanes);
-	// seed number for first array value
-	// Find the center lane. For 'odd' number of pool lanes - round up;
-	Lanes[0] := Ceil(double(NumOfPoolLanes) / 2.0);
-	// build the data for the array
-	for i := 1 to NumOfPoolLanes-1 do
+(*
+  function TSCM.ScatterLanes(index, NumOfPoolLanes: integer): integer;
+  // ---------------------------------------------------------------------------
+  // the scatter algorithm no longer requires even pool-lane count
+  // the scatter algorithm will process all pool-lane counts > 1.
+  // ---------------------------------------------------------------------------
+  var
+  Lanes: Array of integer;
+  IsEven: Boolean;
+  i: integer;
   begin
-		// start the iterate at index 1
-		// reference previous value in list with base 0
-    if (((i + 1) MOD 2) = 0) then IsEven := true else IsEven := false;
-		if (IsEven) then
-			Lanes[i] := (i) + (Lanes[(i - 1)])
-		else
-			Lanes[i] := (Lanes[(i - 1)]) - (i);
+  result := 0;
+  // NumOfPoolLanes must be 2 or greater
+  if (NumOfPoolLanes < 2) then
+  exit;
+  // index passed is base 0
+  // test for out-of-bounds
+  if ((index + 1) > NumOfPoolLanes) then
+  exit;
+  SetLength(Lanes, NumOfPoolLanes);
+  // seed number for first array value
+  // Find the center lane. For 'odd' number of pool lanes - round up;
+  Lanes[0] := Ceil(double(NumOfPoolLanes) / 2.0);
+  // build the data for the array
+  for i := 1 to NumOfPoolLanes - 1 do
+  begin
+  // start the iterate at index 1
+  // reference previous value in list with base 0
+  if (((i + 1) MOD 2) = 0) then
+  IsEven := true
+  else
+  IsEven := false;
+  if (IsEven) then
+  Lanes[i] := (i) + (Lanes[(i - 1)])
+  else
+  Lanes[i] := (Lanes[(i - 1)]) - (i);
   end;
-	// pull the entrants lane number.
-	result := Lanes[index];
-	// this frees the array.
-	Lanes := nil;
-end;
+  // pull the entrants lane number.
+  result := Lanes[index];
+  // this frees the array.
+  Lanes := nil;
+  end;
+
+*)
 
 procedure TSCM.scmConnectionAfterDisconnect(Sender: TObject);
 begin

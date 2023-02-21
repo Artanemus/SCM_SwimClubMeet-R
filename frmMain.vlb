@@ -34,9 +34,6 @@ Coordinates=1400,863,52,51
 [Session_ToggleVisible]
 Coordinates=1304,826,126,33
 
-[N14]
-Coordinates=0,830,40,33
-
 [SCM.qryHeatCount]
 Coordinates=1167,709,108,51
 
@@ -147,9 +144,6 @@ Coordinates=26,1404,45,33
 
 [SCM.dsFNameEllipse]
 Coordinates=1098,78,119,33
-
-[N3]
-Coordinates=1534,56,40,33
 
 [ShapeBarEv1]
 Coordinates=701,1017,80,33
@@ -341,9 +335,6 @@ Coordinates=318,1478,75,33
 [BatchPrintALLTimekeeperReports1]
 Coordinates=1781,221,188,33
 
-[N13]
-Coordinates=269,1478,40,33
-
 [EventRpt1]
 Coordinates=190,1478,65,33
 
@@ -373,9 +364,6 @@ Coordinates=804,429,46,51
 
 [lblSessionEventCaption]
 Coordinates=202,632,132,51
-
-[actnClearNominee]
-Coordinates=1781,386,104,33
 
 [Heat_AutoBuild]
 Coordinates=1781,441,91,33
@@ -914,7 +902,7 @@ Coordinates=574,118,101,51
 LayerNames=NominateCotrolList
 
 []
-Coordinates=2272,166,84,33
+Coordinates=1534,56,40,33
 
 [dbtxtNominateFullName]
 Coordinates=1009,709,132,51
@@ -1049,4 +1037,7 @@ Coordinates=121,1017,89,33
 
 [Help_DBVerInfo]
 Coordinates=923,1615,125,33
+
+[actnClearSessionNominations]
+Coordinates=1781,386,104,33
 

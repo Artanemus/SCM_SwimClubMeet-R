@@ -30,6 +30,7 @@ function GetSCMHelpPrefFileName(): string;
 function GetSCMDocumentDir(): string;
 function GetRegAppPath(appName: string): string;
 function GetRegArtanemusAppPath(appName: string): string;
+function ScatterLanes(index, NumOfPoolLanes: integer): integer;
 
 const
   PrefFileName = 'SCMPref.ini';
@@ -46,7 +47,8 @@ const
 
 implementation
 
-// uses
+uses
+  System.Math;
 // Winapi.ShLwApi;
 
 function GetSCM_SharedIniFile(): string;
@@ -237,6 +239,54 @@ begin
   finally
     reg.Free;
   end;
+end;
+
+// -----------------------------------------------------------
+// SHARED FUNCTION
+// Called by dmSCM and dmAutoBuildV2
+// -----------------------------------------------------------
+function ScatterLanes(index, NumOfPoolLanes: integer): integer;
+var
+  Lanes: Array of integer;
+  i: integer;
+  IsEven: boolean;
+begin
+  result := 0;
+  // NumOfPoolLanes must be greater than 1
+  if (NumOfPoolLanes < 2) then
+    exit;
+  // index passed is base 0
+  // test for out-of-bounds
+  if ((index + 1) > NumOfPoolLanes) then
+    exit;
+  SetLength(Lanes, NumOfPoolLanes);
+  // seed number for first array value
+  // Find the center lane. For 'odd' number of pool lanes - round up;
+  Lanes[0] := Ceil(double(NumOfPoolLanes) / 2.0);
+  // build the
+  for i := 1 to NumOfPoolLanes - 1 do
+  begin
+    // start the iterate at index 1
+    // reference previous value in list with base 0
+    if (((i + 1) MOD 2) = 0) then
+      IsEven := true
+    else
+      IsEven := false;
+    if IsEven then
+      Lanes[i] := (i) + (Lanes[(i - 1)])
+    else
+      Lanes[i] := (Lanes[(i - 1)]) - (i);
+  end;
+  // pull the entrants lane number.
+  result := Lanes[index];
+
+  {
+    You don't need to call SetLength at the end.
+    A dynamic-array field like 'Lanes' gets released automatically when
+    the object is destroyed.
+  }
+  // free the array.   ALT Lanes := nil;
+  // SetLength(Lanes, 0);
 end;
 
 end.

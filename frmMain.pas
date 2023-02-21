@@ -102,7 +102,6 @@ type
     File1: TMenuItem;
     mnuImportXLS: TMenuItem;
     mnuExportXLS: TMenuItem;
-    N13: TMenuItem;
     ImportSession2: TMenuItem;
     ExportSession2: TMenuItem;
     N2: TMenuItem;
@@ -112,9 +111,7 @@ type
     EditSession2: TMenuItem;
     CloneSession1: TMenuItem;
     DeleteSession2: TMenuItem;
-    N3: TMenuItem;
     ToggleStatus2: TMenuItem;
-    N14: TMenuItem;
     BuildALLHeats1: TMenuItem;
     BatchPrintALLMarshallReports1: TMenuItem;
     BatchPrintALLTimekeeperReports1: TMenuItem;
@@ -190,7 +187,7 @@ type
     Entrant_GotoMemberDetails: TAction;
     Heat_PrintSet: TAction;
     Tools_House: TAction;
-    actnClearNominee: TAction;
+    actnClearSessionNominations: TAction;
     actnClearEventNominations: TAction;
     Help_DBVerInfo: TAction;
     Event_BuildFinals: TAction;
@@ -303,6 +300,41 @@ type
     VirtualImageList3: TVirtualImageList;
     spbtnEntrantSort: TSpeedButton;
     DBVersionInfo: TMenuItem;
+    Heats1: TMenuItem;
+    Clearsessionnominations1: TMenuItem;
+    N14: TMenuItem;
+    NominateRpt2: TMenuItem;
+    SortonName1: TMenuItem;
+    N16: TMenuItem;
+    ogglegridview1: TMenuItem;
+    MoveUp4: TMenuItem;
+    MoveDown4: TMenuItem;
+    NewEvent2: TMenuItem;
+    DeleteEvent2: TMenuItem;
+    EventReport1: TMenuItem;
+    SessionReport1: TMenuItem;
+    N13: TMenuItem;
+    ogglevisibility1: TMenuItem;
+    N3: TMenuItem;
+    MoveUp5: TMenuItem;
+    MoveDown5: TMenuItem;
+    oggleHeatStatus1: TMenuItem;
+    NewHeat1: TMenuItem;
+    DeleteHeat2: TMenuItem;
+    AutoBuildHeats1: TMenuItem;
+    Marshallsheet1: TMenuItem;
+    imeKeepersheet1: TMenuItem;
+    PrintSet1: TMenuItem;
+    HeatReport1: TMenuItem;
+    Entrants1: TMenuItem;
+    MoveUp6: TMenuItem;
+    MoveDown6: TMenuItem;
+    SwapLanes2: TMenuItem;
+    EmptyLane2: TMenuItem;
+    StrikeEntrant2: TMenuItem;
+    Sort3: TMenuItem;
+    RenumberEvents1: TMenuItem;
+    MembersDetails1: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure SCM_RefreshExecute(Sender: TObject);
@@ -432,6 +464,8 @@ type
     procedure Tools_MembershipTypeUpdate(Sender: TObject);
     procedure Help_DBVerInfoExecute(Sender: TObject);
     procedure Help_DBVerInfoUpdate(Sender: TObject);
+    procedure Nominate_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
   private
     { Private declarations }
     // For scroll wheel tracking on mouse ...
@@ -640,6 +674,9 @@ begin
     BindSourceDB1.DataSet.Active := true;
 
   fDoStatusBarUpdate := true;
+
+  // paint the member tomatoe red in the nominate_grid
+  Nominate_Grid.Invalidate;
 end;
 
 procedure TMain.Nominate_ControlListBeforeDrawItem(AIndex: integer;
@@ -654,7 +691,7 @@ begin
 
     s := FieldByName('Caption').AsString;
     if (s = '') then
-      clistEventCaption.Caption := '. .'
+      clistEventCaption.Caption := ''
     else
       clistEventCaption.Caption := s;
     b := FieldByName('IsNominated').AsBoolean;
@@ -3066,6 +3103,37 @@ begin
     dlg.ShowModal;
   finally
     dlg.Free;
+  end;
+end;
+
+procedure TMain.Nominate_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
+  DataCol: integer; Column: TColumn; State: TGridDrawState);
+var
+  SQL: String;
+  Count, MemberID, SessionID: integer;
+begin
+  with Sender AS TDBGrid do
+  begin
+    if AssertConnection then
+    begin
+      // Default draw disabled
+      // Has the member been nominated to some events?
+      MemberID := DataSource.DataSet.FieldByName('MemberID').AsInteger;
+      SessionID := SCM.GetSessionID;
+      SQL := 'SELECT Count(MemberID) FROM [SwimClubMeet].[dbo].Nominee ' +
+        sLineBreak + 'INNER JOIN [SwimClubMeet].[dbo].[Event] ON ' + sLineBreak
+        + '[SwimClubMeet].[dbo].Nominee.EventID = [SwimClubMeet].[dbo].[Event].EventID '
+        + sLineBreak + 'WHERE SessionID = :id1 AND MemberID = :id2;';
+      // run scalar function on DB
+      Count := SCM.scmConnection.ExecSQLScalar(SQL, [SessionID, MemberID],
+        [ftInteger, ftInteger]);
+      if (Count > 0) then
+      begin
+        Canvas.Font.Color := clWebTomato;
+      end;
+    end;
+    // DEFAULT cell draaw
+    DefaultDrawColumnCell(Rect, DataCol, Column, State);
   end;
 end;
 

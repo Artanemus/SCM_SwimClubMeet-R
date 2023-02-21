@@ -72,8 +72,10 @@ type
     function GetHeatMaxSeedNumber(EventID: integer): integer;
     function CountNominees(EventID: integer): integer;
     function RenumberHeats(EventID: integer): integer;
+
     // Autobuild support functions
-    function ScatterLanes(index, NumOfPoolLanes: integer): integer;
+    // DEPRECIATED: 2023.02.21 - NOW SHARED CODE FOUND IN SCMUtility
+    // function ScatterLanes(index, NumOfPoolLanes: integer): integer;
     function CreateNewEmptyHeat(EventID: integer): integer;
     function SeedNominees(DataSet: TFDQuery; mySeedMethod: seedMethod;
       mySeedDepth: integer = 3): integer;
@@ -125,7 +127,7 @@ var
   numberOfHeats, numOfNominees, totalNumberOfHeats: integer;
   fAge, fGenderID, fMembershipTypeID: integer;
   ds: TFDQuery;
-  param: TFDParam;
+  Param: TFDParam;
 begin
   ds := nil;
   totalNumberOfHeats := 0;
@@ -192,13 +194,13 @@ begin
     ds.ParamByName('EVENTID').AsInteger := EventID;
 
     // not all queries use param SESSIONSTART
-    param := ds.FindParam('SESSIONSTART');
+    Param := ds.FindParam('SESSIONSTART');
     if Assigned(Param) then
     begin
       if (GroupBy = 1) then // Group by AGE
-        param.AsDateTime := SCM.GetSessionStart
+        Param.AsDateTime := SCM.GetSessionStart
       else
-        param.Clear; // SESSIONSTART = <null>;
+        Param.Clear; // SESSIONSTART = <null>;
     end;
 
     ds.Prepare;
@@ -399,7 +401,7 @@ begin
     // For each nominee - assign a lane number.
     // nominees are ordered fastest to slowest
     // index i=0 results in lane number 4 when the pool lane count = 8
-    laneNumber := ScatterLanes(i, NumOfPoolLanes);
+    laneNumber := SCMUtility.ScatterLanes(i, NumOfPoolLanes);
     if (laneNumber <> 0) then
     begin
       pass := AssignLane(DataSet, HeatID, laneNumber);
@@ -866,7 +868,7 @@ begin
       if (i < NomineesInHeat[j]) then
       begin
         // swimmers index value is passed as base 0
-        laneNumber := ScatterLanes(i, NumOfPoolLanes);
+        laneNumber := SCMUtility.ScatterLanes(i, NumOfPoolLanes);
         Success := AssignLane(DataSet, HeatIDs[j], laneNumber);
         // next nominee
         if (Success) then
@@ -1142,8 +1144,7 @@ begin
   // SEEDTIME IS USED TO INJECT DATA INTO ENTRANT TABLE
   // use the preference dialog to enable and set options.
   // NOTE: the session date used will be Now().
-  prefImportSeedTime := iFile.ReadInteger('Preferences',
-    'ImportSeedTime', 0);
+  prefImportSeedTime := iFile.ReadInteger('Preferences', 'ImportSeedTime', 0);
 
   iFile.Free;
 end;
@@ -1173,20 +1174,21 @@ begin
   result := iter;
 end;
 
-function TAutoBuildV2.ScatterLanes(index, NumOfPoolLanes: integer): integer;
-var
+(*
+  function TAutoBuildV2.ScatterLanes(index, NumOfPoolLanes: integer): integer;
+  var
   Lanes: Array of integer;
   i: integer;
   IsEven: boolean;
-begin
+  begin
   result := 0;
   // NumOfPoolLanes must be greater than 1
   if (NumOfPoolLanes < 2) then
-    exit;
+  exit;
   // index passed is base 0
   // test for out-of-bounds
   if ((index + 1) > NumOfPoolLanes) then
-    exit;
+  exit;
   SetLength(Lanes, NumOfPoolLanes);
   // seed number for first array value
   // Find the center lane. For 'odd' number of pool lanes - round up;
@@ -1194,22 +1196,30 @@ begin
   // build the
   for i := 1 to NumOfPoolLanes - 1 do
   begin
-    // start the iterate at index 1
-    // reference previous value in list with base 0
-    if (((i + 1) MOD 2) = 0) then
-      IsEven := true
-    else
-      IsEven := false;
-    if IsEven then
-      Lanes[i] := (i) + (Lanes[(i - 1)])
-    else
-      Lanes[i] := (Lanes[(i - 1)]) - (i);
+  // start the iterate at index 1
+  // reference previous value in list with base 0
+  if (((i + 1) MOD 2) = 0) then
+  IsEven := true
+  else
+  IsEven := false;
+  if IsEven then
+  Lanes[i] := (i) + (Lanes[(i - 1)])
+  else
+  Lanes[i] := (Lanes[(i - 1)]) - (i);
   end;
   // pull the entrants lane number.
   result := Lanes[index];
-  // free the array.
+
+  {
+  You don't need to call SetLength at the end.
+  A dynamic-array field like 'Lanes' gets released automatically when
+  the object is destroyed.
+
+  }
+  // free the array.   ALT Lanes := nil;
   SetLength(Lanes, 0);
-end;
+  end;
+*)
 
 function TAutoBuildV2.SeedNominees(DataSet: TFDQuery; mySeedMethod: seedMethod;
   mySeedDepth: integer): integer;

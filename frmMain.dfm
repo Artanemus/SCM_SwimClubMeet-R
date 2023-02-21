@@ -33,7 +33,7 @@ object Main: TMain
       Top = 0
       Width = 1414
       Height = 761
-      ActivePage = TabSheet3
+      ActivePage = TabSheet2
       Align = alClient
       Style = tsFlatButtons
       TabOrder = 0
@@ -709,6 +709,7 @@ object Main: TMain
                 Margins.Right = 0
                 Margins.Bottom = 0
                 DataSource = SCM.dsNominateMembers
+                DefaultDrawing = False
                 Options = [dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
                 PopupMenu = pumNominate
                 TabOrder = 1
@@ -717,6 +718,7 @@ object Main: TMain
                 TitleFont.Height = -16
                 TitleFont.Name = 'Segoe UI'
                 TitleFont.Style = []
+                OnDrawColumnCell = Nominate_GridDrawColumnCell
                 OnDblClick = Nominate_GridDblClick
                 Columns = <
                   item
@@ -2201,24 +2203,13 @@ object Main: TMain
     Top = 344
     object File1: TMenuItem
       Caption = 'File'
-      object mnuImportXLS: TMenuItem
-        Caption = 'Import XLS ...'
-        Enabled = False
-      end
-      object mnuExportXLS: TMenuItem
-        Caption = 'Export XLS ...'
-        Enabled = False
-      end
-      object N13: TMenuItem
-        Caption = '-'
+      object ExportSession2: TMenuItem
+        Action = Session_Export
+        Caption = 'Export CarnivalMeet...'
       end
       object ImportSession2: TMenuItem
         Action = Session_Import
         Caption = 'Import CarnivalMeet...'
-      end
-      object ExportSession2: TMenuItem
-        Action = Session_Export
-        Caption = 'Export CarnivalMeet...'
       end
       object N2: TMenuItem
         Caption = '-'
@@ -2229,6 +2220,12 @@ object Main: TMain
     end
     object Session1: TMenuItem
       Caption = 'Session'
+      object ogglevisibility1: TMenuItem
+        Action = Session_ToggleVisible
+      end
+      object ToggleStatus2: TMenuItem
+        Action = Session_ToggleLock
+      end
       object NewSession2: TMenuItem
         Action = Session_New
         Caption = 'New Session ...'
@@ -2236,35 +2233,52 @@ object Main: TMain
       object EditSession2: TMenuItem
         Action = Session_Edit
       end
-      object CloneSession1: TMenuItem
-        Action = Session_Clone
-        Caption = 'Clone Session ...'
-      end
       object DeleteSession2: TMenuItem
         Action = Session_Delete
         Caption = 'Delete Session ...'
       end
-      object N3: TMenuItem
+      object SessionReport1: TMenuItem
+        Action = Session_Report
+      end
+      object N13: TMenuItem
         Caption = '-'
       end
-      object ToggleStatus2: TMenuItem
-        Action = Session_ToggleLock
+      object mnuExportXLS: TMenuItem
+        Caption = 'Export Session...'
+        Enabled = False
       end
-      object N14: TMenuItem
-        Caption = '-'
+      object mnuImportXLS: TMenuItem
+        Caption = 'Import Session...'
+        Enabled = False
       end
-      object BuildALLHeats1: TMenuItem
-        Action = Session_BatchBuildHeats
-      end
-      object BatchPrintALLMarshallReports1: TMenuItem
-        Action = Session_BatchMarshallReport
-      end
-      object BatchPrintALLTimekeeperReports1: TMenuItem
-        Action = Session_BatchTimeKeeperReport
+      object CloneSession1: TMenuItem
+        Action = Session_Clone
+        Caption = 'Clone Session ...'
       end
     end
     object mnuEvents: TMenuItem
       Caption = 'Events'
+      object ogglegridview1: TMenuItem
+        Action = Event_ToggleGridView
+      end
+      object MoveUp4: TMenuItem
+        Action = Entrant_MoveUp
+      end
+      object MoveDown4: TMenuItem
+        Action = Entrant_MoveDown
+      end
+      object NewEvent2: TMenuItem
+        Action = Event_NewRecord
+      end
+      object DeleteEvent2: TMenuItem
+        Action = Event_Delete
+      end
+      object EventReport1: TMenuItem
+        Action = Event_Report
+      end
+      object N16: TMenuItem
+        Caption = '-'
+      end
       object mnuBuildQuarterFinal: TMenuItem
         Action = Event_BuildFinals
       end
@@ -2288,8 +2302,92 @@ object Main: TMain
     end
     object mnuNominate: TMenuItem
       Caption = 'Nominate'
+      object SortonName1: TMenuItem
+        Action = Nominate_SortMembers
+      end
+      object NominateRpt2: TMenuItem
+        Action = Nominate_Report
+      end
+      object N14: TMenuItem
+        Caption = '-'
+      end
       object Cleareventsnominations1: TMenuItem
         Action = actnClearEventNominations
+      end
+      object Clearsessionnominations1: TMenuItem
+        Action = actnClearSessionNominations
+      end
+    end
+    object Heats1: TMenuItem
+      Caption = 'Heats'
+      object MoveUp5: TMenuItem
+        Action = Heat_MoveUp
+      end
+      object MoveDown5: TMenuItem
+        Action = Heat_MoveDown
+      end
+      object oggleHeatStatus1: TMenuItem
+        Action = Heat_ToggleStatus
+      end
+      object NewHeat1: TMenuItem
+        Action = Heat_NewRecord
+      end
+      object DeleteHeat2: TMenuItem
+        Action = Heat_Delete
+      end
+      object AutoBuildHeats1: TMenuItem
+        Action = Heat_AutoBuild
+      end
+      object Marshallsheet1: TMenuItem
+        Action = Heat_MarshallReport
+      end
+      object imeKeepersheet1: TMenuItem
+        Action = Heat_TimeKeeperReport
+      end
+      object PrintSet1: TMenuItem
+        Action = Heat_PrintSet
+      end
+      object HeatReport1: TMenuItem
+        Action = Heat_HeatReport
+      end
+      object N3: TMenuItem
+        Caption = '-'
+      end
+      object BuildALLHeats1: TMenuItem
+        Action = Session_BatchBuildHeats
+      end
+      object BatchPrintALLMarshallReports1: TMenuItem
+        Action = Session_BatchMarshallReport
+      end
+      object BatchPrintALLTimekeeperReports1: TMenuItem
+        Action = Session_BatchTimeKeeperReport
+      end
+    end
+    object Entrants1: TMenuItem
+      Caption = 'Entrants'
+      object MoveUp6: TMenuItem
+        Action = Entrant_MoveUp
+      end
+      object MoveDown6: TMenuItem
+        Action = Entrant_MoveDown
+      end
+      object SwapLanes2: TMenuItem
+        Action = Entrant_SwapLanes
+      end
+      object EmptyLane2: TMenuItem
+        Action = Entrant_EmptyLane
+      end
+      object StrikeEntrant2: TMenuItem
+        Action = Entrant_Strike
+      end
+      object Sort3: TMenuItem
+        Action = Entrant_Sort
+      end
+      object MembersDetails1: TMenuItem
+        Action = Entrant_GotoMemberDetails
+      end
+      object RenumberEvents1: TMenuItem
+        Action = Event_Renumber
       end
     end
     object Tools1: TMenuItem
@@ -2420,7 +2518,7 @@ object Main: TMain
     end
     object Nominate_Report: TAction
       Category = 'Nominate'
-      Caption = 'Nominate Rpt*'
+      Caption = 'Nominate Report*'
       Hint = 'Display a nominee'#39's report.'
       OnExecute = Nominate_ReportExecute
     end
@@ -2447,7 +2545,8 @@ object Main: TMain
     end
     object Event_Renumber: TAction
       Category = 'Event'
-      Caption = 'Renumber Events'
+      Caption = 'Renumber Lanes...'
+      Enabled = False
       OnExecute = Event_RenumberExecute
       OnUpdate = Event_RenumberUpdate
     end
@@ -2492,7 +2591,7 @@ object Main: TMain
     end
     object Entrant_Sort: TAction
       Category = 'Entrant'
-      Caption = 'Sort'
+      Caption = 'Sort on TTB'
       Hint = 'Sort entrants and repair lanes.'
       OnExecute = Entrant_SortExecute
       OnUpdate = Entrant_SortUpdate
@@ -2661,13 +2760,14 @@ object Main: TMain
       OnExecute = Tools_HouseExecute
       OnUpdate = Tools_HouseUpdate
     end
-    object actnClearNominee: TAction
-      Category = 'Nominate'
-      Caption = 'Clear member'#39's nominations...'
-    end
     object actnClearEventNominations: TAction
       Category = 'Nominate'
       Caption = 'Clear event nominations... '
+      Enabled = False
+    end
+    object actnClearSessionNominations: TAction
+      Category = 'Nominate'
+      Caption = 'Clear session nominations...'
       Enabled = False
     end
     object Help_DBVerInfo: TAction
