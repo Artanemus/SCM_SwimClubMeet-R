@@ -248,6 +248,7 @@ type
     function IsClosedHeat(AHeatID: Integer): boolean; overload;
     function IsLockedHeat(): boolean; // uses diff logic IsClosedHeat. Pref
     function IsRacedHeat(): boolean;
+    function GetHeatID(): integer;
     function GetNextHeatID(AHeatID: integer): integer; // uses HeatNum
     function GetPrevHeatID(AHeatID: integer): integer; // uses HeatNum
     procedure Heat_Renumber(DoLocate: boolean = true);
@@ -1258,6 +1259,14 @@ begin
   if fSCMActive and dsEvent.DataSet.Active then
     if not dsEvent.DataSet.IsEmpty then
       result := dsEvent.DataSet.FieldByName('EventID').AsInteger;
+end;
+
+function TSCM.GetHeatID: integer;
+begin
+  result := 0;
+  if fSCMActive and dsHeat.DataSet.Active then
+    if not dsHeat.DataSet.IsEmpty then
+      result := dsHeat.DataSet.FieldByName('HeatID').AsInteger;
 end;
 
 function TSCM.GetSessionID: integer;

@@ -59,7 +59,10 @@ uses
   rptMembersDetail in 'MEMBERS\rptMembersDetail.pas' {MembersDetail: TDataModule},
   rptMemberHistory in 'MEMBERS\rptMemberHistory.pas' {MemberHistory: TDataModule},
   rptMembersList in 'MEMBERS\rptMembersList.pas' {MembersList: TDataModule},
-  dlgDBVerInfo in 'dlgDBVerInfo.pas' {DBVerInfo};
+  dlgDBVerInfo in 'dlgDBVerInfo.pas' {DBVerInfo},
+  Vcl.PlatformVclStylesActnCtrls in 'Vcl.PlatformVclStylesActnCtrls.pas',
+  rptHeatReportA in 'REPORTS\rptHeatReportA.pas' {HeatReportA: TDataModule},
+  rptHeatReportB in 'REPORTS\rptHeatReportB.pas' {HeatReportB: TDataModule};
 
 {$R *.res}
 

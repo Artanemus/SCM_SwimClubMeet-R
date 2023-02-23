@@ -2,7 +2,7 @@ object Main: TMain
   Left = 0
   Top = 0
   Caption = 'Main'
-  ClientHeight = 871
+  ClientHeight = 939
   ClientWidth = 1414
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -10,45 +10,47 @@ object Main: TMain
   Font.Height = -16
   Font.Name = 'Segoe UI'
   Font.Style = []
-  Menu = MainMenu1
-  OldCreateOrder = False
   Position = poScreenCenter
   ShowHint = True
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnMouseWheel = FormMouseWheel
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 21
   object pnlPageControl: TPanel
     Left = 0
-    Top = 81
+    Top = 108
     Width = 1414
-    Height = 761
+    Height = 802
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 1410
+    ExplicitHeight = 801
     object PageControl1: TPageControl
       Left = 0
       Top = 0
       Width = 1414
-      Height = 761
-      ActivePage = TabSheet2
+      Height = 802
+      ActivePage = TabSheet3
       Align = alClient
       Style = tsFlatButtons
       TabOrder = 0
       OnChange = PageControl1Change
       OnChanging = PageControl1Changing
+      ExplicitWidth = 1410
+      ExplicitHeight = 801
       object TabSheet1: TTabSheet
         Caption = 'Session'
         object pnlSessionLeft: TPanel
           Left = 0
           Top = 0
           Width = 729
-          Height = 722
+          Height = 732
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 0
+          ExplicitHeight = 722
           object pnlSessLeftTop: TPanel
             Left = 0
             Top = 0
@@ -70,7 +72,7 @@ object Main: TMain
             Left = 10
             Top = 20
             Width = 649
-            Height = 702
+            Height = 712
             Margins.Left = 10
             Margins.Top = 0
             Margins.Right = 10
@@ -91,7 +93,7 @@ object Main: TMain
             Left = 669
             Top = 20
             Width = 60
-            Height = 702
+            Height = 712
             ControlCollection = <
               item
                 Control = spbtnSessionToggleVisible
@@ -175,9 +177,10 @@ object Main: TMain
             Align = alRight
             BevelOuter = bvNone
             TabOrder = 2
+            ExplicitHeight = 702
             DesignSize = (
               60
-              702)
+              743)
             object spbtnSessionToggleVisible: TSpeedButton
               Left = 6
               Top = 0
@@ -213,8 +216,6 @@ object Main: TMain
               Hint = 'Lock-Unlock the session.'
               Action = Session_ToggleLock
               Anchors = []
-              ImageIndex = 21
-              ImageName = 'Lock'
               Images = VirtualImageList1
               Flat = True
               Layout = blGlyphTop
@@ -227,8 +228,6 @@ object Main: TMain
               Height = 48
               Action = Session_New
               Anchors = []
-              ImageIndex = 20
-              ImageName = 'New'
               Images = VirtualImageList1
               Flat = True
               Layout = blGlyphTop
@@ -242,8 +241,6 @@ object Main: TMain
               Height = 48
               Action = Session_Delete
               Anchors = []
-              ImageIndex = 19
-              ImageName = 'Delete'
               Images = VirtualImageList1
               Flat = True
               Layout = blGlyphTop
@@ -270,8 +267,6 @@ object Main: TMain
               Height = 48
               Action = Session_Report
               Anchors = []
-              ImageIndex = 17
-              ImageName = 'Report'
               Images = VirtualImageList1
               Flat = True
               Layout = blGlyphTop
@@ -293,11 +288,12 @@ object Main: TMain
           Left = 729
           Top = 0
           Width = 677
-          Height = 722
+          Height = 763
           Align = alClient
           BevelOuter = bvNone
           Caption = 'pnlSessionClient'
           TabOrder = 1
+          ExplicitHeight = 722
           object pnlSessClientTop: TPanel
             Left = 0
             Top = 0
@@ -318,17 +314,18 @@ object Main: TMain
             Left = 0
             Top = 20
             Width = 677
-            Height = 702
+            Height = 712
             Align = alClient
             BevelOuter = bvNone
             Caption = 'Panel7'
             TabOrder = 1
+            ExplicitHeight = 702
             object Event_Grid: TDBGrid
               AlignWithMargins = True
               Left = 10
               Top = 0
               Width = 597
-              Height = 702
+              Height = 712
               Margins.Left = 10
               Margins.Top = 0
               Margins.Right = 10
@@ -349,7 +346,7 @@ object Main: TMain
               Left = 617
               Top = 0
               Width = 60
-              Height = 702
+              Height = 712
               ControlCollection = <
                 item
                   Control = ShapeBarEv1
@@ -443,9 +440,10 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 1
+              ExplicitHeight = 702
               DesignSize = (
                 60
-                702)
+                743)
               object ShapeBarEv1: TShape
                 AlignWithMargins = True
                 Left = 6
@@ -493,8 +491,6 @@ object Main: TMain
                 Height = 48
                 Action = Event_Delete
                 Anchors = []
-                ImageIndex = 19
-                ImageName = 'Delete'
                 Images = VirtualImageList1
                 Flat = True
                 Layout = blGlyphTop
@@ -508,8 +504,6 @@ object Main: TMain
                 Height = 48
                 Action = Event_MoveDown
                 Anchors = []
-                ImageIndex = 13
-                ImageName = 'Down'
                 Images = VirtualImageList1
                 Flat = True
                 Layout = blGlyphTop
@@ -523,8 +517,6 @@ object Main: TMain
                 Height = 48
                 Action = Event_MoveUp
                 Anchors = []
-                ImageIndex = 12
-                ImageName = 'Up'
                 Images = VirtualImageList1
                 Flat = True
                 Layout = blGlyphTop
@@ -538,8 +530,6 @@ object Main: TMain
                 Height = 48
                 Action = Event_NewRecord
                 Anchors = []
-                ImageIndex = 20
-                ImageName = 'New'
                 Images = VirtualImageList1
                 Flat = True
                 Layout = blGlyphTop
@@ -553,8 +543,6 @@ object Main: TMain
                 Height = 48
                 Action = Event_Report
                 Anchors = []
-                ImageIndex = 17
-                ImageName = 'Report'
                 Images = VirtualImageList1
                 Flat = True
                 Layout = blGlyphTop
@@ -585,7 +573,7 @@ object Main: TMain
           Left = 0
           Top = 0
           Width = 1406
-          Height = 722
+          Height = 763
           ControlCollection = <
             item
               Control = NominateCenteredPanel
@@ -608,14 +596,16 @@ object Main: TMain
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 0
+          ExplicitWidth = 1402
+          ExplicitHeight = 721
           DesignSize = (
             1406
-            722)
+            763)
           object NominateCenteredPanel: TPanel
             Left = 181
             Top = 0
             Width = 1044
-            Height = 722
+            Height = 763
             Anchors = []
             BevelOuter = bvNone
             TabOrder = 0
@@ -624,7 +614,7 @@ object Main: TMain
               Left = 0
               Top = 10
               Width = 352
-              Height = 702
+              Height = 743
               Margins.Left = 0
               Margins.Top = 10
               Margins.Right = 0
@@ -669,9 +659,10 @@ object Main: TMain
               Align = alLeft
               BevelOuter = bvNone
               TabOrder = 0
+              ExplicitHeight = 701
               DesignSize = (
                 352
-                702)
+                743)
               object Nominate_Edit: TEdit
                 AlignWithMargins = True
                 Left = 40
@@ -703,7 +694,7 @@ object Main: TMain
                 Left = 0
                 Top = 40
                 Width = 352
-                Height = 662
+                Height = 703
                 Margins.Left = 0
                 Margins.Top = 40
                 Margins.Right = 0
@@ -765,7 +756,7 @@ object Main: TMain
               Left = 352
               Top = 48
               Width = 60
-              Height = 674
+              Height = 715
               Margins.Left = 0
               Margins.Top = 48
               Margins.Right = 0
@@ -813,9 +804,10 @@ object Main: TMain
               Align = alLeft
               BevelOuter = bvNone
               TabOrder = 1
+              ExplicitHeight = 673
               DesignSize = (
                 60
-                674)
+                715)
               object spbtnNominateSortMember: TSpeedButton
                 Left = 6
                 Top = 0
@@ -850,8 +842,6 @@ object Main: TMain
                 Hint = 'Create and display a nominee'#39's report.'
                 Action = Nominate_Report
                 Anchors = []
-                ImageIndex = 17
-                ImageName = 'Report'
                 Images = VirtualImageList1
                 Flat = True
                 Layout = blGlyphTop
@@ -873,7 +863,7 @@ object Main: TMain
               Left = 514
               Top = 10
               Width = 530
-              Height = 702
+              Height = 743
               Margins.Left = 0
               Margins.Top = 10
               Margins.Right = 0
@@ -901,11 +891,12 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 2
+              ExplicitHeight = 701
               object Nominate_ControlList: TControlList
                 Left = 57
                 Top = 0
                 Width = 473
-                Height = 702
+                Height = 743
                 Margins.Left = 0
                 Margins.Top = 0
                 Margins.Right = 0
@@ -987,7 +978,7 @@ object Main: TMain
                 Left = 12
                 Top = 40
                 Width = 45
-                Height = 659
+                Height = 700
                 Margins.Top = 40
                 Margins.Right = 0
                 Align = alRight
@@ -1033,7 +1024,7 @@ object Main: TMain
           Left = 282
           Top = 147
           Width = 1104
-          Height = 565
+          Height = 606
           Margins.Left = 0
           Margins.Top = 10
           Margins.Right = 20
@@ -1042,11 +1033,13 @@ object Main: TMain
           BevelOuter = bvNone
           Caption = 'HeatRightPanel'
           TabOrder = 0
+          ExplicitWidth = 1100
+          ExplicitHeight = 605
           object Entrant_Grid: TDBGrid
             Left = 0
             Top = 0
             Width = 1044
-            Height = 565
+            Height = 606
             Margins.Left = 60
             Align = alClient
             Anchors = []
@@ -1071,7 +1064,7 @@ object Main: TMain
             Left = 1044
             Top = 0
             Width = 60
-            Height = 565
+            Height = 606
             ControlCollection = <
               item
                 Control = spbtnEntrantDown
@@ -1136,9 +1129,11 @@ object Main: TMain
             Anchors = []
             BevelOuter = bvNone
             TabOrder = 1
+            ExplicitLeft = 1040
+            ExplicitHeight = 605
             DesignSize = (
               60
-              565)
+              606)
             object spbtnEntrantDown: TSpeedButton
               Left = 6
               Top = 48
@@ -1146,8 +1141,6 @@ object Main: TMain
               Height = 48
               Action = Entrant_MoveDown
               Anchors = []
-              ImageIndex = 13
-              ImageName = 'Down'
               Images = VirtualImageList1
               Flat = True
               Layout = blGlyphTop
@@ -1161,8 +1154,6 @@ object Main: TMain
               Height = 48
               Action = Entrant_EmptyLane
               Anchors = []
-              ImageIndex = 19
-              ImageName = 'Delete'
               Images = VirtualImageList1
               Flat = True
               Layout = blGlyphTop
@@ -1176,8 +1167,6 @@ object Main: TMain
               Height = 48
               Action = Entrant_Strike
               Anchors = []
-              ImageIndex = 18
-              ImageName = 'DeleteForever'
               Images = VirtualImageList1
               Flat = True
               Layout = blGlyphTop
@@ -1191,8 +1180,6 @@ object Main: TMain
               Height = 48
               Action = Entrant_SwapLanes
               Anchors = []
-              ImageIndex = 10
-              ImageName = 'Shuffle'
               Images = VirtualImageList1
               Flat = True
               Layout = blGlyphTop
@@ -1206,8 +1193,6 @@ object Main: TMain
               Height = 48
               Action = Entrant_MoveUp
               Anchors = []
-              ImageIndex = 12
-              ImageName = 'Up'
               Images = VirtualImageList1
               Flat = True
               Layout = blGlyphTop
@@ -1272,6 +1257,7 @@ object Main: TMain
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 1
+          ExplicitWidth = 1402
           DesignSize = (
             1406
             117)
@@ -1431,7 +1417,7 @@ object Main: TMain
           Left = 20
           Top = 137
           Width = 252
-          Height = 585
+          Height = 626
           Margins.Left = 20
           Margins.Top = 0
           Margins.Right = 10
@@ -1439,12 +1425,13 @@ object Main: TMain
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 2
+          ExplicitHeight = 625
           object HeatWidgets: TRelativePanel
             AlignWithMargins = True
             Left = 192
             Top = 10
             Width = 60
-            Height = 565
+            Height = 606
             Margins.Left = 0
             Margins.Top = 10
             Margins.Right = 0
@@ -1612,9 +1599,10 @@ object Main: TMain
             Align = alRight
             BevelOuter = bvNone
             TabOrder = 0
+            ExplicitHeight = 605
             DesignSize = (
               60
-              565)
+              606)
             object spbtnHeatUp: TSpeedButton
               Left = 6
               Top = 0
@@ -1622,8 +1610,6 @@ object Main: TMain
               Height = 48
               Action = Heat_MoveUp
               Anchors = []
-              ImageIndex = 12
-              ImageName = 'Up'
               Images = VirtualImageList1
               Flat = True
               Layout = blGlyphTop
@@ -1637,8 +1623,6 @@ object Main: TMain
               Height = 48
               Action = Heat_MoveDown
               Anchors = []
-              ImageIndex = 13
-              ImageName = 'Down'
               Images = VirtualImageList1
               Flat = True
               Layout = blGlyphTop
@@ -1652,8 +1636,6 @@ object Main: TMain
               Height = 48
               Action = Heat_ToggleStatus
               Anchors = []
-              ImageIndex = 36
-              ImageName = 'HeatStatusToggle'
               Images = VirtualImageList1
               Flat = True
               Layout = blGlyphTop
@@ -1667,8 +1649,6 @@ object Main: TMain
               Height = 48
               Action = Heat_NewRecord
               Anchors = []
-              ImageIndex = 20
-              ImageName = 'New'
               Images = VirtualImageList1
               Flat = True
               Layout = blGlyphTop
@@ -1682,8 +1662,6 @@ object Main: TMain
               Height = 48
               Action = Heat_Delete
               Anchors = []
-              ImageIndex = 19
-              ImageName = 'Delete'
               Images = VirtualImageList1
               Flat = True
               Layout = blGlyphTop
@@ -1710,8 +1688,6 @@ object Main: TMain
               Height = 48
               Action = Heat_AutoBuild
               Anchors = []
-              ImageIndex = 6
-              ImageName = 'AutoBuild'
               Images = VirtualImageList1
               Flat = True
               Layout = blGlyphTop
@@ -1739,8 +1715,6 @@ object Main: TMain
               Hint = 'Create a marshall'#39's sheet for the heats in this event.'
               Action = Heat_MarshallReport
               Anchors = []
-              ImageIndex = 4
-              ImageName = 'Marshall'
               Images = VirtualImageList1
               Flat = True
               Layout = blGlyphTop
@@ -1755,8 +1729,6 @@ object Main: TMain
               Hint = 'Create a timekeeper'#39's sheet for the selected heat.'
               Action = Heat_TimeKeeperReport
               Anchors = []
-              ImageIndex = 5
-              ImageName = 'TimeKeeper'
               Images = VirtualImageList1
               Flat = True
               Layout = blGlyphTop
@@ -1784,8 +1756,6 @@ object Main: TMain
               Hint = 'Create and print all sheets, both marshall and timekeepers.'
               Action = Heat_PrintSet
               Anchors = []
-              ImageIndex = 3
-              ImageName = 'BatchPrint'
               Images = VirtualImageList1
               Flat = True
               Layout = blGlyphTop
@@ -1797,10 +1767,8 @@ object Main: TMain
               Top = 504
               Width = 48
               Height = 48
-              Action = Heat_HeatReport
+              Action = Heat_Report
               Anchors = []
-              ImageIndex = 17
-              ImageName = 'Report'
               Images = VirtualImageList1
               Flat = True
               Layout = blGlyphTop
@@ -1845,7 +1813,7 @@ object Main: TMain
             Left = 0
             Top = 0
             Width = 176
-            Height = 585
+            Height = 626
             Align = alLeft
             BorderStyle = bsNone
             ItemMargins.Left = 0
@@ -1856,6 +1824,7 @@ object Main: TMain
             PopupMenu = pumHeat
             TabOrder = 1
             OnBeforeDrawItem = HeatControlListBeforeDrawItem
+            ExplicitHeight = 625
             object vimgHeatNum: TVirtualImage
               Left = 16
               Top = 11
@@ -1902,7 +1871,7 @@ object Main: TMain
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 842
+    Top = 910
     Width = 1414
     Height = 29
     Panels = <
@@ -1920,10 +1889,12 @@ object Main: TMain
       end>
     ParentFont = True
     UseSystemFont = False
+    ExplicitTop = 909
+    ExplicitWidth = 1410
   end
   object pnlTitleBar: TRelativePanel
     Left = 0
-    Top = 0
+    Top = 27
     Width = 1414
     Height = 81
     ControlCollection = <
@@ -1977,6 +1948,7 @@ object Main: TMain
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitWidth = 1410
     DesignSize = (
       1414
       81)
@@ -2198,529 +2170,494 @@ object Main: TMain
       Margin = 0
     end
   end
-  object MainMenu1: TMainMenu
-    Left = 904
-    Top = 344
-    object File1: TMenuItem
-      Caption = 'File'
-      object ExportSession2: TMenuItem
-        Action = Session_Export
-        Caption = 'Export CarnivalMeet...'
-      end
-      object ImportSession2: TMenuItem
-        Action = Session_Import
-        Caption = 'Import CarnivalMeet...'
-      end
-      object N2: TMenuItem
-        Caption = '-'
-      end
-      object Exit1: TMenuItem
-        Action = File_Exit
-      end
-    end
-    object Session1: TMenuItem
-      Caption = 'Session'
-      object ogglevisibility1: TMenuItem
-        Action = Session_ToggleVisible
-      end
-      object ToggleStatus2: TMenuItem
-        Action = Session_ToggleLock
-      end
-      object NewSession2: TMenuItem
-        Action = Session_New
-        Caption = 'New Session ...'
-      end
-      object EditSession2: TMenuItem
-        Action = Session_Edit
-      end
-      object DeleteSession2: TMenuItem
-        Action = Session_Delete
-        Caption = 'Delete Session ...'
-      end
-      object SessionReport1: TMenuItem
-        Action = Session_Report
-      end
-      object N13: TMenuItem
-        Caption = '-'
-      end
-      object mnuExportXLS: TMenuItem
-        Caption = 'Export Session...'
-        Enabled = False
-      end
-      object mnuImportXLS: TMenuItem
-        Caption = 'Import Session...'
-        Enabled = False
-      end
-      object CloneSession1: TMenuItem
-        Action = Session_Clone
-        Caption = 'Clone Session ...'
-      end
-    end
-    object mnuEvents: TMenuItem
-      Caption = 'Events'
-      object ogglegridview1: TMenuItem
-        Action = Event_ToggleGridView
-      end
-      object MoveUp4: TMenuItem
-        Action = Entrant_MoveUp
-      end
-      object MoveDown4: TMenuItem
-        Action = Entrant_MoveDown
-      end
-      object NewEvent2: TMenuItem
-        Action = Event_NewRecord
-      end
-      object DeleteEvent2: TMenuItem
-        Action = Event_Delete
-      end
-      object EventReport1: TMenuItem
-        Action = Event_Report
-      end
-      object N16: TMenuItem
-        Caption = '-'
-      end
-      object mnuBuildQuarterFinal: TMenuItem
-        Action = Event_BuildFinals
-      end
-      object mnuBuildSemiFinal: TMenuItem
-        Action = Event_BuildSemiFinals
-      end
-      object mnuBuildFinal: TMenuItem
-        Action = Event_BuildQuarterFinals
-      end
-      object N7: TMenuItem
-        Caption = '-'
-      end
-      object mnuMastersChampionships: TMenuItem
-        Caption = 'Masters Championship...'
-        Enabled = False
-      end
-      object mnuRelay: TMenuItem
-        Caption = 'Relay ...'
-        Enabled = False
-      end
-    end
-    object mnuNominate: TMenuItem
-      Caption = 'Nominate'
-      object SortonName1: TMenuItem
-        Action = Nominate_SortMembers
-      end
-      object NominateRpt2: TMenuItem
-        Action = Nominate_Report
-      end
-      object N14: TMenuItem
-        Caption = '-'
-      end
-      object Cleareventsnominations1: TMenuItem
-        Action = actnClearEventNominations
-      end
-      object Clearsessionnominations1: TMenuItem
-        Action = actnClearSessionNominations
-      end
-    end
-    object Heats1: TMenuItem
-      Caption = 'Heats'
-      object MoveUp5: TMenuItem
-        Action = Heat_MoveUp
-      end
-      object MoveDown5: TMenuItem
-        Action = Heat_MoveDown
-      end
-      object oggleHeatStatus1: TMenuItem
-        Action = Heat_ToggleStatus
-      end
-      object NewHeat1: TMenuItem
-        Action = Heat_NewRecord
-      end
-      object DeleteHeat2: TMenuItem
-        Action = Heat_Delete
-      end
-      object AutoBuildHeats1: TMenuItem
-        Action = Heat_AutoBuild
-      end
-      object Marshallsheet1: TMenuItem
-        Action = Heat_MarshallReport
-      end
-      object imeKeepersheet1: TMenuItem
-        Action = Heat_TimeKeeperReport
-      end
-      object PrintSet1: TMenuItem
-        Action = Heat_PrintSet
-      end
-      object HeatReport1: TMenuItem
-        Action = Heat_HeatReport
-      end
-      object N3: TMenuItem
-        Caption = '-'
-      end
-      object BuildALLHeats1: TMenuItem
-        Action = Session_BatchBuildHeats
-      end
-      object BatchPrintALLMarshallReports1: TMenuItem
-        Action = Session_BatchMarshallReport
-      end
-      object BatchPrintALLTimekeeperReports1: TMenuItem
-        Action = Session_BatchTimeKeeperReport
-      end
-    end
-    object Entrants1: TMenuItem
-      Caption = 'Entrants'
-      object MoveUp6: TMenuItem
-        Action = Entrant_MoveUp
-      end
-      object MoveDown6: TMenuItem
-        Action = Entrant_MoveDown
-      end
-      object SwapLanes2: TMenuItem
-        Action = Entrant_SwapLanes
-      end
-      object EmptyLane2: TMenuItem
-        Action = Entrant_EmptyLane
-      end
-      object StrikeEntrant2: TMenuItem
-        Action = Entrant_Strike
-      end
-      object Sort3: TMenuItem
-        Action = Entrant_Sort
-      end
-      object MembersDetails1: TMenuItem
-        Action = Entrant_GotoMemberDetails
-      end
-      object RenumberEvents1: TMenuItem
-        Action = Event_Renumber
-      end
-    end
-    object Tools1: TMenuItem
-      Caption = 'Tools'
-      object EventQualificationTimes1: TMenuItem
-        Action = Tools_QualifyTimes
-      end
-      object MembershipType1: TMenuItem
-        Action = Tools_MembershipType
-      end
-      object HouseScore1: TMenuItem
-        Action = Tools_House
-      end
-      object PlacePoints1: TMenuItem
-        Action = Tools_Score
-      end
-      object Divisions1: TMenuItem
-        Action = Tools_Divisions
-      end
-      object LeaderBoard1: TMenuItem
-        Action = Tools_LeaderBoard
-      end
-      object Connection1: TMenuItem
-        Action = Tools_ConnectionManager
-        Visible = False
-      end
-      object N12: TMenuItem
-        Caption = '-'
-      end
-      object Options1: TMenuItem
-        Action = Tools_Preferences
-      end
-    end
-    object Help1: TMenuItem
-      Caption = 'Help'
-      object About1: TMenuItem
-        Action = Help_About
-      end
-      object DBVersionInfo: TMenuItem
-        Action = Help_DBVerInfo
-      end
-      object Help_Help: TMenuItem
-        Caption = 'Help...'
-        OnClick = Help_HelpClick
-      end
-      object Help_Online: TMenuItem
-        Caption = 'Online Help...'
-        OnClick = Help_OnlineClick
-      end
-      object N15: TMenuItem
-        Caption = '-'
-      end
-      object Help_HomePage: TMenuItem
-        Caption = 'SCM Homepage...'
-        OnClick = Help_HomePageClick
-      end
-    end
+  object ActionMainMenuBar1: TActionMainMenuBar
+    Left = 0
+    Top = 0
+    Width = 1414
+    Height = 27
+    UseSystemFont = False
+    ActionManager = ActionManager1
+    Caption = 'ActionMainMenuBar1'
+    Color = clMenuBar
+    ColorMap.DisabledFontColor = 7171437
+    ColorMap.HighlightColor = clWhite
+    ColorMap.BtnSelectedFont = clBlack
+    ColorMap.UnusedColor = clWhite
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -16
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    Spacing = 0
+    ExplicitWidth = 1410
   end
   object ActionManager1: TActionManager
+    ActionBars = <
+      item
+        Items = <
+          item
+            Items = <
+              item
+                Action = File_ExportCarnival
+                Caption = 'E&xport CarnivalMeet...'
+              end
+              item
+                Action = File_ImportCarnival
+                Caption = '&Import CarnivalMeet...'
+              end
+              item
+                Caption = '-'
+              end
+              item
+                Action = File_Exit
+                Caption = '&Exit'
+              end>
+            Caption = '&File'
+          end
+          item
+            Items = <
+              item
+                Action = Session_ToggleVisible
+                Caption = '&Toggle visibility.'
+                ImageIndex = 23
+                ImageName = 'VisibilityOn'
+              end
+              item
+                Action = Session_ToggleLock
+                Caption = '&Lock/Unlock'
+                ImageIndex = 21
+                ImageName = 'Lock'
+                ShortCut = 16460
+              end
+              item
+                Action = Session_New
+                Caption = '&New Session...'
+                ImageIndex = 20
+                ImageName = 'New'
+                ShortCut = 16429
+              end
+              item
+                Action = Session_Edit
+                Caption = '&Edit Session ...'
+              end
+              item
+                Action = Session_Delete
+                Caption = '&Delete Session...'
+                ImageIndex = 19
+                ImageName = 'Delete'
+                ShortCut = 16430
+              end
+              item
+                Action = Session_Report
+                Caption = '&Session Report*'
+                ImageIndex = 17
+                ImageName = 'Report'
+              end
+              item
+                Caption = '-'
+              end
+              item
+                Action = Session_Export
+                Caption = 'E&xport Session...'
+              end
+              item
+                Action = Session_Clone
+                Caption = '&Clone Session...'
+              end
+              item
+                Action = Session_Import
+                Caption = '&Import Session...'
+              end
+              item
+                Action = Session_Sort
+                Caption = 'S&ort'
+              end>
+            Caption = '&Session'
+          end
+          item
+            Items = <
+              item
+                Action = Event_ToggleGridView
+                Caption = '&Toggle grid view.'
+                ImageIndex = 16
+                ImageName = 'GridOn'
+              end
+              item
+                Action = Event_MoveUp
+                Caption = '&Move Up'
+                ImageIndex = 12
+                ImageName = 'Up'
+                ShortCut = 16422
+              end
+              item
+                Action = Event_MoveDown
+                Caption = 'M&ove Down'
+                ImageIndex = 13
+                ImageName = 'Down'
+                ShortCut = 16424
+              end
+              item
+                Action = Event_NewRecord
+                Caption = '&New Event'
+                ImageIndex = 20
+                ImageName = 'New'
+                ShortCut = 16429
+              end
+              item
+                Action = Event_Delete
+                Caption = '&Delete Event'
+                ImageIndex = 19
+                ImageName = 'Delete'
+                ShortCut = 16430
+              end
+              item
+                Action = Event_Report
+                Caption = '&Event Report*'
+                ImageIndex = 17
+                ImageName = 'Report'
+              end
+              item
+                Caption = '-'
+              end
+              item
+                Action = Event_BuildFinals
+                Caption = '&Build event finals ...'
+              end
+              item
+                Action = Event_BuildSemiFinals
+                Caption = 'B&uild event semi-finals ...'
+              end
+              item
+                Action = Event_BuildQuarterFinals
+                Caption = 'Bu&ild event quarter-finals ...'
+              end
+              item
+                Visible = False
+                Action = Event_Renumber
+                Caption = '&Renumber Lanes...'
+              end>
+            Caption = '&Events'
+          end
+          item
+            Items = <
+              item
+                Action = Nominate_SortMembers
+                Caption = '&Sort on Name'
+                ImageIndex = 11
+                ImageName = 'Switch'
+              end
+              item
+                Action = Nominate_Report
+                Caption = '&Nominate Report*'
+                ImageIndex = 17
+                ImageName = 'Report'
+              end
+              item
+                Caption = '-'
+              end
+              item
+                Action = Nominate_ClearEventNominations
+                Caption = '&Clear event nominations... '
+              end
+              item
+                Action = Nominate_ClearSessionNominations
+                Caption = 'C&lear session nominations...'
+              end>
+            Caption = '&Nominate'
+          end
+          item
+            Items = <
+              item
+                Action = Heat_MoveUp
+                Caption = '&Move Up'
+                ImageIndex = 12
+                ImageName = 'Up'
+                ShortCut = 16422
+              end
+              item
+                Action = Heat_MoveDown
+                Caption = 'M&ove Down'
+                ImageIndex = 13
+                ImageName = 'Down'
+                ShortCut = 16424
+              end
+              item
+                Action = Heat_ToggleStatus
+                Caption = '&Toggle Heat Status'
+                ImageIndex = 36
+                ImageName = 'HeatStatusToggle'
+                ShortCut = 16468
+              end
+              item
+                Action = Heat_NewRecord
+                Caption = '&New Heat...'
+                ImageIndex = 20
+                ImageName = 'New'
+                ShortCut = 16429
+              end
+              item
+                Action = Heat_Delete
+                Caption = '&Delete Heat...'
+                ImageIndex = 19
+                ImageName = 'Delete'
+                ShortCut = 16430
+              end
+              item
+                Action = Heat_AutoBuild
+                Caption = '&AutoBuild Heats...'
+                ImageIndex = 6
+                ImageName = 'AutoBuild'
+              end
+              item
+                Action = Heat_MarshallReport
+                Caption = 'Ma&rshall sheet*'
+                ImageIndex = 4
+                ImageName = 'Marshall'
+              end
+              item
+                Action = Heat_TimeKeeperReport
+                Caption = 'T&ime Keeper sheet*'
+                ImageIndex = 5
+                ImageName = 'TimeKeeper'
+              end
+              item
+                Action = Heat_PrintSet
+                Caption = '&Print Set'
+                ImageIndex = 3
+                ImageName = 'BatchPrint'
+              end
+              item
+                Action = Heat_Report
+                Caption = '&Heat Report*'
+                ImageIndex = 17
+                ImageName = 'Report'
+              end
+              item
+                Caption = '-'
+              end
+              item
+                Action = Heat_BatchBuildHeats
+                Caption = '&Build ALL Heats...'
+              end
+              item
+                Action = Heat_BatchMarshallReport
+                Caption = 'Print A&LL Marshall Reports...'
+              end
+              item
+                Action = Heat_BatchTimeKeeperReport
+                Caption = 'Print ALL Tim&ekeeper Reports...'
+              end
+              item
+                Visible = False
+                Action = Heat_Renumber
+              end>
+            Caption = '&Heats'
+          end
+          item
+            Items = <
+              item
+                Action = Entrant_MoveUp
+                Caption = '&Move Up'
+                ImageIndex = 12
+                ImageName = 'Up'
+                ShortCut = 16422
+              end
+              item
+                Action = Entrant_MoveDown
+                Caption = 'M&ove Down'
+                ImageIndex = 13
+                ImageName = 'Down'
+                ShortCut = 16424
+              end
+              item
+                Action = Entrant_SwapLanes
+                Caption = '&Swap Lanes...'
+                ImageIndex = 10
+                ImageName = 'Shuffle'
+              end
+              item
+                Action = Entrant_EmptyLane
+                Caption = '&Empty Lane'
+                ImageIndex = 19
+                ImageName = 'Delete'
+                ShortCut = 16472
+              end
+              item
+                Action = Entrant_Strike
+                Caption = 'S&trike Entrant'
+                ImageIndex = 18
+                ImageName = 'DeleteForever'
+                ShortCut = 16430
+              end
+              item
+                Action = Entrant_Renumber
+                Caption = '&Renumber Lanes'
+                ImageIndex = 37
+                ImageName = 'Sort'
+              end
+              item
+                Action = Entrant_GotoMemberDetails
+                Caption = 'Mem&ber'#39's Details...'
+              end
+              item
+                Visible = False
+                Action = Entrant_Sort
+              end>
+            Caption = 'En&trants'
+          end
+          item
+            Items = <
+              item
+                Action = Tools_QualifyTimes
+                Caption = '&Qualify Times...'
+              end
+              item
+                Action = Tools_MembershipType
+                Caption = '&Membership Type...'
+              end
+              item
+                Visible = False
+                Action = Tools_ConnectionManager
+                Caption = '&Connection...'
+              end
+              item
+                Action = Tools_House
+                Caption = '&House...'
+              end
+              item
+                Action = Tools_Score
+                Caption = '&Score, Place, Points...'
+              end
+              item
+                Action = Tools_Divisions
+                Caption = '&Divisions...'
+              end
+              item
+                Action = Tools_LeaderBoard
+                Caption = '&LeaderBoard...'
+              end
+              item
+                Caption = '-'
+              end
+              item
+                Action = Tools_Preferences
+                Caption = '&Preferences...'
+              end>
+            Caption = 'T&ools'
+          end
+          item
+            Items = <
+              item
+                Action = Help_About
+                Caption = '&About...'
+              end
+              item
+                Action = Help_DBVerInfo
+                Caption = '&DB Version Info...'
+              end
+              item
+                Action = Help_LocalHelp
+                Caption = '&Help...'
+              end
+              item
+                Action = Help_OnlineHelp
+                Caption = '&Online Help...'
+              end
+              item
+                Caption = '-'
+              end
+              item
+                Action = Help_Website
+                Caption = '&SCM Homepage...'
+              end>
+            Caption = 'He&lp'
+          end>
+        ActionBar = ActionMainMenuBar1
+      end>
     Images = VirtualImageList1
     OnUpdate = ActionManager1Update
-    Left = 984
-    Top = 344
+    Left = 888
+    Top = 440
     StyleName = 'Platform Default'
     object Help_About: TAction
       Category = 'Help'
       Caption = 'About...'
       OnExecute = Help_AboutExecute
     end
+    object File_ExportCarnival: TAction
+      Category = 'File'
+      Caption = 'Export CarnivalMeet...'
+      Enabled = False
+    end
+    object File_ImportCarnival: TAction
+      Category = 'File'
+      Caption = 'Import CarnivalMeet...'
+      Enabled = False
+    end
     object File_Exit: TAction
       Category = 'File'
       Caption = 'Exit'
       OnExecute = File_ExitExecute
     end
-    object Session_Sort: TAction
+    object Session_ToggleVisible: TAction
       Category = 'Session'
-      Caption = 'Sort'
-      OnExecute = Session_SortExecute
-      OnUpdate = Session_SortUpdate
-    end
-    object Session_Clone: TAction
-      Category = 'Session'
-      Caption = 'Clone Session...'
-      OnExecute = Session_CloneExecute
-      OnUpdate = Session_CloneUpdate
-    end
-    object Session_Export: TAction
-      Category = 'Session'
-      Caption = 'Export Session...'
-      Enabled = False
-    end
-    object Session_Import: TAction
-      Category = 'Session'
-      Caption = 'Import Session...'
-      Enabled = False
-    end
-    object Session_New: TAction
-      Category = 'Session'
-      Caption = 'New Session...'
-      Hint = 'Create a new session.'
-      ShortCut = 16429
-      OnExecute = Session_NewExecute
-      OnUpdate = Session_NewUpdate
-    end
-    object Session_Delete: TAction
-      Category = 'Session'
-      Caption = 'Delete Session...'
-      Hint = 'Delete the current selected session.'
-      ShortCut = 16430
-      OnExecute = Session_DeleteExecute
-      OnUpdate = Session_DeleteUpdate
-    end
-    object Tools_Preferences: TAction
-      Category = 'Tools'
-      Caption = 'Preferences...'
-      OnExecute = Tools_PreferencesExecute
-    end
-    object Session_Report: TAction
-      Category = 'Session'
-      Caption = 'Session Report*'
-      Hint = 'Display the session report.'
-      OnExecute = Session_ReportExecute
-      OnUpdate = Session_ReportUpdate
-    end
-    object Tools_FDAdministrator: TAction
-      Category = 'Tools'
-      Caption = 'FireDAC Administrator...'
-    end
-    object Nominate_Report: TAction
-      Category = 'Nominate'
-      Caption = 'Nominate Report*'
-      Hint = 'Display a nominee'#39's report.'
-      OnExecute = Nominate_ReportExecute
-    end
-    object Event_MoveUp: TAction
-      Category = 'Event'
-      Caption = 'Move Up'
-      Hint = 'Move the event up.'
-      ShortCut = 16422
-      OnExecute = Event_MoveUpExecute
-      OnUpdate = Event_MoveUpOrDownUpdate
-    end
-    object Event_MoveDown: TAction
-      Category = 'Event'
-      Caption = 'Move Down'
-      Hint = 'Move the event down.'
-      ShortCut = 16424
-      OnExecute = Event_MoveDownExecute
-      OnUpdate = Event_MoveUpOrDownUpdate
-    end
-    object Tools_QualifyTimes: TAction
-      Category = 'Tools'
-      Caption = 'Qualify Times...'
-      OnExecute = Tools_QualifyTimesExecute
-    end
-    object Event_Renumber: TAction
-      Category = 'Event'
-      Caption = 'Renumber Lanes...'
-      Enabled = False
-      OnExecute = Event_RenumberExecute
-      OnUpdate = Event_RenumberUpdate
-    end
-    object Entrant_MoveUp: TAction
-      Category = 'Entrant'
-      Caption = 'Move Up'
-      Hint = 'Move the entrant up a lane.'
-      ShortCut = 16422
-      OnExecute = Entrant_MoveUpExecute
-      OnUpdate = Entrant_MoveUpUpdate
-    end
-    object Entrant_MoveDown: TAction
-      Category = 'Entrant'
-      Caption = 'Move Down'
-      Hint = 'Move the entrant down a lane.'
-      ShortCut = 16424
-      OnExecute = Entrant_MoveDownExecute
-      OnUpdate = Entrant_MoveDownUpdate
-    end
-    object Entrant_SwapLanes: TAction
-      Category = 'Entrant'
-      Caption = 'Swap Lanes...'
-      Hint = 'Opens the swap lanes dialogue.'
-      OnExecute = Entrant_SwapLanesExecute
-      OnUpdate = Entrant_SwapLanesUpdate
-    end
-    object Entrant_EmptyLane: TAction
-      Category = 'Entrant'
-      Caption = 'Empty Lane'
-      Hint = 'Empty the lane. The member remains nominated.'
-      ShortCut = 16472
-      OnExecute = Entrant_EmptyLaneExecute
-      OnUpdate = Entrant_EmptyLaneUpdate
-    end
-    object Entrant_Strike: TAction
-      Category = 'Entrant'
-      Caption = 'Strike Entrant'
-      Hint = 'Remove nomination and empty the lane.'
-      ShortCut = 16430
-      OnExecute = Entrant_StrikeExecute
-      OnUpdate = Entrant_StrikeUpdate
-    end
-    object Entrant_Sort: TAction
-      Category = 'Entrant'
-      Caption = 'Sort on TTB'
-      Hint = 'Sort entrants and repair lanes.'
-      OnExecute = Entrant_SortExecute
-      OnUpdate = Entrant_SortUpdate
-    end
-    object Entrant_Renumber: TAction
-      Category = 'Entrant'
-      Caption = 'Renumber Lanes'
-    end
-    object Heat_MoveUp: TAction
-      Category = 'Heat'
-      Caption = 'Move Up'
-      Hint = 'Move the heat up the stack.'
-      ShortCut = 16422
-      OnExecute = Heat_MoveUpExecute
-      OnUpdate = Heat_MoveUpUpdate
-    end
-    object Heat_MoveDown: TAction
-      Category = 'Heat'
-      Caption = 'Move Down'
-      Hint = 'Move the heat down the stack.'
-      ShortCut = 16424
-      OnExecute = Heat_MoveDownExecute
-      OnUpdate = Heat_MoveDownUpdate
-    end
-    object Heat_ToggleStatus: TAction
-      Category = 'Heat'
-      Caption = 'Toggle Heat Status'
-      Hint = 'Toggle the heat status'
-      ShortCut = 16468
-      OnExecute = Heat_ToggleStatusExecute
-      OnUpdate = Heat_ToggleStatusUpdate
-    end
-    object Heat_Renumber: TAction
-      Category = 'Heat'
-      Caption = 'Renumber'
-    end
-    object Heat_NewRecord: TAction
-      Category = 'Heat'
-      Caption = 'New Heat...'
-      Hint = 'Create a new heat'
-      ShortCut = 16429
-      OnExecute = Heat_NewRecordExecute
-      OnUpdate = Heat_NewRecordUpdate
-    end
-    object SCM_Refresh: TAction
-      Category = 'SCM'
-      Caption = 'Refresh'
-      Hint = 'Refresh'
-      OnExecute = SCM_RefreshExecute
-    end
-    object Heat_Delete: TAction
-      Category = 'Heat'
-      Caption = 'Delete Heat...'
-      Hint = 'Delete the selected heat.'
-      ShortCut = 16430
-      OnExecute = Heat_DeleteExecute
-      OnUpdate = Heat_DeleteUpdate
-    end
-    object Heat_HeatReport: TAction
-      Category = 'Heat'
-      Caption = 'Heat Report*'
-      Hint = 'Display a heat report.'
-    end
-    object Heat_MarshallReport: TAction
-      Category = 'Heat'
-      Caption = 'Marshall sheet*'
-      Hint = 'Display a marshall'#39's sheet for all heats.'
-      OnExecute = Heat_MarshallReportExecute
-      OnUpdate = Heat_MarshallReportUpdate
-    end
-    object Heat_TimeKeeperReport: TAction
-      Category = 'Heat'
-      Caption = 'Time Keeper sheet*'
-      Hint = 'Display a timekeeper'#39's sheet for the selected heat.'
-      OnExecute = Heat_TimeKeeperReportExecute
-      OnUpdate = Heat_TimeKeeperReportUpdate
-    end
-    object Heat_AutoBuild: TAction
-      Category = 'Heat'
-      Caption = 'AutoBuild Heats...'
-      Hint = 'Auto-build heats.'
-      OnExecute = Heat_AutoBuildExecute
-      OnUpdate = Heat_AutoBuildUpdate
-    end
-    object Event_NewRecord: TAction
-      Category = 'Event'
-      Caption = 'New Event'
-      Hint = 'Create a new event.'
-      ShortCut = 16429
-      OnExecute = Event_NewRecordExecute
-      OnUpdate = Event_NewRecordUpdate
-    end
-    object Event_Delete: TAction
-      Category = 'Event'
-      Caption = 'Delete Event'
-      Hint = 'Delete the selected event.'
-      ShortCut = 16430
-      OnExecute = Event_DeleteExecute
-      OnUpdate = Event_DeleteUpdate
-    end
-    object Event_Report: TAction
-      Category = 'Event'
-      Caption = 'Event Report*'
-      Hint = 'Display the event report.'
-      OnExecute = Event_ReportExecute
-      OnUpdate = Event_ReportUpdate
-    end
-    object Event_ToggleGridView: TAction
-      Category = 'Event'
-      Caption = 'Toggle grid view.'
-      Hint = 'Toggle grid. Expand or collapse it'#39's view.'
-      ImageIndex = 16
-      ImageName = 'GridOn'
-      OnExecute = Event_ToggleGridViewExecute
-      OnUpdate = Event_ToggleGridViewUpdate
+      Caption = 'Toggle visibility.'
+      GroupIndex = 1
+      Hint = 'Show, hide the visibility of locked sessions.'
+      ImageIndex = 23
+      ImageName = 'VisibilityOn'
+      OnExecute = Session_ToggleVisibleExecute
+      OnUpdate = Session_ToggleVisibleUpdate
     end
     object Session_ToggleLock: TAction
       Category = 'Session'
       Caption = 'Lock/Unlock'
       Hint = 'Toggle the session status.'
+      ImageIndex = 21
+      ImageName = 'Lock'
       ShortCut = 16460
       OnExecute = Session_ToggleLockExecute
       OnUpdate = Session_ToggleLockUpdate
     end
-    object Nominate_TagQualified: TAction
-      Category = 'Nominate'
-      Caption = 'Qualified'
-      GroupIndex = 2
-      Hint = 'Tag events qualified by the nominee.'
+    object Session_New: TAction
+      Category = 'Session'
+      Caption = 'New Session...'
+      Hint = 'Create a new session.'
+      ImageIndex = 20
+      ImageName = 'New'
+      ShortCut = 16429
+      OnExecute = Session_NewExecute
+      OnUpdate = Session_NewUpdate
+    end
+    object Session_Edit: TAction
+      Category = 'Session'
+      Caption = 'Edit Session ...'
+      OnExecute = Session_EditExecute
+      OnUpdate = Session_EditUpdate
+    end
+    object Session_Delete: TAction
+      Category = 'Session'
+      Caption = 'Delete Session...'
+      Hint = 'Delete the current selected session.'
+      ImageIndex = 19
+      ImageName = 'Delete'
+      ShortCut = 16430
+      OnExecute = Session_DeleteExecute
+      OnUpdate = Session_DeleteUpdate
+    end
+    object Session_Report: TAction
+      Category = 'Session'
+      Caption = 'Session Report*'
+      Hint = 'Display the session report.'
+      ImageIndex = 17
+      ImageName = 'Report'
+      OnExecute = Session_ReportExecute
+      OnUpdate = Session_ReportUpdate
+    end
+    object Session_Export: TAction
+      Category = 'Session'
+      Caption = 'Export Session...'
+      Enabled = False
     end
     object Nominate_SortMembers: TAction
       Category = 'Nominate'
@@ -2731,28 +2668,253 @@ object Main: TMain
       OnExecute = Nominate_SortMembersExecute
       OnUpdate = Nominate_SortMembersUpdate
     end
+    object Nominate_Report: TAction
+      Category = 'Nominate'
+      Caption = 'Nominate Report*'
+      Hint = 'Display a nominee'#39's report.'
+      ImageIndex = 17
+      ImageName = 'Report'
+      OnExecute = Nominate_ReportExecute
+      OnUpdate = Nominate_ReportUpdate
+    end
+    object Event_ToggleGridView: TAction
+      Category = 'Events'
+      Caption = 'Toggle grid view.'
+      Hint = 'Toggle grid. Expand or collapse it'#39's view.'
+      ImageIndex = 16
+      ImageName = 'GridOn'
+      OnExecute = Event_ToggleGridViewExecute
+      OnUpdate = Event_ToggleGridViewUpdate
+    end
+    object Event_MoveUp: TAction
+      Category = 'Events'
+      Caption = 'Move Up'
+      Hint = 'Move the event up.'
+      ImageIndex = 12
+      ImageName = 'Up'
+      ShortCut = 16422
+      OnExecute = Event_MoveUpExecute
+      OnUpdate = Event_MoveUpOrDownUpdate
+    end
+    object Event_MoveDown: TAction
+      Category = 'Events'
+      Caption = 'Move Down'
+      Hint = 'Move the event down.'
+      ImageIndex = 13
+      ImageName = 'Down'
+      ShortCut = 16424
+      OnExecute = Event_MoveDownExecute
+      OnUpdate = Event_MoveUpOrDownUpdate
+    end
+    object Tools_QualifyTimes: TAction
+      Category = 'Tools'
+      Caption = 'Qualify Times...'
+      OnExecute = Tools_QualifyTimesExecute
+    end
+    object Event_NewRecord: TAction
+      Category = 'Events'
+      Caption = 'New Event'
+      Hint = 'Create a new event.'
+      ImageIndex = 20
+      ImageName = 'New'
+      ShortCut = 16429
+      OnExecute = Event_NewRecordExecute
+      OnUpdate = Event_NewRecordUpdate
+    end
+    object Event_Delete: TAction
+      Category = 'Events'
+      Caption = 'Delete Event'
+      Hint = 'Delete the selected event.'
+      ImageIndex = 19
+      ImageName = 'Delete'
+      ShortCut = 16430
+      OnExecute = Event_DeleteExecute
+      OnUpdate = Event_DeleteUpdate
+    end
+    object Event_Report: TAction
+      Category = 'Events'
+      Caption = 'Event Report*'
+      Hint = 'Display the event report.'
+      ImageIndex = 17
+      ImageName = 'Report'
+      OnExecute = Event_ReportExecute
+      OnUpdate = Event_ReportUpdate
+    end
+    object Entrant_MoveUp: TAction
+      Category = 'Entrants'
+      Caption = 'Move Up'
+      Hint = 'Move the entrant up a lane.'
+      ImageIndex = 12
+      ImageName = 'Up'
+      ShortCut = 16422
+      OnExecute = Entrant_MoveUpExecute
+      OnUpdate = Entrant_MoveUpUpdate
+    end
+    object Entrant_MoveDown: TAction
+      Category = 'Entrants'
+      Caption = 'Move Down'
+      Hint = 'Move the entrant down a lane.'
+      ImageIndex = 13
+      ImageName = 'Down'
+      ShortCut = 16424
+      OnExecute = Entrant_MoveDownExecute
+      OnUpdate = Entrant_MoveDownUpdate
+    end
+    object Entrant_SwapLanes: TAction
+      Category = 'Entrants'
+      Caption = 'Swap Lanes...'
+      Hint = 'Opens the swap lanes dialogue.'
+      ImageIndex = 10
+      ImageName = 'Shuffle'
+      OnExecute = Entrant_SwapLanesExecute
+      OnUpdate = Entrant_SwapLanesUpdate
+    end
+    object Entrant_EmptyLane: TAction
+      Category = 'Entrants'
+      Caption = 'Empty Lane'
+      Hint = 'Empty the lane. The member remains nominated.'
+      ImageIndex = 19
+      ImageName = 'Delete'
+      ShortCut = 16472
+      OnExecute = Entrant_EmptyLaneExecute
+      OnUpdate = Entrant_EmptyLaneUpdate
+    end
+    object Entrant_Strike: TAction
+      Category = 'Entrants'
+      Caption = 'Strike Entrant'
+      Hint = 'Remove nomination and empty the lane.'
+      ImageIndex = 18
+      ImageName = 'DeleteForever'
+      ShortCut = 16430
+      OnExecute = Entrant_StrikeExecute
+      OnUpdate = Entrant_StrikeUpdate
+    end
+    object Entrant_GotoMemberDetails: TAction
+      Category = 'Entrants'
+      Caption = 'Member'#39's Details...'
+      Hint = 'Show the selected member'#39's details.'
+    end
+    object Entrant_Renumber: TAction
+      Category = 'Entrants'
+      Caption = 'Renumber Lanes'
+      ImageIndex = 37
+      ImageName = 'Sort'
+    end
+    object Heat_MoveUp: TAction
+      Category = 'Heats'
+      Caption = 'Move Up'
+      Hint = 'Move the heat up the stack.'
+      ImageIndex = 12
+      ImageName = 'Up'
+      ShortCut = 16422
+      OnExecute = Heat_MoveUpExecute
+      OnUpdate = Heat_MoveUpUpdate
+    end
+    object Heat_MoveDown: TAction
+      Category = 'Heats'
+      Caption = 'Move Down'
+      Hint = 'Move the heat down the stack.'
+      ImageIndex = 13
+      ImageName = 'Down'
+      ShortCut = 16424
+      OnExecute = Heat_MoveDownExecute
+      OnUpdate = Heat_MoveDownUpdate
+    end
+    object Heat_ToggleStatus: TAction
+      Category = 'Heats'
+      Caption = 'Toggle Heat Status'
+      Hint = 'Toggle the heat status'
+      ImageIndex = 36
+      ImageName = 'HeatStatusToggle'
+      ShortCut = 16468
+      OnExecute = Heat_ToggleStatusExecute
+      OnUpdate = Heat_ToggleStatusUpdate
+    end
+    object Heat_NewRecord: TAction
+      Category = 'Heats'
+      Caption = 'New Heat...'
+      Hint = 'Create a new heat'
+      ImageIndex = 20
+      ImageName = 'New'
+      ShortCut = 16429
+      OnExecute = Heat_NewRecordExecute
+      OnUpdate = Heat_NewRecordUpdate
+    end
+    object SCM_Refresh: TAction
+      Category = 'SCM'
+      Caption = 'Refresh'
+      Hint = 'Refresh'
+      OnExecute = SCM_RefreshExecute
+      OnUpdate = SCM_RefreshUpdate
+    end
+    object Heat_Delete: TAction
+      Category = 'Heats'
+      Caption = 'Delete Heat...'
+      Hint = 'Delete the selected heat.'
+      ImageIndex = 19
+      ImageName = 'Delete'
+      ShortCut = 16430
+      OnExecute = Heat_DeleteExecute
+      OnUpdate = Heat_DeleteUpdate
+    end
+    object Heat_AutoBuild: TAction
+      Category = 'Heats'
+      Caption = 'AutoBuild Heats...'
+      Hint = 'Auto-build heats.'
+      ImageIndex = 6
+      ImageName = 'AutoBuild'
+      OnExecute = Heat_AutoBuildExecute
+      OnUpdate = Heat_AutoBuildUpdate
+    end
+    object Heat_MarshallReport: TAction
+      Category = 'Heats'
+      Caption = 'Marshall sheet*'
+      Hint = 'Display a marshall'#39's sheet for all heats.'
+      ImageIndex = 4
+      ImageName = 'Marshall'
+      OnExecute = Heat_MarshallReportExecute
+      OnUpdate = Heat_MarshallReportUpdate
+    end
+    object Heat_TimeKeeperReport: TAction
+      Category = 'Heats'
+      Caption = 'Time Keeper sheet*'
+      Hint = 'Display a timekeeper'#39's sheet for the selected heat.'
+      ImageIndex = 5
+      ImageName = 'TimeKeeper'
+      OnExecute = Heat_TimeKeeperReportExecute
+      OnUpdate = Heat_TimeKeeperReportUpdate
+    end
     object Tools_MembershipType: TAction
       Category = 'Tools'
       Caption = 'Membership Type...'
       OnExecute = Tools_MembershipTypeExecute
       OnUpdate = Tools_MembershipTypeUpdate
     end
-    object Tools_ConnectionManager: TAction
-      Category = 'Tools'
-      Caption = 'Connection...'
-      OnExecute = Tools_ConnectionManagerExecute
-    end
-    object Entrant_GotoMemberDetails: TAction
-      Category = 'Entrant'
-      Caption = 'Member'#39's Details...'
-      Hint = 'Show the selected member'#39's details.'
+    object Entrant_Sort: TAction
+      Category = 'Entrants'
+      Caption = 'Sort on TTB'
+      Hint = 'Sort entrants and repair lanes.'
+      Visible = False
+      OnExecute = Entrant_SortExecute
+      OnUpdate = Entrant_SortUpdate
     end
     object Heat_PrintSet: TAction
-      Category = 'Heat'
+      Category = 'Heats'
       Caption = 'Print Set'
       Hint = 'Print all sheets (marshall and timekeepers).'
+      ImageIndex = 3
+      ImageName = 'BatchPrint'
       OnExecute = Heat_PrintSetExecute
       OnUpdate = Heat_PrintSetUpdate
+    end
+    object Heat_Report: TAction
+      Category = 'Heats'
+      Caption = 'Heat Report*'
+      Hint = 'Display a heat report.'
+      ImageIndex = 17
+      ImageName = 'Report'
+      OnExecute = Heat_ReportExecute
+      OnUpdate = Heat_ReportUpdate
     end
     object Tools_House: TAction
       Category = 'Tools'
@@ -2760,12 +2922,12 @@ object Main: TMain
       OnExecute = Tools_HouseExecute
       OnUpdate = Tools_HouseUpdate
     end
-    object actnClearEventNominations: TAction
+    object Nominate_ClearEventNominations: TAction
       Category = 'Nominate'
       Caption = 'Clear event nominations... '
       Enabled = False
     end
-    object actnClearSessionNominations: TAction
+    object Nominate_ClearSessionNominations: TAction
       Category = 'Nominate'
       Caption = 'Clear session nominations...'
       Enabled = False
@@ -2777,46 +2939,70 @@ object Main: TMain
       OnUpdate = Help_DBVerInfoUpdate
     end
     object Event_BuildFinals: TAction
-      Category = 'Event'
+      Category = 'Events'
       Caption = 'Build event finals ...'
       OnExecute = Event_BuildFinalsExecute
       OnUpdate = Event_BuildSCMEventTypeUpdate
     end
     object Event_BuildSemiFinals: TAction
-      Category = 'Event'
+      Category = 'Events'
       Caption = 'Build event semi-finals ...'
       OnExecute = Event_BuildSemiFinalsExecute
       OnUpdate = Event_BuildSCMEventTypeUpdate
     end
     object Event_BuildQuarterFinals: TAction
-      Category = 'Event'
+      Category = 'Events'
       Caption = 'Build event quarter-finals ...'
       OnExecute = Event_BuildQuarterFinalsExecute
       OnUpdate = Event_BuildSCMEventTypeUpdate
     end
-    object Session_BatchBuildHeats: TAction
-      Category = 'Session'
+    object Event_Renumber: TAction
+      Category = 'Events'
+      Caption = 'Renumber Lanes...'
+      Enabled = False
+      Visible = False
+      OnExecute = Event_RenumberExecute
+      OnUpdate = Event_RenumberUpdate
+    end
+    object Heat_BatchBuildHeats: TAction
+      Category = 'Heats'
       Caption = 'Build ALL Heats...'
-      OnExecute = Session_BatchBuildHeatsExecute
-      OnUpdate = Session_BatchBuildHeatsUpdate
+      OnExecute = Heat_BatchBuildHeatsExecute
+      OnUpdate = Heat_BatchBuildHeatsUpdate
     end
-    object Session_BatchMarshallReport: TAction
-      Category = 'Session'
+    object Heat_BatchMarshallReport: TAction
+      Category = 'Heats'
       Caption = 'Print ALL Marshall Reports...'
-      OnExecute = Session_BatchMarshallReportExecute
-      OnUpdate = Session_BatchMarshallReportUpdate
+      OnExecute = Heat_BatchMarshallReportExecute
+      OnUpdate = Heat_BatchMarshallReportUpdate
     end
-    object Session_BatchTimeKeeperReport: TAction
-      Category = 'Session'
+    object Heat_BatchTimeKeeperReport: TAction
+      Category = 'Heats'
       Caption = 'Print ALL Timekeeper Reports...'
-      OnExecute = Session_BatchTimeKeeperReportExecute
-      OnUpdate = Session_BatchTimeKeeperReportUpdate
+      OnExecute = Heat_BatchTimeKeeperReportExecute
+      OnUpdate = Heat_BatchTimeKeeperReportUpdate
     end
-    object Session_Edit: TAction
+    object Heat_Renumber: TAction
+      Category = 'Heats'
+      Caption = 'Renumber'
+      Visible = False
+    end
+    object Session_Import: TAction
       Category = 'Session'
-      Caption = 'Edit Session ...'
-      OnExecute = Session_EditExecute
-      OnUpdate = Session_EditUpdate
+      Caption = 'Import Session...'
+      Enabled = False
+    end
+    object Session_Clone: TAction
+      Category = 'Session'
+      Caption = 'Clone Session...'
+      OnExecute = Session_CloneExecute
+      OnUpdate = Session_CloneUpdate
+    end
+    object Session_Sort: TAction
+      Category = 'Session'
+      Caption = 'Sort'
+      OnExecute = Session_SortExecute
+      OnUpdate = Session_SortUpdate
     end
     object Tools_Score: TAction
       Category = 'Tools'
@@ -2836,6 +3022,17 @@ object Main: TMain
       OnExecute = Tools_LeaderBoardExecute
       OnUpdate = Tools_LeaderBoardUpdate
     end
+    object Tools_Preferences: TAction
+      Category = 'Tools'
+      Caption = 'Preferences...'
+      OnExecute = Tools_PreferencesExecute
+    end
+    object Tools_ConnectionManager: TAction
+      Category = 'Tools'
+      Caption = 'Connection...'
+      Visible = False
+      OnExecute = Tools_ConnectionManagerExecute
+    end
     object SCM_ManageMembers: TAction
       Category = 'SCM'
       Caption = 'Manage Members...'
@@ -2843,20 +3040,25 @@ object Main: TMain
       OnExecute = SCM_ManageMembersExecute
       OnUpdate = SCM_ManageMembersUpdate
     end
-    object Session_ToggleVisible: TAction
-      Category = 'Session'
-      Caption = 'Toggle visibility.'
-      GroupIndex = 1
-      Hint = 'Show, hide the visibility of locked sessions.'
-      ImageIndex = 23
-      ImageName = 'VisibilityOn'
-      OnExecute = Session_ToggleVisibleExecute
-      OnUpdate = Session_ToggleVisibleUpdate
+    object Help_LocalHelp: TAction
+      Category = 'Help'
+      Caption = 'Help...'
+      OnExecute = Help_LocalHelpExecute
+    end
+    object Help_OnlineHelp: TAction
+      Category = 'Help'
+      Caption = 'Online Help...'
+      OnExecute = Help_OnlineHelpExecute
+    end
+    object Help_Website: TAction
+      Category = 'Help'
+      Caption = 'SCM Homepage...'
+      OnExecute = Help_WebsiteExecute
     end
   end
   object pumHeat: TPopupMenu
-    Left = 736
-    Top = 280
+    Left = 888
+    Top = 208
     object MoveUp2: TMenuItem
       Action = Heat_MoveUp
     end
@@ -2885,7 +3087,7 @@ object Main: TMain
       Caption = '-'
     end
     object HeatRpt1: TMenuItem
-      Action = Heat_HeatReport
+      Action = Heat_Report
     end
   end
   object pumSession: TPopupMenu
@@ -2976,13 +3178,15 @@ object Main: TMain
     end
   end
   object pumNominate: TPopupMenu
-    Left = 672
-    Top = 280
+    Left = 816
+    Top = 200
     object Sort2: TMenuItem
       Action = Nominate_SortMembers
     end
     object Filter1: TMenuItem
-      Action = Nominate_TagQualified
+      Caption = 'IsQualified'
+      Hint = 'Tag events qualified by the nominee.'
+      Visible = False
     end
     object N10: TMenuItem
       Caption = '-'
@@ -5819,249 +6023,210 @@ object Main: TMain
           item
             Image.Data = {
               89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
-              87000000017352474200AECE1CE9000000CE494441546843ED95410E84300C03
-              E9CBD97D395C38A1D56227B6502B734EDC64A6A8639BFC1B93CFBF6581B70DC6
-              400C3409E40A3501B6DB63A08DB019B0B481A30947DDFE13F63F035940AC8036
-              203EDF13B7F44FEC41264E8D0131503A2E066864E2868A815D3CC33DEECBE457
-              1670BFD0D44C54F14566FA053E8CE2422D955F315098C9D792057C6CB1E418C0
-              38F9AA62C0C7164B7618787AE8A4674AC3C0975A7AA6346C9505B0CB2BAA7218
-              108D86C564018C93AF2A067C6CB1E418C038F9AA62C0C7164B8E018C93AFEA04
-              D76F0A31AA7958A90000000049454E44AE426082}
+              87000000017352474200AECE1CE9000000E7494441546843ED96CB11C3200C44
+              E5CE92CA9254E674664F0EBEC4800492C838F37CC5ACD87DE2B3C8C5BFE5E2EB
+              170CFC9A200420E04C80167206E89E5E23F0742B97053691EAD1DD1A3BD44EEB
+              6A1978249918957D89080646D38B98D74520A2E0140D8ED12931378A400002CE
+              0468216780EEE9BD0422DF48ADB78FB9CE8881EC3752F1C6ADA1C280BB89CF02
+              A9046E090B2E49BEAD757A5BC8AA3BED3F0C4C8BBA520802107026400B7D0568
+              BD27CCE7BC06289AC0C7C0AA14BD8B08068E9020F06F7B40DB73E1E3D12D14BE
+              404D10035A42D9E310C84E58D387809650F63804B213D6F4772ABA1A31506964
+              3F0000000049454E44AE426082}
           end>
       end>
     Left = 488
     Top = 392
   end
   object VirtualImageList1: TVirtualImageList
-    DisabledGrayscale = False
-    DisabledSuffix = '_Disabled'
     Images = <
       item
         CollectionIndex = 0
         CollectionName = 'Search'
-        Disabled = False
         Name = 'Search'
       end
       item
         CollectionIndex = 1
         CollectionName = 'Members'
-        Disabled = False
         Name = 'Members'
       end
       item
         CollectionIndex = 2
         CollectionName = 'Refresh'
-        Disabled = False
         Name = 'Refresh'
       end
       item
         CollectionIndex = 3
         CollectionName = 'BatchPrint'
-        Disabled = False
         Name = 'BatchPrint'
       end
       item
         CollectionIndex = 4
         CollectionName = 'Marshall'
-        Disabled = False
         Name = 'Marshall'
       end
       item
         CollectionIndex = 5
         CollectionName = 'TimeKeeper'
-        Disabled = False
         Name = 'TimeKeeper'
       end
       item
         CollectionIndex = 6
         CollectionName = 'AutoBuild'
-        Disabled = False
         Name = 'AutoBuild'
       end
       item
         CollectionIndex = 7
         CollectionName = 'Cycle'
-        Disabled = False
         Name = 'Cycle'
       end
       item
         CollectionIndex = 8
         CollectionName = 'Sync'
-        Disabled = False
         Name = 'Sync'
       end
       item
         CollectionIndex = 9
         CollectionName = 'Swap'
-        Disabled = False
         Name = 'Swap'
       end
       item
         CollectionIndex = 10
         CollectionName = 'Shuffle'
-        Disabled = False
         Name = 'Shuffle'
       end
       item
         CollectionIndex = 11
         CollectionName = 'Switch'
-        Disabled = False
         Name = 'Switch'
       end
       item
         CollectionIndex = 12
         CollectionName = 'Up'
-        Disabled = False
         Name = 'Up'
       end
       item
         CollectionIndex = 13
         CollectionName = 'Down'
-        Disabled = False
         Name = 'Down'
       end
       item
         CollectionIndex = 14
         CollectionName = 'ExpandContent'
-        Disabled = False
         Name = 'ExpandContent'
       end
       item
         CollectionIndex = 15
         CollectionName = 'GridOff'
-        Disabled = False
         Name = 'GridOff'
       end
       item
         CollectionIndex = 16
         CollectionName = 'GridOn'
-        Disabled = False
         Name = 'GridOn'
       end
       item
         CollectionIndex = 17
         CollectionName = 'Report'
-        Disabled = False
         Name = 'Report'
       end
       item
         CollectionIndex = 18
         CollectionName = 'DeleteForever'
-        Disabled = False
         Name = 'DeleteForever'
       end
       item
         CollectionIndex = 19
         CollectionName = 'Delete'
-        Disabled = False
         Name = 'Delete'
       end
       item
         CollectionIndex = 20
         CollectionName = 'New'
-        Disabled = False
         Name = 'New'
       end
       item
         CollectionIndex = 21
         CollectionName = 'Lock'
-        Disabled = False
         Name = 'Lock'
       end
       item
         CollectionIndex = 22
         CollectionName = 'VisibilityOff'
-        Disabled = False
         Name = 'VisibilityOff'
       end
       item
         CollectionIndex = 23
         CollectionName = 'VisibilityOn'
-        Disabled = False
         Name = 'VisibilityOn'
       end
       item
         CollectionIndex = 24
         CollectionName = 'Qualify'
-        Disabled = False
         Name = 'Qualify'
       end
       item
         CollectionIndex = 25
         CollectionName = 'UnChecked'
-        Disabled = False
         Name = 'UnChecked'
       end
       item
         CollectionIndex = 26
         CollectionName = 'Checked'
-        Disabled = False
         Name = 'Checked'
       end
       item
         CollectionIndex = 52
         CollectionName = 'HeatstatusOpen'
-        Disabled = False
         Name = 'HeatstatusOpen'
       end
       item
         CollectionIndex = 51
         CollectionName = 'HeatStatusRaced'
-        Disabled = False
         Name = 'HeatStatusRaced'
       end
       item
         CollectionIndex = 50
         CollectionName = 'HeatStatusClosed'
-        Disabled = False
         Name = 'HeatStatusClosed'
       end
       item
         CollectionIndex = 55
         CollectionName = 'HeatStatusOpenActive'
-        Disabled = False
         Name = 'HeatStatusOpenActive'
       end
       item
         CollectionIndex = 54
         CollectionName = 'HeatStatusRacedActive'
-        Disabled = False
         Name = 'HeatStatusRacedActive'
       end
       item
         CollectionIndex = 53
         CollectionName = 'HeatStatusClosedActive'
-        Disabled = False
         Name = 'HeatStatusClosedActive'
       end
       item
         CollectionIndex = 56
         CollectionName = 'HeatOpen'
-        Disabled = False
         Name = 'HeatOpen'
       end
       item
         CollectionIndex = 57
         CollectionName = 'HeatRaced'
-        Disabled = False
         Name = 'HeatRaced'
       end
       item
         CollectionIndex = 58
         CollectionName = 'HeatClosed'
-        Disabled = False
         Name = 'HeatClosed'
       end
       item
         CollectionIndex = 59
         CollectionName = 'HeatStatusToggle'
-        Disabled = False
         Name = 'HeatStatusToggle'
       end
       item
         CollectionIndex = 61
         CollectionName = 'Sort'
-        Disabled = False
         Name = 'Sort'
       end>
     ImageCollection = ImageCollection1
@@ -6071,25 +6236,20 @@ object Main: TMain
     Top = 472
   end
   object VirtualImageList2: TVirtualImageList
-    DisabledGrayscale = False
-    DisabledSuffix = '_Disabled'
     Images = <
       item
         CollectionIndex = 25
         CollectionName = 'UnChecked'
-        Disabled = False
         Name = 'UnChecked'
       end
       item
         CollectionIndex = 26
         CollectionName = 'Checked'
-        Disabled = False
         Name = 'Checked'
       end
       item
         CollectionIndex = 24
         CollectionName = 'Qualify'
-        Disabled = False
         Name = 'Qualify'
       end>
     ImageCollection = ImageCollection1
@@ -6176,13 +6336,10 @@ object Main: TMain
     Top = 560
   end
   object VirtualImageList3: TVirtualImageList
-    DisabledGrayscale = False
-    DisabledSuffix = '_Disabled'
     Images = <
       item
         CollectionIndex = 60
         CollectionName = 'ClearBackSpace'
-        Disabled = False
         Name = 'ClearBackSpace'
       end>
     ImageCollection = ImageCollection1
