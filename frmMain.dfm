@@ -46,11 +46,10 @@ object Main: TMain
           Left = 0
           Top = 0
           Width = 729
-          Height = 732
+          Height = 763
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitHeight = 722
           object pnlSessLeftTop: TPanel
             Left = 0
             Top = 0
@@ -72,7 +71,7 @@ object Main: TMain
             Left = 10
             Top = 20
             Width = 649
-            Height = 712
+            Height = 743
             Margins.Left = 10
             Margins.Top = 0
             Margins.Right = 10
@@ -93,7 +92,7 @@ object Main: TMain
             Left = 669
             Top = 20
             Width = 60
-            Height = 712
+            Height = 743
             ControlCollection = <
               item
                 Control = spbtnSessionToggleVisible
@@ -177,7 +176,6 @@ object Main: TMain
             Align = alRight
             BevelOuter = bvNone
             TabOrder = 2
-            ExplicitHeight = 702
             DesignSize = (
               60
               743)
@@ -293,7 +291,6 @@ object Main: TMain
           BevelOuter = bvNone
           Caption = 'pnlSessionClient'
           TabOrder = 1
-          ExplicitHeight = 722
           object pnlSessClientTop: TPanel
             Left = 0
             Top = 0
@@ -314,18 +311,17 @@ object Main: TMain
             Left = 0
             Top = 20
             Width = 677
-            Height = 712
+            Height = 743
             Align = alClient
             BevelOuter = bvNone
             Caption = 'Panel7'
             TabOrder = 1
-            ExplicitHeight = 702
             object Event_Grid: TDBGrid
               AlignWithMargins = True
               Left = 10
               Top = 0
               Width = 597
-              Height = 712
+              Height = 743
               Margins.Left = 10
               Margins.Top = 0
               Margins.Right = 10
@@ -346,7 +342,7 @@ object Main: TMain
               Left = 617
               Top = 0
               Width = 60
-              Height = 712
+              Height = 743
               ControlCollection = <
                 item
                   Control = ShapeBarEv1
@@ -440,7 +436,6 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 1
-              ExplicitHeight = 702
               DesignSize = (
                 60
                 743)
@@ -596,8 +591,6 @@ object Main: TMain
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitWidth = 1402
-          ExplicitHeight = 721
           DesignSize = (
             1406
             763)
@@ -659,7 +652,6 @@ object Main: TMain
               Align = alLeft
               BevelOuter = bvNone
               TabOrder = 0
-              ExplicitHeight = 701
               DesignSize = (
                 352
                 743)
@@ -804,7 +796,6 @@ object Main: TMain
               Align = alLeft
               BevelOuter = bvNone
               TabOrder = 1
-              ExplicitHeight = 673
               DesignSize = (
                 60
                 715)
@@ -891,7 +882,6 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 2
-              ExplicitHeight = 701
               object Nominate_ControlList: TControlList
                 Left = 57
                 Top = 0
@@ -2148,8 +2138,6 @@ object Main: TMain
       Height = 48
       Action = SCM_Refresh
       Anchors = []
-      ImageIndex = 2
-      ImageName = 'Refresh'
       Images = VirtualImageList1
       Flat = True
       Layout = blGlyphTop
@@ -2162,8 +2150,6 @@ object Main: TMain
       Height = 48
       Action = SCM_ManageMembers
       Anchors = []
-      ImageIndex = 1
-      ImageName = 'Members'
       Images = VirtualImageList1
       Flat = True
       Layout = blGlyphTop
@@ -2188,7 +2174,7 @@ object Main: TMain
     Font.Height = -16
     Font.Name = 'Segoe UI'
     Font.Style = []
-    Spacing = 0
+    Spacing = 6
     ExplicitWidth = 1410
   end
   object ActionManager1: TActionManager
@@ -2200,10 +2186,14 @@ object Main: TMain
               item
                 Action = File_ExportCarnival
                 Caption = 'E&xport CarnivalMeet...'
+                ImageIndex = 46
+                ImageName = 'Export'
               end
               item
                 Action = File_ImportCarnival
                 Caption = '&Import CarnivalMeet...'
+                ImageIndex = 39
+                ImageName = 'import'
               end
               item
                 Caption = '-'
@@ -2211,6 +2201,8 @@ object Main: TMain
               item
                 Action = File_Exit
                 Caption = '&Exit'
+                ImageIndex = 38
+                ImageName = 'Exit'
               end>
             Caption = '&File'
           end
@@ -2239,6 +2231,8 @@ object Main: TMain
               item
                 Action = Session_Edit
                 Caption = '&Edit Session ...'
+                ImageIndex = 45
+                ImageName = 'Edit'
               end
               item
                 Action = Session_Delete
@@ -2259,18 +2253,26 @@ object Main: TMain
               item
                 Action = Session_Export
                 Caption = 'E&xport Session...'
-              end
-              item
-                Action = Session_Clone
-                Caption = '&Clone Session...'
+                ImageIndex = 46
+                ImageName = 'Export'
               end
               item
                 Action = Session_Import
                 Caption = '&Import Session...'
+                ImageIndex = 39
+                ImageName = 'import'
+              end
+              item
+                Action = Session_Clone
+                Caption = '&Clone Session...'
+                ImageIndex = 44
+                ImageName = 'clone'
               end
               item
                 Action = Session_Sort
                 Caption = 'S&ort'
+                ImageIndex = 8
+                ImageName = 'Sync'
               end>
             Caption = '&Session'
           end
@@ -2322,19 +2324,27 @@ object Main: TMain
               item
                 Action = Event_BuildFinals
                 Caption = '&Build event finals ...'
+                ImageIndex = 6
+                ImageName = 'AutoBuild'
               end
               item
                 Action = Event_BuildSemiFinals
                 Caption = 'B&uild event semi-finals ...'
+                ImageIndex = 6
+                ImageName = 'AutoBuild'
               end
               item
                 Action = Event_BuildQuarterFinals
                 Caption = 'Bu&ild event quarter-finals ...'
+                ImageIndex = 6
+                ImageName = 'AutoBuild'
               end
               item
                 Visible = False
                 Action = Event_Renumber
                 Caption = '&Renumber Lanes...'
+                ImageIndex = 7
+                ImageName = 'Cycle'
               end>
             Caption = '&Events'
           end
@@ -2438,18 +2448,26 @@ object Main: TMain
               item
                 Action = Heat_BatchBuildHeats
                 Caption = '&Build ALL Heats...'
+                ImageIndex = 6
+                ImageName = 'AutoBuild'
               end
               item
                 Action = Heat_BatchMarshallReport
                 Caption = 'Print A&LL Marshall Reports...'
+                ImageIndex = 6
+                ImageName = 'AutoBuild'
               end
               item
                 Action = Heat_BatchTimeKeeperReport
                 Caption = 'Print ALL Tim&ekeeper Reports...'
+                ImageIndex = 6
+                ImageName = 'AutoBuild'
               end
               item
                 Visible = False
                 Action = Heat_Renumber
+                ImageIndex = 7
+                ImageName = 'Cycle'
               end>
             Caption = '&Heats'
           end
@@ -2498,6 +2516,8 @@ object Main: TMain
               item
                 Action = Entrant_GotoMemberDetails
                 Caption = 'Mem&ber'#39's Details...'
+                ImageIndex = 1
+                ImageName = 'Members'
               end
               item
                 Visible = False
@@ -2550,18 +2570,26 @@ object Main: TMain
               item
                 Action = Help_About
                 Caption = '&About...'
+                ImageIndex = 43
+                ImageName = 'info'
               end
               item
                 Action = Help_DBVerInfo
                 Caption = '&DB Version Info...'
+                ImageIndex = 43
+                ImageName = 'info'
               end
               item
                 Action = Help_LocalHelp
                 Caption = '&Help...'
+                ImageIndex = 42
+                ImageName = 'Help'
               end
               item
                 Action = Help_OnlineHelp
                 Caption = '&Online Help...'
+                ImageIndex = 42
+                ImageName = 'Help'
               end
               item
                 Caption = '-'
@@ -2569,6 +2597,8 @@ object Main: TMain
               item
                 Action = Help_Website
                 Caption = '&SCM Homepage...'
+                ImageIndex = 41
+                ImageName = 'home'
               end>
             Caption = 'He&lp'
           end>
@@ -2582,21 +2612,29 @@ object Main: TMain
     object Help_About: TAction
       Category = 'Help'
       Caption = 'About...'
+      ImageIndex = 43
+      ImageName = 'info'
       OnExecute = Help_AboutExecute
     end
     object File_ExportCarnival: TAction
       Category = 'File'
       Caption = 'Export CarnivalMeet...'
       Enabled = False
+      ImageIndex = 46
+      ImageName = 'Export'
     end
     object File_ImportCarnival: TAction
       Category = 'File'
       Caption = 'Import CarnivalMeet...'
       Enabled = False
+      ImageIndex = 39
+      ImageName = 'import'
     end
     object File_Exit: TAction
       Category = 'File'
       Caption = 'Exit'
+      ImageIndex = 38
+      ImageName = 'Exit'
       OnExecute = File_ExitExecute
     end
     object Session_ToggleVisible: TAction
@@ -2632,6 +2670,8 @@ object Main: TMain
     object Session_Edit: TAction
       Category = 'Session'
       Caption = 'Edit Session ...'
+      ImageIndex = 45
+      ImageName = 'Edit'
       OnExecute = Session_EditExecute
       OnUpdate = Session_EditUpdate
     end
@@ -2658,6 +2698,8 @@ object Main: TMain
       Category = 'Session'
       Caption = 'Export Session...'
       Enabled = False
+      ImageIndex = 46
+      ImageName = 'Export'
     end
     object Nominate_SortMembers: TAction
       Category = 'Nominate'
@@ -2793,6 +2835,8 @@ object Main: TMain
       Category = 'Entrants'
       Caption = 'Member'#39's Details...'
       Hint = 'Show the selected member'#39's details.'
+      ImageIndex = 1
+      ImageName = 'Members'
     end
     object Entrant_Renumber: TAction
       Category = 'Entrants'
@@ -2844,6 +2888,8 @@ object Main: TMain
       Category = 'SCM'
       Caption = 'Refresh'
       Hint = 'Refresh'
+      ImageIndex = 2
+      ImageName = 'Refresh'
       OnExecute = SCM_RefreshExecute
       OnUpdate = SCM_RefreshUpdate
     end
@@ -2935,24 +2981,32 @@ object Main: TMain
     object Help_DBVerInfo: TAction
       Category = 'Help'
       Caption = 'DB Version Info...'
+      ImageIndex = 43
+      ImageName = 'info'
       OnExecute = Help_DBVerInfoExecute
       OnUpdate = Help_DBVerInfoUpdate
     end
     object Event_BuildFinals: TAction
       Category = 'Events'
       Caption = 'Build event finals ...'
+      ImageIndex = 6
+      ImageName = 'AutoBuild'
       OnExecute = Event_BuildFinalsExecute
       OnUpdate = Event_BuildSCMEventTypeUpdate
     end
     object Event_BuildSemiFinals: TAction
       Category = 'Events'
       Caption = 'Build event semi-finals ...'
+      ImageIndex = 6
+      ImageName = 'AutoBuild'
       OnExecute = Event_BuildSemiFinalsExecute
       OnUpdate = Event_BuildSCMEventTypeUpdate
     end
     object Event_BuildQuarterFinals: TAction
       Category = 'Events'
       Caption = 'Build event quarter-finals ...'
+      ImageIndex = 6
+      ImageName = 'AutoBuild'
       OnExecute = Event_BuildQuarterFinalsExecute
       OnUpdate = Event_BuildSCMEventTypeUpdate
     end
@@ -2960,6 +3014,8 @@ object Main: TMain
       Category = 'Events'
       Caption = 'Renumber Lanes...'
       Enabled = False
+      ImageIndex = 7
+      ImageName = 'Cycle'
       Visible = False
       OnExecute = Event_RenumberExecute
       OnUpdate = Event_RenumberUpdate
@@ -2967,40 +3023,54 @@ object Main: TMain
     object Heat_BatchBuildHeats: TAction
       Category = 'Heats'
       Caption = 'Build ALL Heats...'
+      ImageIndex = 6
+      ImageName = 'AutoBuild'
       OnExecute = Heat_BatchBuildHeatsExecute
       OnUpdate = Heat_BatchBuildHeatsUpdate
     end
     object Heat_BatchMarshallReport: TAction
       Category = 'Heats'
       Caption = 'Print ALL Marshall Reports...'
+      ImageIndex = 6
+      ImageName = 'AutoBuild'
       OnExecute = Heat_BatchMarshallReportExecute
       OnUpdate = Heat_BatchMarshallReportUpdate
     end
     object Heat_BatchTimeKeeperReport: TAction
       Category = 'Heats'
       Caption = 'Print ALL Timekeeper Reports...'
+      ImageIndex = 6
+      ImageName = 'AutoBuild'
       OnExecute = Heat_BatchTimeKeeperReportExecute
       OnUpdate = Heat_BatchTimeKeeperReportUpdate
     end
     object Heat_Renumber: TAction
       Category = 'Heats'
       Caption = 'Renumber'
+      ImageIndex = 7
+      ImageName = 'Cycle'
       Visible = False
     end
     object Session_Import: TAction
       Category = 'Session'
       Caption = 'Import Session...'
       Enabled = False
+      ImageIndex = 39
+      ImageName = 'import'
     end
     object Session_Clone: TAction
       Category = 'Session'
       Caption = 'Clone Session...'
+      ImageIndex = 44
+      ImageName = 'clone'
       OnExecute = Session_CloneExecute
       OnUpdate = Session_CloneUpdate
     end
     object Session_Sort: TAction
       Category = 'Session'
       Caption = 'Sort'
+      ImageIndex = 8
+      ImageName = 'Sync'
       OnExecute = Session_SortExecute
       OnUpdate = Session_SortUpdate
     end
@@ -3037,22 +3107,30 @@ object Main: TMain
       Category = 'SCM'
       Caption = 'Manage Members...'
       Hint = 'Create, edit, delete, stats, reports for your club members.'
+      ImageIndex = 1
+      ImageName = 'Members'
       OnExecute = SCM_ManageMembersExecute
       OnUpdate = SCM_ManageMembersUpdate
     end
     object Help_LocalHelp: TAction
       Category = 'Help'
       Caption = 'Help...'
+      ImageIndex = 42
+      ImageName = 'Help'
       OnExecute = Help_LocalHelpExecute
     end
     object Help_OnlineHelp: TAction
       Category = 'Help'
       Caption = 'Online Help...'
+      ImageIndex = 42
+      ImageName = 'Help'
       OnExecute = Help_OnlineHelpExecute
     end
     object Help_Website: TAction
       Category = 'Help'
       Caption = 'SCM Homepage...'
+      ImageIndex = 41
+      ImageName = 'home'
       OnExecute = Help_WebsiteExecute
     end
   end
@@ -6033,8 +6111,315 @@ object Main: TMain
               404D10035A42D9E310C84E58D387809650F63804B213D6F4772ABA1A31506964
               3F0000000049454E44AE426082}
           end>
+      end
+      item
+        Name = 'Exit'
+        SourceImages = <
+          item
+            Image.Data = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000017352474200AECE1CE9000001B3494441546843ED99BB2E05511486
+              BF53E924121AA2D57A0209954E47A344212A89DEA5388D44251A0A858A17D0F1
+              329E83ACE40CC7D897D997396BEF98A92699B5F6FCDFBAEC59E7EC11955FA3CA
+              F533006867D09781256015984F10FA9EE0EB757501DC00A7DE15DC06227E2B71
+              0DA7BB0DE00358CEF06215800BE03C8378594205E01E38AC19E00DD86C015C26
+              0049467BBB4C3D6002F0ED56BD09F42D3C00F822D4F7F312323007EC002F31B0
+              DA000BC0E304602F0642136005786AED78C1105A006BC033B06E289B20082D00
+              D1EDFAE27786D004C802A10D900C51028040C8F0681B399CE59413A03D3F856E
+              EBE26F9B82AD1039013E431507DA1B216A0210DE3F1003C05419545F42A94DBC
+              015C59FA62264D1CD893BFCCCF80EB50F1629FB30762014E80DB18F125001C00
+              0FB1E2B501F627E3B4497F15C39C8CD3BB358FD3A2BD0DD139F20D78094DDC40
+              048BD7EE81E9EA9152AAF2477DECD6FBED5742092541FC1B00DF9FBBCD202701
+              91FB263072EFF3CD9E813BE03869D51F6795F301D7E73D944B054044BE02DBA1
+              6A0DF66A008BC018384A8450036874577DCC9A18FCD9B8177B74D4157F00E81A
+              A9BEECBE007A7E5F31069917990000000049454E44AE426082}
+          end>
+      end
+      item
+        Name = 'import'
+        SourceImages = <
+          item
+            Image.Data = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000017352474200AECE1CE9000001F4494441546843ED98BD2E44411480
+              BF2DD4B412A1D01195074078000A74A2A5E305AC17A0A3151D0A1E80E0015442
+              A720122DB5464E7247D6B873EF999FBDBB9BCC94BBE7CE7CDF9C3333776E8B01
+              6FAD01E7270BF43A839A0C2C02E3C044C3B0AFC01B7053356E9DC011B0D530B8
+              3DDC31B0ED62A812D8010E7A0C6F86DF050ECB585C0223C02330D62702EFC00C
+              F069F3B8049681CB3E8137182BC09556A00DEC59C10B0D0BDD5AE3ED03C2F5A7
+              B932E012B86B48621EC80265259433A02CC15C42A916F15431E3CFCA9937617D
+              9101813F2F88D6001F899E0B18F8E942E009F0914822305772906876211BDE74
+              E3232102F62E78EF73907996EC6FB80B3E4442C550F73AADEAA408AA83EF8A44
+              2A012D7C72891402BEF04925620542E19349C40854C15F00ABD6022AFB4D427C
+              76A77F6B3254A00E5EEED2F6EBB0DC27E46E6B8B45498408D4C1CB8155761089
+              809C23723A279308119804CE80D992121178695502F27F99C403B00EBCF8ECDD
+              2102D2FF28700A2C1583497D1B788D802D710D6C001F3EF0121B2A20CF0E0327
+              C0B705AF15301243C026F0E50B1F2B20CFCBE02260B7BA12EA8C77F5A1F289C9
+              40D5003E022A5057501670CC4CCE80B6AE7209E512D2D68A232E97502EA15C42
+              913350514272987536B90B68BE2B7911756B117B41C404678198D94BF16CCE40
+              8A598CE9E30712D68D31561E64D80000000049454E44AE426082}
+          end>
+      end
+      item
+        Name = 'settings'
+        SourceImages = <
+          item
+            Image.Data = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000017352474200AECE1CE9000005C4494441546843ED9965A86E451486
+              9F2B228A817F544C145BB1C0C0C440B1BBC50E0CEC0E30B0BB153BB0BB453130
+              B1B0B015C544FD23068A88C8036B2EF3CD99FDED7D3E36DE7BE02E383FBE3D33
+              6BD63B6BAD77AD993389092E9326B8FD4C0330A53DD8B7072E050E6E01751970
+              485FC0FB06F038B0518B714F001B4FAD003E03166931EE7360D1A911C0BCC0B7
+              61D8DDC00E85917701DBC7B7F980EFFA00D16708AD0D3C17465D001C5518783E
+              70647C5B0778FEFF02B032F07A87CDF601AE8D79870226742E26EE25F1615FE0
+              BA0E3A5BF7EEE2815B816581DB80731B365D033805582FC637031E2DE66E0A3C
+              12DF3CFDD381671AF41D03EC02BC07EC3A0C681B0063D6D84D62DC7A721AABAC
+              029C006C5E6CB234F061F16D29E083E29B9E35B4EE89EFEAD593E6531273C99C
+              AA4A1B801780352B2BFF0C6F9C5C19934AB701FE2AC66604EE6BA0D053014F7D
+              A68ABE1781B5460160129E170BBF01DE010C8D9AFC039C0DDC0C4893C3449ADD
+              1D380E98BE61A2A1B63C307F8C1F1D9E1A33BDC9037303AF650A4E04CE048CE3
+              FD0A203F017B018FB5185E0E6F02DC00CC990D68F835913F86E619D9011AAE3F
+              944A9A005C0CC824CA27806CF06BB6D8DF52E2628094F8CB388D4FD3670FEAFD
+              14907A73B69B2D7E2F1E9365B0C3BA00D0384F3F89F467FF3225C4BE2AA763BD
+              3040E9350F98685B67AEF364127F7705313320EB48BF8A74282BFDD15541CC33
+              0AF474CA85FB832026ABA90110B58C60B94F62729E94B50AC3EC90B7E5F8058A
+              495F870EEB4A9BB8B73A4CF6245F44225F9D2F6ECA010B92896B7C27793F803D
+              39647779BC46ADF9122933D5919AAA0D83A297C9061F004E0B261C5833AC0E4C
+              075C01EC5FECD24469D60BEB4612C3E6A5F861A54EE1E427795D7E2F25A76EC7
+              7E0FB0867155DA0A998BACC69703738486EBA35AE60A6701DE041263D44E59CF
+              A49397D9560C03733D86EE39F1414F9B033254A37401E062DB87BD43CBB1959E
+              6835E0E5187F2368B7B6A90CB2520CAC0EBC524CCA3B5A7365B761C63BD61580
+              6DB2CA15DB04D92017C3ECAAF860714A60CBFDF59E454F39001848C8D823B5E4
+              367C790E8E1C422E6C03A0C1A93DBE1238A8E1E4CCA90363CCA64D40B9E41EE8
+              15C0EDC04E4342C8B04805C6E45DAE01C0BB59325B300DB7260077003BF71142
+              F62CF627F384B29A620B97852A71BFC96A22E79253AC35C142571636EF1BB29C
+              F27DF45D437BAC361A3D3E0A4A6EC8E180BD522916B05BB28F9EAEB54391D353
+              F2FADBE4AC15347B9D8B0AC516D0B3807F6BDE680220C5C936DB668B648C238A
+              3EA9D4D94721B3DFB91090D992DC1BF42A550F480D80EDB26ECC9F472C24F2F3
+              CFB55328BE59D0BC1BA79A9086E57EEFC2B50256AAB5E67880E911C071EF19DE
+              4F0CE7C95203E0F52E9DBCB1AAE132CB78C4C266E5CD9B3993DBCA3A1E91B104
+              92724B4F6CD706C09BD0DBD9242971BC00C663E4B0B902907A93AC50F6434D39
+              60D278E5533E8ACBFB6F992219C430334C3618E164932A3DF5545C9A0C8FFC21
+              60D6C8B72563B257564965409A00CC05BC0A2C14B3056328D984ED09EC9169F9
+              2A9E40CAB6A0CD0B26A94F350B66136F026E8CA6D0D0D168E54B6055E0C7AE00
+              9C67A94FA1632E488BB61135F93B5CAD01C6FA30312F3C0043738686895EAAA4
+              DD14FB86526A553A79204DD2BDEB573631197DCFA9F5F5CF0216BFDAB38A4569
+              DD8A3EF5D84A1B52A53C1D615AC5DAD6CC6D013C98AD2C6F454BC46BC5568576
+              E3F6E3E29B73CDA75CDE8A8B7ABA37D8140A64E16CD296C0434D2E6D03E03AAF
+              93BEB4C9BF031C9C29F565CE5EDE1659F17F04E5CDCD9B96FF1B507C34F0A1C0
+              1CA889B5C83F5FF2F26BE598B95D00B43EB08656DBE4D45DD65AE5BCE5B67BB5
+              ED6E93D6BDBB0068DB248D7BFA29146A949753B357CC7401EAAABF3AAF4F00BE
+              E6D9412A7766ED77DAD82E76C7F861673BE6956D14247D02707F13B7EC814ABB
+              EC894CE85EA46F000F0F79004E06FBFE593EC78F0CA66F00F99B6A9351D537CE
+              5111F40D60543B465E370DC0C847D7D3C209EF81FF00B0F61A40C56188A00000
+              000049454E44AE426082}
+          end>
+      end
+      item
+        Name = 'home'
+        SourceImages = <
+          item
+            Image.Data = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000017352474200AECE1CE90000023D494441546843ED973F4C15411087
+              3F2C889556C6865859416322A1920A2B3AEDAC08055190466C90466984466DFC
+              1B0A4265A79D955650194968B4A22234C40A2A430164C85C981C8FB7B3F79677
+              9CD96D2EB99D9DF97D33B37B7B3D347CF4345C3F19A0EE0AE60AFCEF1578A180
+              C53339EF79B5D00DE00330AA8ABF0193C0566A82F300B80F7C04AE95C4FE051E
+              015F5242A4065800660302178167A9205201DCD4AC8F1861DBDA36F24ADAA9CF
+              CCFDD06A6C760A9202E0810ABC6AC47C55F13BFAEEBADADC3336BB6AF3B91388
+              4E015E013325017380B452AB21ADF3B234F11A785A15A22A40BFB6CCB0092CED
+              2027CDF78098BB5A0D69BB62AC6A4BFD8905A90230A6E22F9B60D20672C2EC39
+              055C511FD27EC5F8A73E569C3E8ECD6201DE028F4B01A485DEC40435B64F0069
+              213BDE01D35E7F5E805BC02760C838FEAD195BF3063BC3EE8E5663C0CCFF041E
+              021B21DF1E80090D70C9385B56F1FBA100CEF95E8D316EEC0F34C6523B1F1E80
+              C3928329DD844E6D51667208BC2FAD68AB31166010588F92146F7C1BF8659625
+              05F000C74B3EBDC2563D03B8B39122F5EAC31DD3D3126E6719E02403EEA4E50A
+              98B669F7DF2B199564154F5916B22F5C77ED141241CF9DFB603E0368A652EE01
+              5B01C970AB5154E8C257A095C032E085DE0319A08ECB9CF477D116A10A88DD59
+              FB44B4D7F2216B3C40689386E6EDA9554B05420243F3B50334BE851A01E0BCEA
+              1C9F30E50F55CC5DC9C6497A99CB00DE0CA4FC905588D9BD259EDB68F7D45488
+              94012A242DE9925C81A4E9ACE0EC08BCD697313ACCA40E0000000049454E44AE
+              426082}
+          end>
+      end
+      item
+        Name = 'Help'
+        SourceImages = <
+          item
+            Image.Data = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000017352474200AECE1CE9000004E0494441546843ED9947C8644510C7
+              7F7B5AF0A02B0A62C415BD284604C38AAB07B38859C1C08AF1A06B40761104F5
+              2282398098308B398059CC6000C584822228C683D9835EE507DD1F3D6F5EA87E
+              33201F6CC1F0867955D555DD5D55FFAA59C222A7258BDC7ED639F07F9FE03C4F
+              600B6025B03BB075F1D1C76F8BCF07C09BC00FF3707E5607B607CE00F606F6A8
+              34E87DE01DE04EE08B4AD905F6B10EAC0F5C045C08F87D16FA1BB81EB80EF07B
+              158D71E014602DB04363A5AF810781EFD3F5C84FD9BC5E5B16CF93806D1BF29F
+              03D700F7D47850EBC00DC0F98D05DE021E48C6FF135C7C3D40274E06F66DC8E8
+              C069413D5569F479E09042F16FC0D9C013D1C53AF88E016E03362ADE1BF4CB23
+              7AA3277013705EA1F033E0C45982AF619CC9E06160C7E2F70F5346EBF523E2C0
+              596987B2A2C780E323BB3382E751E0B842EE12E0AA3E3D430E9C907626EBB8A5
+              71125DBAB7015600BB017E37659A2A9F0E387533706EC167AC3CD425D7E780E9
+              D13C9DB3CD2BC081030658C42E068E0496B6F0BE0DDC18889B97810392BCD9C9
+              3AD39A62FB1CB81CB82C293125EE05FCD8E3C061C05DC026815D3E15B8BF876F
+              73E0DD947A65BB02D09E29EA72C0A052412E5247034FF52CB8292044D82CF1BC
+              08BC0ABC067C05EC94AE9E812FFD0EEC0F7CDAA3F328E0C9F4DEDD7703A72A76
+              970356C60B92B0795E8CD347E56969DC76C9C8A64C79BF75E69101BD62A65C27
+              AC4156FE09EA72E0236097C46916BA6360214FC09A7026B02615B5361175AA5B
+              B2209A9EFB487DB727868F815D230E8824BF498CC2839D8168851DB0878D815F
+              1293C17EED808015FB93027658DC2C720BD47602AB80BB134767F00C59DAF1BE
+              DC51339A996D88CAEB29C498C04A6D0E94F7DF6B918F7068A1C8FBE7804313E3
+              5609F80DC99585742A0EDA1C30DB98C7A5C301179D079555D6605E1D546A7A7E
+              36F15A08CD4EBD57A80C60D39FB867562AAFC10BC52944F48A8F72BA9D0AE4B6
+              13F803589634FBFC2BB24A0F8FD8C6DD97ACB00755EADB00F833C9F8DC70E804
+              4A0714AEEE928A054AE36D76C4FFB56431CD9B1872A0BC42E2A0D1FD6A4AC7A6
+              E55F817D802F6BAD074405E221297485CA203E187869C4A28AEC07BC9E646D7A
+              8E1DA9C72B27349142415CA651270E02B431740E706B12B4E2365BD1A8CED3D3
+              E442FE501A157FDBE34AB314324FA0A437A21637F8CA0C660C194B0BD496859C
+              20089FA57943895A1F9A50C2C9C6C440AC0BCCBD570CAA2260AED6B0287F093D
+              ECEAF66C0A7639E0902943D7089CEE3348A4FA73D4E2065F09A78D4D87691314
+              6D68CC20B5E313618890C1343A26961CB73C9EACAD6E68942B83C719908D454D
+              4D28B1CF4F806D6294CCFD9E7C9E1555B7942ED46CEAC54462A3283947CA0D4B
+              6D1516FBE419D1E8A65E439D83DE57585C3B13B2B770BC22F2FC37E879733634
+              D503947A86E642F25E9D4625592E3A1B0ADA3BC1D69C090DCE49230EB8C233C0
+              11C5527652EE4CDF98A5C601E3C32E30CF82940DCD47A30EA8F05EC0794E268B
+              9DF0A06FDC1271C206C56197452A53682E2A738D03F297F8262F36EFF1FAE03C
+              B436069ABBE83CE7D29E3F384C995EADEFD24779FB5F3F5E15875F5D7F705CD9
+              37076D3BCEDA13C83A16F55F4CE5465870C42B22CF3C088BDC7B796C4E44A80E
+              CD6A0AE484FEB127D066A49041471C84F5FDCDEAA04AC327065451AF9B7CF374
+              60AC0D33C9AD7360A6ED9B83F0A23F81FF0008DEF53185E762FC000000004945
+              4E44AE426082}
+          end>
+      end
+      item
+        Name = 'info'
+        SourceImages = <
+          item
+            Image.Data = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000017352474200AECE1CE90000042E494441546843ED9947A815491486
+              3FB72E0C881B130AAE467414845117868563449C3163405147174E7010441046
+              712328C6013161CE19CC2E745C184031A12B41316D440C0BD7F20F558FBA7DBB
+              6F5755973E1E78A0B9977BEB9C3A7F8513FE6E450B97562DDC7FBE0368EE1D4C
+              B9035D8021407FA0BBF308E373E7B903FC07BC4A01BE2A801F8079C020E0A740
+              876E0337801DC09340DDA6E1B100DA007F038B017DAF229F80F5C03A40DF8324
+              06C04C6029D02B33D353E000F0D21C0FFBA9613A5E5D9DCFE940CF8CFE63602D
+              B03B044128800DC09F9909AE03FB8DF39F3D276F0D08C40C6070464700E678DA
+              090AA3E781518EE177C002E084EF6405E326005B810ECEFFBAF43D7CECFAEEC0
+              26E077C7E023606A95CB97714EC1E030D0DBF9FDAE89680D71F800F8CDAC9035
+              740C98ECB33A11638E02931CBD65C0EA4676CA004C312B636DFC9BD989081F4B
+              5536038B9C51BA2B078BB41A015078549CB6D1E60AF073E9F469065C06861B53
+              8A4ECA33B921B6118015C03FC68842E240E0751AFF4AAD74066E9AD0ABC12B01
+              F95327450074A964C026A95F8153A5D3D60E9806FC627E92EEA1407DE99E343A
+              5A7D2D605DC62E02A0CCF89751569C578D132A0AAF022E91230A97A1A29AC9E6
+              09E52065FE1A2902700FE86B462A0A6D0F9D19980DEC327A4A4C4119D6E8CD07
+              B699EFF7817E3E0054493E3303551EFC08F866D8ACFD8EE687B7110B201565EC
+              074ED9A1E4A624D724793BE0AE5CE1E589742846CD0D26753B9907C03DFF2A15
+              EC16C64C9E42C74DA475F7200F8022C67833F358E05C0A2F2AD818039C35FAA7
+              9DC8F6FF4F7900DC0BDC0750DD13234381AB46F11A302CC688A98F1E165DE43C
+              00EF817646419F1F23274E05A02DF0C1F8A0CFF66597D80520E5E02EC94C900A
+              8092A95D442F00EE11521D14DBAFA602A0AA40F590A42E17945DE291C0A5663E
+              4223808B2197D80DA3621C76363380B986B9901B5E6154F5B77A5C49954496EA
+              08B9894C3DB4888326C93B426210543E4BAA94122900644B09311B3584585131
+              77CB21AA628BB91400DC624E44D880EC712E022092C996AEB1E5740A006E39AD
+              BB2932AD467C1B9A8911F4495500EA1F8E1B6F831B1AE9B997471C901A8B909C
+              50058062BF76DE7245C12DA500649B7AD544AA8DBE85A8F6B11C5174532F47C5
+              83EE753CFE9A9C909D26CB0DCD02F615AD5A192F24BD35C012C7C0D7E486B29C
+              D046A737CFC5E003408A6780718E057144EA8E52D12CA251D43F5B2E48535D00
+              46979D575F00B2B307D0765A51B213531D4AB7647D127DA2955692B2A29DF8A3
+              CC79FD1F0240E317025B328653D3EB416D6C2800F92E567A7983171C6FCCD17A
+              01E89174338F8E4A27F36E20EF05C72AE088CFCADB313100A4DBA25F31B90BA4
+              84A37A4549CB1261BE0BA8E644BDB248B3900459633F7607F29C1421262022C2
+              1ABD66155125C76B082A5FD4D9712901C4FA5049EF3B804ACB9740B9C5EFC017
+              4EABDD310AD690EA0000000049454E44AE426082}
+          end>
+      end
+      item
+        Name = 'clone'
+        SourceImages = <
+          item
+            Image.Data = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000017352474200AECE1CE90000014A494441546843ED993D6E02311085
+              BFBD4E2E00220D54D4A4E50C697290349C216D52A7A301910B701DA2510A5628
+              B647B36BAF40CFD54AF6BE99F7DEF867BD1D77DEBA3BCF1F1198DAC1A803AFC0
+              16985522F0037C00BB127E84C006F82C018FD4FF027CE5B022040EC062A4044B
+              3047E0796C02971E60448052D2D6EF8E1149C00DEEC93431C61DE3A1092C7BEA
+              EC7BCF6E75A6762095A808389C718B949B0372C0A1746A881CC86D266E75E4C0
+              9F02D9BD4A93784099E45E7597A91C9003FF2BA012D23E30706EA88454422AA1
+              AB023A0BDD9E08DD2BC4803272C7D0596880CA3A8D96BE76527578AA78AD7EEB
+              8A5DB3CFA397BB2902F64FC048B46896BC9148B6C82436B027E01D585762F10D
+              BC01E7127E944009B759BF0834933A1128E740ABD5C6AEEE57512172045AAD36
+              D508B4586D2C46550251679BBD17F947D62C394F2011F0A85473CC2F06826B31
+              8E670DDF0000000049454E44AE426082}
+          end>
+      end
+      item
+        Name = 'Edit'
+        SourceImages = <
+          item
+            Image.Data = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000017352474200AECE1CE90000033F494441546843ED9879C80D511887
+              9F2F9148241259229125916489105992C8CE67DFF77DDF65DFF77DDF77591289
+              1059924824125922914824129D7AA7DEE6BBF7CE9D7B67FBEACE7FBF3BB799E7
+              79CF7B66CE992C72F99195CBF9C908843D829911F061049A00738079C035A7EB
+              4769040A01BB818E0AFA38D02591445404CA024780FA3160134A444560AEB44D
+              BC62C795888A8001779268079CB51B862960EEDD0930D5B58E44126642378D8A
+              401EE979236026693212063EC753298C11C82BF01D54359D244ECA68E5982341
+              0BE4038E02ED63CCD67812B78196C0F758333C4881FC52793319ADE30950CD61
+              2476016FE23D9E82122820F06D158879DB9E008E3948247C1907215050DAA68D
+              2299052C905C351D09BF05CCF2C0F47C6B053F0358A4F26C59F7583F995131F3
+              E19FD33AC89CF753A0B0B44D2B05320D58A2F24C60BECAA704FE6F32F07E0A14
+              91CAB750205381A52A4F0716AA7C5AE0FF240BEF974051816FAE402603CB6D32
+              8B553E23F0BFDDC0FB21504CDAA699029908AC54798AAD8DCE09FC2FB7F05E0B
+              1497CAEBF5CA7860B5029B042C53F9BCC0FF4C05DE4B811202DF58818C05D6AA
+              3C0158A1F205A033F0235578AF044A0A7C2305321A58AFF2386095CA17A5F231
+              97076E84D27D8C9612F886EAA623818D2A8F01D6A87C49E0BFB9018DF7DF7404
+              4A0B7C0375F1E1C066954701EB54BE2C6DF3D50BF8745AA88CBCFEEB2990A1C0
+              569547001B54BE2295FFE2157CAA02E5A4F27515C86060BBCAC3804D2A5F15F8
+              CF5EC2A722505EE0EB289081C04E9587005B54BE2E6DF3C96B78B70215A46D6A
+              2B90FEF22DC7FA6910B04D9DBF21F01FFD8077235051E06B29907EC01E950700
+              3B54BE296DF3C12FF864052A49DBD454207D807D3619B373B28E5B52F9F77EC2
+              272350592A5F4381F4020EA8DCD7D6467704FE9DDFF04E025504BEBA02C9060E
+              A9DC1BD8ABF25D817F1B04BC93C063DB5EB5BBAC342DB69EC07E057A4FE05F07
+              05EF24A0B7745D65342CB61EC041057A5FE05F0509EF46402F39BA018715E803
+              F9E8F43268F85404CC66DB6CD2ADE3A154FE4518F06E0462F13D12F8E761C1A7
+              236026B8F930FB2C4CF85405CCE740B3937A1A36BC934014F81C19D2D9D0385E
+              3C883F640482A872A27B644620EC11F80FD4919C3180B038370000000049454E
+              44AE426082}
+          end>
+      end
+      item
+        Name = 'Export'
+        SourceImages = <
+          item
+            Image.Data = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000097048597300000EC300000EC301C76FA8640000001974455874536F
+              667477617265007777772E696E6B73636170652E6F72679BEE3C1A000001F749
+              4441546881ED983F4B1C4118879FD7083990F801041B418816A9AC442D04FF14
+              862082454008A4B049A168AF7E044B05B54E95B4A60E214D406C0F2B0589E569
+              0807C637CD89CB38B3DEEECCDCDEE2FEE06DDE99619E676759EE46549532A7A7
+              6800DF540245A7F402A8AAB38041E000B8006E01ED50DDB6F6DC0306521953E0
+              4781DF1D8476D525F03A9300F00238ED02F8FB3A017AB2084C7601B4591336D6
+              5EEC19B1F4EA40C3313F74FA8161A337027C3727BA045E5A7A9F54F59B27585B
+              119159E0D868D76C734BFF19AD048A4E255074A20888C8BC889C19B514632FD7
+              67D4377DC090D17B1563A3D2BF42AE13F80CFC307AF5C82CC9FC04C68CDEB96D
+              A2554055AF80ABC0506D47551BC0AF76E696FE15AA048A4E2550742A81A2E325
+              20222B22B2E8B17E4E44567D1872FF161291F7C011702722CBAAFA35E3FA19E0
+              0B5013919AAAEEE60249BB344AB933FA08FCE3E1C6A009BC4B8C2FF1F856E143
+              627C0AB8498CDD016BB95872C0BF31E093120B4F0900D3C01FCBB802E3D1055A
+              10EB0E8026F0D625004C00D78EB55B1D398184C48603E42FB06FE91F1AAF4DB2
+              B67373E45DF8C44964A95C4F3E884000092FF820021E12DEF0C104724804810F
+              2A904122187C7081362482C247114891080E1F4DC02211055E5591D666512222
+              9B409FAAEE44DB23A64027F2BCFFD074432A81A2F31F4366965D1A9C2FAF0000
+              000049454E44AE426082}
+          end>
       end>
-    Left = 488
+    Left = 416
     Top = 392
   end
   object VirtualImageList1: TVirtualImageList
@@ -6228,11 +6613,56 @@ object Main: TMain
         CollectionIndex = 61
         CollectionName = 'Sort'
         Name = 'Sort'
+      end
+      item
+        CollectionIndex = 62
+        CollectionName = 'Exit'
+        Name = 'Exit'
+      end
+      item
+        CollectionIndex = 63
+        CollectionName = 'import'
+        Name = 'import'
+      end
+      item
+        CollectionIndex = 64
+        CollectionName = 'settings'
+        Name = 'settings'
+      end
+      item
+        CollectionIndex = 65
+        CollectionName = 'home'
+        Name = 'home'
+      end
+      item
+        CollectionIndex = 66
+        CollectionName = 'Help'
+        Name = 'Help'
+      end
+      item
+        CollectionIndex = 67
+        CollectionName = 'info'
+        Name = 'info'
+      end
+      item
+        CollectionIndex = 68
+        CollectionName = 'clone'
+        Name = 'clone'
+      end
+      item
+        CollectionIndex = 69
+        CollectionName = 'Edit'
+        Name = 'Edit'
+      end
+      item
+        CollectionIndex = 70
+        CollectionName = 'Export'
+        Name = 'Export'
       end>
     ImageCollection = ImageCollection1
     Width = 48
     Height = 48
-    Left = 488
+    Left = 416
     Top = 472
   end
   object VirtualImageList2: TVirtualImageList
@@ -6255,7 +6685,7 @@ object Main: TMain
     ImageCollection = ImageCollection1
     Width = 40
     Height = 40
-    Left = 480
+    Left = 408
     Top = 552
   end
   object BindSourceDB1: TBindSourceDB
@@ -6345,7 +6775,7 @@ object Main: TMain
     ImageCollection = ImageCollection1
     Width = 24
     Height = 24
-    Left = 600
-    Top = 392
+    Left = 400
+    Top = 624
   end
 end
