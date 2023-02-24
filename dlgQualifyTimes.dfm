@@ -11,20 +11,20 @@ object QualifyTimes: TQualifyTimes
   Font.Height = -13
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = False
   Position = poOwnerFormCenter
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  PixelsPerInch = 96
   TextHeight = 17
   object PageControl1: TPageControl
     Left = 0
     Top = 0
     Width = 621
     Height = 639
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
+    ExplicitWidth = 617
+    ExplicitHeight = 638
     object TabSheet1: TTabSheet
       Caption = 'Setup'
       object DBGrid1: TDBGrid
@@ -33,7 +33,6 @@ object QualifyTimes: TQualifyTimes
         Width = 613
         Height = 475
         Align = alClient
-        DataSource = DSQualify
         Options = [dgEditing, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
         TabOrder = 0
         TitleFont.Charset = DEFAULT_CHARSET
@@ -49,6 +48,7 @@ object QualifyTimes: TQualifyTimes
         Height = 33
         Align = alTop
         TabOrder = 1
+        ExplicitWidth = 609
         DesignSize = (
           613
           33)
@@ -78,6 +78,7 @@ object QualifyTimes: TQualifyTimes
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 2
+        ExplicitWidth = 609
         object Label4: TLabel
           Left = 26
           Top = 25
@@ -264,11 +265,13 @@ object QualifyTimes: TQualifyTimes
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitTop = 638
+    ExplicitWidth = 617
     DesignSize = (
       621
       41)
     object BtnClose: TButton
-      Left = 535
+      Left = 527
       Top = 6
       Width = 75
       Height = 25
@@ -276,6 +279,7 @@ object QualifyTimes: TQualifyTimes
       Caption = 'Close'
       TabOrder = 0
       OnClick = BtnCloseClick
+      ExplicitLeft = 523
     end
   end
   object qryQualify: TFDQuery
@@ -400,6 +404,15 @@ object QualifyTimes: TQualifyTimes
     Left = 168
     Top = 496
   end
+  object tblQDistance: TFDTable
+    ActiveStoredUsage = [auDesignTime]
+    IndexFieldNames = 'DistanceID'
+    Connection = SCM.scmConnection
+    UpdateOptions.UpdateTableName = 'SwimClubMeet..Distance'
+    TableName = 'SwimClubMeet..Distance'
+    Left = 288
+    Top = 504
+  end
   object tblStroke: TFDTable
     ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'StrokeID'
@@ -417,15 +430,6 @@ object QualifyTimes: TQualifyTimes
     TableName = 'SwimClubMeet..Gender'
     Left = 360
     Top = 560
-  end
-  object tblQDistance: TFDTable
-    ActiveStoredUsage = [auDesignTime]
-    IndexFieldNames = 'DistanceID'
-    Connection = SCM.scmConnection
-    UpdateOptions.UpdateTableName = 'SwimClubMeet..Distance'
-    TableName = 'SwimClubMeet..Distance'
-    Left = 288
-    Top = 504
   end
   object tblTDistance: TFDTable
     ActiveStoredUsage = [auDesignTime]

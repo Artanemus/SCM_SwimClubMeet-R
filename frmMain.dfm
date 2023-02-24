@@ -2604,7 +2604,7 @@ object Main: TMain
           end>
         ActionBar = ActionMainMenuBar1
       end>
-    Images = VirtualImageList1
+    Images = VirtualImageListMenu
     OnUpdate = ActionManager1Update
     Left = 888
     Top = 440
@@ -3125,6 +3125,7 @@ object Main: TMain
       ImageIndex = 42
       ImageName = 'Help'
       OnExecute = Help_OnlineHelpExecute
+      OnUpdate = Help_OnlineHelpUpdate
     end
     object Help_Website: TAction
       Category = 'Help'
@@ -3132,6 +3133,7 @@ object Main: TMain
       ImageIndex = 41
       ImageName = 'home'
       OnExecute = Help_WebsiteExecute
+      OnUpdate = Help_WebsiteUpdate
     end
   end
   object pumHeat: TPopupMenu
@@ -6777,5 +6779,248 @@ object Main: TMain
     Height = 24
     Left = 400
     Top = 624
+  end
+  object VirtualImageListMenu: TVirtualImageList
+    Images = <
+      item
+        CollectionIndex = 0
+        CollectionName = 'Search'
+        Name = 'Search'
+      end
+      item
+        CollectionIndex = 1
+        CollectionName = 'Members'
+        Name = 'Members'
+      end
+      item
+        CollectionIndex = 2
+        CollectionName = 'Refresh'
+        Name = 'Refresh'
+      end
+      item
+        CollectionIndex = 3
+        CollectionName = 'BatchPrint'
+        Name = 'BatchPrint'
+      end
+      item
+        CollectionIndex = 4
+        CollectionName = 'Marshall'
+        Name = 'Marshall'
+      end
+      item
+        CollectionIndex = 5
+        CollectionName = 'TimeKeeper'
+        Name = 'TimeKeeper'
+      end
+      item
+        CollectionIndex = 6
+        CollectionName = 'AutoBuild'
+        Name = 'AutoBuild'
+      end
+      item
+        CollectionIndex = 7
+        CollectionName = 'Cycle'
+        Name = 'Cycle'
+      end
+      item
+        CollectionIndex = 8
+        CollectionName = 'Sync'
+        Name = 'Sync'
+      end
+      item
+        CollectionIndex = 9
+        CollectionName = 'Swap'
+        Name = 'Swap'
+      end
+      item
+        CollectionIndex = 10
+        CollectionName = 'Shuffle'
+        Name = 'Shuffle'
+      end
+      item
+        CollectionIndex = 11
+        CollectionName = 'Switch'
+        Name = 'Switch'
+      end
+      item
+        CollectionIndex = 12
+        CollectionName = 'Up'
+        Name = 'Up'
+      end
+      item
+        CollectionIndex = 13
+        CollectionName = 'Down'
+        Name = 'Down'
+      end
+      item
+        CollectionIndex = 14
+        CollectionName = 'ExpandContent'
+        Name = 'ExpandContent'
+      end
+      item
+        CollectionIndex = 15
+        CollectionName = 'GridOff'
+        Name = 'GridOff'
+      end
+      item
+        CollectionIndex = 16
+        CollectionName = 'GridOn'
+        Name = 'GridOn'
+      end
+      item
+        CollectionIndex = 17
+        CollectionName = 'Report'
+        Name = 'Report'
+      end
+      item
+        CollectionIndex = 18
+        CollectionName = 'DeleteForever'
+        Name = 'DeleteForever'
+      end
+      item
+        CollectionIndex = 19
+        CollectionName = 'Delete'
+        Name = 'Delete'
+      end
+      item
+        CollectionIndex = 20
+        CollectionName = 'New'
+        Name = 'New'
+      end
+      item
+        CollectionIndex = 21
+        CollectionName = 'Lock'
+        Name = 'Lock'
+      end
+      item
+        CollectionIndex = 22
+        CollectionName = 'VisibilityOff'
+        Name = 'VisibilityOff'
+      end
+      item
+        CollectionIndex = 23
+        CollectionName = 'VisibilityOn'
+        Name = 'VisibilityOn'
+      end
+      item
+        CollectionIndex = 24
+        CollectionName = 'Qualify'
+        Name = 'Qualify'
+      end
+      item
+        CollectionIndex = 25
+        CollectionName = 'UnChecked'
+        Name = 'UnChecked'
+      end
+      item
+        CollectionIndex = 26
+        CollectionName = 'Checked'
+        Name = 'Checked'
+      end
+      item
+        CollectionIndex = 52
+        CollectionName = 'HeatstatusOpen'
+        Name = 'HeatstatusOpen'
+      end
+      item
+        CollectionIndex = 51
+        CollectionName = 'HeatStatusRaced'
+        Name = 'HeatStatusRaced'
+      end
+      item
+        CollectionIndex = 50
+        CollectionName = 'HeatStatusClosed'
+        Name = 'HeatStatusClosed'
+      end
+      item
+        CollectionIndex = 55
+        CollectionName = 'HeatStatusOpenActive'
+        Name = 'HeatStatusOpenActive'
+      end
+      item
+        CollectionIndex = 54
+        CollectionName = 'HeatStatusRacedActive'
+        Name = 'HeatStatusRacedActive'
+      end
+      item
+        CollectionIndex = 53
+        CollectionName = 'HeatStatusClosedActive'
+        Name = 'HeatStatusClosedActive'
+      end
+      item
+        CollectionIndex = 56
+        CollectionName = 'HeatOpen'
+        Name = 'HeatOpen'
+      end
+      item
+        CollectionIndex = 57
+        CollectionName = 'HeatRaced'
+        Name = 'HeatRaced'
+      end
+      item
+        CollectionIndex = 58
+        CollectionName = 'HeatClosed'
+        Name = 'HeatClosed'
+      end
+      item
+        CollectionIndex = 59
+        CollectionName = 'HeatStatusToggle'
+        Name = 'HeatStatusToggle'
+      end
+      item
+        CollectionIndex = 61
+        CollectionName = 'Sort'
+        Name = 'Sort'
+      end
+      item
+        CollectionIndex = 62
+        CollectionName = 'Exit'
+        Name = 'Exit'
+      end
+      item
+        CollectionIndex = 63
+        CollectionName = 'import'
+        Name = 'import'
+      end
+      item
+        CollectionIndex = 64
+        CollectionName = 'settings'
+        Name = 'settings'
+      end
+      item
+        CollectionIndex = 65
+        CollectionName = 'home'
+        Name = 'home'
+      end
+      item
+        CollectionIndex = 66
+        CollectionName = 'Help'
+        Name = 'Help'
+      end
+      item
+        CollectionIndex = 67
+        CollectionName = 'info'
+        Name = 'info'
+      end
+      item
+        CollectionIndex = 68
+        CollectionName = 'clone'
+        Name = 'clone'
+      end
+      item
+        CollectionIndex = 69
+        CollectionName = 'Edit'
+        Name = 'Edit'
+      end
+      item
+        CollectionIndex = 70
+        CollectionName = 'Export'
+        Name = 'Export'
+      end>
+    ImageCollection = ImageCollection1
+    Width = 32
+    Height = 32
+    Left = 752
+    Top = 696
   end
 end

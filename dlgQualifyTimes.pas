@@ -3,7 +3,8 @@ unit dlgQualifyTimes;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
@@ -51,9 +52,9 @@ type
     qryQualifyluGender: TStringField;
     qryQualifyTrialTime: TTimeField;
     DSQualify: TDataSource;
+    tblQDistance: TFDTable;
     tblStroke: TFDTable;
     tblGender: TFDTable;
-    tblQDistance: TFDTable;
     tblTDistance: TFDTable;
     procedure BtnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -89,16 +90,16 @@ end;
 procedure TQualifyTimes.btnDistStrokeReportClick(Sender: TObject);
 var
   rptA: TQTDistStrokeReportA;
-//  rptB: TQTDistStrokeReportB;
+  // rptB: TQTDistStrokeReportB;
 begin
   // run qulify for session report
   try
     // control key is pressed
     if ((GetKeyState(VK_CONTROL) and 128) = 128) then
     begin
-//      rptB := TQTDistStrokeReportB.Create(self);
-//      rptB.RunReport;
-//      rptB.Free;
+      // rptB := TQTDistStrokeReportB.Create(self);
+      // rptB.RunReport;
+      // rptB.Free;
     end
     else
     begin
@@ -118,16 +119,16 @@ end;
 procedure TQualifyTimes.btnMemberReportClick(Sender: TObject);
 var
   rptA: TQTMemberReportA;
-//  rptB: TQTMemberReportB;
+  // rptB: TQTMemberReportB;
 begin
   // run qulify for session report
   try
     // control key is pressed
     if ((GetKeyState(VK_CONTROL) and 128) = 128) then
     begin
-//      rptB := TQTMemberReportB.Create(self);
-//      rptB.RunReport;
-//      rptB.Free;
+      // rptB := TQTMemberReportB.Create(self);
+      // rptB.RunReport;
+      // rptB.Free;
     end
     else
     begin
@@ -147,16 +148,16 @@ end;
 procedure TQualifyTimes.btnSessionReportClick(Sender: TObject);
 var
   rptA: TQTSessionReportA;
-//  rptB: TQTSessionReportB;
+  // rptB: TQTSessionReportB;
 begin
   // run qulify for session report
   try
     // control key is pressed
     if ((GetKeyState(VK_CONTROL) and 128) = 128) then
     begin
-//      rptB := TQTSessionReportB.Create(self);
-//      rptB.RunReport;
-//      rptB.Free;
+      // rptB := TQTSessionReportB.Create(self);
+      // rptB.RunReport;
+      // rptB.Free;
     end
     else
     begin
@@ -176,16 +177,16 @@ end;
 procedure TQualifyTimes.btnTableReportClick(Sender: TObject);
 var
   rptA: TQTTableReportA;
-//  rptB: TQTTableReportB;
+  // rptB: TQTTableReportB;
 begin
   // run qulify for session report
   try
     // control key is pressed
     if ((GetKeyState(VK_CONTROL) and 128) = 128) then
     begin
-//      rptB := TQTTableReportB.Create(self);
-//      rptB.RunReport;
-//      rptB.Free;
+      // rptB := TQTTableReportB.Create(self);
+      // rptB.RunReport;
+      // rptB.Free;
     end
     else
     begin
@@ -275,26 +276,39 @@ procedure TQualifyTimes.qryQualifyTrialTimeSetText(Sender: TField;
 var
   s: String;
   dt: TDateTime;
-  Min: word;
-  Sec: word;
-  MSec: word;
+  Min, Sec, MSec: word;
   i: integer;
+  failed: Boolean;
 begin
+
+  failed := false;
+
+  // Take the user input that was entered into the time mask and replace
+  // spaces with '0'. Resulting in a valid TTime string.
+  // UnicodeString is '1-based'
+
   s := Text;
   for i := 1 to s.Length - 1 do
     if (s[i] = ' ') then
       s[i] := '0';
-  Min := StrToInt(s.SubString(1, 2));
-  Sec := StrToInt(s.SubString(4, 2));
-  MSec := StrToInt(s.SubString(7, 3));
 
+  // SubString is '0-based'
+  Min := StrToIntDef(s.SubString(0, 2), 0);
+  Sec := StrToIntDef(s.SubString(3, 2), 0);
+  MSec := StrToIntDef(s.SubString(6, 3), 0);
   try
-    dt := EncodeTime(0, Min, Sec, MSec);
-    Sender.AsDateTime := dt;
+    begin
+      dt := EncodeTime(0, Min, Sec, MSec);
+      Sender.AsDateTime := dt;
+    end;
   except
-    on E: Exception do
-      // illegal date..
+    failed := true;
   end;
+
+  // set the racetime to nil.
+  if failed then
+    Sender.Clear; // Sets the value of the field to NULL
+
 end;
 
 end.

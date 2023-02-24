@@ -4,90 +4,92 @@ object MembershipType: TMembershipType
   BorderStyle = bsDialog
   Caption = 'Membership Type ...'
   ClientHeight = 598
-  ClientWidth = 853
+  ClientWidth = 856
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -13
+  Font.Height = -16
   Font.Name = 'Segoe UI'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
   OnShow = FormShow
-  PixelsPerInch = 96
-  TextHeight = 17
+  TextHeight = 21
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 853
+    Width = 856
     Height = 557
     ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
+    ExplicitWidth = 853
     object TabSheet1: TTabSheet
       Caption = 'Details'
       object Panel2: TPanel
         AlignWithMargins = True
         Left = 3
         Top = 3
-        Width = 839
-        Height = 519
+        Width = 842
+        Height = 515
         Align = alClient
         BevelEdges = []
         BevelOuter = bvNone
         TabOrder = 0
+        ExplicitWidth = 835
+        ExplicitHeight = 518
         object Panel1: TPanel
           Left = 0
           Top = 0
-          Width = 839
-          Height = 41
+          Width = 842
+          Height = 57
           Align = alTop
           BevelEdges = []
           BevelOuter = bvNone
           TabOrder = 0
+          ExplicitWidth = 839
           object Label4: TLabel
             Left = 17
-            Top = 12
-            Width = 91
-            Height = 17
+            Top = 32
+            Width = 128
+            Height = 22
             Caption = 'Display Caption'
             WordWrap = True
           end
           object Label5: TLabel
-            Left = 576
-            Top = 0
-            Width = 59
-            Height = 34
+            Left = 593
+            Top = 9
+            Width = 74
+            Height = 42
             Alignment = taCenter
             Caption = 'Used for Swimmers'
             WordWrap = True
           end
           object Label6: TLabel
-            Left = 720
-            Top = 0
-            Width = 56
-            Height = 34
+            Left = 733
+            Top = 10
+            Width = 70
+            Height = 42
             Alignment = taCenter
             Caption = 'Age To (Inclusive)'
             WordWrap = True
           end
           object Label7: TLabel
-            Left = 224
-            Top = 12
-            Width = 213
-            Height = 17
+            Left = 251
+            Top = 32
+            Width = 289
+            Height = 22
             Caption = 'Full description of membership type.'
             WordWrap = True
           end
           object Label8: TLabel
-            Left = 656
-            Top = 0
-            Width = 30
-            Height = 34
+            Left = 682
+            Top = 9
+            Width = 37
+            Height = 42
             Alignment = taCenter
             Caption = 'Age From'
             WordWrap = True
@@ -95,25 +97,29 @@ object MembershipType: TMembershipType
         end
         object Panel4: TPanel
           Left = 0
-          Top = 41
-          Width = 839
-          Height = 478
+          Top = 57
+          Width = 842
+          Height = 458
           Align = alClient
           Caption = 'Panel4'
           TabOrder = 1
+          ExplicitTop = 41
+          ExplicitWidth = 835
+          ExplicitHeight = 477
           object DBGrid1: TDBGrid
             Left = 1
             Top = 1
-            Width = 837
-            Height = 476
+            Width = 840
+            Height = 456
             Align = alClient
+            BorderStyle = bsNone
             DataSource = dsMembershipType
             DefaultDrawing = False
             Options = [dgEditing, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
             TabOrder = 0
             TitleFont.Charset = DEFAULT_CHARSET
             TitleFont.Color = clWindowText
-            TitleFont.Height = -13
+            TitleFont.Height = -16
             TitleFont.Name = 'Segoe UI'
             TitleFont.Style = []
             OnCellClick = DBGrid1CellClick
@@ -129,7 +135,7 @@ object MembershipType: TMembershipType
               item
                 Expanded = False
                 FieldName = 'Caption'
-                Width = 207
+                Width = 230
                 Visible = True
               end
               item
@@ -214,16 +220,18 @@ object MembershipType: TMembershipType
   object Panel3: TPanel
     Left = 0
     Top = 557
-    Width = 853
+    Width = 856
     Height = 41
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitTop = 556
+    ExplicitWidth = 849
     DesignSize = (
-      853
+      856
       41)
     object btnClose: TButton
-      Left = 771
+      Left = 770
       Top = 6
       Width = 75
       Height = 25
@@ -231,6 +239,7 @@ object MembershipType: TMembershipType
       Caption = 'Close'
       TabOrder = 0
       OnClick = btnCloseClick
+      ExplicitLeft = 763
     end
   end
   object qryMembershipType: TFDQuery

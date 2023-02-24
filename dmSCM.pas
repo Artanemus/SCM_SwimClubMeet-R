@@ -2034,6 +2034,8 @@ procedure TSCM.qryEntrantTIMEGetText(Sender: TField; var Text: string;
 var
   Hour, Min, Sec, MSec: word;
 begin
+  // CALLED BY TimeToBeat AND PersonalBest (Read Only fields)
+  // this FIXES display format issues.
   DecodeTime(Sender.AsDateTime, Hour, Min, Sec, MSec);
   // DisplayText is true if the field's value is to be used for display only;
   // false if the string is to be used for editing the field's value.
@@ -2055,27 +2057,39 @@ end;
 procedure TSCM.qryEntrantTIMESetText(Sender: TField; const Text: string);
 var
   Min, Sec, MSec: word;
-  s: string;
+  s, s2: string;
   dt: TDateTime;
   i: integer;
+  failed: Boolean;
 begin
   s := Text;
-  for i := 1 to Length(s) do // UnicodeString is '1-based'
+  failed := false;
+
+  // Take the user input that was entered into the time mask and replace
+  // spaces with '0'. Resulting in a valid TTime string.
+  // UnicodeString is '1-based'
+  for i := 1 to Length(s) do
   begin
     if (s[i] = ' ') then
       s[i] := '0';
   end;
-  Min := StrToInt(s.SubString(1, 2));
-  Sec := StrToInt(s.SubString(4, 2));
-  MSec := StrToInt(s.SubString(7, 3));
+
+  // SubString is '0-based'
+  Min := StrToIntDef(s.SubString(0, 2), 0);
+  Sec := StrToIntDef(s.SubString(3, 2), 0);
+  MSec := StrToIntDef(s.SubString(6, 3), 0);
   try
     begin
       dt := EncodeTime(0, Min, Sec, MSec);
       Sender.AsDateTime := dt;
     end;
   except
-    on E: Exception do
+    failed := true;
   end;
+
+  if failed then
+    Sender.Clear; // Sets the value of the field to NULL
+
 end;
 
 procedure TSCM.qryEventAfterDelete(DataSet: TDataSet);

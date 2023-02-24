@@ -262,6 +262,7 @@ type
     Help_LocalHelp: TAction;
     Help_OnlineHelp: TAction;
     Help_Website: TAction;
+    VirtualImageListMenu: TVirtualImageList;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure SCM_RefreshExecute(Sender: TObject);
@@ -397,6 +398,8 @@ type
     procedure Nominate_ReportUpdate(Sender: TObject);
     procedure Heat_ReportExecute(Sender: TObject);
     procedure Heat_ReportUpdate(Sender: TObject);
+    procedure Help_OnlineHelpUpdate(Sender: TObject);
+    procedure Help_WebsiteUpdate(Sender: TObject);
   private
     { Private declarations }
     // For scroll wheel tracking on mouse ...
@@ -411,6 +414,9 @@ type
     fEntrantEditBoxNormal: TColor;
     fEntrantBgColor: TColor;
     fscmStyleName: String;
+
+    // Internet connection state
+    fMyInternetConnected: Boolean;
 
     SCMEventList: TObjectList;
 
@@ -724,7 +730,7 @@ begin
           // is there any entrants?
           if not SCM.dsEntrant.DataSet.IsEmpty then
             DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Entrant_GridCellClick(Column: TColumn);
@@ -1033,7 +1039,7 @@ begin
           // is there any entrants?
           if not SCM.dsEntrant.DataSet.IsEmpty then
             DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Entrant_MoveUpExecute(Sender: TObject);
@@ -1071,7 +1077,7 @@ begin
           // is there any entrants?
           if not SCM.dsEntrant.DataSet.IsEmpty then
             DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Entrant_Scroll(var Msg: TMessage);
@@ -1123,7 +1129,7 @@ begin
           // is there any entrants?
           if not SCM.dsEntrant.DataSet.IsEmpty then
             DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Entrant_StrikeExecute(Sender: TObject);
@@ -1159,7 +1165,7 @@ begin
           // is there any entrants?
           if not SCM.dsEntrant.DataSet.IsEmpty then
             DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Entrant_SwapLanesExecute(Sender: TObject);
@@ -1189,7 +1195,7 @@ begin
           // is there any entrants?
           if not SCM.dsEntrant.DataSet.IsEmpty then
             DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Event_AssertState(var Msg: TMessage);
@@ -1393,7 +1399,7 @@ begin
       // are there any events?
       if not SCM.dsEvent.DataSet.IsEmpty then
         DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Event_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -1611,13 +1617,13 @@ begin
   // no connection
   if not AssertConnection then
   begin
-    (Sender as TAction).Enabled := DoEnable;
+    TAction(Sender).Enabled := DoEnable;
     exit;
   end;
   // session is locked
   if (SCM.dsSession.DataSet.FieldByName('SessionStatusID').AsInteger = 2) then
   begin
-    (Sender as TAction).Enabled := DoEnable;
+    TAction(Sender).Enabled := DoEnable;
     exit;
   end;
   // we need events to move up or down
@@ -1627,7 +1633,7 @@ begin
   // 13.10.2020
   // events can be moved up or down (re-ordered)
   // even if the heat has been raced or closed
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Event_NewRecordExecute(Sender: TObject);
@@ -1648,7 +1654,7 @@ begin
     // Checks if session is Empty. Then checks if locked..
     if not SCM.IsLockedSession then
       DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Event_RenumberExecute(Sender: TObject);
@@ -1667,7 +1673,7 @@ begin
     if not SCM.IsLockedSession then
       if not SCM.dsEvent.DataSet.IsEmpty then
         DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Event_ReportExecute(Sender: TObject);
@@ -1710,7 +1716,7 @@ begin
       // Are there any Events?
       if not SCM.dsEvent.DataSet.IsEmpty then
         DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Event_Scroll(var Msg: TMessage);
@@ -1796,7 +1802,7 @@ begin
   if AssertConnection then
     // Event_grid View can be toggled if no event?
     DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.File_ExitExecute(Sender: TObject);
@@ -1820,6 +1826,7 @@ begin
   fSCMisInitializing := true;
   fSessionClosedFontColor := clWebTomato;
   fSessionClosedBgColor := clAppWorkSpace;
+  fMyInternetConnected := true; // an assumption is presumed.
 
   try
     SCM := TSCM.Create(self);
@@ -2079,10 +2086,8 @@ begin
   }
 
   Screen.MenuFont.Name := 'Segoe UI Semibold';
-  Screen.MenuFont.Size := 14;
-
+  Screen.MenuFont.Size := 12;
   ActionManager1.Style := PlatformVclStylesStyle;
-
 end;
 
 procedure TMain.FormDestroy(Sender: TObject);
@@ -2104,6 +2109,7 @@ begin
       SCM.scmConnection.Close;
     SCM.Free;
   end;
+
 end;
 
 procedure TMain.FormMouseWheel(Sender: TObject; Shift: TShiftState;
@@ -2394,7 +2400,7 @@ begin
       // are there any Events?
       if not SCM.dsEvent.DataSet.IsEmpty then
         DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Heat_BatchBuildHeatsExecute(Sender: TObject);
@@ -2616,7 +2622,7 @@ begin
         // are there any Heats?
         if not SCM.dsHeat.DataSet.IsEmpty then
           DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Heat_MarshallReportExecute(Sender: TObject);
@@ -2659,7 +2665,7 @@ begin
     // Are there any heats? Note: Locked sessions can be printed.
     if not SCM.dsHeat.DataSet.IsEmpty then
       DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Heat_MoveDownExecute(Sender: TObject);
@@ -2814,7 +2820,7 @@ begin
       // are there any Events?
       if not SCM.dsEvent.DataSet.IsEmpty then
         DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Heat_PrintSetExecute(Sender: TObject);
@@ -2946,7 +2952,7 @@ begin
     // Are there any heats? Note: Locked sessions can be printed.
     if not SCM.dsHeat.DataSet.IsEmpty then
       DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Heat_ReportExecute(Sender: TObject);
@@ -2986,7 +2992,7 @@ begin
     // Are there any heats? Note: Locked sessions can be printed.
     if not SCM.dsHeat.DataSet.IsEmpty then
       DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Heat_Scroll(var Msg: TMessage);
@@ -3051,7 +3057,7 @@ begin
     // Are there any heats? Note: Locked sessions can be printed.
     if not SCM.dsHeat.DataSet.IsEmpty then
       DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Heat_ToggleStatusExecute(Sender: TObject);
@@ -3082,7 +3088,7 @@ begin
       // are there any heats?
       if not SCM.dsHeat.DataSet.IsEmpty then
         DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Help_DBVerInfoExecute(Sender: TObject);
@@ -3103,7 +3109,7 @@ begin
   // Are we connected?
   if AssertConnection then
     DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Help_AboutExecute(Sender: TObject);
@@ -3129,16 +3135,50 @@ procedure TMain.Help_OnlineHelpExecute(Sender: TObject);
 var
   base_URL: string;
 begin
-  base_URL := 'http://artanemus.github.io/manual/index.htm';
-  ShellExecute(0, nil, PWideChar(base_URL), nil, nil, SW_SHOWNORMAL);
+  if CheckInternetA then
+  begin
+    base_URL := 'http://artanemus.github.io/manual/index.htm';
+    ShellExecute(0, nil, PWideChar(base_URL), nil, nil, SW_SHOWNORMAL);
+  end
+  else
+  begin
+    MessageDlg('No internet connection found!', TMsgDlgType.mtError, [mbOK], 0);
+    // NOTE: requires a restart of app after re-connection.
+    fMyInternetConnected := false;
+  end;
+end;
+
+procedure TMain.Help_OnlineHelpUpdate(Sender: TObject);
+begin
+    if fMyInternetConnected then
+    TAction(Sender).Enabled := true
+  else
+    TAction(Sender).Enabled := false;
 end;
 
 procedure TMain.Help_WebsiteExecute(Sender: TObject);
 var
   base_URL: string;
 begin
+  if CheckInternetA then
+  begin
   base_URL := 'http://artanemus.github.io';
   ShellExecute(0, 'open', PWideChar(base_URL), nil, nil, SW_SHOWNORMAL);
+  end
+  else
+  begin
+    MessageDlg('No internet connection found!', TMsgDlgType.mtError, [mbOK], 0);
+    // NOTE: requires a restart of app after re-connection.
+    fMyInternetConnected := false;
+  end;
+end;
+
+procedure TMain.Help_WebsiteUpdate(Sender: TObject);
+begin
+  if fMyInternetConnected then
+    TAction(Sender).Enabled := true
+  else
+    TAction(Sender).Enabled := false;
 end;
 
 procedure TMain.Nominate_ControlListBeforeDrawItem(AIndex: integer;
@@ -3284,7 +3324,7 @@ begin
       // No members listed. Nothing to sort.
       if not Nominate_Grid.DataSource.DataSet.IsEmpty then
         DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Nominate_Scroll(var Msg: TMessage);
@@ -3328,7 +3368,7 @@ begin
       // No members listed. Nothing to sort.
       if not Nominate_Grid.DataSource.DataSet.IsEmpty then
         DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.PageControl1Change(Sender: TObject);
@@ -3527,7 +3567,7 @@ begin
   DoEnable := false;
   if AssertConnection then
     DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.SCM_RefreshExecute(Sender: TObject);
@@ -3562,7 +3602,7 @@ begin
   DoEnable := false;
   if AssertConnection then
     DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Session_AssertStatusState(var Msg: TMessage);
@@ -4103,7 +4143,7 @@ begin
   if AssertConnection then
     if not SCM.dsSession.DataSet.IsEmpty then
       DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Session_ToggleVisibleExecute(Sender: TObject);
@@ -4137,7 +4177,7 @@ begin
   if AssertConnection then
     if not SCM.dsSession.DataSet.IsEmpty then
       DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Tools_ConnectionManagerExecute(Sender: TObject);
@@ -4222,7 +4262,7 @@ begin
   // Are we connected?
   if AssertConnection then
     DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Tools_HouseExecute(Sender: TObject);
@@ -4243,7 +4283,7 @@ begin
   // Are we connected?
   if AssertConnection then
     DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Tools_LeaderBoardExecute(Sender: TObject);
@@ -4266,7 +4306,7 @@ begin
   // Are we connected?
   if AssertConnection then
     DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Tools_MembershipTypeExecute(Sender: TObject);
@@ -4288,7 +4328,7 @@ begin
   // Are we connected?
   if AssertConnection then
     DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Tools_PreferencesExecute(Sender: TObject);
@@ -4353,7 +4393,7 @@ begin
   // Are we connected?
   if AssertConnection then
     DoEnable := true;
-  (Sender as TAction).Enabled := DoEnable;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.UpdateStatusBar;

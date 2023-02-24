@@ -31,6 +31,9 @@ function GetSCMDocumentDir(): string;
 function GetRegAppPath(appName: string): string;
 function GetRegArtanemusAppPath(appName: string): string;
 function ScatterLanes(index, NumOfPoolLanes: integer): integer;
+function CheckInternetA: Boolean;
+function CheckInternetB: Boolean;
+
 
 const
   PrefFileName = 'SCMPref.ini';
@@ -48,12 +51,48 @@ const
 implementation
 
 uses
-  System.Math;
+  System.Math,
+  WinInet, // for interenet
+  IdTCPClient;   // for checkinternet
+
 // Winapi.ShLwApi;
 
 function GetSCM_SharedIniFile(): string;
 begin
   result := GetSCMAppDataDir + PrefFileName;
+end;
+
+
+// WINDOWS API FUNCTION
+function CheckInternetA: Boolean;
+var
+  origin: Cardinal;
+begin
+Result := False;
+  if InternetGetConnectedState(@origin,0) then
+    Result := True;
+end;
+
+// POLL GOOGLE
+function CheckInternetB: Boolean;
+var TCPClient:TIdTCPClient;
+begin
+  TCPClient := TIdTCPClient.Create(NIL);
+  try
+    try
+      TCPClient.ReadTimeout := 2000;
+      TCPClient.ConnectTimeout := 2000;
+      TCPClient.Port := 80;
+      TCPClient.Host := 'google.com';
+      TCPClient.Connect;
+      TCPClient.Disconnect;
+      Result := true;
+    except
+      Result := false;
+    end;
+  finally
+    TCPClient.Free;
+  end;
 end;
 
 function CreateSCMPrefFileName(AFileName: TFileName): boolean;

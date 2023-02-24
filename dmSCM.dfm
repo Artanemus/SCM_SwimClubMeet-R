@@ -312,6 +312,7 @@ object SCM: TSCM
       FieldName = 'TimeToBeat'
       Origin = 'TimeToBeat'
       ReadOnly = True
+      OnGetText = qryEntrantTIMEGetText
       DisplayFormat = 'nn:ss.zzz'
       EditMask = '!00:00.000;1;0'
     end
@@ -321,6 +322,7 @@ object SCM: TSCM
       FieldName = 'PersonalBest'
       Origin = 'PersonalBest'
       ReadOnly = True
+      OnGetText = qryEntrantTIMEGetText
       DisplayFormat = 'nn:ss.zzz'
       EditMask = '!00:00.000;1;0'
     end
