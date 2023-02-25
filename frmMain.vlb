@@ -755,7 +755,7 @@ Coordinates=574,118,101,51
 LayerNames=NominateCotrolList
 
 []
-Coordinates=779,1653,42,33
+Coordinates=923,1615,125,33
 
 [dbtxtNominateFullName]
 Coordinates=1009,709,132,51
@@ -887,9 +887,6 @@ Coordinates=1207,1135,89,33
 
 [sbtnMembers]
 Coordinates=121,1017,89,33
-
-[Help_DBVerInfo]
-Coordinates=923,1615,125,33
 
 [Nominate_ClearEventNominations]
 Coordinates=2036,276,151,33

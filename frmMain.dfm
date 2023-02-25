@@ -32,7 +32,7 @@ object Main: TMain
       Top = 0
       Width = 1414
       Height = 802
-      ActivePage = TabSheet3
+      ActivePage = TabSheet1
       Align = alClient
       Style = tsFlatButtons
       TabOrder = 0
@@ -990,10 +990,10 @@ object Main: TMain
             Left = 134
             Top = 53
             Width = 45
-            Height = 143
+            Height = 187
             Alignment = taCenter
             Anchors = []
-            Caption = 'No Events'
+            Caption = 'No Members'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -32
@@ -2366,10 +2366,17 @@ object Main: TMain
                 Caption = '-'
               end
               item
+                Action = Nominate_MemeberDetails
+                ImageIndex = 1
+                ImageName = 'Members'
+              end
+              item
+                Visible = False
                 Action = Nominate_ClearEventNominations
                 Caption = '&Clear event nominations... '
               end
               item
+                Visible = False
                 Action = Nominate_ClearSessionNominations
                 Caption = 'C&lear session nominations...'
               end>
@@ -2570,12 +2577,6 @@ object Main: TMain
               item
                 Action = Help_About
                 Caption = '&About...'
-                ImageIndex = 43
-                ImageName = 'info'
-              end
-              item
-                Action = Help_DBVerInfo
-                Caption = '&DB Version Info...'
                 ImageIndex = 43
                 ImageName = 'info'
               end
@@ -2837,6 +2838,8 @@ object Main: TMain
       Hint = 'Show the selected member'#39's details.'
       ImageIndex = 1
       ImageName = 'Members'
+      OnExecute = Entrant_GotoMemberDetailsExecute
+      OnUpdate = Entrant_GotoMemberDetailsUpdate
     end
     object Entrant_Renumber: TAction
       Category = 'Entrants'
@@ -2968,23 +2971,26 @@ object Main: TMain
       OnExecute = Tools_HouseExecute
       OnUpdate = Tools_HouseUpdate
     end
+    object Nominate_MemeberDetails: TAction
+      Category = 'Nominate'
+      Caption = 'Member'#39's Details...'
+      Hint = 'Show the selected member'#39's details.'
+      ImageIndex = 1
+      ImageName = 'Members'
+      OnExecute = Nominate_MemeberDetailsExecute
+      OnUpdate = Nominate_MemeberDetailsUpdate
+    end
     object Nominate_ClearEventNominations: TAction
       Category = 'Nominate'
       Caption = 'Clear event nominations... '
       Enabled = False
+      Visible = False
     end
     object Nominate_ClearSessionNominations: TAction
       Category = 'Nominate'
       Caption = 'Clear session nominations...'
       Enabled = False
-    end
-    object Help_DBVerInfo: TAction
-      Category = 'Help'
-      Caption = 'DB Version Info...'
-      ImageIndex = 43
-      ImageName = 'info'
-      OnExecute = Help_DBVerInfoExecute
-      OnUpdate = Help_DBVerInfoUpdate
+      Visible = False
     end
     object Event_BuildFinals: TAction
       Category = 'Events'
@@ -7020,7 +7026,7 @@ object Main: TMain
     ImageCollection = ImageCollection1
     Width = 32
     Height = 32
-    Left = 752
-    Top = 696
+    Left = 400
+    Top = 704
   end
 end

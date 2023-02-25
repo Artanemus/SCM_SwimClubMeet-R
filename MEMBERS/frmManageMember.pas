@@ -12,7 +12,10 @@ uses
   FireDAC.Comp.Client, FireDAC.Comp.DataSet, Vcl.StdCtrls, VclTee.TeEngine,
   VclTee.TeeSpline, VclTee.Series, VclTee.TeeProcs, VclTee.Chart,
   VclTee.DBChart, Vcl.ComCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.DBCtrls, Vcl.Mask,
-  Vcl.ExtCtrls, Vcl.Menus, Vcl.WinXCalendars, dmManageMemberData, SCMDefines;
+  Vcl.ExtCtrls, Vcl.Menus, Vcl.WinXCalendars, dmManageMemberData, SCMDefines,
+  Vcl.VirtualImageList, Vcl.BaseImageCollection, Vcl.ImageCollection,
+  System.Actions, Vcl.ActnList, Vcl.PlatformDefaultStyleActnCtrls, Vcl.ActnMan,
+  Vcl.ToolWin, Vcl.ActnCtrls, Vcl.ActnMenus;
 
 type
   TManageMember = class(TForm)
@@ -55,23 +58,14 @@ type
     TabSheet2: TTabSheet;
     DBGrid3: TDBGrid;
     ImageList1: TImageList;
-    MainMenu1: TMainMenu;
-    File2: TMenuItem;
-    Exit2: TMenuItem;
-    Help2: TMenuItem;
-    About2: TMenuItem;
     btnFindMember: TButton;
     btnGotoMemberID: TButton;
-    Find1: TMenuItem;
-    Find2: TMenuItem;
     Label18: TLabel;
     RegistrationNum: TDBEdit;
     Label8: TLabel;
     dtpickDOB: TCalendarPicker;
     lblCount: TLabel;
     btnGotoMembership: TButton;
-    Onlinehelp1: TMenuItem;
-    SCMwebsite1: TMenuItem;
     DBgridHistoryPB: TDBGrid;
     Label23: TLabel;
     Label13: TLabel;
@@ -90,10 +84,15 @@ type
     btnMemberHistory: TButton;
     btnClubMembersDetailed: TButton;
     btnClubMembersList: TButton;
-    GotoMemberID1: TMenuItem;
-    GotoMembershipNumber1: TMenuItem;
-    N1: TMenuItem;
-    AutoEdit1: TMenuItem;
+    ActnMemberMenuBar: TActionMainMenuBar;
+    ActnManagerMember: TActionManager;
+    MemFile_AutoEdit: TAction;
+    MemFile_Exit: TAction;
+    MemSearch_GotoMembershipNum: TAction;
+    MemSearch_GotoMemberID: TAction;
+    MemSearch_FindMember: TAction;
+    ImageCollectMember: TImageCollection;
+    VirtlImageListMember: TVirtualImageList;
     procedure FormCreate(Sender: TObject);
     procedure About2Click(Sender: TObject);
     procedure DBGrid3CellClick(Column: TColumn);
@@ -115,10 +114,8 @@ type
     procedure btnGotoMemberIDClick(Sender: TObject);
     procedure btnGotoMembershipClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure Find2Click(Sender: TObject);
     procedure Onlinehelp1Click(Sender: TObject);
     procedure SCMwebsite1Click(Sender: TObject);
-    procedure Exit2Click(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure DBNavigator1BeforeAction(Sender: TObject; Button: TNavigateBtn);
     procedure DBNavigator1Click(Sender: TObject; Button: TNavigateBtn);
@@ -128,6 +125,8 @@ type
     procedure btnClubMembersSummaryClick(Sender: TObject);
     procedure btnClubMembersDetailedClick(Sender: TObject);
     procedure btnClubMembersListClick(Sender: TObject);
+    procedure MemFile_ExitExecute(Sender: TObject);
+    procedure MemSearch_FindMemberExecute(Sender: TObject);
 
   private
     { Private declarations }
@@ -682,16 +681,6 @@ begin
   end;
 end;
 
-procedure TManageMember.Exit2Click(Sender: TObject);
-begin
-  Close();
-end;
-
-procedure TManageMember.Find2Click(Sender: TObject);
-begin
-  btnFindMemberClick(Self);
-end;
-
 function TManageMember.FindMember(MemberID: Integer): Boolean;
 var
   b: Boolean;
@@ -805,6 +794,16 @@ begin
     exit;
   // UPDATE THE NUMBER OF RECORDS.
   lblCount.Caption := IntToStr(ManageMemberData.RecordCount);
+end;
+
+procedure TManageMember.MemFile_ExitExecute(Sender: TObject);
+begin
+  Close();
+end;
+
+procedure TManageMember.MemSearch_FindMemberExecute(Sender: TObject);
+begin
+  btnFindMemberClick(Self);
 end;
 
 procedure TManageMember.Onlinehelp1Click(Sender: TObject);

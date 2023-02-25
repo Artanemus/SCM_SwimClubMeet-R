@@ -214,7 +214,6 @@ end;
 procedure TManageMemberData.qryMemberAfterInsert(DataSet: TDataSet);
 var
   fld: TField;
-  SwimClubID: integer;
 begin
   fld := DataSet.FieldByName('IsArchived');
   if (fld.IsNull) then

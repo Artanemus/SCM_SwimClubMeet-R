@@ -4,7 +4,7 @@
         <ProjectVersion>19.5</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -348,10 +348,6 @@
             <Form>MembersList</Form>
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="dlgDBVerInfo.pas">
-            <Form>DBVerInfo</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Vcl.PlatformVclStylesActnCtrls.pas"/>
         <DCCReference Include="REPORTS\rptHeatReportA.pas">

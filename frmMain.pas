@@ -146,7 +146,6 @@ type
     Tools_House: TAction;
     Nominate_ClearSessionNominations: TAction;
     Nominate_ClearEventNominations: TAction;
-    Help_DBVerInfo: TAction;
     Event_BuildFinals: TAction;
     Event_BuildSemiFinals: TAction;
     Event_BuildQuarterFinals: TAction;
@@ -263,6 +262,7 @@ type
     Help_OnlineHelp: TAction;
     Help_Website: TAction;
     VirtualImageListMenu: TVirtualImageList;
+    Nominate_MemeberDetails: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure SCM_RefreshExecute(Sender: TObject);
@@ -387,8 +387,6 @@ type
     procedure Entrant_SwapLanesExecute(Sender: TObject);
     procedure Entrant_SwapLanesUpdate(Sender: TObject);
     procedure Tools_MembershipTypeUpdate(Sender: TObject);
-    procedure Help_DBVerInfoExecute(Sender: TObject);
-    procedure Help_DBVerInfoUpdate(Sender: TObject);
     procedure Nominate_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure SCM_RefreshUpdate(Sender: TObject);
@@ -400,6 +398,10 @@ type
     procedure Heat_ReportUpdate(Sender: TObject);
     procedure Help_OnlineHelpUpdate(Sender: TObject);
     procedure Help_WebsiteUpdate(Sender: TObject);
+    procedure Nominate_MemeberDetailsExecute(Sender: TObject);
+    procedure Nominate_MemeberDetailsUpdate(Sender: TObject);
+    procedure Entrant_GotoMemberDetailsUpdate(Sender: TObject);
+    procedure Entrant_GotoMemberDetailsExecute(Sender: TObject);
   private
     { Private declarations }
     // For scroll wheel tracking on mouse ...
@@ -730,6 +732,35 @@ begin
           // is there any entrants?
           if not SCM.dsEntrant.DataSet.IsEmpty then
             DoEnable := true;
+  TAction(Sender).Enabled := DoEnable;
+end;
+
+procedure TMain.Entrant_GotoMemberDetailsExecute(Sender: TObject);
+var
+  dlg: TManageMember;
+  MemberID: integer;
+begin
+  if not AssertConnection then
+    exit;
+  dlg := TManageMember.Create(self);
+  MemberID := SCM.dsEntrant.DataSet.FieldByName('MemberID').AsInteger;
+  try
+    dlg.Prepare(SCM.scmConnection, 1, MemberID);
+    dlg.ShowModal;
+  finally
+    dlg.Free;
+  end;
+end;
+
+procedure TMain.Entrant_GotoMemberDetailsUpdate(Sender: TObject);
+var
+  DoEnable: boolean;
+begin
+  DoEnable := false;
+  if AssertConnection then
+      // No members listed.
+      if not SCM.dsEntrant.DataSet.IsEmpty then
+        DoEnable := true;
   TAction(Sender).Enabled := DoEnable;
 end;
 
@@ -3091,32 +3122,13 @@ begin
   TAction(Sender).Enabled := DoEnable;
 end;
 
-procedure TMain.Help_DBVerInfoExecute(Sender: TObject);
-var
-dlg: TDBVerInfo;
-begin
-  // display the [SwimClubMeet].[dbo].SCMSystem version info
-  dlg := TDBVerInfo.Create(self, SCM.scmConnection);
-  dlg.ShowModal;
-  dlg.Free;
-end;
-
-procedure TMain.Help_DBVerInfoUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  // Are we connected?
-  if AssertConnection then
-    DoEnable := true;
-  TAction(Sender).Enabled := DoEnable;
-end;
-
 procedure TMain.Help_AboutExecute(Sender: TObject);
 var
   dlg: TAbout;
 begin
   dlg := TAbout.Create(self);
+  if AssertConnection then
+    dlg.DBConnection := SCM.scmConnection;
   dlg.ShowModal;
   dlg.Free;
 end;
@@ -3238,20 +3250,8 @@ begin
 end;
 
 procedure TMain.Nominate_GridDblClick(Sender: TObject);
-var
-  dlg: TManageMember;
-  MemberID: integer;
 begin
-  if not AssertConnection then
-    exit;
-  dlg := TManageMember.Create(self);
-  MemberID := SCM.dsNominateMembers.DataSet.FieldByName('MemberID').AsInteger;
-  try
-    dlg.Prepare(SCM.scmConnection, 1, MemberID);
-    dlg.ShowModal;
-  finally
-    dlg.Free;
-  end;
+  Nominate_MemeberDetailsExecute(Self);
 end;
 
 procedure TMain.Nominate_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -3283,6 +3283,35 @@ begin
     // DEFAULT cell draaw
     DefaultDrawColumnCell(Rect, DataCol, Column, State);
   end;
+end;
+
+procedure TMain.Nominate_MemeberDetailsExecute(Sender: TObject);
+var
+  dlg: TManageMember;
+  MemberID: integer;
+begin
+  if not AssertConnection then
+    exit;
+  dlg := TManageMember.Create(self);
+  MemberID := SCM.dsNominateMembers.DataSet.FieldByName('MemberID').AsInteger;
+  try
+    dlg.Prepare(SCM.scmConnection, 1, MemberID);
+    dlg.ShowModal;
+  finally
+    dlg.Free;
+  end;
+end;
+
+procedure TMain.Nominate_MemeberDetailsUpdate(Sender: TObject);
+var
+  DoEnable: boolean;
+begin
+  DoEnable := false;
+  if AssertConnection then
+      // No members listed.
+      if not Nominate_Grid.DataSource.DataSet.IsEmpty then
+        DoEnable := true;
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Nominate_ReportExecute(Sender: TObject);

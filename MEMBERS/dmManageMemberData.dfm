@@ -1,5 +1,4 @@
 object ManageMemberData: TManageMemberData
-  OldCreateOrder = False
   OnCreate = DataModuleCreate
   Height = 639
   Width = 665

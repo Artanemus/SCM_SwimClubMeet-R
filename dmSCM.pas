@@ -1503,7 +1503,7 @@ end;
 procedure TSCM.Heat_DeleteALL(aEventID: integer);
 var
 SQL: string;
-aHeatID, id: integer;
+id: integer;
 qry: TFDQuery;
 begin
   // 11.10.2020
@@ -2057,7 +2057,7 @@ end;
 procedure TSCM.qryEntrantTIMESetText(Sender: TField; const Text: string);
 var
   Min, Sec, MSec: word;
-  s, s2: string;
+  s: string;
   dt: TDateTime;
   i: integer;
   failed: Boolean;
@@ -2201,9 +2201,6 @@ end;
 
 procedure TSCM.qryEventScheduleDTGetText(Sender: TField; var Text: string;
   DisplayText: Boolean);
-var
-s: string;
-fs: TFormatSettings;
 begin
   Text := FormatDateTime('hh:nn', Sender.AsDateTime);
 end;
