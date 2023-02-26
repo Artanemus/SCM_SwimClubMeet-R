@@ -31,7 +31,7 @@ If you are interested in following a developer's blog and track my progress then
 
 ### CODE
 
-As of version 1.6, SCM is written in Delphi using Embarcadero's RAD Studio 10.4.2. FastReport VCL components are used for reporting. Database access is done with FireDAC (included in the enterprise edition). Other than that, no other additional VCL components have been used. All SQL scripts have been written to be compatible with MS SQL EXPRESS 2017 and up. The release version is 32bit due to the limits of FastReport.
+As of version 1.5.5.0, SCM is written in Delphi using Embarcadero's RAD Studio 11.2. FastReport VCL components are used for reporting. Database access is done with FireDAC (included in the enterprise edition). Other than that, no other additional VCL components have been used. All SQL scripts have been written to be compatible with MS SQL EXPRESS 2017 and up. The release version is 32bit due to the limits of FastReport.
 
 FYI: Database design was done with ERStudio.
 
