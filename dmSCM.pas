@@ -1417,7 +1417,7 @@ begin
     qrySCMSystem.Open;
     if qrySCMSystem.Active then
       Result := qrySCMSystem.FieldByName('Major').AsInteger;
-    qrySCMSystem.Open;
+    qrySCMSystem.Close;
   end;
 end;
 
