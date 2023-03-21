@@ -132,7 +132,7 @@ begin
   begin
     { *
       ForceDirectories creates a new directory as specified in Dir, which must be
-      a fully-qualified path name. If the directories given in the path do not yet
+      a fully-qualified pathname. If the directories given in the path do not yet
       exist, ForceDirectories attempts to create them. ForceDirectories returns
       True if it successfully creates all necessary directories, False if it could
       not create a needed directory.

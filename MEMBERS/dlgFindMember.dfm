@@ -3,8 +3,8 @@ object FindMember: TFindMember
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Find Member'
-  ClientHeight = 531
-  ClientWidth = 357
+  ClientHeight = 530
+  ClientWidth = 353
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,21 +12,20 @@ object FindMember: TFindMember
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poOwnerFormCenter
   OnClose = FormClose
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
-  PixelsPerInch = 96
   TextHeight = 19
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 357
+    Width = 353
     Height = 49
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 357
     object VirtualImage1: TVirtualImage
       Left = 8
       Top = 7
@@ -50,14 +49,16 @@ object FindMember: TFindMember
   end
   object Panel2: TPanel
     Left = 0
-    Top = 480
-    Width = 357
+    Top = 479
+    Width = 353
     Height = 51
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitTop = 480
+    ExplicitWidth = 357
     DesignSize = (
-      357
+      353
       51)
     object lblFound: TLabel
       Left = 8
@@ -67,7 +68,7 @@ object FindMember: TFindMember
       Caption = 'Found :'
     end
     object btnGotoMember: TButton
-      Left = 201
+      Left = 193
       Top = 10
       Width = 131
       Height = 30
@@ -75,13 +76,14 @@ object FindMember: TFindMember
       Caption = 'Goto Member'
       TabOrder = 0
       OnClick = btnGotoMemberClick
+      ExplicitLeft = 201
     end
   end
   object DBGrid1: TDBGrid
     Left = 0
     Top = 49
-    Width = 357
-    Height = 431
+    Width = 353
+    Height = 430
     Align = alClient
     DataSource = dsFindMember
     Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]

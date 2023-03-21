@@ -548,7 +548,7 @@ begin
   begin
     fDoDelete := false;
     dlg := TDeleteMember.Create(Self);
-    // get the name of the member to delete
+    // get the fullname of the member to delete
     FName := ManageMemberData.dsMember.DataSet.FieldByName('FName').AsString;
     ID := ManageMemberData.dsMember.DataSet.FieldByName('MemberID').AsInteger;
     s := IntToStr(ID);

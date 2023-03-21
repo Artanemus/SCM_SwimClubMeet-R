@@ -2,22 +2,20 @@ object BasicLogin: TBasicLogin
   Left = 0
   Top = 0
   Caption = 'Login to the SwimClubMeet Server ...'
-  ClientHeight = 285
-  ClientWidth = 527
+  ClientHeight = 284
+  ClientWidth = 523
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -16
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
   OnShow = FormShow
   DesignSize = (
-    527
-    285)
-  PixelsPerInch = 96
+    523
+    284)
   TextHeight = 19
   object Label1: TLabel
     Left = 48
@@ -64,42 +62,47 @@ object BasicLogin: TBasicLogin
   object edtPassword: TEdit
     Left = 99
     Top = 96
-    Width = 295
+    Width = 287
     Height = 27
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 1
     Text = 'edtPassword'
+    ExplicitWidth = 295
   end
   object edtServer: TEdit
     Left = 99
     Top = 16
-    Width = 419
+    Width = 411
     Height = 27
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 2
     Text = 'edtServer'
+    ExplicitWidth = 419
   end
   object edtUser: TEdit
     Left = 99
     Top = 56
-    Width = 367
+    Width = 359
     Height = 27
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 3
     Text = 'edtUser'
+    ExplicitWidth = 367
   end
   object Panel1: TPanel
     Left = 0
-    Top = 215
-    Width = 527
+    Top = 214
+    Width = 523
     Height = 70
     Align = alBottom
     BevelEdges = [beTop]
     BevelKind = bkFlat
     BevelOuter = bvNone
     TabOrder = 4
+    ExplicitTop = 215
+    ExplicitWidth = 527
     DesignSize = (
-      527
+      523
       68)
     object lblMsg: TLabel
       Left = 23
@@ -111,7 +114,7 @@ object BasicLogin: TBasicLogin
       Visible = False
     end
     object btnAbort: TButton
-      Left = 351
+      Left = 343
       Top = 19
       Width = 81
       Height = 32
@@ -120,9 +123,10 @@ object BasicLogin: TBasicLogin
       ModalResult = 3
       TabOrder = 1
       OnClick = btnAbortClick
+      ExplicitLeft = 351
     end
     object btnConnect: TButton
-      Left = 438
+      Left = 430
       Top = 19
       Width = 81
       Height = 32
@@ -131,6 +135,7 @@ object BasicLogin: TBasicLogin
       Default = True
       TabOrder = 0
       OnClick = btnConnectClick
+      ExplicitLeft = 438
     end
   end
 end

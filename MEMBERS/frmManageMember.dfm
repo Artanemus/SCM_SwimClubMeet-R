@@ -2,8 +2,8 @@ object ManageMember: TManageMember
   Left = 0
   Top = 0
   Caption = 'Manage SwimClubMeet Members'
-  ClientHeight = 844
-  ClientWidth = 1350
+  ClientHeight = 843
+  ClientWidth = 1346
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,15 +18,14 @@ object ManageMember: TManageMember
   TextHeight = 19
   object Panel1: TPanel
     Left = 0
-    Top = 42
-    Width = 1350
+    Top = 27
+    Width = 1346
     Height = 49
     Align = alTop
     BevelEdges = []
     BevelOuter = bvNone
     TabOrder = 0
     ExplicitTop = 0
-    ExplicitWidth = 1346
     object lblMemberCount: TLabel
       Left = 669
       Top = 12
@@ -113,15 +112,14 @@ object ManageMember: TManageMember
   end
   object Panel3: TPanel
     Left = 0
-    Top = 778
-    Width = 1350
+    Top = 777
+    Width = 1346
     Height = 66
     Align = alBottom
     BevelEdges = []
     BevelOuter = bvNone
     TabOrder = 1
     ExplicitTop = 757
-    ExplicitWidth = 1346
     object DBNavigator1: TDBNavigator
       Left = 385
       Top = 6
@@ -139,9 +137,9 @@ object ManageMember: TManageMember
   end
   object PageControl1: TPageControl
     Left = 0
-    Top = 91
-    Width = 1350
-    Height = 687
+    Top = 76
+    Width = 1346
+    Height = 701
     ActivePage = TabSheet1
     Align = alClient
     MultiLine = True
@@ -149,7 +147,6 @@ object ManageMember: TManageMember
     TabOrder = 2
     TabWidth = 160
     ExplicitTop = 49
-    ExplicitWidth = 1346
     ExplicitHeight = 708
     object TabSheet1: TTabSheet
       Caption = 'Member'#39's Details'
@@ -157,7 +154,7 @@ object ManageMember: TManageMember
         Left = 0
         Top = 0
         Width = 1342
-        Height = 637
+        Height = 652
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
@@ -842,8 +839,9 @@ object ManageMember: TManageMember
   object ActnMemberMenuBar: TActionMainMenuBar
     Left = 0
     Top = 0
-    Width = 1350
-    Height = 42
+    Width = 1346
+    Height = 27
+    UseSystemFont = False
     ActionManager = ActnManagerMember
     Caption = 'Member Menu Bar'
     Color = clMenuBar
@@ -852,14 +850,12 @@ object ManageMember: TManageMember
     ColorMap.BtnSelectedFont = clBlack
     ColorMap.UnusedColor = clWhite
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
+    Font.Color = clBlack
     Font.Height = -13
     Font.Name = 'Segoe UI'
     Font.Style = []
     HorzMargin = 10
     Spacing = 10
-    ExplicitTop = 3
-    ExplicitHeight = 29
   end
   object ImageList1: TImageList
     Height = 24

@@ -559,7 +559,7 @@ begin
   // CLOSE, SET new PARMS and OPEN the database used by the controllist.
   // This is needed for images in event Nominate_ControlListBeforeDrawItem
   SCM.Nominate_UpdateControlList(SCM.GetSessionID, MemberID);
-  // CLOSE makes inactive the bind source, but DATASET connection name ok.
+  // CLOSE makes inactive the bind source, but DATASET connection ok.
   if not BindSourceDB1.DataSet.Active then
     BindSourceDB1.DataSet.Active := true;
 
@@ -861,7 +861,7 @@ begin
     dlg.Free;
   end;
 
-  // require a refresh to update members name
+  // require a refresh to update members details
   if passed and IsPositiveResult(rtnValue) then
   begin
     SCM.dsEntrant.DataSet.Refresh;
@@ -2106,7 +2106,7 @@ begin
 
     The font of the MenuItemTextNormal element (or any other) in the style
     designer has no effect, this is because the Vcl Style Engine simply
-    ignores the font size and name, and just uses the font color defined in
+    ignores the font-size and font-name, and just uses the font color defined in
     the vcl style file.
 
     S O L U T I O N :
@@ -2920,7 +2920,7 @@ begin
     rptTimeKeeper.qryReport.Close;
     // disable select printer dialog ....
     rptTimeKeeper.frxReport1.PrintOptions.ShowDialog := false;
-    // store printer name
+    // store printer-name
     // printerName := rptTimeKeeper.lastPrinterName;
     SCM.dsHeat.DataSet.Next;
   end;
@@ -2949,7 +2949,7 @@ begin
     rptMarshall := TMarshallReportA.Create(self);
     // disable select printer dialog ....
     rptMarshall.frxReport1.PrintOptions.ShowDialog := false;
-    // set printer name
+    // set printer-name
     rptMarshall.frxReport1.PrintOptions.Printer := printerName;
     EventID := SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger;
     rptMarshall.Prepare(SCM.scmConnection, EventID);
@@ -3731,7 +3731,7 @@ begin
   if PrinterOrFolderName.IsEmpty then
   begin
     if (SendToMode = stmSendToFile) then
-      s := 'ERROR: No folder name given.'
+      s := 'ERROR: No folder-name given.'
     else
       s := 'ERROR: No printer selected.';
     MessageDlg(s, mtError, [mbOK], 0);
@@ -3764,7 +3764,7 @@ begin
   // Dlg tasked to print/export reports.
   // BatchPrint(
   // REPORT TYPE - MARSHALL or TIMEKEEPER,
-  // PRINTER NAME OR FOLDER NAME FOR FILE EXPORT,
+  // PRINTER-NAME OR FOLDER-NAME FOR FILE EXPORT,
   // NUMBER OF ERRORS (REFERENCE PARAM),
   // SEND TO PRINTER (DEFAULT) OR EXPORT TO FILE
   // FILE TYPE TO EXPORT PDF, XLS, HTML, NA (DEFAULT)

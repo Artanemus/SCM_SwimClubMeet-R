@@ -88,7 +88,7 @@ begin
   MemberID := qryFindMember.FieldByName('MemberID').AsInteger;
 
   // ---------------------------------
-  // MEMBER'S NAME ....
+  // MEMBER'S FULLNAME ....
   // ---------------------------------
   if (Length(Edit1.Text) > 0) then
   begin

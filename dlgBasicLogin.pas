@@ -83,7 +83,7 @@ end;
 
 procedure TBasicLogin.FormCreate(Sender: TObject);
 var
-  Value, Section, Name: string;
+  AValue, ASection, AName: string;
 begin
   lblLoginErrMsg.Visible := false;
   lblMsg.Visible := false;
@@ -91,20 +91,20 @@ begin
   if Assigned(SCM) then
   begin
     // Read last successful connection params and load into controls
-    Section := 'MSSQL_SwimClubMeet';
-    Name := 'Server';
-    SCM.SimpleLoadSettingString(Section, Name, Value);
-    edtServer.Text := Value;
-    Name := 'User';
-    SCM.SimpleLoadSettingString(Section, Name, Value);
-    edtUser.Text := Value;
-    Name := 'Password';
-    SCM.SimpleLoadSettingString(Section, Name, Value);
-    edtPassword.Text := Value;
-    Name := 'OsAuthent';
-    SCM.SimpleLoadSettingString(Section, Name, Value);
+    ASection := 'MSSQL_SwimClubMeet';
+    AName := 'Server';
+    SCM.SimpleLoadSettingString(ASection, AName, AValue);
+    edtServer.Text := AValue;
+    AName := 'User';
+    SCM.SimpleLoadSettingString(ASection, AName, AValue);
+    edtUser.Text := AValue;
+    AName := 'Password';
+    SCM.SimpleLoadSettingString(ASection, AName, AValue);
+    edtPassword.Text := AValue;
+    AName := 'OsAuthent';
+    SCM.SimpleLoadSettingString(ASection, AName, AValue);
 
-    if ((UpperCase(Value) = 'YES') or (UpperCase(Value) = 'TRUE')) then
+    if ((UpperCase(AValue) = 'YES') or (UpperCase(AValue) = 'TRUE')) then
       chkOsAuthent.Checked := true
     else
       chkOsAuthent.Checked := false;

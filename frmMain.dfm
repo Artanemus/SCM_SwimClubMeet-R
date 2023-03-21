@@ -50,6 +50,7 @@ object Main: TMain
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 0
+          ExplicitHeight = 762
           object pnlSessLeftTop: TPanel
             Left = 0
             Top = 0
@@ -176,6 +177,7 @@ object Main: TMain
             Align = alRight
             BevelOuter = bvNone
             TabOrder = 2
+            ExplicitHeight = 742
             DesignSize = (
               60
               743)
@@ -291,6 +293,8 @@ object Main: TMain
           BevelOuter = bvNone
           Caption = 'pnlSessionClient'
           TabOrder = 1
+          ExplicitWidth = 673
+          ExplicitHeight = 762
           object pnlSessClientTop: TPanel
             Left = 0
             Top = 0
@@ -299,6 +303,7 @@ object Main: TMain
             Align = alTop
             BevelOuter = bvNone
             TabOrder = 0
+            ExplicitWidth = 673
             object lblSessionEventCaption: TLabel
               Left = 6
               Top = -3
@@ -316,6 +321,8 @@ object Main: TMain
             BevelOuter = bvNone
             Caption = 'Panel7'
             TabOrder = 1
+            ExplicitWidth = 673
+            ExplicitHeight = 742
             object Event_Grid: TDBGrid
               AlignWithMargins = True
               Left = 10
@@ -436,6 +443,8 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 1
+              ExplicitLeft = 613
+              ExplicitHeight = 742
               DesignSize = (
                 60
                 743)
@@ -1415,7 +1424,6 @@ object Main: TMain
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 2
-          ExplicitHeight = 625
           object HeatWidgets: TRelativePanel
             AlignWithMargins = True
             Left = 192
@@ -1814,7 +1822,6 @@ object Main: TMain
             PopupMenu = pumHeat
             TabOrder = 1
             OnBeforeDrawItem = HeatControlListBeforeDrawItem
-            ExplicitHeight = 625
             object vimgHeatNum: TVirtualImage
               Left = 16
               Top = 11
@@ -2367,6 +2374,7 @@ object Main: TMain
               end
               item
                 Action = Nominate_MemeberDetails
+                Caption = '&Member'#39's Details...'
                 ImageIndex = 1
                 ImageName = 'Members'
               end
