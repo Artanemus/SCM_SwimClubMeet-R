@@ -293,10 +293,10 @@ type
     // function ScatterLanes(index, NumOfPoolLanes: integer): integer;
 
     // CONNECTION
-    procedure SimpleLoadSettingString(ASection, AName: string; var AValue: string);
-    procedure SimpleMakeTemporyFDConnection(Server, User, Password: string;
-      OsAuthent: boolean);
-    procedure SimpleSaveSettingString(ASection, AName, AValue: string);
+//    procedure SimpleLoadSettingString(ASection, AName: string; var AValue: string);
+//    procedure SimpleMakeTemporyFDConnection(Server, User, Password: string;
+//      OsAuthent: boolean);
+//    procedure SimpleSaveSettingString(ASection, AName, AValue: string);
 
   published
 
@@ -2604,6 +2604,7 @@ begin
   end;
 end;
 
+{
 procedure TSCM.SimpleLoadSettingString(ASection, AName: string; var AValue: string);
 var
   ini: TIniFile;
@@ -2675,6 +2676,8 @@ begin
     ini.free;
   end;
 end;
+
+}
 
 function TSCM.SwapLanes(EntrantIDA, EntrantIDB: integer): boolean;
 begin

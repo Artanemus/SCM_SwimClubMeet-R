@@ -125,10 +125,6 @@
             <Form>About</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="dlgBasicLogin.pas">
-            <Form>BasicLogin</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <DCCReference Include="dlgBootProgress.pas">
             <Form>BootProgress</Form>
             <FormType>dfm</FormType>
@@ -181,9 +177,6 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="SCMExeInfo.pas"/>
-        <DCCReference Include="SCMDefines.pas"/>
-        <DCCReference Include="SCMUtility.pas"/>
         <DCCReference Include="dlgAutoBuild_Heats.pas">
             <Form>AutoBuild_Heats</Form>
             <FormType>dfm</FormType>
@@ -359,6 +352,14 @@
             <Form>HeatReportB</Form>
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\SCM_SHARED\SCMDefines.pas"/>
+        <DCCReference Include="..\SCM_SHARED\exeinfo.pas"/>
+        <DCCReference Include="..\SCM_SHARED\SCMSimpleConnect.pas"/>
+        <DCCReference Include="..\SCM_SHARED\SCMUtility.pas"/>
+        <DCCReference Include="..\SCM_SHARED\dlgBasicLogin.pas">
+            <Form>BasicLogin</Form>
+            <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>

@@ -146,9 +146,9 @@ type
   protected
     // windows messages ....
     procedure ManageMemberAfterScroll(var Msg: TMessage);
-      message MANAGEMEMBER_AFTERSCROLL;
+      message SCM_AFTERSCROLL;
     procedure ManageMemberUpdate(var Msg: TMessage);
-      message MANAGEMEMBER_UPDATE;
+      message SCM_UPDATE;
 
   public
     { Public declarations }

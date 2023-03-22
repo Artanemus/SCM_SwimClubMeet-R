@@ -6,7 +6,6 @@ uses
   Vcl.Themes,
   Vcl.Styles,
   dlgAbout in 'dlgAbout.pas' {About},
-  dlgBasicLogin in 'dlgBasicLogin.pas' {BasicLogin},
   dlgBootProgress in 'dlgBootProgress.pas' {BootProgress},
   dlgCloneSession in 'dlgCloneSession.pas' {CloneSession},
   dlgDivision in 'dlgDivision.pas' {Division},
@@ -19,9 +18,6 @@ uses
   dmReports in 'dmReports.pas' {RPTS: TDataModule},
   dmSCM in 'dmSCM.pas' {SCM: TDataModule},
   dmSCMNom in 'dmSCMNom.pas' {SCMNom: TDataModule},
-  SCMExeInfo in 'SCMExeInfo.pas',
-  SCMDefines in 'SCMDefines.pas',
-  SCMUtility in 'SCMUtility.pas',
   dlgAutoBuild_Heats in 'dlgAutoBuild_Heats.pas' {AutoBuild_Heats},
   dlgQualifyTimes in 'dlgQualifyTimes.pas' {QualifyTimes},
   dlgSwapLanes in 'dlgSwapLanes.pas' {SwapLanes},
@@ -61,7 +57,12 @@ uses
   rptMembersList in 'MEMBERS\rptMembersList.pas' {MembersList: TDataModule},
   Vcl.PlatformVclStylesActnCtrls in 'Vcl.PlatformVclStylesActnCtrls.pas',
   rptHeatReportA in 'REPORTS\rptHeatReportA.pas' {HeatReportA: TDataModule},
-  rptHeatReportB in 'REPORTS\rptHeatReportB.pas' {HeatReportB: TDataModule};
+  rptHeatReportB in 'REPORTS\rptHeatReportB.pas' {HeatReportB: TDataModule},
+  SCMDefines in '..\SCM_SHARED\SCMDefines.pas',
+  exeinfo in '..\SCM_SHARED\exeinfo.pas',
+  SCMSimpleConnect in '..\SCM_SHARED\SCMSimpleConnect.pas',
+  SCMUtility in '..\SCM_SHARED\SCMUtility.pas',
+  dlgBasicLogin in '..\SCM_SHARED\dlgBasicLogin.pas' {BasicLogin};
 
 {$R *.res}
 
