@@ -1880,6 +1880,8 @@ begin
   // to the FireDAC connection definition file
   // -----------------------------------------------------------
   aBasicLogin := TBasicLogin.Create(self);
+  aBasicLogin.DBName := 'SwimClubMeet';
+  aBasicLogin.DBConnection := SCM.scmConnection;
   result := aBasicLogin.ShowModal;
   aBasicLogin.Free;
 
@@ -3127,6 +3129,8 @@ var
   dlg: TAbout;
 begin
   dlg := TAbout.Create(self);
+  dlg.DBName := 'SwimClubMeet'; // DEFAULT
+  // Note: Safe to call TAbout without connection params assigned.
   if AssertConnection then
     dlg.DBConnection := SCM.scmConnection;
   dlg.ShowModal;

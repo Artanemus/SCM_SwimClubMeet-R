@@ -4,7 +4,7 @@
         <ProjectVersion>19.5</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -104,14 +104,14 @@
         <DCC_DebugInformation>0</DCC_DebugInformation>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_MinorVer>5</VerInfo_MinorVer>
         <VerInfo_Release>5</VerInfo_Release>
-        <VerInfo_Keys>CompanyName=Artanemus;FileDescription=$(MSBuildProjectName) - Manage club members and run your club nights.;FileVersion=1.5.5.0;InternalName=SwimClubMeet;LegalCopyright=Copyright (C) 2019-2023 Artanemus.  All rights reserved.;LegalTrademarks=;OriginalFilename=SwimClubMeet.exe;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.5;Comments=Manage club members and run your club nights.</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=Artanemus;FileDescription=$(MSBuildProjectName) - Manage club members and run your club nights.;FileVersion=1.5.5.1;InternalName=SwimClubMeet;LegalCopyright=Copyright (C) 2019-2023 Artanemus.  All rights reserved.;LegalTrademarks=;OriginalFilename=SwimClubMeet.exe;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.5;Comments=Manage club members and run your club nights.</VerInfo_Keys>
         <Icon_MainIcon>SwimClubMeet.ico</Icon_MainIcon>
+        <VerInfo_Build>1</VerInfo_Build>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -119,10 +119,6 @@
         </DelphiCompile>
         <DCCReference Include="frmMain.pas">
             <Form>Main</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="dlgAbout.pas">
-            <Form>About</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="dlgBootProgress.pas">
@@ -308,7 +304,6 @@
             <Form>AutoBuildPref</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="UEnvVars.pas"/>
         <DCCReference Include="dlgEntrantPicker.pas">
             <Form>EntrantPicker</Form>
             <FormType>dfm</FormType>
@@ -342,7 +337,6 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="Vcl.PlatformVclStylesActnCtrls.pas"/>
         <DCCReference Include="REPORTS\rptHeatReportA.pas">
             <Form>HeatReportA</Form>
             <FormType>dfm</FormType>
@@ -359,6 +353,12 @@
         <DCCReference Include="..\SCM_SHARED\SCMUtility.pas"/>
         <DCCReference Include="..\SCM_SHARED\dlgBasicLogin.pas">
             <Form>BasicLogin</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\SCM_SHARED\UEnvVars.pas"/>
+        <DCCReference Include="..\SCM_SHARED\Vcl.PlatformVclStylesActnCtrls.pas"/>
+        <DCCReference Include="..\SCM_SHARED\dlgAbout.pas">
+            <Form>About</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Base">

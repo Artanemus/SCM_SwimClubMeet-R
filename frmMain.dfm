@@ -1032,8 +1032,6 @@ object Main: TMain
           BevelOuter = bvNone
           Caption = 'HeatRightPanel'
           TabOrder = 0
-          ExplicitWidth = 1100
-          ExplicitHeight = 605
           object Entrant_Grid: TDBGrid
             Left = 0
             Top = 0
@@ -1128,8 +1126,6 @@ object Main: TMain
             Anchors = []
             BevelOuter = bvNone
             TabOrder = 1
-            ExplicitLeft = 1040
-            ExplicitHeight = 605
             DesignSize = (
               60
               606)
@@ -1256,7 +1252,6 @@ object Main: TMain
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 1
-          ExplicitWidth = 1402
           DesignSize = (
             1406
             117)
@@ -1597,7 +1592,6 @@ object Main: TMain
             Align = alRight
             BevelOuter = bvNone
             TabOrder = 0
-            ExplicitHeight = 605
             DesignSize = (
               60
               606)

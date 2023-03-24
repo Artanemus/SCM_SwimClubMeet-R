@@ -5,7 +5,6 @@ uses
   frmMain in 'frmMain.pas' {Main},
   Vcl.Themes,
   Vcl.Styles,
-  dlgAbout in 'dlgAbout.pas' {About},
   dlgBootProgress in 'dlgBootProgress.pas' {BootProgress},
   dlgCloneSession in 'dlgCloneSession.pas' {CloneSession},
   dlgDivision in 'dlgDivision.pas' {Division},
@@ -47,7 +46,6 @@ uses
   dlgSelectPrinter in 'dlgSelectPrinter.pas' {SelectPrinter},
   dlgBatchProgress in 'dlgBatchProgress.pas' {BatchProgress},
   dlgAutoBuildPref in 'dlgAutoBuildPref.pas' {AutoBuildPref},
-  UEnvVars in 'UEnvVars.pas',
   dlgEntrantPicker in 'dlgEntrantPicker.pas' {EntrantPicker},
   dlgEntrantPickerCTRL in 'dlgEntrantPickerCTRL.pas' {EntrantPickerCTRL},
   rptMemberDetail in 'MEMBERS\rptMemberDetail.pas' {MemberDetail: TDataModule},
@@ -55,14 +53,16 @@ uses
   rptMembersDetail in 'MEMBERS\rptMembersDetail.pas' {MembersDetail: TDataModule},
   rptMemberHistory in 'MEMBERS\rptMemberHistory.pas' {MemberHistory: TDataModule},
   rptMembersList in 'MEMBERS\rptMembersList.pas' {MembersList: TDataModule},
-  Vcl.PlatformVclStylesActnCtrls in 'Vcl.PlatformVclStylesActnCtrls.pas',
   rptHeatReportA in 'REPORTS\rptHeatReportA.pas' {HeatReportA: TDataModule},
   rptHeatReportB in 'REPORTS\rptHeatReportB.pas' {HeatReportB: TDataModule},
   SCMDefines in '..\SCM_SHARED\SCMDefines.pas',
   exeinfo in '..\SCM_SHARED\exeinfo.pas',
   SCMSimpleConnect in '..\SCM_SHARED\SCMSimpleConnect.pas',
   SCMUtility in '..\SCM_SHARED\SCMUtility.pas',
-  dlgBasicLogin in '..\SCM_SHARED\dlgBasicLogin.pas' {BasicLogin};
+  dlgBasicLogin in '..\SCM_SHARED\dlgBasicLogin.pas' {BasicLogin},
+  UEnvVars in '..\SCM_SHARED\UEnvVars.pas',
+  Vcl.PlatformVclStylesActnCtrls in '..\SCM_SHARED\Vcl.PlatformVclStylesActnCtrls.pas',
+  dlgAbout in '..\SCM_SHARED\dlgAbout.pas' {About};
 
 {$R *.res}
 
