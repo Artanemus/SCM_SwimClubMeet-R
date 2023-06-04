@@ -12,13 +12,11 @@ object Preferences: TPreferences
   Font.Name = 'Segoe UI'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poOwnerFormCenter
   ShowHint = True
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
-  PixelsPerInch = 96
   TextHeight = 21
   object Panel1: TPanel
     Left = 0
@@ -28,6 +26,7 @@ object Preferences: TPreferences
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 650
     object DBText1: TDBText
       Left = 13
       Top = 9
@@ -52,11 +51,13 @@ object Preferences: TPreferences
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitTop = 543
+    ExplicitWidth = 650
     DesignSize = (
       654
       48)
     object btnClose: TButton
-      Left = 536
+      Left = 528
       Top = 6
       Width = 101
       Height = 33
@@ -64,6 +65,7 @@ object Preferences: TPreferences
       Caption = 'Close'
       TabOrder = 0
       OnClick = btnCloseClick
+      ExplicitLeft = 524
     end
   end
   object PageControl1: TPageControl
@@ -71,10 +73,12 @@ object Preferences: TPreferences
     Top = 41
     Width = 654
     Height = 503
-    ActivePage = TabSheet3
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 2
     OnChanging = PageControl1Changing
+    ExplicitWidth = 650
+    ExplicitHeight = 502
     object TabSheet1: TTabSheet
       Caption = 'Club'
       object Label2: TLabel
@@ -152,7 +156,7 @@ object Preferences: TPreferences
       object DBEdit1: TDBEdit
         Left = 134
         Top = 11
-        Width = 262
+        Width = 387
         Height = 29
         DataField = 'Caption'
         DataSource = dsSwimClub
@@ -161,7 +165,7 @@ object Preferences: TPreferences
       object DBEdit2: TDBEdit
         Left = 134
         Top = 46
-        Width = 262
+        Width = 387
         Height = 29
         DataField = 'NickName'
         DataSource = dsSwimClub
@@ -170,7 +174,7 @@ object Preferences: TPreferences
       object DBEdit3: TDBEdit
         Left = 134
         Top = 82
-        Width = 350
+        Width = 483
         Height = 29
         DataField = 'Email'
         DataSource = dsSwimClub
@@ -179,7 +183,7 @@ object Preferences: TPreferences
       object DBEdit4: TDBEdit
         Left = 134
         Top = 118
-        Width = 142
+        Width = 203
         Height = 29
         DataField = 'ContactNum'
         DataSource = dsSwimClub
@@ -364,7 +368,7 @@ object Preferences: TPreferences
         ParentFont = False
       end
       object btn1: TSpeedButton
-        Left = 205
+        Left = 197
         Top = 15
         Width = 33
         Height = 33
@@ -526,12 +530,12 @@ object Preferences: TPreferences
       object prefCheckUnNomination: TCheckBox
         Left = 9
         Top = 11
-        Width = 464
+        Width = 584
         Height = 78
         Caption = 
-          'If the member has been assigned a lane and then un-nominated, th' +
-          'ey will be removed from the heat.  When this option is enabled, ' +
-          'a warning message will be displayed.'
+          'If a member has been assigned a lane and then un-nominated, they' +
+          ' will be removed from the heat.  When this option is enabled, a ' +
+          'warning message will be displayed.'
         TabOrder = 0
         WordWrap = True
       end

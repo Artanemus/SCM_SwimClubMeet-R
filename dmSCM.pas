@@ -375,12 +375,14 @@ begin
         begin
           // contact numbers - non critical
           qryContactNum.Open;
-          if (GetVerInfoMajor < 6) then
-          begin
-            // need to remove field-name ScheduleDT
-            fld := qryEvent.Fields.FindField('ScheduleDT');
-            if Assigned(fld) then qryEvent.Fields.Remove(fld);
-          end;
+(*
+            if (GetVerInfoMajor < 6) and (GetVerInfoMinor < 2) then
+            begin
+              // need to remove field-name ScheduleDT
+              fld := qryEvent.Fields.FindField('ScheduleDT');
+              if Assigned(fld) then qryEvent.Fields.Remove(fld);
+            end;
+*)
           qryEvent.Open; // EVENT
           if (qryEvent.Active) then
           begin

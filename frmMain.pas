@@ -263,6 +263,7 @@ type
     Help_Website: TAction;
     VirtualImageListMenu: TVirtualImageList;
     Nominate_MemeberDetails: TAction;
+    Tools_DisqualifyCodes: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure SCM_RefreshExecute(Sender: TObject);
@@ -402,6 +403,8 @@ type
     procedure Nominate_MemeberDetailsUpdate(Sender: TObject);
     procedure Entrant_GotoMemberDetailsUpdate(Sender: TObject);
     procedure Entrant_GotoMemberDetailsExecute(Sender: TObject);
+    procedure Tools_DisqualifyCodesExecute(Sender: TObject);
+    procedure Event_GridEditButtonClick(Sender: TObject);
   private
     { Private declarations }
     // For scroll wheel tracking on mouse ...
@@ -444,6 +447,7 @@ type
 
     procedure UpdateStatusBar();
     procedure EnableEntrant_GridEllipse();
+    procedure EnableEvent_GridEllipse();
     procedure Event_BuildSCMEventType(Sender: TObject;
       EventType: scmEventFinalsType);
 
@@ -497,7 +501,8 @@ uses
   dlgAutoBuild_Finals, dlgPointsScored, dlgDivision, dlgLeaderBoard,
   dlgSelectPrinter, ioutils, dlgBatchProgress, dlgAutoBuildPref, ShellAPI,
   UEnvVars, dlgEntrantPicker, dlgEntrantPickerCTRL, dmSCMNom, dlgSwapLanes,
-  dlgDBVerInfo, rptHeatReportA, rptHeatReportB;
+  dlgDBVerInfo, rptHeatReportA, rptHeatReportB, frmDisqualificationCodes,
+  dlgSchedulePicker;
 
 
 procedure TMain.ActionManager1Update(Action: TBasicAction;
@@ -694,6 +699,25 @@ begin
     begin
       col.ButtonStyle := cbsEllipsis;
       Entrant_Grid.Repaint;
+      break;
+    end;
+  end;
+end;
+
+procedure TMain.EnableEvent_GridEllipse;
+var
+  i: integer;
+  col: TColumn;
+begin
+  for i := 0 to Event_Grid.Columns.Count - 1 do
+  begin
+    col := Event_Grid.Columns.Items[i];
+    if (col.FieldName = 'ScheduleDT') then
+    begin
+      // editing in the this cell isn't allowed - use ellipse button.
+      col.ButtonStyle := cbsEllipsis;
+      col.ReadOnly := true;
+      Event_Grid.Repaint;
       break;
     end;
   end;
@@ -1450,6 +1474,30 @@ begin
   end;
 end;
 
+procedure TMain.Event_GridEditButtonClick(Sender: TObject);
+var
+  passed: boolean;
+  dlg: TSchedulePicker;
+  EventID: integer;
+  rtnValue: TModalResult;
+begin
+  if not AssertConnection then
+    exit;
+  rtnValue := mrCancel;
+  SCM.dsEvent.DataSet.DisableControls;
+  EventID := SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger;
+  dlg := TSchedulePicker.CreateWithConnection(self, SCM.scmConnection);
+  rtnValue := dlg.ShowModal;
+  dlg.Free;
+  // require a refresh to update members details
+  if IsPositiveResult(rtnValue) then
+  begin
+    SCM.dsEvent.DataSet.Refresh;
+    SCM.Event_Locate(EventID);
+  end;
+  SCM.dsEvent.DataSet.EnableControls;
+end;
+
 procedure TMain.Event_GridKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 var
@@ -1822,6 +1870,9 @@ begin
         fld.DisplayLabel := ' Ent#';
     end;
     SCM.qryEvent.EnableControls;
+    // 4/6/2023 - if ScheduleDT is revealed
+    // - make visible ellipse button and repaint.
+    if Checked then EnableEvent_GridEllipse;
   end;
 end;
 
@@ -2063,6 +2114,7 @@ begin
   Nominate_Grid.DataSource := SCM.dsNominateMembers;
   // Heat_Grid.DataSource := SCM.dsHeat;
   Entrant_Grid.DataSource := SCM.dsEntrant;
+
   // L I N K   T D B T e x t
   dbtxtSwimClubCaption.DataSource := SCM.dsSwimClub;
   dbtxtSwimClubNickName.DataSource := SCM.dsSwimClub;
@@ -4263,6 +4315,15 @@ begin
       MessageDlg('It''s recommended you close and restart SCM', mtError,
         [mbOK], 0);
   end;
+end;
+
+procedure TMain.Tools_DisqualifyCodesExecute(Sender: TObject);
+var
+dlg: TDisqualificationCodes;
+begin
+  dlg := TDisqualificationCodes.CreateWithConnection(self, SCM.scmConnection);
+  dlg.ShowModal;
+  dlg.Free;
 end;
 
 procedure TMain.Tools_DivisionsExecute(Sender: TObject);

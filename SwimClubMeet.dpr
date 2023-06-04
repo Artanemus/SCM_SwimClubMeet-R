@@ -62,7 +62,9 @@ uses
   dlgBasicLogin in '..\SCM_SHARED\dlgBasicLogin.pas' {BasicLogin},
   UEnvVars in '..\SCM_SHARED\UEnvVars.pas',
   Vcl.PlatformVclStylesActnCtrls in '..\SCM_SHARED\Vcl.PlatformVclStylesActnCtrls.pas',
-  dlgAbout in '..\SCM_SHARED\dlgAbout.pas' {About};
+  dlgAbout in '..\SCM_SHARED\dlgAbout.pas' {About},
+  frmDisqualificationCodes in 'TOOLS\frmDisqualificationCodes.pas' {DisqualificationCodes},
+  dlgSchedulePicker in 'TOOLS\dlgSchedulePicker.pas' {SchedulePicker};
 
 {$R *.res}
 

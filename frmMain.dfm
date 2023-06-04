@@ -25,6 +25,8 @@ object Main: TMain
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 1410
+    ExplicitHeight = 797
     object PageControl1: TPageControl
       Left = 0
       Top = 0
@@ -36,6 +38,8 @@ object Main: TMain
       TabOrder = 0
       OnChange = PageControl1Change
       OnChanging = PageControl1Changing
+      ExplicitWidth = 1410
+      ExplicitHeight = 797
       object TabSheet1: TTabSheet
         Caption = 'Session'
         object pnlSessionLeft: TPanel
@@ -46,6 +50,7 @@ object Main: TMain
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 0
+          ExplicitHeight = 758
           object pnlSessLeftTop: TPanel
             Left = 0
             Top = 0
@@ -171,7 +176,6 @@ object Main: TMain
               end>
             Align = alRight
             BevelOuter = bvNone
-            Caption = 'VisibilityOn'
             TabOrder = 2
             ExplicitHeight = 738
             DesignSize = (
@@ -330,6 +334,7 @@ object Main: TMain
               Margins.Right = 10
               Margins.Bottom = 0
               Align = alClient
+              DataSource = SCM.dsEvent
               Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgTitleClick, dgTitleHotTrack]
               PopupMenu = pumEvent
               TabOrder = 0
@@ -339,6 +344,7 @@ object Main: TMain
               TitleFont.Name = 'Segoe UI'
               TitleFont.Style = []
               OnDrawColumnCell = Event_GridDrawColumnCell
+              OnEditButtonClick = Event_GridEditButtonClick
               OnKeyDown = Event_GridKeyDown
             end
             object EventWidgets: TRelativePanel
@@ -1288,8 +1294,10 @@ object Main: TMain
             Margins.Right = 66
             Margins.Bottom = 0
             Anchors = []
+            ItemCount = 2
             ItemWidth = 200
             ItemHeight = 68
+            ItemIndex = 0
             ItemMargins.Left = 10
             ItemMargins.Top = 0
             ItemMargins.Right = 10
@@ -1361,6 +1369,7 @@ object Main: TMain
               Alignment = taCenter
               Anchors = []
               AutoSize = False
+              Caption = '1'
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWindowText
               Font.Height = -32
@@ -1392,6 +1401,7 @@ object Main: TMain
               Alignment = taCenter
               Anchors = []
               AutoSize = False
+              Caption = '25'
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWindowText
               Font.Height = -27
@@ -2562,6 +2572,10 @@ object Main: TMain
                 Caption = '&LeaderBoard...'
               end
               item
+                Action = Tools_DisqualifyCodes
+                Caption = 'D&isqualification Codes...'
+              end
+              item
                 Caption = '-'
               end
               item
@@ -2605,8 +2619,8 @@ object Main: TMain
       end>
     Images = VirtualImageListMenu
     OnUpdate = ActionManager1Update
-    Left = 888
-    Top = 440
+    Left = 424
+    Top = 304
     StyleName = 'Platform Default'
     object Help_About: TAction
       Category = 'Help'
@@ -3138,6 +3152,11 @@ object Main: TMain
       ImageName = 'home'
       OnExecute = Help_WebsiteExecute
       OnUpdate = Help_WebsiteUpdate
+    end
+    object Tools_DisqualifyCodes: TAction
+      Category = 'Tools'
+      Caption = 'Disqualification Codes...'
+      OnExecute = Tools_DisqualifyCodesExecute
     end
   end
   object pumHeat: TPopupMenu
@@ -6697,13 +6716,13 @@ object Main: TMain
   object BindSourceDB1: TBindSourceDB
     DataSet = SCM.qryNominateControlList
     ScopeMappings = <>
-    Left = 1208
-    Top = 112
+    Left = 1104
+    Top = 168
   end
   object BindingsList1: TBindingsList
     Methods = <>
     OutputConverters = <>
-    Left = 1132
+    Left = 1108
     Top = 109
     object LinkGridToDataSourceBindSourceDB1: TLinkGridToDataSource
       Category = 'Quick Bindings'
@@ -6762,14 +6781,14 @@ object Main: TMain
   object BindSourceDB2: TBindSourceDB
     DataSet = SCM.qryEvent
     ScopeMappings = <>
-    Left = 600
-    Top = 488
+    Left = 1104
+    Top = 232
   end
   object BindSourceDB3: TBindSourceDB
     DataSet = SCM.qryHeat
     ScopeMappings = <>
-    Left = 600
-    Top = 560
+    Left = 1104
+    Top = 296
   end
   object VirtualImageList3: TVirtualImageList
     Images = <
