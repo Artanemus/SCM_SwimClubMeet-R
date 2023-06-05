@@ -57,7 +57,7 @@ object Preferences: TPreferences
       654
       48)
     object btnClose: TButton
-      Left = 528
+      Left = 524
       Top = 6
       Width = 101
       Height = 33
@@ -65,7 +65,7 @@ object Preferences: TPreferences
       Caption = 'Close'
       TabOrder = 0
       OnClick = btnCloseClick
-      ExplicitLeft = 524
+      ExplicitLeft = 520
     end
   end
   object PageControl1: TPageControl
@@ -73,12 +73,10 @@ object Preferences: TPreferences
     Top = 41
     Width = 654
     Height = 503
-    ActivePage = TabSheet1
+    ActivePage = TabSheet6
     Align = alClient
     TabOrder = 2
     OnChanging = PageControl1Changing
-    ExplicitWidth = 650
-    ExplicitHeight = 502
     object TabSheet1: TTabSheet
       Caption = 'Club'
       object Label2: TLabel
@@ -368,7 +366,7 @@ object Preferences: TPreferences
         ParentFont = False
       end
       object btn1: TSpeedButton
-        Left = 197
+        Left = 193
         Top = 15
         Width = 33
         Height = 33
@@ -538,6 +536,55 @@ object Preferences: TPreferences
           'warning message will be displayed.'
         TabOrder = 0
         WordWrap = True
+      end
+    end
+    object TabSheet6: TTabSheet
+      Caption = 'Switches'
+      ImageIndex = 6
+      object CheckBox1: TCheckBox
+        Left = 32
+        Top = 24
+        Width = 433
+        Height = 17
+        Caption = 'Enable characters in membership numbers.'
+        Enabled = False
+        TabOrder = 0
+      end
+      object CheckBox2: TCheckBox
+        Left = 32
+        Top = 56
+        Width = 241
+        Height = 17
+        Caption = 'Enable '#39'Team Events'#39'.'
+        Enabled = False
+        TabOrder = 1
+      end
+      object CheckBox3: TCheckBox
+        Left = 32
+        Top = 88
+        Width = 241
+        Height = 17
+        Caption = 'Enable '#39'Swim-A-Thon'#39'.'
+        Enabled = False
+        TabOrder = 2
+      end
+      object CheckBox4: TCheckBox
+        Left = 32
+        Top = 120
+        Width = 241
+        Height = 17
+        Caption = 'Enable extended heat types.'
+        Enabled = False
+        TabOrder = 3
+      end
+      object CheckBox5: TCheckBox
+        Left = 32
+        Top = 152
+        Width = 313
+        Height = 17
+        Caption = 'Enable simplified disqualification codes.'
+        Enabled = False
+        TabOrder = 4
       end
     end
     object TabSheet3: TTabSheet

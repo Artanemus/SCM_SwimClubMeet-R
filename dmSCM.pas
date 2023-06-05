@@ -2207,6 +2207,8 @@ begin
   Text := FormatDateTime('hh:nn', Sender.AsDateTime);
 end;
 
+
+
 procedure TSCM.qryHeatAfterDelete(DataSet: TDataSet);
 begin
 	Heat_Renumber();

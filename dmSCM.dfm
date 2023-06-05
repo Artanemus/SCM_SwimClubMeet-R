@@ -789,6 +789,8 @@ object SCM: TSCM
       DisplayFormat = '00'
     end
     object qryEventluEventType: TStringField
+      DisplayLabel = 'Type'
+      DisplayWidth = 7
       FieldKind = fkLookup
       FieldName = 'luEventType'
       LookupDataSet = tblEventType
@@ -796,6 +798,7 @@ object SCM: TSCM
       LookupResultField = 'Caption'
       KeyFields = 'EventTypeID'
       Visible = False
+      Size = 5
       Lookup = True
     end
     object qryEventClosedDT: TSQLTimeStampField
@@ -823,7 +826,9 @@ object SCM: TSCM
       FieldName = 'ScheduleDT'
       Origin = 'ScheduleDT'
       Visible = False
-      DisplayFormat = 'HH:NN'
+      OnGetText = qryEventScheduleDTGetText
+      DisplayFormat = 'hh:nn'
+      EditMask = '!90:00;1;_'
     end
   end
   object qryFNameEllipse: TFDQuery

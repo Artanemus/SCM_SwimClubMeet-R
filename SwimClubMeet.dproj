@@ -94,8 +94,9 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>SwimClubMeet.ico</Icon_MainIcon>
         <VerInfo_MinorVer>5</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=Artanemus;FileDescription=$(MSBuildProjectName) - Manage club members and run your club nights.;FileVersion=1.5.5.0;InternalName=SwimClubMeet;LegalCopyright=Copyright (C) 2019-2023 Artanemus.  All rights reserved.;LegalTrademarks=;OriginalFilename=SwimClubMeet.exe;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.5;Comments=Manage club members and run your club nights.</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=Artanemus;FileDescription=$(MSBuildProjectName) - Manage club members and run your club nights.;FileVersion=1.5.5.3;InternalName=SwimClubMeet;LegalCopyright=Copyright (C) 2019-2023 Artanemus.  All rights reserved.;LegalTrademarks=;OriginalFilename=SwimClubMeet.exe;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.5;Comments=Manage club members and run your club nights.</VerInfo_Keys>
         <VerInfo_Release>5</VerInfo_Release>
+        <VerInfo_Build>3</VerInfo_Build>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -368,6 +369,16 @@
         <DCCReference Include="TOOLS\dlgSchedulePicker.pas">
             <Form>SchedulePicker</Form>
             <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="FRAME\frameEventTeam.pas">
+            <Form>EventTeamFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="FRAME\frameEventIndv.pas">
+            <Form>EventIndvFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>

@@ -716,7 +716,6 @@ begin
     begin
       // editing in the this cell isn't allowed - use ellipse button.
       col.ButtonStyle := cbsEllipsis;
-      col.ReadOnly := true;
       Event_Grid.Repaint;
       break;
     end;
@@ -1760,6 +1759,8 @@ var
   rptA: TEventReportA;
   rptB: TEventReportB;
 begin
+  // finalize editing within table
+  Event_Grid.DataSource.DataSet.CheckBrowseMode;
   try
     begin
       if ((GetKeyState(VK_CONTROL) and 128) = 128) then
@@ -1845,8 +1846,13 @@ begin
     fld := SCM.qryEvent.FindField('Caption');
     if Assigned(fld) then
       fld.Visible := Checked;
+
     // e v e n t   s c h e d u l e  t i m e ...
     fld := SCM.qryEvent.FindField('ScheduleDT');
+    if Assigned(fld) then
+      fld.Visible := Checked;
+    // INDV or RELAY event type ....
+    fld := SCM.qryEvent.FindField('luEventType');
     if Assigned(fld) then
       fld.Visible := Checked;
 

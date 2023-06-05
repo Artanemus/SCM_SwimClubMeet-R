@@ -64,7 +64,9 @@ uses
   Vcl.PlatformVclStylesActnCtrls in '..\SCM_SHARED\Vcl.PlatformVclStylesActnCtrls.pas',
   dlgAbout in '..\SCM_SHARED\dlgAbout.pas' {About},
   frmDisqualificationCodes in 'TOOLS\frmDisqualificationCodes.pas' {DisqualificationCodes},
-  dlgSchedulePicker in 'TOOLS\dlgSchedulePicker.pas' {SchedulePicker};
+  dlgSchedulePicker in 'TOOLS\dlgSchedulePicker.pas' {SchedulePicker},
+  frameEventTeam in 'FRAME\frameEventTeam.pas' {EventTeamFrame: TFrame},
+  frameEventIndv in 'FRAME\frameEventIndv.pas' {EventIndvFrame: TFrame};
 
 {$R *.res}
 

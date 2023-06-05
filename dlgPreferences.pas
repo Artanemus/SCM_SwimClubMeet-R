@@ -79,6 +79,12 @@ type
     qrySwimClub: TFDQuery;
     Label9: TLabel;
     Label17: TLabel;
+    TabSheet6: TTabSheet;
+    CheckBox1: TCheckBox;
+    CheckBox2: TCheckBox;
+    CheckBox3: TCheckBox;
+    CheckBox4: TCheckBox;
+    CheckBox5: TCheckBox;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
