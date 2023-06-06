@@ -19,14 +19,17 @@ type
     procedure btnCancelClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
     fConnection: TFDConnection;
+    fSeedTime: TTime;
 
   public
     { Public declarations }
     constructor CreateWithConnection(AOwner: TComponent;
       aConnection: TFDConnection);
+    property SeedTime: TTime read fSeedTime write fSeedTime;
 
   end;
 
@@ -45,6 +48,7 @@ end;
 
 procedure TSchedulePicker.btnOkClick(Sender: TObject);
 begin
+  fSeedTime := TimePicker1.Time;
   ModalResult := mrOK;
 end;
 
@@ -53,6 +57,7 @@ constructor TSchedulePicker.CreateWithConnection(AOwner: TComponent;
 begin
   inherited Create(AOwner);
   fConnection := aConnection;
+  fSeedTime := 0;
 end;
 
 procedure TSchedulePicker.FormKeyDown(Sender: TObject; var Key: Word;
@@ -63,6 +68,14 @@ begin
     ModalResult := mrCancel;
     Key := 0;
   end;
+end;
+
+procedure TSchedulePicker.FormShow(Sender: TObject);
+begin
+  if fSeedTime > 0 then
+    TimePicker1.Time := fSeedTime
+  else
+    TimePicker1.Time := Time;
 end;
 
 end.

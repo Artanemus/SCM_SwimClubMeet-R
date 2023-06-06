@@ -25,12 +25,14 @@ object Main: TMain
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 1410
+    ExplicitHeight = 797
     object PageControl1: TPageControl
       Left = 0
       Top = 0
       Width = 1414
       Height = 798
-      ActivePage = TabSheet3
+      ActivePage = TabSheet1
       Align = alClient
       Style = tsFlatButtons
       TabOrder = 0
@@ -48,7 +50,6 @@ object Main: TMain
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitHeight = 758
           object pnlSessLeftTop: TPanel
             Left = 0
             Top = 0
@@ -175,7 +176,6 @@ object Main: TMain
             Align = alRight
             BevelOuter = bvNone
             TabOrder = 2
-            ExplicitHeight = 738
             DesignSize = (
               60
               739)
@@ -299,7 +299,6 @@ object Main: TMain
             Align = alTop
             BevelOuter = bvNone
             TabOrder = 0
-            ExplicitWidth = 673
             object lblSessionEventCaption: TLabel
               Left = 6
               Top = -3
@@ -439,8 +438,6 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 1
-              ExplicitLeft = 613
-              ExplicitHeight = 738
               DesignSize = (
                 60
                 739)

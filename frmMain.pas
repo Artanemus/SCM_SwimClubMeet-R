@@ -389,7 +389,7 @@ type
     procedure Entrant_SwapLanesUpdate(Sender: TObject);
     procedure Tools_MembershipTypeUpdate(Sender: TObject);
     procedure Nominate_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+      DataCol: integer; Column: TColumn; State: TGridDrawState);
     procedure SCM_RefreshUpdate(Sender: TObject);
     procedure Help_LocalHelpExecute(Sender: TObject);
     procedure Help_OnlineHelpExecute(Sender: TObject);
@@ -421,7 +421,7 @@ type
     fscmStyleName: String;
 
     // Internet connection state
-    fMyInternetConnected: Boolean;
+    fMyInternetConnected: boolean;
 
     SCMEventList: TObjectList;
 
@@ -470,7 +470,8 @@ type
     // Posted by TSCM.qryMemberQuickPick : AfterScroll
     procedure Nominate_Scroll(var Msg: TMessage); message SCM_NOMINATESCROLL;
     // posted by dmSCMNom : a refresh of the entrant grid is required.
-    procedure Entrant_LaneWasCleaned(var Msg: TMessage); message SCM_LANEWASCLEANED;
+    procedure Entrant_LaneWasCleaned(var Msg: TMessage);
+      message SCM_LANEWASCLEANED;
 
   public
     { Public declarations }
@@ -491,7 +492,8 @@ implementation
 uses
 
   System.UITypes, dmSCM, dlgBasicLogin, Vcl.Themes, SCMUtility,
-  System.IniFiles, dlgCloneSession, rptSessionReportA, rptSessionReportB,
+  System.IniFiles, System.DateUtils,
+  dlgCloneSession, rptSessionReportA, rptSessionReportB,
   dlgNewSession, dmAutoBuildV2, rptEventReportA, rptEventReportB,
   dlgAutoBuild_Heats, dlgAbout, dlgPreferences, rptNominateReportA,
   rptNominateReportB, dlgQualifyTimes, dlgMembershipType,
@@ -503,7 +505,6 @@ uses
   UEnvVars, dlgEntrantPicker, dlgEntrantPickerCTRL, dmSCMNom, dlgSwapLanes,
   dlgDBVerInfo, rptHeatReportA, rptHeatReportB, frmDisqualificationCodes,
   dlgSchedulePicker;
-
 
 procedure TMain.ActionManager1Update(Action: TBasicAction;
   var Handled: boolean);
@@ -781,9 +782,9 @@ var
 begin
   DoEnable := false;
   if AssertConnection then
-      // No members listed.
-      if not SCM.dsEntrant.DataSet.IsEmpty then
-        DoEnable := true;
+    // No members listed.
+    if not SCM.dsEntrant.DataSet.IsEmpty then
+      DoEnable := true;
   TAction(Sender).Enabled := DoEnable;
 end;
 
@@ -1067,11 +1068,11 @@ begin
   MaxLane := SCM.GetNumberOfLanes;
   if (Entrant_Grid.DataSource.DataSet.FieldByName('Lane').AsInteger = MaxLane)
   then
-    begin
+  begin
     success := SCM.SwapMoveDownHeat(Entrant_Grid.DataSource.DataSet);
     // move to next heat  (By default, will position on first entrant.)
     SCM.dsHeat.DataSet.Next;
-    end
+  end
   else
     success := SCM.SwapMoveDown(Entrant_Grid.DataSource.DataSet);
   if not success then
@@ -1224,14 +1225,14 @@ end;
 
 procedure TMain.Entrant_SwapLanesExecute(Sender: TObject);
 var
-	dlg: TSwapLanes;
+  dlg: TSwapLanes;
 begin
-	dlg := TSwapLanes.Create(self); // DEPENDANT ON THE SCM DATA MODULE
-	if IsPositiveResult(dlg.ShowModal) then
-		Refresh_Entrant;
+  dlg := TSwapLanes.Create(self); // DEPENDANT ON THE SCM DATA MODULE
+  if IsPositiveResult(dlg.ShowModal) then
+    Refresh_Entrant;
   dlg.Free;
-	if Entrant_Grid.CanFocus then
-		Entrant_Grid.SetFocus;
+  if Entrant_Grid.CanFocus then
+    Entrant_Grid.SetFocus;
 end;
 
 procedure TMain.Entrant_SwapLanesUpdate(Sender: TObject);
@@ -1479,22 +1480,33 @@ var
   dlg: TSchedulePicker;
   EventID: integer;
   rtnValue: TModalResult;
+  fld: TField;
 begin
   if not AssertConnection then
     exit;
-  rtnValue := mrCancel;
-  SCM.dsEvent.DataSet.DisableControls;
-  EventID := SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger;
-  dlg := TSchedulePicker.CreateWithConnection(self, SCM.scmConnection);
-  rtnValue := dlg.ShowModal;
-  dlg.Free;
-  // require a refresh to update members details
-  if IsPositiveResult(rtnValue) then
+  { TODO -oBSA -cGeneral : Is Sender ellipse button 'ScheduleDT' }
+  fld := Event_Grid.SelectedField;
+  if fld.FieldName = 'ScheduleDT' then
   begin
-    SCM.dsEvent.DataSet.Refresh;
-    SCM.Event_Locate(EventID);
+    rtnValue := mrCancel;
+//    dt := Event_Grid.DataSource.DataSet.FieldByName('ScheduleDT').AsDateTime;
+    SCM.dsEvent.DataSet.DisableControls;
+    EventID := SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger;
+    dlg := TSchedulePicker.CreateWithConnection(self, SCM.scmConnection);
+    if not fld.IsNull then
+        dlg.SeedTime := System.DateUtils.TimeOf(fld.AsDateTime);
+    rtnValue := dlg.ShowModal;
+    dlg.Free;
+    if IsPositiveResult(rtnValue) then
+    begin
+      SCM.dsEvent.DataSet.Edit;
+      Event_Grid.DataSource.DataSet.FieldByName('ScheduleDT').AsDateTime := dlg.SeedTime;
+      SCM.dsEvent.DataSet.Post;
+      SCM.dsEvent.DataSet.Refresh; // require a refresh to update members details
+      SCM.Event_Locate(EventID);
+    end;
+    SCM.dsEvent.DataSet.EnableControls;
   end;
-  SCM.dsEvent.DataSet.EnableControls;
 end;
 
 procedure TMain.Event_GridKeyDown(Sender: TObject; var Key: Word;
@@ -1876,9 +1888,12 @@ begin
         fld.DisplayLabel := ' Ent#';
     end;
     SCM.qryEvent.EnableControls;
+
     // 4/6/2023 - if ScheduleDT is revealed
     // - make visible ellipse button and repaint.
-    if Checked then EnableEvent_GridEllipse;
+    if Checked then
+      EnableEvent_GridEllipse;
+
   end;
 end;
 
@@ -2087,8 +2102,8 @@ begin
     begin
       // disable InterFace
       PageControl1.Visible := false;
-//      Session1.Enabled := false;
-//      Tools1.Enabled := false;
+      // Session1.Enabled := false;
+      // Tools1.Enabled := false;
       // display message
       MessageDlg('The swimming club hasn''t been defined!' + sLineBreak +
         'Run the utility, SCM_BuildMeAClub, with the supplied SQL' + sLineBreak
@@ -2545,7 +2560,7 @@ begin
       end;
       // 2023.02.16
       // DELETE HEATS ...  For current event. Only open heats are deleted.
-      SCM.Heat_DeleteALL(FieldByName('EventID').AsInteger) ;
+      SCM.Heat_DeleteALL(FieldByName('EventID').AsInteger);
       // QUICK TEST - Do we have NOMINEES?
       if not SCM.HasNominees(FieldByName('EventID').AsInteger) then
       begin
@@ -2718,32 +2733,34 @@ end;
 
 procedure TMain.Heat_MarshallReportExecute(Sender: TObject);
 var
-rptA: TMarshallReportA;
-rptB: TMarshallReportB;
-EventID: integer;
+  rptA: TMarshallReportA;
+  rptB: TMarshallReportB;
+  EventID: integer;
 begin
-  if not AssertConnection then exit;
+  if not AssertConnection then
+    exit;
 
   EventID := SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger;
-	try
-		if ((GetKeyState(VK_CONTROL) and 128) = 128) then
+  try
+    if ((GetKeyState(VK_CONTROL) and 128) = 128) then
     begin
-			rptB := TMarshallReportB.Create(self);
+      rptB := TMarshallReportB.Create(self);
       rptB.Prepare(SCM.scmConnection, EventID);
       rptB.RunReport;
-			rptB.Free;
-		end
-		else
+      rptB.Free;
+    end
+    else
     begin
-			rptA := TMarshallReportA.Create(self);
+      rptA := TMarshallReportA.Create(self);
       rptA.Prepare(SCM.scmConnection, EventID);
       rptA.RunReport;
-			rptA.Free;
-		end;
-  except on E: Exception do
-		ShowMessage('Error opening report.');
+      rptA.Free;
+    end;
+  except
+    on E: Exception do
+      ShowMessage('Error opening report.');
   end;
-	if HeatControlList.CanFocus then
+  if HeatControlList.CanFocus then
     HeatControlList.SetFocus;
 end;
 
@@ -2925,7 +2942,8 @@ var
   PrintStatus: EPrintStatus;
   HeatID, EventID: integer;
 begin
-  if not AssertConnection then exit;
+  if not AssertConnection then
+    exit;
 
   {
     Looking at the FastReport source code for the TfrxPreviewPages.Print
@@ -3111,31 +3129,33 @@ end;
 
 procedure TMain.Heat_TimeKeeperReportExecute(Sender: TObject);
 var
-rptA: TTimeKeeperReportA;
-rptB: TTimeKeeperReportB;
-HeatID: integer;
+  rptA: TTimeKeeperReportA;
+  rptB: TTimeKeeperReportB;
+  HeatID: integer;
 begin
-  if not AssertConnection then exit;
+  if not AssertConnection then
+    exit;
   HeatID := SCM.dsHeat.DataSet.FieldByName('HeatID').AsInteger;
-	try
-		if ((GetKeyState(VK_CONTROL) and 128) = 128) then
+  try
+    if ((GetKeyState(VK_CONTROL) and 128) = 128) then
     begin
-			rptB := TTimeKeeperReportB.Create(self);
+      rptB := TTimeKeeperReportB.Create(self);
       rptB.Prepare(SCM.scmConnection, HeatID);
       rptB.RunReport;
-			rptB.Free;
-		end
-		else
+      rptB.Free;
+    end
+    else
     begin
-			rptA := TTimeKeeperReportA.Create(self);
+      rptA := TTimeKeeperReportA.Create(self);
       rptA.Prepare(SCM.scmConnection, HeatID);
       rptA.RunReport;
-			rptA.Free;
-		end;
-  except on E: Exception do
-		ShowMessage('Error opening report.');
+      rptA.Free;
+    end;
+  except
+    on E: Exception do
+      ShowMessage('Error opening report.');
   end;
-	if HeatControlList.CanFocus then
+  if HeatControlList.CanFocus then
     HeatControlList.SetFocus;
 end;
 
@@ -3224,7 +3244,7 @@ end;
 
 procedure TMain.Help_OnlineHelpUpdate(Sender: TObject);
 begin
-    if fMyInternetConnected then
+  if fMyInternetConnected then
     TAction(Sender).Enabled := true
   else
     TAction(Sender).Enabled := false;
@@ -3236,8 +3256,8 @@ var
 begin
   if CheckInternetA then
   begin
-  base_URL := 'http://artanemus.github.io';
-  ShellExecute(0, 'open', PWideChar(base_URL), nil, nil, SW_SHOWNORMAL);
+    base_URL := 'http://artanemus.github.io';
+    ShellExecute(0, 'open', PWideChar(base_URL), nil, nil, SW_SHOWNORMAL);
   end
   else
   begin
@@ -3313,7 +3333,7 @@ end;
 
 procedure TMain.Nominate_GridDblClick(Sender: TObject);
 begin
-  Nominate_MemeberDetailsExecute(Self);
+  Nominate_MemeberDetailsExecute(self);
 end;
 
 procedure TMain.Nominate_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -3370,9 +3390,9 @@ var
 begin
   DoEnable := false;
   if AssertConnection then
-      // No members listed.
-      if not Nominate_Grid.DataSource.DataSet.IsEmpty then
-        DoEnable := true;
+    // No members listed.
+    if not Nominate_Grid.DataSource.DataSet.IsEmpty then
+      DoEnable := true;
   TAction(Sender).Enabled := DoEnable;
 end;
 
@@ -3412,9 +3432,9 @@ var
 begin
   DoEnable := false;
   if AssertConnection then
-      // No members listed. Nothing to sort.
-      if not Nominate_Grid.DataSource.DataSet.IsEmpty then
-        DoEnable := true;
+    // No members listed. Nothing to sort.
+    if not Nominate_Grid.DataSource.DataSet.IsEmpty then
+      DoEnable := true;
   TAction(Sender).Enabled := DoEnable;
 end;
 
@@ -3620,21 +3640,22 @@ begin
   // Update the SCM.dsQmember's table
   // (may have changed if the user has been editing the member's table
   // in the member's dialogue)
-  with  SCM.dsNominateMembers.DataSet do begin
-  DisableControls;
-  bm := GetBookmark;
-  Close;
-  Open;
-  if Active then
+  with SCM.dsNominateMembers.DataSet do
   begin
-    try
-      // NOTE: Posts nominate-scroll event - forces a nominate_controllist update.
-      GotoBookmark(bm);
-    finally;
+    DisableControls;
+    bm := GetBookmark;
+    Close;
+    Open;
+    if Active then
+    begin
+      try
+        // NOTE: Posts nominate-scroll event - forces a nominate_controllist update.
+        GotoBookmark(bm);
+      finally;
+      end;
     end;
-  end;
-  Nominate_ControlList.ItemCount := SCM.qryNominateEvent.RecordCount;
-  EnableControls;
+    Nominate_ControlList.ItemCount := SCM.qryNominateEvent.RecordCount;
+    EnableControls;
   end;
 end;
 
@@ -4054,7 +4075,7 @@ end;
 procedure TMain.Session_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
   DataCol: integer; Column: TColumn; State: TGridDrawState);
 var
-  size: TSize;
+  Size: TSize;
   topMargin: integer;
   MyRect: TRect;
 begin
@@ -4071,8 +4092,8 @@ begin
     // PRINT THE TEXT
     // Session_Grid.Canvas.Pen.Color = clWebTomato;
     Session_Grid.Canvas.Font.Color := clWebTomato;
-    size := Session_Grid.Canvas.TextExtent(Column.Field.DisplayText);
-    topMargin := Round((Rect.Height - size.Height) / 2);
+    Size := Session_Grid.Canvas.TextExtent(Column.Field.DisplayText);
+    topMargin := Round((Rect.Height - Size.Height) / 2);
     // calculate margins
     MyRect.Top := Rect.Top + topMargin;
     MyRect.Left := Rect.Left + topMargin;
@@ -4325,7 +4346,7 @@ end;
 
 procedure TMain.Tools_DisqualifyCodesExecute(Sender: TObject);
 var
-dlg: TDisqualificationCodes;
+  dlg: TDisqualificationCodes;
 begin
   dlg := TDisqualificationCodes.CreateWithConnection(self, SCM.scmConnection);
   dlg.ShowModal;

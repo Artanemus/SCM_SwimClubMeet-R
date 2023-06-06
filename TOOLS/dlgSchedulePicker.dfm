@@ -14,6 +14,7 @@ object SchedulePicker: TSchedulePicker
   KeyPreview = True
   Position = poMainFormCenter
   OnKeyDown = FormKeyDown
+  OnShow = FormShow
   TextHeight = 21
   object Label1: TLabel
     Left = 23
@@ -37,11 +38,13 @@ object SchedulePicker: TSchedulePicker
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitTop = 135
+    ExplicitWidth = 415
     DesignSize = (
       419
       46)
     object btnCancel: TButton
-      Left = 255
+      Left = 251
       Top = 9
       Width = 75
       Height = 30
@@ -49,9 +52,10 @@ object SchedulePicker: TSchedulePicker
       Caption = 'Cancel'
       TabOrder = 0
       OnClick = btnCancelClick
+      ExplicitLeft = 247
     end
     object btnOk: TButton
-      Left = 336
+      Left = 332
       Top = 9
       Width = 75
       Height = 30
@@ -59,6 +63,7 @@ object SchedulePicker: TSchedulePicker
       Caption = 'OK'
       TabOrder = 1
       OnClick = btnOkClick
+      ExplicitLeft = 328
     end
   end
   object TimePicker1: TTimePicker
@@ -71,7 +76,6 @@ object SchedulePicker: TSchedulePicker
     Font.Name = 'Segoe UI'
     Font.Style = []
     TabOrder = 1
-    Time = 45081.596733321760000000
     TimeFormat = 'hh:nn'
   end
 end
