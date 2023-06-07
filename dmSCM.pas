@@ -2103,7 +2103,6 @@ end;
 procedure TSCM.qryEventAfterPost(DataSet: TDataSet);
 var
   i, v: integer;
-//  v: Variant;
   fld: TField;
 begin
   v := DataSet.FieldByName('EventNum').AsInteger;

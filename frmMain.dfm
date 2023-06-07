@@ -25,8 +25,6 @@ object Main: TMain
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 1410
-    ExplicitHeight = 797
     object PageControl1: TPageControl
       Left = 0
       Top = 0
@@ -50,6 +48,7 @@ object Main: TMain
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 0
+          ExplicitHeight = 758
           object pnlSessLeftTop: TPanel
             Left = 0
             Top = 0
@@ -176,6 +175,7 @@ object Main: TMain
             Align = alRight
             BevelOuter = bvNone
             TabOrder = 2
+            ExplicitHeight = 738
             DesignSize = (
               60
               739)
@@ -291,6 +291,8 @@ object Main: TMain
           BevelOuter = bvNone
           Caption = 'pnlSessionClient'
           TabOrder = 1
+          ExplicitWidth = 673
+          ExplicitHeight = 758
           object pnlSessClientTop: TPanel
             Left = 0
             Top = 0
@@ -299,6 +301,7 @@ object Main: TMain
             Align = alTop
             BevelOuter = bvNone
             TabOrder = 0
+            ExplicitWidth = 673
             object lblSessionEventCaption: TLabel
               Left = 6
               Top = -3
@@ -316,6 +319,8 @@ object Main: TMain
             BevelOuter = bvNone
             Caption = 'Panel7'
             TabOrder = 1
+            ExplicitWidth = 673
+            ExplicitHeight = 738
             object Event_Grid: TDBGrid
               AlignWithMargins = True
               Left = 10
@@ -337,7 +342,6 @@ object Main: TMain
               TitleFont.Name = 'Segoe UI'
               TitleFont.Style = []
               OnDrawColumnCell = Event_GridDrawColumnCell
-              OnEditButtonClick = Event_GridEditButtonClick
               OnKeyDown = Event_GridKeyDown
             end
             object EventWidgets: TRelativePanel
@@ -438,6 +442,8 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 1
+              ExplicitLeft = 613
+              ExplicitHeight = 738
               DesignSize = (
                 60
                 739)
@@ -1025,8 +1031,6 @@ object Main: TMain
           BevelOuter = bvNone
           Caption = 'HeatRightPanel'
           TabOrder = 0
-          ExplicitWidth = 1100
-          ExplicitHeight = 601
           object Entrant_Grid: TDBGrid
             Left = 0
             Top = 0
@@ -1121,8 +1125,6 @@ object Main: TMain
             Anchors = []
             BevelOuter = bvNone
             TabOrder = 1
-            ExplicitLeft = 1040
-            ExplicitHeight = 601
             DesignSize = (
               60
               602)
@@ -1249,7 +1251,6 @@ object Main: TMain
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 1
-          ExplicitWidth = 1402
           DesignSize = (
             1406
             117)
@@ -1421,7 +1422,6 @@ object Main: TMain
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 2
-          ExplicitHeight = 621
           object HeatWidgets: TRelativePanel
             AlignWithMargins = True
             Left = 192
@@ -1595,7 +1595,6 @@ object Main: TMain
             Align = alRight
             BevelOuter = bvNone
             TabOrder = 0
-            ExplicitHeight = 601
             DesignSize = (
               60
               602)
@@ -1820,7 +1819,6 @@ object Main: TMain
             PopupMenu = pumHeat
             TabOrder = 1
             OnBeforeDrawItem = HeatControlListBeforeDrawItem
-            ExplicitHeight = 621
             object vimgHeatNum: TVirtualImage
               Left = 16
               Top = 11
@@ -1960,6 +1958,7 @@ object Main: TMain
       Margins.Bottom = 10
       Anchors = []
       DataField = 'LogoImg'
+      DataSource = SCM.dsSwimClub
       Proportional = True
       Stretch = True
       TabOrder = 0
@@ -2346,6 +2345,15 @@ object Main: TMain
                 ImageName = 'AutoBuild'
               end
               item
+                Caption = '-'
+              end
+              item
+                Action = Event_AutoSchedule
+                Caption = '&Auto Schedule...'
+                ImageIndex = 47
+                ImageName = 'TimeAuto'
+              end
+              item
                 Visible = False
                 Action = Event_Renumber
                 Caption = '&Renumber Lanes...'
@@ -2619,7 +2627,7 @@ object Main: TMain
     Images = VirtualImageListMenu
     OnUpdate = ActionManager1Update
     Left = 424
-    Top = 304
+    Top = 240
     StyleName = 'Platform Default'
     object Help_About: TAction
       Category = 'Help'
@@ -3156,6 +3164,15 @@ object Main: TMain
       Category = 'Tools'
       Caption = 'Disqualification Codes...'
       OnExecute = Tools_DisqualifyCodesExecute
+    end
+    object Event_AutoSchedule: TAction
+      Category = 'Events'
+      Caption = 'Auto Schedule...'
+      Hint = 'Auto schedule events. '
+      ImageIndex = 47
+      ImageName = 'TimeAuto'
+      OnExecute = Event_AutoScheduleExecute
+      OnUpdate = Event_AutoScheduleUpdate
     end
   end
   object pumHeat: TPopupMenu
@@ -6442,9 +6459,56 @@ object Main: TMain
               9B409FAAEE44DB23A64027F2BCFFD074432A81A2F31F4366965D1A9C2FAF0000
               000049454E44AE426082}
           end>
+      end
+      item
+        Name = 'TimeAuto'
+        SourceImages = <
+          item
+            Image.Data = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000017352474200AECE1CE9000004B6494441546843ED9955A82E551480
+              BFAB88F120066262C7836260A382FD6263628282A20F76A20F8A855DA028F860
+              82DD0836A86062A0600798984F0662F05DD6C8769FF967EF997F8E70E12CD8FC
+              736656EEB5F7AA338F051CE62DE0FA33A6017FF7DC8C51648FC224149F33A0A7
+              07E7A38FE98121F2A7A6993360EA2D9C92C1981E5806D80D3812F079D9F8F572
+              FF007C0F7C063C05BC1A6B4AF5C7B903BB03070107008BF4D0E865E03AE08E09
+              348B01BF95F84DE301153F1AD8A324A4F0FD71E042E0C504EF6E6049E008E0DB
+              2EFAA106DC18CAE7BCEF035E88A3E2717109AB276B5B60DF8CF057E06CE02A40
+              E5F78FEF6F8767DF9F64C410035E03364D18BA4377C6F25B0D6C061C1C6BF984
+              E09E44795F9F079C3BA607F26CEB853C0EF8B046EB169CB5802B813D5BBE1595
+              EF9BC8EE07F64904DD041C3350F19CEC2CE0A2E4A5F7C1A0F055897FED11BA18
+              383361B62BF06489F980EFA987BDD8E79478D41860B47924617412707589F1C0
+              EFE6914783F64760AF080A13D9D518F070122A8DD987562AF76C86B74325DDF5
+              C0B1816B54DB6F9A4B9CEEBED1666BE0D30A45D66EB9D8EB001F55D0AE0ABC02
+              34D1C90D9B94EC8AD5A861ADD90163F4C9150A886264F1A8A530945E63B69C24
+              B7EB08997CD2DDDE1CA88DF396008B025F87E01581DF01CB831A304F582F35A0
+              011A3203BA0C30335E507B1613CE66DAE7E3EF6BE3F7F8F8DDAE7429133EF726
+              197B6244EA3240255446F0E878046AE016E0F044611F1B836E8DFAA6868F47D0
+              A328589E687C2F0FBC03AC1F142615EF43091602FE0CA4CFA3FEF14F6BA2D5E2
+              FDC2C05F25465152581709EF021BF435E04B60A520F24CBE5E215443EF0ABCCB
+              81D3E2F932E0D4783E300AB6123BEBADE6CE999157EE6BC02FC0E2416483F253
+              496224219391B013F04C3CEF083C1DCF8F0186E7122C0D98CC04ABD525A63140
+              663F1724BA435F04CE07C07A19BE25F1BAF16E15400F77C152C9A60D3240651A
+              B76D02BC591078425262187D1EC8F02D049B687422704D81DFC6C01B81A3B11A
+              3D03BAA2D05BC08641A1F0070B025FEA4A3819ADEDE456057E7B279B6063B351
+              5F03AC65B60FA2520167926B4D341D4A6E5168ECF55213BA9F035A6BA92E0F1C
+              0618B78552517509707AE0EAA949C7C363E6CE0A9702677418982632F3CA6D7D
+              3D60E4F92699347495121F036B8680AE5E6117E089C0FB04B0236B83B494F803
+              58218948FFC12F95D3B7038704C5A462CC9A3DBD1F259E69D3A2371E6AB1202D
+              063B4BF892B0BC9CF64EBC9709D4B54D84B03776D4D205B6A296D68291CEA39A
+              82DF2C3D9A72DAB14DD3E4CCE05B324082B4A1A9891E05FD8B9F6D55770E2C3B
+              C1B686FF5F263506E42DA5023CE7B301F9BCA973F755A0C600F172C655238F9E
+              16A6175CD2AAA947AD0132CC075A37C44CA8A79EADE869CC17C1C2D14854843E
+              06C82C1F6C592E58711A4687C01AC0F949A46B7854EB558D986897F7BB638E16
+              FBF4CDF3551A62807447010EBB96CBB6DD8CED54CDF068A27209263997E1769B
+              96E1EE7780D3B99BFBBA71A801CA315E9F32C278D10071C5D0F9EA3406349B65
+              48355B1BBB9B0EAEB49176580E86CDB24D6951A269FD3E860129638F87E1D0C1
+              96ABC9B86668875A2EF348FACF8C418AF7BEED53499945E2B13D308BAAB6B39E
+              33E07FDFF24CE03FD753E231353844E00000000049454E44AE426082}
+          end>
       end>
-    Left = 416
-    Top = 392
+    Left = 424
+    Top = 296
   end
   object VirtualImageList1: TVirtualImageList
     Images = <
@@ -6686,8 +6750,8 @@ object Main: TMain
     ImageCollection = ImageCollection1
     Width = 48
     Height = 48
-    Left = 416
-    Top = 472
+    Left = 176
+    Top = 528
   end
   object VirtualImageList2: TVirtualImageList
     Images = <
@@ -6709,8 +6773,8 @@ object Main: TMain
     ImageCollection = ImageCollection1
     Width = 40
     Height = 40
-    Left = 408
-    Top = 552
+    Left = 304
+    Top = 528
   end
   object BindSourceDB1: TBindSourceDB
     DataSet = SCM.qryNominateControlList
@@ -6799,8 +6863,8 @@ object Main: TMain
     ImageCollection = ImageCollection1
     Width = 24
     Height = 24
-    Left = 400
-    Top = 624
+    Left = 416
+    Top = 528
   end
   object VirtualImageListMenu: TVirtualImageList
     Images = <
@@ -7038,11 +7102,16 @@ object Main: TMain
         CollectionIndex = 70
         CollectionName = 'Export'
         Name = 'Export'
+      end
+      item
+        CollectionIndex = 71
+        CollectionName = 'TimeAuto'
+        Name = 'TimeAuto'
       end>
     ImageCollection = ImageCollection1
     Width = 32
     Height = 32
-    Left = 400
-    Top = 704
+    Left = 424
+    Top = 352
   end
 end

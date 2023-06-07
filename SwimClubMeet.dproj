@@ -366,8 +366,8 @@
             <Form>DisqualificationCodes</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="TOOLS\dlgSchedulePicker.pas">
-            <Form>SchedulePicker</Form>
+        <DCCReference Include="TOOLS\dlgAutoSchedule.pas">
+            <Form>AutoSchedule</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FRAME\frameEventTeam.pas">

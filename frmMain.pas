@@ -264,6 +264,7 @@ type
     VirtualImageListMenu: TVirtualImageList;
     Nominate_MemeberDetails: TAction;
     Tools_DisqualifyCodes: TAction;
+    Event_AutoSchedule: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure SCM_RefreshExecute(Sender: TObject);
@@ -404,7 +405,8 @@ type
     procedure Entrant_GotoMemberDetailsUpdate(Sender: TObject);
     procedure Entrant_GotoMemberDetailsExecute(Sender: TObject);
     procedure Tools_DisqualifyCodesExecute(Sender: TObject);
-    procedure Event_GridEditButtonClick(Sender: TObject);
+    procedure Event_AutoScheduleExecute(Sender: TObject);
+    procedure Event_AutoScheduleUpdate(Sender: TObject);
   private
     { Private declarations }
     // For scroll wheel tracking on mouse ...
@@ -447,7 +449,7 @@ type
 
     procedure UpdateStatusBar();
     procedure EnableEntrant_GridEllipse();
-    procedure EnableEvent_GridEllipse();
+    // procedure EnableEvent_GridEllipse();
     procedure Event_BuildSCMEventType(Sender: TObject;
       EventType: scmEventFinalsType);
 
@@ -504,7 +506,7 @@ uses
   dlgSelectPrinter, ioutils, dlgBatchProgress, dlgAutoBuildPref, ShellAPI,
   UEnvVars, dlgEntrantPicker, dlgEntrantPickerCTRL, dmSCMNom, dlgSwapLanes,
   dlgDBVerInfo, rptHeatReportA, rptHeatReportB, frmDisqualificationCodes,
-  dlgSchedulePicker;
+  dlgAutoSchedule;
 
 procedure TMain.ActionManager1Update(Action: TBasicAction;
   var Handled: boolean);
@@ -705,23 +707,23 @@ begin
   end;
 end;
 
-procedure TMain.EnableEvent_GridEllipse;
-var
-  i: integer;
-  col: TColumn;
-begin
-  for i := 0 to Event_Grid.Columns.Count - 1 do
-  begin
-    col := Event_Grid.Columns.Items[i];
-    if (col.FieldName = 'ScheduleDT') then
-    begin
-      // editing in the this cell isn't allowed - use ellipse button.
-      col.ButtonStyle := cbsEllipsis;
-      Event_Grid.Repaint;
-      break;
-    end;
-  end;
-end;
+// procedure TMain.EnableEvent_GridEllipse;
+// var
+// i: integer;
+// col: TColumn;
+// begin
+// for i := 0 to Event_Grid.Columns.Count - 1 do
+// begin
+// col := Event_Grid.Columns.Items[i];
+// if (col.FieldName = 'ScheduleDT') then
+// begin
+// // editing in the this cell isn't allowed - use ellipse button.
+// col.ButtonStyle := cbsEllipsis;
+// Event_Grid.Repaint;
+// break;
+// end;
+// end;
+// end;
 
 procedure TMain.Entrant_EmptyLaneExecute(Sender: TObject);
 var
@@ -1337,6 +1339,42 @@ begin
 
 end;
 
+procedure TMain.Event_AutoScheduleExecute(Sender: TObject);
+var
+  dlg: TAutoSchedule;
+  EventID: integer;
+  rtnValue: TModalResult;
+begin
+  if not AssertConnection then
+    exit;
+  SCM.dsEvent.DataSet.DisableControls;
+  EventID := SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger;
+  dlg := TAutoSchedule.CreateWithConnection(self, SCM.scmConnection);
+  dlg.SeedTime := SCM.GetSessionStart;
+  rtnValue := dlg.ShowModal;
+  dlg.Free;
+  if IsPositiveResult(rtnValue) then
+  begin
+    SCM.dsEvent.DataSet.Refresh;
+    SCM.Event_Locate(EventID);
+  end;
+  SCM.dsEvent.DataSet.EnableControls;
+end;
+
+procedure TMain.Event_AutoScheduleUpdate(Sender: TObject);
+var
+  DoEnable: boolean;
+begin
+  DoEnable := false;
+  if AssertConnection then
+    if not SCM.dsSession.DataSet.IsEmpty then
+    begin
+      if not SCM.dsEvent.DataSet.IsEmpty then
+        DoEnable := true;
+    end;
+  TAction(Sender).Enabled := DoEnable;
+end;
+
 procedure TMain.Event_BuildSCMEventType(Sender: TObject;
   EventType: scmEventFinalsType);
 var
@@ -1471,41 +1509,6 @@ begin
     else
       // 17.10.2020 - leave the column blank ...
       Event_Grid.Canvas.FillRect(Rect);
-  end;
-end;
-
-procedure TMain.Event_GridEditButtonClick(Sender: TObject);
-var
-  passed: boolean;
-  dlg: TSchedulePicker;
-  EventID: integer;
-  rtnValue: TModalResult;
-  fld: TField;
-begin
-  if not AssertConnection then
-    exit;
-  { TODO -oBSA -cGeneral : Is Sender ellipse button 'ScheduleDT' }
-  fld := Event_Grid.SelectedField;
-  if fld.FieldName = 'ScheduleDT' then
-  begin
-    rtnValue := mrCancel;
-//    dt := Event_Grid.DataSource.DataSet.FieldByName('ScheduleDT').AsDateTime;
-    SCM.dsEvent.DataSet.DisableControls;
-    EventID := SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger;
-    dlg := TSchedulePicker.CreateWithConnection(self, SCM.scmConnection);
-    if not fld.IsNull then
-        dlg.SeedTime := System.DateUtils.TimeOf(fld.AsDateTime);
-    rtnValue := dlg.ShowModal;
-    dlg.Free;
-    if IsPositiveResult(rtnValue) then
-    begin
-      SCM.dsEvent.DataSet.Edit;
-      Event_Grid.DataSource.DataSet.FieldByName('ScheduleDT').AsDateTime := dlg.SeedTime;
-      SCM.dsEvent.DataSet.Post;
-      SCM.dsEvent.DataSet.Refresh; // require a refresh to update members details
-      SCM.Event_Locate(EventID);
-    end;
-    SCM.dsEvent.DataSet.EnableControls;
   end;
 end;
 
@@ -1888,12 +1891,6 @@ begin
         fld.DisplayLabel := ' Ent#';
     end;
     SCM.qryEvent.EnableControls;
-
-    // 4/6/2023 - if ScheduleDT is revealed
-    // - make visible ellipse button and repaint.
-    if Checked then
-      EnableEvent_GridEllipse;
-
   end;
 end;
 
@@ -1921,7 +1918,6 @@ var
   aBasicLogin: TBasicLogin; // 24/04/2020 uses simple INI access
   result: TModalResult;
   hf: NativeUInt;
-  fld: TField;
 begin
   bootprogress := nil;
   SCMEventList := nil;
@@ -2133,7 +2129,6 @@ begin
   // L I N K   G R I D S   T O   D A T A S O U R C E S .
   Event_Grid.DataSource := SCM.dsEvent;
   Nominate_Grid.DataSource := SCM.dsNominateMembers;
-  // Heat_Grid.DataSource := SCM.dsHeat;
   Entrant_Grid.DataSource := SCM.dsEntrant;
 
   // L I N K   T D B T e x t
@@ -2146,22 +2141,13 @@ begin
   dbtxtDebugHeat.DataSource := SCM.dsHeat;
   dbtxtDebugMember.DataSource := SCM.dsEntrant;
   dbtxtDebugNominee.DataSource := SCM.dsNominee;
-
   dbtxtEventCaption.DataSource := SCM.dsEvent;
+  dbtxtNominateFullName.DataSource := SCM.dsNominateMembers;
+  // LINK EVENT NAVIGATOR
   dbnavEventNavigatePrior.DataSource := SCM.dsEvent;
   dbnavEventNavigateNext.DataSource := SCM.dsEvent;
-
-  dbtxtNominateFullName.DataSource := SCM.dsNominateMembers;
-
-  { TODO -oBSA -cV1500 compatability : Deactivate extended database fields }
-  fld := SCM.dsSwimClub.DataSet.FindField('LogoDir');
-  if Assigned(fld) then
-  begin
-    dbimgSwimClubLogo.DataSource := SCM.dsSwimClub;
-    dbimgSwimClubLogo.DataField := 'LogoImg';
-  end
-  else
-    dbimgSwimClubLogo.Visible := false;
+  // L I N K   C L U B   L O G O  .
+  dbimgSwimClubLogo.DataSource := SCM.dsSwimClub;
 
   // Assert binding - because it always fails!!!
   BindSourceDB1.DataSet := SCM.qryNominateControlList;
