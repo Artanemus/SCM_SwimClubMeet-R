@@ -22,13 +22,14 @@ object AutoSchedule: TAutoSchedule
     704)
   TextHeight = 21
   object Label3: TLabel
-    Left = 121
+    Left = 117
     Top = 251
     Width = 42
     Height = 21
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
     Caption = '25M ..'
+    ExplicitLeft = 121
   end
   object Label4: TLabel
     Left = 256
@@ -38,13 +39,14 @@ object AutoSchedule: TAutoSchedule
     Caption = '(MINS)'
   end
   object Label5: TLabel
-    Left = 121
+    Left = 117
     Top = 289
     Width = 42
     Height = 21
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
     Caption = '50M ..'
+    ExplicitLeft = 121
   end
   object Label6: TLabel
     Left = 256
@@ -54,13 +56,14 @@ object AutoSchedule: TAutoSchedule
     Caption = '(MINS)'
   end
   object Label7: TLabel
-    Left = 112
+    Left = 108
     Top = 327
     Width = 51
     Height = 21
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
     Caption = '100M ..'
+    ExplicitLeft = 112
   end
   object Label8: TLabel
     Left = 256
@@ -70,13 +73,14 @@ object AutoSchedule: TAutoSchedule
     Caption = '(MINS)'
   end
   object Label9: TLabel
-    Left = 112
+    Left = 108
     Top = 365
     Width = 51
     Height = 21
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
     Caption = '200M ..'
+    ExplicitLeft = 112
   end
   object Label10: TLabel
     Left = 256
@@ -86,13 +90,14 @@ object AutoSchedule: TAutoSchedule
     Caption = '(MINS)'
   end
   object Label11: TLabel
-    Left = 112
+    Left = 108
     Top = 403
     Width = 51
     Height = 21
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
     Caption = '400M ..'
+    ExplicitLeft = 112
   end
   object Label12: TLabel
     Left = 256
@@ -102,13 +107,14 @@ object AutoSchedule: TAutoSchedule
     Caption = '(MINS)'
   end
   object Label1: TLabel
-    Left = 103
+    Left = 99
     Top = 441
     Width = 60
     Height = 21
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
     Caption = '1000M ..'
+    ExplicitLeft = 103
   end
   object Label2: TLabel
     Left = 256
@@ -187,13 +193,13 @@ object AutoSchedule: TAutoSchedule
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 135
-    ExplicitWidth = 415
+    ExplicitTop = 657
+    ExplicitWidth = 465
     DesignSize = (
       469
       46)
     object btnCancel: TButton
-      Left = 110
+      Left = 106
       Top = 8
       Width = 75
       Height = 30
@@ -201,9 +207,10 @@ object AutoSchedule: TAutoSchedule
       Caption = 'Cancel'
       TabOrder = 0
       OnClick = btnCancelClick
+      ExplicitLeft = 102
     end
     object btnOk: TButton
-      Left = 191
+      Left = 187
       Top = 8
       Width = 169
       Height = 30
@@ -211,9 +218,10 @@ object AutoSchedule: TAutoSchedule
       Caption = 'AUTO Schedule'
       TabOrder = 1
       OnClick = btnOkClick
+      ExplicitLeft = 183
     end
   end
-  object TimePicker2: TTimePicker
+  object TimePicker25: TTimePicker
     Left = 169
     Top = 245
     Width = 81
@@ -226,7 +234,7 @@ object AutoSchedule: TAutoSchedule
     Time = 0.001388888888888889
     TimeFormat = 'nn'
   end
-  object TimePicker3: TTimePicker
+  object TimePicker50: TTimePicker
     Left = 169
     Top = 283
     Width = 81
@@ -239,7 +247,7 @@ object AutoSchedule: TAutoSchedule
     Time = 0.002083333333333333
     TimeFormat = 'nn'
   end
-  object TimePicker4: TTimePicker
+  object TimePicker100: TTimePicker
     Left = 169
     Top = 321
     Width = 81
@@ -252,7 +260,7 @@ object AutoSchedule: TAutoSchedule
     Time = 0.002777777777777778
     TimeFormat = 'nn'
   end
-  object TimePicker5: TTimePicker
+  object TimePicker200: TTimePicker
     Left = 169
     Top = 359
     Width = 81
@@ -265,7 +273,7 @@ object AutoSchedule: TAutoSchedule
     Time = 0.004166666666666667
     TimeFormat = 'nn'
   end
-  object TimePicker6: TTimePicker
+  object TimePicker400: TTimePicker
     Left = 169
     Top = 397
     Width = 81
@@ -278,7 +286,7 @@ object AutoSchedule: TAutoSchedule
     Time = 0.006944444444444444
     TimeFormat = 'nn'
   end
-  object TimePicker1: TTimePicker
+  object TimePicker1000: TTimePicker
     Left = 169
     Top = 435
     Width = 81
@@ -291,7 +299,7 @@ object AutoSchedule: TAutoSchedule
     Time = 0.013888888888888890
     TimeFormat = 'nn'
   end
-  object TimePicker7: TTimePicker
+  object TimePickerEventInterval: TTimePicker
     Left = 169
     Top = 513
     Width = 81
@@ -361,6 +369,32 @@ object AutoSchedule: TAutoSchedule
         DataType = ftInteger
         ParamType = ptInput
         Value = 1
+      end>
+  end
+  object qryEvent: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    Connection = SCM.scmConnection
+    SQL.Strings = (
+      'USE SwimClubMeet;'
+      ''
+      'DECLARE @SessionID AS INTEGER;'
+      'SET @SessionID = :SESSIONID;'
+      ''
+      
+        'SELECT Event.EventID, Event.EventNum, Event.ScheduleDT, Distance' +
+        '.Meters  '
+      'FROM Event '
+      'INNER JOIN Distance ON Event.DistanceID = Distance.DistanceID '
+      'WHERE SessionID = @SessionID'
+      'ORDER BY EventNum;')
+    Left = 376
+    Top = 352
+    ParamData = <
+      item
+        Name = 'SESSIONID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = Null
       end>
   end
 end
