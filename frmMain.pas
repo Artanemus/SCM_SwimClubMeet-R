@@ -1348,9 +1348,9 @@ begin
   if not AssertConnection then
     exit;
   SCM.dsEvent.DataSet.DisableControls;
-  EventID := SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger;
+  EventID := SCM.GetEventID;
   dlg := TAutoSchedule.CreateWithConnection(self, SCM.scmConnection);
-  dlg.SeedTime := SCM.GetSessionStart;
+  dlg.SessionID := SCM.GetSessionID;
   rtnValue := dlg.ShowModal;
   dlg.Free;
   if IsPositiveResult(rtnValue) then

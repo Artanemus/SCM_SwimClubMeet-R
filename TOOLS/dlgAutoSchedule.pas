@@ -13,64 +13,45 @@ uses
 
 type
   TAutoSchedule = class(TForm)
-    Panel1: TPanel;
     btnCancel: TButton;
     btnOk: TButton;
-    Label3: TLabel;
-    Label4: TLabel;
-    TimePicker25: TTimePicker;
-    Label5: TLabel;
-    Label6: TLabel;
-    TimePicker50: TTimePicker;
-    Label7: TLabel;
-    Label8: TLabel;
-    TimePicker100: TTimePicker;
-    Label9: TLabel;
-    Label10: TLabel;
-    TimePicker200: TTimePicker;
-    Label11: TLabel;
-    Label12: TLabel;
-    TimePicker400: TTimePicker;
-    Label1: TLabel;
-    Label2: TLabel;
-    TimePicker1000: TTimePicker;
     Label13: TLabel;
     Label14: TLabel;
     Label15: TLabel;
     Label16: TLabel;
-    TimePickerEventInterval: TTimePicker;
     Label17: TLabel;
-    tpEventStart: TTimePicker;
     Label19: TLabel;
-    TimePicker9: TTimePicker;
     Label20: TLabel;
-    Label18: TLabel;
-    tpSessionStart: TTimePicker;
-    qrySession: TFDQuery;
+    Label4: TLabel;
+    Panel1: TPanel;
     qryEvent: TFDQuery;
+    qrySession: TFDQuery;
+    tpHeatInterval: TTimePicker;
+    TimePickerSessionEnds: TTimePicker;
+    tpEventInterval: TTimePicker;
+    tpEventStart: TTimePicker;
     procedure btnCancelClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
-    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FormShow(Sender: TObject);
+    procedure tpChange(Sender: TObject);
   private
     { Private declarations }
     fConnection: TFDConnection;
     fSessionID: integer;
-    fSeedTime: TTime;
-
-    procedure WritePreferences(IniFileName: string);
-    procedure ReadPreferences(IniFileName: string);
+    fSessionStartTime: TTime;
     procedure AutoSchedule_Execute;
     procedure EstimateSessionEnd;
-
+    function GetSessionStartTime(ASessionID: integer): TTime;
+    procedure ReadPreferences(IniFileName: string);
+    procedure WritePreferences(IniFileName: string);
   public
     { Public declarations }
     constructor CreateWithConnection(AOwner: TComponent;
       aConnection: TFDConnection);
-    property SeedTime: TTime read fSeedTime write fSeedTime;
-
+    property SessionID: integer read fSessionID write fSessionID;
   end;
 
 var
@@ -81,36 +62,37 @@ implementation
 uses System.IniFiles, SCMUtility, dmSCM, System.DateUtils, System.UITypes;
 
 {$R *.dfm}
+
+constructor TAutoSchedule.CreateWithConnection(AOwner: TComponent;
+  aConnection: TFDConnection);
+begin
+  inherited Create(AOwner);
+  fConnection := aConnection;
+  { TODO -oBSA -cGeneral : LOAD Preferences }
+  // load last state ...
+end;
+
 { TSchedulePicker }
 
 procedure TAutoSchedule.AutoSchedule_Execute;
 var
   t, interval: TTime;
-  dt: TDateTime;
-  d: TDate;
-  v: variant;
-  s: string;
-  SQL: string;
   meters, heatcount: integer;
+
 begin
-  t := 0;
-  d := 0;
-  // if the session start time has changes - update it....
-  SQL := 'SELECT SessionStart FROM SwimClubMeet.dbo.Session WHERE SessionID = :ID';
-  v := fConnection.ExecSQLScalar(SQL, [fSessionID]);
-  if not VarIsNull(v) then
-  begin
-    t := TimeOf(v.AsDateTime);
+  if (fSessionID = 0) or (fSessionStartTime = 0) then
+    exit;
+
+  { t := TimeOf(v.AsDateTime);
     d := DateOf(v.AsDateTime);
     if (t <> tpSessionStart.Time) then
     begin
-      dt := DateOf(v.AsDateTime) + t;
-      s := FormatDateTime('yyyy.mm.dd', dt);
-      SQL := 'UPDATE SwimClubMeet.dbo.Session SET [SessionStart] = :STR WHERE SessionID = :ID';
-      fConnection.ExecSQL(SQL, [s, fSessionID], [ftString, ftInteger]);
-    end;
-  end;
-  // set seed
+    dt := DateOf(v.AsDateTime) + t;
+    s := FormatDateTime('yyyy.mm.dd', dt);
+    SQL := 'UPDATE SwimClubMeet.dbo.Session SET [SessionStart] = :STR WHERE SessionID = :ID';
+    fConnection.ExecSQL(SQL, [s, fSessionID], [ftString, ftInteger]);
+    end; }
+
   t := tpEventStart.Time;
   interval := 0;
   with qryEvent do
@@ -124,28 +106,18 @@ begin
       while not eof do
       begin
         edit;
-        FieldByName('ScheduleDT').AsDateTime := d + t;
+        FieldByName('ScheduleDT').AsDateTime := t;
         post;
-        meters := FieldByName('Meters').AsInteger;
-        case meters of
-          25:
-            interval := TimePicker25.Time;
-          50:
-            interval := TimePicker50.Time;
-          100:
-            interval := TimePicker100.Time;
-          200:
-            interval := TimePicker200.Time;
-          400:
-            interval := TimePicker400.Time;
-          1000:
-            interval := TimePicker1000.Time;
-        end;
-        heatcount := GetHeatCount(FieldByName('EventID').AsInteger);
-        t := t + (interval * (heatcount-1)) + TimePickerEventInterval.Time;
+        interval := tpHeatInterval.Time;
+        heatcount := FieldByName('HeatCount').AsInteger;
+        if heatcount > 0 then
+          t := t + (interval * (heatcount - 1)) + tpEventInterval.Time
+        else
+          t := t + tpEventInterval.Time;
         next;
       end;
     end;
+    qryEvent.Close;
   end;
 
 end;
@@ -159,23 +131,44 @@ procedure TAutoSchedule.btnOkClick(Sender: TObject);
 begin
   { TODO -oBSA -cGeneral : SAVE Preferences }
   // save last state ...
-  fSeedTime := tpSessionStart.Time;
+  AutoSchedule_Execute;
   ModalResult := mrOK;
 end;
 
-constructor TAutoSchedule.CreateWithConnection(AOwner: TComponent;
-  aConnection: TFDConnection);
-begin
-  inherited Create(AOwner);
-  fConnection := aConnection;
-  fSeedTime := 0;
-  { TODO -oBSA -cGeneral : LOAD Preferences }
-  // load last state ...
-end;
-
 procedure TAutoSchedule.EstimateSessionEnd;
+var
+  t, interval: TTime;
+  meters, heatcount: integer;
 begin
-  // estimate a SessionEnd TDateTime
+  if (fSessionID = 0) or (fSessionStartTime = 0) then
+    exit;
+  t := tpEventStart.Time;
+  TimePickerSessionEnds.Time := tpEventStart.Time;
+  interval := 0;
+  with qryEvent do
+  begin
+    Connection := fConnection;
+    ParamByName('SESSIONID').AsInteger := fSessionID;
+    Prepare;
+    Open;
+    if Active then
+    begin
+      while not eof do
+      begin
+        meters := FieldByName('Meters').AsInteger;
+        heatcount := FieldByName('HeatCount').AsInteger;
+        interval := tpHeatInterval.Time;
+        if heatcount > 0 then
+          t := t + (interval * (heatcount - 1)) + tpEventInterval.Time
+        else
+          t := t + tpEventInterval.Time;
+        next;
+      end;
+    end;
+    TimePickerSessionEnds.Time := t;
+    qryEvent.Close;
+  end;
+
 end;
 
 procedure TAutoSchedule.FormCreate(Sender: TObject);
@@ -183,6 +176,7 @@ var
   IniFileName: string;
 begin
   fSessionID := 0;
+  fSessionStartTime := 0;
   // r e a d   p r e f e r e n c e .
   IniFileName := SCMUtility.GetSCMPreferenceFileName();
   if (FileExists(IniFileName)) then
@@ -214,12 +208,32 @@ begin
 end;
 
 procedure TAutoSchedule.FormShow(Sender: TObject);
+
 begin
-  if fSeedTime > 0 then
-    tpSessionStart.Time := fSeedTime
+  fSessionStartTime := GetSessionStartTime(fSessionID);
+  if fSessionStartTime > 0 then
+    // found SCM sessionStart DT
+    tpEventStart.Time := TimeOf(fSessionStartTime)
   else
-    tpSessionStart.Time := Time;
-  tpEventStart.Time := tpSessionStart.Time;
+    // Assign the current time ...
+    tpEventStart.Time := Time;
+    EstimateSessionEnd;
+end;
+
+function TAutoSchedule.GetSessionStartTime(ASessionID: integer): TTime;
+var
+  v: variant;
+  SQL: string;
+begin
+  v := null;
+  result := 0;
+  if Assigned(fConnection) and (ASessionID > 0) then
+  begin
+    SQL := 'SELECT SessionStart FROM SwimClubMeet.dbo.Session WHERE SessionID = :ID';
+    v := fConnection.ExecSQLScalar(SQL, [ASessionID]);
+  end;
+  if not VarIsNull(v) then
+    result := TimeOf(v.AsDateTime);
 end;
 
 procedure TAutoSchedule.ReadPreferences(IniFileName: string);
@@ -227,8 +241,14 @@ var
   iFile: TIniFile;
 begin
   iFile := TIniFile.Create(IniFileName);
-  // ATIME := (iFile.ReadTime('AutoSchedule', 'prefNAME', Time));
+  tpHeatInterval.Time := iFile.ReadTime('AutoSchedule', 'tp25m', EncodeTime(0, 2, 0, 0));
+  tpEventInterval.Time := iFile.ReadTime('AutoSchedule', 'tpEvInterval', EncodeTime(0, 5, 0, 0));
   iFile.free;
+end;
+
+procedure TAutoSchedule.tpChange(Sender: TObject);
+begin
+    EstimateSessionEnd;
 end;
 
 procedure TAutoSchedule.WritePreferences(IniFileName: string);
@@ -236,7 +256,8 @@ var
   iFile: TIniFile;
 begin
   iFile := TIniFile.Create(IniFileName);
-  // iFile.Writetime('AutoSchedule', 'prefNAME', ADateTime);
+  iFile.Writetime('AutoSchedule', 'tp25m', tpHeatInterval.Time);
+  iFile.Writetime('AutoSchedule', 'tpEvInterval', tpEventInterval.Time);
   iFile.free;
 end;
 

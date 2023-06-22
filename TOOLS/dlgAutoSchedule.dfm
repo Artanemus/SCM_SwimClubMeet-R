@@ -3,8 +3,8 @@ object AutoSchedule: TAutoSchedule
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Auto-Schedule'
-  ClientHeight = 704
-  ClientWidth = 469
+  ClientHeight = 331
+  ClientWidth = 668
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,114 +17,16 @@ object AutoSchedule: TAutoSchedule
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
   OnShow = FormShow
-  DesignSize = (
-    469
-    704)
   TextHeight = 21
-  object Label3: TLabel
-    Left = 117
-    Top = 251
-    Width = 42
-    Height = 21
-    Alignment = taRightJustify
-    Anchors = [akTop, akRight]
-    Caption = '25M ..'
-    ExplicitLeft = 121
-  end
   object Label4: TLabel
-    Left = 256
-    Top = 251
-    Width = 49
-    Height = 21
-    Caption = '(MINS)'
-  end
-  object Label5: TLabel
-    Left = 117
-    Top = 289
-    Width = 42
-    Height = 21
-    Alignment = taRightJustify
-    Anchors = [akTop, akRight]
-    Caption = '50M ..'
-    ExplicitLeft = 121
-  end
-  object Label6: TLabel
-    Left = 256
-    Top = 289
-    Width = 49
-    Height = 21
-    Caption = '(MINS)'
-  end
-  object Label7: TLabel
-    Left = 108
-    Top = 327
-    Width = 51
-    Height = 21
-    Alignment = taRightJustify
-    Anchors = [akTop, akRight]
-    Caption = '100M ..'
-    ExplicitLeft = 112
-  end
-  object Label8: TLabel
-    Left = 256
-    Top = 327
-    Width = 49
-    Height = 21
-    Caption = '(MINS)'
-  end
-  object Label9: TLabel
-    Left = 108
-    Top = 365
-    Width = 51
-    Height = 21
-    Alignment = taRightJustify
-    Anchors = [akTop, akRight]
-    Caption = '200M ..'
-    ExplicitLeft = 112
-  end
-  object Label10: TLabel
-    Left = 256
-    Top = 365
-    Width = 49
-    Height = 21
-    Caption = '(MINS)'
-  end
-  object Label11: TLabel
-    Left = 108
-    Top = 403
-    Width = 51
-    Height = 21
-    Alignment = taRightJustify
-    Anchors = [akTop, akRight]
-    Caption = '400M ..'
-    ExplicitLeft = 112
-  end
-  object Label12: TLabel
-    Left = 256
-    Top = 403
-    Width = 49
-    Height = 21
-    Caption = '(MINS)'
-  end
-  object Label1: TLabel
-    Left = 99
-    Top = 441
-    Width = 60
-    Height = 21
-    Alignment = taRightJustify
-    Anchors = [akTop, akRight]
-    Caption = '1000M ..'
-    ExplicitLeft = 103
-  end
-  object Label2: TLabel
-    Left = 256
-    Top = 441
+    Left = 456
+    Top = 120
     Width = 49
     Height = 21
     Caption = '(MINS)'
   end
   object Label13: TLabel
-    Left = 90
+    Left = 189
     Top = 18
     Width = 289
     Height = 25
@@ -137,69 +39,62 @@ object AutoSchedule: TAutoSchedule
     ParentFont = False
   end
   object Label14: TLabel
-    Left = 41
-    Top = 218
-    Width = 359
+    Left = 58
+    Top = 120
+    Width = 305
     Height = 21
-    Caption = 'Turn-around time for each heat for a given distance.'
+    Caption = 'The average turn-around time for each heat.'
   end
   object Label15: TLabel
-    Left = 41
-    Top = 486
+    Left = 100
+    Top = 169
     Width = 263
     Height = 21
     Caption = 'The interval that seperates each event.'
   end
   object Label16: TLabel
-    Left = 256
-    Top = 519
+    Left = 456
+    Top = 169
     Width = 49
     Height = 21
     Caption = '(MINS)'
   end
   object Label17: TLabel
-    Left = 40
-    Top = 137
+    Left = 177
+    Top = 70
     Width = 177
     Height = 21
-    Caption = 'Event 01 commences at ...'
+    Caption = 'Event #1 commences at ...'
   end
   object Label19: TLabel
-    Left = 41
-    Top = 568
+    Left = 223
+    Top = 227
     Width = 140
     Height = 21
     Caption = 'Session finishes at ...'
   end
   object Label20: TLabel
-    Left = 335
-    Top = 602
+    Left = 535
+    Top = 227
     Width = 82
     Height = 21
     Caption = '(Estimated) '
   end
-  object Label18: TLabel
-    Left = 40
-    Top = 57
-    Width = 170
-    Height = 21
-    Caption = 'Session commences at ...'
-  end
   object Panel1: TPanel
     Left = 0
-    Top = 658
-    Width = 469
+    Top = 285
+    Width = 668
     Height = 46
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 657
+    ExplicitTop = 622
     ExplicitWidth = 465
     DesignSize = (
-      469
+      668
       46)
     object btnCancel: TButton
-      Left = 106
+      Left = 209
       Top = 8
       Width = 75
       Height = 30
@@ -207,10 +102,9 @@ object AutoSchedule: TAutoSchedule
       Caption = 'Cancel'
       TabOrder = 0
       OnClick = btnCancelClick
-      ExplicitLeft = 102
     end
     object btnOk: TButton
-      Left = 187
+      Left = 290
       Top = 8
       Width = 169
       Height = 30
@@ -218,12 +112,11 @@ object AutoSchedule: TAutoSchedule
       Caption = 'AUTO Schedule'
       TabOrder = 1
       OnClick = btnOkClick
-      ExplicitLeft = 183
     end
   end
-  object TimePicker25: TTimePicker
-    Left = 169
-    Top = 245
+  object tpHeatInterval: TTimePicker
+    Left = 369
+    Top = 114
     Width = 81
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -233,10 +126,11 @@ object AutoSchedule: TAutoSchedule
     TabOrder = 1
     Time = 0.001388888888888889
     TimeFormat = 'nn'
+    OnChange = tpChange
   end
-  object TimePicker50: TTimePicker
-    Left = 169
-    Top = 283
+  object tpEventInterval: TTimePicker
+    Left = 369
+    Top = 163
     Width = 81
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -244,112 +138,37 @@ object AutoSchedule: TAutoSchedule
     Font.Name = 'Segoe UI'
     Font.Style = []
     TabOrder = 2
-    Time = 0.002083333333333333
+    Time = 0.003472222222222222
     TimeFormat = 'nn'
+    OnChange = tpChange
   end
-  object TimePicker100: TTimePicker
-    Left = 169
-    Top = 321
-    Width = 81
+  object tpEventStart: TTimePicker
+    Left = 369
+    Top = 64
+    Width = 160
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
     Font.Name = 'Segoe UI'
     Font.Style = []
     TabOrder = 3
-    Time = 0.002777777777777778
-    TimeFormat = 'nn'
+    Time = 0.770833333333333400
+    TimeFormat = 'HH:nn ampm'
+    OnChange = tpChange
   end
-  object TimePicker200: TTimePicker
-    Left = 169
-    Top = 359
-    Width = 81
+  object TimePickerSessionEnds: TTimePicker
+    Left = 369
+    Top = 221
+    Width = 160
+    Enabled = False
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
     Font.Name = 'Segoe UI'
     Font.Style = []
     TabOrder = 4
-    Time = 0.004166666666666667
-    TimeFormat = 'nn'
-  end
-  object TimePicker400: TTimePicker
-    Left = 169
-    Top = 397
-    Width = 81
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -16
-    Font.Name = 'Segoe UI'
-    Font.Style = []
-    TabOrder = 5
-    Time = 0.006944444444444444
-    TimeFormat = 'nn'
-  end
-  object TimePicker1000: TTimePicker
-    Left = 169
-    Top = 435
-    Width = 81
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -16
-    Font.Name = 'Segoe UI'
-    Font.Style = []
-    TabOrder = 6
-    Time = 0.013888888888888890
-    TimeFormat = 'nn'
-  end
-  object TimePickerEventInterval: TTimePicker
-    Left = 169
-    Top = 513
-    Width = 81
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -16
-    Font.Name = 'Segoe UI'
-    Font.Style = []
-    TabOrder = 7
-    Time = 0.003472222222222222
-    TimeFormat = 'nn'
-  end
-  object tpEventStart: TTimePicker
-    Left = 169
-    Top = 164
-    Width = 160
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -16
-    Font.Name = 'Segoe UI'
-    Font.Style = []
-    TabOrder = 8
-    Time = 0.770833333333333400
-    TimeFormat = 'HH:nn ampm'
-  end
-  object TimePicker9: TTimePicker
-    Left = 169
-    Top = 595
-    Width = 160
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -16
-    Font.Name = 'Segoe UI'
-    Font.Style = []
-    TabOrder = 9
     Time = 0.770833333333333400
     TimeFormat = 'hh:nn ampm'
-  end
-  object tpSessionStart: TTimePicker
-    Left = 169
-    Top = 84
-    Width = 160
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -16
-    Font.Name = 'Segoe UI'
-    Font.Style = []
-    TabOrder = 10
-    Time = 0.770833333333333400
-    TimeFormat = 'HH:nn ampm'
   end
   object qrySession: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -361,8 +180,8 @@ object AutoSchedule: TAutoSchedule
       'SET @SessionID = :SESSIONID;'
       ''
       'SELECT SessionStart FROM SESSION WHERE SessionID = @SessionID;')
-    Left = 376
-    Top = 280
+    Left = 32
+    Top = 216
     ParamData = <
       item
         Name = 'SESSIONID'
@@ -373,22 +192,58 @@ object AutoSchedule: TAutoSchedule
   end
   object qryEvent: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    IndexFieldNames = 'EventID'
     Connection = SCM.scmConnection
+    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
+    UpdateOptions.UpdateTableName = 'SwimClubMeet.dbo.Event'
+    UpdateOptions.KeyFields = 'EventID'
     SQL.Strings = (
       'USE SwimClubMeet;'
+      ''
+      '-- Drop a temporary table called '#39'#CountHeats'#39
+      '-- Drop the table if it already exists'
+      'IF OBJECT_ID('#39'tempDB..#CountHeats'#39', '#39'U'#39') IS NOT NULL'
+      '    DROP TABLE #CountHeats;'
       ''
       'DECLARE @SessionID AS INTEGER;'
       'SET @SessionID = :SESSIONID;'
       ''
       
-        'SELECT Event.EventID, Event.EventNum, Event.ScheduleDT, Distance' +
-        '.Meters  '
-      'FROM Event '
-      'INNER JOIN Distance ON Event.DistanceID = Distance.DistanceID '
+        '-- Create the temporary table from a physical table called '#39'Heat' +
+        'Indivual'#39' in schema '#39'dbo'#39' in database '#39'SwimClubMeet'#39
+      'SELECT COUNT(HeatID) AS HeatCount'
+      '     , [HeatIndividual].EventID'
+      'INTO #CountHeats'
+      'FROM [SwimClubMeet].[dbo].[HeatIndividual]'
+      '    INNER JOIN [Event]'
+      '        ON [HeatIndividual].[EventID] = [Event].[EventID]'
+      'WHERE [Event].[SessionID] = @SessionID'
+      'GROUP BY [HeatIndividual].[EventID]'
+      ''
+      '-- calculate swimming time for heat heat  for each event'
+      ''
+      'IF OBJECT_ID('#39'tempDB..#HeatTime'#39', '#39'U'#39') IS NOT NULL'
+      '    DROP TABLE #HeatTime;'
+      '    '
+      '--  TODO ... TODO ...'
+      ''
+      'SELECT [Event].EventID'
+      '     , [Event].EventNum'
+      '     , [Event].ScheduleDT'
+      '     , Distance.Meters'
+      '     , HeatCount'
+      '     , HeatTimeTOT'
+      'FROM [Event]'
+      '    INNER JOIN Distance'
+      '        ON [Event].DistanceID = Distance.DistanceID'
+      '    LEFT JOIN #CountHeats'
+      '        ON [Event].[EventID] = #CountHeats.EventID'
+      '    LEFT JOIN #HeatTime'
+      '        ON [Event].[EventID] = #HeatTime.EventID'
       'WHERE SessionID = @SessionID'
       'ORDER BY EventNum;')
-    Left = 376
-    Top = 352
+    Left = 112
+    Top = 216
     ParamData = <
       item
         Name = 'SESSIONID'
