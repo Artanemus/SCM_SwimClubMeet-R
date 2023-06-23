@@ -9,7 +9,8 @@ uses
   Vcl.ExtCtrls, Vcl.WinXPickers, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, Data.DB,
-  FireDAC.Comp.DataSet;
+  FireDAC.Comp.DataSet, Vcl.Samples.Spin, Vcl.VirtualImage,
+  Vcl.BaseImageCollection, Vcl.ImageCollection;
 
 type
   TAutoSchedule = class(TForm)
@@ -25,17 +26,27 @@ type
     Label4: TLabel;
     Panel1: TPanel;
     qryEvent: TFDQuery;
-    qrySession: TFDQuery;
     tpHeatInterval: TTimePicker;
     TimePickerSessionEnds: TTimePicker;
     tpEventInterval: TTimePicker;
     tpEventStart: TTimePicker;
+    spinRound: TSpinEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    BalloonHint1: TBalloonHint;
+    ImageCollection1: TImageCollection;
+    btnInfo1: TVirtualImage;
+    btnInfo2: TVirtualImage;
     procedure btnCancelClick(Sender: TObject);
+    procedure btnInfo1Click(Sender: TObject);
+    procedure btnInfoMouseLeave(Sender: TObject);
+    procedure btnInfo2Click(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
+    procedure spinRoundChange(Sender: TObject);
     procedure tpChange(Sender: TObject);
   private
     { Private declarations }
@@ -47,6 +58,8 @@ type
     function GetSessionStartTime(ASessionID: integer): TTime;
     procedure ReadPreferences(IniFileName: string);
     procedure WritePreferences(IniFileName: string);
+    function RoundToNearestInterval(time: TTime; interval: integer): TTime;
+    function RoundToNearest(value: integer; interval: integer): integer;
   public
     { Public declarations }
     constructor CreateWithConnection(AOwner: TComponent;
@@ -59,7 +72,8 @@ var
 
 implementation
 
-uses System.IniFiles, SCMUtility, dmSCM, System.DateUtils, System.UITypes;
+uses System.IniFiles, SCMUtility, dmSCM, System.DateUtils, System.UITypes,
+  System.Math;
 
 {$R *.dfm}
 
@@ -83,17 +97,7 @@ begin
   if (fSessionID = 0) or (fSessionStartTime = 0) then
     exit;
 
-  { t := TimeOf(v.AsDateTime);
-    d := DateOf(v.AsDateTime);
-    if (t <> tpSessionStart.Time) then
-    begin
-    dt := DateOf(v.AsDateTime) + t;
-    s := FormatDateTime('yyyy.mm.dd', dt);
-    SQL := 'UPDATE SwimClubMeet.dbo.Session SET [SessionStart] = :STR WHERE SessionID = :ID';
-    fConnection.ExecSQL(SQL, [s, fSessionID], [ftString, ftInteger]);
-    end; }
-
-  t := tpEventStart.Time;
+  t := tpEventStart.time;
   interval := 0;
   with qryEvent do
   begin
@@ -108,12 +112,14 @@ begin
         edit;
         FieldByName('ScheduleDT').AsDateTime := t;
         post;
-        interval := tpHeatInterval.Time;
+        interval := tpHeatInterval.time;
         heatcount := FieldByName('HeatCount').AsInteger;
         if heatcount > 0 then
-          t := t + (interval * (heatcount - 1)) + tpEventInterval.Time
+          t := t + (interval * (heatcount - 1)) + tpEventInterval.time +
+            TimeOf(FieldByName('MaxSwimTime').AsDateTime)
         else
-          t := t + tpEventInterval.Time;
+          t := t + tpEventInterval.time;
+        t := RoundToNearestInterval(t, spinRound.value);
         next;
       end;
     end;
@@ -127,6 +133,30 @@ begin
   ModalResult := mrCancel;
 end;
 
+procedure TAutoSchedule.btnInfo1Click(Sender: TObject);
+begin
+  BalloonHint1.Title := 'Calculating duration.(1)';
+  BalloonHint1.Description := 'For each heat, the slowest swimmer' + sLinebreak
+    + 'is used to caculate the heat''s duration +' + sLinebreak +
+    'the turn-around time.';
+  BalloonHint1.ShowHint(btnInfo1);
+  // BalloonHint1.ShowHint(ClientToScreen(Tpoint.Create(btnInfo1.Left,btnInfo1.Top)));
+end;
+
+procedure TAutoSchedule.btnInfoMouseLeave(Sender: TObject);
+begin
+  BalloonHint1.HideHint;
+end;
+
+procedure TAutoSchedule.btnInfo2Click(Sender: TObject);
+begin
+  BalloonHint1.Title := 'Calculating duration.(2)';
+  BalloonHint1.Description := 'The time it takes to rally and' +
+    sLinebreak + 'mount the blocks + the time for swimmers to' + sLinebreak +
+    'leave the pool on completion.';
+  BalloonHint1.ShowHint(btnInfo2);
+end;
+
 procedure TAutoSchedule.btnOkClick(Sender: TObject);
 begin
   { TODO -oBSA -cGeneral : SAVE Preferences }
@@ -138,12 +168,12 @@ end;
 procedure TAutoSchedule.EstimateSessionEnd;
 var
   t, interval: TTime;
-  meters, heatcount: integer;
+  heatcount: integer;
 begin
   if (fSessionID = 0) or (fSessionStartTime = 0) then
     exit;
-  t := tpEventStart.Time;
-  TimePickerSessionEnds.Time := tpEventStart.Time;
+  t := tpEventStart.time;
+  TimePickerSessionEnds.time := tpEventStart.time;
   interval := 0;
   with qryEvent do
   begin
@@ -155,17 +185,19 @@ begin
     begin
       while not eof do
       begin
-        meters := FieldByName('Meters').AsInteger;
         heatcount := FieldByName('HeatCount').AsInteger;
-        interval := tpHeatInterval.Time;
+        interval := tpHeatInterval.time;
         if heatcount > 0 then
-          t := t + (interval * (heatcount - 1)) + tpEventInterval.Time
+          t := t + (interval * (heatcount - 1)) + tpEventInterval.time +
+            +TimeOf(FieldByName('MaxSwimTime').AsDateTime)
         else
-          t := t + tpEventInterval.Time;
+          t := t + tpEventInterval.time;
+        t := RoundToNearestInterval(t, spinRound.value);
         next;
       end;
     end;
-    TimePickerSessionEnds.Time := t;
+
+    TimePickerSessionEnds.time := t;
     qryEvent.Close;
   end;
 
@@ -208,16 +240,15 @@ begin
 end;
 
 procedure TAutoSchedule.FormShow(Sender: TObject);
-
 begin
   fSessionStartTime := GetSessionStartTime(fSessionID);
   if fSessionStartTime > 0 then
     // found SCM sessionStart DT
-    tpEventStart.Time := TimeOf(fSessionStartTime)
+    tpEventStart.time := fSessionStartTime
   else
     // Assign the current time ...
-    tpEventStart.Time := Time;
-    EstimateSessionEnd;
+    tpEventStart.time := time;
+  EstimateSessionEnd;
 end;
 
 function TAutoSchedule.GetSessionStartTime(ASessionID: integer): TTime;
@@ -241,14 +272,56 @@ var
   iFile: TIniFile;
 begin
   iFile := TIniFile.Create(IniFileName);
-  tpHeatInterval.Time := iFile.ReadTime('AutoSchedule', 'tp25m', EncodeTime(0, 2, 0, 0));
-  tpEventInterval.Time := iFile.ReadTime('AutoSchedule', 'tpEvInterval', EncodeTime(0, 5, 0, 0));
+  tpHeatInterval.time := iFile.ReadTime('AutoSchedule', 'tp25m',
+    EncodeTime(0, 2, 0, 0));
+  tpEventInterval.time := iFile.ReadTime('AutoSchedule', 'tpEvInterval',
+    EncodeTime(0, 5, 0, 0));
   iFile.free;
+end;
+
+function TAutoSchedule.RoundToNearest(value, interval: integer): integer;
+var
+  remainder: double;
+begin
+  result := value;
+  if interval = 0 then
+    exit
+  else
+    remainder := value / interval;
+//    remainder := value mod interval;
+  if remainder = 0 then
+    exit
+    { else
+      result := value + interval - remainder }
+  else if remainder >= interval / 2.0 then
+//  else if remainder >= interval div 2 then
+    // round up ....
+    result := Round(value + interval - remainder)
+  else
+    // round down ...
+    result := Round(value - remainder);
+
+end;
+
+function TAutoSchedule.RoundToNearestInterval(time: TTime;
+  interval: integer): TTime;
+var
+  roundedMinutes: integer;
+  t: TTime;
+begin
+  roundedMinutes := RoundToNearest(MinuteOf(time), interval);
+  t := EncodeTime(HourOf(time), 0, 0, 0);
+  result := IncMinute(t, roundedMinutes);
+end;
+
+procedure TAutoSchedule.spinRoundChange(Sender: TObject);
+begin
+  EstimateSessionEnd;
 end;
 
 procedure TAutoSchedule.tpChange(Sender: TObject);
 begin
-    EstimateSessionEnd;
+  EstimateSessionEnd;
 end;
 
 procedure TAutoSchedule.WritePreferences(IniFileName: string);
@@ -256,8 +329,8 @@ var
   iFile: TIniFile;
 begin
   iFile := TIniFile.Create(IniFileName);
-  iFile.Writetime('AutoSchedule', 'tp25m', tpHeatInterval.Time);
-  iFile.Writetime('AutoSchedule', 'tpEvInterval', tpEventInterval.Time);
+  iFile.Writetime('AutoSchedule', 'tp25m', tpHeatInterval.time);
+  iFile.Writetime('AutoSchedule', 'tpEvInterval', tpEventInterval.time);
   iFile.free;
 end;
 

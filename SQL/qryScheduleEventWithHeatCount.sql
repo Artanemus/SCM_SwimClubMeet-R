@@ -18,15 +18,35 @@ FROM [SwimClubMeet].[dbo].[HeatIndividual]
 WHERE [Event].[SessionID] = @SessionID
 GROUP BY [HeatIndividual].[EventID]
 
+-- calculate swimming time for heat heat  for each event
+
+IF OBJECT_ID('tempDB..#HeatTime', 'U') IS NOT NULL
+    DROP TABLE #HeatTime;
+
+SELECT MAX([Entrant].[TimeToBeat]) AS MaxSwimTime
+     , [Event].[EventID] AS EventID
+INTO #HeatTime
+FROM [SwimClubMeet].[dbo].[Entrant]
+    INNER JOIN [HeatIndividual]
+        ON [Entrant].[HeatID] = [HeatIndividual].[HeatID]
+    INNER JOIN [Event]
+        ON [HeatIndividual].[EventID] = [Event].[EventID]
+WHERE [Entrant].[TimeToBeat] IS NOT NULL
+      AND [Event].[SessionID] = 1
+GROUP BY [Event].[EventID];
+
 SELECT [Event].EventID
      , [Event].EventNum
      , [Event].ScheduleDT
      , Distance.Meters
      , HeatCount
+     , MaxSwimTime
 FROM [Event]
     INNER JOIN Distance
         ON [Event].DistanceID = Distance.DistanceID
     LEFT JOIN #CountHeats
         ON [Event].[EventID] = #CountHeats.EventID
+    LEFT JOIN #HeatTime
+        ON [Event].[EventID] = #HeatTime.EventID
 WHERE SessionID = @SessionID
 ORDER BY EventNum;
