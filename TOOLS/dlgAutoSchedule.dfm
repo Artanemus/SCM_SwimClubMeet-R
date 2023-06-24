@@ -4,7 +4,7 @@ object AutoSchedule: TAutoSchedule
   BorderStyle = bsDialog
   Caption = 'Auto-Schedule'
   ClientHeight = 365
-  ClientWidth = 668
+  ClientWidth = 671
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,14 +19,14 @@ object AutoSchedule: TAutoSchedule
   OnShow = FormShow
   TextHeight = 21
   object Label4: TLabel
-    Left = 456
+    Left = 432
     Top = 120
     Width = 49
     Height = 21
     Caption = '(MINS)'
   end
   object Label13: TLabel
-    Left = 189
+    Left = 191
     Top = 18
     Width = 289
     Height = 25
@@ -39,64 +39,66 @@ object AutoSchedule: TAutoSchedule
     ParentFont = False
   end
   object Label14: TLabel
-    Left = 58
+    Left = 34
     Top = 120
     Width = 305
     Height = 21
     Caption = 'The average turn-around time for each heat.'
   end
   object Label15: TLabel
-    Left = 100
+    Left = 76
     Top = 169
     Width = 263
     Height = 21
     Caption = 'The interval that seperates each event.'
   end
   object Label16: TLabel
-    Left = 456
+    Left = 432
     Top = 169
     Width = 49
     Height = 21
     Caption = '(MINS)'
   end
   object Label17: TLabel
-    Left = 177
+    Left = 153
     Top = 70
     Width = 177
     Height = 21
     Caption = 'Event #1 commences at ...'
   end
   object Label19: TLabel
-    Left = 223
+    Left = 199
     Top = 267
     Width = 140
     Height = 21
     Caption = 'Session finishes at ...'
   end
   object Label20: TLabel
-    Left = 535
+    Left = 511
     Top = 267
     Width = 82
     Height = 21
     Caption = '(Estimated) '
   end
   object Label1: TLabel
-    Left = 156
+    Left = 110
     Top = 219
-    Width = 207
+    Width = 229
     Height = 21
     Alignment = taRightJustify
-    Caption = 'Round events to the nearest ...'
+    Caption = 'Round events up to the nearest ...'
+    Visible = False
   end
   object Label2: TLabel
-    Left = 431
+    Left = 407
     Top = 219
     Width = 108
     Height = 21
     Caption = 'minute interval.'
+    Visible = False
   end
   object btnInfo1: TVirtualImage
-    Left = 504
+    Left = 480
     Top = 102
     Width = 25
     Height = 26
@@ -109,7 +111,7 @@ object AutoSchedule: TAutoSchedule
     OnMouseLeave = btnInfoMouseLeave
   end
   object btnInfo2: TVirtualImage
-    Left = 504
+    Left = 480
     Top = 147
     Width = 25
     Height = 26
@@ -124,18 +126,18 @@ object AutoSchedule: TAutoSchedule
   object Panel1: TPanel
     Left = 0
     Top = 319
-    Width = 668
+    Width = 671
     Height = 46
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 284
+    ExplicitTop = 318
     ExplicitWidth = 664
     DesignSize = (
-      668
+      671
       46)
     object btnCancel: TButton
-      Left = 205
+      Left = 210
       Top = 8
       Width = 75
       Height = 30
@@ -143,10 +145,9 @@ object AutoSchedule: TAutoSchedule
       Caption = 'Cancel'
       TabOrder = 0
       OnClick = btnCancelClick
-      ExplicitLeft = 201
     end
     object btnOk: TButton
-      Left = 286
+      Left = 291
       Top = 8
       Width = 169
       Height = 30
@@ -154,11 +155,10 @@ object AutoSchedule: TAutoSchedule
       Caption = 'AUTO Schedule'
       TabOrder = 1
       OnClick = btnOkClick
-      ExplicitLeft = 282
     end
   end
   object tpHeatInterval: TTimePicker
-    Left = 369
+    Left = 345
     Top = 114
     Width = 81
     Font.Charset = DEFAULT_CHARSET
@@ -172,7 +172,7 @@ object AutoSchedule: TAutoSchedule
     OnChange = tpChange
   end
   object tpEventInterval: TTimePicker
-    Left = 369
+    Left = 345
     Top = 163
     Width = 81
     Font.Charset = DEFAULT_CHARSET
@@ -186,7 +186,7 @@ object AutoSchedule: TAutoSchedule
     OnChange = tpChange
   end
   object tpEventStart: TTimePicker
-    Left = 369
+    Left = 345
     Top = 64
     Width = 160
     Font.Charset = DEFAULT_CHARSET
@@ -200,7 +200,7 @@ object AutoSchedule: TAutoSchedule
     OnChange = tpChange
   end
   object TimePickerSessionEnds: TTimePicker
-    Left = 369
+    Left = 345
     Top = 261
     Width = 160
     Enabled = False
@@ -213,8 +213,8 @@ object AutoSchedule: TAutoSchedule
     Time = 0.770833333333333400
     TimeFormat = 'hh:nn ampm'
   end
-  object spinRound: TSpinEdit
-    Left = 369
+  object spinRoundUp: TSpinEdit
+    Left = 345
     Top = 216
     Width = 56
     Height = 31
@@ -223,7 +223,20 @@ object AutoSchedule: TAutoSchedule
     MinValue = 0
     TabOrder = 5
     Value = 5
-    OnChange = spinRoundChange
+    Visible = False
+    OnChange = spinRoundUpChange
+  end
+  object btnSessionStartTime: TButton
+    Left = 511
+    Top = 68
+    Width = 131
+    Height = 28
+    Caption = 'Session Start'
+    ImageIndex = 0
+    ImageName = 'ClearBackSpace'
+    Images = VirtualImageList1
+    TabOrder = 6
+    OnClick = btnSessionStartTimeClick
   end
   object qryEvent: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -264,6 +277,7 @@ object AutoSchedule: TAutoSchedule
       ''
       'SELECT MAX([Entrant].[TimeToBeat]) AS MaxSwimTime'
       '     , [Event].[EventID] AS EventID'
+      '     , [HeatIndividual].[HeatID] AS HeatID     '
       'INTO #HeatTime'
       'FROM [SwimClubMeet].[dbo].[Entrant]'
       '    INNER JOIN [HeatIndividual]'
@@ -271,22 +285,34 @@ object AutoSchedule: TAutoSchedule
       '    INNER JOIN [Event]'
       '        ON [HeatIndividual].[EventID] = [Event].[EventID]'
       'WHERE [Entrant].[TimeToBeat] IS NOT NULL'
-      '      AND [Event].[SessionID] = 1'
-      'GROUP BY [Event].[EventID];'
+      '      AND [Event].[SessionID] = @SessionID'
+      'GROUP BY [Event].[EventID], [HeatIndividual].[HeatID];'
+      ''
+      'IF OBJECT_ID('#39'tempDB..#TOTHeatTime'#39', '#39'U'#39') IS NOT NULL'
+      '    DROP TABLE #TOTHeatTime;'
+      '    '
+      
+        'SELECT CONVERT(TIME, DATEADD(MILLISECOND,SUM(dbo.SwimTimeToMilli' +
+        'seconds(MaxSwimTime) ) , 0), 114) AS TOTEvSwimTime, EventID'
+      'INTO #TOTHeatTime'
+      'FROM #HeatTime'
+      'GROUP BY EventID'
+      ''
+      ''
       ''
       'SELECT [Event].EventID'
       '     , [Event].EventNum'
       '     , [Event].ScheduleDT'
       '     , Distance.Meters'
       '     , HeatCount'
-      '     , MaxSwimTime'
+      '     , TOTEvSwimTime'
       'FROM [Event]'
       '    INNER JOIN Distance'
       '        ON [Event].DistanceID = Distance.DistanceID'
       '    LEFT JOIN #CountHeats'
       '        ON [Event].[EventID] = #CountHeats.EventID'
-      '    LEFT JOIN #HeatTime'
-      '        ON [Event].[EventID] = #HeatTime.EventID'
+      '    LEFT JOIN #TOTHeatTime'
+      '        ON [Event].[EventID] = #TOTHeatTime.EventID'
       'WHERE SessionID = @SessionID'
       'ORDER BY EventNum;')
     Left = 56
@@ -301,8 +327,8 @@ object AutoSchedule: TAutoSchedule
   end
   object BalloonHint1: TBalloonHint
     Delay = 50
-    Left = 600
-    Top = 48
+    Left = 32
+    Top = 168
   end
   object ImageCollection1: TImageCollection
     Images = <
@@ -348,8 +374,49 @@ object AutoSchedule: TAutoSchedule
               1ABD66155125C76B082A5FD4D9712901C4FA5049EF3B804ACB9740B9C5EFC017
               4EABDD310AD690EA0000000049454E44AE426082}
           end>
+      end
+      item
+        Name = 'ClearBackSpace'
+        SourceImages = <
+          item
+            Image.Data = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000017352474200AECE1CE900000252494441546843ED98E13105311485
+              CFAB0015A00274A00354800A50012A4005A80015D0012A400754C07C33C94C26
+              93CDCB4B6E981D9B5F8FD9BD7BBF7BCF3DC9EE4C235FB391E7AF09E0AF3B3875
+              60EA40630526093516B0F9F67FDF813549A7920E9A4B990EF029E946D2C950FC
+              960E6C4A7A94B4DC29F930EC95A4E3D4736A01489AE481F88D4527562C012E25
+              1DB9805F0EE4BD03C977103359EC9A0EEC4ABA0B02A34F807A2C7300A4F316E8
+              FE411240BD96390095F709231D5C087DC60B5024765E48B62FE93671AD29002E
+              70113C644FD2FD40F27EC0B1C0C33910D7CE8653D79A01C49639686B92CEDCDE
+              E0F3CE41F8E4FDB5C072BD5F6600CF81657EB8DF29E98449238B1C449C3C128A
+              37441380B8A25B925E0AB44D2587204A92E711CD00DB6EC3F2F932940095AE14
+              04F786954E55DE44423809D2C16958AF953B6F0C11C2E7926FEE406C990C72ED
+              6E9B8298977C330016B9E3CAC5C0A2FD5A8058F3842DB1D8A61940420CEBAA83
+              E037108BAE54F239770AE3370110A87588536E43DC79166B32C43E48AD8DE6AC
+              3267B1A61DF0C190CF86FB8339404AB98DACC4E74B209A25E40170A027494BEE
+              1F8B1C25726E1343C4FB8C1900792F729803968E9558A587609F61E6C2CE9A02
+              00115BEB7AE6380D70E9AECD75BC14C5B23407C05A99012F25803856F75AE600
+              296B1DD52BA5AF74F852DFBA4BE7BAD7A5033C1029F941ED259F302EAFAFC9EF
+              4F355F2586ACB52788F9872D9F2C476D1C243C1A588250796C36F9558E07B574
+              C032D1EA58134075E98C6E9C3A6054C8EA305307AA4B6774E3D401A342568719
+              7D077E00C2448C31F447C64B0000000049454E44AE426082}
+          end>
       end>
-    Left = 600
-    Top = 112
+    Left = 32
+    Top = 224
+  end
+  object VirtualImageList1: TVirtualImageList
+    Images = <
+      item
+        CollectionIndex = 1
+        CollectionName = 'ClearBackSpace'
+        Name = 'ClearBackSpace'
+      end>
+    ImageCollection = ImageCollection1
+    Width = 24
+    Height = 24
+    Left = 568
+    Top = 136
   end
 end

@@ -10,7 +10,8 @@ uses
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, Data.DB,
   FireDAC.Comp.DataSet, Vcl.Samples.Spin, Vcl.VirtualImage,
-  Vcl.BaseImageCollection, Vcl.ImageCollection;
+  Vcl.BaseImageCollection, Vcl.ImageCollection, System.ImageList, Vcl.ImgList,
+  Vcl.VirtualImageList;
 
 type
   TAutoSchedule = class(TForm)
@@ -30,23 +31,26 @@ type
     TimePickerSessionEnds: TTimePicker;
     tpEventInterval: TTimePicker;
     tpEventStart: TTimePicker;
-    spinRound: TSpinEdit;
+    spinRoundUp: TSpinEdit;
     Label1: TLabel;
     Label2: TLabel;
     BalloonHint1: TBalloonHint;
     ImageCollection1: TImageCollection;
     btnInfo1: TVirtualImage;
     btnInfo2: TVirtualImage;
+    VirtualImageList1: TVirtualImageList;
+    btnSessionStartTime: TButton;
     procedure btnCancelClick(Sender: TObject);
     procedure btnInfo1Click(Sender: TObject);
     procedure btnInfoMouseLeave(Sender: TObject);
     procedure btnInfo2Click(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
+    procedure btnSessionStartTimeClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
-    procedure spinRoundChange(Sender: TObject);
+    procedure spinRoundUpChange(Sender: TObject);
     procedure tpChange(Sender: TObject);
   private
     { Private declarations }
@@ -59,7 +63,7 @@ type
     procedure ReadPreferences(IniFileName: string);
     procedure WritePreferences(IniFileName: string);
     function RoundToNearestInterval(time: TTime; interval: integer): TTime;
-    function RoundToNearest(value: integer; interval: integer): integer;
+    function RoundUpToNearest(value: integer; interval: integer): integer;
   public
     { Public declarations }
     constructor CreateWithConnection(AOwner: TComponent;
@@ -91,14 +95,12 @@ end;
 procedure TAutoSchedule.AutoSchedule_Execute;
 var
   t, interval: TTime;
-  meters, heatcount: integer;
-
+  heatcount: integer;
 begin
   if (fSessionID = 0) or (fSessionStartTime = 0) then
     exit;
 
   t := tpEventStart.time;
-  interval := 0;
   with qryEvent do
   begin
     Connection := fConnection;
@@ -110,16 +112,18 @@ begin
       while not eof do
       begin
         edit;
+//        if (spinRoundUp.Value > 0) then
+//          t := RoundToNearestInterval(t, spinRoundUp.value);
         FieldByName('ScheduleDT').AsDateTime := t;
         post;
         interval := tpHeatInterval.time;
         heatcount := FieldByName('HeatCount').AsInteger;
         if heatcount > 0 then
           t := t + (interval * (heatcount - 1)) + tpEventInterval.time +
-            TimeOf(FieldByName('MaxSwimTime').AsDateTime)
+            FieldByName('TOTEvSwimTime').AsDateTime
         else
           t := t + tpEventInterval.time;
-        t := RoundToNearestInterval(t, spinRound.value);
+
         next;
       end;
     end;
@@ -151,8 +155,8 @@ end;
 procedure TAutoSchedule.btnInfo2Click(Sender: TObject);
 begin
   BalloonHint1.Title := 'Calculating duration.(2)';
-  BalloonHint1.Description := 'The time it takes to rally and' +
-    sLinebreak + 'mount the blocks + the time for swimmers to' + sLinebreak +
+  BalloonHint1.Description := 'The time it takes to rally and' + sLinebreak +
+    'mount the blocks + the time for swimmers to' + sLinebreak +
     'leave the pool on completion.';
   BalloonHint1.ShowHint(btnInfo2);
 end;
@@ -165,6 +169,13 @@ begin
   ModalResult := mrOK;
 end;
 
+procedure TAutoSchedule.btnSessionStartTimeClick(Sender: TObject);
+begin
+  if (fSessionID = 0) or (fSessionStartTime = 0) then
+    exit;
+  tpEventStart.time := fSessionStartTime;
+end;
+
 procedure TAutoSchedule.EstimateSessionEnd;
 var
   t, interval: TTime;
@@ -174,7 +185,6 @@ begin
     exit;
   t := tpEventStart.time;
   TimePickerSessionEnds.time := tpEventStart.time;
-  interval := 0;
   with qryEvent do
   begin
     Connection := fConnection;
@@ -189,10 +199,10 @@ begin
         interval := tpHeatInterval.time;
         if heatcount > 0 then
           t := t + (interval * (heatcount - 1)) + tpEventInterval.time +
-            +TimeOf(FieldByName('MaxSwimTime').AsDateTime)
+            +TimeOf(FieldByName('TOTEvSwimTime').AsDateTime)
         else
           t := t + tpEventInterval.time;
-        t := RoundToNearestInterval(t, spinRound.value);
+        t := RoundToNearestInterval(t, spinRoundUp.value);
         next;
       end;
     end;
@@ -242,12 +252,8 @@ end;
 procedure TAutoSchedule.FormShow(Sender: TObject);
 begin
   fSessionStartTime := GetSessionStartTime(fSessionID);
-  if fSessionStartTime > 0 then
-    // found SCM sessionStart DT
-    tpEventStart.time := fSessionStartTime
-  else
-    // Assign the current time ...
-    tpEventStart.time := time;
+  if (fSessionStartTime > 0) and (tpEventStart.time < fSessionStartTime) then
+    tpEventStart.time := fSessionStartTime;
   EstimateSessionEnd;
 end;
 
@@ -272,34 +278,38 @@ var
   iFile: TIniFile;
 begin
   iFile := TIniFile.Create(IniFileName);
-  tpHeatInterval.time := iFile.ReadTime('AutoSchedule', 'tp25m',
+  tpEventStart.time := iFile.ReadTime('AutoSchedule', 'EventStart',
+    EncodeTime(18, 30, 0, 0));
+  tpHeatInterval.time := iFile.ReadTime('AutoSchedule', 'HeatInterval',
     EncodeTime(0, 2, 0, 0));
-  tpEventInterval.time := iFile.ReadTime('AutoSchedule', 'tpEvInterval',
+  tpEventInterval.time := iFile.ReadTime('AutoSchedule', 'EventInterval',
     EncodeTime(0, 5, 0, 0));
+  spinRoundUp.Value := iFile.ReadInteger('AutoSchedule', 'RoundToNearest', 5);
   iFile.free;
 end;
 
-function TAutoSchedule.RoundToNearest(value, interval: integer): integer;
+function TAutoSchedule.RoundUpToNearest(value, interval: integer): integer;
 var
-  remainder: double;
+  remainder: integer;
 begin
   result := value;
+
   if interval = 0 then
-    exit
-  else
-    remainder := value / interval;
-//    remainder := value mod interval;
+    exit; // Exception: if y=0 in x mod y is evaluated.
+
+  if value < interval then
+  // Performing MOD here results in the dividend being returned.
+  begin
+    result := value + (interval - value);
+    exit;
+  end;
+
+  remainder := value mod interval;
   if remainder = 0 then
-    exit
-    { else
-      result := value + interval - remainder }
-  else if remainder >= interval / 2.0 then
-//  else if remainder >= interval div 2 then
-    // round up ....
-    result := Round(value + interval - remainder)
-  else
-    // round down ...
-    result := Round(value - remainder);
+    exit;   // Value is at interval boundary
+
+  // R O U N D   U P   V A L U E . . .
+  result := value + interval - remainder;
 
 end;
 
@@ -309,12 +319,12 @@ var
   roundedMinutes: integer;
   t: TTime;
 begin
-  roundedMinutes := RoundToNearest(MinuteOf(time), interval);
+  roundedMinutes := RoundUpToNearest(MinuteOf(time), interval);
   t := EncodeTime(HourOf(time), 0, 0, 0);
   result := IncMinute(t, roundedMinutes);
 end;
 
-procedure TAutoSchedule.spinRoundChange(Sender: TObject);
+procedure TAutoSchedule.spinRoundUpChange(Sender: TObject);
 begin
   EstimateSessionEnd;
 end;
@@ -329,8 +339,10 @@ var
   iFile: TIniFile;
 begin
   iFile := TIniFile.Create(IniFileName);
-  iFile.Writetime('AutoSchedule', 'tp25m', tpHeatInterval.time);
-  iFile.Writetime('AutoSchedule', 'tpEvInterval', tpEventInterval.time);
+  iFile.Writetime('AutoSchedule', 'EventStart', tpEventStart.time);
+  iFile.Writetime('AutoSchedule', 'HeatInterval', tpHeatInterval.time);
+  iFile.Writetime('AutoSchedule', 'EventInterval', tpEventInterval.time);
+  iFile.WriteInteger('AutoSchedule', 'RoundToNearest', spinRoundUp.Value);
   iFile.free;
 end;
 
