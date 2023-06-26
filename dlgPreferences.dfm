@@ -57,7 +57,7 @@ object Preferences: TPreferences
       654
       48)
     object btnClose: TButton
-      Left = 520
+      Left = 512
       Top = 6
       Width = 101
       Height = 33
@@ -65,7 +65,7 @@ object Preferences: TPreferences
       Caption = 'Close'
       TabOrder = 0
       OnClick = btnCloseClick
-      ExplicitLeft = 516
+      ExplicitLeft = 508
     end
   end
   object PageControl1: TPageControl
@@ -368,7 +368,7 @@ object Preferences: TPreferences
         ParentFont = False
       end
       object btn1: TSpeedButton
-        Left = 189
+        Left = 181
         Top = 15
         Width = 33
         Height = 33
@@ -543,24 +543,21 @@ object Preferences: TPreferences
     object TabSheet6: TTabSheet
       Caption = 'Switches'
       ImageIndex = 6
-      object CheckBox2: TCheckBox
+      object prefEnableTeamEvents: TCheckBox
         Left = 32
         Top = 30
         Width = 241
         Height = 19
         Caption = 'Enable Team Events.'
-        Checked = True
         Enabled = False
-        State = cbChecked
         TabOrder = 0
       end
-      object CheckBox5: TCheckBox
+      object prefEnableFINAcodes: TCheckBox
         Left = 32
         Top = 64
         Width = 313
         Height = 20
-        Caption = 'Enable simplified disqualification codes.'
-        Enabled = False
+        Caption = 'Enable FINA disqualification codes.'
         TabOrder = 1
       end
     end

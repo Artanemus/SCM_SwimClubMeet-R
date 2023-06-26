@@ -421,6 +421,9 @@ type
     fEntrantEditBoxNormal: TColor;
     fEntrantBgColor: TColor;
     fscmStyleName: String;
+    prefEnableTeamEvents: Boolean;
+    prefEnableFINAcodes: Boolean;
+
 
     // Internet connection state
     fMyInternetConnected: boolean;
@@ -435,7 +438,8 @@ type
     procedure Refresh_Entrant();
     procedure Refresh_Nominate();
 
-    // NOMINATE
+    // FINA CODES
+    procedure ToggleFINA(EnableFINA: Boolean);
 
     // Miscellaneous - uncatagorized
     procedure GetSCMPreferences();
@@ -1927,6 +1931,9 @@ begin
   fSessionClosedBgColor := clAppWorkSpace;
   fMyInternetConnected := true; // an assumption is presumed.
 
+  prefEnableTeamEvents := false;
+  prefEnableFINAcodes := false;
+
   try
     SCM := TSCM.Create(self);
   finally
@@ -2084,6 +2091,8 @@ begin
   if (passed) then
     GetSCMPreferences();
   // ====================================================================
+
+  ToggleFINA(prefEnableFINAcodes);
 
   bootprogress.lblProgress.Caption := 'Final checks on database integerity.';
   bootprogress.lblProgress.Repaint;
@@ -2302,6 +2311,13 @@ begin
     fEntrantEditBoxNormal := clWindowText;
     fEntrantBgColor := clAppWorkSpace;
   end;
+
+    // 2023.06.26
+  prefEnableTeamEvents := iFile.ReadBool('Preferences',
+    'EnableTeamEvents', false);
+  prefEnableFINAcodes := iFile.ReadBool('Preferences',
+    'EnableFINAcodes', false);
+
   iFile.Free;
 end;
 
@@ -4276,6 +4292,36 @@ begin
     if not SCM.dsSession.DataSet.IsEmpty then
       DoEnable := true;
   TAction(Sender).Enabled := DoEnable;
+end;
+
+procedure TMain.ToggleFINA(EnableFINA: Boolean);
+var
+  fld: TField;
+begin
+// toggle FINA codes of simple scratch/disqualified
+    SCM.qryEntrant.DisableControls;
+    // i s S c r a t c h e d   . . .
+    fld := SCM.qryEntrant.FindField('IsScratched');
+    if Assigned(fld) then
+    begin
+      if EnableFINA then
+        fld.Visible := false else fld.Visible := true;
+    end;
+    // i s D i s q u a l i f i e d   . . .
+    fld := SCM.qryEntrant.FindField('IsDisqualified');
+    if Assigned(fld) then
+    begin
+      if EnableFINA then
+        fld.Visible := false else fld.Visible := true;
+    end;
+    // FinaCode   . . .
+    fld := SCM.qryEntrant.FindField('luDisqualifyCode');
+    if Assigned(fld) then
+    begin
+      if EnableFINA then
+        fld.Visible := true else fld.Visible := false;
+    end;
+    SCM.qryEntrant.EnableControls;
 end;
 
 procedure TMain.Tools_ConnectionManagerExecute(Sender: TObject);

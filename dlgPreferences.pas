@@ -80,8 +80,8 @@ type
     Label9: TLabel;
     Label17: TLabel;
     TabSheet6: TTabSheet;
-    CheckBox2: TCheckBox;
-    CheckBox5: TCheckBox;
+    prefEnableTeamEvents: TCheckBox;
+    prefEnableFINAcodes: TCheckBox;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
@@ -444,6 +444,12 @@ begin
   { /* 2020-11-01 auto-build v2 seed depth for Circle Seed */ }
   spnSeedDepth.Value := (iFile.ReadInteger('Preferences', 'SeedDepth', 3));
 
+  // 2023.06.26
+  prefEnableTeamEvents.Checked := iFile.ReadBool('Preferences',
+    'EnableTeamEvents', false);
+  prefEnableFINAcodes.Checked := iFile.ReadBool('Preferences',
+    'EnableFINAcodes', false);
+
   iFile.free;
 end;
 
@@ -482,6 +488,13 @@ begin
   iFile.WriteInteger('Preferences', 'SeedMethod', rgpSeedMethod.ItemIndex);
   { 2020-11-01 auto-build v2 seed depth for Circle Seed }
   iFile.WriteInteger('Preferences', 'SeedDepth', (spnSeedDepth.Value));
+
+  // 2023.06.26
+  iFile.WriteBool('Preferences', 'EnableTeamEvents',
+    prefEnableTeamEvents.Checked);
+  iFile.WriteBool('Preferences', 'EnableFINAcodes',
+    prefEnableFINAcodes.Checked);
+
   iFile.free;
 end;
 

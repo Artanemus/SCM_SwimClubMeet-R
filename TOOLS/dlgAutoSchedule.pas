@@ -57,13 +57,15 @@ type
     fConnection: TFDConnection;
     fSessionID: integer;
     fSessionStartTime: TTime;
+    fEnableRoundUp: boolean;
+    fRoundUpOnly: boolean;
     procedure AutoSchedule_Execute;
     procedure EstimateSessionEnd;
     function GetSessionStartTime(ASessionID: integer): TTime;
     procedure ReadPreferences(IniFileName: string);
     procedure WritePreferences(IniFileName: string);
-    function RoundToNearestInterval(time: TTime; interval: integer): TTime;
-    function RoundUpToNearest(value: integer; interval: integer): integer;
+    function RoundUpNearestInterval(time: TTime; interval: integer): TTime;
+    function RoundToNearest(value: integer; interval: integer): integer;
   public
     { Public declarations }
     constructor CreateWithConnection(AOwner: TComponent;
@@ -112,8 +114,8 @@ begin
       while not eof do
       begin
         edit;
-//        if (spinRoundUp.Value > 0) then
-//          t := RoundToNearestInterval(t, spinRoundUp.value);
+        // if (spinRoundUp.Value > 0) then
+        // t := RoundToNearestInterval(t, spinRoundUp.value);
         FieldByName('ScheduleDT').AsDateTime := t;
         post;
         interval := tpHeatInterval.time;
@@ -139,10 +141,9 @@ end;
 
 procedure TAutoSchedule.btnInfo1Click(Sender: TObject);
 begin
-  BalloonHint1.Title := 'Calculating duration.(1)';
+  BalloonHint1.Title := 'Calculating duration.';
   BalloonHint1.Description := 'For each heat, the slowest swimmer' + sLinebreak
-    + 'is used to caculate the heat''s duration +' + sLinebreak +
-    'the turn-around time.';
+    + 'is used to caculate the heat''s duration';
   BalloonHint1.ShowHint(btnInfo1);
   // BalloonHint1.ShowHint(ClientToScreen(Tpoint.Create(btnInfo1.Left,btnInfo1.Top)));
 end;
@@ -154,10 +155,9 @@ end;
 
 procedure TAutoSchedule.btnInfo2Click(Sender: TObject);
 begin
-  BalloonHint1.Title := 'Calculating duration.(2)';
-  BalloonHint1.Description := 'The time it takes to rally and' + sLinebreak +
-    'mount the blocks + the time for swimmers to' + sLinebreak +
-    'leave the pool on completion.';
+  BalloonHint1.Title := 'Calculating duration.';
+  BalloonHint1.Description := 'The time it takes to rally swimmers' + sLinebreak +
+    'and have your timekeepers set.';
   BalloonHint1.ShowHint(btnInfo2);
 end;
 
@@ -202,7 +202,8 @@ begin
             +TimeOf(FieldByName('TOTEvSwimTime').AsDateTime)
         else
           t := t + tpEventInterval.time;
-        t := RoundToNearestInterval(t, spinRoundUp.value);
+        if fEnableRoundUp then
+          t := RoundUpNearestInterval(t, spinRoundUp.value);
         next;
       end;
     end;
@@ -219,10 +220,17 @@ var
 begin
   fSessionID := 0;
   fSessionStartTime := 0;
+  fEnableRoundUp := false;
+  fRoundUpOnly := true;
   // r e a d   p r e f e r e n c e .
   IniFileName := SCMUtility.GetSCMPreferenceFileName();
   if (FileExists(IniFileName)) then
     ReadPreferences(IniFileName);
+  // Set control visibility for round up event to nearest.
+  spinRoundUp.Visible := fEnableRoundUp;
+  Label1.Visible := fEnableRoundUp;
+  Label2.Visible := fEnableRoundUp;
+
 end;
 
 procedure TAutoSchedule.FormDestroy(Sender: TObject);
@@ -284,42 +292,48 @@ begin
     EncodeTime(0, 2, 0, 0));
   tpEventInterval.time := iFile.ReadTime('AutoSchedule', 'EventInterval',
     EncodeTime(0, 5, 0, 0));
-  spinRoundUp.Value := iFile.ReadInteger('AutoSchedule', 'RoundToNearest', 5);
+  spinRoundUp.value := iFile.ReadInteger('AutoSchedule', 'RoundUpToNearest', 5);
+  fEnableRoundUp := iFile.ReadBool('AutoSchedule', 'EnableRoundUp', false);
   iFile.free;
 end;
 
-function TAutoSchedule.RoundUpToNearest(value, interval: integer): integer;
+function TAutoSchedule.RoundToNearest(value, interval: integer): integer;
 var
   remainder: integer;
 begin
   result := value;
 
+  // x mod y where y = 0 results in an exception.
   if interval = 0 then
-    exit; // Exception: if y=0 in x mod y is evaluated.
-
+    exit; 
   if value < interval then
-  // Performing MOD here results in the dividend being returned.
+  // x mod y where x < y result in x.
   begin
-    result := value + (interval - value);
+    result := interval;
     exit;
   end;
-
   remainder := value mod interval;
   if remainder = 0 then
-    exit;   // Value is at interval boundary
-
-  // R O U N D   U P   V A L U E . . .
-  result := value + interval - remainder;
-
+    Result := value
+  // special switch to force round up only. On by default; 
+  else if fRoundUpOnly then
+    Result := value + interval - remainder     
+  else if remainder >= interval div 2 then
+    // R O U N D   U P 
+    Result := value + interval - remainder
+  else 
+    // R O U N D   D O W N 
+    Result := value - remainder;  
+    
 end;
 
-function TAutoSchedule.RoundToNearestInterval(time: TTime;
+function TAutoSchedule.RoundUpNearestInterval(time: TTime;
   interval: integer): TTime;
 var
   roundedMinutes: integer;
   t: TTime;
 begin
-  roundedMinutes := RoundUpToNearest(MinuteOf(time), interval);
+  roundedMinutes := RoundToNearest(MinuteOf(time), interval);
   t := EncodeTime(HourOf(time), 0, 0, 0);
   result := IncMinute(t, roundedMinutes);
 end;
@@ -342,7 +356,8 @@ begin
   iFile.Writetime('AutoSchedule', 'EventStart', tpEventStart.time);
   iFile.Writetime('AutoSchedule', 'HeatInterval', tpHeatInterval.time);
   iFile.Writetime('AutoSchedule', 'EventInterval', tpEventInterval.time);
-  iFile.WriteInteger('AutoSchedule', 'RoundToNearest', spinRoundUp.Value);
+  iFile.WriteInteger('AutoSchedule', 'RoundUpToNearest', spinRoundUp.value);
+  iFile.WriteBool('AutoSchedule', 'EnableRoundUp', fEnableRoundUp);
   iFile.free;
 end;
 

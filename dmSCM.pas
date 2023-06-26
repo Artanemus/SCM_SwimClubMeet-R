@@ -137,6 +137,10 @@ type
     qryNominateControlListDistStrokeStr: TWideStringField;
     qryEventMeters: TIntegerField;
     qryEventScheduleDT: TTimeField;
+    qryEntrantDisqualifyCodeID: TIntegerField;
+    tblDisqualifyCode: TFDTable;
+    luDisqualifyCode: TDataSource;
+    qryEntrantluDisqualifyCode: TStringField;
     procedure DataModuleCreate(Sender: TObject);
     procedure qrySessionAfterScroll(DataSet: TDataSet);
     procedure qrySessionBeforePost(DataSet: TDataSet);
@@ -168,6 +172,7 @@ type
     procedure qryNominateMembersAfterScroll(DataSet: TDataSet);
     procedure qryEventScheduleDTGetText(Sender: TField; var Text: string;
       DisplayText: Boolean);
+    procedure qryEventScheduleDTSetText(Sender: TField; const Text: string);
 
   private
     { Private declarations }
@@ -363,6 +368,7 @@ begin
     tblGender.Active := true;
     tblHeatType.Active := true;
     tblHeatStatus.Active := true;
+    tblDisqualifyCode.Active := true;
 
     qrySwimClub.Close;
     qrySwimClub.ParamByName('SWIMCLUBID').AsInteger := 1;
@@ -2923,6 +2929,14 @@ begin
       result := true;
   end;
   qryTestForNominees.Close;
+end;
+
+procedure TSCM.qryEventScheduleDTSetText(Sender: TField; const Text: string);
+begin
+  if Pos(' ', Text) > 0 then
+    Sender.AsDateTime := StrToTime(ReplaceText(Text,' ', '0' ))
+  else
+    Sender.AsDateTime := StrToTime(Text);
 end;
 
 end.

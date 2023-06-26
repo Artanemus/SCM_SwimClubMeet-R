@@ -246,6 +246,7 @@ object SCM: TSCM
       #9#9'END AS FullName'
       #9',MembershipType.Caption AS MemberShipTypeStr'
       #9',Member.MembershipNum'
+      '        ,DisqualifyCodeID'
       'FROM Entrant'
       'LEFT OUTER JOIN Member ON Entrant.MemberID = Member.MemberID'
       
@@ -350,6 +351,22 @@ object SCM: TSCM
       FieldName = 'MembershipNum'
       Origin = 'MembershipNum'
       Visible = False
+    end
+    object qryEntrantDisqualifyCodeID: TIntegerField
+      FieldName = 'DisqualifyCodeID'
+      Origin = 'DisqualifyCodeID'
+      Visible = False
+    end
+    object qryEntrantluDisqualifyCode: TStringField
+      DisplayLabel = 'FINA'
+      DisplayWidth = 10
+      FieldKind = fkLookup
+      FieldName = 'luDisqualifyCode'
+      LookupDataSet = tblDisqualifyCode
+      LookupKeyFields = 'DisqualifyTypeID'
+      LookupResultField = 'ABREV'
+      KeyFields = 'DisqualifyCodeID'
+      Lookup = True
     end
   end
   object dsEntrant: TDataSource
@@ -677,7 +694,7 @@ object SCM: TSCM
       'ORDER BY #TempSCMEvent.EventNum;'
       '*/')
     Left = 48
-    Top = 272
+    Top = 256
     object qryEventEventID: TFDAutoIncField
       Alignment = taLeftJustify
       DisplayWidth = 4
@@ -827,6 +844,7 @@ object SCM: TSCM
       Origin = 'ScheduleDT'
       Visible = False
       OnGetText = qryEventScheduleDTGetText
+      OnSetText = qryEventScheduleDTSetText
       DisplayFormat = 'hh:nn'
       EditMask = '!90:00;1;_'
     end
@@ -1274,8 +1292,8 @@ object SCM: TSCM
   end
   object dsIsQualified: TDataSource
     DataSet = qryIsQualifiedALT
-    Left = 520
-    Top = 360
+    Left = 424
+    Top = 408
   end
   object luHouse: TDataSource
     DataSet = tblHouse
@@ -1668,7 +1686,7 @@ object SCM: TSCM
       #9'AND (Qualify.GenderID = @GenderID)'
       'ORDER BY Entrant.RaceTime')
     Left = 424
-    Top = 368
+    Top = 352
     ParamData = <
       item
         Name = 'QUALIFYDISTID'
@@ -2154,5 +2172,22 @@ object SCM: TSCM
       'SELECT * FROM SCMSystem WHERE SCMSystemID = 1;')
     Left = 288
     Top = 24
+  end
+  object tblDisqualifyCode: TFDTable
+    ActiveStoredUsage = [auDesignTime]
+    IndexFieldNames = 'DisqualifyCodeID'
+    Connection = scmConnection
+    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
+    UpdateOptions.EnableDelete = False
+    UpdateOptions.EnableInsert = False
+    UpdateOptions.EnableUpdate = False
+    TableName = 'SwimClubMeet.dbo.DisqualifyCode'
+    Left = 592
+    Top = 512
+  end
+  object luDisqualifyCode: TDataSource
+    DataSet = tblDisqualifyCode
+    Left = 696
+    Top = 512
   end
 end
