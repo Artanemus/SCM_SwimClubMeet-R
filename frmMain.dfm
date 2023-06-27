@@ -32,7 +32,7 @@ object Main: TMain
       Top = 0
       Width = 1414
       Height = 798
-      ActivePage = TabSheet1
+      ActivePage = TabSheet3
       Align = alClient
       Style = tsFlatButtons
       TabOrder = 0
@@ -1033,6 +1033,8 @@ object Main: TMain
           BevelOuter = bvNone
           Caption = 'HeatRightPanel'
           TabOrder = 0
+          ExplicitWidth = 1100
+          ExplicitHeight = 601
           object Entrant_Grid: TDBGrid
             Left = 0
             Top = 0
@@ -1041,6 +1043,7 @@ object Main: TMain
             Margins.Left = 60
             Align = alClient
             Anchors = []
+            DataSource = SCM.dsEntrant
             DefaultDrawing = False
             Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgTitleClick, dgTitleHotTrack]
             PopupMenu = pumEntrant
@@ -1127,6 +1130,8 @@ object Main: TMain
             Anchors = []
             BevelOuter = bvNone
             TabOrder = 1
+            ExplicitLeft = 1040
+            ExplicitHeight = 601
             DesignSize = (
               60
               602)
@@ -1253,6 +1258,7 @@ object Main: TMain
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 1
+          ExplicitWidth = 1402
           DesignSize = (
             1406
             117)
@@ -1424,6 +1430,7 @@ object Main: TMain
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 2
+          ExplicitHeight = 621
           object HeatWidgets: TRelativePanel
             AlignWithMargins = True
             Left = 192
@@ -1597,6 +1604,7 @@ object Main: TMain
             Align = alRight
             BevelOuter = bvNone
             TabOrder = 0
+            ExplicitHeight = 601
             DesignSize = (
               60
               602)
@@ -1821,6 +1829,7 @@ object Main: TMain
             PopupMenu = pumHeat
             TabOrder = 1
             OnBeforeDrawItem = HeatControlListBeforeDrawItem
+            ExplicitHeight = 621
             object vimgHeatNum: TVirtualImage
               Left = 16
               Top = 11

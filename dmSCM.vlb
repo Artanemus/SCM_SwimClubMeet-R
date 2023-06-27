@@ -85,9 +85,6 @@ Coordinates=482,351,79,33
 [qryNominee]
 Coordinates=645,492,73,51
 
-[qryEntrantMemberShipTypeStr]
-Coordinates=1060,1,166,33
-
 [qryFNameEllipse]
 Coordinates=862,553,97,51
 
@@ -288,9 +285,6 @@ Coordinates=761,553,91,51
 [tblSessionStatus]
 Coordinates=102,492,97,51
 
-[qryEntrantMembershipNum]
-Coordinates=1264,1,149,33
-
 [qrySwimClub]
 Coordinates=180,395,80,51
 
@@ -393,5 +387,5 @@ EditingLayerName=Heat
 ActiveLayerNames=
 
 []
-Coordinates=214,206,117,33
+Coordinates=1264,1,149,33
 

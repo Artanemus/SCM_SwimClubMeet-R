@@ -66,7 +66,8 @@ uses
   frmDisqualificationCodes in 'TOOLS\frmDisqualificationCodes.pas' {DisqualificationCodes},
   dlgAutoSchedule in 'TOOLS\dlgAutoSchedule.pas' {AutoSchedule},
   frameEventTeam in 'FRAME\frameEventTeam.pas' {EventTeamFrame: TFrame},
-  frameEventIndv in 'FRAME\frameEventIndv.pas' {EventIndvFrame: TFrame};
+  frameEventIndv in 'FRAME\frameEventIndv.pas' {EventIndvFrame: TFrame},
+  dlgDisqualifyCode in 'dlgDisqualifyCode.pas' {DisqualifyCode};
 
 {$R *.res}
 

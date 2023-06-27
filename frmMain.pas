@@ -510,7 +510,7 @@ uses
   dlgSelectPrinter, ioutils, dlgBatchProgress, dlgAutoBuildPref, ShellAPI,
   UEnvVars, dlgEntrantPicker, dlgEntrantPickerCTRL, dmSCMNom, dlgSwapLanes,
   dlgDBVerInfo, rptHeatReportA, rptHeatReportB, frmDisqualificationCodes,
-  dlgAutoSchedule;
+  dlgAutoSchedule, dlgDisqualifyCode;
 
 procedure TMain.ActionManager1Update(Action: TBasicAction;
   var Handled: boolean);
@@ -702,7 +702,8 @@ begin
   for i := 0 to Entrant_Grid.Columns.Count - 1 do
   begin
     col := Entrant_Grid.Columns.Items[i];
-    if (col.FieldName = 'FullName') then
+    // MOD 23.06.27
+    if (col.FieldName = 'FullName') or (col.FieldName = 'DCode') then
     begin
       col.ButtonStyle := cbsEllipsis;
       Entrant_Grid.Repaint;
@@ -865,39 +866,54 @@ var
   passed: boolean;
   dlg: TEntrantPicker;
   dlgCntrl: TEntrantPickerCTRL;
+  dlgDCode: TDisqualifyCode;
   EntrantID: integer;
   rtnValue: TModalResult;
+  fld: TField;
 begin
   if not AssertConnection then
     exit;
   rtnValue := mrCancel;
   SCM.dsEntrant.DataSet.DisableControls;
   EntrantID := SCM.dsEntrant.DataSet.FieldByName('EntrantID').AsInteger;
-  if ((GetKeyState(VK_CONTROL) and 128) = 128) then
+
+  // handle the ellipse button for the disqualification code
+  fld := TDBGrid(Sender).SelectedField;
+  if fld.Name = 'DCode' then
   begin
-    // if (GetKeyState(VK_CONTROL) < 0) then begin
-    dlgCntrl := TEntrantPickerCTRL.Create(self);
-    passed := dlgCntrl.Prepare(SCM.scmConnection, EntrantID);
-    if passed then
-      rtnValue := dlgCntrl.ShowModal;
-    dlgCntrl.Free;
+      dlgDCode := TDisqualifyCode.CreateWithConnection(self, SCM.scmConnection);
+      rtnValue := dlgDCode.ShowModal;
+      dlgDCode.Free;
   end
-  else
+  // handle the ellipse entrant
+  else if fld.Name = 'FullName' then
   begin
-    dlg := TEntrantPicker.Create(self);
-    passed := dlg.Prepare(SCM.scmConnection, EntrantID);
-    if passed then
-      rtnValue := dlg.ShowModal;
-    dlg.Free;
-  end;
+    if ((GetKeyState(VK_CONTROL) and 128) = 128) then
+    begin
+      // if (GetKeyState(VK_CONTROL) < 0) then begin
+      dlgCntrl := TEntrantPickerCTRL.Create(self);
+      passed := dlgCntrl.Prepare(SCM.scmConnection, EntrantID);
+      if passed then
+        rtnValue := dlgCntrl.ShowModal;
+      dlgCntrl.Free;
+    end
+    else
+    begin
+      dlg := TEntrantPicker.Create(self);
+      passed := dlg.Prepare(SCM.scmConnection, EntrantID);
+      if passed then
+        rtnValue := dlg.ShowModal;
+      dlg.Free;
+    end;
 
-  // require a refresh to update members details
-  if passed and IsPositiveResult(rtnValue) then
-  begin
-    SCM.dsEntrant.DataSet.Refresh;
-    SCM.Entrant_Locate(EntrantID);
-  end;
+    // require a refresh to update members details
+    if passed and IsPositiveResult(rtnValue) then
+    begin
+      SCM.dsEntrant.DataSet.Refresh;
+      SCM.Entrant_Locate(EntrantID);
+    end;
 
+  end;
   SCM.dsEntrant.DataSet.EnableControls;
 end;
 
@@ -2131,7 +2147,8 @@ begin
   Application.ShowHint := true;
   // inhibits statusbar updates in TActionManager.Update
   fSCMisInitializing := false;
-  // 3.10.2020
+
+  // 20.10.3 - MOD 23.06.27
   EnableEntrant_GridEllipse;
 
   // 22/12/22

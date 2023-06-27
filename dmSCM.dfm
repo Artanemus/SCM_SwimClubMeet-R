@@ -202,6 +202,7 @@ object SCM: TSCM
   end
   object qryEntrant: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     BeforeInsert = qryEntrantBeforeInsert
     AfterScroll = qryEntrantAfterScroll
     IndexFieldNames = 'HeatID'
@@ -222,42 +223,52 @@ object SCM: TSCM
       'USE SwimClubMeet'
       ''
       'SELECT Entrant.EntrantID'
-      #9',Entrant.HeatID'
-      #9',Entrant.Lane'
-      #9',Entrant.RaceTime'
-      #9',Entrant.TimeToBeat'
-      #9',Entrant.IsDisqualified'
-      #9',Entrant.IsScratched'
-      #9',Entrant.MemberID'
-      #9',Entrant.PersonalBest'
-      #9',CASE '
-      #9#9'WHEN Member.MemberID IS NOT NULL'
-      #9#9#9'THEN CONCAT ('
+      '     , Entrant.HeatID'
+      '     , Entrant.Lane'
+      '     , Entrant.RaceTime'
+      '     , Entrant.TimeToBeat'
+      '     , Entrant.IsDisqualified'
+      '     , Entrant.IsScratched'
+      '     , Entrant.MemberID'
+      '     , Entrant.PersonalBest'
+      '     , CASE'
+      '           WHEN Member.MemberID IS NOT NULL THEN'
+      '               CONCAT('
       
-        #9#9#9#9#9'FORMAT(dbo.SwimmerAge(Session.SessionStart, Member.DOB), '#39'0' +
-        '0'#39')'
-      #9#9#9#9#9','#39'.'#39
-      #9#9#9#9#9',dbo.SwimmerGenderToString(Member.MemberID)'
-      #9#9#9#9#9','#39'  '#39
-      #9#9#9#9#9',Member.FirstName'
-      #9#9#9#9#9','#39' '#39
-      #9#9#9#9#9',Upper(Member.LastName)'
-      #9#9#9#9#9')'
-      #9#9'END AS FullName'
-      #9',MembershipType.Caption AS MemberShipTypeStr'
-      #9',Member.MembershipNum'
-      '        ,DisqualifyCodeID'
+        '                         FORMAT(dbo.SwimmerAge(Session.SessionSt' +
+        'art, Member.DOB), '#39'00'#39')'
+      '                       , '#39'.'#39
+      
+        '                       , dbo.SwimmerGenderToString(Member.Member' +
+        'ID)'
+      '                       , '#39'  '#39
+      '                       , Member.FirstName'
+      '                       , '#39' '#39
+      '                       , UPPER(Member.LastName)'
+      '                     )'
+      '       END AS FullName'
+      '     --,MembershipType.Caption AS MemberShipTypeStr'
+      '     --,Member.MembershipNum'
+      '     , DisqualifyCode.Caption AS DCode'
+      '     , Entrant.DisqualifyCodeID'
       'FROM Entrant'
-      'LEFT OUTER JOIN Member ON Entrant.MemberID = Member.MemberID'
+      '    LEFT OUTER JOIN Member'
+      '        ON Entrant.MemberID = Member.MemberID'
+      '    INNER JOIN HeatIndividual'
+      '        ON Entrant.HeatID = HeatIndividual.HeatID'
+      '    INNER JOIN Event'
+      '        ON HeatIndividual.EventID = Event.EventID'
+      '    INNER JOIN Session'
+      '        ON Event.SessionID = Session.SessionID'
       
-        'INNER JOIN HeatIndividual ON Entrant.HeatID = HeatIndividual.Hea' +
-        'tID'
-      'INNER JOIN Event ON HeatIndividual.EventID = Event.EventID'
-      'INNER JOIN Session ON Event.SessionID = Session.SessionID'
+        '    --LEFT OUTER JOIN MembershipType ON Member.MembershipTypeID ' +
+        '= MembershipType.MembershipTypeID'
+      '    LEFT OUTER JOIN DisqualifyCode'
       
-        'LEFT OUTER JOIN MembershipType ON Member.MembershipTypeID = Memb' +
-        'ershipType.MembershipTypeID'
+        '        ON Entrant.DisqualifyCodeID = DisqualifyCode.DisqualifyC' +
+        'odeID'
       'ORDER BY Entrant.Lane'
+      ''
       ''
       '')
     Left = 48
@@ -341,32 +352,15 @@ object SCM: TSCM
       FieldName = 'IsDisqualified'
       Origin = 'IsDisqualified'
     end
-    object qryEntrantMemberShipTypeStr: TWideStringField
-      FieldName = 'MemberShipTypeStr'
-      Origin = 'MemberShipTypeStr'
-      Visible = False
-      Size = 64
-    end
-    object qryEntrantMembershipNum: TIntegerField
-      FieldName = 'MembershipNum'
-      Origin = 'MembershipNum'
-      Visible = False
-    end
     object qryEntrantDisqualifyCodeID: TIntegerField
       FieldName = 'DisqualifyCodeID'
       Origin = 'DisqualifyCodeID'
       Visible = False
     end
-    object qryEntrantluDisqualifyCode: TStringField
-      DisplayLabel = 'FINA'
-      DisplayWidth = 10
-      FieldKind = fkLookup
-      FieldName = 'luDisqualifyCode'
-      LookupDataSet = tblDisqualifyCode
-      LookupKeyFields = 'DisqualifyTypeID'
-      LookupResultField = 'ABREV'
-      KeyFields = 'DisqualifyCodeID'
-      Lookup = True
+    object qryEntrantDCode: TWideStringField
+      FieldName = 'DCode'
+      Origin = 'DCode'
+      Size = 8
     end
   end
   object dsEntrant: TDataSource

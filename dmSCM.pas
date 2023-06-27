@@ -47,8 +47,6 @@ type
     qryEntrantPersonalBest: TTimeField;
     qryEntrantIsScratched: TBooleanField;
     qryEntrantIsDisqualified: TBooleanField;
-    qryEntrantMemberShipTypeStr: TWideStringField;
-    qryEntrantMembershipNum: TIntegerField;
     dsEntrant: TDataSource;
     qrySession: TFDQuery;
     qrySessionSessionID: TFDAutoIncField;
@@ -140,7 +138,7 @@ type
     qryEntrantDisqualifyCodeID: TIntegerField;
     tblDisqualifyCode: TFDTable;
     luDisqualifyCode: TDataSource;
-    qryEntrantluDisqualifyCode: TStringField;
+    qryEntrantDCode: TWideStringField;
     procedure DataModuleCreate(Sender: TObject);
     procedure qrySessionAfterScroll(DataSet: TDataSet);
     procedure qrySessionBeforePost(DataSet: TDataSet);
