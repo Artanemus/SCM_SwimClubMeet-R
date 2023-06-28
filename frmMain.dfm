@@ -32,7 +32,7 @@ object Main: TMain
       Top = 0
       Width = 1414
       Height = 798
-      ActivePage = TabSheet3
+      ActivePage = TabSheet1
       Align = alClient
       Style = tsFlatButtons
       TabOrder = 0
@@ -50,7 +50,6 @@ object Main: TMain
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitHeight = 758
           object pnlSessLeftTop: TPanel
             Left = 0
             Top = 0
@@ -177,7 +176,6 @@ object Main: TMain
             Align = alRight
             BevelOuter = bvNone
             TabOrder = 2
-            ExplicitHeight = 738
             DesignSize = (
               60
               739)
@@ -293,8 +291,6 @@ object Main: TMain
           BevelOuter = bvNone
           Caption = 'pnlSessionClient'
           TabOrder = 1
-          ExplicitWidth = 673
-          ExplicitHeight = 758
           object pnlSessClientTop: TPanel
             Left = 0
             Top = 0
@@ -303,7 +299,6 @@ object Main: TMain
             Align = alTop
             BevelOuter = bvNone
             TabOrder = 0
-            ExplicitWidth = 673
             object lblSessionEventCaption: TLabel
               Left = 6
               Top = -3
@@ -321,8 +316,6 @@ object Main: TMain
             BevelOuter = bvNone
             Caption = 'Panel7'
             TabOrder = 1
-            ExplicitWidth = 673
-            ExplicitHeight = 738
             object Event_Grid: TDBGrid
               AlignWithMargins = True
               Left = 10
@@ -444,8 +437,6 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 1
-              ExplicitLeft = 613
-              ExplicitHeight = 738
               DesignSize = (
                 60
                 739)
@@ -2565,8 +2556,7 @@ object Main: TMain
                 Caption = '&Qualify Times...'
               end
               item
-                Action = Tools_MembershipType
-                Caption = '&Membership Type...'
+                Action = Tools_Swimmercategory
               end
               item
                 Visible = False
@@ -2963,11 +2953,11 @@ object Main: TMain
       OnExecute = Heat_TimeKeeperReportExecute
       OnUpdate = Heat_TimeKeeperReportUpdate
     end
-    object Tools_MembershipType: TAction
+    object Tools_Swimmercategory: TAction
       Category = 'Tools'
-      Caption = 'Membership Type...'
-      OnExecute = Tools_MembershipTypeExecute
-      OnUpdate = Tools_MembershipTypeUpdate
+      Caption = 'Swimmer Categories...'
+      OnExecute = Tools_SwimmercategoryExecute
+      OnUpdate = Tools_SwimmercategoryUpdate
     end
     object Entrant_Sort: TAction
       Category = 'Entrants'

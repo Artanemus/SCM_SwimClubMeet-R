@@ -1,90 +1,90 @@
-unit dlgmemberShipType;
+unit dlgSwimmerCategory;
 
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.Grids,
   Vcl.DBGrids, Vcl.ExtCtrls, Vcl.ComCtrls, FireDAC.UI.Intf, FireDAC.Stan.Def,
   FireDAC.Stan.Pool, FireDAC.Phys, FireDAC.Phys.MSSQL, FireDAC.Phys.MSSQLDef,
-  FireDAC.VCLUI.Wait;
+  FireDAC.VCLUI.Wait, dmSCM;
 
 type
-  TMembershipType = class(TForm)
-    PageControl1: TPageControl;
-    TabSheet1: TTabSheet;
-    Panel2: TPanel;
-    Panel1: TPanel;
+  TSwimmerCategory = class(TForm)
+    btnClose: TButton;
+    btnSwimCategoryDetailed: TButton;
+    btnSwimCategoryTable: TButton;
+    DBGrid1: TDBGrid;
+    dsSwimmerCategory: TDataSource;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
     Label7: TLabel;
     Label8: TLabel;
-    Panel4: TPanel;
-    DBGrid1: TDBGrid;
-    TabSheet3: TTabSheet;
-    Label2: TLabel;
-    Label1: TLabel;
-    btnMemShipTypeMember: TButton;
-    btnMemShipTypeTable: TButton;
+    Label9: TLabel;
+    PageControl1: TPageControl;
+    Panel1: TPanel;
+    Panel2: TPanel;
     Panel3: TPanel;
-    btnClose: TButton;
-    qryMembershipType: TFDQuery;
-    qryMembershipTypeMembershipTypeID: TFDAutoIncField;
-    qryMembershipTypeCaption: TWideStringField;
-    qryMembershipTypeIsSwimmer: TBooleanField;
-    qryMembershipTypeSort: TIntegerField;
-    qryMembershipTypeAgeFrom: TIntegerField;
-    qryMembershipTypeAgeTo: TIntegerField;
-    qryMembershipTypeLongCaption: TWideStringField;
-    qryMembershipTypeStartOfSwimSeason: TSQLTimeStampField;
-    dsMembershipType: TDataSource;
-    procedure FormShow(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
-    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    Panel4: TPanel;
+    qrySwimmerCategory: TFDQuery;
+    qrySwimmerCategoryABREV: TWideStringField;
+    qrySwimmerCategoryAgeFrom: TIntegerField;
+    qrySwimmerCategoryAgeTo: TIntegerField;
+    qrySwimmerCategoryCaption: TWideStringField;
+    qrySwimmerCategoryIsActive: TBooleanField;
+    qrySwimmerCategoryIsArchived: TBooleanField;
+    qrySwimmerCategoryLongCaption: TWideStringField;
+    qrySwimmerCategorySwimmerCategoryID: TFDAutoIncField;
+    TabSheet1: TTabSheet;
+    TabSheet3: TTabSheet;
     procedure btnCloseClick(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
-    procedure DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure DBGrid1CellClick(Column: TColumn);
     procedure DBGrid1ColEnter(Sender: TObject);
     procedure DBGrid1ColExit(Sender: TObject);
+    procedure DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FormShow(Sender: TObject);
   private
-    { Private declarations }
-    fSwimClubID: integer;
-    fConnection: TFDConnection;
+    fColorBgColor: TColor;
     fColorEditBoxFocused: TColor;
     fColorEditBoxNormal: TColor;
-    fColorBgColor: TColor;
-
+    fConnection: TFDConnection;
+    { Private declarations }
+    fSwimClubID: Integer;
     procedure DrawCheckBoxes(oGrid: TObject; Rect: TRect; Column: TColumn;
-  fontColor, bgColor: TColor);
-
+      fontColor, bgColor: TColor);
   public
     { Public declarations }
-    property Connection: TFDConnection write FConnection;
-
+    property Connection: TFDConnection write fConnection;
   end;
 
 var
-  MembershipType: TMembershipType;
+  SwimmerCategory: TSwimmerCategory;
 
 implementation
 
-uses vcl.Themes;
+uses Vcl.Themes;
 
 {$R *.dfm}
 
-procedure TMembershipType.btnCloseClick(Sender: TObject);
+procedure TSwimmerCategory.btnCloseClick(Sender: TObject);
 begin
-  dsMembershipType.DataSet.CheckBrowseMode;
+  dsSwimmerCategory.DataSet.CheckBrowseMode;
   ModalResult := mrOk;
 end;
 
-procedure TMembershipType.DBGrid1CellClick(Column: TColumn);
+procedure TSwimmerCategory.DBGrid1CellClick(Column: TColumn);
 begin
   if Assigned(Column.Field) and (Column.Field.DataType = ftBoolean) then
   begin
@@ -94,7 +94,7 @@ begin
   end;
 end;
 
-procedure TMembershipType.DBGrid1ColEnter(Sender: TObject);
+procedure TSwimmerCategory.DBGrid1ColEnter(Sender: TObject);
 begin
   // By default, two clicks on the same cell enacts the cell editing mode.
   // The grid draws a TEditBox over the cell, killing the checkbox draw UI.
@@ -107,20 +107,21 @@ begin
   end;
 end;
 
-procedure TMembershipType.DBGrid1ColExit(Sender: TObject);
+procedure TSwimmerCategory.DBGrid1ColExit(Sender: TObject);
 begin
   with Sender as TDBGrid do
-  if Assigned(SelectedField) and   (SelectedField.DataType = ftBoolean) then
-    Options := Options + [dgEditing];
+    if Assigned(SelectedField) and (SelectedField.DataType = ftBoolean) then
+      Options := Options + [dgEditing];
 end;
 
-procedure TMembershipType.DBGrid1DrawColumnCell(Sender: TObject;
+procedure TSwimmerCategory.DBGrid1DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
 var
   clFont, clBg: TColor;
 begin
   // NOTE : DEFAULT DRAWING IS DISABLED ....
-  if (Column.Field.FieldName = 'IsSwimmer') then
+  if (Column.Field.FieldName = 'IsActive') or
+    (Column.Field.FieldName = 'IsArchived') then
   begin
     if gdFocused in State then
       clFont := fColorEditBoxFocused
@@ -140,12 +141,12 @@ begin
   end;
 end;
 
-procedure TMembershipType.DrawCheckBoxes(oGrid: TObject; Rect: TRect; Column: TColumn;
-  fontColor, bgColor: TColor);
+procedure TSwimmerCategory.DrawCheckBoxes(oGrid: TObject; Rect: TRect;
+  Column: TColumn; fontColor, bgColor: TColor);
 var
   MyRect: TRect;
   oField: TField;
-  iPos, iFactor: integer;
+  iPos, iFactor: Integer;
   bValue: boolean;
   g: TDBGrid;
   points: Array [0 .. 4] of TPoint;
@@ -228,7 +229,7 @@ begin
   end;
 end;
 
-procedure TMembershipType.FormCreate(Sender: TObject);
+procedure TSwimmerCategory.FormCreate(Sender: TObject);
 var
   css: TCustomStyleServices;
 begin
@@ -254,33 +255,33 @@ begin
   end;
 end;
 
-procedure TMembershipType.FormDestroy(Sender: TObject);
+procedure TSwimmerCategory.FormDestroy(Sender: TObject);
 begin
-  qryMembershipType.Close;
+  qrySwimmerCategory.Close;
 end;
 
-procedure TMembershipType.FormKeyDown(Sender: TObject; var Key: Word;
+procedure TSwimmerCategory.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   if (Key = VK_ESCAPE) then
   begin
-    dsMembershipType.DataSet.CheckBrowseMode;
+    dsSwimmerCategory.DataSet.CheckBrowseMode;
     ModalResult := mrCancel;
   end;
 end;
 
-procedure TMembershipType.FormShow(Sender: TObject);
+procedure TSwimmerCategory.FormShow(Sender: TObject);
 begin
   // -------------------------------------
   // C O N N E C T   L O C A L   D A T A S E T S  .
   // -------------------------------------
-  if assigned(fConnection) then
+  if Assigned(fConnection) then
   begin
-    qryMembershipType.Connection := fConnection;
+    qrySwimmerCategory.Connection := fConnection;
     // Activate tables/queries contained in this dialogue
-    qryMembershipType.ParamByName('SWIMCLUBID').AsInteger := fSwimClubID;
-    qryMembershipType.Prepare;
-    qryMembershipType.Open;
+    qrySwimmerCategory.ParamByName('SWIMCLUBID').AsInteger := fSwimClubID;
+    qrySwimmerCategory.Prepare;
+    qrySwimmerCategory.Open;
   end;
 end;
 

@@ -186,8 +186,8 @@
             <Form>SwapLanes</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="dlgMembershipType.pas">
-            <Form>MembershipType</Form>
+        <DCCReference Include="dlgSwimmerCategory.pas">
+            <Form>SwimmerCategory</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="MEMBERS\dlgDeleteMember.pas">

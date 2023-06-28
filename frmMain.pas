@@ -139,7 +139,7 @@ type
     Event_ToggleGridView: TAction;
     Session_ToggleLock: TAction;
     Nominate_SortMembers: TAction;
-    Tools_MembershipType: TAction;
+    Tools_Swimmercategory: TAction;
     Tools_ConnectionManager: TAction;
     Entrant_GotoMemberDetails: TAction;
     Heat_PrintSet: TAction;
@@ -318,7 +318,7 @@ type
     procedure Session_ToggleLockUpdate(Sender: TObject);
     procedure Nominate_SortMembersExecute(Sender: TObject);
     procedure Nominate_SortMembersUpdate(Sender: TObject);
-    procedure Tools_MembershipTypeExecute(Sender: TObject);
+    procedure Tools_SwimmercategoryExecute(Sender: TObject);
     procedure Tools_ConnectionManagerExecute(Sender: TObject);
     procedure SCM_ManageMembersExecute(Sender: TObject);
     procedure SCM_ManageMembersUpdate(Sender: TObject);
@@ -388,7 +388,7 @@ type
     procedure btnClearSearchClick(Sender: TObject);
     procedure Entrant_SwapLanesExecute(Sender: TObject);
     procedure Entrant_SwapLanesUpdate(Sender: TObject);
-    procedure Tools_MembershipTypeUpdate(Sender: TObject);
+    procedure Tools_SwimmercategoryUpdate(Sender: TObject);
     procedure Nominate_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: integer; Column: TColumn; State: TGridDrawState);
     procedure SCM_RefreshUpdate(Sender: TObject);
@@ -502,7 +502,7 @@ uses
   dlgCloneSession, rptSessionReportA, rptSessionReportB,
   dlgNewSession, dmAutoBuildV2, rptEventReportA, rptEventReportB,
   dlgAutoBuild_Heats, dlgAbout, dlgPreferences, rptNominateReportA,
-  rptNominateReportB, dlgQualifyTimes, dlgMembershipType,
+  rptNominateReportB, dlgQualifyTimes, dlgSwimmerCategory,
   FireDAC.VCLUI.ConnEdit, FireDAC.Stan.Param, frmManageMember,
   rptMarshallReportA,
   rptMarshallReportB, rptTimeKeeperReportA, rptTimeKeeperReportB, dlgHouse,
@@ -4479,18 +4479,18 @@ begin
   TAction(Sender).Enabled := DoEnable;
 end;
 
-procedure TMain.Tools_MembershipTypeExecute(Sender: TObject);
+procedure TMain.Tools_SwimmercategoryExecute(Sender: TObject);
 var
-  dlg: TMembershipType;
+  dlg: TSwimmerCategory;
 begin
   // display the membership type dialogue
-  dlg := TMembershipType.Create(self);
+  dlg := TSwimmerCategory.Create(self);
   dlg.Connection := SCM.scmConnection;
   dlg.ShowModal;
   dlg.Free;
 end;
 
-procedure TMain.Tools_MembershipTypeUpdate(Sender: TObject);
+procedure TMain.Tools_SwimmercategoryUpdate(Sender: TObject);
 var
   DoEnable: boolean;
 begin

@@ -20,7 +20,7 @@ uses
   dlgAutoBuild_Heats in 'dlgAutoBuild_Heats.pas' {AutoBuild_Heats},
   dlgQualifyTimes in 'dlgQualifyTimes.pas' {QualifyTimes},
   dlgSwapLanes in 'dlgSwapLanes.pas' {SwapLanes},
-  dlgMembershipType in 'dlgMembershipType.pas' {MembershipType},
+  dlgSwimmerCategory in 'dlgSwimmerCategory.pas' {SwimmerCategory},
   dlgDeleteMember in 'MEMBERS\dlgDeleteMember.pas' {DeleteMember},
   dlgFindMember in 'MEMBERS\dlgFindMember.pas' {FindMember},
   dlgGotoMember in 'MEMBERS\dlgGotoMember.pas' {GotoMember},

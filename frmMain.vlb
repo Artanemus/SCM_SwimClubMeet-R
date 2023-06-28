@@ -214,9 +214,6 @@ Coordinates=1534,1321,89,36
 [Renumber2]
 Coordinates=1534,1376,81,36
 
-[Tools_MembershipType]
-Coordinates=1781,1,152,36
-
 [SCM.qryEntrantCount]
 Coordinates=876,429,140,58
 
@@ -954,4 +951,7 @@ Coordinates=960,332,127,36
 
 [btnClearSearch]
 Coordinates=381,1,104,58
+
+[Tools_Swimmercategory]
+Coordinates=1781,1,152,36
 
