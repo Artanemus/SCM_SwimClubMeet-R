@@ -67,7 +67,8 @@ uses
   dlgAutoSchedule in 'TOOLS\dlgAutoSchedule.pas' {AutoSchedule},
   frameEventTeam in 'FRAME\frameEventTeam.pas' {EventTeamFrame: TFrame},
   frameEventIndv in 'FRAME\frameEventIndv.pas' {EventIndvFrame: TFrame},
-  dlgDisqualifyCode in 'dlgDisqualifyCode.pas' {DisqualifyCode};
+  dlgDisqualifyCode in 'dlgDisqualifyCode.pas' {DisqualifyCode},
+  AutoBuildRelayAlgorithm in 'AutoBuildRelayAlgorithm.pas';
 
 {$R *.res}
 
