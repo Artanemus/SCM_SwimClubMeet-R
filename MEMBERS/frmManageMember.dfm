@@ -159,8 +159,7 @@ object ManageMember: TManageMember
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitWidth = 1330
-        ExplicitHeight = 645
+        ExplicitTop = 4
         object Label3: TLabel
           Left = 105
           Top = 139
@@ -206,8 +205,8 @@ object ManageMember: TManageMember
           ParentFont = False
         end
         object Label10: TLabel
-          Left = 99
-          Top = 567
+          Left = 100
+          Top = 503
           Width = 39
           Height = 19
           Alignment = taRightJustify
@@ -219,15 +218,6 @@ object ManageMember: TManageMember
           Width = 65
           Height = 17
           DataField = 'SwimmerAge'
-        end
-        object Label6: TLabel
-          Left = 52
-          Top = 500
-          Width = 86
-          Height = 38
-          Alignment = taRightJustify
-          Caption = 'Membership Type'
-          WordWrap = True
         end
         object Label7: TLabel
           Left = 11
@@ -267,8 +257,8 @@ object ManageMember: TManageMember
           ParentFont = False
         end
         object Label21: TLabel
-          Left = 94
-          Top = 606
+          Left = 95
+          Top = 542
           Width = 44
           Height = 19
           Alignment = taRightJustify
@@ -306,8 +296,8 @@ object ManageMember: TManageMember
           Caption = '(Recommended - minimum of 4 digits)'
         end
         object Label23: TLabel
-          Left = 605
-          Top = 251
+          Left = 1039
+          Top = 27
           Width = 21
           Height = 118
           Alignment = taCenter
@@ -321,7 +311,7 @@ object ManageMember: TManageMember
           ParentFont = False
         end
         object Label13: TLabel
-          Left = 605
+          Left = 546
           Top = 27
           Width = 21
           Height = 137
@@ -335,6 +325,37 @@ object ManageMember: TManageMember
           Font.Style = []
           ParentFont = False
           Layout = tlCenter
+        end
+        object Label6: TLabel
+          Left = 546
+          Top = 263
+          Width = 21
+          Height = 47
+          Alignment = taRightJustify
+          Caption = 'ROLES'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'Tahoma'
+          Font.Orientation = 900
+          Font.Style = []
+          ParentFont = False
+          Layout = tlCenter
+        end
+        object Label11: TLabel
+          Left = 31
+          Top = 582
+          Width = 108
+          Height = 19
+          Alignment = taRightJustify
+          Caption = 'Swimmer Class'
+        end
+        object Label15: TLabel
+          Left = 275
+          Top = 582
+          Width = 139
+          Height = 19
+          Caption = '(Max 12 characters)'
         end
         object DBlucboGender: TDBLookupComboBox
           Left = 145
@@ -373,25 +394,6 @@ object ManageMember: TManageMember
           DataSource = ManageMemberData.dsMember
           TabOrder = 1
         end
-        object DBlucboMembershipType: TDBLookupComboBox
-          Left = 144
-          Top = 500
-          Width = 320
-          Height = 27
-          DataField = 'MembershipTypeID'
-          DataSource = ManageMemberData.dsMember
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -16
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          KeyField = 'MembershipTypeID'
-          ListField = 'Caption'
-          ListSource = ManageMemberData.dsMembershipType
-          NullValueKey = 32776
-          ParentFont = False
-          TabOrder = 10
-        end
         object DBedtMembershipNum: TDBEdit
           Left = 145
           Top = 441
@@ -412,18 +414,18 @@ object ManageMember: TManageMember
           TabOrder = 6
         end
         object DBEdtEmail: TDBEdit
-          Left = 144
-          Top = 564
-          Width = 320
+          Left = 145
+          Top = 500
+          Width = 407
           Height = 27
           DataField = 'Email'
           DataSource = ManageMemberData.dsMember
-          TabOrder = 12
+          TabOrder = 10
         end
         object DBlucboHouse: TDBLookupComboBox
-          Left = 144
-          Top = 602
-          Width = 186
+          Left = 145
+          Top = 538
+          Width = 233
           Height = 27
           Hint = 'Assign house (Clear .. Ctrl-Del)'
           DataField = 'HouseID'
@@ -432,7 +434,7 @@ object ManageMember: TManageMember
           ListField = 'Caption'
           ListSource = ManageMemberData.dsHouse
           NullValueKey = 32776
-          TabOrder = 13
+          TabOrder = 11
         end
         object DBchkIsSwimmer: TDBCheckBox
           Left = 144
@@ -456,28 +458,15 @@ object ManageMember: TManageMember
         end
         object btnClearHouse: TButton
           Tag = 3
-          Left = 336
-          Top = 601
+          Left = 384
+          Top = 537
           Width = 75
           Height = 32
           Hint = 'Clear the house name.'
           Caption = 'Clear'
           ImageIndex = 0
           Images = ImageList1
-          TabOrder = 14
-          OnClick = btnClearClick
-        end
-        object btnClearMembershipType: TButton
-          Tag = 2
-          Left = 470
-          Top = 500
-          Width = 75
-          Height = 32
-          Hint = 'Clear the house name.'
-          Caption = 'Clear'
-          ImageIndex = 0
-          Images = ImageList1
-          TabOrder = 11
+          TabOrder = 12
           OnClick = btnClearClick
         end
         object btnClearGender: TButton
@@ -528,12 +517,12 @@ object ManageMember: TManageMember
           TextHint = 'select a date'
         end
         object DBgridHistoryPB: TDBGrid
-          Left = 632
-          Top = 251
-          Width = 321
+          Left = 1066
+          Top = 27
+          Width = 269
           Height = 382
           DataSource = ManageMemberData.dsMemberPB
-          TabOrder = 15
+          TabOrder = 13
           TitleFont.Charset = DEFAULT_CHARSET
           TitleFont.Color = clWindowText
           TitleFont.Height = -16
@@ -555,13 +544,13 @@ object ManageMember: TManageMember
             end>
         end
         object DBgridContactInfo: TDBGrid
-          Left = 632
+          Left = 573
           Top = 27
           Width = 321
           Height = 204
           DataSource = ManageMemberData.dsContactNum
           Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
-          TabOrder = 16
+          TabOrder = 14
           TitleFont.Charset = DEFAULT_CHARSET
           TitleFont.Color = clWindowText
           TitleFont.Height = -16
@@ -584,7 +573,7 @@ object ManageMember: TManageMember
             end>
         end
         object DBContactNumNavigator: TDBNavigator
-          Left = 959
+          Left = 900
           Top = 27
           Width = 60
           Height = 204
@@ -606,7 +595,90 @@ object ManageMember: TManageMember
           Kind = dbnVertical
           ParentShowHint = False
           ShowHint = True
+          TabOrder = 15
+        end
+        object DBGrid1: TDBGrid
+          Left = 573
+          Top = 263
+          Width = 387
+          Height = 370
+          DataSource = ManageMemberData.dsMemberRole
+          Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+          TabOrder = 16
+          TitleFont.Charset = DEFAULT_CHARSET
+          TitleFont.Color = clWindowText
+          TitleFont.Height = -16
+          TitleFont.Name = 'Tahoma'
+          TitleFont.Style = []
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'MemberRoleID'
+              Visible = False
+            end
+            item
+              Expanded = False
+              FieldName = 'MemberID'
+              Visible = False
+            end
+            item
+              Expanded = False
+              FieldName = 'CreatedOn'
+              Width = -1
+              Visible = False
+            end
+            item
+              Expanded = False
+              FieldName = 'Caption'
+              Width = 200
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'IsActive'
+              Title.Caption = 'Active'
+              Width = 68
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'IsArchived'
+              Title.Caption = 'Archived'
+              Width = 68
+              Visible = True
+            end>
+        end
+        object DBNavigator2: TDBNavigator
+          Left = 966
+          Top = 263
+          Width = 60
+          Height = 204
+          DataSource = ManageMemberData.dsContactNum
+          VisibleButtons = [nbInsert, nbDelete, nbPost, nbCancel]
+          Hints.Strings = (
+            'First record'
+            'Prior record'
+            'Next record'
+            'Last record'
+            'Insert contact record'
+            'Delete contact record'
+            'Edit record'
+            'Post contact edit'
+            'Cancel contact edit'
+            'Refresh data'
+            'Apply updates'
+            'Cancel updates')
+          Kind = dbnVertical
+          ParentShowHint = False
+          ShowHint = True
           TabOrder = 17
+        end
+        object DBEdit1: TDBEdit
+          Left = 145
+          Top = 579
+          Width = 124
+          Height = 27
+          TabOrder = 18
         end
       end
     end
@@ -649,32 +721,27 @@ object ManageMember: TManageMember
           item
             Expanded = False
             FieldName = 'MembershipNum'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'FirstName'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'LastName'
-            Width = 64
             Visible = True
           end
           item
             ButtonStyle = cbsEllipsis
             Expanded = False
             FieldName = 'DOB'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luGender'
-            Width = 64
             Visible = True
           end
           item
@@ -682,7 +749,6 @@ object ManageMember: TManageMember
             Expanded = False
             FieldName = 'IsArchived'
             Title.Caption = 'Archive'
-            Width = 64
             Visible = True
           end
           item
@@ -696,19 +762,16 @@ object ManageMember: TManageMember
             Expanded = False
             FieldName = 'IsSwimmer'
             Title.Caption = 'Swims'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luMembershipType'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luHouse'
-            Width = 64
             Visible = True
           end
           item
@@ -862,8 +925,8 @@ object ManageMember: TManageMember
   object ImageList1: TImageList
     Height = 24
     Width = 24
-    Left = 1088
-    Top = 376
+    Left = 504
+    Top = 392
     Bitmap = {
       494C010101000800040018001800FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000600000001800000001002000000000000024
@@ -1218,8 +1281,8 @@ object ManageMember: TManageMember
         ActionBar = ActnMemberMenuBar
       end>
     Images = VirtlImageListMember
-    Left = 1088
-    Top = 136
+    Left = 504
+    Top = 152
     StyleName = 'Platform Default'
     object MemFile_AutoEdit: TAction
       Category = 'File'
@@ -1373,8 +1436,8 @@ object ManageMember: TManageMember
               28D25331505BCA9D0000000049454E44AE426082}
           end>
       end>
-    Left = 1088
-    Top = 208
+    Left = 504
+    Top = 224
   end
   object VirtlImageListMember: TVirtualImageList
     Images = <
@@ -1401,7 +1464,7 @@ object ManageMember: TManageMember
     ImageCollection = ImageCollectMember
     Width = 32
     Height = 32
-    Left = 1088
-    Top = 296
+    Left = 504
+    Top = 312
   end
 end

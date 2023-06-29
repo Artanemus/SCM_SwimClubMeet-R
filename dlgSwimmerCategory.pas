@@ -11,7 +11,7 @@ uses
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.Grids,
   Vcl.DBGrids, Vcl.ExtCtrls, Vcl.ComCtrls, FireDAC.UI.Intf, FireDAC.Stan.Def,
   FireDAC.Stan.Pool, FireDAC.Phys, FireDAC.Phys.MSSQL, FireDAC.Phys.MSSQLDef,
-  FireDAC.VCLUI.Wait, dmSCM;
+  FireDAC.VCLUI.Wait, dmSCM, Vcl.DBCtrls;
 
 type
   TSwimmerCategory = class(TForm)
@@ -45,6 +45,7 @@ type
     qrySwimmerCategorySwimmerCategoryID: TFDAutoIncField;
     TabSheet1: TTabSheet;
     TabSheet3: TTabSheet;
+    DBNavigator1: TDBNavigator;
     procedure btnCloseClick(Sender: TObject);
     procedure DBGrid1CellClick(Column: TColumn);
     procedure DBGrid1ColEnter(Sender: TObject);

@@ -35,7 +35,6 @@ type
     Label1: TLabel;
     Label10: TLabel;
     DBText3: TDBText;
-    Label6: TLabel;
     Label7: TLabel;
     Label12: TLabel;
     dblblMemberID: TDBText;
@@ -45,7 +44,6 @@ type
     DBlucboGender: TDBLookupComboBox;
     DBedtFirstName: TDBEdit;
     DBedtLastName: TDBEdit;
-    DBlucboMembershipType: TDBLookupComboBox;
     DBedtMembershipNum: TDBEdit;
     DBchkIsActive: TDBCheckBox;
     DBEdtEmail: TDBEdit;
@@ -53,7 +51,6 @@ type
     DBchkIsSwimmer: TDBCheckBox;
     DBchkIsArchived: TDBCheckBox;
     btnClearHouse: TButton;
-    btnClearMembershipType: TButton;
     btnClearGender: TButton;
     TabSheet2: TTabSheet;
     DBGrid3: TDBGrid;
@@ -93,6 +90,12 @@ type
     MemSearch_FindMember: TAction;
     ImageCollectMember: TImageCollection;
     VirtlImageListMember: TVirtualImageList;
+    Label6: TLabel;
+    DBGrid1: TDBGrid;
+    DBNavigator2: TDBNavigator;
+    Label11: TLabel;
+    DBEdit1: TDBEdit;
+    Label15: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure About2Click(Sender: TObject);
     procedure DBGrid3CellClick(Column: TColumn);
@@ -205,8 +208,6 @@ begin
     case TButton(Sender).Tag of
       1:
         ManageMemberData.qryMember.FieldByName('GenderID').Clear();
-      2:
-        ManageMemberData.qryMember.FieldByName('MembershipTypeID').Clear();
       3:
         ManageMemberData.qryMember.FieldByName('HouseID').Clear();
     end;

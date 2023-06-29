@@ -4,7 +4,7 @@ object SwimmerCategory: TSwimmerCategory
   BorderStyle = bsDialog
   Caption = 'Swimmer Categories ...'
   ClientHeight = 598
-  ClientWidth = 1012
+  ClientWidth = 1054
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,37 +21,37 @@ object SwimmerCategory: TSwimmerCategory
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 1012
-    Height = 557
-    ActivePage = TabSheet3
+    Width = 1054
+    Height = 544
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 1008
-    ExplicitHeight = 556
+    ExplicitWidth = 1050
+    ExplicitHeight = 543
     object TabSheet1: TTabSheet
       Caption = 'Details'
       object Panel2: TPanel
         AlignWithMargins = True
         Left = 3
         Top = 3
-        Width = 998
-        Height = 515
+        Width = 1040
+        Height = 502
         Align = alClient
         BevelEdges = []
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitWidth = 994
-        ExplicitHeight = 514
+        ExplicitWidth = 1036
+        ExplicitHeight = 501
         object Panel1: TPanel
           Left = 0
           Top = 0
-          Width = 998
+          Width = 1040
           Height = 57
           Align = alTop
           BevelEdges = []
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitWidth = 994
+          ExplicitWidth = 1036
           object Label4: TLabel
             Left = 57
             Top = 30
@@ -61,17 +61,17 @@ object SwimmerCategory: TSwimmerCategory
             WordWrap = True
           end
           object Label5: TLabel
-            Left = 273
+            Left = 289
             Top = 30
-            Width = 47
+            Width = 46
             Height = 21
             Alignment = taCenter
-            Caption = 'ABREV'
+            Caption = 'CLASS'
             WordWrap = True
           end
           object Label6: TLabel
-            Left = 733
-            Top = 9
+            Left = 786
+            Top = 10
             Width = 70
             Height = 42
             Alignment = taCenter
@@ -79,7 +79,7 @@ object SwimmerCategory: TSwimmerCategory
             WordWrap = True
           end
           object Label7: TLabel
-            Left = 339
+            Left = 380
             Top = 31
             Width = 253
             Height = 21
@@ -87,8 +87,8 @@ object SwimmerCategory: TSwimmerCategory
             WordWrap = True
           end
           object Label8: TLabel
-            Left = 682
-            Top = 9
+            Left = 735
+            Top = 10
             Width = 37
             Height = 42
             Alignment = taCenter
@@ -96,8 +96,8 @@ object SwimmerCategory: TSwimmerCategory
             WordWrap = True
           end
           object Label3: TLabel
-            Left = 873
-            Top = 30
+            Left = 926
+            Top = 31
             Width = 61
             Height = 21
             Alignment = taCenter
@@ -105,8 +105,8 @@ object SwimmerCategory: TSwimmerCategory
             WordWrap = True
           end
           object Label9: TLabel
-            Left = 817
-            Top = 30
+            Left = 867
+            Top = 31
             Width = 42
             Height = 21
             Alignment = taCenter
@@ -117,23 +117,25 @@ object SwimmerCategory: TSwimmerCategory
         object Panel4: TPanel
           Left = 0
           Top = 57
-          Width = 998
-          Height = 458
+          Width = 1040
+          Height = 445
           Align = alClient
           Caption = 'Panel4'
           TabOrder = 1
-          ExplicitWidth = 994
-          ExplicitHeight = 457
+          ExplicitWidth = 1036
+          ExplicitHeight = 444
           object DBGrid1: TDBGrid
             Left = 1
             Top = 1
-            Width = 996
-            Height = 456
+            Width = 1038
+            Height = 443
             Align = alClient
             BorderStyle = bsNone
             DataSource = dsSwimmerCategory
             DefaultDrawing = False
             Options = [dgEditing, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+            ParentShowHint = False
+            ShowHint = True
             TabOrder = 0
             TitleFont.Charset = DEFAULT_CHARSET
             TitleFont.Color = clWindowText
@@ -154,12 +156,14 @@ object SwimmerCategory: TSwimmerCategory
               item
                 Expanded = False
                 FieldName = 'Caption'
-                Width = 230
+                Width = 210
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'ABREV'
+                Title.Caption = 'CLASS'
+                Width = 120
                 Visible = True
               end
               item
@@ -242,32 +246,41 @@ object SwimmerCategory: TSwimmerCategory
   end
   object Panel3: TPanel
     Left = 0
-    Top = 557
-    Width = 1012
-    Height = 41
+    Top = 544
+    Width = 1054
+    Height = 54
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 556
-    ExplicitWidth = 1008
+    ExplicitTop = 543
+    ExplicitWidth = 1050
     DesignSize = (
-      1012
-      41)
+      1054
+      54)
     object btnClose: TButton
-      Left = 914
+      Left = 948
       Top = 6
       Width = 75
-      Height = 25
+      Height = 30
       Anchors = [akTop, akRight]
       Caption = 'Close'
       TabOrder = 0
       OnClick = btnCloseClick
-      ExplicitLeft = 910
+      ExplicitLeft = 944
+    end
+    object DBNavigator1: TDBNavigator
+      Left = 332
+      Top = 2
+      Width = 360
+      Height = 47
+      DataSource = dsSwimmerCategory
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
     end
   end
   object qrySwimmerCategory: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'SwimmerCategoryID'
     Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet.dbo.SwimmerCategory'
@@ -316,8 +329,9 @@ object SwimmerCategory: TSwimmerCategory
       Size = 128
     end
     object qrySwimmerCategoryABREV: TWideStringField
+      DisplayWidth = 12
       FieldName = 'ABREV'
-      Size = 5
+      Size = 12
     end
     object qrySwimmerCategoryAgeFrom: TIntegerField
       DisplayLabel = 'Age.From'

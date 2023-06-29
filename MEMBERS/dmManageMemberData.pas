@@ -8,7 +8,7 @@ uses
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.VCLUI.Wait,
   Data.DB, FireDAC.Comp.Client, FireDAC.Stan.Param, FireDAC.DatS,
   FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Phys.MSSQL,
-  FireDAC.Phys.MSSQLDef;
+  FireDAC.Phys.MSSQLDef, dmSCM;
 
 type
   TManageMemberData = class(TDataModule)
@@ -20,7 +20,6 @@ type
     dsMember: TDataSource;
     qryMember: TFDQuery;
     qryMemberMemberID: TFDAutoIncField;
-    qryMemberMembershipDue: TSQLTimeStampField;
     qryMemberMembershipNum: TIntegerField;
     qryMemberFirstName: TWideStringField;
     qryMemberLastName: TWideStringField;
@@ -36,12 +35,8 @@ type
     qryMemberArchivedOn: TSQLTimeStampField;
     qryMemberGenderID: TIntegerField;
     qryMemberluGender: TStringField;
-    qryMemberluMembershipType: TStringField;
-    qryMemberMembershipTypeID: TIntegerField;
     qryMemberluHouse: TStringField;
     qryMemberHouseID: TIntegerField;
-    tblMembershipType: TFDTable;
-    dsMembershipType: TDataSource;
     tblGender: TFDTable;
     dsGender: TDataSource;
     dsHouse: TDataSource;
@@ -64,12 +59,9 @@ type
     qryFindMemberAge: TIntegerField;
     qryFindMemberIsActive: TBooleanField;
     qryFindMembercGender: TWideStringField;
-    qryFindMembercMembershipType: TWideStringField;
     qryFindMemberFirstName: TWideStringField;
     qryFindMemberLastName: TWideStringField;
     qryFindMemberGenderID: TIntegerField;
-    qryFindMemberMemberShipTypeID: TIntegerField;
-    qryFindMemberIsSwimmer: TBooleanField;
     dsFindMember: TDataSource;
     qAssertMemberID: TFDQuery;
     qryEntrantDataCount: TFDQuery;
@@ -81,6 +73,9 @@ type
     qryMemberPBMemberID: TFDAutoIncField;
     qryMemberPBDistanceID: TFDAutoIncField;
     qryMemberPBStrokeID: TFDAutoIncField;
+    qryMemberRole: TFDQuery;
+    dsMemberRole: TDataSource;
+    qryFindMemberIsSwimmer: TBooleanField;
     procedure DataModuleCreate(Sender: TObject);
     procedure qryMemberAfterScroll(DataSet: TDataSet);
     procedure qryMemberAfterInsert(DataSet: TDataSet);
@@ -138,7 +133,7 @@ begin
     // prepare lookup tables.
     tblStroke.Connection := FConnection;
     tblDistance.Connection := FConnection;
-    tblMembershipType.Connection := FConnection;
+    qryMemberRole.Connection := FConnection;
     tblGender.Connection := FConnection;
     tblHouse.Connection := FConnection;
     tblContactNumType.Connection := FConnection;
@@ -148,7 +143,7 @@ begin
       // Lookup tables used by member
       tblStroke.Open;
       tblDistance.Open;
-      tblMembershipType.Open;
+      qryMemberRole.Open;
       tblGender.Open;
       tblHouse.Open;
       qryMember.Open;

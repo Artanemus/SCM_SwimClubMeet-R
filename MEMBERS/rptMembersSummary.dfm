@@ -1,5 +1,4 @@
 object MembersSummary: TMembersSummary
-  OldCreateOrder = False
   Height = 468
   Width = 474
   object frxReport1: TfrxReport
@@ -228,6 +227,21 @@ object MembersSummary: TMembersSummary
   object frxDSReport: TfrxDBDataset
     UserName = 'frxDS'
     CloseDataSource = False
+    FieldAliases.Strings = (
+      'MemberID=MemberID'
+      'MembershipNumStr=MembershipNumStr'
+      'FirstName=FirstName'
+      'LastName=LastName'
+      'ucFName=ucFName'
+      'DOB=DOB'
+      'IsActive=IsActive'
+      'Email=Email'
+      'cGender=cGender'
+      'GenderID=GenderID'
+      'SwimClubID=SwimClubID'
+      'cSwimClub=cSwimClub'
+      'NickName=NickName'
+      'Age=Age')
     DataSet = qryReport
     BCDToCurrency = False
     Left = 192
@@ -292,6 +306,7 @@ object MembersSummary: TMembersSummary
   end
   object qryReport: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     Connection = SCM.scmConnection
     SQL.Strings = (
       'USE SwimClubMeet;'
@@ -314,19 +329,11 @@ object MembersSummary: TMembersSummary
       #9#9') AS ucFName'
       #9',Member.DOB'
       #9',Member.IsActive'
-      #9',CASE '
-      #9#9'WHEN  Member.MembershipDue IS NULL'#9'THEN '#39#39
-      
-        #9#9'ELSE CONCAT('#39'Membership Due '#39',CONVERT(nvarchar,Member.Membersh' +
-        'ipDue))'
-      #9#9'END AS MembershipDueStr'
+      ''
       #9',Member.Email'
-      #9'-- , Member.DoEmailSessionReport'
       #9',Gender.Caption AS cGender'
       #9',Member.GenderID'
       #9',Member.SwimClubID'
-      #9',Member.MembershipTypeID'
-      #9',MembershipType.Caption AS cMembershipTypeStr'
       #9',SwimClub.Caption AS cSwimClub'
       #9',SwimClub.NickName'
       #9',FLOOR(DATEDIFF(Day, DOB, GETDATE()) / 365.0) AS Age'
@@ -336,9 +343,6 @@ object MembersSummary: TMembersSummary
         'LEFT OUTER JOIN SwimClub ON Member.SwimClubID = SwimClub.SwimClu' +
         'bID'
       'LEFT OUTER JOIN Gender ON Member.GenderID = Gender.GenderID'
-      
-        'LEFT OUTER JOIN MembershipType ON Member.MembershipTypeID = Memb' +
-        'ershipType.MembershipTypeID'
       'WHERE (Member.SwimClubID = @SwimClubID )'
       'ORDER BY Member.LastName'
       ''

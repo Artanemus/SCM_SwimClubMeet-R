@@ -56,6 +56,7 @@ object ManageMemberData: TManageMemberData
     MasterSource = dsSwimClub
     MasterFields = 'SwimClubID'
     DetailFields = 'SwimClubID'
+    Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Member'
     UpdateOptions.KeyFields = 'SwimClubID;MemberID'
     SQL.Strings = (
@@ -74,7 +75,6 @@ object ManageMemberData: TManageMemberData
       'SELECT [MemberID],'
       '       [MembershipNum],'
       '       [MembershipStr],'
-      '       [MembershipDue],'
       '       [FirstName],'
       '       [LastName],'
       '       [DOB],'
@@ -85,7 +85,6 @@ object ManageMemberData: TManageMemberData
       '       [Email],'
       '       [GenderID],'
       '       [SwimClubID],'
-      '       [MembershipTypeID],'
       
         '       CONCAT(Member.FirstName, '#39' '#39', UPPER(Member.LastName)) AS ' +
         'FName,'
@@ -169,11 +168,6 @@ object ManageMemberData: TManageMemberData
       Origin = 'MemberID'
       ProviderFlags = [pfInWhere, pfInKey]
       ReadOnly = True
-    end
-    object qryMemberMembershipDue: TSQLTimeStampField
-      FieldName = 'MembershipDue'
-      Origin = 'MembershipDue'
-      Visible = False
     end
     object qryMemberMembershipNum: TIntegerField
       Alignment = taLeftJustify
@@ -272,23 +266,6 @@ object ManageMemberData: TManageMemberData
       KeyFields = 'GenderID'
       Lookup = True
     end
-    object qryMemberluMembershipType: TStringField
-      DisplayLabel = 'Membership Type'
-      DisplayWidth = 24
-      FieldKind = fkLookup
-      FieldName = 'luMembershipType'
-      LookupDataSet = tblMembershipType
-      LookupKeyFields = 'MembershipTypeID'
-      LookupResultField = 'Caption'
-      KeyFields = 'MembershipTypeID'
-      Size = 24
-      Lookup = True
-    end
-    object qryMemberMembershipTypeID: TIntegerField
-      FieldName = 'MembershipTypeID'
-      Origin = 'MembershipTypeID'
-      Visible = False
-    end
     object qryMemberluHouse: TStringField
       DisplayLabel = 'House'
       DisplayWidth = 14
@@ -307,19 +284,6 @@ object ManageMemberData: TManageMemberData
       Origin = 'HouseID'
       Visible = False
     end
-  end
-  object tblMembershipType: TFDTable
-    ActiveStoredUsage = [auDesignTime]
-    IndexFieldNames = 'MembershipTypeID'
-    UpdateOptions.UpdateTableName = 'SwimClubMeet..MembershipType'
-    TableName = 'SwimClubMeet..MembershipType'
-    Left = 56
-    Top = 256
-  end
-  object dsMembershipType: TDataSource
-    DataSet = tblMembershipType
-    Left = 160
-    Top = 256
   end
   object tblGender: TFDTable
     ActiveStoredUsage = [auDesignTime]
@@ -460,6 +424,7 @@ object ManageMemberData: TManageMemberData
     FilterOptions = [foCaseInsensitive]
     Filter = '(GenderID = 1 OR GenderID = 2) AND (IsActive = TRUE)'
     IndexFieldNames = 'MemberID'
+    Connection = SCM.scmConnection
     UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
     UpdateOptions.EnableDelete = False
     UpdateOptions.EnableInsert = False
@@ -470,23 +435,14 @@ object ManageMemberData: TManageMemberData
       ', Member.LastName'
       ', Member.MemberID'
       ', Member.GenderID'
-      ', Member.MemberShipTypeID'
       ', Member.MembershipNum'
       ', FORMAT(Member.DOB, '#39'dd/MM/yyyy'#39') AS dtDOB'
       ', Member.IsActive'
-      ', Member.MembershipDue'
       ', Gender.Caption AS cGender'
-      '--, SwimClub.Caption AS cSwimClub'
-      '--, SwimClub.NickName'
-      ', MembershipType.Caption AS cMembershipType'
-      ', MembershipType.IsSwimmer'
+      ', Member.IsSwimmer'
       ', CONCAT(UPPER([LastName]), '#39', '#39', Member.FirstName ) AS FName'
       ', DATEDIFF ( year , [DOB], GETDATE() ) AS Age'
       'FROM            Member '
-      'LEFT OUTER JOIN'
-      
-        '                         MembershipType ON Member.MembershipType' +
-        'ID = MembershipType.MembershipTypeID '
       'LEFT OUTER JOIN'
       
         '                         SwimClub ON Member.SwimClubID = SwimClu' +
@@ -553,13 +509,6 @@ object ManageMemberData: TManageMemberData
       FieldName = 'cGender'
       Origin = 'cGender'
     end
-    object qryFindMembercMembershipType: TWideStringField
-      DisplayLabel = 'Membership Type'
-      DisplayWidth = 30
-      FieldName = 'cMembershipType'
-      Origin = 'cMembershipType'
-      Size = 64
-    end
     object qryFindMemberFirstName: TWideStringField
       FieldName = 'FirstName'
       Origin = 'FirstName'
@@ -577,15 +526,9 @@ object ManageMemberData: TManageMemberData
       Origin = 'GenderID'
       Visible = False
     end
-    object qryFindMemberMemberShipTypeID: TIntegerField
-      FieldName = 'MemberShipTypeID'
-      Origin = 'MemberShipTypeID'
-      Visible = False
-    end
     object qryFindMemberIsSwimmer: TBooleanField
       FieldName = 'IsSwimmer'
       Origin = 'IsSwimmer'
-      Visible = False
     end
   end
   object dsFindMember: TDataSource
@@ -660,8 +603,8 @@ object ManageMemberData: TManageMemberData
   end
   object dsMemberPB: TDataSource
     DataSet = qryMemberPB
-    Left = 401
-    Top = 448
+    Left = 489
+    Top = 408
   end
   object qryMemberPB: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -705,8 +648,8 @@ object ManageMemberData: TManageMemberData
       #9',StrokeID'
       #9',PB ASC'
       ';')
-    Left = 313
-    Top = 448
+    Left = 401
+    Top = 408
     ParamData = <
       item
         Name = 'MEMBERID'
@@ -746,5 +689,38 @@ object ManageMemberData: TManageMemberData
       ReadOnly = True
       Visible = False
     end
+  end
+  object qryMemberRole: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    Active = True
+    IndexFieldNames = 'MemberRoleID;MemberID'
+    Connection = SCM.scmConnection
+    UpdateOptions.UpdateTableName = 'SwimClubMeet.dbo.MemberRoleLink'
+    UpdateOptions.KeyFields = 'MemberRoleID;MemberID'
+    SQL.Strings = (
+      'USE SwimClubMeet;'
+      ''
+      'DECLARE @MemberID AS INTEGER;'
+      'SET @MemberID = 1; --:MEMBERID'
+      ''
+      'SELECT [MemberRoleLink].[MemberRoleID]'
+      '     , [MemberRoleLink].[MemberID]'
+      '     , [MemberRoleLink].[CreatedOn]'
+      '     , [MemberRoleLink].[IsActive]'
+      '     , [MemberRoleLink].[IsArchived]'
+      '     , [MemberRole].[Caption]'
+      'FROM MemberRoleLink'
+      '    INNER JOIN [MemberRole]'
+      
+        '        ON [MemberRoleLink].[MemberRoleID] = [MemberRole].[Membe' +
+        'rRoleID]'
+      'WHERE [MemberRoleLink].[MemberID] = @MemberID;')
+    Left = 56
+    Top = 240
+  end
+  object dsMemberRole: TDataSource
+    DataSet = qryMemberRole
+    Left = 160
+    Top = 240
   end
 end
