@@ -1,8 +1,11 @@
 unit AutoBuildRelayAlgorithm;
 
 interface
-// Bin packing algorithm in Delphi using a genetic algorithm
 
+uses
+System.Classes;
+
+// Bin packing algorithm in Delphi using a genetic algorithm
 
 // Define the container and item types
 type
@@ -42,7 +45,32 @@ begin
     Result := 0;
 end;
 
+// Define the quicksort function
+procedure QuickSort(var A: array of TChromosome; iLo, iHi: Integer; Compare: TListSortCompare);
+var
+  Lo, Hi: Integer;
+  Pivot, T: TChromosome;
+begin
+  Lo := iLo;
+  Hi := iHi;
+  Pivot := A[(Lo + Hi) div 2];
+  repeat
+    while Compare(@A[Lo], @Pivot) < 0 do Inc(Lo);
+    while Compare(@A[Hi], @Pivot) > 0 do Dec(Hi);
+    if Lo <= Hi then
+    begin
+      T := A[Lo];
+      A[Lo] := A[Hi];
+      A[Hi] := T;
+      Inc(Lo);
+      Dec(Hi);
+    end;
+  until Lo > Hi;
+  if Hi > iLo then QuickSort(A, iLo, Hi, Compare);
+  if Lo < iHi then QuickSort(A, Lo, iHi, Compare);
+end;
 
+(*
 procedure QuickSortI(lLowBound, lHighBound: integer; lCompare: TListSortCompare;
   lSwap: TListSortSwap);
 var
@@ -119,7 +147,7 @@ begin
     until lStackLen = 0;
   end;
 end;
-
+*)
 
 
 // Define the mean function
@@ -226,7 +254,7 @@ begin
 end;
 
 // Define the bin packing function using a genetic algorithm
-function BinPack(Lanes: array of TLane; Swimmers: array of TSwimmer): Integer;
+function BinPack(Lanes: array of TLane; Swimmers: array of TSwimmer): TArray<Integer>;
 var
   i, j, k, Generation: Integer;
   Population: array[0..POPULATION_SIZE - 1] of TChromosome;
