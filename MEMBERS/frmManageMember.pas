@@ -91,27 +91,26 @@ type
     ImageCollectMember: TImageCollection;
     VirtlImageListMember: TVirtualImageList;
     Label6: TLabel;
-    DBGrid1: TDBGrid;
+    DBGridRole: TDBGrid;
     DBNavigator2: TDBNavigator;
     Label11: TLabel;
     DBEdit1: TDBEdit;
     Label15: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure About2Click(Sender: TObject);
-    procedure DBGrid3CellClick(Column: TColumn);
-    procedure DBGrid3ColEnter(Sender: TObject);
-    procedure DBGrid3ColExit(Sender: TObject);
-    procedure DBGrid3DrawColumnCell(Sender: TObject; const Rect: TRect;
+    procedure DBGridCellClick(Column: TColumn);
+    procedure DBGridColEnter(Sender: TObject);
+    procedure DBGridColExit(Sender: TObject);
+    procedure DBGridDrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumn; State: TGridDrawState);
-    procedure DBGrid3KeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
+    procedure DBGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure DrawCheckBoxes(oGrid: TObject; Rect: TRect; Column: TColumn;
-  fontColor, bgColor: TColor);
+      fontColor, bgColor: TColor);
     procedure dtpickDOBChange(Sender: TObject);
     procedure chkbHideArchivedClick(Sender: TObject);
     procedure chkbHideInActiveClick(Sender: TObject);
     procedure chkbHideNonSwimmersClick(Sender: TObject);
-    procedure DBGrid3EditButtonClick(Sender: TObject);
+    procedure DBGridEditButtonClick(Sender: TObject);
     procedure btnClearClick(Sender: TObject);
     procedure btnFindMemberClick(Sender: TObject);
     procedure btnGotoMemberIDClick(Sender: TObject);
@@ -128,6 +127,7 @@ type
     procedure btnClubMembersSummaryClick(Sender: TObject);
     procedure btnClubMembersDetailedClick(Sender: TObject);
     procedure btnClubMembersListClick(Sender: TObject);
+    procedure DBGridRoleCellClick(Column: TColumn);
     procedure MemFile_ExitExecute(Sender: TObject);
     procedure MemSearch_FindMemberExecute(Sender: TObject);
 
@@ -150,8 +150,7 @@ type
     // windows messages ....
     procedure ManageMemberAfterScroll(var Msg: TMessage);
       message SCM_AFTERSCROLL;
-    procedure ManageMemberUpdate(var Msg: TMessage);
-      message SCM_UPDATE;
+    procedure ManageMemberUpdate(var Msg: TMessage); message SCM_UPDATE;
 
   public
     { Public declarations }
@@ -174,7 +173,7 @@ implementation
 
 uses SCMUtility, dlgBasicLogin, System.IniFiles, System.UITypes, dlgAbout,
   dlgDOBPicker, dlgFindMember, dlgGotoMember, dlgGotoMembership,
-  System.IOUtils, Winapi.ShellAPI, dlgDeleteMember, vcl.Themes, rptMemberDetail,
+  System.IOUtils, Winapi.ShellAPI, dlgDeleteMember, Vcl.Themes, rptMemberDetail,
   rptMemberHistory, rptMembersList, rptMembersDetail, rptMembersSummary;
 
 procedure TManageMember.About2Click(Sender: TObject);
@@ -216,32 +215,35 @@ end;
 
 procedure TManageMember.btnClubMembersDetailedClick(Sender: TObject);
 var
-rpt: TMembersDetail;
+  rpt: TMembersDetail;
 begin
-  if not Assigned(ManageMemberData) then exit;
-    rpt := TMembersDetail.Create(self);
-    rpt.RunReport(FConnection, FSwimClubID);
-    rpt.Free;
+  if not Assigned(ManageMemberData) then
+    exit;
+  rpt := TMembersDetail.Create(Self);
+  rpt.RunReport(FConnection, fSwimClubID);
+  rpt.Free;
 end;
 
 procedure TManageMember.btnClubMembersListClick(Sender: TObject);
 var
-rpt: TMembersList;
+  rpt: TMembersList;
 begin
-  if not Assigned(ManageMemberData) then exit;
-    rpt := TMembersList.Create(self);
-    rpt.RunReport(FConnection, FSwimClubID);
-    rpt.Free;
+  if not Assigned(ManageMemberData) then
+    exit;
+  rpt := TMembersList.Create(Self);
+  rpt.RunReport(FConnection, fSwimClubID);
+  rpt.Free;
 end;
 
 procedure TManageMember.btnClubMembersSummaryClick(Sender: TObject);
 var
-rpt: TMembersSummary;
+  rpt: TMembersSummary;
 begin
-  if not Assigned(ManageMemberData) then exit;
-    rpt := TMembersSummary.Create(self);
-    rpt.RunReport(FConnection, FSwimClubID);
-    rpt.Free;
+  if not Assigned(ManageMemberData) then
+    exit;
+  rpt := TMembersSummary.Create(Self);
+  rpt.RunReport(FConnection, fSwimClubID);
+  rpt.Free;
 end;
 
 procedure TManageMember.btnFindMemberClick(Sender: TObject);
@@ -358,7 +360,7 @@ begin
   end;
 end;
 
-procedure TManageMember.DBGrid3CellClick(Column: TColumn);
+procedure TManageMember.DBGridCellClick(Column: TColumn);
 begin
   if Assigned(Column.Field) and (Column.Field.DataType = ftBoolean) then
   begin
@@ -373,7 +375,7 @@ begin
   end;
 end;
 
-procedure TManageMember.DBGrid3ColEnter(Sender: TObject);
+procedure TManageMember.DBGridColEnter(Sender: TObject);
 begin
   // By default, two clicks on the same cell enacts the cell editing mode.
   // The grid draws a TEditBox over the cell, killing the checkbox draw UI.
@@ -386,15 +388,15 @@ begin
   end;
 end;
 
-procedure TManageMember.DBGrid3ColExit(Sender: TObject);
+procedure TManageMember.DBGridColExit(Sender: TObject);
 begin
   with Sender as TDBGrid do
-  if Assigned(SelectedField) and   (SelectedField.DataType = ftBoolean) then
-    Options := Options + [dgEditing];
+    if Assigned(SelectedField) and (SelectedField.DataType = ftBoolean) then
+      Options := Options + [dgEditing];
 end;
 
-procedure TManageMember.DBGrid3DrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+procedure TManageMember.DBGridDrawColumnCell(Sender: TObject; const Rect: TRect;
+  DataCol: Integer; Column: TColumn; State: TGridDrawState);
 var
   clFont, clBg: TColor;
 begin
@@ -421,7 +423,7 @@ begin
   end;
 end;
 
-procedure TManageMember.DBGrid3EditButtonClick(Sender: TObject);
+procedure TManageMember.DBGridEditButtonClick(Sender: TObject);
 var
   fld: TField;
   cal: TDOBPicker;
@@ -454,88 +456,120 @@ begin
   end;
 end;
 
-procedure TManageMember.DBGrid3KeyDown(Sender: TObject; var Key: Word;
+procedure TManageMember.DBGridKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 var
   fld: TField;
 begin
 
-  With Sender as TDBGrid do begin
-  if Assigned(SelectedField) then
+  With Sender as TDBGrid do
   begin
-
-    if (SelectedField.DataType = ftBoolean) then
+    if Assigned(SelectedField) then
     begin
-      // If the selected field is a boolean,
-      // then enable SPACE key to toggle the value.
-      fld := SelectedField;
-      if (Key = vkSpace) then
-      begin
-        if (DataSource.DataSet.State <> dsEdit) or
-          (DataSource.DataSet.State <> dsInsert) then
-        begin
-          DataSource.DataSet.Edit();
-        end;
-        fld.Value := not fld.AsBoolean;
-        Key := NULL;
-      end;
-      // Y, y, T, t
-      if (Key = $59) or (Key = $79) or (Key = $54) or (Key = $74) then
-      begin
-        if (DataSource.DataSet.State <> dsEdit) or
-          (DataSource.DataSet.State <> dsInsert) then
-        begin
-          DataSource.DataSet.Edit();
-        end;
-        fld.Value := 1;
-        Key := NULL;
-      end;
-      // N, n, F, f
-      if (Key = $4E) or (Key = $6E) or (Key = $46) or (Key = $66) then
-      begin
-        if (DataSource.DataSet.State <> dsEdit) or
-          (DataSource.DataSet.State <> dsInsert) then
-        begin
-          DataSource.DataSet.Edit();
-        end;
-        fld.Value := 0;
-        Key := NULL;
-      end;
-    end;
 
-    // DROPDOWN COMBOBOX
-    if (SelectedField.FieldKind = fkLookup) then
-    begin
-      // NullValueKey - Alt+BkSp - CLEAR
-      if (Key = vkBack) and (ssAlt in Shift) then
+      if (SelectedField.DataType = ftBoolean) then
       begin
+        // If the selected field is a boolean,
+        // then enable SPACE key to toggle the value.
         fld := SelectedField;
-        if (fld.FieldName = 'luHouse') then
+        if (Key = vkSpace) then
         begin
-          DataSource.DataSet.Edit();
-          DataSource.DataSet.FieldByName('HouseID').Clear();
-          DataSource.DataSet.Post();
+          if (DataSource.DataSet.State <> dsEdit) or
+            (DataSource.DataSet.State <> dsInsert) then
+          begin
+            DataSource.DataSet.Edit();
+          end;
+          fld.Value := not fld.AsBoolean;
           Key := NULL;
         end;
-        if (fld.FieldName = 'luMembershipType') then
+        // Y, y, T, t
+        if (Key = $59) or (Key = $79) or (Key = $54) or (Key = $74) then
         begin
-          DataSource.DataSet.Edit();
-          DataSource.DataSet.FieldByName('MembershipTypeID').Clear();
-          DataSource.DataSet.Post();
+          if (DataSource.DataSet.State <> dsEdit) or
+            (DataSource.DataSet.State <> dsInsert) then
+          begin
+            DataSource.DataSet.Edit();
+          end;
+          fld.Value := 1;
           Key := NULL;
         end;
-        if (fld.FieldName = 'luGender') then
+        // N, n, F, f
+        if (Key = $4E) or (Key = $6E) or (Key = $46) or (Key = $66) then
         begin
-          DataSource.DataSet.Edit();
-          DataSource.DataSet.FieldByName('GenderID').Clear();
-          DataSource.DataSet.Post();
+          if (DataSource.DataSet.State <> dsEdit) or
+            (DataSource.DataSet.State <> dsInsert) then
+          begin
+            DataSource.DataSet.Edit();
+          end;
+          fld.Value := 0;
           Key := NULL;
+        end;
+      end;
+
+      // DROPDOWN COMBOBOX
+      if (SelectedField.FieldKind = fkLookup) then
+      begin
+        // NullValueKey - Alt+BkSp - CLEAR
+        if (Key = vkBack) and (ssAlt in Shift) then
+        begin
+          fld := SelectedField;
+          if (fld.FieldName = 'luHouse') then
+          begin
+            DataSource.DataSet.Edit();
+            DataSource.DataSet.FieldByName('HouseID').Clear();
+            DataSource.DataSet.Post();
+            Key := NULL;
+          end;
+          if (fld.FieldName = 'luMembershipType') then
+          begin
+            DataSource.DataSet.Edit();
+            DataSource.DataSet.FieldByName('MembershipTypeID').Clear();
+            DataSource.DataSet.Post();
+            Key := NULL;
+          end;
+          if (fld.FieldName = 'luGender') then
+          begin
+            DataSource.DataSet.Edit();
+            DataSource.DataSet.FieldByName('GenderID').Clear();
+            DataSource.DataSet.Post();
+            Key := NULL;
+          end;
+          if (fld.FieldName = 'luMemberRoleStr') then
+          begin
+            DataSource.DataSet.Edit();
+            DataSource.DataSet.FieldByName('MemberRoleID').Clear();
+            DataSource.DataSet.Post();
+            Key := NULL;
+          end;
         end;
       end;
     end;
   end;
+
+end;
+
+procedure TManageMember.DBGridRoleCellClick(Column: TColumn);
+var
+  fld: TField;
+begin
+  if Assigned(Column.Field) and (Column.Field.DataType = ftBoolean) then
+  begin
+    fld := DBGridRole.DataSource.DataSet.FindField('MemberID');
+    if fld.IsNull then
+      exit;
+    // for MemberRoleLink ...
+    // both MemberID and boolean must have values assigned
+    // before CheckBrowswMode can be performed ....
+    Column.Grid.DataSource.DataSet.CheckBrowseMode;
+    Column.Grid.DataSource.DataSet.Edit;
+    Column.Field.AsBoolean := not Column.Field.AsBoolean;
   end;
 
+  if Assigned(Column.Field) and (Column.Field.FieldKind = fkLookup) then
+  begin
+    Column.Grid.DataSource.DataSet.CheckBrowseMode;
+    Column.Grid.DataSource.DataSet.Edit;
+  end;
 end;
 
 procedure TManageMember.DBNavigator1BeforeAction(Sender: TObject;
@@ -581,13 +615,13 @@ end;
 // ---------------------------------------------------------------------------
 // Draw a very basic checkbox (ticked) - not a nice as TCheckListBox
 // ---------------------------------------------------------------------------
-procedure TManageMember.DrawCheckBoxes(oGrid: TObject; Rect: TRect; Column: TColumn;
-  fontColor, bgColor: TColor);
+procedure TManageMember.DrawCheckBoxes(oGrid: TObject; Rect: TRect;
+  Column: TColumn; fontColor, bgColor: TColor);
 var
   MyRect: TRect;
   oField: TField;
-  iPos, iFactor: integer;
-  bValue: boolean;
+  iPos, iFactor: Integer;
+  bValue: Boolean;
   g: TDBGrid;
   points: Array [0 .. 4] of TPoint;
 begin
@@ -598,7 +632,7 @@ begin
   g := TDBGrid(oGrid);
   // is the cell checked?
   oField := Column.Field;
-  if (oField.value = -1) then
+  if (oField.Value = -1) then
     bValue := true
   else
     bValue := false;
@@ -848,7 +882,7 @@ begin
   end;
 
   // execute SQL. Make all null IsArchived, IsActive, IsSwimmer = 0;
-  //  ManageMemberData.FixNullBooleans;
+  // ManageMemberData.FixNullBooleans;
 
   // ----------------------------------------------------
   // Prepares all core queries  (Master+Child)

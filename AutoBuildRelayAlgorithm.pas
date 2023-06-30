@@ -30,6 +30,10 @@ const
   CROSSOVER_RATE = 0.8;
   MAX_GENERATIONS = 1000;
 
+//  var
+//  Population: array[0..POPULATION_SIZE - 1] of TChromosome;
+
+
 implementation
 
 uses System.Math, system.Generics.Collections;
@@ -69,86 +73,6 @@ begin
   if Hi > iLo then QuickSort(A, iLo, Hi, Compare);
   if Lo < iHi then QuickSort(A, Lo, iHi, Compare);
 end;
-
-(*
-procedure QuickSortI(lLowBound, lHighBound: integer; lCompare: TListSortCompare;
-  lSwap: TListSortSwap);
-var
-  lLeft: Integer;
-  lRight: Integer;
-  lPivot: Integer;
-  lLeftCompare: Integer;
-  lRightCompare: Integer;
-  lStack: array of integer;
-  lStackLen: integer;
-begin
-  if lHighBound > lLowBound then
-  begin
-    lStackLen := 2;
-    SetLength(lStack, lStackLen);
-    lStack[lStackLen - 1] := lLowBound;
-    lStack[lStackLen - 2] := lHighBound;
-
-    repeat
-      lLowBound := lStack[lStackLen - 1];
-      lHighBound := lStack[lStackLen - 2];
-      SetLength(lStack, lStackLen - 2);
-      Dec(lStackLen, 2);
-
-      lLeft := lLowBound;
-      lRight := lHighBound;
-      lPivot := (lLowBound + lHighBound) div 2;
-      repeat
-        lLeftCompare := lCompare(lLeft, lPivot);
-        while lLeftCompare < 0 do
-        begin
-          Inc(lLeft);
-          lLeftCompare := lCompare(lLeft, lPivot);
-        end;
-        lRightCompare := lCompare(lRight, lPivot);
-        while lRightCompare > 0 do
-        begin
-          Dec(lRight);
-          lRightCompare := lCompare(lRight, lPivot);
-        end;
-
-        if lLeft <= lRight then
-        begin
-          if not ((lLeftCompare = 0) and (lRightCompare = 0)) then
-          begin
-            lSwap(lRight, lLeft);
-
-            if lPivot = lLeft then
-              lPivot := lRight
-            else if lPivot = lRight then
-              lPivot := lLeft;
-          end;
-          Inc(lLeft);
-          Dec(lRight);
-        end;
-      until lLeft > lRight;
-
-      if (lHighBound > lLeft) then
-      begin
-        Inc(lStackLen, 2);
-        SetLength(lStack, lStackLen);
-        lStack[lStackLen - 1] := lLeft;
-        lStack[lStackLen - 2] := lHighBound;
-      end;
-
-      if (lLowBound < lRight) then
-      begin
-        Inc(lStackLen, 2);
-        SetLength(lStack, lStackLen);
-        lStack[lStackLen - 1] := lLowBound;
-        lStack[lStackLen - 2] := lRight;
-      end;
-
-    until lStackLen = 0;
-  end;
-end;
-*)
-
 
 // Define the mean function
 function Mean(Data: array of Integer): Double;
@@ -307,8 +231,89 @@ begin
   end;
 
   // Return the best solution found by the genetic algorithm
-  Result := BestChromosome.Genes;
+  SetLength(Result, Length(BestChromosome.Genes));
+  for i := Low(BestChromosome.Genes) to High(BestChromosome.Genes) do
+    Result[i] := BestChromosome.Genes[i];
 end;
+
+(*
+procedure QuickSortI(lLowBound, lHighBound: integer; lCompare: TListSortCompare;
+  lSwap: TListSortSwap);
+var
+  lLeft: Integer;
+  lRight: Integer;
+  lPivot: Integer;
+  lLeftCompare: Integer;
+  lRightCompare: Integer;
+  lStack: array of integer;
+  lStackLen: integer;
+begin
+  if lHighBound > lLowBound then
+  begin
+    lStackLen := 2;
+    SetLength(lStack, lStackLen);
+    lStack[lStackLen - 1] := lLowBound;
+    lStack[lStackLen - 2] := lHighBound;
+
+    repeat
+      lLowBound := lStack[lStackLen - 1];
+      lHighBound := lStack[lStackLen - 2];
+      SetLength(lStack, lStackLen - 2);
+      Dec(lStackLen, 2);
+
+      lLeft := lLowBound;
+      lRight := lHighBound;
+      lPivot := (lLowBound + lHighBound) div 2;
+      repeat
+        lLeftCompare := lCompare(lLeft, lPivot);
+        while lLeftCompare < 0 do
+        begin
+          Inc(lLeft);
+          lLeftCompare := lCompare(lLeft, lPivot);
+        end;
+        lRightCompare := lCompare(lRight, lPivot);
+        while lRightCompare > 0 do
+        begin
+          Dec(lRight);
+          lRightCompare := lCompare(lRight, lPivot);
+        end;
+
+        if lLeft <= lRight then
+        begin
+          if not ((lLeftCompare = 0) and (lRightCompare = 0)) then
+          begin
+            lSwap(lRight, lLeft);
+
+            if lPivot = lLeft then
+              lPivot := lRight
+            else if lPivot = lRight then
+              lPivot := lLeft;
+          end;
+          Inc(lLeft);
+          Dec(lRight);
+        end;
+      until lLeft > lRight;
+
+      if (lHighBound > lLeft) then
+      begin
+        Inc(lStackLen, 2);
+        SetLength(lStack, lStackLen);
+        lStack[lStackLen - 1] := lLeft;
+        lStack[lStackLen - 2] := lHighBound;
+      end;
+
+      if (lLowBound < lRight) then
+      begin
+        Inc(lStackLen, 2);
+        SetLength(lStack, lStackLen);
+        lStack[lStackLen - 1] := lLowBound;
+        lStack[lStackLen - 2] := lRight;
+      end;
+
+    until lStackLen = 0;
+  end;
+end;
+*)
 
 
 end.

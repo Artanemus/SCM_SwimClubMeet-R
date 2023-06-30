@@ -690,9 +690,9 @@ object ManageMemberData: TManageMemberData
       Visible = False
     end
   end
-  object qryMemberRole: TFDQuery
+  object qryMemberRoleLnk: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
+    OnNewRecord = qryMemberRoleLnkNewRecord
     IndexFieldNames = 'MemberRoleID;MemberID'
     Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet.dbo.MemberRoleLink'
@@ -708,19 +708,62 @@ object ManageMemberData: TManageMemberData
       '     , [MemberRoleLink].[CreatedOn]'
       '     , [MemberRoleLink].[IsActive]'
       '     , [MemberRoleLink].[IsArchived]'
-      '     , [MemberRole].[Caption]'
       'FROM MemberRoleLink'
-      '    INNER JOIN [MemberRole]'
+      '    --INNER JOIN [MemberRole]'
       
-        '        ON [MemberRoleLink].[MemberRoleID] = [MemberRole].[Membe' +
-        'rRoleID]'
+        '        --ON [MemberRoleLink].[MemberRoleID] = [MemberRole].[Mem' +
+        'berRoleID]'
       'WHERE [MemberRoleLink].[MemberID] = @MemberID;')
     Left = 56
     Top = 240
+    object qryMemberRoleLnkMemberRoleID: TIntegerField
+      FieldName = 'MemberRoleID'
+      Origin = 'MemberRoleID'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object qryMemberRoleLnkMemberID: TIntegerField
+      FieldName = 'MemberID'
+      Origin = 'MemberID'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object qryMemberRoleLnkCreatedOn: TSQLTimeStampField
+      FieldName = 'CreatedOn'
+      Origin = 'CreatedOn'
+    end
+    object qryMemberRoleLnkIsActive: TBooleanField
+      FieldName = 'IsActive'
+      Origin = 'IsActive'
+      Required = True
+    end
+    object qryMemberRoleLnkIsArchived: TBooleanField
+      FieldName = 'IsArchived'
+      Origin = 'IsArchived'
+      Required = True
+    end
+    object qryMemberRoleLnkluMemberRoleStr: TStringField
+      FieldKind = fkLookup
+      FieldName = 'luMemberRoleStr'
+      LookupDataSet = tblMemberRole
+      LookupKeyFields = 'MemberRoleID'
+      LookupResultField = 'Caption'
+      KeyFields = 'MemberRoleID'
+      OnChange = qryMemberRoleLnkluMemberRoleStrChange
+      Lookup = True
+    end
   end
-  object dsMemberRole: TDataSource
-    DataSet = qryMemberRole
+  object dsMemberRoleLnk: TDataSource
+    DataSet = qryMemberRoleLnk
     Left = 160
     Top = 240
+  end
+  object tblMemberRole: TFDTable
+    ActiveStoredUsage = [auDesignTime]
+    IndexFieldNames = 'MemberRoleID'
+    Connection = SCM.scmConnection
+    TableName = 'SwimClubMeet.dbo.MemberRole'
+    Left = 56
+    Top = 552
   end
 end

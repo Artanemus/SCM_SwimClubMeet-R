@@ -12,97 +12,104 @@ uses
 
 type
   TManageMemberData = class(TDataModule)
-    tblContactNumType: TFDTable;
-    tblContactNumTypeContactNumTypeID: TFDAutoIncField;
-    tblContactNumTypeCaption: TWideStringField;
-    tblStroke: TFDTable;
-    tblDistance: TFDTable;
-    dsMember: TDataSource;
-    qryMember: TFDQuery;
-    qryMemberMemberID: TFDAutoIncField;
-    qryMemberMembershipNum: TIntegerField;
-    qryMemberFirstName: TWideStringField;
-    qryMemberLastName: TWideStringField;
-    qryMemberFName: TWideStringField;
-    qryMemberDOB: TSQLTimeStampField;
-    qryMemberSwimmerAge: TIntegerField;
-    qryMemberIsActive: TBooleanField;
-    qryMemberIsSwimmer: TBooleanField;
-    qryMemberIsArchived: TBooleanField;
-    qryMemberEmail: TWideStringField;
-    qryMemberSwimClubID: TIntegerField;
-    qryMemberCreatedOn: TSQLTimeStampField;
-    qryMemberArchivedOn: TSQLTimeStampField;
-    qryMemberGenderID: TIntegerField;
-    qryMemberluGender: TStringField;
-    qryMemberluHouse: TStringField;
-    qryMemberHouseID: TIntegerField;
-    tblGender: TFDTable;
+    cmdFixNullBooleans: TFDCommand;
+    dsContactNum: TDataSource;
+    dsFindMember: TDataSource;
     dsGender: TDataSource;
     dsHouse: TDataSource;
-    tblHouse: TFDTable;
-    dsContactNum: TDataSource;
+    dsMember: TDataSource;
+    dsMemberPB: TDataSource;
+    dsMemberRoleLnk: TDataSource;
+    dsSwimClub: TDataSource;
+    qAssertMemberID: TFDQuery;
     qryContactNum: TFDQuery;
     qryContactNumContactNumID: TFDAutoIncField;
-    qryContactNumNumber: TWideStringField;
     qryContactNumContactNumTypeID: TIntegerField;
-    qryContactNumMemberID: TIntegerField;
     qryContactNumlu: TStringField;
-    qrySwimClub: TFDQuery;
-    dsSwimClub: TDataSource;
-    qryMemberMembershipStr: TWideStringField;
+    qryContactNumMemberID: TIntegerField;
+    qryContactNumNumber: TWideStringField;
+    qryEntrantDataCount: TFDQuery;
     qryFindMember: TFDQuery;
+    qryFindMemberAge: TIntegerField;
+    qryFindMembercGender: TWideStringField;
+    qryFindMemberdtDOB: TWideStringField;
+    qryFindMemberFirstName: TWideStringField;
+    qryFindMemberFName: TWideStringField;
+    qryFindMemberGenderID: TIntegerField;
+    qryFindMemberIsActive: TBooleanField;
+    qryFindMemberIsSwimmer: TBooleanField;
+    qryFindMemberLastName: TWideStringField;
     qryFindMemberMemberID: TFDAutoIncField;
     qryFindMemberMembershipNum: TIntegerField;
-    qryFindMemberFName: TWideStringField;
-    qryFindMemberdtDOB: TWideStringField;
-    qryFindMemberAge: TIntegerField;
-    qryFindMemberIsActive: TBooleanField;
-    qryFindMembercGender: TWideStringField;
-    qryFindMemberFirstName: TWideStringField;
-    qryFindMemberLastName: TWideStringField;
-    qryFindMemberGenderID: TIntegerField;
-    dsFindMember: TDataSource;
-    qAssertMemberID: TFDQuery;
-    qryEntrantDataCount: TFDQuery;
-    cmdFixNullBooleans: TFDCommand;
-    dsMemberPB: TDataSource;
+    qryMember: TFDQuery;
+    qryMemberArchivedOn: TSQLTimeStampField;
+    qryMemberCreatedOn: TSQLTimeStampField;
+    qryMemberDOB: TSQLTimeStampField;
+    qryMemberEmail: TWideStringField;
+    qryMemberFirstName: TWideStringField;
+    qryMemberFName: TWideStringField;
+    qryMemberGenderID: TIntegerField;
+    qryMemberHouseID: TIntegerField;
+    qryMemberIsActive: TBooleanField;
+    qryMemberIsArchived: TBooleanField;
+    qryMemberIsSwimmer: TBooleanField;
+    qryMemberLastName: TWideStringField;
+    qryMemberluGender: TStringField;
+    qryMemberluHouse: TStringField;
+    qryMemberMemberID: TFDAutoIncField;
+    qryMemberMembershipNum: TIntegerField;
+    qryMemberMembershipStr: TWideStringField;
     qryMemberPB: TFDQuery;
-    qryMemberPBEventStr: TWideStringField;
-    qryMemberPBPB: TTimeField;
-    qryMemberPBMemberID: TFDAutoIncField;
     qryMemberPBDistanceID: TFDAutoIncField;
+    qryMemberPBEventStr: TWideStringField;
+    qryMemberPBMemberID: TFDAutoIncField;
+    qryMemberPBPB: TTimeField;
     qryMemberPBStrokeID: TFDAutoIncField;
-    qryMemberRole: TFDQuery;
-    dsMemberRole: TDataSource;
-    qryFindMemberIsSwimmer: TBooleanField;
+    qryMemberRoleLnk: TFDQuery;
+    qryMemberSwimClubID: TIntegerField;
+    qryMemberSwimmerAge: TIntegerField;
+    qrySwimClub: TFDQuery;
+    tblContactNumType: TFDTable;
+    tblContactNumTypeCaption: TWideStringField;
+    tblContactNumTypeContactNumTypeID: TFDAutoIncField;
+    tblDistance: TFDTable;
+    tblGender: TFDTable;
+    tblHouse: TFDTable;
+    tblMemberRole: TFDTable;
+    tblStroke: TFDTable;
+    qryMemberRoleLnkMemberRoleID: TIntegerField;
+    qryMemberRoleLnkMemberID: TIntegerField;
+    qryMemberRoleLnkCreatedOn: TSQLTimeStampField;
+    qryMemberRoleLnkIsActive: TBooleanField;
+    qryMemberRoleLnkIsArchived: TBooleanField;
+    qryMemberRoleLnkluMemberRoleStr: TStringField;
     procedure DataModuleCreate(Sender: TObject);
-    procedure qryMemberAfterScroll(DataSet: TDataSet);
-    procedure qryMemberAfterInsert(DataSet: TDataSet);
-    procedure qryMemberBeforeDelete(DataSet: TDataSet);
     procedure qryMemberAfterDelete(DataSet: TDataSet);
+    procedure qryMemberAfterInsert(DataSet: TDataSet);
+    procedure qryMemberAfterScroll(DataSet: TDataSet);
+    procedure qryMemberBeforeDelete(DataSet: TDataSet);
+    procedure qryMemberRoleLnkluMemberRoleStrChange(Sender: TField);
+    procedure qryMemberRoleLnkNewRecord(DataSet: TDataSet);
   private
+    FConnection: TFDConnection;
     { Private declarations }
     fManageMemberDataActive: boolean;
     fRecordCount: Integer;
-    FConnection: TFDConnection;
     procedure UpdateMembersPersonalBest;
-
   public
     { Public declarations }
     constructor CreateWithConnection(AOwner: TComponent;
       AConnection: TFDConnection);
     procedure ActivateTable();
+    procedure FixNullBooleans();
+    function LocateMember(MemberID: Integer): boolean;
     procedure UpdateDOB(DOB: TDateTime);
     procedure UpdateMember(SwimClubID: Integer;
       hideArchived, hideInactive, hideNonSwimmer: boolean);
-    procedure FixNullBooleans();
-    function LocateMember(MemberID: Integer): boolean;
+    property Connection: TFDConnection read FConnection write FConnection;
     property ManageMemberDataActive: boolean read fManageMemberDataActive
       write fManageMemberDataActive;
     property RecordCount: Integer read fRecordCount;
-    property Connection: TFDConnection read FConnection write FConnection;
-
   end;
 
 const
@@ -119,7 +126,14 @@ implementation
 
 uses
   System.IOUtils, IniFiles, SCMUtility, SCMDefines, Winapi.Windows,
-  Winapi.Messages, vcl.Dialogs, System.UITypes, Vcl.Forms;
+  Winapi.Messages, vcl.Dialogs, System.UITypes, vcl.Forms;
+
+constructor TManageMemberData.CreateWithConnection(AOwner: TComponent;
+  AConnection: TFDConnection);
+begin
+  inherited Create(AOwner);
+  FConnection := AConnection;
+end;
 
 procedure TManageMemberData.ActivateTable;
 begin
@@ -129,11 +143,11 @@ begin
     qrySwimClub.Connection := FConnection;
     qryMember.Connection := FConnection;
     qryContactNum.Connection := FConnection;
-    qryMemberPB.Connection :=FConnection;
+    qryMemberPB.Connection := FConnection;
     // prepare lookup tables.
     tblStroke.Connection := FConnection;
     tblDistance.Connection := FConnection;
-    qryMemberRole.Connection := FConnection;
+    qryMemberRoleLnk.Connection := FConnection;
     tblGender.Connection := FConnection;
     tblHouse.Connection := FConnection;
     tblContactNumType.Connection := FConnection;
@@ -143,7 +157,7 @@ begin
       // Lookup tables used by member
       tblStroke.Open;
       tblDistance.Open;
-      qryMemberRole.Open;
+      qryMemberRoleLnk.Open;
       tblGender.Open;
       tblHouse.Open;
       qryMember.Open;
@@ -161,13 +175,6 @@ begin
   end;
 end;
 
-constructor TManageMemberData.CreateWithConnection(AOwner: TComponent;
-  AConnection: TFDConnection);
-begin
-  inherited Create(AOwner);
-  FConnection := AConnection;
-end;
-
 procedure TManageMemberData.DataModuleCreate(Sender: TObject);
 begin
   // TODO:
@@ -177,7 +184,7 @@ end;
 
 procedure TManageMemberData.FixNullBooleans;
 begin
-if Assigned(FConnection) then
+  if Assigned(FConnection) then
   begin
     cmdFixNullBooleans.Connection := FConnection;
     if FConnection.Connected then
@@ -235,9 +242,9 @@ begin
 
   // DB : v1,1,6,0 - CREATE LINK
   // build many-to-many relationship with SwimClub and member.
-(*
-  SQL := 'INSERT lnkSwimClubMember Value ....
-*)
+  (*
+    SQL := 'INSERT lnkSwimClubMember Value ....
+  *)
 
 end;
 
@@ -306,13 +313,53 @@ begin
 
     { TODO -oBen -cGeneral : Remove link }
     (*
-    SQL := 'DELETE FROM [SwimClubMeet].[dbo].[lnkSwimClubMember] WHERE MemberID = '
+      SQL := 'DELETE FROM [SwimClubMeet].[dbo].[lnkSwimClubMember] WHERE MemberID = '
       + IntToStr(MemberID) + ' AND SwimClubID = ' +
       IntToStr(qrySwimClub.FieldByName('SwimClubID').AsInteger) + ';';
-    FConnection.ExecSQL(SQL);
+      FConnection.ExecSQL(SQL);
     *)
 
     qryMember.EnableControls;
+  end;
+end;
+
+procedure TManageMemberData.qryMemberRoleLnkluMemberRoleStrChange
+  (Sender: TField);
+begin
+  // test that MemberID has been assigned
+  if qryMemberRoleLnk.FieldByName('MemberID').IsNull then
+  begin
+    qryMemberRoleLnk.FieldByName('MemberID').AsInteger :=
+      dsMember.DataSet.FieldByName('MemberID').AsInteger;
+    qryMemberRoleLnk.FieldByName('IsArchived').AsBoolean := false;
+    qryMemberRoleLnk.FieldByName('IsActive').AsBoolean := false;
+  end;
+
+end;
+
+procedure TManageMemberData.qryMemberRoleLnkNewRecord(DataSet: TDataSet);
+var
+fld: TField;
+begin
+  fld := DataSet.FieldByName('IsArchived');
+  if (fld.IsNull) then
+  begin
+    fld.AsBoolean := false;
+  end;
+  fld := DataSet.FieldByName('IsActive');
+  if (fld.IsNull) then
+  begin
+    fld.AsBoolean := True;
+  end;
+  fld := DataSet.FieldByName('MemberID');
+  if (fld.IsNull) then
+  begin
+    fld.AsInteger := dsMember.DataSet.FieldByName('MemberID').AsInteger;
+  end;
+  fld := DataSet.FieldByName('MemberRoleID');
+  if (fld.IsNull) then
+  begin
+//    fld.AsInteger := 0;
   end;
 end;
 
@@ -334,7 +381,8 @@ procedure TManageMemberData.UpdateMember(SwimClubID: Integer;
 begin
   if not Assigned(FConnection) then
     exit;
-  if not qrymember.Active then exit;
+  if not qryMember.Active then
+    exit;
 
   qryMember.DisableControls;
   qryMember.Close;
@@ -373,14 +421,14 @@ begin
     exit;
   // to improve loading performance of the Member's Dialogue
   // the 'personal bests' for a member are loaded on demand.
-  qrymemberPb.DisableControls;
+  qryMemberPB.DisableControls;
   qryMemberPB.Close();
   qryMemberPB.ParamByName('MEMBERID').AsInteger :=
     dsMember.DataSet.FieldByName('MemberID').AsInteger;
   // ensures params changes are used
   qryMemberPB.Prepare();
   qryMemberPB.Open();
-  qrymemberPb.enableControls;
+  qryMemberPB.EnableControls;
 end;
 
 end.

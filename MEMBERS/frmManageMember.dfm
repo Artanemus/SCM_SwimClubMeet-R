@@ -159,7 +159,8 @@ object ManageMember: TManageMember
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitTop = 4
+        ExplicitWidth = 1330
+        ExplicitHeight = 645
         object Label3: TLabel
           Left = 105
           Top = 139
@@ -520,7 +521,7 @@ object ManageMember: TManageMember
           Left = 1066
           Top = 27
           Width = 269
-          Height = 382
+          Height = 606
           DataSource = ManageMemberData.dsMemberPB
           TabOrder = 13
           TitleFont.Charset = DEFAULT_CHARSET
@@ -597,12 +598,13 @@ object ManageMember: TManageMember
           ShowHint = True
           TabOrder = 15
         end
-        object DBGrid1: TDBGrid
+        object DBGridRole: TDBGrid
           Left = 573
           Top = 263
           Width = 387
           Height = 370
-          DataSource = ManageMemberData.dsMemberRole
+          DataSource = ManageMemberData.dsMemberRoleLnk
+          DefaultDrawing = False
           Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
           TabOrder = 16
           TitleFont.Charset = DEFAULT_CHARSET
@@ -610,6 +612,11 @@ object ManageMember: TManageMember
           TitleFont.Height = -16
           TitleFont.Name = 'Tahoma'
           TitleFont.Style = []
+          OnCellClick = DBGridRoleCellClick
+          OnColEnter = DBGridColEnter
+          OnColExit = DBGridColExit
+          OnDrawColumnCell = DBGridDrawColumnCell
+          OnKeyDown = DBGridKeyDown
           Columns = <
             item
               Expanded = False
@@ -622,15 +629,9 @@ object ManageMember: TManageMember
               Visible = False
             end
             item
+              DropDownRows = 10
               Expanded = False
-              FieldName = 'CreatedOn'
-              Width = -1
-              Visible = False
-            end
-            item
-              Expanded = False
-              FieldName = 'Caption'
-              Width = 200
+              FieldName = 'luMemberRoleStr'
               Visible = True
             end
             item
@@ -646,6 +647,11 @@ object ManageMember: TManageMember
               Title.Caption = 'Archived'
               Width = 68
               Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'CreatedOn'
+              Visible = False
             end>
         end
         object DBNavigator2: TDBNavigator
@@ -653,18 +659,18 @@ object ManageMember: TManageMember
           Top = 263
           Width = 60
           Height = 204
-          DataSource = ManageMemberData.dsContactNum
+          DataSource = ManageMemberData.dsMemberRoleLnk
           VisibleButtons = [nbInsert, nbDelete, nbPost, nbCancel]
           Hints.Strings = (
             'First record'
             'Prior record'
             'Next record'
             'Last record'
-            'Insert contact record'
-            'Delete contact record'
+            'Insert role record'
+            'Delete role record'
             'Edit record'
-            'Post contact edit'
-            'Cancel contact edit'
+            'Post role edit'
+            'Cancel role edit'
             'Refresh data'
             'Apply updates'
             'Cancel updates')
@@ -706,12 +712,12 @@ object ManageMember: TManageMember
         TitleFont.Height = -13
         TitleFont.Name = 'Segoe UI'
         TitleFont.Style = []
-        OnCellClick = DBGrid3CellClick
-        OnColEnter = DBGrid3ColEnter
-        OnColExit = DBGrid3ColExit
-        OnDrawColumnCell = DBGrid3DrawColumnCell
-        OnEditButtonClick = DBGrid3EditButtonClick
-        OnKeyDown = DBGrid3KeyDown
+        OnCellClick = DBGridCellClick
+        OnColEnter = DBGridColEnter
+        OnColExit = DBGridColExit
+        OnDrawColumnCell = DBGridDrawColumnCell
+        OnEditButtonClick = DBGridEditButtonClick
+        OnKeyDown = DBGridKeyDown
         Columns = <
           item
             Expanded = False
@@ -721,27 +727,32 @@ object ManageMember: TManageMember
           item
             Expanded = False
             FieldName = 'MembershipNum'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'FirstName'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'LastName'
+            Width = 64
             Visible = True
           end
           item
             ButtonStyle = cbsEllipsis
             Expanded = False
             FieldName = 'DOB'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luGender'
+            Width = 64
             Visible = True
           end
           item
@@ -749,6 +760,7 @@ object ManageMember: TManageMember
             Expanded = False
             FieldName = 'IsArchived'
             Title.Caption = 'Archive'
+            Width = 64
             Visible = True
           end
           item
@@ -762,16 +774,13 @@ object ManageMember: TManageMember
             Expanded = False
             FieldName = 'IsSwimmer'
             Title.Caption = 'Swims'
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'luMembershipType'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luHouse'
+            Width = 64
             Visible = True
           end
           item
