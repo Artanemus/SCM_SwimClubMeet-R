@@ -83,6 +83,7 @@ type
     qryMemberRoleLnkIsActive: TBooleanField;
     qryMemberRoleLnkIsArchived: TBooleanField;
     qryMemberRoleLnkluMemberRoleStr: TStringField;
+    qryMemberABREV: TWideStringField;
     procedure DataModuleCreate(Sender: TObject);
     procedure qryMemberAfterDelete(DataSet: TDataSet);
     procedure qryMemberAfterInsert(DataSet: TDataSet);
@@ -233,7 +234,7 @@ begin
     fld.AsBoolean := True;
   end;
 
-  // DB : v1,1,5,0 v1,1,5,1 - required.
+  // DB : v1,1,5,0 v1,1,5,1 v1,1,5,2 v1,1,5,3 - required.
   fld := DataSet.FieldByName('SwimClubID');
   if (fld.IsNull) then
   begin
@@ -327,14 +328,13 @@ procedure TManageMemberData.qryMemberRoleLnkluMemberRoleStrChange
   (Sender: TField);
 begin
   // test that MemberID has been assigned
-  if qryMemberRoleLnk.FieldByName('MemberID').IsNull then
-  begin
-    qryMemberRoleLnk.FieldByName('MemberID').AsInteger :=
-      dsMember.DataSet.FieldByName('MemberID').AsInteger;
-    qryMemberRoleLnk.FieldByName('IsArchived').AsBoolean := false;
-    qryMemberRoleLnk.FieldByName('IsActive').AsBoolean := false;
-  end;
-
+//  if qryMemberRoleLnk.FieldByName('MemberID').IsNull then
+//  begin
+//    qryMemberRoleLnk.FieldByName('MemberID').AsInteger :=
+//      dsMember.DataSet.FieldByName('MemberID').AsInteger;
+//    qryMemberRoleLnk.FieldByName('IsArchived').AsBoolean := false;
+//    qryMemberRoleLnk.FieldByName('IsActive').AsBoolean := false;
+//  end;
 end;
 
 procedure TManageMemberData.qryMemberRoleLnkNewRecord(DataSet: TDataSet);
@@ -356,11 +356,11 @@ begin
   begin
     fld.AsInteger := dsMember.DataSet.FieldByName('MemberID').AsInteger;
   end;
-  fld := DataSet.FieldByName('MemberRoleID');
-  if (fld.IsNull) then
-  begin
+//  fld := DataSet.FieldByName('MemberRoleID');
+//  if (fld.IsNull) then
+//  begin
 //    fld.AsInteger := 0;
-  end;
+//  end;
 end;
 
 procedure TManageMemberData.UpdateDOB(DOB: TDateTime);

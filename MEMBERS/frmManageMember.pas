@@ -94,8 +94,7 @@ type
     DBGridRole: TDBGrid;
     DBNavigator2: TDBNavigator;
     Label11: TLabel;
-    DBEdit1: TDBEdit;
-    Label15: TLabel;
+    DBMemo1: TDBMemo;
     procedure FormCreate(Sender: TObject);
     procedure About2Click(Sender: TObject);
     procedure DBGridCellClick(Column: TColumn);

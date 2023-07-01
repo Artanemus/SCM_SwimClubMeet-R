@@ -122,8 +122,8 @@ object ManageMember: TManageMember
     ExplicitTop = 775
     ExplicitWidth = 1338
     object DBNavigator1: TDBNavigator
-      Left = 385
-      Top = 6
+      Left = 347
+      Top = 9
       Width = 648
       Height = 47
       DataSource = ManageMemberData.dsMember
@@ -207,7 +207,7 @@ object ManageMember: TManageMember
         end
         object Label10: TLabel
           Left = 100
-          Top = 503
+          Top = 486
           Width = 39
           Height = 19
           Alignment = taRightJustify
@@ -222,7 +222,7 @@ object ManageMember: TManageMember
         end
         object Label7: TLabel
           Left = 11
-          Top = 444
+          Top = 418
           Width = 128
           Height = 38
           Alignment = taRightJustify
@@ -259,7 +259,7 @@ object ManageMember: TManageMember
         end
         object Label21: TLabel
           Left = 95
-          Top = 542
+          Top = 525
           Width = 44
           Height = 19
           Alignment = taRightJustify
@@ -275,14 +275,14 @@ object ManageMember: TManageMember
         end
         object Label24: TLabel
           Left = 144
-          Top = 263
+          Top = 246
           Width = 204
           Height = 19
           Caption = '(Checkboxes use Specificity.)'
         end
         object Label18: TLabel
           Left = 27
-          Top = 388
+          Top = 371
           Width = 113
           Height = 38
           Alignment = taRightJustify
@@ -291,7 +291,7 @@ object ManageMember: TManageMember
         end
         object Label8: TLabel
           Left = 275
-          Top = 444
+          Top = 418
           Width = 277
           Height = 19
           Caption = '(Recommended - minimum of 4 digits)'
@@ -344,19 +344,12 @@ object ManageMember: TManageMember
           Layout = tlCenter
         end
         object Label11: TLabel
-          Left = 31
-          Top = 582
-          Width = 108
+          Left = 54
+          Top = 554
+          Width = 85
           Height = 19
           Alignment = taRightJustify
-          Caption = 'Swimmer Class'
-        end
-        object Label15: TLabel
-          Left = 275
-          Top = 582
-          Width = 139
-          Height = 19
-          Caption = '(Max 12 characters)'
+          Caption = 'METADATA'
         end
         object DBlucboGender: TDBLookupComboBox
           Left = 145
@@ -397,7 +390,7 @@ object ManageMember: TManageMember
         end
         object DBedtMembershipNum: TDBEdit
           Left = 145
-          Top = 441
+          Top = 415
           Width = 124
           Height = 27
           DataField = 'MembershipNum'
@@ -406,7 +399,7 @@ object ManageMember: TManageMember
         end
         object DBchkIsActive: TDBCheckBox
           Left = 144
-          Top = 317
+          Top = 300
           Width = 292
           Height = 17
           Caption = 'Is Active - Indicates full membership. '
@@ -416,7 +409,7 @@ object ManageMember: TManageMember
         end
         object DBEdtEmail: TDBEdit
           Left = 145
-          Top = 500
+          Top = 483
           Width = 407
           Height = 27
           DataField = 'Email'
@@ -425,7 +418,7 @@ object ManageMember: TManageMember
         end
         object DBlucboHouse: TDBLookupComboBox
           Left = 145
-          Top = 538
+          Top = 521
           Width = 233
           Height = 27
           Hint = 'Assign house (Clear .. Ctrl-Del)'
@@ -439,7 +432,7 @@ object ManageMember: TManageMember
         end
         object DBchkIsSwimmer: TDBCheckBox
           Left = 144
-          Top = 344
+          Top = 327
           Width = 344
           Height = 17
           Caption = 'Is Swimmer - Participates in events.'
@@ -449,7 +442,7 @@ object ManageMember: TManageMember
         end
         object DBchkIsArchived: TDBCheckBox
           Left = 144
-          Top = 290
+          Top = 273
           Width = 255
           Height = 17
           Caption = 'Is Archived - Retired from club.'
@@ -460,7 +453,7 @@ object ManageMember: TManageMember
         object btnClearHouse: TButton
           Tag = 3
           Left = 384
-          Top = 537
+          Top = 516
           Width = 75
           Height = 32
           Hint = 'Clear the house name.'
@@ -485,7 +478,7 @@ object ManageMember: TManageMember
         end
         object RegistrationNum: TDBEdit
           Left = 145
-          Top = 388
+          Top = 371
           Width = 184
           Height = 27
           DataField = 'MembershipStr'
@@ -602,7 +595,7 @@ object ManageMember: TManageMember
           Left = 573
           Top = 263
           Width = 387
-          Height = 370
+          Height = 282
           DataSource = ManageMemberData.dsMemberRoleLnk
           DefaultDrawing = False
           Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
@@ -619,19 +612,10 @@ object ManageMember: TManageMember
           OnKeyDown = DBGridKeyDown
           Columns = <
             item
-              Expanded = False
-              FieldName = 'MemberRoleID'
-              Visible = False
-            end
-            item
-              Expanded = False
-              FieldName = 'MemberID'
-              Visible = False
-            end
-            item
               DropDownRows = 10
               Expanded = False
               FieldName = 'luMemberRoleStr'
+              Title.Caption = 'Member'#39's Roles'
               Visible = True
             end
             item
@@ -647,11 +631,6 @@ object ManageMember: TManageMember
               Title.Caption = 'Archived'
               Width = 68
               Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'CreatedOn'
-              Visible = False
             end>
         end
         object DBNavigator2: TDBNavigator
@@ -679,11 +658,11 @@ object ManageMember: TManageMember
           ShowHint = True
           TabOrder = 17
         end
-        object DBEdit1: TDBEdit
+        object DBMemo1: TDBMemo
           Left = 145
-          Top = 579
-          Width = 124
-          Height = 27
+          Top = 554
+          Width = 815
+          Height = 89
           TabOrder = 18
         end
       end
@@ -727,32 +706,27 @@ object ManageMember: TManageMember
           item
             Expanded = False
             FieldName = 'MembershipNum'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'FirstName'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'LastName'
-            Width = 64
             Visible = True
           end
           item
             ButtonStyle = cbsEllipsis
             Expanded = False
             FieldName = 'DOB'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luGender'
-            Width = 64
             Visible = True
           end
           item
@@ -760,7 +734,6 @@ object ManageMember: TManageMember
             Expanded = False
             FieldName = 'IsArchived'
             Title.Caption = 'Archive'
-            Width = 64
             Visible = True
           end
           item
@@ -774,13 +747,11 @@ object ManageMember: TManageMember
             Expanded = False
             FieldName = 'IsSwimmer'
             Title.Caption = 'Swims'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luHouse'
-            Width = 64
             Visible = True
           end
           item

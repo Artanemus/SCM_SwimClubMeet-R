@@ -57,6 +57,7 @@ object ManageMemberData: TManageMemberData
     MasterFields = 'SwimClubID'
     DetailFields = 'SwimClubID'
     Connection = SCM.scmConnection
+    FormatOptions.AssignedValues = [fvStrsTrim2Len]
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Member'
     UpdateOptions.KeyFields = 'SwimClubID;MemberID'
     SQL.Strings = (
@@ -90,7 +91,8 @@ object ManageMemberData: TManageMemberData
         'FName,'
       '       HouseID,'
       '       CreatedOn,'
-      '       ArchivedOn'
+      '       ArchivedOn,'
+      '       ABREV'
       'FROM [dbo].[Member]'
       'WHERE (IsActive >= CASE'
       '                       WHEN @HideInActive = 1 THEN'
@@ -283,6 +285,11 @@ object ManageMemberData: TManageMemberData
       FieldName = 'HouseID'
       Origin = 'HouseID'
       Visible = False
+    end
+    object qryMemberABREV: TWideStringField
+      FieldName = 'ABREV'
+      Origin = 'ABREV'
+      Size = 13
     end
   end
   object tblGender: TFDTable
