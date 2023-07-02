@@ -84,11 +84,15 @@ type
     qryMemberRoleLnkIsArchived: TBooleanField;
     qryMemberRoleLnkluMemberRoleStr: TStringField;
     qryMemberABREV: TWideStringField;
+    qryMemberMETADATA: TWideMemoField;
     procedure DataModuleCreate(Sender: TObject);
     procedure qryMemberAfterDelete(DataSet: TDataSet);
     procedure qryMemberAfterInsert(DataSet: TDataSet);
     procedure qryMemberAfterScroll(DataSet: TDataSet);
     procedure qryMemberBeforeDelete(DataSet: TDataSet);
+    procedure qryMemberMETADATAGetText(Sender: TField; var Text: string;
+        DisplayText: Boolean);
+    procedure qryMemberMETADATASetText(Sender: TField; const Text: string);
     procedure qryMemberRoleLnkluMemberRoleStrChange(Sender: TField);
     procedure qryMemberRoleLnkNewRecord(DataSet: TDataSet);
   private
@@ -322,6 +326,18 @@ begin
 
     qryMember.EnableControls;
   end;
+end;
+
+procedure TManageMemberData.qryMemberMETADATAGetText(Sender: TField; var Text:
+    string; DisplayText: Boolean);
+begin
+  Text := Sender.AsString;
+end;
+
+procedure TManageMemberData.qryMemberMETADATASetText(Sender: TField; const
+    Text: string);
+begin
+    Sender.AsString := Text;
 end;
 
 procedure TManageMemberData.qryMemberRoleLnkluMemberRoleStrChange

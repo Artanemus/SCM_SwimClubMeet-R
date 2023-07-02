@@ -399,7 +399,9 @@ procedure TManageMember.DBGridDrawColumnCell(Sender: TObject; const Rect: TRect;
 var
   clFont, clBg: TColor;
 begin
-  // NOTE : DEFAULT DRAWING IS DISABLED ....
+  // NOTE: DEFAULT DRAWING IS DISABLED ....
+  // NOTE: DO NOT ENABLE TDBGRID OPTION dgAlwaysShowEditor.
+  //    (inconsistent OS MESSAGING)
   if (Column.Field.FieldName = 'IsActive') or
     (Column.Field.FieldName = 'IsArchived') or
     (Column.Field.FieldName = 'IsSwimmer') then
@@ -556,18 +558,20 @@ begin
     fld := DBGridRole.DataSource.DataSet.FindField('MemberID');
     if fld.IsNull then
       exit;
-    // for MemberRoleLink ...
-    // both MemberID and boolean must have values assigned
-    // before CheckBrowswMode can be performed ....
-    Column.Grid.DataSource.DataSet.CheckBrowseMode;
-    Column.Grid.DataSource.DataSet.Edit;
+    if Column.Grid.DataSource.DataSet.State <> dsEdit then
+      Column.Grid.DataSource.DataSet.Edit;
+
+//    Column.Grid.DataSource.DataSet.CheckBrowseMode;
+//    Column.Grid.DataSource.DataSet.Edit;
     Column.Field.AsBoolean := not Column.Field.AsBoolean;
   end;
 
   if Assigned(Column.Field) and (Column.Field.FieldKind = fkLookup) then
   begin
-    Column.Grid.DataSource.DataSet.CheckBrowseMode;
-    Column.Grid.DataSource.DataSet.Edit;
+    if Column.Grid.DataSource.DataSet.State <> dsEdit then
+      Column.Grid.DataSource.DataSet.Edit;
+//    Column.Grid.DataSource.DataSet.CheckBrowseMode;
+//    Column.Grid.DataSource.DataSet.Edit;
   end;
 end;
 
@@ -627,6 +631,9 @@ begin
   // ---------------------------------------------------------------------------
   // Draw a very basic checkbox (ticked) - not a nice as TCheckListBox
   // ---------------------------------------------------------------------------
+  // NOTE: DEFAULT DRAWING IS DISABLED ....
+  // NOTE: DO NOT ENABLE TDBGRID OPTION dgAlwaysShowEditor.
+  //    (inconsistent OS MESSAGING)
 
   g := TDBGrid(oGrid);
   // is the cell checked?

@@ -59,7 +59,7 @@ type
     fSessionStartTime: TTime;
     fEnableRoundUp: boolean;
     fRoundUpOnly: boolean;
-    procedure AutoSchedule_Execute;
+    procedure AutoSchedule_Execute(DoEdit: boolean = false);
     procedure EstimateSessionEnd;
     function GetSessionStartTime(ASessionID: integer): TTime;
     procedure ReadPreferences(IniFileName: string);
@@ -94,14 +94,13 @@ end;
 
 { TSchedulePicker }
 
-procedure TAutoSchedule.AutoSchedule_Execute;
+procedure TAutoSchedule.AutoSchedule_Execute(DoEdit: boolean = false);
 var
   t, interval: TTime;
   heatcount: integer;
 begin
   if (fSessionID = 0) or (fSessionStartTime = 0) then
     exit;
-
   t := tpEventStart.time;
   with qryEvent do
   begin
@@ -113,11 +112,14 @@ begin
     begin
       while not eof do
       begin
-        edit;
-        // if (spinRoundUp.Value > 0) then
-        // t := RoundToNearestInterval(t, spinRoundUp.value);
-        FieldByName('ScheduleDT').AsDateTime := t;
-        post;
+        if DoEdit then
+        begin
+          edit;
+          // if (spinRoundUp.Value > 0) then
+          // t := RoundToNearestInterval(t, spinRoundUp.value);
+          FieldByName('ScheduleDT').AsDateTime := t;
+          post;
+        end;
         interval := tpHeatInterval.time;
         heatcount := FieldByName('HeatCount').AsInteger;
         if heatcount > 0 then
@@ -125,13 +127,14 @@ begin
             FieldByName('TOTEvSwimTime').AsDateTime
         else
           t := t + tpEventInterval.time;
-
+        if fEnableRoundUp then
+          t := RoundUpNearestInterval(t, spinRoundUp.value);
         next;
       end;
     end;
+    TimePickerSessionEnds.time := t;
     qryEvent.Close;
   end;
-
 end;
 
 procedure TAutoSchedule.btnCancelClick(Sender: TObject);
@@ -141,9 +144,11 @@ end;
 
 procedure TAutoSchedule.btnInfo1Click(Sender: TObject);
 begin
-  BalloonHint1.Title := 'Calculating duration.';
-  BalloonHint1.Description := 'For each heat, the slowest swimmer' + sLinebreak
-    + 'is used to caculate the heat''s duration';
+  BalloonHint1.Title := 'Calculating a heat''s duration.';
+  BalloonHint1.Description := 'The running time for each heat is calculated on' +
+    sLinebreak +              'the slowest swimmer''s TTB. Then the time entered'
+    + sLinebreak +            'here is added. (ie. The time needed to exit the'
+    + sLinebreak +            'poll and rally the next swimmers.)';
   BalloonHint1.ShowHint(btnInfo1);
   // BalloonHint1.ShowHint(ClientToScreen(Tpoint.Create(btnInfo1.Left,btnInfo1.Top)));
 end;
@@ -155,9 +160,9 @@ end;
 
 procedure TAutoSchedule.btnInfo2Click(Sender: TObject);
 begin
-  BalloonHint1.Title := 'Calculating duration.';
-  BalloonHint1.Description := 'The time it takes to rally swimmers' + sLinebreak +
-    'and have your timekeepers set.';
+  BalloonHint1.Title := 'Calculating interval.';
+  BalloonHint1.Description := 'That extra time needed between events' +
+    sLinebreak + 'to relocate the timekeepers and collect data.';
   BalloonHint1.ShowHint(btnInfo2);
 end;
 
@@ -165,7 +170,7 @@ procedure TAutoSchedule.btnOkClick(Sender: TObject);
 begin
   { TODO -oBSA -cGeneral : SAVE Preferences }
   // save last state ...
-  AutoSchedule_Execute;
+  AutoSchedule_Execute(true);
   ModalResult := mrOK;
 end;
 
@@ -177,41 +182,8 @@ begin
 end;
 
 procedure TAutoSchedule.EstimateSessionEnd;
-var
-  t, interval: TTime;
-  heatcount: integer;
 begin
-  if (fSessionID = 0) or (fSessionStartTime = 0) then
-    exit;
-  t := tpEventStart.time;
-  TimePickerSessionEnds.time := tpEventStart.time;
-  with qryEvent do
-  begin
-    Connection := fConnection;
-    ParamByName('SESSIONID').AsInteger := fSessionID;
-    Prepare;
-    Open;
-    if Active then
-    begin
-      while not eof do
-      begin
-        heatcount := FieldByName('HeatCount').AsInteger;
-        interval := tpHeatInterval.time;
-        if heatcount > 0 then
-          t := t + (interval * (heatcount - 1)) + tpEventInterval.time +
-            +TimeOf(FieldByName('TOTEvSwimTime').AsDateTime)
-        else
-          t := t + tpEventInterval.time;
-        if fEnableRoundUp then
-          t := RoundUpNearestInterval(t, spinRoundUp.value);
-        next;
-      end;
-    end;
-
-    TimePickerSessionEnds.time := t;
-    qryEvent.Close;
-  end;
-
+  AutoSchedule_Execute(false);
 end;
 
 procedure TAutoSchedule.FormCreate(Sender: TObject);
@@ -305,7 +277,7 @@ begin
 
   // x mod y where y = 0 results in an exception.
   if interval = 0 then
-    exit; 
+    exit;
   if value < interval then
   // x mod y where x < y result in x.
   begin
@@ -314,17 +286,17 @@ begin
   end;
   remainder := value mod interval;
   if remainder = 0 then
-    Result := value
-  // special switch to force round up only. On by default; 
+    result := value
+    // special switch to force round up only. On by default;
   else if fRoundUpOnly then
-    Result := value + interval - remainder     
+    result := value + interval - remainder
   else if remainder >= interval div 2 then
-    // R O U N D   U P 
-    Result := value + interval - remainder
-  else 
-    // R O U N D   D O W N 
-    Result := value - remainder;  
-    
+    // R O U N D   U P
+    result := value + interval - remainder
+  else
+    // R O U N D   D O W N
+    result := value - remainder;
+
 end;
 
 function TAutoSchedule.RoundUpNearestInterval(time: TTime;

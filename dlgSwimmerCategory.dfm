@@ -61,12 +61,12 @@ object SwimmerCategory: TSwimmerCategory
             WordWrap = True
           end
           object Label5: TLabel
-            Left = 273
-            Top = 31
+            Left = 281
+            Top = 10
             Width = 76
-            Height = 21
+            Height = 42
             Alignment = taCenter
-            Caption = 'METADATA'
+            Caption = 'METADATA TAG'
             WordWrap = True
           end
           object Label6: TLabel
@@ -258,7 +258,7 @@ object SwimmerCategory: TSwimmerCategory
       1054
       54)
     object btnClose: TButton
-      Left = 940
+      Left = 936
       Top = 6
       Width = 75
       Height = 30
@@ -266,7 +266,7 @@ object SwimmerCategory: TSwimmerCategory
       Caption = 'Close'
       TabOrder = 0
       OnClick = btnCloseClick
-      ExplicitLeft = 936
+      ExplicitLeft = 932
     end
     object DBNavigator1: TDBNavigator
       Left = 332

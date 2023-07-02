@@ -92,7 +92,8 @@ object ManageMemberData: TManageMemberData
       '       HouseID,'
       '       CreatedOn,'
       '       ArchivedOn,'
-      '       ABREV'
+      '       ABREV,'
+      '       METADATA'
       'FROM [dbo].[Member]'
       'WHERE (IsActive >= CASE'
       '                       WHEN @HideInActive = 1 THEN'
@@ -290,6 +291,13 @@ object ManageMemberData: TManageMemberData
       FieldName = 'ABREV'
       Origin = 'ABREV'
       Size = 13
+    end
+    object qryMemberMETADATA: TWideMemoField
+      FieldName = 'METADATA'
+      Origin = 'METADATA'
+      OnGetText = qryMemberMETADATAGetText
+      OnSetText = qryMemberMETADATASetText
+      BlobType = ftWideMemo
     end
   end
   object tblGender: TFDTable
@@ -756,6 +764,7 @@ object ManageMemberData: TManageMemberData
       LookupKeyFields = 'MemberRoleID'
       LookupResultField = 'Caption'
       KeyFields = 'MemberRoleID'
+      Required = True
       OnChange = qryMemberRoleLnkluMemberRoleStrChange
       Lookup = True
     end

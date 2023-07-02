@@ -19,11 +19,11 @@ object AutoSchedule: TAutoSchedule
   OnShow = FormShow
   TextHeight = 21
   object Label4: TLabel
-    Left = 432
+    Left = 447
     Top = 120
-    Width = 49
+    Width = 70
     Height = 21
-    Caption = '(MINS)'
+    Caption = '(MIN:SEC)'
   end
   object Label13: TLabel
     Left = 191
@@ -53,11 +53,11 @@ object AutoSchedule: TAutoSchedule
     Caption = 'The interval that seperates each event.'
   end
   object Label16: TLabel
-    Left = 432
+    Left = 447
     Top = 169
-    Width = 49
+    Width = 70
     Height = 21
-    Caption = '(MINS)'
+    Caption = '(MIN:SEC)'
   end
   object Label17: TLabel
     Left = 153
@@ -98,7 +98,7 @@ object AutoSchedule: TAutoSchedule
     Visible = False
   end
   object btnInfo1: TVirtualImage
-    Left = 480
+    Left = 503
     Top = 102
     Width = 25
     Height = 26
@@ -111,7 +111,7 @@ object AutoSchedule: TAutoSchedule
     OnMouseLeave = btnInfoMouseLeave
   end
   object btnInfo2: TVirtualImage
-    Left = 480
+    Left = 503
     Top = 147
     Width = 25
     Height = 26
@@ -137,7 +137,7 @@ object AutoSchedule: TAutoSchedule
       671
       46)
     object btnCancel: TButton
-      Left = 202
+      Left = 198
       Top = 8
       Width = 75
       Height = 30
@@ -145,10 +145,10 @@ object AutoSchedule: TAutoSchedule
       Caption = 'Cancel'
       TabOrder = 0
       OnClick = btnCancelClick
-      ExplicitLeft = 198
+      ExplicitLeft = 194
     end
     object btnOk: TButton
-      Left = 283
+      Left = 279
       Top = 8
       Width = 169
       Height = 30
@@ -156,13 +156,13 @@ object AutoSchedule: TAutoSchedule
       Caption = 'AUTO Schedule'
       TabOrder = 1
       OnClick = btnOkClick
-      ExplicitLeft = 279
+      ExplicitLeft = 275
     end
   end
   object tpHeatInterval: TTimePicker
     Left = 345
     Top = 114
-    Width = 81
+    Width = 96
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
@@ -170,13 +170,13 @@ object AutoSchedule: TAutoSchedule
     Font.Style = []
     TabOrder = 1
     Time = 0.001388888888888889
-    TimeFormat = 'nn'
+    TimeFormat = 'nn:ss'
     OnChange = tpChange
   end
   object tpEventInterval: TTimePicker
     Left = 345
     Top = 163
-    Width = 81
+    Width = 96
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
@@ -184,7 +184,7 @@ object AutoSchedule: TAutoSchedule
     Font.Style = []
     TabOrder = 2
     Time = 0.003472222222222222
-    TimeFormat = 'nn'
+    TimeFormat = 'nn:ss'
     OnChange = tpChange
   end
   object tpEventStart: TTimePicker
@@ -418,7 +418,7 @@ object AutoSchedule: TAutoSchedule
     ImageCollection = ImageCollection1
     Width = 24
     Height = 24
-    Left = 568
-    Top = 136
+    Left = 16
+    Top = 72
   end
 end

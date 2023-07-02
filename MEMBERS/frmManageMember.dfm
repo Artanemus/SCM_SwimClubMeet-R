@@ -158,9 +158,8 @@ object ManageMember: TManageMember
         Height = 646
         Align = alClient
         BevelOuter = bvNone
+        Caption = 'METADATA'
         TabOrder = 0
-        ExplicitWidth = 1330
-        ExplicitHeight = 645
         object Label3: TLabel
           Left = 105
           Top = 139
@@ -344,12 +343,12 @@ object ManageMember: TManageMember
           Layout = tlCenter
         end
         object Label11: TLabel
-          Left = 54
-          Top = 554
-          Width = 85
+          Left = 98
+          Top = 557
+          Width = 41
           Height = 19
           Alignment = taRightJustify
-          Caption = 'METADATA'
+          Caption = 'TAGS'
         end
         object DBlucboGender: TDBLookupComboBox
           Left = 145
@@ -598,7 +597,6 @@ object ManageMember: TManageMember
           Height = 282
           DataSource = ManageMemberData.dsMemberRoleLnk
           DefaultDrawing = False
-          Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
           TabOrder = 16
           TitleFont.Charset = DEFAULT_CHARSET
           TitleFont.Color = clWindowText
@@ -612,7 +610,7 @@ object ManageMember: TManageMember
           OnKeyDown = DBGridKeyDown
           Columns = <
             item
-              DropDownRows = 10
+              DropDownRows = 20
               Expanded = False
               FieldName = 'luMemberRoleStr'
               Title.Caption = 'Member'#39's Roles'
@@ -661,8 +659,10 @@ object ManageMember: TManageMember
         object DBMemo1: TDBMemo
           Left = 145
           Top = 554
-          Width = 815
+          Width = 422
           Height = 89
+          DataField = 'METADATA'
+          DataSource = ManageMemberData.dsMember
           TabOrder = 18
         end
       end
