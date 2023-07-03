@@ -707,6 +707,7 @@ object ManageMemberData: TManageMemberData
   end
   object qryMemberRoleLnk: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    BeforePost = qryMemberRoleLnkBeforePost
     OnNewRecord = qryMemberRoleLnkNewRecord
     IndexFieldNames = 'MemberRoleID;MemberID'
     Connection = SCM.scmConnection
@@ -765,7 +766,6 @@ object ManageMemberData: TManageMemberData
       LookupResultField = 'Caption'
       KeyFields = 'MemberRoleID'
       Required = True
-      OnChange = qryMemberRoleLnkluMemberRoleStrChange
       Lookup = True
     end
   end

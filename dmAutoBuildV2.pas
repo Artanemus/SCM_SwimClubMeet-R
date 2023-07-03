@@ -135,7 +135,7 @@ begin
   { INFO: group on....
     0-No (DEFAULT),
     1-Entrant Age,
-    2-Entrant MembershipType,
+    2-Entrant Swimming Category,
     3-Division
   }
 
@@ -151,7 +151,7 @@ begin
       1: // GroupBy Gender. may produce a very large amount of heats!
         ds := qryGenderAgeCount;
       2:
-        // GroupBy MembershipType
+        // GroupBy Swimming Category
         ds := qryGenderMemberTypeCount;
       3:
         { TODO -oBSA -cGeneral : Sperate gender and GroupBy Division }
@@ -1135,7 +1135,7 @@ begin
   { /group on....
     Don't (DEFAULT),
     Entrant Age,
-    Entrant MembershipType,
+    Entrant Swimming Category,
     Division
   }
   prefGroupBy := iFile.ReadInteger('Preferences', 'GroupBy', 0);

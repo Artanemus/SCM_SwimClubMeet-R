@@ -535,13 +535,6 @@ begin
             DataSource.DataSet.Post();
             Key := NULL;
           end;
-          if (fld.FieldName = 'luMemberRoleStr') then
-          begin
-            DataSource.DataSet.Edit();
-            DataSource.DataSet.FieldByName('MemberRoleID').Clear();
-            DataSource.DataSet.Post();
-            Key := NULL;
-          end;
         end;
       end;
     end;

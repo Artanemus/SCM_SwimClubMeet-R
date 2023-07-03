@@ -91,14 +91,14 @@ type
     procedure qryMemberAfterScroll(DataSet: TDataSet);
     procedure qryMemberBeforeDelete(DataSet: TDataSet);
     procedure qryMemberMETADATAGetText(Sender: TField; var Text: string;
-        DisplayText: Boolean);
+      DisplayText: Boolean);
     procedure qryMemberMETADATASetText(Sender: TField; const Text: string);
-    procedure qryMemberRoleLnkluMemberRoleStrChange(Sender: TField);
+    procedure qryMemberRoleLnkBeforePost(DataSet: TDataSet);
     procedure qryMemberRoleLnkNewRecord(DataSet: TDataSet);
   private
     FConnection: TFDConnection;
     { Private declarations }
-    fManageMemberDataActive: boolean;
+    fManageMemberDataActive: Boolean;
     fRecordCount: Integer;
     procedure UpdateMembersPersonalBest;
   public
@@ -107,12 +107,12 @@ type
       AConnection: TFDConnection);
     procedure ActivateTable();
     procedure FixNullBooleans();
-    function LocateMember(MemberID: Integer): boolean;
+    function LocateMember(MemberID: Integer): Boolean;
     procedure UpdateDOB(DOB: TDateTime);
     procedure UpdateMember(SwimClubID: Integer;
-      hideArchived, hideInactive, hideNonSwimmer: boolean);
+      hideArchived, hideInactive, hideNonSwimmer: Boolean);
     property Connection: TFDConnection read FConnection write FConnection;
-    property ManageMemberDataActive: boolean read fManageMemberDataActive
+    property ManageMemberDataActive: Boolean read fManageMemberDataActive
       write fManageMemberDataActive;
     property RecordCount: Integer read fRecordCount;
   end;
@@ -197,7 +197,7 @@ begin
   end;
 end;
 
-function TManageMemberData.LocateMember(MemberID: Integer): boolean;
+function TManageMemberData.LocateMember(MemberID: Integer): Boolean;
 var
   SearchOptions: TLocateOptions;
 begin
@@ -328,34 +328,41 @@ begin
   end;
 end;
 
-procedure TManageMemberData.qryMemberMETADATAGetText(Sender: TField; var Text:
-    string; DisplayText: Boolean);
+procedure TManageMemberData.qryMemberMETADATAGetText(Sender: TField;
+  var Text: string; DisplayText: Boolean);
 begin
   Text := Sender.AsString;
 end;
 
-procedure TManageMemberData.qryMemberMETADATASetText(Sender: TField; const
-    Text: string);
+procedure TManageMemberData.qryMemberMETADATASetText(Sender: TField;
+  const Text: string);
 begin
-    Sender.AsString := Text;
+  Sender.AsString := Text;
 end;
 
-procedure TManageMemberData.qryMemberRoleLnkluMemberRoleStrChange
-  (Sender: TField);
+procedure TManageMemberData.qryMemberRoleLnkBeforePost(DataSet: TDataSet);
+var
+  SQL: string;
+  v: variant;
+  fld: TField;
 begin
-  // test that MemberID has been assigned
-//  if qryMemberRoleLnk.FieldByName('MemberID').IsNull then
-//  begin
-//    qryMemberRoleLnk.FieldByName('MemberID').AsInteger :=
-//      dsMember.DataSet.FieldByName('MemberID').AsInteger;
-//    qryMemberRoleLnk.FieldByName('IsArchived').AsBoolean := false;
-//    qryMemberRoleLnk.FieldByName('IsActive').AsBoolean := false;
-//  end;
+  // Validate MemberRoleID
+  fld := DataSet.FieldByName('MemberRoleID');
+  if (fld.IsNull) then
+    Abort;
+  // raise Exception.Create('A member''s role must be assigned.');
+  // test for duplicity ...
+  SQL := 'SELECT COUNT(MemberRoleID) FROM dbo.MemberRoleLink WHERE MemberRoleID = '
+    + IntToStr(fld.AsInteger);
+  v := FConnection.ExecSQLScalar(SQL);
+  if (v <> 0) then
+    Abort;
+  // raise Exception.Create('A member cannot have the same role twice.');
 end;
 
 procedure TManageMemberData.qryMemberRoleLnkNewRecord(DataSet: TDataSet);
 var
-fld: TField;
+  fld: TField;
 begin
   fld := DataSet.FieldByName('IsArchived');
   if (fld.IsNull) then
@@ -372,11 +379,11 @@ begin
   begin
     fld.AsInteger := dsMember.DataSet.FieldByName('MemberID').AsInteger;
   end;
-//  fld := DataSet.FieldByName('MemberRoleID');
-//  if (fld.IsNull) then
-//  begin
-//    fld.AsInteger := 0;
-//  end;
+  // fld := DataSet.FieldByName('MemberRoleID');
+  // if (fld.IsNull) then
+  // begin
+  // fld.AsInteger := 0;
+  // end;
 end;
 
 procedure TManageMemberData.UpdateDOB(DOB: TDateTime);
@@ -393,7 +400,7 @@ begin
 end;
 
 procedure TManageMemberData.UpdateMember(SwimClubID: Integer;
-  hideArchived, hideInactive, hideNonSwimmer: boolean);
+  hideArchived, hideInactive, hideNonSwimmer: Boolean);
 begin
   if not Assigned(FConnection) then
     exit;

@@ -160,6 +160,8 @@ object ManageMember: TManageMember
         BevelOuter = bvNone
         Caption = 'METADATA'
         TabOrder = 0
+        ExplicitWidth = 1330
+        ExplicitHeight = 645
         object Label3: TLabel
           Left = 105
           Top = 139
@@ -593,7 +595,7 @@ object ManageMember: TManageMember
         object DBGridRole: TDBGrid
           Left = 573
           Top = 263
-          Width = 387
+          Width = 391
           Height = 282
           DataSource = ManageMemberData.dsMemberRoleLnk
           DefaultDrawing = False
@@ -607,13 +609,13 @@ object ManageMember: TManageMember
           OnColEnter = DBGridColEnter
           OnColExit = DBGridColExit
           OnDrawColumnCell = DBGridDrawColumnCell
-          OnKeyDown = DBGridKeyDown
           Columns = <
             item
-              DropDownRows = 20
+              DropDownRows = 16
               Expanded = False
               FieldName = 'luMemberRoleStr'
               Title.Caption = 'Member'#39's Roles'
+              Width = 200
               Visible = True
             end
             item
@@ -632,7 +634,7 @@ object ManageMember: TManageMember
             end>
         end
         object DBNavigator2: TDBNavigator
-          Left = 966
+          Left = 970
           Top = 263
           Width = 60
           Height = 204
@@ -706,27 +708,32 @@ object ManageMember: TManageMember
           item
             Expanded = False
             FieldName = 'MembershipNum'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'FirstName'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'LastName'
+            Width = 64
             Visible = True
           end
           item
             ButtonStyle = cbsEllipsis
             Expanded = False
             FieldName = 'DOB'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luGender'
+            Width = 64
             Visible = True
           end
           item
@@ -734,6 +741,7 @@ object ManageMember: TManageMember
             Expanded = False
             FieldName = 'IsArchived'
             Title.Caption = 'Archive'
+            Width = 64
             Visible = True
           end
           item
@@ -747,11 +755,13 @@ object ManageMember: TManageMember
             Expanded = False
             FieldName = 'IsSwimmer'
             Title.Caption = 'Swims'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luHouse'
+            Width = 64
             Visible = True
           end
           item
