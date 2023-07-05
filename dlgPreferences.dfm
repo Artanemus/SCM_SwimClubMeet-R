@@ -57,7 +57,7 @@ object Preferences: TPreferences
       654
       48)
     object btnClose: TButton
-      Left = 512
+      Left = 508
       Top = 6
       Width = 101
       Height = 33
@@ -65,7 +65,7 @@ object Preferences: TPreferences
       Caption = 'Close'
       TabOrder = 0
       OnClick = btnCloseClick
-      ExplicitLeft = 508
+      ExplicitLeft = 504
     end
   end
   object PageControl1: TPageControl
@@ -368,7 +368,7 @@ object Preferences: TPreferences
         ParentFont = False
       end
       object btn1: TSpeedButton
-        Left = 181
+        Left = 177
         Top = 15
         Width = 33
         Height = 33

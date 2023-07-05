@@ -19,15 +19,17 @@ type
     Button2: TButton;
     Button3: TButton;
     Panel1: TPanel;
+    qryStroke: TFDQuery;
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
         fConnection: TFDConnection;
+        fEntrantID: integer;
   public
     { Public declarations }
     constructor CreateWithConnection(AOwner: TComponent;
       aConnection: TFDConnection);
-
+    property EntrantID: integer read FEntrantID write FEntrantID;
   end;
 
 var
@@ -44,6 +46,13 @@ constructor TDisqualifyCode.CreateWithConnection(AOwner: TComponent;
 begin
   inherited Create(AOwner);
   fConnection := aConnection;
+  fEntrantID := 0;
+
+  if Assigned(fConnection) and fConnection.Connected then
+  BEGIN
+    qryStroke.Connection := fConnection;
+    qryDisqualifyCode.Connection := fConnection;
+  END;
 end;
 
 procedure TDisqualifyCode.FormCreate(Sender: TObject);
@@ -51,6 +60,13 @@ begin
   // prepare SQL
   // assign RB
   //
+  if fEntrantID > 0 then
+  begin
+    qryStroke.ParamByName('EntrantID').AsInteger := fEntrantID;
+    qryStroke.Prepare;
+  end;
+
+
 end;
 
 end.

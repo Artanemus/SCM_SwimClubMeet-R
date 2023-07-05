@@ -32,7 +32,7 @@ object Main: TMain
       Top = 0
       Width = 1414
       Height = 798
-      ActivePage = TabSheet1
+      ActivePage = TabSheet3
       Align = alClient
       Style = tsFlatButtons
       TabOrder = 0
@@ -1058,6 +1058,48 @@ object Main: TMain
             OnEditButtonClick = Entrant_GridEditButtonClick
             OnEnter = Entrant_GridEnter
             OnKeyDown = Entrant_GridKeyDown
+            Columns = <
+              item
+                Expanded = False
+                FieldName = 'Lane'
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'FullName'
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'RaceTime'
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'TimeToBeat'
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'PersonalBest'
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'IsScratched'
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'IsDisqualified'
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'DCode'
+                Width = 90
+                Visible = True
+              end>
           end
           object EntrantWidgets: TRelativePanel
             Left = 1044
@@ -1294,7 +1336,7 @@ object Main: TMain
             Margins.Right = 66
             Margins.Bottom = 0
             Anchors = []
-            ItemCount = 34
+            ItemCount = 35
             ItemWidth = 200
             ItemHeight = 68
             ItemIndex = 0
@@ -1814,6 +1856,8 @@ object Main: TMain
             Height = 622
             Align = alLeft
             BorderStyle = bsNone
+            ItemCount = 2
+            ItemIndex = 0
             ItemMargins.Left = 0
             ItemMargins.Top = 0
             ItemMargins.Right = 0
@@ -1854,6 +1898,7 @@ object Main: TMain
               Height = 32
               Alignment = taCenter
               AutoSize = False
+              Caption = '1'
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWindowText
               Font.Height = -24
@@ -7277,5 +7322,10 @@ object Main: TMain
     Height = 32
     Left = 424
     Top = 352
+  end
+  object SQLQuery1: TSQLQuery
+    Params = <>
+    Left = 696
+    Top = 472
   end
 end

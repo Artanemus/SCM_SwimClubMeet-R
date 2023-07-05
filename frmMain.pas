@@ -13,7 +13,8 @@ uses
   Vcl.ImageCollection, Vcl.WinXCtrls, Vcl.ControlList, Data.Bind.EngExt,
   Vcl.Bind.DBEngExt, Vcl.Bind.ControlList, System.Rtti, System.Bindings.Outputs,
   Vcl.Bind.Editors, Data.Bind.Components, Data.Bind.Grid, Data.Bind.DBScope,
-  Vcl.ToolWin, Vcl.ActnCtrls, Vcl.ActnMenus, Vcl.PlatformVclStylesActnCtrls;
+  Vcl.ToolWin, Vcl.ActnCtrls, Vcl.ActnMenus, Vcl.PlatformVclStylesActnCtrls,
+  Data.FMTBcd, Data.SqlExpr;
 
 type
 
@@ -265,6 +266,7 @@ type
     Nominate_MemeberDetails: TAction;
     Tools_DisqualifyCodes: TAction;
     Event_AutoSchedule: TAction;
+    SQLQuery1: TSQLQuery;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure SCM_RefreshExecute(Sender: TObject);
@@ -421,9 +423,8 @@ type
     fEntrantEditBoxNormal: TColor;
     fEntrantBgColor: TColor;
     fscmStyleName: String;
-    prefEnableTeamEvents: Boolean;
-    prefEnableFINAcodes: Boolean;
-
+    prefEnableTeamEvents: boolean;
+    prefEnableFINAcodes: boolean;
 
     // Internet connection state
     fMyInternetConnected: boolean;
@@ -439,7 +440,7 @@ type
     procedure Refresh_Nominate();
 
     // FINA CODES
-    procedure ToggleFINA(EnableFINA: Boolean);
+    procedure ToggleFINA(EnableFINA: boolean);
 
     // Miscellaneous - uncatagorized
     procedure GetSCMPreferences();
@@ -843,7 +844,8 @@ begin
     if gdFocused in State then
       Entrant_Grid.Canvas.DrawFocusRect(Rect);
   end
-  else if (Column.Field.FieldName = 'FullName') then
+  else if (Column.Field.FieldName = 'FullName') or (Column.FieldName = 'DCode')
+  then
   begin
     // ENABLE the button if not enabled
     if (Column.ButtonStyle <> TColumnButtonStyle.cbsEllipsis) then
@@ -874,19 +876,24 @@ begin
   if not AssertConnection then
     exit;
   rtnValue := mrCancel;
+
   SCM.dsEntrant.DataSet.DisableControls;
   EntrantID := SCM.dsEntrant.DataSet.FieldByName('EntrantID').AsInteger;
 
   // handle the ellipse button for the disqualification code
   fld := TDBGrid(Sender).SelectedField;
-  if fld.Name = 'DCode' then
+  if fld.FieldName = 'DCode' then
   begin
+    if not SCM.dsEntrant.DataSet.FieldByName('MemberID').IsNull then
+    begin
       dlgDCode := TDisqualifyCode.CreateWithConnection(self, SCM.scmConnection);
+      dlgDCode.EntrantID := EntrantID;
       rtnValue := dlgDCode.ShowModal;
       dlgDCode.Free;
+    end;
   end
   // handle the ellipse entrant
-  else if fld.Name = 'FullName' then
+  else if fld.FieldName = 'FullName' then
   begin
     if ((GetKeyState(VK_CONTROL) and 128) = 128) then
     begin
@@ -905,15 +912,15 @@ begin
         rtnValue := dlg.ShowModal;
       dlg.Free;
     end;
-
-    // require a refresh to update members details
-    if passed and IsPositiveResult(rtnValue) then
-    begin
-      SCM.dsEntrant.DataSet.Refresh;
-      SCM.Entrant_Locate(EntrantID);
-    end;
-
   end;
+
+  // require a refresh to update members details
+  if passed and IsPositiveResult(rtnValue) then
+  begin
+    SCM.dsEntrant.DataSet.Refresh;
+    SCM.Entrant_Locate(EntrantID);
+  end;
+
   SCM.dsEntrant.DataSet.EnableControls;
 end;
 
@@ -1938,6 +1945,7 @@ var
   aBasicLogin: TBasicLogin; // 24/04/2020 uses simple INI access
   result: TModalResult;
   hf: NativeUInt;
+  fld: TField;
 begin
   bootprogress := nil;
   SCMEventList := nil;
@@ -2206,6 +2214,7 @@ begin
   Screen.MenuFont.Name := 'Segoe UI Semibold';
   Screen.MenuFont.Size := 12;
   ActionManager1.Style := PlatformVclStylesStyle;
+
 end;
 
 procedure TMain.FormDestroy(Sender: TObject);
@@ -2329,7 +2338,7 @@ begin
     fEntrantBgColor := clAppWorkSpace;
   end;
 
-    // 2023.06.26
+  // 2023.06.26
   prefEnableTeamEvents := iFile.ReadBool('Preferences',
     'EnableTeamEvents', false);
   prefEnableFINAcodes := iFile.ReadBool('Preferences',
@@ -3581,6 +3590,7 @@ end;
 procedure TMain.Refresh_Entrant;
 var
   bm: TBookmark;
+  fld: TField;
 begin
   if not AssertConnection then
     exit;
@@ -4311,34 +4321,44 @@ begin
   TAction(Sender).Enabled := DoEnable;
 end;
 
-procedure TMain.ToggleFINA(EnableFINA: Boolean);
+procedure TMain.ToggleFINA(EnableFINA: boolean);
 var
   fld: TField;
+  i: integer;
 begin
-// toggle FINA codes of simple scratch/disqualified
-    SCM.qryEntrant.DisableControls;
-    // i s S c r a t c h e d   . . .
-    fld := SCM.qryEntrant.FindField('IsScratched');
-    if Assigned(fld) then
+  // toggle FINA codes of simple scratch/disqualified
+  SCM.qryEntrant.DisableControls;
+  for i := 0 to Entrant_Grid.Columns.Count - 1 do
+  begin
+    if (Entrant_Grid.Columns[i].Field <> Nil) then
     begin
-      if EnableFINA then
-        fld.Visible := false else fld.Visible := true;
+      if (CompareText(Entrant_Grid.Columns[i].FieldName, 'DCode') = 0) then
+        Entrant_Grid.Columns[i].Visible := EnableFINA;
+      if (CompareText(Entrant_Grid.Columns[i].FieldName, 'IsScratched') = 0)
+      then
+        Entrant_Grid.Columns[i].Visible := not EnableFINA;
+      if (CompareText(Entrant_Grid.Columns[i].FieldName, 'IsDisqualified') = 0)
+      then
+        Entrant_Grid.Columns[i].Visible := not EnableFINA;
     end;
-    // i s D i s q u a l i f i e d   . . .
-    fld := SCM.qryEntrant.FindField('IsDisqualified');
-    if Assigned(fld) then
-    begin
-      if EnableFINA then
-        fld.Visible := false else fld.Visible := true;
-    end;
-    // FinaCode   . . .
-    fld := SCM.qryEntrant.FindField('luDisqualifyCode');
-    if Assigned(fld) then
-    begin
-      if EnableFINA then
-        fld.Visible := true else fld.Visible := false;
-    end;
-    SCM.qryEntrant.EnableControls;
+  end;
+
+  // DOESN'T EFFECT THE VISIBILITY IN THE TDBGRID
+  // When columns have been assigned in the 'Column Editor'.
+  // // i s S c r a t c h e d   . . .
+  // fld := Entrant_Grid.DataSource.DataSet.FindField('IsScratched');
+  // if Assigned(fld) then
+  // fld.Visible := EnableFINA;
+  // // i s D i s q u a l i f i e d   . . .
+  // fld := Entrant_Grid.DataSource.DataSet.FindField('IsDisqualified');
+  // if Assigned(fld) then
+  // fld.Visible := not EnableFINA;
+  // // FinaCode   . . .
+  // fld := Entrant_Grid.DataSource.DataSet.FindField('DCode');
+  // if Assigned(fld) then
+  // fld.Visible := not EnableFINA;
+
+  SCM.qryEntrant.EnableControls;
 end;
 
 procedure TMain.Tools_ConnectionManagerExecute(Sender: TObject);
@@ -4526,9 +4546,13 @@ begin
   dlg.Free;
 
   GetSCMPreferences();
+
+  ToggleFINA(prefEnableFINAcodes);
+
   // deals with some repaint issues if event title is enabled/disabled
   { TODO -oBSA -cGeneral : Call action SCMRefresh? }
   Refresh_Event();
+
   SCM.qrySwimClub.Refresh();
 end;
 

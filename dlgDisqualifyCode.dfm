@@ -44,8 +44,8 @@ object DisqualifyCode: TDisqualifyCode
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 3
-    ExplicitTop = 560
-    ExplicitWidth = 1109
+    ExplicitTop = 440
+    ExplicitWidth = 913
     object Button1: TButton
       Left = 710
       Top = 18
@@ -102,13 +102,39 @@ object DisqualifyCode: TDisqualifyCode
       '      OR [DisqualifyCode].[DisqualifyTypeID] = 8'
       'ORDER BY [DisqualifyCode].[DisqualifyTypeID];')
     Left = 440
-    Top = 232
+    Top = 112
     ParamData = <
       item
         Name = 'DISQUALIFYTYPEID'
         DataType = ftInteger
         ParamType = ptInput
         Value = 3
+      end>
+  end
+  object qryStroke: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    Active = True
+    Connection = SCM.scmConnection
+    SQL.Strings = (
+      'USE  SwimClubMeet ;'
+      ''
+      'DECLARE @EntrantID AS INTEGER;'
+      'SET @EntrantID = :ENTRANTID;'
+      ''
+      'SELECT StrokeID FROM dbo.Entrant'
+      
+        'INNER JOIN HeatIndividual ON  Entrant.HeatID = HeatIndividual.He' +
+        'atID'
+      'INNER JOIN [Event] ON HeatIndividual.EventID = [Event].EventID'
+      'WHERE Entrant.EntrantID = @EntrantID;')
+    Left = 440
+    Top = 216
+    ParamData = <
+      item
+        Name = 'ENTRANTID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = Null
       end>
   end
 end

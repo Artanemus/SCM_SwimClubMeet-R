@@ -202,6 +202,7 @@ object SCM: TSCM
   end
   object qryEntrant: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     BeforeInsert = qryEntrantBeforeInsert
     AfterScroll = qryEntrantAfterScroll
     IndexFieldNames = 'HeatID'
@@ -354,6 +355,7 @@ object SCM: TSCM
     object qryEntrantDCode: TWideStringField
       FieldName = 'DCode'
       Origin = 'DCode'
+      ReadOnly = True
       Size = 8
     end
   end
@@ -1553,6 +1555,7 @@ object SCM: TSCM
   end
   object qryHeat: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     AfterPost = qryHeatAfterPost
     AfterDelete = qryHeatAfterDelete
     AfterScroll = qryHeatAfterScroll
