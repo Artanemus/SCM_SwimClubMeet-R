@@ -380,8 +380,8 @@
             <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
-        <DCCReference Include="dlgDisqualifyCode.pas">
-            <Form>DisqualifyCode</Form>
+        <DCCReference Include="dlgDCodePicker.pas">
+            <Form>DCodePicker</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="AutoBuildRelayAlgorithm.pas"/>

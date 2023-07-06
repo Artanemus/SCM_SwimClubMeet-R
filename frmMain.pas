@@ -511,7 +511,7 @@ uses
   dlgSelectPrinter, ioutils, dlgBatchProgress, dlgAutoBuildPref, ShellAPI,
   UEnvVars, dlgEntrantPicker, dlgEntrantPickerCTRL, dmSCMNom, dlgSwapLanes,
   dlgDBVerInfo, rptHeatReportA, rptHeatReportB, frmDisqualificationCodes,
-  dlgAutoSchedule, dlgDisqualifyCode;
+  dlgAutoSchedule, dlgDCodePicker;
 
 procedure TMain.ActionManager1Update(Action: TBasicAction;
   var Handled: boolean);
@@ -868,11 +868,12 @@ var
   passed: boolean;
   dlg: TEntrantPicker;
   dlgCntrl: TEntrantPickerCTRL;
-  dlgDCode: TDisqualifyCode;
+  dlgDCode: TDCodePicker;
   EntrantID: integer;
   rtnValue: TModalResult;
   fld: TField;
 begin
+  passed := false;
   if not AssertConnection then
     exit;
   rtnValue := mrCancel;
@@ -886,7 +887,7 @@ begin
   begin
     if not SCM.dsEntrant.DataSet.FieldByName('MemberID').IsNull then
     begin
-      dlgDCode := TDisqualifyCode.CreateWithConnection(self, SCM.scmConnection);
+      dlgDCode := TDCodePicker.CreateWithConnection(self, SCM.scmConnection);
       dlgDCode.EntrantID := EntrantID;
       rtnValue := dlgDCode.ShowModal;
       dlgDCode.Free;
@@ -1945,7 +1946,6 @@ var
   aBasicLogin: TBasicLogin; // 24/04/2020 uses simple INI access
   result: TModalResult;
   hf: NativeUInt;
-  fld: TField;
 begin
   bootprogress := nil;
   SCMEventList := nil;
@@ -3590,7 +3590,6 @@ end;
 procedure TMain.Refresh_Entrant;
 var
   bm: TBookmark;
-  fld: TField;
 begin
   if not AssertConnection then
     exit;
@@ -4323,7 +4322,6 @@ end;
 
 procedure TMain.ToggleFINA(EnableFINA: boolean);
 var
-  fld: TField;
   i: integer;
 begin
   // toggle FINA codes of simple scratch/disqualified
