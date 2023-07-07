@@ -50,7 +50,6 @@ object Main: TMain
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitHeight = 758
           object pnlSessLeftTop: TPanel
             Left = 0
             Top = 0
@@ -177,7 +176,6 @@ object Main: TMain
             Align = alRight
             BevelOuter = bvNone
             TabOrder = 2
-            ExplicitHeight = 738
             DesignSize = (
               60
               739)
@@ -293,8 +291,6 @@ object Main: TMain
           BevelOuter = bvNone
           Caption = 'pnlSessionClient'
           TabOrder = 1
-          ExplicitWidth = 673
-          ExplicitHeight = 758
           object pnlSessClientTop: TPanel
             Left = 0
             Top = 0
@@ -303,7 +299,6 @@ object Main: TMain
             Align = alTop
             BevelOuter = bvNone
             TabOrder = 0
-            ExplicitWidth = 673
             object lblSessionEventCaption: TLabel
               Left = 6
               Top = -3
@@ -321,8 +316,6 @@ object Main: TMain
             BevelOuter = bvNone
             Caption = 'Panel7'
             TabOrder = 1
-            ExplicitWidth = 673
-            ExplicitHeight = 738
             object Event_Grid: TDBGrid
               AlignWithMargins = True
               Left = 10
@@ -444,8 +437,6 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 1
-              ExplicitLeft = 613
-              ExplicitHeight = 738
               DesignSize = (
                 60
                 739)
@@ -1045,7 +1036,6 @@ object Main: TMain
             Anchors = []
             DataSource = SCM.dsEntrant
             DefaultDrawing = False
-            Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgTitleClick, dgTitleHotTrack]
             PopupMenu = pumEntrant
             TabOrder = 0
             TitleFont.Charset = DEFAULT_CHARSET
@@ -1069,31 +1059,37 @@ object Main: TMain
               item
                 Expanded = False
                 FieldName = 'FullName'
+                Width = 64
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'RaceTime'
+                Width = 64
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'TimeToBeat'
+                Width = 64
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'PersonalBest'
+                Width = 64
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'IsScratched'
+                Width = 64
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'IsDisqualified'
+                Width = 64
                 Visible = True
               end
               item

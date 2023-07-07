@@ -331,8 +331,6 @@ uses
 { TSCM }
 
 procedure TSCM.ActivateTable;
-var
-  fld: TField;
 begin
   // -----------------------------------------------------------
   // 24/04/2020 Always ASSERT fSCMActive state.
@@ -677,7 +675,7 @@ end;
 
 procedure TSCM.Entrant_DeleteExcessLanes(aHeatID: integer);
 var
-  NumOfLanes, CountLanesInHeat, i, LanesToBuild: integer;
+  NumOfLanes, i: integer;
 begin
   if not fSCMActive then
     exit;

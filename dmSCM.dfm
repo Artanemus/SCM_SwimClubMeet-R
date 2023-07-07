@@ -202,7 +202,6 @@ object SCM: TSCM
   end
   object qryEntrant: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     BeforeInsert = qryEntrantBeforeInsert
     AfterScroll = qryEntrantAfterScroll
     IndexFieldNames = 'HeatID'
@@ -247,7 +246,7 @@ object SCM: TSCM
       '                       , UPPER(Member.LastName)'
       '                     )'
       '       END AS FullName'
-      '     , DisqualifyCode.Caption AS DCode'
+      '     , DisqualifyCode.ABREV AS DCode'
       '     , Entrant.DisqualifyCodeID'
       'FROM Entrant'
       '    LEFT OUTER JOIN Member'

@@ -3,8 +3,8 @@ object DisqualificationCodes: TDisqualificationCodes
   Top = 0
   BorderStyle = bsDialog
   Caption = 'FINA Disqualification Codes'
-  ClientHeight = 892
-  ClientWidth = 842
+  ClientHeight = 891
+  ClientWidth = 838
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,8 +20,8 @@ object DisqualificationCodes: TDisqualificationCodes
   object frxPreview1: TfrxPreview
     Left = 0
     Top = 0
-    Width = 842
-    Height = 830
+    Width = 838
+    Height = 829
     Align = alClient
     ActiveFrameColor = clNone
     BevelInner = bvNone
@@ -33,24 +33,22 @@ object DisqualificationCodes: TDisqualificationCodes
     FindFmVisible = False
     UseReportHints = True
     HideScrolls = False
-    ExplicitWidth = 838
-    ExplicitHeight = 829
+    ExplicitWidth = 842
+    ExplicitHeight = 830
   end
   object Panel1: TPanel
     Left = 0
-    Top = 830
-    Width = 842
+    Top = 829
+    Width = 838
     Height = 62
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 829
-    ExplicitWidth = 838
     DesignSize = (
-      842
+      838
       62)
     object btnPrintPDF: TButton
-      Left = 635
+      Left = 627
       Top = 16
       Width = 80
       Height = 29
@@ -61,7 +59,7 @@ object DisqualificationCodes: TDisqualificationCodes
       ExplicitLeft = 631
     end
     object btnClose: TButton
-      Left = 721
+      Left = 713
       Top = 16
       Width = 80
       Height = 29

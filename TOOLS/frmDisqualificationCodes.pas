@@ -30,7 +30,6 @@ type
     procedure FormShow(Sender: TObject);
   private
     { Private declarations }
-    fConnection: TFDConnection;
   public
     { Public declarations }
     constructor CreateWithConnection(AOwner: TComponent;

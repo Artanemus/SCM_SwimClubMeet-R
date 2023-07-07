@@ -11,6 +11,7 @@ object DCodePicker: TDCodePicker
   Font.Height = -16
   Font.Name = 'Segoe UI'
   Font.Style = []
+  KeyPreview = True
   Position = poMainFormCenter
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
@@ -24,8 +25,8 @@ object DCodePicker: TDCodePicker
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 440
-    ExplicitWidth = 913
+    ExplicitTop = 714
+    ExplicitWidth = 530
     object btnOk: TButton
       Left = 348
       Top = 18
@@ -44,13 +45,14 @@ object DCodePicker: TDCodePicker
       TabOrder = 1
       OnClick = btnCancelClick
     end
-    object Button3: TButton
+    object btnClearCodeExit: TButton
       Left = 14
       Top = 18
       Width = 161
       Height = 33
       Caption = 'Clear Code and Exit'
       TabOrder = 2
+      OnClick = btnClearCodeExitClick
     end
   end
   object lvCodes: TListView
@@ -105,7 +107,7 @@ object DCodePicker: TDCodePicker
         State = [lgsNormal]
         HeaderAlign = taLeftJustify
         FooterAlign = taLeftJustify
-        Subtitle = 'Extended DCode schema.'
+        Subtitle = 'Extended DCodes for simplified schema.'
         TitleImage = -1
       end>
     IconOptions.AutoArrange = True
@@ -124,8 +126,11 @@ object DCodePicker: TDCodePicker
     ShowHint = False
     TabOrder = 1
     ViewStyle = vsReport
+    OnDblClick = lvCodesDblClick
     ExplicitLeft = 8
     ExplicitTop = 0
+    ExplicitWidth = 517
+    ExplicitHeight = 708
   end
   object qryDisqualifyCode: TFDQuery
     ActiveStoredUsage = [auDesignTime]

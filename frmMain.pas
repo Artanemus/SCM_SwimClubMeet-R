@@ -800,29 +800,62 @@ procedure TMain.Entrant_GridCellClick(Column: TColumn);
 begin
   if Assigned(Column.Field) and (Column.Field.DataType = ftBoolean) then
   begin
+    // Editing must be enabled for FUllName, RaceTime and DCode
+    // ...BUT if editing is enabled and focus is on CheckBoxes
+    // then 'true/false' text appears
+    // (custom paint routine not called during editing).
+
+    // If the field is boolean, switch OFF Grid editing.
+    // Entrant_Grid.Options := Entrant_Grid.Options - [dgEditing];
+
+    Entrant_Grid.BeginUpdate;
     Column.Grid.DataSource.DataSet.Edit;
     Column.Field.value := not Column.Field.AsBoolean;
+    if Column.Field.AsBoolean = false then
+      Column.Grid.DataSource.DataSet.FieldByName('DisqualifyCodeID').Clear
+    else
+    begin
+      if Column.FieldName = 'IsScratched' then
+        Column.Grid.DataSource.DataSet.FieldByName('DisqualifyCodeID')
+          .AsInteger := 53
+      else if Column.FieldName = 'IsDisqualified' then
+        Column.Grid.DataSource.DataSet.FieldByName('DisqualifyCodeID')
+          .AsInteger := 54;
+    end;
     Column.Grid.DataSource.DataSet.Post;
+    // Entrant_Grid.Update;
+    Entrant_Grid.EndUpdate;
+    // Entrant_Grid.RePaint;
   end;
 end;
 
 procedure TMain.Entrant_GridColEnter(Sender: TObject);
+var
+  fld: TField;
 begin
-  // Important to cast TBGridOptions - else assignment desn't work!
-  // If the field is boolean, switch off Grid editing, else allow editing
-  if Assigned(Entrant_Grid.SelectedField) and
-    (Entrant_Grid.SelectedField.DataType = ftBoolean) then
-    // Important to use TBGridOptions constructor
-    // - else assignment desn't work!
-    Entrant_Grid.Options := Entrant_Grid.Options + [dgEditing];
-
+  // If the field is boolean, switch OFF Grid editing.
+  fld := Entrant_Grid.SelectedField;
+  if Assigned(fld) then
+  begin
+    if (fld.FieldName = 'RaceTime') or (fld.FieldName = 'DCode') or
+      (fld.FieldName = 'FullName') then
+      Entrant_Grid.EditorMode := true
+    else
+      Entrant_Grid.EditorMode := false;
+  end
 end;
 
 procedure TMain.Entrant_GridColExit(Sender: TObject);
 begin
-  if Assigned(Entrant_Grid.SelectedField) and
-    (Entrant_Grid.SelectedField.DataType = ftBoolean) then
-    Entrant_Grid.Options := Entrant_Grid.Options + [dgEditing];
+  // Editing must be enabled for FullName, RaceTime and DCode
+  // If the field is boolean, switch ON Grid editing.
+  // if Assigned(Entrant_Grid.SelectedField) and
+  // (Entrant_Grid.SelectedField.DataType = ftBoolean) then
+  // begin
+  // Entrant_Grid.BeginUpdate;
+  // Entrant_Grid.Options := Entrant_Grid.Options + [dgEditing, dgAlwaysShowEditor];
+  // Entrant_Grid.EndUpdate;
+  // end;
 end;
 
 procedure TMain.Entrant_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -873,7 +906,6 @@ var
   rtnValue: TModalResult;
   fld: TField;
 begin
-  passed := false;
   if not AssertConnection then
     exit;
   rtnValue := mrCancel;
@@ -891,6 +923,11 @@ begin
       dlgDCode.EntrantID := EntrantID;
       rtnValue := dlgDCode.ShowModal;
       dlgDCode.Free;
+      if IsPositiveResult(rtnValue) then
+      begin
+        SCM.dsEntrant.DataSet.Refresh;
+        SCM.Entrant_Locate(EntrantID);
+      end;
     end;
   end
   // handle the ellipse entrant
@@ -904,6 +941,7 @@ begin
       if passed then
         rtnValue := dlgCntrl.ShowModal;
       dlgCntrl.Free;
+
     end
     else
     begin
@@ -913,13 +951,12 @@ begin
         rtnValue := dlg.ShowModal;
       dlg.Free;
     end;
-  end;
-
-  // require a refresh to update members details
-  if passed and IsPositiveResult(rtnValue) then
-  begin
-    SCM.dsEntrant.DataSet.Refresh;
-    SCM.Entrant_Locate(EntrantID);
+    // require a refresh to update members details
+    if passed and IsPositiveResult(rtnValue) then
+    begin
+      SCM.dsEntrant.DataSet.Refresh;
+      SCM.Entrant_Locate(EntrantID);
+    end;
   end;
 
   SCM.dsEntrant.DataSet.EnableControls;
@@ -1166,12 +1203,29 @@ begin
 end;
 
 procedure TMain.Entrant_Scroll(var Msg: TMessage);
+var
+  fld: TField;
 begin
   // messages posted by TSCM.qryMemberQuickPickAfterScroll
   if not AssertConnection then
     exit;
   if Entrant_Grid.Focused then
+  begin
     fDoStatusBarUpdate := true;
+    // After moving row re-engage editing for selected fields.
+    fld := Entrant_Grid.SelectedField;
+    if Assigned(fld) then
+    begin
+      if (fld.FieldName = 'RaceTime') or (fld.FieldName = 'DCode') or
+        (fld.FieldName = 'FullName') then
+        begin
+        Entrant_Grid.EditorMode := true;
+        // Entrant_Grid.SelectAll;
+        end
+      else
+        Entrant_Grid.EditorMode := false;
+    end;
+  end;
 end;
 
 procedure TMain.Entrant_SortExecute(Sender: TObject);
@@ -1257,7 +1311,8 @@ procedure TMain.Entrant_SwapLanesExecute(Sender: TObject);
 var
   dlg: TSwapLanes;
 begin
-  dlg := TSwapLanes.Create(self); // DEPENDANT ON THE SCM DATA MODULE
+  dlg := TSwapLanes.Create(self);
+  // DEPENDANT ON THE SCM DATA MODULE
   if IsPositiveResult(dlg.ShowModal) then
     Refresh_Entrant;
   dlg.Free;
@@ -1506,7 +1561,8 @@ begin
   rtnValue := MessageDlg(SQL, mtConfirmation, [mbYes, mbNo], 0, mbYes);
 
   if (rtnValue = mrYes) then
-    SCM.Event_Delete(); // delete the current selected event.
+    SCM.Event_Delete();
+  // delete the current selected event.
 end;
 
 procedure TMain.Event_DeleteUpdate(Sender: TObject);
@@ -1875,12 +1931,14 @@ begin
     Checked := not Checked;
     if Checked then
     begin
-      ImageIndex := 1; // collapse session grid
+      ImageIndex := 1;
+      // collapse session grid
       pnlSessionLeft.Visible := false;
     end
     else
     begin
-      ImageIndex := 0; // reveal session grid (default)
+      ImageIndex := 0;
+      // reveal session grid (default)
       pnlSessionLeft.Visible := true;
     end;
     // makes visible the event caption field used to enter event details
@@ -1943,7 +2001,8 @@ procedure TMain.FormCreate(Sender: TObject);
 var
   str: string;
   passed: boolean;
-  aBasicLogin: TBasicLogin; // 24/04/2020 uses simple INI access
+  aBasicLogin: TBasicLogin;
+  // 24/04/2020 uses simple INI access
   result: TModalResult;
   hf: NativeUInt;
 begin
@@ -1953,7 +2012,8 @@ begin
   fSCMisInitializing := true;
   fSessionClosedFontColor := clWebTomato;
   fSessionClosedBgColor := clAppWorkSpace;
-  fMyInternetConnected := true; // an assumption is presumed.
+  fMyInternetConnected := true;
+  // an assumption is presumed.
 
   prefEnableTeamEvents := false;
   prefEnableFINAcodes := false;
@@ -2214,6 +2274,11 @@ begin
   Screen.MenuFont.Name := 'Segoe UI Semibold';
   Screen.MenuFont.Size := 12;
   ActionManager1.Style := PlatformVclStylesStyle;
+
+  // ASSERT ENTRANT_GRID OPTION STATE
+  // (Entrant_Grid.EditorMode used to toggle individual cell editing)
+  Entrant_Grid.Options := Entrant_Grid.Options + [dgEditing];
+  Entrant_Grid.Options := Entrant_Grid.Options - [dgAlwaysShowEditor];
 
 end;
 
@@ -2578,7 +2643,8 @@ begin
   with SCM.dsEvent.DataSet do
   begin
     First;
-    while not Eof do // iterate over the events ...
+    while not Eof do
+    // iterate over the events ...
     begin
       // Is the EVENT CLOSED?
       if (FieldByName('EventStatusID').AsInteger = 2) then
@@ -3019,7 +3085,8 @@ begin
         else
         begin
           PrintStatus := psPrinterError;
-          break; // something wrong during printing.
+          break;
+          // something wrong during printing.
         end;
       end;
     end;
@@ -3538,7 +3605,8 @@ begin
         if Nominate_Grid.CanFocus then
           Nominate_Grid.SetFocus;
       end;
-    2: // H e a t s .
+    2:
+      // H e a t s .
       begin
         fDoStatusBarUpdate := true;
         if HeatControlList.CanFocus then
@@ -4144,7 +4212,8 @@ begin
   dlg.SessionMode := smNewSession;
   if IsPositiveResult(dlg.ShowModal) then
   begin
-    SCM.dsSession.DataSet.Refresh; // Requery, Sort.
+    SCM.dsSession.DataSet.Refresh;
+    // Requery, Sort.
     SCM.Session_Locate(dlg.SessionID); // CUE-TO NEW session.
     PostMessage(self.Handle, SCM_EVENTASSERTSTATE, 0, 0);
   end;
@@ -4298,7 +4367,8 @@ begin
     end
     else
     begin
-      ImageIndex := 23; // show locked (default)
+      ImageIndex := 23;
+      // show locked (default)
       spbtnSessionToggleVisible.ImageIndex := 23;
     end;
     // toggle visibility of locked sessions

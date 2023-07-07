@@ -1,4 +1,9 @@
 unit dlgDCodePicker;
+{
+  Normally I would create an Object list with SwimClubmeet.dbo.Entrant data.
+  Instead I've used TListView.Items.SubItems to hold the DisqualifyCodeID
+  as a String param.
+}
 
 interface
 
@@ -16,15 +21,17 @@ type
     qryDisqualifyCode: TFDQuery;
     btnOk: TButton;
     btnCancel: TButton;
-    Button3: TButton;
+    btnClearCodeExit: TButton;
     Panel1: TPanel;
     qryStroke: TFDQuery;
     lvCodes: TListView;
     procedure btnCancelClick(Sender: TObject);
+    procedure btnClearCodeExitClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
+    procedure lvCodesDblClick(Sender: TObject);
   private
     { Private declarations }
     fConnection: TFDConnection;
@@ -48,6 +55,7 @@ constructor TDCodePicker.CreateWithConnection(AOwner: TComponent;
   aConnection: TFDConnection);
 begin
   inherited Create(AOwner);
+  //INIT
   fConnection := aConnection;
   fEntrantID := 0;
 
@@ -61,37 +69,59 @@ end;
 procedure TDCodePicker.btnCancelClick(Sender: TObject);
 begin
   ModalResult := mrCancel;
-  Close;
+end;
+
+procedure TDCodePicker.btnClearCodeExitClick(Sender: TObject);
+var
+SQL: string;
+begin
+    // remove disqualification code and exit
+    SQL := 'UPDATE SwimClubMeet.dbo.Entrant SET' +
+      ' [DisqualifyCodeID] = NULL, [IsScratched] = 0,' +
+      ' [IsDisqualified] = 0 WHERE [Entrant].EntrantID = :ID1;';
+
+    fConnection.ExecSQL(SQL, [fEntrantID]);
+        ModalResult := mrOk;
 end;
 
 procedure TDCodePicker.btnOkClick(Sender: TObject);
 var
-  SQL, ADCodeStr: String;
-  CodeID, CodeTypeID: integer;
+  SQL: String;
+  CodeID: integer;
   IsScratched, IsDisqualified: boolean;
   lvItem: TListItem;
 begin
-  // ALTERNATIVE index := lvCodes.ItemIndex;
   lvItem := lvCodes.Selected;
   if Assigned(lvItem) then
   begin
-    // disqualification label for Entrant_Grid
-    ADCodeStr := lvItem.Caption;
-    // disqualification code ID
-    CodeID := StrToIntDef(lvItem.SubItems[1], 0);
+    // "Simplified Disqualification Schema" :DEFAULT INIT
+    // SCMb - Unspecified disqualification.
     IsScratched := false;
     IsDisqualified := true;
-    SQL := 'UPDATE SwimClubMeet.dbo.Entrant (DisqualifyCodeID, IsScratched, IsDisqualified) ' +
-    ' VALUES (:ID1, :ID2, :ID3) WHERE [Entrant].EntrantID = :ID4;';
-    // fConnection.ExecSQL(SQL, [CodeID, IsScratched, IsArchived, fEntrantID]);
+    // disqualification code ID
+    CodeID := StrToIntDef(lvItem.SubItems[1], 0);
+    // "Simplified Disqualification Schema"
+    // SCMa - Swimmer didn't show for event. Scratched
+    if CodeID = 53 then
+    begin
+      IsScratched := true;
+      IsDisqualified := false;
+    end;
+
+    SQL := 'UPDATE SwimClubMeet.dbo.Entrant SET' +
+      ' [DisqualifyCodeID] = :ID1, [IsScratched] = :ID2,' +
+      ' [IsDisqualified] = :ID3 WHERE [Entrant].EntrantID = :ID4;';
+
+    fConnection.ExecSQL(SQL, [CodeID, IsScratched, IsDisqualified, fEntrantID],
+      [ftInteger, ftBoolean, ftBoolean, ftInteger]);
 
     ModalResult := mrOk;
-    Close;
   end;
 end;
 
 procedure TDCodePicker.FormCreate(Sender: TObject);
 begin
+  // Clear out the DesignTime doodles...
   lvCodes.Items.Clear;
 end;
 
@@ -100,7 +130,6 @@ procedure TDCodePicker.FormKeyDown(Sender: TObject; var Key: Word;
 begin
   if Key = VK_ESCAPE then
     ModalResult := mrCancel;
-  Close;
 end;
 
 procedure TDCodePicker.FormShow(Sender: TObject);
@@ -177,6 +206,11 @@ begin
     lvCodes.Items.EndUpdate;
   end;
 
+end;
+
+procedure TDCodePicker.lvCodesDblClick(Sender: TObject);
+begin
+  btnOkClick(Sender);
 end;
 
 end.

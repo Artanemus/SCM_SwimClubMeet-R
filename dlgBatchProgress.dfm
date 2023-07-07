@@ -3,8 +3,8 @@ object BatchProgress: TBatchProgress
   Top = 0
   BorderStyle = bsToolWindow
   Caption = 'Batch Process Reports'
-  ClientHeight = 196
-  ClientWidth = 521
+  ClientHeight = 184
+  ClientWidth = 513
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -13,27 +13,28 @@ object BatchProgress: TBatchProgress
   Font.Name = 'Segoe UI'
   Font.Style = []
   FormStyle = fsStayOnTop
-  OldCreateOrder = False
   Position = poMainFormCenter
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 21
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 521
+    Width = 513
     Height = 57
     Align = alTop
     Caption = 'Batch Process Reports.'
     TabOrder = 0
+    ExplicitWidth = 521
   end
   object Panel2: TPanel
     Left = 0
-    Top = 139
-    Width = 521
+    Top = 127
+    Width = 513
     Height = 57
     Align = alBottom
     TabOrder = 1
+    ExplicitTop = 139
+    ExplicitWidth = 521
     object Label2: TLabel
       Left = 11
       Top = 18
@@ -56,10 +57,12 @@ object BatchProgress: TBatchProgress
   object Panel3: TPanel
     Left = 0
     Top = 57
-    Width = 521
-    Height = 82
+    Width = 513
+    Height = 70
     Align = alClient
     TabOrder = 2
+    ExplicitWidth = 521
+    ExplicitHeight = 82
     object Label1: TLabel
       AlignWithMargins = True
       Left = 11
