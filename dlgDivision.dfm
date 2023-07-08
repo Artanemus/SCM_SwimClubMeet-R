@@ -4,46 +4,48 @@ object Division: TDivision
   BorderStyle = bsDialog
   Caption = 'Divisions : Age bracket and gender.'
   ClientHeight = 711
-  ClientWidth = 694
+  ClientWidth = 737
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -13
+  Font.Height = -16
   Font.Name = 'Segoe UI'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
   OnShow = FormShow
-  PixelsPerInch = 96
-  TextHeight = 17
+  TextHeight = 21
   object Panel2: TPanel
     Left = 0
     Top = 670
-    Width = 694
+    Width = 737
     Height = 41
     Align = alBottom
+    BevelOuter = bvNone
     TabOrder = 0
+    ExplicitTop = 669
+    ExplicitWidth = 690
     DesignSize = (
-      694
+      737
       41)
+    object Label5: TLabel
+      Left = 7
+      Top = 6
+      Width = 412
+      Height = 21
+      Caption = 'A division is an age range (inclusive) with a specific gender. '
+    end
     object btnClose: TButton
-      Left = 588
+      Left = 627
       Top = 6
       Width = 88
-      Height = 25
+      Height = 27
       Anchors = [akTop, akRight]
       Caption = 'Close'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
       TabOrder = 0
       OnClick = btnCloseClick
     end
@@ -51,40 +53,57 @@ object Division: TDivision
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 694
+    Width = 737
     Height = 670
     ActivePage = TabSheet3
     Align = alClient
     TabOrder = 1
+    ExplicitWidth = 694
     object TabSheet3: TTabSheet
       Caption = 'Divisions'
       DesignSize = (
-        686
-        638)
-      object Label5: TLabel
-        Left = 3
-        Top = 3
-        Width = 345
-        Height = 17
-        Caption = 'A division is an age range (inclusive) with a specific gender.'
-      end
+        729
+        634)
       object DBGrid1: TDBGrid
         Left = 3
-        Top = 23
-        Width = 553
-        Height = 613
+        Top = 16
+        Width = 638
+        Height = 620
         Anchors = [akLeft, akTop, akBottom]
         DataSource = dsDivision
+        Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
         TabOrder = 0
         TitleFont.Charset = DEFAULT_CHARSET
         TitleFont.Color = clWindowText
-        TitleFont.Height = -13
+        TitleFont.Height = -16
         TitleFont.Name = 'Segoe UI'
         TitleFont.Style = []
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'Caption'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'AgeFrom'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'AgeTo'
+            Visible = True
+          end
+          item
+            DropDownRows = 4
+            Expanded = False
+            FieldName = 'luGender'
+            Visible = True
+          end>
       end
       object DBNavigator1: TDBNavigator
-        Left = 576
-        Top = 23
+        Left = 658
+        Top = 16
         Width = 65
         Height = 600
         DataSource = dsDivision
@@ -99,8 +118,8 @@ object Division: TDivision
       object Label10: TLabel
         Left = 179
         Top = 13
-        Width = 453
-        Height = 34
+        Width = 452
+        Height = 63
         Caption = 
           'List all the available members for each division.  Member'#39's age ' +
           'calculated on '#39'start of swimming season'#39'. Active members appear ' +
@@ -120,6 +139,7 @@ object Division: TDivision
   end
   object qryDivision: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'ScoreDivisionID'
     Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..ScoreDivision'
@@ -164,7 +184,7 @@ object Division: TDivision
     end
     object qryDivisionCaption: TWideStringField
       DisplayLabel = 'Description of Division'
-      DisplayWidth = 40
+      DisplayWidth = 34
       FieldName = 'Caption'
       Origin = 'Caption'
       Size = 128
@@ -209,6 +229,7 @@ object Division: TDivision
   end
   object tblGender: TFDTable
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'GenderID'
     Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'Gender'

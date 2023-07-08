@@ -301,7 +301,7 @@
             <Form>BatchProgress</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="dlgAutoBuildPref.pas">
+        <DCCReference Include="dlgAutoBuild_Batch.pas">
             <Form>AutoBuildPref</Form>
             <FormType>dfm</FormType>
         </DCCReference>
@@ -385,6 +385,10 @@
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="AutoBuildRelayAlgorithm.pas"/>
+        <DCCReference Include="dlgAutoBuild_Relay.pas">
+            <Form>AutoBuild_Relay</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

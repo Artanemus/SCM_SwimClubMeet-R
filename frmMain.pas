@@ -508,7 +508,7 @@ uses
   rptMarshallReportA,
   rptMarshallReportB, rptTimeKeeperReportA, rptTimeKeeperReportB, dlgHouse,
   dlgAutoBuild_Finals, dlgPointsScored, dlgDivision, dlgLeaderBoard,
-  dlgSelectPrinter, ioutils, dlgBatchProgress, dlgAutoBuildPref, ShellAPI,
+  dlgSelectPrinter, ioutils, dlgBatchProgress, dlgAutoBuild_Batch, ShellAPI,
   UEnvVars, dlgEntrantPicker, dlgEntrantPickerCTRL, dmSCMNom, dlgSwapLanes,
   dlgDBVerInfo, rptHeatReportA, rptHeatReportB, frmDisqualificationCodes,
   dlgAutoSchedule, dlgDCodePicker;

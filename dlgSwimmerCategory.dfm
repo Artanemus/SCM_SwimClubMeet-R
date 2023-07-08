@@ -258,7 +258,7 @@ object SwimmerCategory: TSwimmerCategory
       1054
       54)
     object btnClose: TButton
-      Left = 936
+      Left = 932
       Top = 6
       Width = 75
       Height = 30
@@ -266,7 +266,7 @@ object SwimmerCategory: TSwimmerCategory
       Caption = 'Close'
       TabOrder = 0
       OnClick = btnCloseClick
-      ExplicitLeft = 932
+      ExplicitLeft = 928
     end
     object DBNavigator1: TDBNavigator
       Left = 332

@@ -1,4 +1,4 @@
-unit dlgAutoBuildPref;
+unit dlgAutoBuild_Batch;
 
 interface
 

@@ -45,7 +45,7 @@ uses
   dlgAutoBuild_Finals in 'dlgAutoBuild_Finals.pas' {AutoBuild_Finals},
   dlgSelectPrinter in 'dlgSelectPrinter.pas' {SelectPrinter},
   dlgBatchProgress in 'dlgBatchProgress.pas' {BatchProgress},
-  dlgAutoBuildPref in 'dlgAutoBuildPref.pas' {AutoBuildPref},
+  dlgAutoBuild_Batch in 'dlgAutoBuild_Batch.pas' {AutoBuildPref},
   dlgEntrantPicker in 'dlgEntrantPicker.pas' {EntrantPicker},
   dlgEntrantPickerCTRL in 'dlgEntrantPickerCTRL.pas' {EntrantPickerCTRL},
   rptMemberDetail in 'MEMBERS\rptMemberDetail.pas' {MemberDetail: TDataModule},
@@ -68,7 +68,8 @@ uses
   frameEventTeam in 'FRAME\frameEventTeam.pas' {EventTeamFrame: TFrame},
   frameEventIndv in 'FRAME\frameEventIndv.pas' {EventIndvFrame: TFrame},
   dlgDCodePicker in 'dlgDCodePicker.pas' {DCodePicker},
-  AutoBuildRelayAlgorithm in 'AutoBuildRelayAlgorithm.pas';
+  AutoBuildRelayAlgorithm in 'AutoBuildRelayAlgorithm.pas',
+  dlgAutoBuild_Relay in 'dlgAutoBuild_Relay.pas' {AutoBuild_Relay};
 
 {$R *.res}
 

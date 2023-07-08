@@ -3,7 +3,7 @@ object AutoBuildPref: TAutoBuildPref
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Auto Build Heats'
-  ClientHeight = 478
+  ClientHeight = 508
   ClientWidth = 508
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -2675,9 +2675,7 @@ object AutoBuildPref: TAutoBuildPref
     0000000000000000000000000000000000000000000000000000000000000000
     0000000000000000000000000000000000000000000000000000000000000000
     000000000000000000000000000000000000000000000000000000000000}
-  OldCreateOrder = False
   Position = poMainFormCenter
-  PixelsPerInch = 96
   TextHeight = 16
   object Panel1: TPanel
     Left = 0
@@ -2687,6 +2685,7 @@ object AutoBuildPref: TAutoBuildPref
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 504
     object Label1: TLabel
       Left = 86
       Top = 20
@@ -2796,7 +2795,7 @@ object AutoBuildPref: TAutoBuildPref
   end
   object Panel2: TPanel
     Left = 0
-    Top = 432
+    Top = 462
     Width = 508
     Height = 46
     Align = alBottom
@@ -2804,6 +2803,8 @@ object AutoBuildPref: TAutoBuildPref
     BevelKind = bkFlat
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitTop = 431
+    ExplicitWidth = 504
     object btnCancel: TButton
       Left = 257
       Top = 6
@@ -2829,27 +2830,28 @@ object AutoBuildPref: TAutoBuildPref
     Left = 0
     Top = 61
     Width = 508
-    Height = 371
+    Height = 401
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitTop = 60
     object Label7: TLabel
       Left = 22
-      Top = 106
+      Top = 121
       Width = 203
       Height = 16
       Caption = 'For members without race times ...'
     end
     object Label8: TLabel
       Left = 106
-      Top = 152
+      Top = 167
       Width = 280
       Height = 16
       Caption = 'percent. (With consideration to age and gender.)'
     end
     object lblSeedDepth1: TLabel
       Left = 262
-      Top = 319
+      Top = 334
       Width = 70
       Height = 16
       Caption = 'Seed depth:'
@@ -2858,7 +2860,7 @@ object AutoBuildPref: TAutoBuildPref
       Left = 22
       Top = 6
       Width = 361
-      Height = 94
+      Height = 101
       Caption = 'Entrant'#39's TimeToBeat (TTB) - Heat algorithm ... '
       ItemIndex = 1
       Items.Strings = (
@@ -2869,7 +2871,7 @@ object AutoBuildPref: TAutoBuildPref
     end
     object prefUseDefRaceTime: TCheckBox
       Left = 22
-      Top = 125
+      Top = 140
       Width = 442
       Height = 21
       Caption = 'Calculate a race time based on the mean average of the bottom '
@@ -2880,7 +2882,7 @@ object AutoBuildPref: TAutoBuildPref
     end
     object prefRaceTimeTopPercent: TSpinEdit
       Left = 59
-      Top = 149
+      Top = 164
       Width = 41
       Height = 26
       MaxValue = 100
@@ -2890,7 +2892,7 @@ object AutoBuildPref: TAutoBuildPref
     end
     object prefExcludeOutsideLanes: TCheckBox
       Left = 22
-      Top = 213
+      Top = 228
       Width = 160
       Height = 17
       Caption = 'Exclude outside lanes.'
@@ -2898,7 +2900,7 @@ object AutoBuildPref: TAutoBuildPref
     end
     object prefSeperateGender: TCheckBox
       Left = 22
-      Top = 190
+      Top = 205
       Width = 134
       Height = 17
       Caption = 'Seperate gender.'
@@ -2906,23 +2908,24 @@ object AutoBuildPref: TAutoBuildPref
     end
     object prefGroupBy: TRadioGroup
       Left = 14
-      Top = 240
+      Top = 255
       Width = 215
-      Height = 97
+      Height = 129
       Caption = 'Group by ...'
       Items.Strings = (
         'Don'#39't group.'
         'Entrant'#39's age.'
-        'Entrant'#39's membership type.')
+        'Swimming Category.'
+        'Divisions.')
       TabOrder = 5
     end
     object rgpSeedMethod: TRadioGroup
       Left = 235
-      Top = 240
+      Top = 255
       Width = 254
       Height = 73
       Hint = 'Decides what lane an entrant is given.'
-      Caption = 'Seed Method.'
+      Caption = 'Seed Method ...'
       ItemIndex = 0
       Items.Strings = (
         'SwimClubMeet (default)'
@@ -2931,7 +2934,7 @@ object AutoBuildPref: TAutoBuildPref
     end
     object spnSeedDepth: TSpinEdit
       Left = 338
-      Top = 316
+      Top = 331
       Width = 41
       Height = 26
       MaxValue = 10

@@ -57,7 +57,7 @@ object Preferences: TPreferences
       654
       48)
     object btnClose: TButton
-      Left = 508
+      Left = 504
       Top = 6
       Width = 101
       Height = 33
@@ -65,7 +65,7 @@ object Preferences: TPreferences
       Caption = 'Close'
       TabOrder = 0
       OnClick = btnCloseClick
-      ExplicitLeft = 504
+      ExplicitLeft = 500
     end
   end
   object PageControl1: TPageControl
@@ -73,7 +73,7 @@ object Preferences: TPreferences
     Top = 41
     Width = 654
     Height = 503
-    ActivePage = TabSheet6
+    ActivePage = tab1
     Align = alClient
     TabOrder = 2
     OnChanging = PageControl1Changing
@@ -368,7 +368,7 @@ object Preferences: TPreferences
         ParentFont = False
       end
       object btn1: TSpeedButton
-        Left = 177
+        Left = 173
         Top = 15
         Width = 33
         Height = 33
@@ -491,13 +491,14 @@ object Preferences: TPreferences
         Left = 9
         Top = 130
         Width = 254
-        Height = 111
+        Height = 175
         Hint = 'Broad categories that gather together entants.'
         Caption = 'Group entrants by ...'
         Items.Strings = (
           'Don'#39't group.'
           'Entrant'#39's age.'
-          'Entrant'#39's membership type..')
+          'Swimming Category.'
+          'Divisions.')
         TabOrder = 2
       end
       object rgpSeedMethod: TRadioGroup
