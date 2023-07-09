@@ -84,12 +84,14 @@ type
     qryMemberRoleLnkIsArchived: TBooleanField;
     qryMemberRoleLnkluMemberRoleStr: TStringField;
     qryMemberABREV: TWideStringField;
-    qryMemberMETADATA: TWideMemoField;
+    qryMemberTAG: TWideMemoField;
     procedure DataModuleCreate(Sender: TObject);
     procedure qryMemberAfterDelete(DataSet: TDataSet);
     procedure qryMemberAfterInsert(DataSet: TDataSet);
     procedure qryMemberAfterScroll(DataSet: TDataSet);
     procedure qryMemberBeforeDelete(DataSet: TDataSet);
+    procedure qryMemberBeforePost(DataSet: TDataSet);
+    procedure qryMemberBeforeScroll(DataSet: TDataSet);
     procedure qryMemberMETADATAGetText(Sender: TField; var Text: string;
       DisplayText: Boolean);
     procedure qryMemberMETADATASetText(Sender: TField; const Text: string);
@@ -100,6 +102,7 @@ type
     { Private declarations }
     fManageMemberDataActive: Boolean;
     fRecordCount: Integer;
+    fDOBChanged: TDateTime;
     procedure UpdateMembersPersonalBest;
   public
     { Public declarations }
@@ -115,6 +118,8 @@ type
     property ManageMemberDataActive: Boolean read fManageMemberDataActive
       write fManageMemberDataActive;
     property RecordCount: Integer read fRecordCount;
+    property DOBChanged: TDateTime read FDOBChanged write FDOBChanged;
+
   end;
 
 const
@@ -149,33 +154,38 @@ begin
     qryMember.Connection := FConnection;
     qryContactNum.Connection := FConnection;
     qryMemberPB.Connection := FConnection;
+    qryMemberRoleLnk.Connection := FConnection;
     // prepare lookup tables.
     tblStroke.Connection := FConnection;
     tblDistance.Connection := FConnection;
-    qryMemberRoleLnk.Connection := FConnection;
     tblGender.Connection := FConnection;
     tblHouse.Connection := FConnection;
     tblContactNumType.Connection := FConnection;
+    tblMemberRole.Connection := FConnection;
+
     qrySwimClub.Open;
     if qrySwimClub.Active then
     begin
       // Lookup tables used by member
       tblStroke.Open;
       tblDistance.Open;
-      qryMemberRoleLnk.Open;
       tblGender.Open;
       tblHouse.Open;
+      tblContactNumType.Open;
+      tblMemberRole.Open;
+
       qryMember.Open;
       if qryMember.Active then
       begin
         // Lookup table used by contactnum
-        tblContactNumType.Open;
         qryContactNum.Open;
+        qryMemberRoleLnk.Open;
         if qryContactNum.Active then
         begin
           fManageMemberDataActive := True;
         end;
       end;
+
     end;
   end;
 end;
@@ -185,6 +195,7 @@ begin
   // TODO:
   if Assigned(FConnection) then
     ActivateTable;
+  fDOBChanged := 0;
 end;
 
 procedure TManageMemberData.FixNullBooleans;
@@ -257,8 +268,11 @@ procedure TManageMemberData.qryMemberAfterScroll(DataSet: TDataSet);
 begin
   // Display Members Personal Best
   UpdateMembersPersonalBest();
+  // CLEAR FLAG - DOB Picker is not linked to data module.
+  fDOBChanged := 0;
   // Post directly to parent form : TForm(Self.GetOwner).Handle;
   // Uses : Vcl.Forms
+  // Updates the dtpickDOB.Date control.
   if Owner is TForm then
     PostMessage(TForm(Owner).Handle, SCM_AFTERSCROLL, 0, 0);
 end;
@@ -328,6 +342,32 @@ begin
   end;
 end;
 
+procedure TManageMemberData.qryMemberBeforePost(DataSet: TDataSet);
+begin
+  // VCL CONTROL dtpickDOB is not linked to data module
+  if fDOBChanged <> 0 then
+  begin
+    if DataSet.FieldByName('DOB').AsDateTime <> fDOBChanged then
+      DataSet.FieldByName('DOB').AsDateTime := fDOBChanged; // SYNC'ed
+    fDOBChanged := 0; // CLEAR FLAG
+  end;
+end;
+
+procedure TManageMemberData.qryMemberBeforeScroll(DataSet: TDataSet);
+begin
+  // VCL CONTROL dtpickDOB is not linked to data module
+  if fDOBChanged <> 0 then
+  begin
+    if DataSet.FieldByName('DOB').AsDateTime <> fDOBChanged then
+    begin
+      DataSet.edit;
+      DataSet.FieldByName('DOB').AsDateTime := fDOBChanged; // SYNC'ed
+      DataSet.post;
+    end;
+    fDOBChanged := 0; // CLEAR FLAG
+  end;
+end;
+
 procedure TManageMemberData.qryMemberMETADATAGetText(Sender: TField;
   var Text: string; DisplayText: Boolean);
 begin
@@ -374,11 +414,14 @@ begin
   begin
     fld.AsBoolean := True;
   end;
-  fld := DataSet.FieldByName('MemberID');
-  if (fld.IsNull) then
-  begin
-    fld.AsInteger := dsMember.DataSet.FieldByName('MemberID').AsInteger;
-  end;
+  fld := DataSet.FieldByName('CreatedOn');
+  fld.AsDateTime := Now;
+
+//  fld := DataSet.FieldByName('MemberID');
+//  if (fld.IsNull) then
+//  begin
+//    fld.AsInteger := DataSet.FieldByName('MemberID').AsInteger;
+//  end;
   // fld := DataSet.FieldByName('MemberRoleID');
   // if (fld.IsNull) then
   // begin

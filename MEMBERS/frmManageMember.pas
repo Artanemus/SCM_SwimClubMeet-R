@@ -19,144 +19,138 @@ uses
 
 type
   TManageMember = class(TForm)
-    Panel1: TPanel;
-    lblMemberCount: TLabel;
-    chkbHideInActive: TCheckBox;
+    ActnManagerMember: TActionManager;
+    ActnMemberMenuBar: TActionMainMenuBar;
+    btnClearGender: TButton;
+    btnClearHouse: TButton;
+    btnClubMembersDetailed: TButton;
+    btnClubMembersList: TButton;
+    btnClubMembersSummary: TButton;
+    btnFindMember: TButton;
+    btnGotoMemberID: TButton;
+    btnGotoMembership: TButton;
+    btnMemberDetail: TButton;
+    btnMemberHistory: TButton;
     chkbHideArchived: TCheckBox;
+    chkbHideInActive: TCheckBox;
     chkbHideNonSwimmers: TCheckBox;
-    Panel3: TPanel;
-    DBNavigator1: TDBNavigator;
-    PageControl1: TPageControl;
-    TabSheet1: TTabSheet;
-    Panel7: TPanel;
-    Label3: TLabel;
-    Label4: TLabel;
-    Label2: TLabel;
-    Label1: TLabel;
-    Label10: TLabel;
-    DBText3: TDBText;
-    Label7: TLabel;
-    Label12: TLabel;
-    dblblMemberID: TDBText;
-    Label21: TLabel;
-    Label22: TLabel;
-    Label24: TLabel;
-    DBlucboGender: TDBLookupComboBox;
+    DBchkIsActive: TDBCheckBox;
+    DBchkIsArchived: TDBCheckBox;
+    DBchkIsSwimmer: TDBCheckBox;
+    DBContactNumNavigator: TDBNavigator;
+    DBEdtEmail: TDBEdit;
     DBedtFirstName: TDBEdit;
     DBedtLastName: TDBEdit;
     DBedtMembershipNum: TDBEdit;
-    DBchkIsActive: TDBCheckBox;
-    DBEdtEmail: TDBEdit;
-    DBlucboHouse: TDBLookupComboBox;
-    DBchkIsSwimmer: TDBCheckBox;
-    DBchkIsArchived: TDBCheckBox;
-    btnClearHouse: TButton;
-    btnClearGender: TButton;
-    TabSheet2: TTabSheet;
     DBGrid3: TDBGrid;
-    ImageList1: TImageList;
-    btnFindMember: TButton;
-    btnGotoMemberID: TButton;
-    Label18: TLabel;
-    RegistrationNum: TDBEdit;
-    Label8: TLabel;
-    dtpickDOB: TCalendarPicker;
-    lblCount: TLabel;
-    btnGotoMembership: TButton;
-    DBgridHistoryPB: TDBGrid;
-    Label23: TLabel;
-    Label13: TLabel;
     DBgridContactInfo: TDBGrid;
-    DBContactNumNavigator: TDBNavigator;
-    TabSheet3: TTabSheet;
-    Label5: TLabel;
+    DBgridHistoryPB: TDBGrid;
+    DBGridRole: TDBGrid;
+    dblblMemberID: TDBText;
+    DBlucboGender: TDBLookupComboBox;
+    DBlucboHouse: TDBLookupComboBox;
+    DBMemo1: TDBMemo;
+    DBNavigator1: TDBNavigator;
+    DBNavigator2: TDBNavigator;
+    DBSwimmerAge: TDBText;
+    dtpickDOB: TCalendarPicker;
+    ImageCollectMember: TImageCollection;
+    ImageList1: TImageList;
+    Label1: TLabel;
+    Label10: TLabel;
+    Label11: TLabel;
+    Label12: TLabel;
+    Label13: TLabel;
     Label14: TLabel;
     Label16: TLabel;
     Label17: TLabel;
-    Label9: TLabel;
+    Label18: TLabel;
     Label19: TLabel;
+    Label2: TLabel;
     Label20: TLabel;
-    btnMemberDetail: TButton;
-    btnClubMembersSummary: TButton;
-    btnMemberHistory: TButton;
-    btnClubMembersDetailed: TButton;
-    btnClubMembersList: TButton;
-    ActnMemberMenuBar: TActionMainMenuBar;
-    ActnManagerMember: TActionManager;
+    Label21: TLabel;
+    Label22: TLabel;
+    Label23: TLabel;
+    Label24: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+    lblCount: TLabel;
+    lblMemberCount: TLabel;
     MemFile_AutoEdit: TAction;
     MemFile_Exit: TAction;
-    MemSearch_GotoMembershipNum: TAction;
-    MemSearch_GotoMemberID: TAction;
     MemSearch_FindMember: TAction;
-    ImageCollectMember: TImageCollection;
+    MemSearch_GotoMemberID: TAction;
+    MemSearch_GotoMembershipNum: TAction;
+    PageControl1: TPageControl;
+    Panel1: TPanel;
+    Panel3: TPanel;
+    Panel7: TPanel;
+    RegistrationNum: TDBEdit;
+    TabSheet1: TTabSheet;
+    TabSheet2: TTabSheet;
+    TabSheet3: TTabSheet;
     VirtlImageListMember: TVirtualImageList;
-    Label6: TLabel;
-    DBGridRole: TDBGrid;
-    DBNavigator2: TDBNavigator;
-    Label11: TLabel;
-    DBMemo1: TDBMemo;
-    procedure FormCreate(Sender: TObject);
     procedure About2Click(Sender: TObject);
+    procedure btnClearClick(Sender: TObject);
+    procedure btnClubMembersDetailedClick(Sender: TObject);
+    procedure btnClubMembersListClick(Sender: TObject);
+    procedure btnClubMembersSummaryClick(Sender: TObject);
+    procedure btnFindMemberClick(Sender: TObject);
+    procedure btnGotoMemberIDClick(Sender: TObject);
+    procedure btnGotoMembershipClick(Sender: TObject);
+    procedure btnMemberDetailClick(Sender: TObject);
+    procedure btnMemberHistoryClick(Sender: TObject);
+    procedure chkbHideArchivedClick(Sender: TObject);
+    procedure chkbHideInActiveClick(Sender: TObject);
+    procedure chkbHideNonSwimmersClick(Sender: TObject);
     procedure DBGridCellClick(Column: TColumn);
     procedure DBGridColEnter(Sender: TObject);
     procedure DBGridColExit(Sender: TObject);
     procedure DBGridDrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure DBGridEditButtonClick(Sender: TObject);
     procedure DBGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure DBGridRoleCellClick(Column: TColumn);
+    procedure DBNavigator1BeforeAction(Sender: TObject; Button: TNavigateBtn);
+    procedure DBNavigator1Click(Sender: TObject; Button: TNavigateBtn);
     procedure DrawCheckBoxes(oGrid: TObject; Rect: TRect; Column: TColumn;
       fontColor, bgColor: TColor);
     procedure dtpickDOBChange(Sender: TObject);
-    procedure chkbHideArchivedClick(Sender: TObject);
-    procedure chkbHideInActiveClick(Sender: TObject);
-    procedure chkbHideNonSwimmersClick(Sender: TObject);
-    procedure DBGridEditButtonClick(Sender: TObject);
-    procedure btnClearClick(Sender: TObject);
-    procedure btnFindMemberClick(Sender: TObject);
-    procedure btnGotoMemberIDClick(Sender: TObject);
-    procedure btnGotoMembershipClick(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
-    procedure Onlinehelp1Click(Sender: TObject);
-    procedure SCMwebsite1Click(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-    procedure DBNavigator1BeforeAction(Sender: TObject; Button: TNavigateBtn);
-    procedure DBNavigator1Click(Sender: TObject; Button: TNavigateBtn);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure btnMemberDetailClick(Sender: TObject);
-    procedure btnMemberHistoryClick(Sender: TObject);
-    procedure btnClubMembersSummaryClick(Sender: TObject);
-    procedure btnClubMembersDetailedClick(Sender: TObject);
-    procedure btnClubMembersListClick(Sender: TObject);
-    procedure DBGridRoleCellClick(Column: TColumn);
     procedure MemFile_ExitExecute(Sender: TObject);
     procedure MemSearch_FindMemberExecute(Sender: TObject);
-
+    procedure Onlinehelp1Click(Sender: TObject);
+    procedure SCMwebsite1Click(Sender: TObject);
   private
-    { Private declarations }
-    fSwimClubID: Integer;
-    fDoDelete: Boolean;
-    FConnection: TFDConnection;
+    fColorBgColor: TColor;
     fColorEditBoxFocused: TColor;
     fColorEditBoxNormal: TColor;
-    fColorBgColor: TColor;
-
-    function FindMember(MemberID: Integer): Boolean;
+    FConnection: TFDConnection;
+    fDoDelete: Boolean;
+    { Private declarations }
+    fSwimClubID: Integer;
     function AssertConnection: Boolean;
-
+    function FindMember(MemberID: Integer): Boolean;
     procedure ReadPreferences();
     procedure WritePreferences();
-
   protected
     // windows messages ....
     procedure ManageMemberAfterScroll(var Msg: TMessage);
       message SCM_AFTERSCROLL;
     procedure ManageMemberUpdate(var Msg: TMessage); message SCM_UPDATE;
-
   public
+    procedure ClearAllFilters();
     { Public declarations }
     procedure Prepare(AConnection: TFDConnection; ASwimClubID: Integer = 1;
       AMemberID: Integer = 0);
-    procedure ClearAllFilters();
-
   end;
 
 const
@@ -705,14 +699,32 @@ end;
 
 procedure TManageMember.dtpickDOBChange(Sender: TObject);
 begin
-  if Assigned(ManageMemberData) and (ManageMemberData.qryMember.Active) then
-  begin
-    if (ManageMemberData.qryMember.State <> dsEdit) then
-      ManageMemberData.qryMember.Edit();
-    ManageMemberData.qryMember.FieldByName('DOB').AsDateTime := dtpickDOB.Date;
-    // let user perform manual post
-    // ManageMemberData.qryMember.Post();
-  end;
+  if not Assigned(ManageMemberData) then
+    exit;
+  with ManageMemberData.dsMember.DataSet do
+  BEGIN
+    if not Active then
+      exit;
+    {
+    VCL Control dtpickDOB is DATA UN-AWARE.
+    When focus is on child grids and a scroll is performed, an exception
+    can occur. Assigning EditorMode := true doesn't avoid the error.
+    }
+    if FieldByName('DOB').AsDateTime <> dtpickDOB.Date then
+    Begin
+      // OK to do assignment here.
+      if State = dsEdit then
+      begin
+          FieldByName('DOB').AsDateTime := dtpickDOB.Date;
+          ManageMemberData.DOBChanged := 0; // indicates SYNCed with datamodule.
+      end
+      else
+        // FLAGS DataModule to check DOB at Member.BeforePost and
+        // Member.BeforeScroll.
+        ManageMemberData.DOBChanged := dtpickDOB.Date;
+    End;
+  END;
+
 end;
 
 function TManageMember.FindMember(MemberID: Integer): Boolean;
@@ -817,9 +829,12 @@ procedure TManageMember.ManageMemberAfterScroll(var Msg: TMessage);
 begin
   if not AssertConnection then
     exit;
-  // DATE-OF-BIRTH - DATETIME PICKER INIT
-  dtpickDOB.Date := ManageMemberData.qryMember.FieldByName('DOB').AsDateTime;
-
+  if ManageMemberData.qryMember.FieldByName('DOB').IsNull then
+    dtpickDOB.Date := Now
+  else
+    // DATE-OF-BIRTH - DATETIME PICKER INIT
+    // DOB Picker is not linked to data module.
+    dtpickDOB.Date := ManageMemberData.qryMember.FieldByName('DOB').AsDateTime;
 end;
 
 procedure TManageMember.ManageMemberUpdate(var Msg: TMessage);

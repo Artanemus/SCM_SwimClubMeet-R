@@ -1,10 +1,12 @@
 object ManageMemberData: TManageMemberData
   OnCreate = DataModuleCreate
-  Height = 639
+  Height = 837
   Width = 665
   object tblContactNumType: TFDTable
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'ContactNumTypeID'
+    Connection = SCM.scmConnection
     UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
     UpdateOptions.EnableDelete = False
     UpdateOptions.EnableInsert = False
@@ -12,7 +14,7 @@ object ManageMemberData: TManageMemberData
     UpdateOptions.UpdateTableName = 'SwimClubMeet..ContactNumType'
     TableName = 'SwimClubMeet..ContactNumType'
     Left = 56
-    Top = 496
+    Top = 640
     object tblContactNumTypeContactNumTypeID: TFDAutoIncField
       FieldName = 'ContactNumTypeID'
       Origin = 'ContactNumTypeID'
@@ -31,7 +33,7 @@ object ManageMemberData: TManageMemberData
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Stroke'
     TableName = 'SwimClubMeet..Stroke'
     Left = 56
-    Top = 400
+    Top = 488
   end
   object tblDistance: TFDTable
     ActiveStoredUsage = [auDesignTime]
@@ -39,7 +41,7 @@ object ManageMemberData: TManageMemberData
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Distance'
     TableName = 'SwimClubMeet..Distance'
     Left = 56
-    Top = 448
+    Top = 536
   end
   object dsMember: TDataSource
     DataSet = qryMember
@@ -49,8 +51,10 @@ object ManageMemberData: TManageMemberData
   object qryMember: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     AfterInsert = qryMemberAfterInsert
+    BeforePost = qryMemberBeforePost
     BeforeDelete = qryMemberBeforeDelete
     AfterDelete = qryMemberAfterDelete
+    BeforeScroll = qryMemberBeforeScroll
     AfterScroll = qryMemberAfterScroll
     IndexFieldNames = 'SwimClubID;MemberID'
     MasterSource = dsSwimClub
@@ -93,7 +97,7 @@ object ManageMemberData: TManageMemberData
       '       CreatedOn,'
       '       ArchivedOn,'
       '       ABREV,'
-      '       METADATA'
+      '       TAG'
       'FROM [dbo].[Member]'
       'WHERE (IsActive >= CASE'
       '                       WHEN @HideInActive = 1 THEN'
@@ -292,39 +296,41 @@ object ManageMemberData: TManageMemberData
       Origin = 'ABREV'
       Size = 13
     end
-    object qryMemberMETADATA: TWideMemoField
-      FieldName = 'METADATA'
-      Origin = 'METADATA'
-      OnGetText = qryMemberMETADATAGetText
-      OnSetText = qryMemberMETADATASetText
+    object qryMemberTAG: TWideMemoField
+      FieldName = 'TAG'
+      Origin = 'TAG'
       BlobType = ftWideMemo
     end
   end
   object tblGender: TFDTable
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'GenderID'
+    Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Gender'
     TableName = 'SwimClubMeet..Gender'
     Left = 56
-    Top = 352
+    Top = 440
   end
   object dsGender: TDataSource
     DataSet = tblGender
-    Left = 160
-    Top = 352
+    Left = 144
+    Top = 488
   end
   object dsHouse: TDataSource
     DataSet = tblHouse
-    Left = 160
-    Top = 304
+    Left = 144
+    Top = 440
   end
   object tblHouse: TFDTable
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'HouseID'
+    Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..House'
     TableName = 'SwimClubMeet..House'
     Left = 56
-    Top = 304
+    Top = 592
   end
   object dsContactNum: TDataSource
     DataSet = qryContactNum
@@ -333,6 +339,7 @@ object ManageMemberData: TManageMemberData
   end
   object qryContactNum: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     Indexes = <
       item
         Active = True
@@ -345,6 +352,7 @@ object ManageMemberData: TManageMemberData
     MasterSource = dsMember
     MasterFields = 'MemberID'
     DetailFields = 'MemberID'
+    Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..ContactNum'
     UpdateOptions.KeyFields = 'ContactNumID'
     SQL.Strings = (
@@ -707,17 +715,21 @@ object ManageMemberData: TManageMemberData
   end
   object qryMemberRoleLnk: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     BeforePost = qryMemberRoleLnkBeforePost
     OnNewRecord = qryMemberRoleLnkNewRecord
-    IndexFieldNames = 'MemberRoleID;MemberID'
+    IndexFieldNames = 'MemberID'
+    MasterSource = dsMember
+    MasterFields = 'MemberID'
+    DetailFields = 'MemberID'
     Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet.dbo.MemberRoleLink'
     UpdateOptions.KeyFields = 'MemberRoleID;MemberID'
     SQL.Strings = (
       'USE SwimClubMeet;'
       ''
-      'DECLARE @MemberID AS INTEGER;'
-      'SET @MemberID = 1; --:MEMBERID'
+      '--DECLARE @MemberID AS INTEGER;'
+      '--SET @MemberID = 1; --:MEMBERID'
       ''
       'SELECT [MemberRoleLink].[MemberRoleID]'
       '     , [MemberRoleLink].[MemberID]'
@@ -729,7 +741,7 @@ object ManageMemberData: TManageMemberData
       
         '        --ON [MemberRoleLink].[MemberRoleID] = [MemberRole].[Mem' +
         'berRoleID]'
-      'WHERE [MemberRoleLink].[MemberID] = @MemberID;')
+      '--WHERE [MemberRoleLink].[MemberID] = @MemberID;')
     Left = 56
     Top = 240
     object qryMemberRoleLnkMemberRoleID: TIntegerField
@@ -776,10 +788,11 @@ object ManageMemberData: TManageMemberData
   end
   object tblMemberRole: TFDTable
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'MemberRoleID'
     Connection = SCM.scmConnection
     TableName = 'SwimClubMeet.dbo.MemberRole'
     Left = 56
-    Top = 552
+    Top = 696
   end
 end

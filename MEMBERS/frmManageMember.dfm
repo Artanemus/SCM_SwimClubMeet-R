@@ -158,7 +158,6 @@ object ManageMember: TManageMember
         Height = 646
         Align = alClient
         BevelOuter = bvNone
-        Caption = 'METADATA'
         TabOrder = 0
         ExplicitWidth = 1330
         ExplicitHeight = 645
@@ -214,12 +213,13 @@ object ManageMember: TManageMember
           Alignment = taRightJustify
           Caption = 'Email'
         end
-        object DBText3: TDBText
+        object DBSwimmerAge: TDBText
           Left = 313
           Top = 170
           Width = 65
           Height = 17
           DataField = 'SwimmerAge'
+          DataSource = ManageMemberData.dsMember
         end
         object Label7: TLabel
           Left = 11
@@ -313,7 +313,7 @@ object ManageMember: TManageMember
           ParentFont = False
         end
         object Label13: TLabel
-          Left = 546
+          Left = 557
           Top = 27
           Width = 21
           Height = 137
@@ -329,7 +329,7 @@ object ManageMember: TManageMember
           Layout = tlCenter
         end
         object Label6: TLabel
-          Left = 546
+          Left = 557
           Top = 263
           Width = 21
           Height = 47
@@ -539,7 +539,7 @@ object ManageMember: TManageMember
             end>
         end
         object DBgridContactInfo: TDBGrid
-          Left = 573
+          Left = 584
           Top = 27
           Width = 321
           Height = 204
@@ -568,7 +568,7 @@ object ManageMember: TManageMember
             end>
         end
         object DBContactNumNavigator: TDBNavigator
-          Left = 900
+          Left = 911
           Top = 27
           Width = 60
           Height = 204
@@ -593,7 +593,7 @@ object ManageMember: TManageMember
           TabOrder = 15
         end
         object DBGridRole: TDBGrid
-          Left = 573
+          Left = 584
           Top = 263
           Width = 391
           Height = 282
@@ -634,7 +634,7 @@ object ManageMember: TManageMember
             end>
         end
         object DBNavigator2: TDBNavigator
-          Left = 970
+          Left = 981
           Top = 263
           Width = 60
           Height = 204
@@ -661,9 +661,9 @@ object ManageMember: TManageMember
         object DBMemo1: TDBMemo
           Left = 145
           Top = 554
-          Width = 422
+          Width = 407
           Height = 89
-          DataField = 'METADATA'
+          DataField = 'TAG'
           DataSource = ManageMemberData.dsMember
           TabOrder = 18
         end
@@ -708,32 +708,27 @@ object ManageMember: TManageMember
           item
             Expanded = False
             FieldName = 'MembershipNum'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'FirstName'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'LastName'
-            Width = 64
             Visible = True
           end
           item
             ButtonStyle = cbsEllipsis
             Expanded = False
             FieldName = 'DOB'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luGender'
-            Width = 64
             Visible = True
           end
           item
@@ -741,7 +736,6 @@ object ManageMember: TManageMember
             Expanded = False
             FieldName = 'IsArchived'
             Title.Caption = 'Archive'
-            Width = 64
             Visible = True
           end
           item
@@ -755,13 +749,11 @@ object ManageMember: TManageMember
             Expanded = False
             FieldName = 'IsSwimmer'
             Title.Caption = 'Swims'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luHouse'
-            Width = 64
             Visible = True
           end
           item
