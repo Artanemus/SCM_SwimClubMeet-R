@@ -51,9 +51,7 @@ object ManageMemberData: TManageMemberData
   object qryMember: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     AfterInsert = qryMemberAfterInsert
-    BeforePost = qryMemberBeforePost
     BeforeDelete = qryMemberBeforeDelete
-    AfterDelete = qryMemberAfterDelete
     BeforeScroll = qryMemberBeforeScroll
     AfterScroll = qryMemberAfterScroll
     IndexFieldNames = 'SwimClubID;MemberID'

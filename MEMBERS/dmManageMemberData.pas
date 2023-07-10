@@ -8,7 +8,10 @@ uses
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.VCLUI.Wait,
   Data.DB, FireDAC.Comp.Client, FireDAC.Stan.Param, FireDAC.DatS,
   FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Phys.MSSQL,
-  FireDAC.Phys.MSSQLDef, dmSCM;
+  FireDAC.Phys.MSSQLDef, dmSCM, Windows, Winapi.Messages;
+
+const
+  UM_TEST = WM_USER + 1;
 
 type
   TManageMemberData = class(TDataModule)
@@ -86,11 +89,9 @@ type
     qryMemberABREV: TWideStringField;
     qryMemberTAG: TWideMemoField;
     procedure DataModuleCreate(Sender: TObject);
-    procedure qryMemberAfterDelete(DataSet: TDataSet);
     procedure qryMemberAfterInsert(DataSet: TDataSet);
     procedure qryMemberAfterScroll(DataSet: TDataSet);
     procedure qryMemberBeforeDelete(DataSet: TDataSet);
-    procedure qryMemberBeforePost(DataSet: TDataSet);
     procedure qryMemberBeforeScroll(DataSet: TDataSet);
     procedure qryMemberMETADATAGetText(Sender: TField; var Text: string;
       DisplayText: Boolean);
@@ -98,27 +99,38 @@ type
     procedure qryMemberRoleLnkBeforePost(DataSet: TDataSet);
     procedure qryMemberRoleLnkNewRecord(DataSet: TDataSet);
   private
-    FConnection: TFDConnection;
     { Private declarations }
+    FConnection: TFDConnection;
     fManageMemberDataActive: Boolean;
     fRecordCount: Integer;
-    fDOBChanged: TDateTime;
+    fHandle: HWND;
+
     procedure UpdateMembersPersonalBest;
+
+  protected
+    procedure   WndProc(var Message: TMessage); virtual;
+
   public
     { Public declarations }
     constructor CreateWithConnection(AOwner: TComponent;
       AConnection: TFDConnection);
+
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy(); override;
+
+
     procedure ActivateTable();
     procedure FixNullBooleans();
     function LocateMember(MemberID: Integer): Boolean;
     procedure UpdateDOB(DOB: TDateTime);
     procedure UpdateMember(SwimClubID: Integer;
       hideArchived, hideInactive, hideNonSwimmer: Boolean);
+
     property Connection: TFDConnection read FConnection write FConnection;
     property ManageMemberDataActive: Boolean read fManageMemberDataActive
       write fManageMemberDataActive;
     property RecordCount: Integer read fRecordCount;
-    property DOBChanged: TDateTime read FDOBChanged write FDOBChanged;
+    property Handle: HWND read fHandle;
 
   end;
 
@@ -135,13 +147,19 @@ implementation
 {$R *.dfm}
 
 uses
-  System.IOUtils, IniFiles, SCMUtility, SCMDefines, Winapi.Windows,
-  Winapi.Messages, vcl.Dialogs, System.UITypes, vcl.Forms;
+  System.IOUtils, IniFiles, SCMUtility, SCMDefines,
+  vcl.Dialogs, System.UITypes, vcl.Forms;
+
+constructor TManageMemberData.Create(AOwner: TComponent);
+begin
+  inherited;
+  fHandle := AllocateHWnd(WndProc);
+end;
 
 constructor TManageMemberData.CreateWithConnection(AOwner: TComponent;
   AConnection: TFDConnection);
 begin
-  inherited Create(AOwner);
+  self.Create(AOwner);
   FConnection := AConnection;
 end;
 
@@ -192,10 +210,14 @@ end;
 
 procedure TManageMemberData.DataModuleCreate(Sender: TObject);
 begin
-  // TODO:
   if Assigned(FConnection) then
     ActivateTable;
-  fDOBChanged := 0;
+end;
+
+destructor TManageMemberData.Destroy;
+begin
+  DeallocateHWND(fHandle);
+  inherited;
 end;
 
 procedure TManageMemberData.FixNullBooleans;
@@ -222,11 +244,6 @@ begin
     on E: Exception do
       // lblErrMsg.Caption := 'SCM DB access error.';
   end;
-end;
-
-procedure TManageMemberData.qryMemberAfterDelete(DataSet: TDataSet);
-begin
-  // Refresh display ?
 end;
 
 procedure TManageMemberData.qryMemberAfterInsert(DataSet: TDataSet);
@@ -268,8 +285,6 @@ procedure TManageMemberData.qryMemberAfterScroll(DataSet: TDataSet);
 begin
   // Display Members Personal Best
   UpdateMembersPersonalBest();
-  // CLEAR FLAG - DOB Picker is not linked to data module.
-  fDOBChanged := 0;
   // Post directly to parent form : TForm(Self.GetOwner).Handle;
   // Uses : Vcl.Forms
   // Updates the dtpickDOB.Date control.
@@ -342,30 +357,10 @@ begin
   end;
 end;
 
-procedure TManageMemberData.qryMemberBeforePost(DataSet: TDataSet);
-begin
-  // VCL CONTROL dtpickDOB is not linked to data module
-  if fDOBChanged <> 0 then
-  begin
-    if DataSet.FieldByName('DOB').AsDateTime <> fDOBChanged then
-      DataSet.FieldByName('DOB').AsDateTime := fDOBChanged; // SYNC'ed
-    fDOBChanged := 0; // CLEAR FLAG
-  end;
-end;
-
 procedure TManageMemberData.qryMemberBeforeScroll(DataSet: TDataSet);
 begin
-  // VCL CONTROL dtpickDOB is not linked to data module
-  if fDOBChanged <> 0 then
-  begin
-    if DataSet.FieldByName('DOB').AsDateTime <> fDOBChanged then
-    begin
-      DataSet.edit;
-      DataSet.FieldByName('DOB').AsDateTime := fDOBChanged; // SYNC'ed
-      DataSet.post;
-    end;
-    fDOBChanged := 0; // CLEAR FLAG
-  end;
+  if (DataSet.State = dsEdit) or (DataSet.State = dsInsert) then
+    DataSet.CheckBrowseMode;  // auto-commit changes ...
 end;
 
 procedure TManageMemberData.qryMemberMETADATAGetText(Sender: TField;
@@ -495,6 +490,31 @@ begin
   qryMemberPB.Prepare();
   qryMemberPB.Open();
   qryMemberPB.EnableControls;
+end;
+
+
+
+procedure TManageMemberData.WndProc(var Message: TMessage);
+var
+  dt, DOB: TDateTime;
+begin
+  if (Message.Msg = SCM_DOBUPDATED) then
+  begin
+    dt := SystemTimeToDateTime(pSystemTime(Message.WParam)^);
+
+    DOB := dsMember.DataSet.FieldByName('DOB').AsDateTime;
+    if dt <> DOB then
+    BEGIN
+      if (dsMember.DataSet.State <> dsEdit) or (dsMember.DataSet.State <> dsInsert) then
+      begin
+        dsMember.DataSet.CheckBrowseMode;
+        dsMember.DataSet.edit;
+      end;
+      // NOTE: edit/insert mode not asserted
+      dsMember.DataSet.FieldByName('DOB').AsDateTime := dt;
+    END;
+
+  end;
 end;
 
 end.

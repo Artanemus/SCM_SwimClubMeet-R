@@ -15,7 +15,9 @@ uses
   Vcl.ExtCtrls, Vcl.Menus, Vcl.WinXCalendars, dmManageMemberData, SCMDefines,
   Vcl.VirtualImageList, Vcl.BaseImageCollection, Vcl.ImageCollection,
   System.Actions, Vcl.ActnList, Vcl.PlatformDefaultStyleActnCtrls, Vcl.ActnMan,
-  Vcl.ToolWin, Vcl.ActnCtrls, Vcl.ActnMenus;
+  Vcl.ToolWin, Vcl.ActnCtrls, Vcl.ActnMenus, Data.Bind.EngExt,
+  Vcl.Bind.DBEngExt, System.Rtti, System.Bindings.Outputs, Vcl.Bind.Editors,
+  Data.Bind.Components, Data.Bind.DBScope;
 
 type
   TManageMember = class(TForm)
@@ -95,6 +97,9 @@ type
     TabSheet2: TTabSheet;
     TabSheet3: TTabSheet;
     VirtlImageListMember: TVirtualImageList;
+    BindSourceDB1: TBindSourceDB;
+    BindingsList1: TBindingsList;
+    LinkPropertyToFieldDate: TLinkPropertyToField;
     procedure About2Click(Sender: TObject);
     procedure btnClearClick(Sender: TObject);
     procedure btnClubMembersDetailedClick(Sender: TObject);
@@ -130,13 +135,17 @@ type
     procedure Onlinehelp1Click(Sender: TObject);
     procedure SCMwebsite1Click(Sender: TObject);
   private
+    { Private declarations }
     fColorBgColor: TColor;
     fColorEditBoxFocused: TColor;
     fColorEditBoxNormal: TColor;
     FConnection: TFDConnection;
     fDoDelete: Boolean;
-    { Private declarations }
     fSwimClubID: Integer;
+    // SPECIAL dtpickDOB : place here to remain persistent over life of DLG.
+    // Used to POST MESSAGE to DataModule.
+    fSystemTime: TSystemTime;
+
     function AssertConnection: Boolean;
     function FindMember(MemberID: Integer): Boolean;
     procedure ReadPreferences();
@@ -167,7 +176,8 @@ implementation
 uses SCMUtility, dlgBasicLogin, System.IniFiles, System.UITypes, dlgAbout,
   dlgDOBPicker, dlgFindMember, dlgGotoMember, dlgGotoMembership,
   System.IOUtils, Winapi.ShellAPI, dlgDeleteMember, Vcl.Themes, rptMemberDetail,
-  rptMemberHistory, rptMembersList, rptMembersDetail, rptMembersSummary;
+  rptMemberHistory, rptMembersList, rptMembersDetail, rptMembersSummary,
+  System.DateUtils;
 
 procedure TManageMember.About2Click(Sender: TObject);
 var
@@ -706,25 +716,30 @@ begin
     if not Active then
       exit;
     {
-    VCL Control dtpickDOB is DATA UN-AWARE.
-    When focus is on child grids and a scroll is performed, an exception
-    can occur. Assigning EditorMode := true doesn't avoid the error.
+      VCL Control dtpickDOB is DATA UN-AWARE.
+      When focus is on child grids and a scroll is performed, an exception
+      can occur when master enters dsEdit state.
     }
+    if dtpickDOB.IsEmpty then exit;
+    if dtpickDOB.Date = 0 then exit;
+    if (YearOf(dtpickDOB.Date) < 1950)  then exit;
+
+
+    // S Y N C R O N I Z E   D A T A M O D U L E   D O B  . . .
     if FieldByName('DOB').AsDateTime <> dtpickDOB.Date then
     Begin
       // OK to do assignment here.
       if State = dsEdit then
       begin
-          FieldByName('DOB').AsDateTime := dtpickDOB.Date;
-          ManageMemberData.DOBChanged := 0; // indicates SYNCed with datamodule.
+        FieldByName('DOB').AsDateTime := dtpickDOB.Date;
       end
       else
-        // FLAGS DataModule to check DOB at Member.BeforePost and
-        // Member.BeforeScroll.
-        ManageMemberData.DOBChanged := dtpickDOB.Date;
+        DateTimeToSystemTime(dtpickDOB.Date, fSystemTime);
+      // MESSAGE avoid exception errors when DB not in correct state.
+      PostMessage(ManageMemberData.Handle, SCM_DOBUPDATED,
+        longint(@fSystemTime), 0);
     End;
   END;
-
 end;
 
 function TManageMember.FindMember(MemberID: Integer): Boolean;
@@ -800,6 +815,7 @@ begin
   // Display tabsheet
   PageControl1.TabIndex := 0;
 
+
 end;
 
 procedure TManageMember.FormDestroy(Sender: TObject);
@@ -827,14 +843,19 @@ end;
 
 procedure TManageMember.ManageMemberAfterScroll(var Msg: TMessage);
 begin
+  // S Y N C R O N I Z E   D A T A M O D U L E   D O B   . . .
   if not AssertConnection then
     exit;
   if ManageMemberData.qryMember.FieldByName('DOB').IsNull then
-    dtpickDOB.Date := Now
+  begin
+//    dtpickDOB.Date := Now;
+    dtpickDOB.BorderColor := clWebTomato;
+  end
   else
-    // DATE-OF-BIRTH - DATETIME PICKER INIT
-    // DOB Picker is not linked to data module.
-    dtpickDOB.Date := ManageMemberData.qryMember.FieldByName('DOB').AsDateTime;
+    begin
+//      dtpickDOB.Date := ManageMemberData.qryMember.FieldByName('DOB').AsDateTime;
+      dtpickDOB.BorderColor := clWebWhiteSmoke; // grey'ish white
+    end;
 end;
 
 procedure TManageMember.ManageMemberUpdate(var Msg: TMessage);
@@ -898,6 +919,13 @@ begin
   // execute SQL. Make all null IsArchived, IsActive, IsSwimmer = 0;
   // ManageMemberData.FixNullBooleans;
 
+
+  // Assert binding - because it always fails!!!
+  // NON DATABASE AWARE dtDOBpicker SYNC with DataModule - link bindings.
+  BindSourceDB1.DataSet := ManageMemberData.qryMember;
+  if not BindSourceDB1.DataSet.Active then
+    BindSourceDB1.DataSet.Active := true;
+
   // ----------------------------------------------------
   // Prepares all core queries  (Master+Child)
   // ----------------------------------------------------
@@ -907,6 +935,8 @@ begin
   // Cue-to-member
   if AMemberID > 0 then
     FindMember(AMemberID);
+
+
 
 end;
 
