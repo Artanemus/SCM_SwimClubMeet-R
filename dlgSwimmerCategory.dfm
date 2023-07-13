@@ -161,7 +161,7 @@ object SwimmerCategory: TSwimmerCategory
               end
               item
                 Expanded = False
-                FieldName = 'ABREV'
+                FieldName = 'TAG'
                 Title.Caption = 'CLASS'
                 Width = 120
                 Visible = True
@@ -258,7 +258,7 @@ object SwimmerCategory: TSwimmerCategory
       1054
       54)
     object btnClose: TButton
-      Left = 932
+      Left = 928
       Top = 6
       Width = 75
       Height = 30
@@ -266,7 +266,7 @@ object SwimmerCategory: TSwimmerCategory
       Caption = 'Close'
       TabOrder = 0
       OnClick = btnCloseClick
-      ExplicitLeft = 928
+      ExplicitLeft = 924
     end
     object DBNavigator1: TDBNavigator
       Left = 332
@@ -281,6 +281,7 @@ object SwimmerCategory: TSwimmerCategory
   end
   object qrySwimmerCategory: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    BeforePost = qrySwimmerCategoryBeforePost
     IndexFieldNames = 'SwimmerCategoryID'
     Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet.dbo.SwimmerCategory'
@@ -295,7 +296,7 @@ object SwimmerCategory: TSwimmerCategory
       'SELECT [SwimmerCategoryID]'
       '     , [Caption]'
       '     , [LongCaption]'
-      '     , [ABREV]'
+      '     , [TAG]'
       '     , [AgeFrom]'
       '     , [AgeTo]'
       '     , [IsActive]'
@@ -323,15 +324,15 @@ object SwimmerCategory: TSwimmerCategory
       Origin = 'Caption'
       Size = 64
     end
+    object qrySwimmerCategoryTAG: TWideStringField
+      FieldName = 'TAG'
+      Origin = 'TAG'
+      Size = 12
+    end
     object qrySwimmerCategoryLongCaption: TWideStringField
       FieldName = 'LongCaption'
       Origin = 'LongCaption'
       Size = 128
-    end
-    object qrySwimmerCategoryABREV: TWideStringField
-      DisplayWidth = 12
-      FieldName = 'ABREV'
-      Size = 12
     end
     object qrySwimmerCategoryAgeFrom: TIntegerField
       DisplayLabel = 'Age.From'

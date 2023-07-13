@@ -325,11 +325,16 @@ begin
       end;
       qryEntrantDataCount.Close;
     end;
-    qryMember.DisableControls; // will it stop refresh of contact table?
-    // remove all the relationships in associated tables for this member
+    qryMember.DisableControls;
+    // remove all C O N T A C T N U Mbers for this member.
     SQL := 'DELETE FROM [SwimClubMeet].[dbo].[ContactNum] WHERE MemberID = ' +
       IntToStr(MemberID) + ';';
     FConnection.ExecSQL(SQL);
+    // remove all R O L E S assigned to this member held in linked-list.
+    SQL := 'DELETE FROM [SwimClubMeet].[dbo].[[MemberRoleLink]] WHERE MemberID = ' +
+      IntToStr(MemberID) + ';';
+    FConnection.ExecSQL(SQL);
+
     { TODO -oBen -cGeneral : db.Split and dbo.TeamSplit need to be handled prior to cleaning dbo.Entrant. }
     SQL := 'UPDATE [SwimClubMeet].[dbo].[Entrant] SET [MemberID] = NULL, ' +
       '[RaceTime] = NULL, [TimeToBeat] = NULL, [PersonalBest] = NULL, ' +
@@ -345,7 +350,7 @@ begin
       IntToStr(MemberID) + ';';
     FConnection.ExecSQL(SQL);
 
-    { TODO -oBen -cGeneral : Remove link }
+    { TODO -oBen -cGeneral : Version 1.5.5.4 uses a linked list to SwimClub ... }
     (*
       SQL := 'DELETE FROM [SwimClubMeet].[dbo].[lnkSwimClubMember] WHERE MemberID = '
       + IntToStr(MemberID) + ' AND SwimClubID = ' +
@@ -383,16 +388,28 @@ var
 begin
   // Validate MemberRoleID
   fld := DataSet.FieldByName('MemberRoleID');
-  if (fld.IsNull) then
+  if Assigned(fld) AND (fld.IsNull) then
+  begin
+    // raise Exception.Create('A member''s role must be assigned.');
     Abort;
-  // raise Exception.Create('A member''s role must be assigned.');
+  end;
   // test for duplicity ...
   SQL := 'SELECT COUNT(MemberRoleID) FROM dbo.MemberRoleLink WHERE MemberRoleID = '
     + IntToStr(fld.AsInteger);
   v := FConnection.ExecSQLScalar(SQL);
   if (v <> 0) then
+  begin
+    // raise Exception.Create('A member cannot have the same role twice.');
     Abort;
-  // raise Exception.Create('A member cannot have the same role twice.');
+  end;
+  // NULL NOT ALLOWED
+  fld := DataSet.FieldByName('IsArchived');
+  if Assigned(fld) AND (fld.IsNull) then
+    fld.AsBoolean := false;
+  // NULL NOT ALLOWED
+  fld := DataSet.FieldByName('IsActive');
+  if Assigned(fld) AND (fld.IsNull) then
+    fld.AsBoolean := false;
 end;
 
 procedure TManageMemberData.qryMemberRoleLnkNewRecord(DataSet: TDataSet);

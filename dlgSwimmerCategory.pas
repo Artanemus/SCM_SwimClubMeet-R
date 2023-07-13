@@ -35,7 +35,6 @@ type
     Panel3: TPanel;
     Panel4: TPanel;
     qrySwimmerCategory: TFDQuery;
-    qrySwimmerCategoryABREV: TWideStringField;
     qrySwimmerCategoryAgeFrom: TIntegerField;
     qrySwimmerCategoryAgeTo: TIntegerField;
     qrySwimmerCategoryCaption: TWideStringField;
@@ -46,6 +45,7 @@ type
     TabSheet1: TTabSheet;
     TabSheet3: TTabSheet;
     DBNavigator1: TDBNavigator;
+    qrySwimmerCategoryTAG: TWideStringField;
     procedure btnCloseClick(Sender: TObject);
     procedure DBGrid1CellClick(Column: TColumn);
     procedure DBGrid1ColEnter(Sender: TObject);
@@ -56,6 +56,7 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
+    procedure qrySwimmerCategoryBeforePost(DataSet: TDataSet);
   private
     fColorBgColor: TColor;
     fColorEditBoxFocused: TColor;
@@ -284,6 +285,21 @@ begin
     qrySwimmerCategory.Prepare;
     qrySwimmerCategory.Open;
   end;
+end;
+
+procedure TSwimmerCategory.qrySwimmerCategoryBeforePost(DataSet: TDataSet);
+var
+fld: TField;
+begin
+  // IsArchived and IsActive NULLS NOT ALLOWED
+  fld := DataSet.FieldByName('IsArchived');
+  if Assigned(fld) AND (fld.IsNull) then
+    fld.AsBoolean := false;
+  fld := DataSet.FieldByName('IsActive');
+  if Assigned(fld) AND (fld.IsNull) then
+    fld.AsBoolean := false;
+  {TODO -oBSA -cGeneral : Check TAG qualifies against SwimmerCategory
+    for current SwimClubID ... dbo.ClubType }
 end;
 
 end.
