@@ -46,6 +46,9 @@ type
     TabSheet3: TTabSheet;
     DBNavigator1: TDBNavigator;
     qrySwimmerCategoryTAG: TWideStringField;
+    qryLUTAG: TFDQuery;
+    qrySwimmerCategoryTAGID: TIntegerField;
+    qrySwimmerCategoryluTAGID: TStringField;
     procedure btnCloseClick(Sender: TObject);
     procedure DBGrid1CellClick(Column: TColumn);
     procedure DBGrid1ColEnter(Sender: TObject);

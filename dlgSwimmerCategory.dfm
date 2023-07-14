@@ -161,7 +161,7 @@ object SwimmerCategory: TSwimmerCategory
               end
               item
                 Expanded = False
-                FieldName = 'TAG'
+                FieldName = 'luTAGID'
                 Title.Caption = 'CLASS'
                 Width = 120
                 Visible = True
@@ -258,7 +258,7 @@ object SwimmerCategory: TSwimmerCategory
       1054
       54)
     object btnClose: TButton
-      Left = 928
+      Left = 924
       Top = 6
       Width = 75
       Height = 30
@@ -266,7 +266,7 @@ object SwimmerCategory: TSwimmerCategory
       Caption = 'Close'
       TabOrder = 0
       OnClick = btnCloseClick
-      ExplicitLeft = 924
+      ExplicitLeft = 920
     end
     object DBNavigator1: TDBNavigator
       Left = 332
@@ -297,6 +297,7 @@ object SwimmerCategory: TSwimmerCategory
       '     , [Caption]'
       '     , [LongCaption]'
       '     , [TAG]'
+      '     , [TAGID]'
       '     , [AgeFrom]'
       '     , [AgeTo]'
       '     , [IsActive]'
@@ -324,6 +325,10 @@ object SwimmerCategory: TSwimmerCategory
       Origin = 'Caption'
       Size = 64
     end
+    object qrySwimmerCategoryTAGID: TIntegerField
+      FieldName = 'TAGID'
+      Origin = 'TAGID'
+    end
     object qrySwimmerCategoryTAG: TWideStringField
       FieldName = 'TAG'
       Origin = 'TAG'
@@ -350,10 +355,49 @@ object SwimmerCategory: TSwimmerCategory
     object qrySwimmerCategoryIsArchived: TBooleanField
       FieldName = 'IsArchived'
     end
+    object qrySwimmerCategoryluTAGID: TStringField
+      FieldKind = fkLookup
+      FieldName = 'luTAGID'
+      LookupDataSet = qryLUTAG
+      LookupKeyFields = 'MetaDataID'
+      LookupResultField = 'TAG'
+      KeyFields = 'TAGID'
+      Lookup = True
+    end
   end
   object dsSwimmerCategory: TDataSource
     DataSet = qrySwimmerCategory
     Left = 280
     Top = 296
+  end
+  object qryLUTAG: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    Connection = SCM.scmConnection
+    SQL.Strings = (
+      'USE SwimClubMeet;'
+      ''
+      'DECLARE @SwimClubID AS INTEGER;'
+      'SET @SwimClubID = :SWIMCLUBID '
+      ''
+      'SELECT '
+      'MetaData.MetaDataID'
+      ',TAG '
+      'FROM '
+      'SwimClubMetaDataLink'
+      
+        'INNER JOIN MetaData ON  SwimClubMetaDataLink.MetaDataID = MetaDa' +
+        'ta.MetaDataID '
+      'WHERE SwimClubID = @SwimClubID;'
+      ''
+      '')
+    Left = 143
+    Top = 388
+    ParamData = <
+      item
+        Name = 'SWIMCLUBID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = 1
+      end>
   end
 end

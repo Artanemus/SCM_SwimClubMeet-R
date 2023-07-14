@@ -1,14 +1,3 @@
--- ================================================
--- Template generated from Template Explorer using:
--- Create Scalar Function (New Menu).SQL
---
--- Use the Specify Values for Template Parameters 
--- command (Ctrl-Shift-M) to fill in the parameter 
--- values below.
---
--- This block of comments will not be included in
--- the definition of the function.
--- ================================================
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16,9 +5,9 @@ GO
 -- =============================================
 -- Author:		Ben Ambrose
 -- Create date: 13/07/2023
--- Description:	Get the Swimming CAT of the MEMBER
+-- Description:	Get the Swimming CATEGORY of the MEMBER
 -- =============================================
-CREATE FUNCTION MembersSwimmerCategory
+CREATE OR ALTER FUNCTION [dbo].[MembersSwimmerCategory] 
 (
 	-- Add the parameters for the function here
 	@MemberID int
@@ -39,9 +28,13 @@ BEGIN
 
 	IF @MemberID IS NULL RETURN @Result;
 
+    DECLARE @SwimClubTypeID AS INTEGER;
+    SET @SwimClubTypeID = (SELECT @SwimClubTypeID FROM dbo.SwimClub WHERE SwimClubID = @SwimClubID);
+    IF @SwimClubTypeID IS NULL SET @SwimClubTypeID = 1;    
+
 	    -- Declare the table variable
     DECLARE @A TABLE (MemberID INT, AGE INT, TAGS nvarchar(max));
-	DECLARE @B TABLE (CategoryID INT, aMATCH INT);
+	DECLARE @B TABLE (ID INT, aMATCH INT);
 
     -- Insert data into the table variable
     INSERT INTO @A (MemberID, AGE, TAGS) 
@@ -54,29 +47,33 @@ BEGIN
 	WHERE MemberID = @MemberID AND SwimClubID = @SwimClubID	;
 
 
-	INSERT INTO @B (CategoryID, aMATCH)
+	INSERT INTO @B (ID, aMATCH)
 	SELECT 
-		[dbo].[SwimmerCategory].[SwimmerCategoryID]
+		[dbo].[SwimmerCategory].[SwimmerCategoryID] AS ID
 		, CASE
+            -- IF BOTH ARE NULL - MATCH
 			WHEN (SwimmerCategory.TAG IS NULL)
 				AND (TAGS IS NULL) THEN
-				1 -- IF BOTH ARE NULL - MATCH
+				1 
+            -- TAG FOUND IN META-DATA                
 			-- If either the expressionToFind or expressionToSearch expression has a NULL value, CHARINDEX returns NULL.
 			-- If CHARINDEX does not find expressionToFind within expressionToSearch, CHARINDEX returns 0.
 			WHEN (CHARINDEX(SwimmerCategory.TAG, TAGS) > 0) THEN
-				1 -- TAG FOUND IN META-DATA
+				1 
 			ELSE
 				0 -- NO MATCH
 		END AS aMATCH 
 
 		FROM [dbo].[SwimmerCategory]
+            
 			INNER JOIN @A
 				ON (AGE >= AgeFrom)
 				   AND (AGE <= AgeTo)
-		ORDER BY aMATCH DESC;
+        WHERE [dbo].[SwimmerCategory].[SwimClubID] = @SwimClubID
+		-- Ordering here fails !!! ???
 
 
-	SELECT TOP (1)  @Result = CategoryID FROM @B;
+	SELECT TOP (1)  @Result = ID FROM @B  WHERE aMATCH = 1 ORDER BY aMATCH DESC; 
 
 
 	-- Return the result of the function
@@ -84,4 +81,3 @@ BEGIN
 
 END
 GO
-

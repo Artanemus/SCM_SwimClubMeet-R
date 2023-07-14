@@ -10,6 +10,10 @@ SET @SeedDate = GETDATE();
 DECLARE @SwimClubID AS INTEGER;
 SET @SwimClubID = 1;
 
+DECLARE @SwimClubTypeID AS INTEGER;
+SET @SwimClubTypeID = (SELECT @SwimClubTypeID FROM dbo.SwimClub WHERE SwimClubID = @SwimClubID);
+IF @SwimClubTypeID IS NULL SET @SwimClubTypeID = 1;
+
 -- Drop a temporary table called '#A'
 -- Drop the table if it already exists
 IF OBJECT_ID('tempDB..#A', 'U') IS NOT NULL
