@@ -121,6 +121,8 @@ type
     procedure DBGridEditButtonClick(Sender: TObject);
     procedure DBGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure DBGridRoleCellClick(Column: TColumn);
+    procedure DBGridRoleEditButtonClick(Sender: TObject);
+    procedure DBGridRoleKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure DBNavigator1BeforeAction(Sender: TObject; Button: TNavigateBtn);
     procedure DBNavigator1Click(Sender: TObject; Button: TNavigateBtn);
     procedure DrawCheckBoxes(oGrid: TObject; Rect: TRect; Column: TColumn;
@@ -405,7 +407,7 @@ var
 begin
   // NOTE: DEFAULT DRAWING IS DISABLED ....
   // NOTE: DO NOT ENABLE TDBGRID OPTION dgAlwaysShowEditor.
-  //    (inconsistent OS MESSAGING)
+  // (inconsistent OS MESSAGING)
   if (Column.Field.FieldName = 'IsActive') or
     (Column.Field.FieldName = 'IsArchived') or
     (Column.Field.FieldName = 'IsSwimmer') then
@@ -558,8 +560,8 @@ begin
     if Column.Grid.DataSource.DataSet.State <> dsEdit then
       Column.Grid.DataSource.DataSet.Edit;
 
-//    Column.Grid.DataSource.DataSet.CheckBrowseMode;
-//    Column.Grid.DataSource.DataSet.Edit;
+    // Column.Grid.DataSource.DataSet.CheckBrowseMode;
+    // Column.Grid.DataSource.DataSet.Edit;
     Column.Field.AsBoolean := not Column.Field.AsBoolean;
   end;
 
@@ -567,9 +569,70 @@ begin
   begin
     if Column.Grid.DataSource.DataSet.State <> dsEdit then
       Column.Grid.DataSource.DataSet.Edit;
-//    Column.Grid.DataSource.DataSet.CheckBrowseMode;
-//    Column.Grid.DataSource.DataSet.Edit;
+    // Column.Grid.DataSource.DataSet.CheckBrowseMode;
+    // Column.Grid.DataSource.DataSet.Edit;
   end;
+end;
+
+procedure TManageMember.DBGridRoleEditButtonClick(Sender: TObject);
+var
+fld: TField;
+dlg: TDOBPicker;
+dt:TDateTime;
+idx: integer;
+mrRtn: TModalResult;
+begin
+  // handle the ellipse button for the disqualification code
+  With Sender as TDBGrid Do
+  BEGIN
+    fld := SelectedField;
+    if not Assigned(fld) then  exit;
+    dt := 0;
+    DataSource.DataSet.DisableControls;
+    if (fld.FieldName = 'ElectedOn') OR (fld.FieldName = 'RetiredOn') then
+    begin
+      // open DATE PICKER ...
+      dlg := TDOBPicker.Create(self);
+      mrRtn := dlg.ShowModal;
+//      if IsPositiveResult(mrRtn) then
+      if (mrRtn = mrOk) then
+
+      begin
+        idx := DBGridRole.SelectedIndex;
+        Columns[idx].ReadOnly := false;
+        fld.AsDateTime := dlg.CalendarView1.Date;
+        Columns[idx].ReadOnly := true;
+      end;
+      dlg.Free;
+    end;
+    DataSource.DataSet.EnableControls;
+  END;
+end;
+
+procedure TManageMember.DBGridRoleKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+var
+  fld: TField;
+begin
+  if Key = VK_BACK then
+  BEGIN
+    with Sender as TDBGrid do
+    Begin
+      // if the query is not in edit mode
+      if not(DataSource.DataSet.State in [dsInsert, dsEdit]) then
+        exit;
+      DataSource.DataSet.DisableControls;
+      fld := TDBGrid(Sender).SelectedField;
+      if Assigned(fld) then
+      BEGIN
+        if (fld.FieldName = 'ElectedOn') or (fld.FieldName = 'RetiredOn') then
+          fld.Clear;
+      end;
+      DataSource.DataSet.EnableControls;
+      // signal finished with key;
+      Key := 0;
+    END;
+  END;
 end;
 
 procedure TManageMember.DBNavigator1BeforeAction(Sender: TObject;
@@ -630,7 +693,7 @@ begin
   // ---------------------------------------------------------------------------
   // NOTE: DEFAULT DRAWING IS DISABLED ....
   // NOTE: DO NOT ENABLE TDBGRID OPTION dgAlwaysShowEditor.
-  //    (inconsistent OS MESSAGING)
+  // (inconsistent OS MESSAGING)
 
   g := TDBGrid(oGrid);
   // is the cell checked?
@@ -709,33 +772,26 @@ end;
 
 procedure TManageMember.dtpickDOBChange(Sender: TObject);
 begin
+  // VCL Control dtpickDOB is DATA UN-AWARE.
   if not Assigned(ManageMemberData) then
     exit;
   with ManageMemberData.dsMember.DataSet do
   BEGIN
     if not Active then
       exit;
-    {
-      VCL Control dtpickDOB is DATA UN-AWARE.
-      When focus is on child grids and a scroll is performed, an exception
-      can occur when master enters dsEdit state.
-    }
-    if dtpickDOB.IsEmpty then exit;
-    if dtpickDOB.Date = 0 then exit;
-    if (YearOf(dtpickDOB.Date) < 1950)  then exit;
-
+    if dtpickDOB.IsEmpty then
+      exit;
+    if dtpickDOB.Date = 0 then
+      exit;
+    if (YearOf(dtpickDOB.Date) < 1950) then
+      exit;
 
     // S Y N C R O N I Z E   D A T A M O D U L E   D O B  . . .
     if FieldByName('DOB').AsDateTime <> dtpickDOB.Date then
     Begin
-      // OK to do assignment here.
-      if State = dsEdit then
-      begin
-        FieldByName('DOB').AsDateTime := dtpickDOB.Date;
-      end
-      else
-        DateTimeToSystemTime(dtpickDOB.Date, fSystemTime);
-      // MESSAGE avoid exception errors when DB not in correct state.
+      // Send SystemTime to the DataModule. (Persistent across curr.session)
+      // POST helps avoid exceptions when DB not in correct state.
+      DateTimeToSystemTime(dtpickDOB.Date, fSystemTime);
       PostMessage(ManageMemberData.Handle, SCM_DOBUPDATED,
         longint(@fSystemTime), 0);
     End;
@@ -815,7 +871,6 @@ begin
   // Display tabsheet
   PageControl1.TabIndex := 0;
 
-
 end;
 
 procedure TManageMember.FormDestroy(Sender: TObject);
@@ -848,14 +903,14 @@ begin
     exit;
   if ManageMemberData.qryMember.FieldByName('DOB').IsNull then
   begin
-//    dtpickDOB.Date := Now;
+    // dtpickDOB.Date := Now;
     dtpickDOB.BorderColor := clWebTomato;
   end
   else
-    begin
-//      dtpickDOB.Date := ManageMemberData.qryMember.FieldByName('DOB').AsDateTime;
-      dtpickDOB.BorderColor := clWebWhiteSmoke; // grey'ish white
-    end;
+  begin
+    // dtpickDOB.Date := ManageMemberData.qryMember.FieldByName('DOB').AsDateTime;
+    dtpickDOB.BorderColor := clWebWhiteSmoke; // grey'ish white
+  end;
 end;
 
 procedure TManageMember.ManageMemberUpdate(var Msg: TMessage);
@@ -919,7 +974,6 @@ begin
   // execute SQL. Make all null IsArchived, IsActive, IsSwimmer = 0;
   // ManageMemberData.FixNullBooleans;
 
-
   // Assert binding - because it always fails!!!
   // NON DATABASE AWARE dtDOBpicker SYNC with DataModule - link bindings.
   BindSourceDB1.DataSet := ManageMemberData.qryMember;
@@ -935,8 +989,6 @@ begin
   // Cue-to-member
   if AMemberID > 0 then
     FindMember(AMemberID);
-
-
 
 end;
 

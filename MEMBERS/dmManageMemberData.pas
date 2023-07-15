@@ -86,8 +86,9 @@ type
     qryMemberRoleLnkIsActive: TBooleanField;
     qryMemberRoleLnkIsArchived: TBooleanField;
     qryMemberRoleLnkluMemberRoleStr: TStringField;
-    qryMemberABREV: TWideStringField;
-    qryMemberTAG: TWideMemoField;
+    qryMemberTAGS: TWideMemoField;
+    qryMemberRoleLnkElectedOn: TSQLTimeStampField;
+    qryMemberRoleLnkRetiredOn: TSQLTimeStampField;
     procedure DataModuleCreate(Sender: TObject);
     procedure qryMemberAfterInsert(DataSet: TDataSet);
     procedure qryMemberAfterScroll(DataSet: TDataSet);
@@ -410,6 +411,11 @@ begin
   fld := DataSet.FieldByName('IsActive');
   if Assigned(fld) AND (fld.IsNull) then
     fld.AsBoolean := false;
+  // Creation date.
+  fld := DataSet.FieldByName('CreatedOn');
+  if Assigned(fld) AND (fld.IsNull) then
+    fld.AsDateTime := Now;
+
 end;
 
 procedure TManageMemberData.qryMemberRoleLnkNewRecord(DataSet: TDataSet);

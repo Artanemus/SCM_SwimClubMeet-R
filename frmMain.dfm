@@ -707,25 +707,9 @@ object Main: TMain
                 Columns = <
                   item
                     Expanded = False
-                    FieldName = 'FName'
-                    Width = 310
+                    FieldName = 'Member'#39's Name'
+                    Width = 300
                     Visible = True
-                  end
-                  item
-                    Expanded = False
-                    FieldName = 'MemberID'
-                    Title.Caption = 'ID'
-                    Visible = False
-                  end
-                  item
-                    Expanded = False
-                    FieldName = 'GenderID'
-                    Visible = False
-                  end
-                  item
-                    Expanded = False
-                    FieldName = 'FullName'
-                    Visible = False
                   end>
               end
               object btnClearSearch: TButton
@@ -1054,48 +1038,49 @@ object Main: TMain
               item
                 Expanded = False
                 FieldName = 'Lane'
+                Width = 60
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'FullName'
-                Width = 64
+                Width = 340
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'RaceTime'
-                Width = 64
+                Width = 100
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'TimeToBeat'
-                Width = 64
+                Width = 100
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'PersonalBest'
-                Width = 64
+                Width = 100
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'IsScratched'
-                Width = 64
+                Width = 30
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'IsDisqualified'
-                Width = 64
+                Width = 30
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'DCode'
-                Width = 90
+                Width = 80
                 Visible = True
               end>
           end

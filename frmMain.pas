@@ -2280,6 +2280,16 @@ begin
   Entrant_Grid.Options := Entrant_Grid.Options + [dgEditing];
   Entrant_Grid.Options := Entrant_Grid.Options - [dgAlwaysShowEditor];
 
+  {
+  When the Columns.State property of the grid is csDefault, grid columns
+  are dynamically generated from the visible fields of the dataset and the
+  order of columns in the grid matches the order of fields in the dataset.
+  }
+  Session_Grid.Columns.State := csDefault;
+  Event_Grid.Columns.State := csDefault;
+  Entrant_Grid.Columns.State := csDefault;
+  Nominate_Grid.Columns.State := csDefault;
+
 end;
 
 procedure TMain.FormDestroy(Sender: TObject);
@@ -4394,7 +4404,7 @@ procedure TMain.ToggleFINA(EnableFINA: boolean);
 var
   i: integer;
 begin
-  // toggle FINA codes of simple scratch/disqualified
+  // Toggle FINA codes of simple scratch/disqualified
   SCM.qryEntrant.DisableControls;
   for i := 0 to Entrant_Grid.Columns.Count - 1 do
   begin
@@ -4410,22 +4420,6 @@ begin
         Entrant_Grid.Columns[i].Visible := not EnableFINA;
     end;
   end;
-
-  // DOESN'T EFFECT THE VISIBILITY IN THE TDBGRID
-  // When columns have been assigned in the 'Column Editor'.
-  // // i s S c r a t c h e d   . . .
-  // fld := Entrant_Grid.DataSource.DataSet.FindField('IsScratched');
-  // if Assigned(fld) then
-  // fld.Visible := EnableFINA;
-  // // i s D i s q u a l i f i e d   . . .
-  // fld := Entrant_Grid.DataSource.DataSet.FindField('IsDisqualified');
-  // if Assigned(fld) then
-  // fld.Visible := not EnableFINA;
-  // // FinaCode   . . .
-  // fld := Entrant_Grid.DataSource.DataSet.FindField('DCode');
-  // if Assigned(fld) then
-  // fld.Visible := not EnableFINA;
-
   SCM.qryEntrant.EnableControls;
 end;
 

@@ -1301,6 +1301,7 @@ object SCM: TSCM
   end
   object qryNominateMembers: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     AfterScroll = qryNominateMembersAfterScroll
     FilterOptions = [foCaseInsensitive]
     Indexes = <
@@ -1394,7 +1395,7 @@ object SCM: TSCM
     end
     object qryNominateMembersFName: TWideStringField
       DisplayLabel = 'Member'#39's Name'
-      DisplayWidth = 38
+      DisplayWidth = 32
       FieldName = 'FName'
       Origin = 'FName'
       ReadOnly = True
@@ -1409,6 +1410,7 @@ object SCM: TSCM
       FieldName = 'FullName'
       Origin = 'FullName'
       ReadOnly = True
+      Visible = False
       Size = 48
     end
   end

@@ -50,6 +50,7 @@ object ManageMemberData: TManageMemberData
   end
   object qryMember: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     AfterInsert = qryMemberAfterInsert
     BeforeDelete = qryMemberBeforeDelete
     BeforeScroll = qryMemberBeforeScroll
@@ -94,8 +95,7 @@ object ManageMemberData: TManageMemberData
       '       HouseID,'
       '       CreatedOn,'
       '       ArchivedOn,'
-      '       ABREV,'
-      '       TAG'
+      '       TAGS'
       'FROM [dbo].[Member]'
       'WHERE (IsActive >= CASE'
       '                       WHEN @HideInActive = 1 THEN'
@@ -289,14 +289,9 @@ object ManageMemberData: TManageMemberData
       Origin = 'HouseID'
       Visible = False
     end
-    object qryMemberABREV: TWideStringField
-      FieldName = 'ABREV'
-      Origin = 'ABREV'
-      Size = 13
-    end
-    object qryMemberTAG: TWideMemoField
-      FieldName = 'TAG'
-      Origin = 'TAG'
+    object qryMemberTAGS: TWideMemoField
+      FieldName = 'TAGS'
+      Origin = 'TAGS'
       BlobType = ftWideMemo
     end
   end
@@ -394,7 +389,9 @@ object ManageMemberData: TManageMemberData
   end
   object qrySwimClub: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'SwimClubID'
+    Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..SwimClub'
     UpdateOptions.KeyFields = 'SwimClubID'
     SQL.Strings = (
@@ -629,7 +626,9 @@ object ManageMemberData: TManageMemberData
   end
   object qryMemberPB: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'MemberID'
+    Connection = SCM.scmConnection
     FormatOptions.AssignedValues = [fvFmtDisplayTime]
     FormatOptions.FmtDisplayTime = 'nn:ss.zzz'
     UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
@@ -734,6 +733,9 @@ object ManageMemberData: TManageMemberData
       '     , [MemberRoleLink].[CreatedOn]'
       '     , [MemberRoleLink].[IsActive]'
       '     , [MemberRoleLink].[IsArchived]'
+      '     , [MemberRoleLink].[ElectedOn]'
+      '     , [MemberRoleLink].[RetiredOn]'
+      '     '
       'FROM MemberRoleLink'
       '    --INNER JOIN [MemberRole]'
       
@@ -777,6 +779,14 @@ object ManageMemberData: TManageMemberData
       KeyFields = 'MemberRoleID'
       Required = True
       Lookup = True
+    end
+    object qryMemberRoleLnkElectedOn: TSQLTimeStampField
+      FieldName = 'ElectedOn'
+      Origin = 'ElectedOn'
+    end
+    object qryMemberRoleLnkRetiredOn: TSQLTimeStampField
+      FieldName = 'RetiredOn'
+      Origin = 'RetiredOn'
     end
   end
   object dsMemberRoleLnk: TDataSource
