@@ -159,8 +159,7 @@ object ManageMember: TManageMember
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitWidth = 1351
-        ExplicitHeight = 645
+        ExplicitTop = -2
         object Label3: TLabel
           Left = 105
           Top = 139
@@ -291,7 +290,7 @@ object ManageMember: TManageMember
           WordWrap = True
         end
         object Label8: TLabel
-          Left = 275
+          Left = 221
           Top = 418
           Width = 277
           Height = 19
@@ -299,7 +298,7 @@ object ManageMember: TManageMember
         end
         object Label23: TLabel
           Left = 997
-          Top = 252
+          Top = 256
           Width = 21
           Height = 118
           Alignment = taCenter
@@ -314,7 +313,7 @@ object ManageMember: TManageMember
         end
         object Label13: TLabel
           Left = 557
-          Top = 252
+          Top = 256
           Width = 21
           Height = 137
           Alignment = taRightJustify
@@ -330,7 +329,7 @@ object ManageMember: TManageMember
         end
         object Label6: TLabel
           Left = 557
-          Top = 10
+          Top = 8
           Width = 21
           Height = 47
           Alignment = taRightJustify
@@ -351,6 +350,32 @@ object ManageMember: TManageMember
           Height = 19
           Alignment = taRightJustify
           Caption = 'TAGS'
+        end
+        object btnInfoRoles: TVirtualImage
+          Left = 1265
+          Top = 10
+          Width = 25
+          Height = 26
+          ImageCollection = ImageCollectMember
+          ImageWidth = 0
+          ImageHeight = 0
+          ImageIndex = 4
+          ImageName = 'Info'
+          OnClick = btnInfoRolesClick
+          OnMouseLeave = btnInfoMouseLeave
+        end
+        object btnInfoContact: TVirtualImage
+          Left = 911
+          Top = 256
+          Width = 25
+          Height = 26
+          ImageCollection = ImageCollectMember
+          ImageWidth = 0
+          ImageHeight = 0
+          ImageIndex = 4
+          ImageName = 'Info'
+          OnClick = btnInfoContactClick
+          OnMouseLeave = btnInfoMouseLeave
         end
         object DBlucboGender: TDBLookupComboBox
           Left = 145
@@ -392,7 +417,7 @@ object ManageMember: TManageMember
         object DBedtMembershipNum: TDBEdit
           Left = 145
           Top = 415
-          Width = 124
+          Width = 70
           Height = 27
           DataField = 'MembershipNum'
           DataSource = ManageMemberData.dsMember
@@ -513,7 +538,7 @@ object ManageMember: TManageMember
         end
         object DBgridHistoryPB: TDBGrid
           Left = 1024
-          Top = 252
+          Top = 256
           Width = 301
           Height = 381
           DataSource = ManageMemberData.dsMemberPB
@@ -540,7 +565,7 @@ object ManageMember: TManageMember
         end
         object DBgridContactInfo: TDBGrid
           Left = 584
-          Top = 252
+          Top = 256
           Width = 321
           Height = 210
           DataSource = ManageMemberData.dsContactNum
@@ -569,9 +594,9 @@ object ManageMember: TManageMember
         end
         object DBContactNumNavigator: TDBNavigator
           Left = 911
-          Top = 252
+          Top = 288
           Width = 60
-          Height = 208
+          Height = 176
           DataSource = ManageMemberData.dsContactNum
           VisibleButtons = [nbInsert, nbDelete, nbPost, nbCancel]
           Hints.Strings = (
@@ -594,7 +619,7 @@ object ManageMember: TManageMember
         end
         object DBGridRole: TDBGrid
           Left = 584
-          Top = 10
+          Top = 8
           Width = 675
           Height = 210
           DataSource = ManageMemberData.dsMemberRoleLnk
@@ -656,9 +681,9 @@ object ManageMember: TManageMember
         end
         object DBNavigator2: TDBNavigator
           Left = 1265
-          Top = 10
+          Top = 42
           Width = 60
-          Height = 204
+          Height = 176
           DataSource = ManageMemberData.dsMemberRoleLnk
           VisibleButtons = [nbInsert, nbDelete, nbPost, nbCancel]
           Hints.Strings = (
@@ -1438,6 +1463,49 @@ object ManageMember: TManageMember
               A28BD548D6046A54352767EB404EB56AC4B60ED4A86A4ECED6819C6AD588FD05
               28D25331505BCA9D0000000049454E44AE426082}
           end>
+      end
+      item
+        Name = 'Info'
+        SourceImages = <
+          item
+            Image.Data = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000017352474200AECE1CE90000042E494441546843ED9947A815491486
+              3FB72E0C881B130AAE467414845117868563449C3163405147174E7010441046
+              712328C6013161CE19CC2E745C184031A12B41316D440C0BD7F20F558FBA7DBB
+              6F5755973E1E78A0B9977BEB9C3A7F8513FE6E450B97562DDC7FBE0368EE1D4C
+              B9035D8021407FA0BBF308E373E7B903FC07BC4A01BE2A801F8079C020E0A740
+              876E0337801DC09340DDA6E1B100DA007F038B017DAF229F80F5C03A40DF8324
+              06C04C6029D02B33D353E000F0D21C0FFBA9613A5E5D9DCFE940CF8CFE63602D
+              B03B044128800DC09F9909AE03FB8DF39F3D276F0D08C40C6070464700E678DA
+              090AA3E781518EE177C002E084EF6405E326005B810ECEFFBAF43D7CECFAEEC0
+              26E077C7E023606A95CB97714EC1E030D0DBF9FDAE89680D71F800F8CDAC9035
+              740C98ECB33A11638E02931CBD65C0EA4676CA004C312B636DFC9BD989081F4B
+              5536038B9C51BA2B078BB41A015078549CB6D1E60AF073E9F469065C06861B53
+              8A4ECA33B921B6118015C03FC68842E240E0751AFF4AAD74066E9AD0ABC12B01
+              F95327450074A964C026A95F8153A5D3D60E9806FC627E92EEA1407DE99E343A
+              5A7D2D605DC62E02A0CCF89751569C578D132A0AAF022E91230A97A1A29AC9E6
+              09E52065FE1A2902700FE86B462A0A6D0F9D19980DEC327A4A4C4119D6E8CD07
+              B699EFF7817E3E0054493E3303551EFC08F866D8ACFD8EE687B7110B201565EC
+              074ED9A1E4A624D724793BE0AE5CE1E589742846CD0D26753B9907C03DFF2A15
+              EC16C64C9E42C74DA475F7200F8022C67833F358E05C0A2F2AD818039C35FAA7
+              9DC8F6FF4F7900DC0BDC0750DD13234381AB46F11A302CC688A98F1E165DE43C
+              00EF817646419F1F23274E05A02DF0C1F8A0CFF66597D80520E5E02EC94C900A
+              8092A95D442F00EE11521D14DBAFA602A0AA40F590A42E17945DE291C0A5663E
+              4223808B2197D80DA3621C76363380B986B9901B5E6154F5B77A5C49954496EA
+              08B9894C3DB4888326C93B426210543E4BAA94122900644B09311B3584585131
+              77CB21AA628BB91400DC624E44D880EC712E022092C996AEB1E5740A006E39AD
+              BB2932AD467C1B9A8911F4495500EA1F8E1B6F831B1AE9B997471C901A8B909C
+              50058062BF76DE7245C12DA500649B7AD544AA8DBE85A8F6B11C5174532F47C5
+              83EE753CFE9A9C909D26CB0DCD02F615AD5A192F24BD35C012C7C0D7E486B29C
+              D046A737CFC5E003408A6780718E057144EA8E52D12CA251D43F5B2E48535D00
+              46979D575F00B2B307D0765A51B213531D4AB7647D127DA2955692B2A29DF8A3
+              CC79FD1F0240E317025B328653D3EB416D6C2800F92E567A7983171C6FCCD17A
+              01E89174338F8E4A27F36E20EF05C72AE088CFCADB313100A4DBA25F31B90BA4
+              84A37A4549CB1261BE0BA8E644BDB248B3900459633F7607F29C1421262022C2
+              1ABD66155125C76B082A5FD4D9712901C4FA5049EF3B804ACB9740B9C5EFC017
+              4EABDD310AD690EA0000000049454E44AE426082}
+          end>
       end>
     Left = 504
     Top = 224
@@ -1488,5 +1556,23 @@ object ManageMember: TManageMember
       Component = dtpickDOB
       ComponentProperty = 'Date'
     end
+  end
+  object BalloonHint1: TBalloonHint
+    Delay = 100
+    Left = 716
+    Top = 630
+  end
+  object VirtualImageList1: TVirtualImageList
+    Images = <
+      item
+        CollectionIndex = 4
+        CollectionName = 'Info'
+        Name = 'Info'
+      end>
+    ImageCollection = ImageCollectMember
+    Width = 24
+    Height = 24
+    Left = 816
+    Top = 632
   end
 end

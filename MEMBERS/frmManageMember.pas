@@ -17,7 +17,7 @@ uses
   System.Actions, Vcl.ActnList, Vcl.PlatformDefaultStyleActnCtrls, Vcl.ActnMan,
   Vcl.ToolWin, Vcl.ActnCtrls, Vcl.ActnMenus, Data.Bind.EngExt,
   Vcl.Bind.DBEngExt, System.Rtti, System.Bindings.Outputs, Vcl.Bind.Editors,
-  Data.Bind.Components, Data.Bind.DBScope;
+  Data.Bind.Components, Data.Bind.DBScope, Vcl.VirtualImage;
 
 type
   TManageMember = class(TForm)
@@ -100,6 +100,10 @@ type
     BindSourceDB1: TBindSourceDB;
     BindingsList1: TBindingsList;
     LinkPropertyToFieldDate: TLinkPropertyToField;
+    BalloonHint1: TBalloonHint;
+    VirtualImageList1: TVirtualImageList;
+    btnInfoRoles: TVirtualImage;
+    btnInfoContact: TVirtualImage;
     procedure About2Click(Sender: TObject);
     procedure btnClearClick(Sender: TObject);
     procedure btnClubMembersDetailedClick(Sender: TObject);
@@ -108,6 +112,9 @@ type
     procedure btnFindMemberClick(Sender: TObject);
     procedure btnGotoMemberIDClick(Sender: TObject);
     procedure btnGotoMembershipClick(Sender: TObject);
+    procedure btnInfoContactClick(Sender: TObject);
+    procedure btnInfoRolesClick(Sender: TObject);
+    procedure btnInfoMouseLeave(Sender: TObject);
     procedure btnMemberDetailClick(Sender: TObject);
     procedure btnMemberHistoryClick(Sender: TObject);
     procedure chkbHideArchivedClick(Sender: TObject);
@@ -122,7 +129,8 @@ type
     procedure DBGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure DBGridRoleCellClick(Column: TColumn);
     procedure DBGridRoleEditButtonClick(Sender: TObject);
-    procedure DBGridRoleKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure DBGridRoleKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
     procedure DBNavigator1BeforeAction(Sender: TObject; Button: TNavigateBtn);
     procedure DBNavigator1Click(Sender: TObject; Button: TNavigateBtn);
     procedure DrawCheckBoxes(oGrid: TObject; Rect: TRect; Column: TColumn;
@@ -302,6 +310,30 @@ begin
     end;
     dlg.Free;
   end;
+end;
+
+procedure TManageMember.btnInfoContactClick(Sender: TObject);
+begin
+  BalloonHint1.Title := 'HINTS for Contact Number.';
+  BalloonHint1.Description := 'Contact Type is optional.' + sLinebreak +
+    'To clear the contact type, select the ' + sLinebreak +
+    'cell and type ALT-BACKSPACE.';
+  BalloonHint1.ShowHint(btnInfoContact);
+end;
+
+procedure TManageMember.btnInfoRolesClick(Sender: TObject);
+begin
+  BalloonHint1.Title := 'HINTS for Membership Roles.';
+  BalloonHint1.Description := 'Assignment of a role is required.' + sLinebreak +
+    'To enter a date use the ellipse button.' + sLinebreak +
+    'To clear a date, select the cell and ' + sLinebreak +
+    'type ALT-BACKSPACE.';
+  BalloonHint1.ShowHint(btnInfoRoles);
+end;
+
+procedure TManageMember.btnInfoMouseLeave(Sender: TObject);
+begin
+  BalloonHint1.HideHint;
 end;
 
 procedure TManageMember.btnMemberDetailClick(Sender: TObject);
@@ -576,37 +608,30 @@ end;
 
 procedure TManageMember.DBGridRoleEditButtonClick(Sender: TObject);
 var
-fld: TField;
-dlg: TDOBPicker;
-dt:TDateTime;
-idx: integer;
-mrRtn: TModalResult;
+  fld: TField;
+  dlg: TDOBPicker;
+  mrRtn: TModalResult;
 begin
-  // handle the ellipse button for the disqualification code
-  With Sender as TDBGrid Do
-  BEGIN
-    fld := SelectedField;
-    if not Assigned(fld) then  exit;
-    dt := 0;
-    DataSource.DataSet.DisableControls;
+    // handle the ellipse button for TDateTime entry...
+    fld := TDBGrid(Sender).SelectedField;
+    if not Assigned(fld) then
+      exit;
     if (fld.FieldName = 'ElectedOn') OR (fld.FieldName = 'RetiredOn') then
     begin
-      // open DATE PICKER ...
-      dlg := TDOBPicker.Create(self);
-      mrRtn := dlg.ShowModal;
-//      if IsPositiveResult(mrRtn) then
+      dlg := TDOBPicker.Create(Self);
+      mrRtn := dlg.ShowModal; // open DATE PICKER ...
       if (mrRtn = mrOk) then
-
       begin
-        idx := DBGridRole.SelectedIndex;
-        Columns[idx].ReadOnly := false;
-        fld.AsDateTime := dlg.CalendarView1.Date;
-        Columns[idx].ReadOnly := true;
+        DateTimeToSystemTime(dlg.CalendarView1.Date, fSystemTime);
+        if (fld.FieldName = 'ElectedOn') then
+          PostMessage(ManageMemberData.Handle, SCM_ELECTEDONUPDATED,
+            longint(@fSystemTime), 0)
+        else
+          PostMessage(ManageMemberData.Handle, SCM_RETIREDONUPDATED,
+            longint(@fSystemTime), 0);
       end;
       dlg.Free;
     end;
-    DataSource.DataSet.EnableControls;
-  END;
 end;
 
 procedure TManageMember.DBGridRoleKeyDown(Sender: TObject; var Key: Word;
@@ -614,17 +639,18 @@ procedure TManageMember.DBGridRoleKeyDown(Sender: TObject; var Key: Word;
 var
   fld: TField;
 begin
-  if Key = VK_BACK then
+  if (Key = VK_BACK) and (ssAlt in Shift) then
   BEGIN
     with Sender as TDBGrid do
     Begin
-      // if the query is not in edit mode
-      if not(DataSource.DataSet.State in [dsInsert, dsEdit]) then
-        exit;
       DataSource.DataSet.DisableControls;
       fld := TDBGrid(Sender).SelectedField;
       if Assigned(fld) then
       BEGIN
+      // if the query is not in edit mode
+      if (DataSource.DataSet.State <> dsEdit) or
+        (DataSource.DataSet.State <> dsInsert) then
+          DataSource.DataSet.Edit;
         if (fld.FieldName = 'ElectedOn') or (fld.FieldName = 'RetiredOn') then
           fld.Clear;
       end;
@@ -810,7 +836,7 @@ begin
     result := true
   else
   begin
-    s := 'Filters must to be cleared to display this member.' + sLineBreak +
+    s := 'Filters must to be cleared to display this member.' + sLinebreak +
       'Clear the filters?';
     rtn := MessageDlg(s, TMsgDlgType.mtConfirmation, mbYesNo, 0);
     if IsPositiveResult(rtn) then
@@ -965,8 +991,8 @@ begin
   ManageMemberData.ActivateTable;
   if not ManageMemberData.ManageMemberDataActive then
   begin
-    MessageDlg('An error occurred during MSSQL table activation.' + sLineBreak +
-      'The database''s schema may need updating.' + sLineBreak +
+    MessageDlg('An error occurred during MSSQL table activation.' + sLinebreak +
+      'The database''s schema may need updating.' + sLinebreak +
       'The application will terminate!', mtError, [mbOk], 0);
     raise Exception.Create('ManageMemberData Member not active.');
   end;

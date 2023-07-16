@@ -783,6 +783,7 @@ object ManageMemberData: TManageMemberData
     object qryMemberRoleLnkElectedOn: TSQLTimeStampField
       FieldName = 'ElectedOn'
       Origin = 'ElectedOn'
+      OnGetText = qryMemberRoleLnkElectedOnGetText
     end
     object qryMemberRoleLnkRetiredOn: TSQLTimeStampField
       FieldName = 'RetiredOn'

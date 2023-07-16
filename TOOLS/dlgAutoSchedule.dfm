@@ -137,7 +137,7 @@ object AutoSchedule: TAutoSchedule
       671
       46)
     object btnCancel: TButton
-      Left = 198
+      Left = 194
       Top = 8
       Width = 75
       Height = 30
@@ -145,10 +145,10 @@ object AutoSchedule: TAutoSchedule
       Caption = 'Cancel'
       TabOrder = 0
       OnClick = btnCancelClick
-      ExplicitLeft = 194
+      ExplicitLeft = 190
     end
     object btnOk: TButton
-      Left = 279
+      Left = 275
       Top = 8
       Width = 169
       Height = 30
@@ -156,7 +156,7 @@ object AutoSchedule: TAutoSchedule
       Caption = 'AUTO Schedule'
       TabOrder = 1
       OnClick = btnOkClick
-      ExplicitLeft = 275
+      ExplicitLeft = 271
     end
   end
   object tpHeatInterval: TTimePicker
@@ -418,7 +418,7 @@ object AutoSchedule: TAutoSchedule
     ImageCollection = ImageCollection1
     Width = 24
     Height = 24
-    Left = 16
+    Left = 40
     Top = 72
   end
 end

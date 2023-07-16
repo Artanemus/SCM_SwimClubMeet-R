@@ -8,10 +8,7 @@ uses
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.VCLUI.Wait,
   Data.DB, FireDAC.Comp.Client, FireDAC.Stan.Param, FireDAC.DatS,
   FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Phys.MSSQL,
-  FireDAC.Phys.MSSQLDef, dmSCM, Windows, Winapi.Messages;
-
-const
-  UM_TEST = WM_USER + 1;
+  FireDAC.Phys.MSSQLDef, dmSCM, Windows, Winapi.Messages, SCMDefines;
 
 type
   TManageMemberData = class(TDataModule)
@@ -98,6 +95,10 @@ type
       DisplayText: Boolean);
     procedure qryMemberMETADATASetText(Sender: TField; const Text: string);
     procedure qryMemberRoleLnkBeforePost(DataSet: TDataSet);
+    procedure qryMemberRoleLnkElectedOnGetText(Sender: TField; var Text: string;
+      DisplayText: Boolean);
+    procedure qryMemberRoleLnkElectedOnSetText(Sender: TField;
+      const Text: string);
     procedure qryMemberRoleLnkNewRecord(DataSet: TDataSet);
   private
     { Private declarations }
@@ -109,7 +110,7 @@ type
     procedure UpdateMembersPersonalBest;
 
   protected
-    procedure   WndProc(var Message: TMessage); virtual;
+    procedure WndProc(var Message: TMessage); virtual;
 
   public
     { Public declarations }
@@ -119,13 +120,14 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy(); override;
 
-
     procedure ActivateTable();
     procedure FixNullBooleans();
     function LocateMember(MemberID: Integer): Boolean;
     procedure UpdateDOB(DOB: TDateTime);
     procedure UpdateMember(SwimClubID: Integer;
       hideArchived, hideInactive, hideNonSwimmer: Boolean);
+    procedure UpdateElectedOn(aDate: TDate);
+    procedure UpdateRetiredOn(aDate: TDate);
 
     property Connection: TFDConnection read FConnection write FConnection;
     property ManageMemberDataActive: Boolean read fManageMemberDataActive
@@ -148,8 +150,8 @@ implementation
 {$R *.dfm}
 
 uses
-  System.IOUtils, IniFiles, SCMUtility, SCMDefines,
-  vcl.Dialogs, System.UITypes, vcl.Forms;
+  System.IOUtils, IniFiles, SCMUtility,
+  vcl.Dialogs, System.UITypes, vcl.Forms, System.DateUtils;
 
 constructor TManageMemberData.Create(AOwner: TComponent);
 begin
@@ -332,8 +334,8 @@ begin
       IntToStr(MemberID) + ';';
     FConnection.ExecSQL(SQL);
     // remove all R O L E S assigned to this member held in linked-list.
-    SQL := 'DELETE FROM [SwimClubMeet].[dbo].[[MemberRoleLink]] WHERE MemberID = ' +
-      IntToStr(MemberID) + ';';
+    SQL := 'DELETE FROM [SwimClubMeet].[dbo].[[MemberRoleLink]] WHERE MemberID = '
+      + IntToStr(MemberID) + ';';
     FConnection.ExecSQL(SQL);
 
     { TODO -oBen -cGeneral : db.Split and dbo.TeamSplit need to be handled prior to cleaning dbo.Entrant. }
@@ -366,7 +368,7 @@ end;
 procedure TManageMemberData.qryMemberBeforeScroll(DataSet: TDataSet);
 begin
   if (DataSet.State = dsEdit) or (DataSet.State = dsInsert) then
-    DataSet.CheckBrowseMode;  // auto-commit changes ...
+    DataSet.CheckBrowseMode; // auto-commit changes ...
 end;
 
 procedure TManageMemberData.qryMemberMETADATAGetText(Sender: TField;
@@ -383,8 +385,8 @@ end;
 
 procedure TManageMemberData.qryMemberRoleLnkBeforePost(DataSet: TDataSet);
 var
-  SQL: string;
-  v: variant;
+//  SQL: string;
+//  v: variant;
   fld: TField;
 begin
   // Validate MemberRoleID
@@ -394,6 +396,8 @@ begin
     // raise Exception.Create('A member''s role must be assigned.');
     Abort;
   end;
+
+  {
   // test for duplicity ...
   SQL := 'SELECT COUNT(MemberRoleID) FROM dbo.MemberRoleLink WHERE MemberRoleID = '
     + IntToStr(fld.AsInteger);
@@ -403,6 +407,8 @@ begin
     // raise Exception.Create('A member cannot have the same role twice.');
     Abort;
   end;
+  }
+
   // NULL NOT ALLOWED
   fld := DataSet.FieldByName('IsArchived');
   if Assigned(fld) AND (fld.IsNull) then
@@ -416,6 +422,49 @@ begin
   if Assigned(fld) AND (fld.IsNull) then
     fld.AsDateTime := Now;
 
+end;
+
+procedure TManageMemberData.qryMemberRoleLnkElectedOnGetText(Sender: TField;
+  var Text: string; DisplayText: Boolean);
+var
+  LFormatSettings: TFormatSettings;
+begin
+  // Set up format settings using current system locale
+  LFormatSettings := TFormatSettings.Create;
+  if (Sender.IsNull) or (DateOf(Sender.AsDateTime) = 0) then
+    Text := ''
+  else
+    Text := FormatDateTime('dd.mm.yy', Sender.AsDateTime, LFormatSettings);
+end;
+
+procedure TManageMemberData.qryMemberRoleLnkElectedOnSetText(Sender: TField;
+  const Text: string);
+var
+  dt: TDateTime;
+  LFormatSettings: TFormatSettings;
+begin
+  // // Set up format settings using current system locale
+  LFormatSettings := TFormatSettings.Create;
+  {
+    LFormatSettings.DateSeparator := '-';
+    LFormatSettings.ShortDateFormat := 'yyyy-mm-dd';
+    LFormatSettings.TimeSeparator := ':';
+    LFormatSettings.LongTimeFormat := 'hh:nn:ss';
+  }
+  if Text.IsNullOrEmpty(Text) then
+    Sender.Clear
+  else
+  begin
+    try
+      dt := StrToDate(Text, LFormatSettings);
+      Sender.AsDateTime := dt;
+    except
+      on E: EConvertError do
+      begin
+        ShowMessage('Invalid date format: ' + E.Message);
+      end;
+    end;
+  end;
 end;
 
 procedure TManageMemberData.qryMemberRoleLnkNewRecord(DataSet: TDataSet);
@@ -435,11 +484,11 @@ begin
   fld := DataSet.FieldByName('CreatedOn');
   fld.AsDateTime := Now;
 
-//  fld := DataSet.FieldByName('MemberID');
-//  if (fld.IsNull) then
-//  begin
-//    fld.AsInteger := DataSet.FieldByName('MemberID').AsInteger;
-//  end;
+  // fld := DataSet.FieldByName('MemberID');
+  // if (fld.IsNull) then
+  // begin
+  // fld.AsInteger := DataSet.FieldByName('MemberID').AsInteger;
+  // end;
   // fld := DataSet.FieldByName('MemberRoleID');
   // if (fld.IsNull) then
   // begin
@@ -448,16 +497,28 @@ begin
 end;
 
 procedure TManageMemberData.UpdateDOB(DOB: TDateTime);
+
 begin
   if Assigned(qryMember.Connection) and (qryMember.Active) then
   begin
     qryMember.DisableControls;
-    qryMember.Edit;
+    qryMember.edit;
     qryMember.FieldByName('DOB').AsDateTime := DOB;
     qryMember.Post;
     qryMember.EnableControls;
   end;
+end;
 
+procedure TManageMemberData.UpdateElectedOn(aDate: TDate);
+begin
+  if Assigned(qryMember.Connection) and (qryMember.Active) then
+  begin
+    qryMember.DisableControls;
+    qryMember.edit;
+    qryMember.FieldByName('ElectedOn').AsDateTime := aDate;
+    qryMember.Post;
+    qryMember.EnableControls;
+  end;
 end;
 
 procedure TManageMemberData.UpdateMember(SwimClubID: Integer;
@@ -515,29 +576,54 @@ begin
   qryMemberPB.EnableControls;
 end;
 
-
+procedure TManageMemberData.UpdateRetiredOn(aDate: TDate);
+begin
+  if Assigned(qryMember.Connection) and (qryMember.Active) then
+  begin
+    qryMember.DisableControls;
+    qryMember.edit;
+    qryMember.FieldByName('RetiredOn').AsDateTime := aDate;
+    qryMember.Post;
+    qryMember.EnableControls;
+  end;
+end;
 
 procedure TManageMemberData.WndProc(var Message: TMessage);
 var
-  dt, DOB: TDateTime;
+  dt, currDt: TDateTime;
+  fldName: string;
 begin
-  if (Message.Msg = SCM_DOBUPDATED) then
-  begin
-    dt := SystemTimeToDateTime(pSystemTime(Message.WParam)^);
+  if (Message.Msg = SCM_DOBUPDATED) OR (Message.Msg = SCM_ELECTEDONUPDATED) OR
+    (Message.Msg = SCM_RETIREDONUPDATED) then
+  BEGIN
+    case Message.Msg of
+      SCM_DOBUPDATED:
+        fldName := 'DOB';
+      SCM_ELECTEDONUPDATED:
+        fldName := 'ElectedOn';
+      SCM_RETIREDONUPDATED:
+        fldName := 'RetiredOn';
+    end;
 
-    DOB := dsMember.DataSet.FieldByName('DOB').AsDateTime;
-    if dt <> DOB then
+    dsMemberRoleLnk.DataSet.DisableControls;
+    dt := SystemTimeToDateTime(pSystemTime(Message.WParam)^);
+    currDt := dsMemberRoleLnk.DataSet.FieldByName(fldName).AsDateTime;
+    if dt <> currDt then
     BEGIN
-      if (dsMember.DataSet.State <> dsEdit) or (dsMember.DataSet.State <> dsInsert) then
+      if (dsMemberRoleLnk.DataSet.State <> dsEdit) or
+        (dsMemberRoleLnk.DataSet.State <> dsInsert) then
       begin
-        dsMember.DataSet.CheckBrowseMode;
-        dsMember.DataSet.edit;
+        dsMemberRoleLnk.DataSet.CheckBrowseMode;
+        dsMemberRoleLnk.DataSet.edit;
       end;
       // NOTE: edit/insert mode not asserted
-      dsMember.DataSet.FieldByName('DOB').AsDateTime := dt;
+      dsMemberRoleLnk.DataSet.FieldByName(fldName).AsDateTime := dt;
+      dsMemberRoleLnk.DataSet.Post;
     END;
+    dsMemberRoleLnk.DataSet.EnableControls;
 
-  end;
+  END;
+
 end;
 
 end.
