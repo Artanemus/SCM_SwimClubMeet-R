@@ -97,15 +97,14 @@ type
     TabSheet2: TTabSheet;
     TabSheet3: TTabSheet;
     VirtlImageListMember: TVirtualImageList;
-    BindSourceDB1: TBindSourceDB;
-    BindingsList1: TBindingsList;
-    LinkPropertyToFieldDate: TLinkPropertyToField;
     BalloonHint1: TBalloonHint;
     VirtualImageList1: TVirtualImageList;
     btnInfoRoles: TVirtualImage;
     btnInfoContact: TVirtualImage;
+    btnClearDOB: TButton;
     procedure About2Click(Sender: TObject);
     procedure btnClearClick(Sender: TObject);
+    procedure btnClearDOBClick(Sender: TObject);
     procedure btnClubMembersDetailedClick(Sender: TObject);
     procedure btnClubMembersListClick(Sender: TObject);
     procedure btnClubMembersSummaryClick(Sender: TObject);
@@ -155,6 +154,7 @@ type
     // SPECIAL dtpickDOB : place here to remain persistent over life of DLG.
     // Used to POST MESSAGE to DataModule.
     fSystemTime: TSystemTime;
+    fKillOnChangeDOB: Boolean;
 
     function AssertConnection: Boolean;
     function FindMember(MemberID: Integer): Boolean;
@@ -223,6 +223,17 @@ begin
       3:
         ManageMemberData.qryMember.FieldByName('HouseID').Clear();
     end;
+  end;
+end;
+
+procedure TManageMember.btnClearDOBClick(Sender: TObject);
+begin
+  if Assigned(ManageMemberData) and (ManageMemberData.qryMember.Active) then
+  begin
+//    if (ManageMemberData.qryMember.State <> dsInsert) or
+//      (ManageMemberData.qryMember.State <> dsEdit) then
+//      ManageMemberData.qryMember.Edit();
+    dtpickDOB.IsEmpty := true;
   end;
 end;
 
@@ -612,26 +623,26 @@ var
   dlg: TDOBPicker;
   mrRtn: TModalResult;
 begin
-    // handle the ellipse button for TDateTime entry...
-    fld := TDBGrid(Sender).SelectedField;
-    if not Assigned(fld) then
-      exit;
-    if (fld.FieldName = 'ElectedOn') OR (fld.FieldName = 'RetiredOn') then
+  // handle the ellipse button for TDateTime entry...
+  fld := TDBGrid(Sender).SelectedField;
+  if not Assigned(fld) then
+    exit;
+  if (fld.FieldName = 'ElectedOn') OR (fld.FieldName = 'RetiredOn') then
+  begin
+    dlg := TDOBPicker.Create(Self);
+    mrRtn := dlg.ShowModal; // open DATE PICKER ...
+    if (mrRtn = mrOk) then
     begin
-      dlg := TDOBPicker.Create(Self);
-      mrRtn := dlg.ShowModal; // open DATE PICKER ...
-      if (mrRtn = mrOk) then
-      begin
-        DateTimeToSystemTime(dlg.CalendarView1.Date, fSystemTime);
-        if (fld.FieldName = 'ElectedOn') then
-          PostMessage(ManageMemberData.Handle, SCM_ELECTEDONUPDATED,
-            longint(@fSystemTime), 0)
-        else
-          PostMessage(ManageMemberData.Handle, SCM_RETIREDONUPDATED,
-            longint(@fSystemTime), 0);
-      end;
-      dlg.Free;
+      DateTimeToSystemTime(dlg.CalendarView1.Date, fSystemTime);
+      if (fld.FieldName = 'ElectedOn') then
+        PostMessage(ManageMemberData.Handle, SCM_ELECTEDONUPDATED,
+          longint(@fSystemTime), 0)
+      else
+        PostMessage(ManageMemberData.Handle, SCM_RETIREDONUPDATED,
+          longint(@fSystemTime), 0);
     end;
+    dlg.Free;
+  end;
 end;
 
 procedure TManageMember.DBGridRoleKeyDown(Sender: TObject; var Key: Word;
@@ -647,9 +658,9 @@ begin
       fld := TDBGrid(Sender).SelectedField;
       if Assigned(fld) then
       BEGIN
-      // if the query is not in edit mode
-      if (DataSource.DataSet.State <> dsEdit) or
-        (DataSource.DataSet.State <> dsInsert) then
+        // if the query is not in edit mode
+        if (DataSource.DataSet.State <> dsEdit) or
+          (DataSource.DataSet.State <> dsInsert) then
           DataSource.DataSet.Edit;
         if (fld.FieldName = 'ElectedOn') or (fld.FieldName = 'RetiredOn') then
           fld.Clear;
@@ -799,29 +810,27 @@ end;
 procedure TManageMember.dtpickDOBChange(Sender: TObject);
 begin
   // VCL Control dtpickDOB is DATA UN-AWARE.
-  if not Assigned(ManageMemberData) then
-    exit;
-  with ManageMemberData.dsMember.DataSet do
-  BEGIN
-    if not Active then
-      exit;
-    if dtpickDOB.IsEmpty then
-      exit;
-    if dtpickDOB.Date = 0 then
-      exit;
-    if (YearOf(dtpickDOB.Date) < 1950) then
-      exit;
+  if not fKillOnChangeDOB then
+  begin
+    with ManageMemberData.dsMember.DataSet do
+    BEGIN
+      // S Y N C R O N I Z E   D A T A M O D U L E   D O B  . . .
+      if FieldByName('DOB').AsDateTime <> dtpickDOB.Date then
+      Begin
+        // Send SystemTime to the Member's DataModule.
+        // POST helps avoid exceptions when DB not in correct state.
+        try
+          DateTimeToSystemTime(dtpickDOB.Date, fSystemTime);
+          PostMessage(ManageMemberData.Handle, SCM_DOBUPDATED,
+            longint(@fSystemTime), 0);
+        except
+          on E: Exception do
+            raise;
+        end;
+      End;
+    END;
+  end;
 
-    // S Y N C R O N I Z E   D A T A M O D U L E   D O B  . . .
-    if FieldByName('DOB').AsDateTime <> dtpickDOB.Date then
-    Begin
-      // Send SystemTime to the DataModule. (Persistent across curr.session)
-      // POST helps avoid exceptions when DB not in correct state.
-      DateTimeToSystemTime(dtpickDOB.Date, fSystemTime);
-      PostMessage(ManageMemberData.Handle, SCM_DOBUPDATED,
-        longint(@fSystemTime), 0);
-    End;
-  END;
 end;
 
 function TManageMember.FindMember(MemberID: Integer): Boolean;
@@ -877,6 +886,7 @@ begin
   // I N I T I A L I Z E   P A R A M S .
   // ----------------------------------------------------
   fSwimClubID := 1;
+  fKillOnChangeDOB := true;
 
   // Special color assignment - used in TDBGrid painting...
   // -------------------------------------------
@@ -927,16 +937,21 @@ begin
   // S Y N C R O N I Z E   D A T A M O D U L E   D O B   . . .
   if not AssertConnection then
     exit;
+  fKillOnChangeDOB := true;
   if ManageMemberData.qryMember.FieldByName('DOB').IsNull then
   begin
-    // dtpickDOB.Date := Now;
+    dtpickDOB.IsEmpty := true;;
     dtpickDOB.BorderColor := clWebTomato;
+    dtpickDOB.Invalidate;
   end
   else
   begin
-    // dtpickDOB.Date := ManageMemberData.qryMember.FieldByName('DOB').AsDateTime;
+    dtpickDOB.Date := ManageMemberData.qryMember.FieldByName('DOB').AsDateTime;
     dtpickDOB.BorderColor := clWebWhiteSmoke; // grey'ish white
+    dtpickDOB.Invalidate;
   end;
+  Application.ProcessMessages;
+  fKillOnChangeDOB := false;
 end;
 
 procedure TManageMember.ManageMemberUpdate(var Msg: TMessage);
@@ -1000,11 +1015,7 @@ begin
   // execute SQL. Make all null IsArchived, IsActive, IsSwimmer = 0;
   // ManageMemberData.FixNullBooleans;
 
-  // Assert binding - because it always fails!!!
-  // NON DATABASE AWARE dtDOBpicker SYNC with DataModule - link bindings.
-  BindSourceDB1.DataSet := ManageMemberData.qryMember;
-  if not BindSourceDB1.DataSet.Active then
-    BindSourceDB1.DataSet.Active := true;
+
 
   // ----------------------------------------------------
   // Prepares all core queries  (Master+Child)

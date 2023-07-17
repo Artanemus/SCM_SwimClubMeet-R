@@ -1,7 +1,7 @@
 object ManageMemberData: TManageMemberData
   OnCreate = DataModuleCreate
-  Height = 837
-  Width = 665
+  Height = 738
+  Width = 897
   object tblContactNumType: TFDTable
     ActiveStoredUsage = [auDesignTime]
     Active = True
@@ -13,8 +13,8 @@ object ManageMemberData: TManageMemberData
     UpdateOptions.EnableUpdate = False
     UpdateOptions.UpdateTableName = 'SwimClubMeet..ContactNumType'
     TableName = 'SwimClubMeet..ContactNumType'
-    Left = 56
-    Top = 640
+    Left = 184
+    Top = 552
     object tblContactNumTypeContactNumTypeID: TFDAutoIncField
       FieldName = 'ContactNumTypeID'
       Origin = 'ContactNumTypeID'
@@ -32,20 +32,20 @@ object ManageMemberData: TManageMemberData
     IndexFieldNames = 'StrokeID'
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Stroke'
     TableName = 'SwimClubMeet..Stroke'
-    Left = 56
-    Top = 488
+    Left = 184
+    Top = 392
   end
   object tblDistance: TFDTable
     ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'DistanceID'
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Distance'
     TableName = 'SwimClubMeet..Distance'
-    Left = 56
-    Top = 536
+    Left = 184
+    Top = 440
   end
   object dsMember: TDataSource
     DataSet = qryMember
-    Left = 160
+    Left = 272
     Top = 120
   end
   object qryMember: TFDQuery
@@ -138,7 +138,7 @@ object ManageMemberData: TManageMemberData
       ''
       ''
       '')
-    Left = 56
+    Left = 200
     Top = 120
     ParamData = <
       item
@@ -302,18 +302,18 @@ object ManageMemberData: TManageMemberData
     Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Gender'
     TableName = 'SwimClubMeet..Gender'
-    Left = 56
-    Top = 440
+    Left = 184
+    Top = 344
   end
   object dsGender: TDataSource
     DataSet = tblGender
-    Left = 144
-    Top = 488
+    Left = 272
+    Top = 392
   end
   object dsHouse: TDataSource
     DataSet = tblHouse
-    Left = 144
-    Top = 440
+    Left = 272
+    Top = 344
   end
   object tblHouse: TFDTable
     ActiveStoredUsage = [auDesignTime]
@@ -322,13 +322,13 @@ object ManageMemberData: TManageMemberData
     Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..House'
     TableName = 'SwimClubMeet..House'
-    Left = 56
-    Top = 592
+    Left = 184
+    Top = 496
   end
   object dsContactNum: TDataSource
     DataSet = qryContactNum
-    Left = 160
-    Top = 168
+    Left = 136
+    Top = 216
   end
   object qryContactNum: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -356,8 +356,8 @@ object ManageMemberData: TManageMemberData
       #9',ContactNum.ContactNumTypeID'
       #9',ContactNum.MemberID'
       'FROM ContactNum;')
-    Left = 56
-    Top = 168
+    Left = 136
+    Top = 160
     object qryContactNumContactNumID: TFDAutoIncField
       FieldName = 'ContactNumID'
       Origin = 'ContactNumID'
@@ -421,8 +421,8 @@ object ManageMemberData: TManageMemberData
         'e, '#39')'#39'), 0, 60) AS DetailStr'
       'FROM SwimCLub'
       'WHERE Swimclub.SwimClubID = 1;')
-    Left = 56
-    Top = 72
+    Left = 200
+    Top = 64
     ParamData = <
       item
         Name = 'SWIMCLUBID'
@@ -433,8 +433,8 @@ object ManageMemberData: TManageMemberData
   end
   object dsSwimClub: TDataSource
     DataSet = qrySwimClub
-    Left = 160
-    Top = 72
+    Left = 272
+    Top = 64
   end
   object qryFindMember: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -470,8 +470,8 @@ object ManageMemberData: TManageMemberData
         '                         Gender ON Member.GenderID = Gender.Gend' +
         'erID'
       #9#9#9#9#9'ORDER BY Member.LastName')
-    Left = 400
-    Top = 80
+    Left = 624
+    Top = 96
     object qryFindMemberMemberID: TFDAutoIncField
       Alignment = taCenter
       DisplayLabel = '  ID'
@@ -551,16 +551,16 @@ object ManageMemberData: TManageMemberData
   end
   object dsFindMember: TDataSource
     DataSet = qryFindMember
-    Left = 486
-    Top = 80
+    Left = 710
+    Top = 96
   end
   object qAssertMemberID: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'MemberID'
     SQL.Strings = (
       'SELECT MemberID, MembershipNum FROM Member WHERE SwimClubID = 1')
-    Left = 400
-    Top = 168
+    Left = 624
+    Top = 184
   end
   object qryEntrantDataCount: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -578,8 +578,8 @@ object ManageMemberData: TManageMemberData
       
         'MemberID = @MemberID AND (RaceTime IS NOT NULL OR (dbo.SwimTimeT' +
         'oMilliseconds(RaceTime) > 0));')
-    Left = 400
-    Top = 232
+    Left = 624
+    Top = 248
     ParamData = <
       item
         Name = 'MEMBERID'
@@ -616,13 +616,13 @@ object ManageMemberData: TManageMemberData
       '      OR IsSwimmer IS NULL'
       ''
       ';')
-    Left = 400
-    Top = 320
+    Left = 624
+    Top = 336
   end
   object dsMemberPB: TDataSource
     DataSet = qryMemberPB
-    Left = 489
-    Top = 408
+    Left = 713
+    Top = 424
   end
   object qryMemberPB: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -668,8 +668,8 @@ object ManageMemberData: TManageMemberData
       #9',StrokeID'
       #9',PB ASC'
       ';')
-    Left = 401
-    Top = 408
+    Left = 625
+    Top = 424
     ParamData = <
       item
         Name = 'MEMBERID'
@@ -712,7 +712,6 @@ object ManageMemberData: TManageMemberData
   end
   object qryMemberRoleLnk: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     BeforePost = qryMemberRoleLnkBeforePost
     OnNewRecord = qryMemberRoleLnkNewRecord
     IndexFieldNames = 'MemberID'
@@ -742,8 +741,8 @@ object ManageMemberData: TManageMemberData
         '        --ON [MemberRoleLink].[MemberRoleID] = [MemberRole].[Mem' +
         'berRoleID]'
       '--WHERE [MemberRoleLink].[MemberID] = @MemberID;')
-    Left = 56
-    Top = 240
+    Left = 328
+    Top = 160
     object qryMemberRoleLnkMemberRoleID: TIntegerField
       FieldName = 'MemberRoleID'
       Origin = 'MemberRoleID'
@@ -792,8 +791,8 @@ object ManageMemberData: TManageMemberData
   end
   object dsMemberRoleLnk: TDataSource
     DataSet = qryMemberRoleLnk
-    Left = 160
-    Top = 240
+    Left = 328
+    Top = 216
   end
   object tblMemberRole: TFDTable
     ActiveStoredUsage = [auDesignTime]
@@ -801,7 +800,7 @@ object ManageMemberData: TManageMemberData
     IndexFieldNames = 'MemberRoleID'
     Connection = SCM.scmConnection
     TableName = 'SwimClubMeet.dbo.MemberRole'
-    Left = 56
-    Top = 696
+    Left = 184
+    Top = 608
   end
 end

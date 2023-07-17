@@ -503,8 +503,8 @@ object ManageMember: TManageMember
           OnClick = btnClearClick
         end
         object RegistrationNum: TDBEdit
-          Left = 145
-          Top = 371
+          Left = 146
+          Top = 368
           Width = 184
           Height = 27
           DataField = 'MembershipStr'
@@ -513,7 +513,7 @@ object ManageMember: TManageMember
         end
         object dtpickDOB: TCalendarPicker
           Left = 143
-          Top = 128
+          Top = 132
           Height = 32
           CalendarHeaderInfo.DaysOfWeekFont.Charset = DEFAULT_CHARSET
           CalendarHeaderInfo.DaysOfWeekFont.Color = clWindowText
@@ -526,11 +526,13 @@ object ManageMember: TManageMember
           CalendarHeaderInfo.Font.Name = 'Segoe UI'
           CalendarHeaderInfo.Font.Style = []
           Color = clWindow
+          Date = 38466.000000000000000000
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clGray
           Font.Height = -16
           Font.Name = 'Segoe UI'
           Font.Style = []
+          IsEmpty = False
           OnChange = dtpickDOBChange
           ParentFont = False
           TabOrder = 2
@@ -712,6 +714,19 @@ object ManageMember: TManageMember
           DataField = 'TAGS'
           DataSource = ManageMemberData.dsMember
           TabOrder = 18
+        end
+        object btnClearDOB: TButton
+          Tag = 1
+          Left = 289
+          Top = 132
+          Width = 75
+          Height = 32
+          Hint = 'Clear the house name.'
+          Caption = 'Clear'
+          ImageIndex = 0
+          Images = ImageList1
+          TabOrder = 19
+          OnClick = btnClearDOBClick
         end
       end
     end
@@ -1537,25 +1552,6 @@ object ManageMember: TManageMember
     Height = 32
     Left = 504
     Top = 312
-  end
-  object BindSourceDB1: TBindSourceDB
-    DataSet = ManageMemberData.qryMember
-    ScopeMappings = <>
-    Left = 384
-    Top = 488
-  end
-  object BindingsList1: TBindingsList
-    Methods = <>
-    OutputConverters = <>
-    Left = 468
-    Top = 485
-    object LinkPropertyToFieldDate: TLinkPropertyToField
-      Category = 'Quick Bindings'
-      DataSource = BindSourceDB1
-      FieldName = 'DOB'
-      Component = dtpickDOB
-      ComponentProperty = 'Date'
-    end
   end
   object BalloonHint1: TBalloonHint
     Delay = 100

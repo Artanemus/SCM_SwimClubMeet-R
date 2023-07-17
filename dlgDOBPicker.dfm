@@ -45,6 +45,12 @@ object DOBPicker: TDOBPicker
     Width = 75
     Height = 25
     Caption = 'OK'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
     TabOrder = 1
     OnClick = btnOkClick
   end

@@ -11,7 +11,7 @@ Coordinates=461,10,189,278
 Coordinates=218,834,110,36
 
 [ManageMemberData.qrySwimClub]
-Coordinates=1731,540,214,58
+Coordinates=1731,540,214,410
 
 [ManageMemberData.qryContactNum]
 Coordinates=1385,10,227,168
@@ -268,8 +268,7 @@ Coordinates=1349,652,53,58
 Coordinates=362,652,167,58
 
 [ManageMemberData.qryMember]
-Coordinates=10,10,203,36
-Visible=False
+Coordinates=223,20,203,498
 
 [lblMemberCount]
 Coordinates=1401,540,109,58
@@ -284,7 +283,7 @@ Coordinates=497,793,194,36
 Coordinates=760,397,223,36
 
 [ManageMemberData.qryMemberRoleLnk]
-Coordinates=660,10,250,190
+Coordinates=660,10,250,234
 
 [TabSheet2]
 Coordinates=117,788,77,36
@@ -296,11 +295,17 @@ Coordinates=497,914,224,36
 Coordinates=10,788,97,36
 
 []
-Coordinates=1599,441,91,36
-
-[BindSourceDB1]
-Coordinates=10,10,189,542
-
-[BindingsList1]
 Coordinates=218,329,91,36
+
+[BalloonHint1]
+Coordinates=489,375,88,36
+
+[btnInfoContact]
+Coordinates=489,497,98,36
+
+[btnInfoRoles]
+Coordinates=729,843,87,36
+
+[VirtualImageList1]
+Coordinates=729,898,114,36
 

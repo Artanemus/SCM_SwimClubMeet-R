@@ -110,7 +110,7 @@ type
     procedure UpdateMembersPersonalBest;
 
   protected
-    procedure WndProc(var Message: TMessage); virtual;
+    procedure WndProc(var wndMsg: TMessage); virtual;
 
   public
     { Public declarations }
@@ -334,7 +334,7 @@ begin
       IntToStr(MemberID) + ';';
     FConnection.ExecSQL(SQL);
     // remove all R O L E S assigned to this member held in linked-list.
-    SQL := 'DELETE FROM [SwimClubMeet].[dbo].[[MemberRoleLink]] WHERE MemberID = '
+    SQL := 'DELETE FROM [SwimClubMeet].[dbo].[MemberRoleLink] WHERE MemberID = '
       + IntToStr(MemberID) + ';';
     FConnection.ExecSQL(SQL);
 
@@ -385,8 +385,8 @@ end;
 
 procedure TManageMemberData.qryMemberRoleLnkBeforePost(DataSet: TDataSet);
 var
-//  SQL: string;
-//  v: variant;
+  // SQL: string;
+  // v: variant;
   fld: TField;
 begin
   // Validate MemberRoleID
@@ -398,15 +398,15 @@ begin
   end;
 
   {
-  // test for duplicity ...
-  SQL := 'SELECT COUNT(MemberRoleID) FROM dbo.MemberRoleLink WHERE MemberRoleID = '
+    // test for duplicity ...
+    SQL := 'SELECT COUNT(MemberRoleID) FROM dbo.MemberRoleLink WHERE MemberRoleID = '
     + IntToStr(fld.AsInteger);
-  v := FConnection.ExecSQLScalar(SQL);
-  if (v <> 0) then
-  begin
+    v := FConnection.ExecSQLScalar(SQL);
+    if (v <> 0) then
+    begin
     // raise Exception.Create('A member cannot have the same role twice.');
     Abort;
-  end;
+    end;
   }
 
   // NULL NOT ALLOWED
@@ -588,15 +588,19 @@ begin
   end;
 end;
 
-procedure TManageMemberData.WndProc(var Message: TMessage);
+procedure TManageMemberData.WndProc(var wndMsg: TMessage);
 var
   dt, currDt: TDateTime;
   fldName: string;
+  st: TSystemTime;
 begin
-  if (Message.Msg = SCM_DOBUPDATED) OR (Message.Msg = SCM_ELECTEDONUPDATED) OR
-    (Message.Msg = SCM_RETIREDONUPDATED) then
+  if (wndMsg.WParam = 0) then
+    exit;
+
+  if (wndMsg.Msg = SCM_DOBUPDATED) OR (wndMsg.Msg = SCM_ELECTEDONUPDATED) OR
+    (wndMsg.Msg = SCM_RETIREDONUPDATED) then
   BEGIN
-    case Message.Msg of
+    case wndMsg.Msg of
       SCM_DOBUPDATED:
         fldName := 'DOB';
       SCM_ELECTEDONUPDATED:
@@ -605,22 +609,36 @@ begin
         fldName := 'RetiredOn';
     end;
 
-    dsMemberRoleLnk.DataSet.DisableControls;
-    dt := SystemTimeToDateTime(pSystemTime(Message.WParam)^);
-    currDt := dsMemberRoleLnk.DataSet.FieldByName(fldName).AsDateTime;
+    try
+      st := pSystemTime(wndMsg.WParam)^;
+      if (st.wYear = 0) then
+        dt := 0
+      else
+      begin
+        dt := SystemTimeToDateTime(st);
+      end;
+    except
+      on E: Exception do
+        raise;
+    end;
+    {TODO -oBSA -cGeneral : IsNul?}
+    currDt := dsMember.DataSet.FieldByName(fldName).AsDateTime;
     if dt <> currDt then
     BEGIN
-      if (dsMemberRoleLnk.DataSet.State <> dsEdit) or
-        (dsMemberRoleLnk.DataSet.State <> dsInsert) then
+      dsMember.DataSet.DisableControls;
+      if (dsMember.DataSet.State <> dsEdit) or
+        (dsMember.DataSet.State <> dsInsert) then
       begin
-        dsMemberRoleLnk.DataSet.CheckBrowseMode;
-        dsMemberRoleLnk.DataSet.edit;
+        dsMember.DataSet.CheckBrowseMode;
+        dsMember.DataSet.edit;
       end;
-      // NOTE: edit/insert mode not asserted
-      dsMemberRoleLnk.DataSet.FieldByName(fldName).AsDateTime := dt;
-      dsMemberRoleLnk.DataSet.Post;
+      if (dt = 0) then
+        dsMember.DataSet.FieldByName(fldName).Clear
+      else
+        dsMember.DataSet.FieldByName(fldName).AsDateTime := dt;
+      dsMember.DataSet.Post;
+      dsMember.DataSet.EnableControls;
     END;
-    dsMemberRoleLnk.DataSet.EnableControls;
 
   END;
 
