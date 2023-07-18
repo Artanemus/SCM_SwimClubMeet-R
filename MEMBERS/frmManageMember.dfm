@@ -159,7 +159,8 @@ object ManageMember: TManageMember
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitTop = -2
+        ExplicitWidth = 1351
+        ExplicitHeight = 645
         object Label3: TLabel
           Left = 105
           Top = 139
@@ -211,14 +212,6 @@ object ManageMember: TManageMember
           Height = 19
           Alignment = taRightJustify
           Caption = 'Email'
-        end
-        object DBSwimmerAge: TDBText
-          Left = 313
-          Top = 170
-          Width = 65
-          Height = 17
-          DataField = 'SwimmerAge'
-          DataSource = ManageMemberData.dsMember
         end
         object Label7: TLabel
           Left = 11
@@ -376,6 +369,19 @@ object ManageMember: TManageMember
           ImageName = 'Info'
           OnClick = btnInfoContactClick
           OnMouseLeave = btnInfoMouseLeave
+        end
+        object lblMembersAge: TLabel
+          Left = 313
+          Top = 168
+          Width = 61
+          Height = 23
+          Caption = 'lblMembersAge'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -19
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
         end
         object DBlucboGender: TDBLookupComboBox
           Left = 145
@@ -578,6 +584,7 @@ object ManageMember: TManageMember
           TitleFont.Height = -16
           TitleFont.Name = 'Tahoma'
           TitleFont.Style = []
+          OnKeyDown = DBGridGenericKeyDown
           Columns = <
             item
               Expanded = False
@@ -638,7 +645,7 @@ object ManageMember: TManageMember
           OnColExit = DBGridColExit
           OnDrawColumnCell = DBGridDrawColumnCell
           OnEditButtonClick = DBGridRoleEditButtonClick
-          OnKeyDown = DBGridRoleKeyDown
+          OnKeyDown = DBGridGenericKeyDown
           Columns = <
             item
               DropDownRows = 12
@@ -665,18 +672,18 @@ object ManageMember: TManageMember
             item
               ButtonStyle = cbsEllipsis
               Expanded = False
-              FieldName = 'ElectedOn'
+              FieldName = 'StartOn'
               ReadOnly = True
-              Title.Caption = 'Elected On'
+              Title.Caption = 'Start On'
               Width = 110
               Visible = True
             end
             item
               ButtonStyle = cbsEllipsis
               Expanded = False
-              FieldName = 'RetiredOn'
+              FieldName = 'EndOn'
               ReadOnly = True
-              Title.Caption = 'Retired On'
+              Title.Caption = 'End On'
               Width = 110
               Visible = True
             end>

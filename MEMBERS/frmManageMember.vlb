@@ -109,9 +109,6 @@ Coordinates=280,540,60,58
 [TabSheet1]
 Coordinates=1128,788,77,36
 
-[DBSwimmerAge]
-Coordinates=1126,720,108,58
-
 [Label13]
 Coordinates=817,540,60,58
 
@@ -295,7 +292,7 @@ Coordinates=497,914,224,36
 Coordinates=10,788,97,36
 
 []
-Coordinates=218,329,91,36
+Coordinates=1126,720,108,58
 
 [BalloonHint1]
 Coordinates=489,375,88,36

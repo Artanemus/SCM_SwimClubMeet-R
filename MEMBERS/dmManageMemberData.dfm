@@ -82,7 +82,6 @@ object ManageMemberData: TManageMemberData
       '       [FirstName],'
       '       [LastName],'
       '       [DOB],'
-      '       dbo.SwimmerAge(GETDATE(), [DOB]) AS SwimmerAge,'
       '       [IsActive],'
       '       IsSwimmer,'
       '       IsArchived,'
@@ -213,13 +212,6 @@ object ManageMemberData: TManageMemberData
       FieldName = 'DOB'
       Origin = 'DOB'
       DisplayFormat = 'dd/mm/yyyy'
-    end
-    object qryMemberSwimmerAge: TIntegerField
-      DisplayLabel = 'Age'
-      DisplayWidth = 4
-      FieldName = 'SwimmerAge'
-      Origin = 'SwimmerAge'
-      ReadOnly = True
     end
     object qryMemberIsActive: TBooleanField
       Alignment = taCenter
@@ -712,6 +704,7 @@ object ManageMemberData: TManageMemberData
   end
   object qryMemberRoleLnk: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     BeforePost = qryMemberRoleLnkBeforePost
     OnNewRecord = qryMemberRoleLnkNewRecord
     IndexFieldNames = 'MemberID'
@@ -732,8 +725,8 @@ object ManageMemberData: TManageMemberData
       '     , [MemberRoleLink].[CreatedOn]'
       '     , [MemberRoleLink].[IsActive]'
       '     , [MemberRoleLink].[IsArchived]'
-      '     , [MemberRoleLink].[ElectedOn]'
-      '     , [MemberRoleLink].[RetiredOn]'
+      '     , [MemberRoleLink].[StartOn]'
+      '     , [MemberRoleLink].[EndOn]'
       '     '
       'FROM MemberRoleLink'
       '    --INNER JOIN [MemberRole]'
@@ -780,12 +773,12 @@ object ManageMemberData: TManageMemberData
       Lookup = True
     end
     object qryMemberRoleLnkElectedOn: TSQLTimeStampField
-      FieldName = 'ElectedOn'
+      FieldName = 'StartOn'
       Origin = 'ElectedOn'
       OnGetText = qryMemberRoleLnkElectedOnGetText
     end
     object qryMemberRoleLnkRetiredOn: TSQLTimeStampField
-      FieldName = 'RetiredOn'
+      FieldName = 'EndOn'
       Origin = 'RetiredOn'
     end
   end

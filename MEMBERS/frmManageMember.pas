@@ -54,7 +54,6 @@ type
     DBMemo1: TDBMemo;
     DBNavigator1: TDBNavigator;
     DBNavigator2: TDBNavigator;
-    DBSwimmerAge: TDBText;
     dtpickDOB: TCalendarPicker;
     ImageCollectMember: TImageCollection;
     ImageList1: TImageList;
@@ -102,6 +101,7 @@ type
     btnInfoRoles: TVirtualImage;
     btnInfoContact: TVirtualImage;
     btnClearDOB: TButton;
+    lblMembersAge: TLabel;
     procedure About2Click(Sender: TObject);
     procedure btnClearClick(Sender: TObject);
     procedure btnClearDOBClick(Sender: TObject);
@@ -128,7 +128,7 @@ type
     procedure DBGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure DBGridRoleCellClick(Column: TColumn);
     procedure DBGridRoleEditButtonClick(Sender: TObject);
-    procedure DBGridRoleKeyDown(Sender: TObject; var Key: Word;
+    procedure DBGridGenericKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure DBNavigator1BeforeAction(Sender: TObject; Button: TNavigateBtn);
     procedure DBNavigator1Click(Sender: TObject; Button: TNavigateBtn);
@@ -158,8 +158,10 @@ type
 
     function AssertConnection: Boolean;
     function FindMember(MemberID: Integer): Boolean;
+    function GetMembersAge(aMemberID: integer; aDate: TDate): string;
     procedure ReadPreferences();
     procedure WritePreferences();
+
   protected
     // windows messages ....
     procedure ManageMemberAfterScroll(var Msg: TMessage);
@@ -645,7 +647,7 @@ begin
   end;
 end;
 
-procedure TManageMember.DBGridRoleKeyDown(Sender: TObject; var Key: Word;
+procedure TManageMember.DBGridGenericKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 var
   fld: TField;
@@ -662,7 +664,11 @@ begin
         if (DataSource.DataSet.State <> dsEdit) or
           (DataSource.DataSet.State <> dsInsert) then
           DataSource.DataSet.Edit;
+        // D B G r i d R o l e  ...
         if (fld.FieldName = 'ElectedOn') or (fld.FieldName = 'RetiredOn') then
+          fld.Clear;
+        // D B G r i d C o n t a c t I n f o ...
+        if (fld.FieldName = 'luContactNumType') then
           fld.Clear;
       end;
       DataSource.DataSet.EnableControls;
@@ -828,9 +834,14 @@ begin
             raise;
         end;
       End;
+      // calculate the age of the member
+      if dtpickDOB.IsEmpty or (dtpickDOB.Date <= 0) then
+        lblMembersAge.Caption := 'No DOB.'
+      else
+        lblMembersAge.Caption :=
+          GetMembersAge(FieldByName('MemberID').AsInteger, dtpickDOB.Date);
     END;
   end;
-
 end;
 
 function TManageMember.FindMember(MemberID: Integer): Boolean;
@@ -932,26 +943,46 @@ begin
     ManageMemberData.qrySwimClub.FieldByName('DetailStr').AsString;
 end;
 
+function TManageMember.GetMembersAge(aMemberID: Integer; aDate: TDate): string;
+var
+  SQL: string;
+  v: Variant;
+begin
+  if not AssertConnection then
+    exit;
+  result := '';
+  SQL := 'SELECT dbo.SwimmerAge(GETDATE(), :ID1) AS SwimmerAge FROM ' +
+    '[SwimClubMeet].[dbo].[Member] WHERE MemberID = :ID2';
+  v := FConnection.ExecSQLScalar(SQL, [dtpickDOB.Date, aMemberID],
+    [ftDateTime, ftInteger]);
+  if not VarIsNull(v) then
+    result := v
+  else
+    result := 'DOB ERROR.'
+end;
+
 procedure TManageMember.ManageMemberAfterScroll(var Msg: TMessage);
 begin
   // S Y N C R O N I Z E   D A T A M O D U L E   D O B   . . .
   if not AssertConnection then
     exit;
-  fKillOnChangeDOB := true;
-  if ManageMemberData.qryMember.FieldByName('DOB').IsNull then
-  begin
-    dtpickDOB.IsEmpty := true;;
-    dtpickDOB.BorderColor := clWebTomato;
-    dtpickDOB.Invalidate;
-  end
-  else
-  begin
-    dtpickDOB.Date := ManageMemberData.qryMember.FieldByName('DOB').AsDateTime;
-    dtpickDOB.BorderColor := clWebWhiteSmoke; // grey'ish white
-    dtpickDOB.Invalidate;
-  end;
-  Application.ProcessMessages;
-  fKillOnChangeDOB := false;
+  with ManageMemberData.dsMember.DataSet do
+  BEGIN
+    fKillOnChangeDOB := true;
+    if FieldByName('DOB').IsNull then
+      dtpickDOB.IsEmpty := true
+    else
+      dtpickDOB.Date := FieldByName('DOB').AsDateTime;
+    { TODO -oBSA -cGeneral : Application.ProcessMessages? }
+    fKillOnChangeDOB := false;
+
+    // calculate the age of the member
+    if dtpickDOB.IsEmpty or (dtpickDOB.Date <= 0) then
+      lblMembersAge.Caption := 'No DOB.'
+    else
+      lblMembersAge.Caption := GetMembersAge(FieldByName('MemberID').AsInteger,
+        dtpickDOB.Date);
+  END;
 end;
 
 procedure TManageMember.ManageMemberUpdate(var Msg: TMessage);

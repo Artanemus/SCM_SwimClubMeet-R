@@ -308,46 +308,64 @@ object AutoBuildV2: TAutoBuildV2
       'USE SwimClubMeet;'
       ''
       'DECLARE @EventID AS INT;'
+      'DECLARE @SwimClubID AS INT;'
+      'DECLARE @SeedDate AS DATETIME;'
       ''
       'SET @EventID = :EVENTID;'
+      'SET @SwimCLubID = 1;'
+      'SET @SeedDate = GETDATE();'
       ''
       '-- Produces a list of nominees current not assigned a lane '
       '-- excludes members already placed in CLOSED Heats'
       '-- excludes members in raced heats'
-      '-- '
-      '-- Define the CTE expression name and column list.'
-      'WITH MembersInClosedHeats_CTE ('
-      #9'EventID'
-      #9',MemberID'
-      #9')'
-      'AS ('
-      #9'SELECT Event.EventID'
-      #9#9',Entrant.MemberID'
-      #9'FROM Event'
+      ''
+      '-- Drop a temporary table called '#39'#MembersInClosedHeats'#39
+      '-- Drop the table if it already exists'
+      'IF OBJECT_ID('#39'tempDB..#MembersInClosedHeats'#39', '#39'U'#39') IS NOT NULL'
+      '    DROP TABLE #MembersInClosedHeats;'
+      '    '
+      '-- Create the temporary table from a '
       
-        #9'INNER JOIN HeatIndividual ON Event.EventID = HeatIndividual.Eve' +
-        'ntID'
-      #9'INNER JOIN Entrant ON HeatIndividual.HeatID = Entrant.HeatID'
-      #9'WHERE ('
-      #9#9#9'HeatIndividual.HeatStatusID = 2'
-      #9#9#9'OR HeatIndividual.HeatStatusID = 3'
-      #9#9#9')'
-      #9#9'AND (Entrant.MemberID IS NOT NULL)'
-      #9')'
-      'SELECT '
-      #9'COUNT(Nominee.NomineeID) AS countNominees'
-      #9',Member.MembershipTypeID'
-      #9',Member.GenderID'
+        '-- physical table called '#39'Event'#39' in schema '#39'dbo'#39' in database '#39'Sw' +
+        'imClubMeet'#39
+      'SELECT Event.EventID'
+      '     , Entrant.MemberID'
+      'INTO #MembersInClosedHeats'
+      'FROM [SwimClubMeet].[dbo].[Event]'
+      '    INNER JOIN HeatIndividual'
+      '        ON Event.EventID = HeatIndividual.EventID'
+      '    INNER JOIN Entrant'
+      '        ON HeatIndividual.HeatID = Entrant.HeatID'
+      'WHERE ('
+      '          HeatIndividual.HeatStatusID = 2'
+      '          OR HeatIndividual.HeatStatusID = 3'
+      '      )'
+      '      AND (Entrant.MemberID IS NOT NULL);'
+      ''
+      ''
+      ''
+      'SELECT COUNT(Nominee.NomineeID) AS countNominees'
+      
+        '     , dbo.MembersSwimmerCategory(Member.MemberID, @SwimClubId, ' +
+        '@SeedDate) AS SwimmerCategoryID'
+      '     , Member.GenderID'
       'FROM Nominee'
-      'LEFT OUTER JOIN Member ON Nominee.MemberID = Member.MemberID'
-      
-        'LEFT OUTER JOIN MembersInClosedHeats_CTE AS MembersInClosedHeats' +
-        '_CTE_1 ON MembersInClosedHeats_CTE_1.MemberID = Nominee.MemberID'
-      #9'AND MembersInClosedHeats_CTE_1.EventID = Nominee.EventID'
+      '    LEFT OUTER JOIN Member'
+      '        ON Nominee.MemberID = Member.MemberID'
+      '    LEFT OUTER JOIN #MembersInClosedHeats'
+      '        ON #MembersInClosedHeats.MemberID = Nominee.MemberID'
+      '           AND #MembersInClosedHeats.EventID = Nominee.EventID'
       'WHERE (Nominee.EventID = @EventID)'
-      #9'AND (MembersInClosedHeats_CTE_1.MemberID IS NULL)'
-      'GROUP BY Member.MembershipTypeID, Member.GenderID'
-      'ORDER BY GenderID DESC, MembershipTypeID DESC '
+      '      AND (#MembersInClosedHeats.MemberID IS NULL)'
+      
+        'GROUP BY dbo.MembersSwimmerCategory(Member.MemberID, @SwimClubId' +
+        ', @SeedDate)'
+      '       , Member.GenderID'
+      'ORDER BY GenderID DESC'
+      '       , SwimmerCategoryID DESC'
+      ''
+      ''
+      ''
       '')
     Left = 576
     Top = 80
@@ -356,7 +374,7 @@ object AutoBuildV2: TAutoBuildV2
         Name = 'EVENTID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = 135
+        Value = 2
       end>
   end
   object qryGenderCount: TFDQuery
@@ -431,8 +449,14 @@ object AutoBuildV2: TAutoBuildV2
       'USE SwimClubMeet;'
       ''
       'DECLARE @EventID AS INT;'
+      'DECLARE @SwimClubID AS INT;'
+      'DECLARE @SeedDate AS DATETIME;'
       ''
       'SET @EventID = :EVENTID;'
+      'SET @SwimCLubID = 1;'
+      'SET @SeedDate = GETDATE();'
+      ''
+      ''
       ''
       '-- Produces a list of nominees current not assigned a lane '
       '-- excludes members already placed in CLOSED Heats'
@@ -459,7 +483,9 @@ object AutoBuildV2: TAutoBuildV2
       #9')'
       'SELECT '
       #9'COUNT(Nominee.NomineeID) AS countNominees'
-      #9',Member.MembershipTypeID'
+      
+        ' ,dbo.MembersSwimmerCategory(Member.MemberID, @SwimClubId, @Seed' +
+        'Date) AS SwimmerCategoryID'
       'FROM Nominee'
       'LEFT OUTER JOIN Member ON Nominee.MemberID = Member.MemberID'
       
@@ -468,8 +494,10 @@ object AutoBuildV2: TAutoBuildV2
       #9'AND MembersInClosedHeats_CTE_1.EventID = Nominee.EventID'
       'WHERE (Nominee.EventID = @EventID)'
       #9'AND (MembersInClosedHeats_CTE_1.MemberID IS NULL)'
-      'GROUP BY Member.MembershipTypeID'
-      'ORDER BY Member.MembershipTypeID DESC;'
+      
+        'GROUP BY dbo.MembersSwimmerCategory(Member.MemberID, @SwimClubId' +
+        ', @SeedDate)'
+      'ORDER BY SwimmerCategoryID DESC;'
       '')
     Left = 576
     Top = 128

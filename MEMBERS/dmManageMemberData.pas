@@ -67,7 +67,6 @@ type
     qryMemberPBStrokeID: TFDAutoIncField;
     qryMemberRoleLnk: TFDQuery;
     qryMemberSwimClubID: TIntegerField;
-    qryMemberSwimmerAge: TIntegerField;
     qrySwimClub: TFDQuery;
     tblContactNumType: TFDTable;
     tblContactNumTypeCaption: TWideStringField;
