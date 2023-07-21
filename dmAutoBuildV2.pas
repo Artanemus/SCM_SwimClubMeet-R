@@ -64,7 +64,7 @@ type
     function CircleSeed(DataSet: TFDQuery; seedDepth: integer): integer;
     function AssignNominees(DataSet: TFDQuery; EventID: integer;
       Age: integer = 0; GenderID: integer = 0;
-      MembershipTypeID: integer = 0): boolean;
+      SwimmerCategoryID: integer = 0): boolean;
 
     // Autobuild startup functions
     function GetNumOfSwimmingLanes(var NumOfPoolLanes: integer;
@@ -125,7 +125,7 @@ function TAutoBuildV2.AssignHeats(EventID, numOfSwimmingLanes, GroupBy,
 var
   Success: boolean;
   numberOfHeats, numOfNominees, totalNumberOfHeats: integer;
-  fAge, fGenderID, fMembershipTypeID: integer;
+  fAge, fGenderID, fSwimmerCategoryID: integer;
   ds: TFDQuery;
   Param: TFDParam;
 begin
@@ -244,7 +244,7 @@ begin
       // ***************************************************************
       fAge := 0;
       fGenderID := 0;
-      fMembershipTypeID := 0;
+      fSwimmerCategoryID := 0;
 
       // FINALIZE DATA PARAM ASSIGNMENT
       // Specific queries need specific data prior to calling AssignNominees.
@@ -255,13 +255,13 @@ begin
         1: // Group on age.
           fAge := ds.FieldByName('Age').AsInteger;
         2: // Group on membership type.
-          fMembershipTypeID := ds.FieldByName('MembershipTypeID').AsInteger;
+          fSwimmerCategoryID := ds.FieldByName('SwimmerCategoryID').AsInteger;
         { TODO -oBSA -cGeneral : CASE 3: GroupBy Division }
       end;
 
       // C A L L   T O   C O L L A T E   E N T R A N T S
       Success := AssignNominees(qryNominees, EventID, fAge, fGenderID,
-        fMembershipTypeID);
+        fSwimmerCategoryID);
 
       if not Success then
       begin
@@ -419,21 +419,21 @@ end;
 // C O L L A T E    E N T R A N T S . . . .
 // ***********************************************************************
 function TAutoBuildV2.AssignNominees(DataSet: TFDQuery;
-  EventID, Age, GenderID, MembershipTypeID: integer): boolean;
+  EventID, Age, GenderID, SwimmerCategoryID: integer): boolean;
 begin
   {
     BASED ON THE GIVEN EVENTID ...
     Prepare a list of swimmer who have nominated for the
     event - they will be sorted by TimeToBeat
     (this excluding nominees in closed or raced heats)
-    Default assignment - age, GenderID, MembershipTypeID , DivisionID = 0
+    Default assignment - age, GenderID, SwimmerCategoryID , DivisionID = 0
     The MSSQL is written - such that CASE statements...
     Values > zero enables filtering to INCLUDE SPECIFIC records.
   }
   DataSet.Close;
   DataSet.ParamByName('AGE').AsInteger := Age;
   DataSet.ParamByName('GENDERID').AsInteger := GenderID;
-  DataSet.ParamByName('MEMBERSHIPTYPEID').AsInteger := MembershipTypeID;
+  DataSet.ParamByName('SWIMMERCATEGORYID').AsInteger := SwimmerCategoryID;
   { TODO -oBSA -cGeneral : dataset.ParamByName('DIVISIONID').AsInteger := DivisionID }
   DataSet.ParamByName('EVENTID').AsInteger := EventID;
 
@@ -574,38 +574,9 @@ begin
   // CLEAN UP HEATS - make readyfor auto build
   if not DatasetHeat.IsEmpty then
   begin
-    // ITERATE OVER HEATS
-    DatasetHeat.First;
-    while not DatasetHeat.Eof do
-    begin
-      // SKIP HEAT (if not CLOSED OR RACED)
-      if (DatasetHeat.FieldByName('HeatStatusID').AsInteger <> 1) then
-      begin
-        DatasetHeat.Next();
-        Continue;
-      end;
-      SCM.dsEntrant.DataSet.First;
-      while not SCM.dsEntrant.DataSet.Eof do
-      begin
-        // DELETE SPLIT DATA FOR ENTRANT
-        strSQL := 'DELETE FROM dbo.Split WHERE Split.EntrantID = ' +
-          IntToStr(SCM.dsEntrant.DataSet.FieldByName('EntrantID').AsInteger);
-        SCM.scmConnection.ExecSQL(strSQL);
-        // Deletes the active record and positions the dataset on the next record.
-        SCM.dsEntrant.DataSet.Delete;
-      end;
-      // after each delete - TSCM::HeatAfterDelete(TDataSet *DataSet)
-      // the heat dataset for this event is renumbered....
-      // IMPORTANT NOTE:
-      // TMain's instance of the Heat DataSet must be sent to AutoBuildExecute(...)
-      // Normally a call SCM.dsHeat.DataSet.Delete would be use but this
-      // doesn't work!... (tbl is locked?)
-      DatasetHeat.Delete;
-    end;
-    // tidy up the lane numbering for the remaining closed or raced heats
-    // always returns 1 if no heats to renumber.
-    // NOTE ORDER BY HeatNum ASC - NULL IS LAST
-    RenumberHeats(EventID);
+    // EXCLUDE RACED OR CLOSED HEATS
+    SCM.Heat_DeleteALLExclude(EventID); // also renumbers heats.
+    // RenumberHeats(EventID);
   end;
 
   {

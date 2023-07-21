@@ -2816,7 +2816,7 @@ begin
   // d e l e t e   t h e   c u r r e n t   s e l e c t e d   h e a t .
   // -----------------------------------------------------------------
   if (results = mrYes) then
-    SCM.Heat_Delete
+    SCM.Heat_Delete(SCM.dsHeat.DataSet.FieldByName('HeatID').AsInteger);
 end;
 
 procedure TMain.Heat_DeleteUpdate(Sender: TObject);

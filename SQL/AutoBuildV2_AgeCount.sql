@@ -1,14 +1,13 @@
-USE SwimClubMeet;
+USE SwimClubMeet
 
-DECLARE @EventID AS INT;
-DECLARE @SwimClubID AS INT;
-DECLARE @SeedDate AS DATETIME;
+DECLARE @EventID AS INT
+DECLARE @SessionStart AS DATETIME
 
 SET @EventID = 2; --:EVENTID;
-SET @SwimCLubID = 1;
+SET @SessionStart = NULL; --:SESSIONSTART;
 
-IF @SeedDate IS NULL
-    SET @SeedDate = GETDATE();
+IF @SessionStart IS NULL
+	SET @SessionStart = GETDATE();
 
 -- LIST OF MEMBERS IN CLOSED OR RACED HEATS (FOR THE CURRENT EVENT)
 --------------------------------------------------------------------
@@ -30,8 +29,7 @@ WHERE (
       )
       AND (Entrant.MemberID IS NOT NULL);
 
-
--- LIST OF ALL NOMINEES FOR THE GIVEN EVENT AND THEIR SWIMMER CATEGORY 
+-- LIST OF ALL NOMINEES FOR THE GIVEN EVENT AND THEIR PERSONAL DATA
 --------------------------------------------------------------------
 -- Drop a temporary table 
 IF OBJECT_ID('tempDB..#NomineesInEvent', 'U') IS NOT NULL
@@ -40,32 +38,24 @@ IF OBJECT_ID('tempDB..#NomineesInEvent', 'U') IS NOT NULL
 SELECT [Nominee].[NomineeID]
      , [Nominee].[EventID]
      , [Nominee].[MemberID]
-     , [Member].[GenderID]
-     , dbo.MembersSwimmerCategory([Member].[MemberID], @SwimClubId, @SeedDate) AS SwimmerCategoryID
+     ,[Member].[DOB]
+    , dbo.SwimmerAge(@SessionStart, [Member].[DOB]) AS AGE
 INTO #NomineesInEvent
 FROM [SwimClubMeet].[dbo].[Nominee]
     LEFT OUTER JOIN [SwimClubMeet].[dbo].[Member]
         ON [Nominee].[MemberID] = [Member].[MemberID]
-WHERE ([Nominee].[EventID] = @EventID);
-
+WHERE ([Nominee].[EventID] = @EventID); 
 
 -- FINALLY
 ----------------------------------------------------------------------- 
 -- FILTER OUT MEMBERS WHO HAVE RACED OR ARE IN HEATS THAT ARE CLOSED.
--- return count, CAT and gender.
-SELECT COUNT(#NomineesInEvent.NomineeID) AS countNominees
-     , #NomineesInEvent.SwimmerCategoryID
-     , #NomineesInEvent.GenderID
+SELECT 
+	COUNT(NomineeID) AS countNominees
+	,AGE
 FROM #NomineesInEvent
-    LEFT OUTER JOIN #MembersInClosedHeats
-        ON #NomineesInEvent.MemberID = #MembersInClosedHeats.MemberID
-           AND #NomineesInEvent.EventID = #MembersInClosedHeats.EventID
+LEFT OUTER JOIN #MembersInClosedHeats ON #MembersInClosedHeats.MemberID = #NomineesInEvent.MemberID
+	AND #MembersInClosedHeats.EventID = #NomineesInEvent.EventID
 WHERE (#NomineesInEvent.EventID = @EventID)
-      AND (#MembersInClosedHeats.MemberID IS NULL)
-GROUP BY SwimmerCategoryID
-       , #NomineesInEvent.GenderID
-ORDER BY GenderID DESC
-       , SwimmerCategoryID DESC;
-
-
-
+	AND (#MembersInClosedHeats.MemberID IS NULL)
+GROUP BY AGE
+ORDER BY AGE ASC

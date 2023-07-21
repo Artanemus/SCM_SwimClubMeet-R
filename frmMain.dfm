@@ -1887,7 +1887,7 @@ object Main: TMain
               Height = 32
               Alignment = taCenter
               AutoSize = False
-              Caption = '1'
+              Caption = '0'
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWindowText
               Font.Height = -24
