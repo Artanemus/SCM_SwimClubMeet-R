@@ -571,7 +571,7 @@ begin
   nom.Free;
   // CLOSE, SET new PARMS and OPEN the database used by the controllist.
   // This is needed for images in event Nominate_ControlListBeforeDrawItem
-  SCM.Nominate_UpdateControlList(SCM.GetSessionID, MemberID);
+  SCM.Nominate_UpdateControlList(SCM.Session_ID, MemberID);
   // CLOSE makes inactive the bind source, but DATASET connection ok.
   if not BindSourceDB1.DataSet.Active then
     BindSourceDB1.DataSet.Active := true;
@@ -756,11 +756,11 @@ begin
   DoEnable := false;
   if AssertConnection then
     // Checks if session is Empty. Then checks if locked..
-    if not SCM.IsLockedSession then
+    if not SCM.Session_IsLocked then
       // are there any heats?
       if not SCM.dsHeat.DataSet.IsEmpty then
         // is the current heat closed?
-        if not SCM.IsClosedHeat then
+        if not SCM.Heat_IsClosed then
           // is there any entrants?
           if not SCM.dsEntrant.DataSet.IsEmpty then
             DoEnable := true;
@@ -1004,7 +1004,7 @@ begin
           // found previous heat move to last lane
           if (success) then
           begin
-            j := SCM.GetNumberOfLanes;
+            j := SCM.SwimClub_NumberOfLanes;
             SCM.dsEntrant.DataSet.Locate('Lane', j, Opts);
             Key := 0;
           end;
@@ -1026,7 +1026,7 @@ begin
     begin
       // Navigate to next heats if current location is on the last lane
       if (SCM.dsEntrant.DataSet.FieldByName('Lane')
-        .AsInteger = SCM.GetNumberOfLanes) then
+        .AsInteger = SCM.SwimClub_NumberOfLanes) then
       begin
         // Can't move if we are at the bottom of the last heat stack.
         if (SCM.dsHeat.DataSet.FieldByName('HeatNum').AsInteger <
@@ -1132,7 +1132,7 @@ var
 begin
   // ...Update traps illegal calls.
   // already at bottom of stack?  Last lane in pool.
-  MaxLane := SCM.GetNumberOfLanes;
+  MaxLane := SCM.SwimClub_NumberOfLanes;
   if (Entrant_Grid.DataSource.DataSet.FieldByName('Lane').AsInteger = MaxLane)
   then
   begin
@@ -1153,11 +1153,11 @@ begin
   DoEnable := false;
   if AssertConnection then
     // Checks if session is Empty. Then checks if locked..
-    if not SCM.IsLockedSession then
+    if not SCM.Session_IsLocked then
       // are there any heats?
       if not SCM.dsHeat.DataSet.IsEmpty then
         // is the current heat closed?
-        if not SCM.IsClosedHeat then
+        if not SCM.Heat_IsClosed then
           // is there any entrants?
           if not SCM.dsEntrant.DataSet.IsEmpty then
             DoEnable := true;
@@ -1191,11 +1191,11 @@ begin
   DoEnable := false;
   if AssertConnection then
     // Checks if session is Empty. Then checks if locked..
-    if not SCM.IsLockedSession then
+    if not SCM.Session_IsLocked then
       // are there any heats?
       if not SCM.dsHeat.DataSet.IsEmpty then
         // is the current heat closed?
-        if not SCM.IsClosedHeat then
+        if not SCM.Heat_IsClosed then
           // is there any entrants?
           if not SCM.dsEntrant.DataSet.IsEmpty then
             DoEnable := true;
@@ -1260,11 +1260,11 @@ begin
   DoEnable := false;
   if AssertConnection then
     // Checks if session is Empty. Then checks if locked..
-    if not SCM.IsLockedSession then
+    if not SCM.Session_IsLocked then
       // are there any heats?
       if not SCM.dsHeat.DataSet.IsEmpty then
         // is the current heat closed?
-        if not SCM.IsClosedHeat then
+        if not SCM.Heat_IsClosed then
           // is there any entrants?
           if not SCM.dsEntrant.DataSet.IsEmpty then
             DoEnable := true;
@@ -1296,11 +1296,11 @@ begin
   DoEnable := false;
   if AssertConnection then
     // Checks if session is Empty. Then checks if locked..
-    if not SCM.IsLockedSession then
+    if not SCM.Session_IsLocked then
       // are there any heats?
       if not SCM.dsHeat.DataSet.IsEmpty then
         // is the current heat closed?
-        if not SCM.IsClosedHeat then
+        if not SCM.Heat_IsClosed then
           // is there any entrants?
           if not SCM.dsEntrant.DataSet.IsEmpty then
             DoEnable := true;
@@ -1327,11 +1327,11 @@ begin
   DoEnable := false;
   if AssertConnection then
     // Checks if session is Empty. Then checks if locked..
-    if not SCM.IsLockedSession then
+    if not SCM.Session_IsLocked then
       // are there any heats?
       if not SCM.dsHeat.DataSet.IsEmpty then
         // is the current heat closed?
-        if not SCM.IsClosedHeat then
+        if not SCM.Heat_IsClosed then
           // is there any entrants?
           if not SCM.dsEntrant.DataSet.IsEmpty then
             DoEnable := true;
@@ -1373,7 +1373,7 @@ begin
   i := SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger;
   if (i > 0) then
   begin
-    AllClosed := SCM.IsAllHeatsClosed(i);
+    AllClosed := SCM.Event_AllHeatsAreClosed(i);
     if (((AllClosed = true) and
       (SCM.dsEvent.DataSet.FieldByName('EventStatusID').AsInteger = 1)) or
       ((AllClosed = false) and (SCM.dsEvent.DataSet.FieldByName('EventStatusID')
@@ -1431,9 +1431,9 @@ begin
   if not AssertConnection then
     exit;
   SCM.dsEvent.DataSet.DisableControls;
-  EventID := SCM.GetEventID;
+  EventID := SCM.Event_ID;
   dlg := TAutoSchedule.CreateWithConnection(self, SCM.scmConnection);
-  dlg.SessionID := SCM.GetSessionID;
+  dlg.SessionID := SCM.Session_ID;
   rtnValue := dlg.ShowModal;
   dlg.Free;
   if IsPositiveResult(rtnValue) then
@@ -1522,8 +1522,8 @@ var
   SQL: String;
   HasClosedHeats, HasRacedHeats: boolean;
 begin
-  HasClosedHeats := SCM.HasClosedHeats;
-  HasRacedHeats := SCM.HasRacedHeats;
+  HasClosedHeats := SCM.Event_HasClosedHeats;
+  HasRacedHeats := SCM.Event_HasRacedHeats;
   if HasClosedHeats then
   begin
     SQL := 'Unable to delete the event ';
@@ -1561,8 +1561,7 @@ begin
   rtnValue := MessageDlg(SQL, mtConfirmation, [mbYes, mbNo], 0, mbYes);
 
   if (rtnValue = mrYes) then
-    SCM.Event_Delete();
-  // delete the current selected event.
+    SCM.Event_Delete(SCM.Event_ID); // delete the current selected event.
 end;
 
 procedure TMain.Event_DeleteUpdate(Sender: TObject);
@@ -1572,7 +1571,7 @@ begin
   DoEnable := false;
   if AssertConnection then
     // Checks if session is Empty. Then checks if locked..
-    if not SCM.IsLockedSession then
+    if not SCM.Session_IsLocked then
       // are there any events?
       if not SCM.dsEvent.DataSet.IsEmpty then
         DoEnable := true;
@@ -1829,7 +1828,7 @@ begin
   // connected?
   if AssertConnection then
     // Checks if session is Empty. Then checks if locked..
-    if not SCM.IsLockedSession then
+    if not SCM.Session_IsLocked then
       DoEnable := true;
   TAction(Sender).Enabled := DoEnable;
 end;
@@ -1847,7 +1846,7 @@ begin
   DoEnable := false;
   if AssertConnection then
     // Checks if session is Empty. Then checks if locked..
-    if not SCM.IsLockedSession then
+    if not SCM.Session_IsLocked then
       if not SCM.dsEvent.DataSet.IsEmpty then
         DoEnable := true;
   TAction(Sender).Enabled := DoEnable;
@@ -1891,7 +1890,7 @@ begin
   // Are we connected?
   if AssertConnection then
     // Checks if session is Empty. Then checks if locked..
-    if not SCM.IsLockedSession then
+    if not SCM.Session_IsLocked then
       // Are there any Events?
       if not SCM.dsEvent.DataSet.IsEmpty then
         DoEnable := true;
@@ -2544,7 +2543,7 @@ begin
   // This routine is simplified (for expediance), it looks at all
   // nominees placed and un-placed ... ignoring open,raced,closed heat
   // status.
-  if not SCM.HasNominees(EventID) then
+  if not SCM.Event_HasNominees(EventID) then
   begin
     MessageDlg('No one has been nominated for this event.' + sLineBreak +
       'Auto-Build Heats was aborted.', mtError, [mbOK], 0, mbOK);
@@ -2605,7 +2604,7 @@ begin
   DoEnable := false;
   if AssertConnection then
     // Checks if session is Empty. Then checks if locked..
-    if not SCM.IsLockedSession then
+    if not SCM.Session_IsLocked then
       // are there any Events?
       if not SCM.dsEvent.DataSet.IsEmpty then
         DoEnable := true;
@@ -2666,7 +2665,7 @@ begin
       // DELETE HEATS ...  For current event. Only open heats are deleted.
       SCM.Heat_DeleteALL(FieldByName('EventID').AsInteger);
       // QUICK TEST - Do we have NOMINEES?
-      if not SCM.HasNominees(FieldByName('EventID').AsInteger) then
+      if not SCM.Event_HasNominees(FieldByName('EventID').AsInteger) then
       begin
         Next;
         continue;
@@ -2722,7 +2721,7 @@ begin
   DoEnable := false;
   if AssertConnection then
   begin
-    if not SCM.IsLockedSession then
+    if not SCM.Session_IsLocked then
       if not SCM.dsSession.DataSet.IsEmpty then
         // Do we have Events?.
         if not SCM.dsEvent.DataSet.IsEmpty then
@@ -2786,14 +2785,14 @@ var
 begin
   // actn.Update dictates if this routine is accessable.
   // The heat is CLOSED.
-  if SCM.IsClosedHeat then
+  if SCM.Heat_IsClosed then
   begin
     MessageDlg('This heat is CLOSE' + sLineBreak +
       'The heat can''t be deleted.', mtInformation, [mbOK], 0, mbOK);
     exit;
   end;
   // The heat is RACED
-  if SCM.IsRacedHeat then
+  if SCM.Heat_IsRaced then
   begin
     results := MessageDlg('WARNING: This heat is RACED.' + sLineBreak +
       'Racetimes and entrant data will be lost if you delete this heat.' +
@@ -2803,7 +2802,7 @@ begin
       exit;
   end;
   // Heat status is RACED or OPEN. Final confirmation message.
-  if SCM.IsRacedHeat then
+  if SCM.Heat_IsRaced then
     results := MessageDlg('Final confirmation:' + sLineBreak +
       'Delete the RACED heat, all of it''s racetimes and entrant data?',
       mtConfirmation, [mbYes, mbNo], 0, mbYes)
@@ -2826,7 +2825,7 @@ begin
   DoEnable := false;
   if AssertConnection then
     // Checks if session is Empty. Then checks if locked..
-    if not SCM.IsLockedSession then
+    if not SCM.Session_IsLocked then
       // are there any Events?
       if not SCM.dsEvent.DataSet.IsEmpty then
         // are there any Heats?
@@ -2938,12 +2937,12 @@ begin
   DoEnable := false;
   if AssertConnection then
     // Checks if session is Empty. Then checks if locked..
-    if not SCM.IsLockedSession then
+    if not SCM.Session_IsLocked then
       // By default, heat is assumed to be LOCKED.
       // This routine asserts the state of heat dataset (connection, active and
       // not isempty) and if all checks pass, returns the record status.
       // Not locked if the HeatStatusID <> 3.
-      if not SCM.IsLockedHeat then
+      if not SCM.Heat_IsClosed then
         DoEnable := true;
   TAction(Sender).Enabled := DoEnable;
 end;
@@ -3006,12 +3005,12 @@ begin
   DoEnable := false;
   if AssertConnection then
     // Checks if session is Empty. Then checks if locked..
-    if not SCM.IsLockedSession then
+    if not SCM.Session_IsLocked then
       // By default, heat is assumed to be LOCKED.
       // This routine asserts the state of heat dataset (connection, active and
       // not isempty) and if all checks pass, returns the record status.
       // Not locked if the HeatStatusID <> 3.
-      if not SCM.IsLockedHeat then
+      if not SCM.Heat_IsClosed then
         DoEnable := true;
   TAction(Sender).Enabled := DoEnable;
 end;
@@ -3028,7 +3027,7 @@ begin
   DoEnable := false;
   if AssertConnection then
     // Checks if session is Empty. Then checks if locked..
-    if not SCM.IsLockedSession then
+    if not SCM.Session_IsLocked then
       // are there any Events?
       if not SCM.dsEvent.DataSet.IsEmpty then
         DoEnable := true;
@@ -3300,7 +3299,7 @@ begin
   DoEnable := false;
   if AssertConnection then
     // Checks if session is Empty. Then checks if locked..
-    if not SCM.IsLockedSession then
+    if not SCM.Session_IsLocked then
       // are there any heats?
       if not SCM.dsHeat.DataSet.IsEmpty then
         DoEnable := true;
@@ -3454,7 +3453,7 @@ begin
       // Default draw disabled
       // Has the member been nominated to some events?
       MemberID := DataSource.DataSet.FieldByName('MemberID').AsInteger;
-      SessionID := SCM.GetSessionID;
+      SessionID := SCM.Session_ID;
       SQL := 'SELECT Count(MemberID) FROM [SwimClubMeet].[dbo].Nominee ' +
         sLineBreak + 'INNER JOIN [SwimClubMeet].[dbo].[Event] ON ' + sLineBreak
         + '[SwimClubMeet].[dbo].Nominee.EventID = [SwimClubMeet].[dbo].[Event].EventID '
@@ -3551,7 +3550,7 @@ begin
   if AssertConnection then
   begin
     MemberID := SCM.dsNominateMembers.DataSet.FieldByName('MemberID').AsInteger;
-    success := SCM.Nominate_UpdateControlList(SCM.GetSessionID, MemberID);
+    success := SCM.Nominate_UpdateControlList(SCM.Session_ID, MemberID);
     // Close, prepare and open - the binding source must be reactivated.
     // -------------------------------------------------------------------
     if not BindSourceDB1.DataSet.Active then
@@ -3580,7 +3579,7 @@ begin
   DoEnable := false;
   if AssertConnection then
     // Checks if session is Empty. Then checks if locked..
-    if not SCM.IsLockedSession then
+    if not SCM.Session_IsLocked then
       // No members listed. Nothing to sort.
       if not Nominate_Grid.DataSource.DataSet.IsEmpty then
         DoEnable := true;
@@ -3839,7 +3838,7 @@ begin
   if SCM.dsEvent.DataSet.IsEmpty then
     exit;
   // Assume current event ID is not zero.
-  AllClosed := SCM.IsAllHeatsClosed(SCM.GetEventID);
+  AllClosed := SCM.Event_AllHeatsAreClosed(SCM.Event_ID);
   currStatus := SCM.dsEvent.DataSet.FieldByName('EventStatusID').AsInteger;
   if (AllClosed and (currStatus = 1)) or (not AllClosed and (currStatus = 2))
   then
@@ -4145,7 +4144,7 @@ begin
   begin
     if not SCM.dsSession.DataSet.IsEmpty then
     begin
-      if not SCM.IsLockedSession then
+      if not SCM.Session_IsLocked then
         DoEnable := true;
     end;
   end;
@@ -4161,7 +4160,7 @@ begin
     exit;
   dlg := TNewSession.CreateWithConnection(self, SCM.scmConnection);
   dlg.SessionMode := smEditSession;
-  dlg.SessionID := SCM.GetSessionID;
+  dlg.SessionID := SCM.Session_ID;
   if IsPositiveResult(dlg.ShowModal) then
     Session_SortExecute(self);
   dlg.Free;
@@ -4490,7 +4489,7 @@ var
   dlg: TDivision;
 begin
   // TActionUpdate determine access to this routine.
-  dt := SCM.GetStartOfSwimSeason();
+  dt := SCM.SwimClub_StartOfSwimSeason();
   if (dt <= 0) then
   begin
     // error no start of swim season given
@@ -4545,7 +4544,7 @@ begin
   // TActionUpdate determins if this routine can be accessed.
   dlg := TLeaderBoard.Create(self);
   dlg.Connection := SCM.scmConnection;
-  dlg.SessionID := SCM.GetSessionID;
+  dlg.SessionID := SCM.Session_ID;
   dlg.ShowModal;
   dlg.Free;
 end;
@@ -4636,7 +4635,7 @@ begin
     exit;
   dlg := TPointsScored.Create(self);
   dlg.Connection := SCM.scmConnection;
-  dlg.SwimClubID := SCM.GetSwimClubID;
+  dlg.SwimClubID := SCM.SwimClub_ID;
   dlg.ShowModal;
   dlg.Free;
 end;

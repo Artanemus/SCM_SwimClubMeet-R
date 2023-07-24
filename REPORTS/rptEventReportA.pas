@@ -43,7 +43,7 @@ end;
 procedure TEventReportA.RunReport;
 begin
 	qryReport.Connection := SCM.scmConnection;
-	qryReport.ParamByName('SESSIONID').AsInteger := SCM.GetSessionID();
+	qryReport.ParamByName('SESSIONID').AsInteger := SCM.Session_ID();
 	qryReport.Prepare;
 	qryReport.Open;
 	if qryReport.Active then

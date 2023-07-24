@@ -63,7 +63,7 @@ begin
     exit;
 
   qrySrcEvent.Connection := SCM.scmConnection;
-  qrySrcEvent.ParamByName('SESSIONID').AsInteger := SCM.GetSessionID;
+  qrySrcEvent.ParamByName('SESSIONID').AsInteger := SCM.Session_ID;
   qrySrcEvent.Prepare;
   qrySrcEvent.Open;
   if not qrySrcEvent.Active then

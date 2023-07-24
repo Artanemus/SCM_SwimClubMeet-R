@@ -198,7 +198,7 @@ begin
     if Assigned(Param) then
     begin
       if (GroupBy = 1) then // Group by AGE
-        Param.AsDateTime := SCM.GetSessionStart
+        Param.AsDateTime := SCM.Session_Start
       else
         Param.Clear; // SESSIONSTART = <null>;
     end;
@@ -392,7 +392,7 @@ begin
   entrantsAssigned := 0;
   // The total number of pool lanes must be passed to scatter
   // (ignore: preExcludeOutsideLanes)
-  NumOfPoolLanes := SCM.GetNumberOfLanes;
+  NumOfPoolLanes := SCM.SwimClub_NumberOfLanes;
   for i := 0 to numOfNomineesInHeat - 1 do
   begin
     if DataSet.Eof then
@@ -442,7 +442,7 @@ begin
   if (prefImportSeedTime > 0) then
     DataSet.ParamByName('SESSIONSTART').AsDateTime := Now
   else
-    DataSet.ParamByName('SESSIONSTART').AsDateTime := SCM.GetSessionStart;
+    DataSet.ParamByName('SESSIONSTART').AsDateTime := SCM.Session_Start;
 
   DataSet.ParamByName('ALGORITHM').AsInteger := prefHeatAlgorithm;
   DataSet.ParamByName('CALCDEFAULT').AsInteger := integer(prefUseDefRaceTime);
@@ -750,7 +750,7 @@ begin
         qryNomineesExt.ParamByName('SRCEVENTID').AsInteger := SourceEventID;
         qryNomineesExt.ParamByName('DESTEVENTID').AsInteger := destEventID;
         qryNomineesExt.ParamByName('SESSIONSTART').AsDateTime :=
-          SCM.GetSessionStart;
+          SCM.Session_Start;
         qryNomineesExt.ParamByName('GENDERID').AsInteger :=
           SCM.luGender.DataSet.FieldByName('GenderID').AsInteger;
         qryNomineesExt.Prepare;
@@ -778,7 +778,7 @@ begin
       qryNomineesExt.ParamByName('DESTEVENTID').AsInteger := destEventID;
       // for PersonalBest PB
       qryNomineesExt.ParamByName('SESSIONSTART').AsDateTime :=
-        SCM.GetSessionStart;
+        SCM.Session_Start;
       // display all genders ....
       qryNomineesExt.ParamByName('GENDERID').AsInteger := 0;
       qryNomineesExt.Prepare;
@@ -816,7 +816,7 @@ begin
   // ********************************
   // The total number of pool lanes must be passed to scatter
   // (the routine ignores preExcludeOutsideLanes)
-  NumOfPoolLanes := SCM.GetNumberOfLanes;
+  NumOfPoolLanes := SCM.SwimClub_NumberOfLanes;
   // seedDepth is BASE 1 - brackets needed!
   lowBounds := (High(HeatIDs) - (seedDepth - 1)); // must have brackets!
   if (lowBounds < Low(HeatIDs)) then
@@ -881,7 +881,7 @@ begin
   SearchOptions := [];
 
   // GET a lane count for ALL pool lanes. (ignore prefExcludeOutsideLanes)
-  NumberOfLanes := SCM.GetNumberOfLanes;
+  NumberOfLanes := SCM.SwimClub_NumberOfLanes;
   // find the next heat number **tblEvent.tbl_ABHeat.MAX(HeatNum)+1**
   // if no heats in event or error ... returns 0
   NextHeatNum := GetHeatMaxSeedNumber(EventID) + 1;
@@ -943,7 +943,7 @@ begin
     SourceEvent.FieldByName('DistanceID').AsInteger;;
   qryInsertEvent.ParamByName('STROKEID').AsInteger :=
     SourceEvent.FieldByName('StrokeID').AsInteger;;
-  qryInsertEvent.ParamByName('SESSIONID').AsInteger := SCM.GetSessionID();
+  qryInsertEvent.ParamByName('SESSIONID').AsInteger := SCM.Session_ID();
   qryInsertEvent.Prepare();
   qryInsertEvent.Execute();
   { TODO -oBSA -cGeneral : Check new Scalar function. }
@@ -1022,7 +1022,7 @@ begin
   result := 0;
   if AssertConnection then
   begin
-    NumOfPoolLanes := SCM.GetNumberOfLanes;
+    NumOfPoolLanes := SCM.SwimClub_NumberOfLanes;
     result := NumOfPoolLanes;
     if (DoExcludeOutsideLanes) then
       result := result - 2;

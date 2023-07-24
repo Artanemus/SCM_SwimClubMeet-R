@@ -1,5 +1,4 @@
 object EventReportB: TEventReportB
-  OldCreateOrder = False
   OnCreate = DataModuleCreate
   Height = 365
   Width = 279

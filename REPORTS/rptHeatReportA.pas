@@ -44,7 +44,7 @@ end;
 procedure THeatReportA.RunReport;
 begin
 	qryReport.Connection := SCM.scmConnection;
-	qryReport.ParamByName('HEATID').AsInteger := SCM.GetHeatID;
+	qryReport.ParamByName('HEATID').AsInteger := SCM.Heat_ID;
 	qryReport.Prepare;
 	qryReport.Open;
 	if qryReport.Active then

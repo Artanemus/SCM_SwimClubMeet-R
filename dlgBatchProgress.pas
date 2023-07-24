@@ -380,7 +380,7 @@ var
   dt: TDateTime;
   s, fn: string;
 begin
-  dt := SCM.GetSessionStart;
+  dt := SCM.Session_Start;
   // SESSION DATE
   DateTimeToString(s, 'yyyymmdd', dt);
   fn := s;

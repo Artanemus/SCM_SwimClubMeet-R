@@ -1,5 +1,4 @@
 object NominateReportA: TNominateReportA
-  OldCreateOrder = False
   OnCreate = DataModuleCreate
   Height = 422
   Width = 246

@@ -1,5 +1,4 @@
 object QTMemberReportA: TQTMemberReportA
-  OldCreateOrder = False
   OnCreate = DataModuleCreate
   Height = 350
   Width = 301
