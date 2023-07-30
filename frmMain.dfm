@@ -50,6 +50,7 @@ object Main: TMain
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 0
+          ExplicitHeight = 758
           object pnlSessLeftTop: TPanel
             Left = 0
             Top = 0
@@ -176,6 +177,7 @@ object Main: TMain
             Align = alRight
             BevelOuter = bvNone
             TabOrder = 2
+            ExplicitHeight = 738
             DesignSize = (
               60
               739)
@@ -291,6 +293,8 @@ object Main: TMain
           BevelOuter = bvNone
           Caption = 'pnlSessionClient'
           TabOrder = 1
+          ExplicitWidth = 673
+          ExplicitHeight = 758
           object pnlSessClientTop: TPanel
             Left = 0
             Top = 0
@@ -299,6 +303,7 @@ object Main: TMain
             Align = alTop
             BevelOuter = bvNone
             TabOrder = 0
+            ExplicitWidth = 673
             object lblSessionEventCaption: TLabel
               Left = 6
               Top = -3
@@ -316,6 +321,8 @@ object Main: TMain
             BevelOuter = bvNone
             Caption = 'Panel7'
             TabOrder = 1
+            ExplicitWidth = 673
+            ExplicitHeight = 738
             object Event_Grid: TDBGrid
               AlignWithMargins = True
               Left = 10
@@ -437,6 +444,8 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 1
+              ExplicitLeft = 613
+              ExplicitHeight = 738
               DesignSize = (
                 60
                 739)
@@ -979,15 +988,18 @@ object Main: TMain
             Alignment = taCenter
             Anchors = []
             Caption = 'No Members'
+            Color = clBtnFace
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -32
             Font.Name = 'Segoe UI'
             Font.Orientation = 900
             Font.Style = []
+            ParentColor = False
             ParentFont = False
             Visible = False
             WordWrap = True
+            StyleElements = [seClient, seBorder]
           end
         end
       end
@@ -1008,8 +1020,6 @@ object Main: TMain
           BevelOuter = bvNone
           Caption = 'HeatRightPanel'
           TabOrder = 0
-          ExplicitWidth = 1100
-          ExplicitHeight = 601
           object Entrant_Grid: TDBGrid
             Left = 0
             Top = 0
@@ -1153,8 +1163,6 @@ object Main: TMain
             Anchors = []
             BevelOuter = bvNone
             TabOrder = 1
-            ExplicitLeft = 1040
-            ExplicitHeight = 601
             DesignSize = (
               60
               602)
@@ -1281,7 +1289,6 @@ object Main: TMain
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 1
-          ExplicitWidth = 1402
           DesignSize = (
             1406
             117)
@@ -1322,10 +1329,8 @@ object Main: TMain
             Margins.Right = 66
             Margins.Bottom = 0
             Anchors = []
-            ItemCount = 35
             ItemWidth = 200
             ItemHeight = 68
-            ItemIndex = 0
             ItemMargins.Left = 10
             ItemMargins.Top = 0
             ItemMargins.Right = 10
@@ -1397,7 +1402,6 @@ object Main: TMain
               Alignment = taCenter
               Anchors = []
               AutoSize = False
-              Caption = '1'
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWindowText
               Font.Height = -32
@@ -1429,7 +1433,6 @@ object Main: TMain
               Alignment = taCenter
               Anchors = []
               AutoSize = False
-              Caption = '100'
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWindowText
               Font.Height = -27
@@ -1453,7 +1456,6 @@ object Main: TMain
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 2
-          ExplicitHeight = 621
           object HeatWidgets: TRelativePanel
             AlignWithMargins = True
             Left = 192
@@ -1627,7 +1629,6 @@ object Main: TMain
             Align = alRight
             BevelOuter = bvNone
             TabOrder = 0
-            ExplicitHeight = 601
             DesignSize = (
               60
               602)
@@ -1844,8 +1845,6 @@ object Main: TMain
             Height = 622
             Align = alLeft
             BorderStyle = bsNone
-            ItemCount = 2
-            ItemIndex = 0
             ItemMargins.Left = 0
             ItemMargins.Top = 0
             ItemMargins.Right = 0
@@ -1854,7 +1853,6 @@ object Main: TMain
             PopupMenu = pumHeat
             TabOrder = 1
             OnBeforeDrawItem = HeatControlListBeforeDrawItem
-            ExplicitHeight = 621
             object vimgHeatNum: TVirtualImage
               Left = 16
               Top = 11
@@ -1887,7 +1885,6 @@ object Main: TMain
               Height = 32
               Alignment = taCenter
               AutoSize = False
-              Caption = '0'
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWindowText
               Font.Height = -24
@@ -1905,6 +1902,7 @@ object Main: TMain
     Top = 910
     Width = 1414
     Height = 29
+    Action = SCM_StatusBar
     Panels = <
       item
         Text = 'Session: '
@@ -2033,7 +2031,7 @@ object Main: TMain
       object dbtxtSwimClubCaption: TDBText
         Left = 0
         Top = 0
-        Width = 161
+        Width = 215
         Height = 19
         Anchors = []
         AutoSize = True
@@ -2049,7 +2047,7 @@ object Main: TMain
       object dbtxtSwimClubNickName: TDBText
         Left = 0
         Top = 30
-        Width = 179
+        Width = 218
         Height = 21
         Anchors = []
         AutoSize = True
@@ -3210,6 +3208,11 @@ object Main: TMain
       ImageName = 'TimeAuto'
       OnExecute = Event_AutoScheduleExecute
       OnUpdate = Event_AutoScheduleUpdate
+    end
+    object SCM_StatusBar: TAction
+      Category = 'SCM'
+      OnExecute = SCM_StatusBarExecute
+      OnUpdate = SCM_StatusBarUpdate
     end
   end
   object pumHeat: TPopupMenu
@@ -6984,7 +6987,7 @@ object Main: TMain
     Methods = <>
     OutputConverters = <>
     Left = 1108
-    Top = 109
+    Top = 101
     object LinkGridToDataSourceBindSourceDB1: TLinkGridToDataSource
       Category = 'Quick Bindings'
       DataSource = BindSourceDB1
@@ -7316,5 +7319,9 @@ object Main: TMain
     Params = <>
     Left = 696
     Top = 472
+  end
+  object FDMoniRemoteClientLink1: TFDMoniRemoteClientLink
+    Left = 1104
+    Top = 24
   end
 end

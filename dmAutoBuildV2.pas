@@ -507,7 +507,7 @@ function TAutoBuildV2.AutoBuildExecute(DatasetHeat: TDataSet; EventID: integer;
 //
 var
   Unplaced, NumberOfPoolLanes, numOfSwimmingLanes, numberOfHeats: integer;
-  s, strSQL: string;
+  s: string;
 begin
   result := false;
   Unplaced := 0;

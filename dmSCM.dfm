@@ -202,6 +202,7 @@ object SCM: TSCM
   end
   object qryEntrant: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     BeforeInsert = qryEntrantBeforeInsert
     AfterScroll = qryEntrantAfterScroll
     IndexFieldNames = 'HeatID'
@@ -266,7 +267,7 @@ object SCM: TSCM
       ''
       '')
     Left = 48
-    Top = 376
+    Top = 392
     object qryEntrantHeatID: TIntegerField
       FieldName = 'HeatID'
       Origin = 'HeatID'
@@ -361,10 +362,11 @@ object SCM: TSCM
   object dsEntrant: TDataSource
     DataSet = qryEntrant
     Left = 112
-    Top = 376
+    Top = 392
   end
   object qrySession: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     BeforePost = qrySessionBeforePost
     AfterPost = qrySessionAfterPost
     AfterDelete = qrySessionAfterDelete
@@ -1028,6 +1030,7 @@ object SCM: TSCM
   end
   object qryNominee: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     Indexes = <
       item
         Active = True
@@ -1301,7 +1304,6 @@ object SCM: TSCM
   end
   object qryNominateMembers: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     AfterScroll = qryNominateMembersAfterScroll
     FilterOptions = [foCaseInsensitive]
     Indexes = <
@@ -1780,6 +1782,7 @@ object SCM: TSCM
       end>
   end
   object qrySwimClub: TFDQuery
+    Active = True
     IndexFieldNames = 'SwimClubID'
     Connection = scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..SwimClub'

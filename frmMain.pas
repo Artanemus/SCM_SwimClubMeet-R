@@ -14,7 +14,7 @@ uses
   Vcl.Bind.DBEngExt, Vcl.Bind.ControlList, System.Rtti, System.Bindings.Outputs,
   Vcl.Bind.Editors, Data.Bind.Components, Data.Bind.Grid, Data.Bind.DBScope,
   Vcl.ToolWin, Vcl.ActnCtrls, Vcl.ActnMenus, Vcl.PlatformVclStylesActnCtrls,
-  Data.FMTBcd, Data.SqlExpr;
+  Data.FMTBcd, Data.SqlExpr, FireDAC.Moni.Base, FireDAC.Moni.RemoteClient;
 
 type
 
@@ -267,6 +267,8 @@ type
     Tools_DisqualifyCodes: TAction;
     Event_AutoSchedule: TAction;
     SQLQuery1: TSQLQuery;
+    FDMoniRemoteClientLink1: TFDMoniRemoteClientLink;
+    SCM_StatusBar: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure SCM_RefreshExecute(Sender: TObject);
@@ -409,6 +411,8 @@ type
     procedure Tools_DisqualifyCodesExecute(Sender: TObject);
     procedure Event_AutoScheduleExecute(Sender: TObject);
     procedure Event_AutoScheduleUpdate(Sender: TObject);
+    procedure SCM_StatusBarExecute(Sender: TObject);
+    procedure SCM_StatusBarUpdate(Sender: TObject);
   private
     { Private declarations }
     // For scroll wheel tracking on mouse ...
@@ -452,7 +456,6 @@ type
     // ASSERT CONNECTION TO MSSQL DATABASE
     function AssertConnection(): boolean;
 
-    procedure UpdateStatusBar();
     procedure EnableEntrant_GridEllipse();
     // procedure EnableEvent_GridEllipse();
     procedure Event_BuildSCMEventType(Sender: TObject;
@@ -482,8 +485,8 @@ type
 
   public
     { Public declarations }
-    fDoStatusBarUpdate: boolean;
-    fSCMisInitializing: boolean;
+    fDoStatusBarUpdate: boolean;  // FLAG ACTION - SCM_StatusBar.Enabled
+    fSCMisInitializing: boolean;  // FLAG FormCreate
     prefGenerateEventDescription: boolean;
     prefGenerateEventDescStr: string;
 
@@ -516,13 +519,12 @@ uses
 procedure TMain.ActionManager1Update(Action: TBasicAction;
   var Handled: boolean);
 begin
+  // kill the statusbar action during initialization.
   if AssertConnection then
   begin
-    if not fSCMisInitializing then
-      if fDoStatusBarUpdate then
-        UpdateStatusBar;
+    if fSCMisInitializing then
+      SCM_StatusBar.Enabled := false;
   end;
-  fDoStatusBarUpdate := false;
 end;
 
 function TMain.AssertConnection: boolean;
@@ -575,11 +577,18 @@ begin
   // CLOSE makes inactive the bind source, but DATASET connection ok.
   if not BindSourceDB1.DataSet.Active then
     BindSourceDB1.DataSet.Active := true;
-
-  fDoStatusBarUpdate := true;
-
   // paint the member tomatoe red in the nominate_grid
   Nominate_Grid.Invalidate;
+
+  // S T A T U S B A R .
+  // Modifying the nominees changes the Session's Nominees Totals
+  fDoStatusBarUpdate := true; // flag set false after SCM_StatusBarExecute.
+  SCM_StatusBar.Update;
+  SCM_StatusBar.Execute;
+  // E V E N T _ G R I D .
+  // The number of nominations has changed - event grid will need to update.
+  Refresh_Event;
+
 end;
 
 procedure TMain.DBGridWndProc(var Msg: TMessage);
@@ -957,9 +966,17 @@ begin
       SCM.dsEntrant.DataSet.Refresh;
       SCM.Entrant_Locate(EntrantID);
     end;
+
   end;
 
   SCM.dsEntrant.DataSet.EnableControls;
+
+  // S T A T U S B A R .
+  // Changes to entrants effect totals in statusbar
+  fDoStatusBarUpdate := true; // flag set false after SCM_StatusBarExecute.
+  SCM_StatusBar.Update; // Asserts enabled state.
+  SCM_StatusBar.Execute; // Fire actions
+
 end;
 
 procedure TMain.Entrant_GridEnter(Sender: TObject);
@@ -1211,17 +1228,16 @@ begin
     exit;
   if Entrant_Grid.Focused then
   begin
-    fDoStatusBarUpdate := true;
     // After moving row re-engage editing for selected fields.
     fld := Entrant_Grid.SelectedField;
     if Assigned(fld) then
     begin
       if (fld.FieldName = 'RaceTime') or (fld.FieldName = 'DCode') or
         (fld.FieldName = 'FullName') then
-        begin
+      begin
         Entrant_Grid.EditorMode := true;
         // Entrant_Grid.SelectAll;
-        end
+      end
       else
         Entrant_Grid.EditorMode := false;
     end;
@@ -1369,7 +1385,9 @@ begin
 
   if not AssertConnection then
     exit;
-  // init
+  // Toggle EVENT_GRID EventStatusID.
+  // If all the heats for the event have been closed then a tick is displayed
+  // in the UI.
   i := SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger;
   if (i > 0) then
   begin
@@ -1555,13 +1573,16 @@ begin
     sLineBreak;
   if (HasRacedHeats) then
     SQL := SQL +
-      'including all (open or raced) heats, entrant and nomination data?'
+      'Including all (open or raced) heats, entrant and nomination data?'
   else
-    SQL := SQL + 'including all open heats, entrant and nomination data?';
+    SQL := SQL + 'Including all open heats, entrant and nomination data?';
   rtnValue := MessageDlg(SQL, mtConfirmation, [mbYes, mbNo], 0, mbYes);
 
   if (rtnValue = mrYes) then
+  begin
     SCM.Event_Delete(SCM.Event_ID); // delete the current selected event.
+    Refresh_Event;
+  end;
 end;
 
 procedure TMain.Event_DeleteUpdate(Sender: TObject);
@@ -1905,18 +1926,17 @@ begin
   if not AssertConnection then
     exit;
   EnabledState := false;
-  // is the session is locked?
+  // is the session is Open?
   if (SCM.dsSession.DataSet.FieldByName('SessionStatusID').AsInteger = 1) then
   begin
-    // Is the heat closed?
+    // Is the heat Open?
     if (SCM.dsHeat.DataSet.FieldByName('HeatStatusID').AsInteger <> 3) then
       EnabledState := true;
   end;
-  // ensures the entrant grid is disable when stepping around GUI
+  // SYNC the enabled state of the Entrant_Grid to the
+  // session/heat status.
   if (Entrant_Grid.Enabled <> EnabledState) then
     Entrant_Grid.Enabled := EnabledState;
-  if (Event_Grid.Focused) then
-    fDoStatusBarUpdate := true;
 end;
 
 procedure TMain.Event_ToggleGridViewExecute(Sender: TObject);
@@ -2007,7 +2027,7 @@ var
 begin
   bootprogress := nil;
   SCMEventList := nil;
-  fDoStatusBarUpdate := false;
+  fDoStatusBarUpdate := false;  // false : aborts StatusBar Update procedure.
   fSCMisInitializing := true;
   fSessionClosedFontColor := clWebTomato;
   fSessionClosedBgColor := clAppWorkSpace;
@@ -2280,9 +2300,9 @@ begin
   Entrant_Grid.Options := Entrant_Grid.Options - [dgAlwaysShowEditor];
 
   {
-  When the Columns.State property of the grid is csDefault, grid columns
-  are dynamically generated from the visible fields of the dataset and the
-  order of columns in the grid matches the order of fields in the dataset.
+    When the Columns.State property of the grid is csDefault, grid columns
+    are dynamically generated from the visible fields of the dataset and the
+    order of columns in the grid matches the order of fields in the dataset.
   }
   Session_Grid.Columns.State := csDefault;
   Event_Grid.Columns.State := csDefault;
@@ -2337,6 +2357,11 @@ begin
     bootprogress.Free;
     bootprogress := nil;
   end;
+
+  // S T A T U S B A R .
+  fDoStatusBarUpdate := true; // flag set false after SCM_StatusBarExecute.
+  SCM_StatusBar.Update;
+  SCM_StatusBar.Execute;
 
   if Session_Grid.CanFocus then
     Session_Grid.SetFocus;
@@ -2580,10 +2605,7 @@ begin
   begin
     Refresh_Heat;
     Refresh_Entrant;
-    // if BATCH AUTO-BUILD enabled ...
-    // Don't refresh EVENT as we are iterating through the list
-    // Event's grid need to be refreshed
-    // to update NOM# and ENT#
+    // Event's grid need to be refreshed to update NOM# and ENT#
     SCM.dsEvent.DataSet.DisableControls;
     Refresh_Event;
     SCM.dsEvent.DataSet.EnableControls;
@@ -3223,12 +3245,9 @@ begin
     if (SCM.dsHeat.DataSet.FieldByName('HeatStatusID').AsInteger <> 3) then
       DoEnable := true;
   end;
-  // ensures the entrant grid is disable when stepping around GUI
+  // Set the entrant grid's 'disabled' state.
   if (Entrant_Grid.Enabled <> DoEnable) then
     Entrant_Grid.Enabled := DoEnable;
-
-  if (HeatControlList.Focused) then
-    fDoStatusBarUpdate := true;
 end;
 
 procedure TMain.Heat_TimeKeeperReportExecute(Sender: TObject);
@@ -3280,7 +3299,8 @@ var
   i: integer;
 begin
   SCM.Heat_ToggleStatus;
-  i := SCM.dsHeat.DataSet.FieldByName('HeatStatusID').AsInteger;
+  i := BindSourceDB3.DataSource.DataSet.FieldByName('HeatStatusID').AsInteger;
+//  i := SCM.dsHeat.DataSet.FieldByName('HeatStatusID').AsInteger;
   case i of
     1, 2:
       Entrant_Grid.Enabled := true;
@@ -3289,7 +3309,10 @@ begin
   end;
   if HeatControlList.CanFocus then
     HeatControlList.SetFocus;
+
+  // All the heats have been closed then the event grid will display a tick.
   PostMessage(Main.Handle, SCM_EVENTASSERTSTATUSSTATE, 0, 0);
+
 end;
 
 procedure TMain.Heat_ToggleStatusUpdate(Sender: TObject);
@@ -3588,10 +3611,16 @@ end;
 
 procedure TMain.PageControl1Change(Sender: TObject);
 begin
+
+{$IFDEF DEBUG}
+  {TODO -oBSA -cGeneral : FireDAC Tracing - DISABLE DEBBUG}
+  SCM.scmConnection.ConnectionIntf.Tracing := false;
+{$ENDIF}
+
   // Update page
   case (PageControl1.TabIndex) of
-    0: // S e s s i o n .
-      fDoStatusBarUpdate := true;
+    // 0: // S e s s i o n .
+
     1: // N o m i n a t e .
       begin
         if AssertConnection then
@@ -3604,11 +3633,22 @@ begin
             Resets last known qualified MemberID to unknown.
             Nominate_ControlList.Invalidate;
           *)
+          lblNomWarning.Visible := false;
           Refresh_Nominate;
           if (SCM.qryEvent.IsEmpty) then
-            lblNomWarning.Visible := true
-          else
-            lblNomWarning.Visible := false;
+          begin
+            lblNomWarning.Font.Color := clWindowText;
+            lblNomWarning.Caption := 'No Members';
+            lblNomWarning.Visible := true;
+          end
+          else if SCM.Session_IsLocked then
+          begin
+            lblNomWarning.Font.Color := clWebTomato;
+            lblNomWarning.Caption := 'Session is Locked';
+            lblNomWarning.Visible := true;
+          end;
+
+
         end;
         // places focus onto the nominees list
         if Nominate_Grid.CanFocus then
@@ -3617,9 +3657,13 @@ begin
     2:
       // H e a t s .
       begin
-        fDoStatusBarUpdate := true;
         if HeatControlList.CanFocus then
           HeatControlList.SetFocus;
+{$IFDEF DEBUG}
+      {TODO -oBSA -cGeneral : FireDAC- DISABLE DEBBUG}
+      SCM.scmConnection.ConnectionIntf.Tracing := true;
+{$ENDIF}
+
       end;
   end;
 end;
@@ -3819,6 +3863,95 @@ begin
   DoEnable := false;
   if AssertConnection then
     DoEnable := true;
+  TAction(Sender).Enabled := DoEnable;
+end;
+
+procedure TMain.SCM_StatusBarExecute(Sender: TObject);
+var
+  dt: TDateTime;
+  s: String;
+  aSessionID, i: integer;
+begin
+
+  if (SCM.dsSession.DataSet.IsEmpty) then
+  begin
+    Main.StatusBar1.Panels.BeginUpdate;
+    for i := 0 to Main.StatusBar1.Panels.Count - 1 do
+      Main.StatusBar1.Panels.Items[i].Text := '';
+    Main.StatusBar1.Panels.EndUpdate;
+    fDoStatusBarUpdate := false;
+    exit;
+  end;
+
+  if (SCM.dsSession.DataSet.FieldByName('SessionStatusID').AsInteger = 2) then
+  begin
+    Main.StatusBar1.Panels.BeginUpdate;
+    for i := 0 to Main.StatusBar1.Panels.Count - 1 do
+      Main.StatusBar1.Panels.Items[i].Text := '';
+    Main.StatusBar1.Panels.EndUpdate;
+    fDoStatusBarUpdate := false;
+    exit;
+  end;
+
+  // Note: Most datasets try to maintain the current record position
+  // when you call refresh.
+  // next line fixes an exception error
+  if (Main.StatusBar1.Panels.Count = 0) then
+  begin
+    fDoStatusBarUpdate := false;
+    exit;
+  end;
+
+  Main.StatusBar1.Panels.BeginUpdate;
+  for i := 0 to Main.StatusBar1.Panels.Count - 1 do
+  begin
+    // Application.ProcessMessages;
+    case (i) of
+      0:
+        begin
+          dt := SCM.dsSession.DataSet.FieldByName('SessionStart').AsDateTime;
+          if (dt > 0) then
+          begin
+            DateTimeToString(s, 'dd mmmm yyyy hh:nn', dt);
+            // next line fixes an exception error
+            Main.StatusBar1.Panels.Items[i].Text := 'Session: ' + s;
+            Main.StatusBar1.Invalidate;
+          end;
+        end;
+      1:
+        begin
+          // NOMINEES ...
+          aSessionID := SCM.dsSession.DataSet.FieldByName('SessionID')
+            .AsInteger;
+          s := IntToStr(SCM.Session_GetNomineeCount(aSessionID));
+          Main.StatusBar1.Panels.Items[i].Text := 'Nominees: ' + s;
+        end;
+      2:
+        begin
+          // ENTRANTS ...
+          aSessionID := SCM.dsSession.DataSet.FieldByName('SessionID')
+            .AsInteger;
+          s := IntToStr(SCM.Session_GetEntrantCount(aSessionID));
+          Main.StatusBar1.Panels.Items[i].Text := 'Entrants: ' + s;
+        end;
+    end;
+  end;
+  fDoStatusBarUpdate := false;
+  Main.StatusBar1.Panels.EndUpdate;
+  Main.StatusBar1.Invalidate;
+
+end;
+
+procedure TMain.SCM_StatusBarUpdate(Sender: TObject);
+var
+  DoEnable: boolean;
+begin
+  DoEnable := false;
+  if AssertConnection then
+  begin
+    if fDoStatusBarUpdate and not fSCMisInitializing then
+      DoEnable := true;
+  end;
   TAction(Sender).Enabled := DoEnable;
 end;
 
@@ -4288,22 +4421,27 @@ begin
   begin
     if (SCM.dsSession.DataSet.FieldByName('SessionStatusID').AsInteger = 2) then
     begin
-      // disable all grids
+      // Disable grids.
+      // With the exception of the Heat grid. This allows user to browse races,
+      // entrant data and race times. Buttons and menu items will be disabled
+      // via the ActionManager.
       Event_Grid.Enabled := false;
-      // Heat_Grid.Enabled := false;
       Entrant_Grid.Enabled := false;
       Nominate_ControlList.Enabled := false;
     end
     else
     begin
       Event_Grid.Enabled := true;
-      // Heat_Grid.Enabled := true;
       Entrant_Grid.Enabled := true;
       Nominate_ControlList.Enabled := true;
     end;
   end;
-  if (Session_Grid.Focused) then
-    fDoStatusBarUpdate := true;
+
+  // S T A T U S B A R .
+  // Session scroll will change statusbar totals for the session
+  fDoStatusBarUpdate := true; // permits ACTION (flag sets false after update)
+  SCM_StatusBar.Update;
+  SCM_StatusBar.Execute;
 end;
 
 procedure TMain.Session_SortExecute(Sender: TObject);
@@ -4651,74 +4789,6 @@ begin
   TAction(Sender).Enabled := DoEnable;
 end;
 
-procedure TMain.UpdateStatusBar;
-var
-  dt: TDateTime;
-  s: String;
-  aSessionID, i: integer;
-begin
 
-  if (SCM.dsSession.DataSet.IsEmpty) then
-  begin
-    Main.StatusBar1.Panels.BeginUpdate;
-    for i := 0 to Main.StatusBar1.Panels.Count - 1 do
-      Main.StatusBar1.Panels.Items[i].Text := '';
-    Main.StatusBar1.Panels.EndUpdate;
-    exit;
-  end;
-
-  if (SCM.dsSession.DataSet.FieldByName('SessionStatusID').AsInteger = 2) then
-  begin
-    Main.StatusBar1.Panels.BeginUpdate;
-    for i := 0 to Main.StatusBar1.Panels.Count - 1 do
-      Main.StatusBar1.Panels.Items[i].Text := '';
-    Main.StatusBar1.Panels.EndUpdate;
-    exit;
-  end;
-
-  // Note: Most datasets try to maintain the current record position
-  // when you call refresh.
-  // next line fixes an exception error
-  if (Main.StatusBar1.Panels.Count = 0) then
-    exit;
-
-  Main.StatusBar1.Panels.BeginUpdate;
-  for i := 0 to Main.StatusBar1.Panels.Count - 1 do
-  begin
-    // Application.ProcessMessages;
-    case (i) of
-      0:
-        begin
-          dt := SCM.dsSession.DataSet.FieldByName('SessionStart').AsDateTime;
-          if (dt > 0) then
-          begin
-            DateTimeToString(s, 'dd mmmm yyyy hh:nn', dt);
-            // next line fixes an exception error
-            Main.StatusBar1.Panels.Items[i].Text := 'Session: ' + s;
-            Main.StatusBar1.Invalidate;
-          end;
-        end;
-      1:
-        begin
-          // NOMINEES ...
-          aSessionID := SCM.dsSession.DataSet.FieldByName('SessionID')
-            .AsInteger;
-          s := IntToStr(SCM.Session_GetNomineeCount(aSessionID));
-          Main.StatusBar1.Panels.Items[i].Text := 'Nominees: ' + s;
-        end;
-      2:
-        begin
-          // ENTRANTS ...
-          aSessionID := SCM.dsSession.DataSet.FieldByName('SessionID')
-            .AsInteger;
-          s := IntToStr(SCM.Session_GetEntrantCount(aSessionID));
-          Main.StatusBar1.Panels.Items[i].Text := 'Entrants: ' + s;
-        end;
-    end;
-  end;
-  Main.StatusBar1.Panels.EndUpdate;
-  Main.StatusBar1.Invalidate;
-
-end;
 
 end.
