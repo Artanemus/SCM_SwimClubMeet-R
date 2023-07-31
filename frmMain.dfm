@@ -50,7 +50,6 @@ object Main: TMain
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitHeight = 758
           object pnlSessLeftTop: TPanel
             Left = 0
             Top = 0
@@ -177,7 +176,6 @@ object Main: TMain
             Align = alRight
             BevelOuter = bvNone
             TabOrder = 2
-            ExplicitHeight = 738
             DesignSize = (
               60
               739)
@@ -293,8 +291,6 @@ object Main: TMain
           BevelOuter = bvNone
           Caption = 'pnlSessionClient'
           TabOrder = 1
-          ExplicitWidth = 673
-          ExplicitHeight = 758
           object pnlSessClientTop: TPanel
             Left = 0
             Top = 0
@@ -303,7 +299,6 @@ object Main: TMain
             Align = alTop
             BevelOuter = bvNone
             TabOrder = 0
-            ExplicitWidth = 673
             object lblSessionEventCaption: TLabel
               Left = 6
               Top = -3
@@ -321,8 +316,6 @@ object Main: TMain
             BevelOuter = bvNone
             Caption = 'Panel7'
             TabOrder = 1
-            ExplicitWidth = 673
-            ExplicitHeight = 738
             object Event_Grid: TDBGrid
               AlignWithMargins = True
               Left = 10
@@ -444,8 +437,6 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 1
-              ExplicitLeft = 613
-              ExplicitHeight = 738
               DesignSize = (
                 60
                 739)
@@ -1020,6 +1011,8 @@ object Main: TMain
           BevelOuter = bvNone
           Caption = 'HeatRightPanel'
           TabOrder = 0
+          ExplicitWidth = 1100
+          ExplicitHeight = 601
           object Entrant_Grid: TDBGrid
             Left = 0
             Top = 0
@@ -1163,6 +1156,8 @@ object Main: TMain
             Anchors = []
             BevelOuter = bvNone
             TabOrder = 1
+            ExplicitLeft = 1040
+            ExplicitHeight = 601
             DesignSize = (
               60
               602)
@@ -1289,6 +1284,7 @@ object Main: TMain
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 1
+          ExplicitWidth = 1402
           DesignSize = (
             1406
             117)
@@ -1329,8 +1325,10 @@ object Main: TMain
             Margins.Right = 66
             Margins.Bottom = 0
             Anchors = []
+            ItemCount = 2
             ItemWidth = 200
             ItemHeight = 68
+            ItemIndex = 0
             ItemMargins.Left = 10
             ItemMargins.Top = 0
             ItemMargins.Right = 10
@@ -1402,6 +1400,7 @@ object Main: TMain
               Alignment = taCenter
               Anchors = []
               AutoSize = False
+              Caption = '1'
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWindowText
               Font.Height = -32
@@ -1433,6 +1432,7 @@ object Main: TMain
               Alignment = taCenter
               Anchors = []
               AutoSize = False
+              Caption = '25'
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWindowText
               Font.Height = -27
@@ -1456,6 +1456,7 @@ object Main: TMain
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 2
+          ExplicitHeight = 621
           object HeatWidgets: TRelativePanel
             AlignWithMargins = True
             Left = 192
@@ -1629,6 +1630,7 @@ object Main: TMain
             Align = alRight
             BevelOuter = bvNone
             TabOrder = 0
+            ExplicitHeight = 601
             DesignSize = (
               60
               602)
@@ -1845,6 +1847,8 @@ object Main: TMain
             Height = 622
             Align = alLeft
             BorderStyle = bsNone
+            ItemCount = 3
+            ItemIndex = 0
             ItemMargins.Left = 0
             ItemMargins.Top = 0
             ItemMargins.Right = 0
@@ -1853,6 +1857,7 @@ object Main: TMain
             PopupMenu = pumHeat
             TabOrder = 1
             OnBeforeDrawItem = HeatControlListBeforeDrawItem
+            ExplicitHeight = 621
             object vimgHeatNum: TVirtualImage
               Left = 16
               Top = 11
@@ -1885,6 +1890,7 @@ object Main: TMain
               Height = 32
               Alignment = taCenter
               AutoSize = False
+              Caption = '1'
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWindowText
               Font.Height = -24

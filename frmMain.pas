@@ -485,8 +485,8 @@ type
 
   public
     { Public declarations }
-    fDoStatusBarUpdate: boolean;  // FLAG ACTION - SCM_StatusBar.Enabled
-    fSCMisInitializing: boolean;  // FLAG FormCreate
+    fDoStatusBarUpdate: boolean; // FLAG ACTION - SCM_StatusBar.Enabled
+    fSCMisInitializing: boolean; // FLAG FormCreate
     prefGenerateEventDescription: boolean;
     prefGenerateEventDescStr: string;
 
@@ -807,15 +807,16 @@ end;
 
 procedure TMain.Entrant_GridCellClick(Column: TColumn);
 begin
+  // --------------------------------------------------------------------
+  // H A N D L E   A   C U S T O M   P A I N T E D   C H E C K B O X .
+  // --------------------------------------------------------------------
   if Assigned(Column.Field) and (Column.Field.DataType = ftBoolean) then
   begin
     // Editing must be enabled for FUllName, RaceTime and DCode
     // ...BUT if editing is enabled and focus is on CheckBoxes
-    // then 'true/false' text appears
-    // (custom paint routine not called during editing).
-
-    // If the field is boolean, switch OFF Grid editing.
-    // Entrant_Grid.Options := Entrant_Grid.Options - [dgEditing];
+    // then 'true/false' text appears!
+    // The custom paint routine isn't called during editing as the
+    // inline editor is made visible and covers the cell.
 
     Entrant_Grid.BeginUpdate;
     Column.Grid.DataSource.DataSet.Edit;
@@ -832,9 +833,23 @@ begin
           .AsInteger := 54;
     end;
     Column.Grid.DataSource.DataSet.Post;
-    // Entrant_Grid.Update;
     Entrant_Grid.EndUpdate;
-    // Entrant_Grid.RePaint;
+
+    // --------------------------------------------------------------------
+    // FIXED - FINALLY ...
+    // BSA 31/07/2023
+    // --------------------------------------------------------------------
+    // If the user clicks the cell a 2nd time, the inline editor paints.
+    // This is system WM_PAINT and cannot be ommitted.
+    // UNLESS ...
+    // 1.CHANGE OPTIONS. REMOVE editing. (MAGIC - I don't why this works.)
+    // 2.NOW EditorMode correctly flags and the final step is to disable it.
+    // NOTE: A REPAINT IS NOT NECESSARY as the inline editor is made invisible
+    // to reveal the custom painted cell.
+    Entrant_Grid.Options := Entrant_Grid.Options - [dgEditing];
+    if Entrant_Grid.EditorMode then
+      Entrant_Grid.EditorMode := false;
+
   end;
 end;
 
@@ -2027,7 +2042,7 @@ var
 begin
   bootprogress := nil;
   SCMEventList := nil;
-  fDoStatusBarUpdate := false;  // false : aborts StatusBar Update procedure.
+  fDoStatusBarUpdate := false; // false : aborts StatusBar Update procedure.
   fSCMisInitializing := true;
   fSessionClosedFontColor := clWebTomato;
   fSessionClosedBgColor := clAppWorkSpace;
@@ -3300,7 +3315,7 @@ var
 begin
   SCM.Heat_ToggleStatus;
   i := BindSourceDB3.DataSource.DataSet.FieldByName('HeatStatusID').AsInteger;
-//  i := SCM.dsHeat.DataSet.FieldByName('HeatStatusID').AsInteger;
+  // i := SCM.dsHeat.DataSet.FieldByName('HeatStatusID').AsInteger;
   case i of
     1, 2:
       Entrant_Grid.Enabled := true;
@@ -3613,10 +3628,9 @@ procedure TMain.PageControl1Change(Sender: TObject);
 begin
 
 {$IFDEF DEBUG}
-  {TODO -oBSA -cGeneral : FireDAC Tracing - DISABLE DEBBUG}
+  { TODO -oBSA -cGeneral : FireDAC Tracing - DISABLE DEBBUG }
   SCM.scmConnection.ConnectionIntf.Tracing := false;
 {$ENDIF}
-
   // Update page
   case (PageControl1.TabIndex) of
     // 0: // S e s s i o n .
@@ -3648,7 +3662,6 @@ begin
             lblNomWarning.Visible := true;
           end;
 
-
         end;
         // places focus onto the nominees list
         if Nominate_Grid.CanFocus then
@@ -3660,10 +3673,9 @@ begin
         if HeatControlList.CanFocus then
           HeatControlList.SetFocus;
 {$IFDEF DEBUG}
-      {TODO -oBSA -cGeneral : FireDAC- DISABLE DEBBUG}
-      SCM.scmConnection.ConnectionIntf.Tracing := true;
+        { TODO -oBSA -cGeneral : FireDAC- DISABLE DEBBUG }
+        SCM.scmConnection.ConnectionIntf.Tracing := true;
 {$ENDIF}
-
       end;
   end;
 end;
@@ -4788,7 +4800,5 @@ begin
     DoEnable := true;
   TAction(Sender).Enabled := DoEnable;
 end;
-
-
 
 end.
