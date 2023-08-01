@@ -142,6 +142,10 @@ type
     tblHouse: TFDTable;
     tblSessionStatus: TFDTable;
     tblStroke: TFDTable;
+    qryEntrantCATID: TIntegerField;
+    tblSwimmerCAT: TFDTable;
+    luSwimmerCAT: TDataSource;
+    qryEntrantluSwimmerCAT: TStringField;
     procedure DataModuleCreate(Sender: TObject);
     procedure qryEntrantAfterScroll(DataSet: TDataSet);
     procedure qryEntrantBeforeInsert(DataSet: TDataSet);
@@ -360,6 +364,7 @@ begin
     tblHeatType.Active := true;
     tblHeatStatus.Active := true;
     tblDisqualifyCode.Active := true;
+    tblSwimmerCAT.Active := true;
 
     qrySwimClub.Close;
     qrySwimClub.ParamByName('SWIMCLUBID').AsInteger := 1;

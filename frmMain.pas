@@ -429,6 +429,7 @@ type
     fscmStyleName: String;
     prefEnableTeamEvents: boolean;
     prefEnableFINAcodes: boolean;
+    prefGroupBy: integer;
 
     // Internet connection state
     fMyInternetConnected: boolean;
@@ -443,8 +444,10 @@ type
     procedure Refresh_Entrant();
     procedure Refresh_Nominate();
 
-    // FINA CODES
+    // ENTRANT_GRID Toggle column display
     procedure ToggleFINA(EnableFINA: boolean);
+    procedure ToggleSwimmerCAT(SetVisible: boolean);
+    procedure ToggleDivisions(SetVisible: boolean);
 
     // Miscellaneous - uncatagorized
     procedure GetSCMPreferences();
@@ -2051,6 +2054,7 @@ begin
 
   prefEnableTeamEvents := false;
   prefEnableFINAcodes := false;
+  prefGroupBy := 0;
 
   try
     SCM := TSCM.Create(self);
@@ -2324,6 +2328,12 @@ begin
   Entrant_Grid.Columns.State := csDefault;
   Nominate_Grid.Columns.State := csDefault;
 
+  // PREPARE ENTRANT GRID DISPLAY
+  // Depending on the preferences set, hide specific fields in SCM.qryEntrant
+  ToggleFINA(prefEnableFINAcodes);
+  ToggleSwimmerCAT(false);
+  ToggleDivisions(false);
+
 end;
 
 procedure TMain.FormDestroy(Sender: TObject);
@@ -2457,6 +2467,10 @@ begin
     'EnableTeamEvents', false);
   prefEnableFINAcodes := iFile.ReadBool('Preferences',
     'EnableFINAcodes', false);
+
+  // 2023.08.01 AutoBuild
+  prefGroupBy := iFile.ReadInteger('Preferences', 'GroupBy', 0);
+
 
   iFile.Free;
 end;
@@ -2618,6 +2632,29 @@ begin
   success := AutoBuild.AutoBuildExecute(SCM.dsHeat.DataSet, EventID);
   if (success) then
   begin
+
+    // 2023.08.01
+    // Toggle visibility of SwimmerCategory/Division based on auto-build
+    GetSCMPreferenceFileName;
+    case prefGroupBy of
+      0,1:
+      begin
+        ToggleSwimmerCAT(false);
+        ToggleDivisions(false);
+      end;
+      2:
+      begin
+        ToggleSwimmerCAT(true);
+        ToggleDivisions(false);
+      end;
+      3:
+      begin
+        ToggleSwimmerCAT(false);
+        ToggleDivisions(true);
+      end;
+    end;
+
+
     Refresh_Heat;
     Refresh_Entrant;
     // Event's grid need to be refreshed to update NOM# and ENT#
@@ -4549,27 +4586,93 @@ begin
   TAction(Sender).Enabled := DoEnable;
 end;
 
+procedure TMain.ToggleDivisions(SetVisible: boolean);
+var
+  fld: TField;
+begin
+  // NOTE: Swimmer Category and Divisions mutally exclusive.
+  with SCM.dsEntrant.DataSet do
+  begin
+  DisableControls;
+  fld := Fields.FindField('luDivision');
+  if Assigned(fld) then
+    fld.Visible := SetVisible;
+  EnableControls;
+  end;
+end;
+
 procedure TMain.ToggleFINA(EnableFINA: boolean);
 var
-  i: integer;
+  fld: TField;
 begin
   // Toggle FINA codes of simple scratch/disqualified
-  SCM.qryEntrant.DisableControls;
-  for i := 0 to Entrant_Grid.Columns.Count - 1 do
+  with SCM.dsEntrant.DataSet do
   begin
-    if (Entrant_Grid.Columns[i].Field <> Nil) then
-    begin
-      if (CompareText(Entrant_Grid.Columns[i].FieldName, 'DCode') = 0) then
-        Entrant_Grid.Columns[i].Visible := EnableFINA;
-      if (CompareText(Entrant_Grid.Columns[i].FieldName, 'IsScratched') = 0)
-      then
-        Entrant_Grid.Columns[i].Visible := not EnableFINA;
-      if (CompareText(Entrant_Grid.Columns[i].FieldName, 'IsDisqualified') = 0)
-      then
-        Entrant_Grid.Columns[i].Visible := not EnableFINA;
-    end;
+  DisableControls;
+  {
+    When the Columns.State property of the grid is csDefault, grid columns
+    are dynamically generated from the visible fields of the dataset and the
+    order of columns in the grid matches the order of fields in the dataset.
+  }
+
+  if EnableFINA then
+  begin
+    fld := Fields.FindField('IsDisqualified');
+    if Assigned(fld) then
+      fld.Visible := false;
+    fld := Fields.FindField('IsScratched');
+    if Assigned(fld) then
+      fld.Visible := false;
+    fld := Fields.FindField('DCode');
+    if Assigned(fld) then
+      fld.Visible := true;
+   end
+   else
+   begin
+    fld := Fields.FindField('IsDisqualified');
+    if Assigned(fld) then
+      fld.Visible := true;
+    fld := Fields.FindField('IsScratched');
+    if Assigned(fld) then
+      fld.Visible := true;
+    fld := Fields.FindField('DCode');
+    if Assigned(fld) then
+      fld.Visible := false;
+
+   end;
+
+//  for i := 0 to Entrant_Grid.Columns.Count - 1 do
+//  begin
+//    if (Entrant_Grid.Columns[i].Field <> Nil) then
+//    begin
+//      if (CompareText(Entrant_Grid.Columns[i].FieldName, 'DCode') = 0) then
+//        Entrant_Grid.Columns[i].Visible := EnableFINA;
+//      if (CompareText(Entrant_Grid.Columns[i].FieldName, 'IsScratched') = 0)
+//      then
+//        Entrant_Grid.Columns[i].Visible := not EnableFINA;
+//      if (CompareText(Entrant_Grid.Columns[i].FieldName, 'IsDisqualified') = 0)
+//      then
+//        Entrant_Grid.Columns[i].Visible := not EnableFINA;
+//    end;
+//  end;
+
+  EnableControls;
   end;
-  SCM.qryEntrant.EnableControls;
+end;
+
+procedure TMain.ToggleSwimmerCAT(SetVisible: boolean);
+var
+  fld: TField;
+begin
+  // NOTE: Swimmer Category and Divisions mutally exclusive.
+  with SCM.dsEntrant.DataSet do
+  begin
+  DisableControls;
+  fld := Fields.FindField('luCategory');
+  if Assigned(fld) then
+    fld.Visible := SetVisible;
+  EnableControls;
+  end;
 end;
 
 procedure TMain.Tools_ConnectionManagerExecute(Sender: TObject);

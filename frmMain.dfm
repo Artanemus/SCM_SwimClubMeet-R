@@ -1085,6 +1085,11 @@ object Main: TMain
                 FieldName = 'DCode'
                 Width = 80
                 Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'luCategory'
+                Visible = True
               end>
           end
           object EntrantWidgets: TRelativePanel
