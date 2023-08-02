@@ -57,7 +57,7 @@ object Preferences: TPreferences
       654
       48)
     object btnClose: TButton
-      Left = 504
+      Left = 500
       Top = 6
       Width = 101
       Height = 33
@@ -65,7 +65,7 @@ object Preferences: TPreferences
       Caption = 'Close'
       TabOrder = 0
       OnClick = btnCloseClick
-      ExplicitLeft = 500
+      ExplicitLeft = 496
     end
   end
   object PageControl1: TPageControl
@@ -73,7 +73,7 @@ object Preferences: TPreferences
     Top = 41
     Width = 654
     Height = 503
-    ActivePage = tab1
+    ActivePage = TabSheet6
     Align = alClient
     TabOrder = 2
     OnChanging = PageControl1Changing
@@ -368,7 +368,7 @@ object Preferences: TPreferences
         ParentFont = False
       end
       object btn1: TSpeedButton
-        Left = 173
+        Left = 169
         Top = 15
         Width = 33
         Height = 33
@@ -553,13 +553,29 @@ object Preferences: TPreferences
         Enabled = False
         TabOrder = 0
       end
-      object prefEnableFINAcodes: TCheckBox
+      object prefEnableDCodes: TCheckBox
         Left = 32
         Top = 64
         Width = 313
         Height = 20
         Caption = 'Enable FINA disqualification codes.'
         TabOrder = 1
+      end
+      object prefDisplaySwimmerCAT: TCheckBox
+        Left = 32
+        Top = 98
+        Width = 369
+        Height = 22
+        Caption = 'Display Swimmer Category in the entrant'#39's grid.'
+        TabOrder = 2
+      end
+      object prefDisplayDivisions: TCheckBox
+        Left = 32
+        Top = 136
+        Width = 313
+        Height = 22
+        Caption = 'Display Divisions in the entrant'#39's grid.'
+        TabOrder = 3
       end
     end
     object TabSheet3: TTabSheet
@@ -693,8 +709,8 @@ object Preferences: TPreferences
   object OpenPictureDialog1: TOpenPictureDialog
     Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
     Title = 'Load SCM Club Logo'
-    Left = 565
-    Top = 253
+    Left = 573
+    Top = 453
   end
   object tblSystem: TFDTable
     ActiveStoredUsage = [auDesignTime]
@@ -704,8 +720,8 @@ object Preferences: TPreferences
     Top = 384
   end
   object SavePictureDialog1: TSavePictureDialog
-    Left = 428
-    Top = 249
+    Left = 572
+    Top = 385
   end
   object qrySwimClub: TFDQuery
     ActiveStoredUsage = [auDesignTime]

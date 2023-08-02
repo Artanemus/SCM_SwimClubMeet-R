@@ -81,7 +81,9 @@ type
     Label17: TLabel;
     TabSheet6: TTabSheet;
     prefEnableTeamEvents: TCheckBox;
-    prefEnableFINAcodes: TCheckBox;
+    prefEnableDCodes: TCheckBox;
+    prefDisplaySwimmerCAT: TCheckBox;
+    prefDisplayDivisions: TCheckBox;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
@@ -447,8 +449,12 @@ begin
   // 2023.06.26
   prefEnableTeamEvents.Checked := iFile.ReadBool('Preferences',
     'EnableTeamEvents', false);
-  prefEnableFINAcodes.Checked := iFile.ReadBool('Preferences',
-    'EnableFINAcodes', false);
+  prefEnableDCodes.Checked := iFile.ReadBool('Preferences',
+    'EnableDCodes', false);
+  prefDisplaySwimmerCAT.Checked := iFile.ReadBool('Preferences',
+    'DisplaySwimmerCAT', false);
+  prefDisplayDivisions.Checked := iFile.ReadBool('Preferences',
+    'DisplayDivisions', false);
 
   iFile.free;
 end;
@@ -492,8 +498,10 @@ begin
   // 2023.06.26
   iFile.WriteBool('Preferences', 'EnableTeamEvents',
     prefEnableTeamEvents.Checked);
-  iFile.WriteBool('Preferences', 'EnableFINAcodes',
-    prefEnableFINAcodes.Checked);
+  iFile.WriteBool('Preferences', 'EnableDCodes',
+    prefEnableDCodes.Checked);
+  iFile.WriteBool('Preferences', 'DisplaySwimmerCAT', prefDisplaySwimmerCAT.Checked);
+  iFile.WriteBool('Preferences', 'DisplayDivision',   prefDisplayDivisions.Checked);
 
   iFile.free;
 end;

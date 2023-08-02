@@ -428,8 +428,9 @@ type
     fEntrantBgColor: TColor;
     fscmStyleName: String;
     prefEnableTeamEvents: boolean;
-    prefEnableFINAcodes: boolean;
-    prefGroupBy: integer;
+    prefEnableDCode: boolean;
+    prefDisplaySwimmerCAT: boolean;
+    prefDisplayDivisions: boolean;
 
     // Internet connection state
     fMyInternetConnected: boolean;
@@ -445,7 +446,7 @@ type
     procedure Refresh_Nominate();
 
     // ENTRANT_GRID Toggle column display
-    procedure ToggleFINA(EnableFINA: boolean);
+    procedure ToggleDCode(EnableFINA: boolean);
     procedure ToggleSwimmerCAT(SetVisible: boolean);
     procedure ToggleDivisions(SetVisible: boolean);
 
@@ -2053,8 +2054,7 @@ begin
   // an assumption is presumed.
 
   prefEnableTeamEvents := false;
-  prefEnableFINAcodes := false;
-  prefGroupBy := 0;
+  prefEnableDCode := false;
 
   try
     SCM := TSCM.Create(self);
@@ -2214,7 +2214,6 @@ begin
     GetSCMPreferences();
   // ====================================================================
 
-  ToggleFINA(prefEnableFINAcodes);
 
   bootprogress.lblProgress.Caption := 'Final checks on database integerity.';
   bootprogress.lblProgress.Repaint;
@@ -2328,11 +2327,10 @@ begin
   Entrant_Grid.Columns.State := csDefault;
   Nominate_Grid.Columns.State := csDefault;
 
-  // PREPARE ENTRANT GRID DISPLAY
-  // Depending on the preferences set, hide specific fields in SCM.qryEntrant
-  ToggleFINA(prefEnableFINAcodes);
-  ToggleSwimmerCAT(false);
-  ToggleDivisions(false);
+  // PREPARE ENTRANT GRID COLUMN VISIBILITY
+  ToggleDCode(prefEnableDCode);
+  ToggleSwimmerCAT(prefDisplaySwimmerCAT);
+  ToggleDivisions(prefDisplayDivisions);
 
 end;
 
@@ -2463,14 +2461,10 @@ begin
   end;
 
   // 2023.06.26
-  prefEnableTeamEvents := iFile.ReadBool('Preferences',
-    'EnableTeamEvents', false);
-  prefEnableFINAcodes := iFile.ReadBool('Preferences',
-    'EnableFINAcodes', false);
-
-  // 2023.08.01 AutoBuild
-  prefGroupBy := iFile.ReadInteger('Preferences', 'GroupBy', 0);
-
+  prefEnableTeamEvents := iFile.ReadBool('Preferences', 'EnableTeamEvents', false);
+  prefEnableDCode := iFile.ReadBool('Preferences', 'EnableDCodes', false);
+  prefDisplaySwimmerCAT := iFile.ReadBool('Preferences', 'DisplaySwimmerCAT', false);
+  prefDisplayDivisions := iFile.ReadBool('Preferences', 'DisplayDivisions', false);
 
   iFile.Free;
 end;
@@ -2632,29 +2626,6 @@ begin
   success := AutoBuild.AutoBuildExecute(SCM.dsHeat.DataSet, EventID);
   if (success) then
   begin
-
-    // 2023.08.01
-    // Toggle visibility of SwimmerCategory/Division based on auto-build
-    GetSCMPreferenceFileName;
-    case prefGroupBy of
-      0,1:
-      begin
-        ToggleSwimmerCAT(false);
-        ToggleDivisions(false);
-      end;
-      2:
-      begin
-        ToggleSwimmerCAT(true);
-        ToggleDivisions(false);
-      end;
-      3:
-      begin
-        ToggleSwimmerCAT(false);
-        ToggleDivisions(true);
-      end;
-    end;
-
-
     Refresh_Heat;
     Refresh_Entrant;
     // Event's grid need to be refreshed to update NOM# and ENT#
@@ -4601,7 +4572,7 @@ begin
   end;
 end;
 
-procedure TMain.ToggleFINA(EnableFINA: boolean);
+procedure TMain.ToggleDCode(EnableFINA: boolean);
 var
   fld: TField;
 begin
@@ -4860,8 +4831,10 @@ begin
   dlg.Free;
 
   GetSCMPreferences();
+  ToggleDCode(prefEnableDCode);
+  ToggleSwimmerCAT(prefDisplaySwimmerCAT);
+  ToggleDivisions(prefDisplayDivisions);
 
-  ToggleFINA(prefEnableFINAcodes);
 
   // deals with some repaint issues if event title is enabled/disabled
   { TODO -oBSA -cGeneral : Call action SCMRefresh? }
