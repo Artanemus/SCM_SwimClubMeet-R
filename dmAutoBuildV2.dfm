@@ -312,7 +312,7 @@ object AutoBuildV2: TAutoBuildV2
         Value = 497
       end>
   end
-  object qryGenderMemberTypeCount: TFDQuery
+  object qryGenderSwimmerCATCount: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     Connection = SCM.scmConnection
     UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
@@ -487,7 +487,7 @@ object AutoBuildV2: TAutoBuildV2
         Value = 2
       end>
   end
-  object qryMemberTypeCount: TFDQuery
+  object qrySwimmerCATCount: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     Connection = SCM.scmConnection
     UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]

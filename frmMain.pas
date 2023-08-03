@@ -19,481 +19,468 @@ uses
 type
 
   TMain = class(TForm)
-    dbtxtSwimClubCaption: TDBText;
-    dbtxtSwimClubNickName: TDBText;
-    sbtnRefresh: TSpeedButton;
-    sbtnMembers: TSpeedButton;
-    pnlDebugInfo: TPanel;
+    ActionMainMenuBar1: TActionMainMenuBar;
+    ActionManager1: TActionManager;
+    BindingsList1: TBindingsList;
+    BindSourceDB1: TBindSourceDB;
+    BindSourceDB2: TBindSourceDB;
+    BindSourceDB3: TBindSourceDB;
+    btnClearSearch: TButton;
+    clbtnHeatStatus: TControlListButton;
+    clistCheckBox: TControlListButton;
+    clistEventCaption: TLabel;
+    clistEventDistStrokeStr: TLabel;
+    CloneSession2: TMenuItem;
+    dbimgSwimClubLogo: TDBImage;
+    dbnavEventNavigateNext: TDBNavigator;
+    dbnavEventNavigatePrior: TDBNavigator;
     dbtxtDebugEntrant: TDBText;
-    dbtxtDebugSwimClub: TDBText;
-    dbtxtDebugSession: TDBText;
     dbtxtDebugEvent: TDBText;
     dbtxtDebugHeat: TDBText;
+    dbtxtDebugMember: TDBText;
+    dbtxtDebugNominee: TDBText;
+    dbtxtDebugSession: TDBText;
+    dbtxtDebugSwimClub: TDBText;
+    dbtxtEventCaption: TDBText;
+    dbtxtNominateFullName: TDBText;
+    dbtxtSwimClubCaption: TDBText;
+    dbtxtSwimClubNickName: TDBText;
+    DeleteEvent1: TMenuItem;
+    DeleteHeat1: TMenuItem;
+    DeleteSession1: TMenuItem;
+    EditSession1: TMenuItem;
+    EmptyLane1: TMenuItem;
+    EntrantWidgets: TRelativePanel;
+    Entrant_EmptyLane: TAction;
+    Entrant_GotoMemberDetails: TAction;
+    Entrant_Grid: TDBGrid;
+    Entrant_MoveDown: TAction;
+    Entrant_MoveUp: TAction;
+    Entrant_Renumber: TAction;
+    Entrant_Sort: TAction;
+    Entrant_Strike: TAction;
+    Entrant_SwapLanes: TAction;
+    EventRpt1: TMenuItem;
+    EventWidgets: TRelativePanel;
+    Event_AutoSchedule: TAction;
+    Event_BuildFinals: TAction;
+    Event_BuildQuarterFinals: TAction;
+    Event_BuildSemiFinals: TAction;
+    Event_Delete: TAction;
+    Event_Grid: TDBGrid;
+    Event_MoveDown: TAction;
+    Event_MoveUp: TAction;
+    Event_NewRecord: TAction;
+    Event_Renumber: TAction;
+    Event_Report: TAction;
+    Event_ToggleGridView: TAction;
+    FDMoniRemoteClientLink1: TFDMoniRemoteClientLink;
+    File_Exit: TAction;
+    File_ExportCarnival: TAction;
+    File_ImportCarnival: TAction;
+    Filter1: TMenuItem;
+    GotoMember: TMenuItem;
+    HeatControlList: TControlList;
+    HeatLeftPanel: TPanel;
+    HeatNavigateControlList: TControlList;
+    HeatNavigationPanel: TRelativePanel;
+    HeatRightPanel: TPanel;
+    HeatRpt1: TMenuItem;
+    HeatWidgets: TRelativePanel;
+    Heat_AutoBuild: TAction;
+    Heat_BatchBuildHeats: TAction;
+    Heat_BatchMarshallReport: TAction;
+    Heat_BatchTimeKeeperReport: TAction;
+    Heat_Delete: TAction;
+    Heat_MarshallReport: TAction;
+    Heat_MoveDown: TAction;
+    Heat_MoveUp: TAction;
+    Heat_NewRecord: TAction;
+    Heat_PrintSet: TAction;
+    Heat_Renumber: TAction;
+    Heat_Report: TAction;
+    Heat_TimeKeeperReport: TAction;
+    Heat_ToggleStatus: TAction;
+    Help_About: TAction;
+    Help_LocalHelp: TAction;
+    Help_OnlineHelp: TAction;
+    Help_Website: TAction;
+    ImageCollection1: TImageCollection;
+    imeKeeper1: TMenuItem;
+    Label1: TLabel;
     Label11: TLabel;
     Label12: TLabel;
     Label13: TLabel;
     Label14: TLabel;
+    Label2: TLabel;
     Label24: TLabel;
     Label25: TLabel;
-    dbtxtDebugMember: TDBText;
-    Label2: TLabel;
-    dbtxtDebugNominee: TDBText;
-    pnlPageControl: TPanel;
-    PageControl1: TPageControl;
-    TabSheet1: TTabSheet;
-    pnlSessionLeft: TPanel;
-    spbtnSessionToggleLock: TSpeedButton;
-    spbtnSessionNew: TSpeedButton;
-    spbtnSessionDelete: TSpeedButton;
-    spbtnSessionReport: TSpeedButton;
-    ShapeSessBar2: TShape;
-    ShapeSessDot1: TShape;
-    spbtnSessionToggleVisible: TSpeedButton;
-    ShapeSessBar1: TShape;
-    pnlSessLeftTop: TPanel;
-    lblSessionCaption: TLabel;
-    Session_Grid: TDBGrid;
-    pnlSessionClient: TPanel;
-    pnlSessClientTop: TPanel;
-    lblSessionEventCaption: TLabel;
-    Panel7: TPanel;
-    Event_Grid: TDBGrid;
-    spbtnEventMoveUp: TSpeedButton;
-    spbtnEventMoveDown: TSpeedButton;
-    spbtnEventNew: TSpeedButton;
-    spbtnEventDelete: TSpeedButton;
-    spbtnEventReport: TSpeedButton;
-    ShapeDotEv1: TShape;
-    ShapeBarEv2: TShape;
-    ShapeBarEv1: TShape;
-    spbtnEventToggleGridView: TSpeedButton;
-    TabSheet2: TTabSheet;
+    lblHeatNavigatorDistance: TLabel;
+    lblHeatNavigatorEventNum: TLabel;
+    lblHeatStrokeStr: TLabel;
     lblNomWarning: TLabel;
-    spbtnNominateSortMember: TSpeedButton;
-    spbtnNominateReport: TSpeedButton;
-    ShapeNomDot1: TShape;
-    ShapeNomBar1: TShape;
-    Nominate_Grid: TDBGrid;
-    Nominate_Edit: TEdit;
-    TabSheet3: TTabSheet;
-    spbtnHeatToggleStatus: TSpeedButton;
-    spbtnHeatDown: TSpeedButton;
-    spbtnHeatUp: TSpeedButton;
-    spbtnHeatAutoBuild: TSpeedButton;
-    spbtnHeatMarshall: TSpeedButton;
-    spbtnHeatTimeKeeper: TSpeedButton;
-    spbtnHeatBatchPrintSet: TSpeedButton;
-    ShapeHeatBar2: TShape;
-    ShapeHeatBar3: TShape;
-    ShapeHeatBar1: TShape;
-    spbtnHeatNew: TSpeedButton;
-    spbtnHeatDelete: TSpeedButton;
-    spbtnHeatReport: TSpeedButton;
-    spbtnEntrantUp: TSpeedButton;
-    spbtnEntrantDown: TSpeedButton;
-    ShapeHeatDot3: TShape;
-    ShapeHeatDot2: TShape;
-    ShapeHeatDot1: TShape;
-    spbtnEntrantSwapLanes: TSpeedButton;
-    spbtnEntrantEmptyLane: TSpeedButton;
-    spbtnEntrantScratchLane: TSpeedButton;
-    Entrant_Grid: TDBGrid;
-    dbnavEventNavigatePrior: TDBNavigator;
-    StatusBar1: TStatusBar;
-    ActionManager1: TActionManager;
-    Help_About: TAction;
-    File_Exit: TAction;
-    Session_Sort: TAction;
-    Session_Clone: TAction;
-    Session_Export: TAction;
-    Session_Import: TAction;
-    Session_New: TAction;
-    Session_Delete: TAction;
-    Tools_Preferences: TAction;
-    Session_Report: TAction;
-    Nominate_Report: TAction;
-    Event_MoveUp: TAction;
-    Event_MoveDown: TAction;
-    Tools_QualifyTimes: TAction;
-    Event_Renumber: TAction;
-    Entrant_MoveUp: TAction;
-    Entrant_MoveDown: TAction;
-    Entrant_SwapLanes: TAction;
-    Entrant_EmptyLane: TAction;
-    Entrant_Strike: TAction;
-    Entrant_Sort: TAction;
-    Entrant_Renumber: TAction;
-    Heat_MoveUp: TAction;
-    Heat_MoveDown: TAction;
-    Heat_ToggleStatus: TAction;
-    Heat_Renumber: TAction;
-    Heat_NewRecord: TAction;
-    SCM_Refresh: TAction;
-    Heat_Delete: TAction;
-    Heat_Report: TAction;
-    Heat_MarshallReport: TAction;
-    Heat_TimeKeeperReport: TAction;
-    Heat_AutoBuild: TAction;
-    Event_NewRecord: TAction;
-    Event_Delete: TAction;
-    Event_Report: TAction;
-    Event_ToggleGridView: TAction;
-    Session_ToggleLock: TAction;
-    Nominate_SortMembers: TAction;
-    Tools_Swimmercategory: TAction;
-    Tools_ConnectionManager: TAction;
-    Entrant_GotoMemberDetails: TAction;
-    Heat_PrintSet: TAction;
-    Tools_House: TAction;
-    Nominate_ClearSessionNominations: TAction;
-    Nominate_ClearEventNominations: TAction;
-    Event_BuildFinals: TAction;
-    Event_BuildSemiFinals: TAction;
-    Event_BuildQuarterFinals: TAction;
-    Heat_BatchBuildHeats: TAction;
-    Heat_BatchMarshallReport: TAction;
-    Heat_BatchTimeKeeperReport: TAction;
-    Session_Edit: TAction;
-    Tools_Score: TAction;
-    Tools_Divisions: TAction;
-    Tools_LeaderBoard: TAction;
-    pumHeat: TPopupMenu;
-    MoveUp2: TMenuItem;
-    MoveDown2: TMenuItem;
-    oggleStatus1: TMenuItem;
-    NewRecord1: TMenuItem;
-    DeleteHeat1: TMenuItem;
-    N6: TMenuItem;
-    Marshall1: TMenuItem;
-    imeKeeper1: TMenuItem;
-    N4: TMenuItem;
-    HeatRpt1: TMenuItem;
-    pumSession: TPopupMenu;
-    DeleteSession1: TMenuItem;
-    EditSession1: TMenuItem;
-    CloneSession2: TMenuItem;
-    NewSession1: TMenuItem;
-    N5: TMenuItem;
-    Sort1: TMenuItem;
-    oggleSessionStatus1: TMenuItem;
-    N8: TMenuItem;
-    SessionRpt1: TMenuItem;
-    pumEntrant: TPopupMenu;
-    MoveUp3: TMenuItem;
-    MoveDown3: TMenuItem;
-    SwapLanes1: TMenuItem;
-    EmptyLane1: TMenuItem;
-    StrikeEntrant1: TMenuItem;
-    Renumber2: TMenuItem;
-    N1: TMenuItem;
-    GotoMember: TMenuItem;
-    pumEvent: TPopupMenu;
-    MoveUp1: TMenuItem;
-    MoveDown1: TMenuItem;
-    NewEvent1: TMenuItem;
-    DeleteEvent1: TMenuItem;
-    Renumber1: TMenuItem;
-    N9: TMenuItem;
-    EventRpt1: TMenuItem;
-    N11: TMenuItem;
-    pumNominate: TPopupMenu;
-    Sort2: TMenuItem;
-    Filter1: TMenuItem;
-    N10: TMenuItem;
-    NominateRpt1: TMenuItem;
-    SCM_ManageMembers: TAction;
-    Session_ToggleVisible: TAction;
-    ImageCollection1: TImageCollection;
-    VirtualImageList1: TVirtualImageList;
-    VirtualImage1: TVirtualImage;
-    HeatWidgets: TRelativePanel;
-    EntrantWidgets: TRelativePanel;
-    SessionWidgets: TRelativePanel;
-    EventWidgets: TRelativePanel;
-    NominateWidgets: TRelativePanel;
-    NominateQuickPick: TRelativePanel;
-    Nominate_ControlList: TControlList;
-    clistEventDistStrokeStr: TLabel;
-    clistEventCaption: TLabel;
-    clistCheckBox: TControlListButton;
-    vimage: TVirtualImage;
-    dbtxtNominateFullName: TDBText;
-    VirtualImageList2: TVirtualImageList;
-    BindSourceDB1: TBindSourceDB;
-    BindingsList1: TBindingsList;
+    lblSessionCaption: TLabel;
+    lblSessionEventCaption: TLabel;
     LinkGridToDataSourceBindSourceDB1: TLinkGridToDataSource;
+    LinkGridToDataSourceBindSourceDB2: TLinkGridToDataSource;
+    LinkGridToDataSourceBindSourceDB3: TLinkGridToDataSource;
     LinkPropertyToFieldCaption: TLinkPropertyToField;
+    LinkPropertyToFieldCaption2: TLinkPropertyToField;
+    LinkPropertyToFieldCaption3: TLinkPropertyToField;
+    LinkPropertyToFieldCaption4: TLinkPropertyToField;
+    LinkPropertyToFieldCaption5: TLinkPropertyToField;
+    Marshall1: TMenuItem;
+    MoveDown1: TMenuItem;
+    MoveDown2: TMenuItem;
+    MoveDown3: TMenuItem;
+    MoveUp1: TMenuItem;
+    MoveUp2: TMenuItem;
+    MoveUp3: TMenuItem;
+    N1: TMenuItem;
+    N10: TMenuItem;
+    N11: TMenuItem;
+    N4: TMenuItem;
+    N5: TMenuItem;
+    N6: TMenuItem;
+    N8: TMenuItem;
+    N9: TMenuItem;
+    NewEvent1: TMenuItem;
+    NewRecord1: TMenuItem;
+    NewSession1: TMenuItem;
     NominateBackPanel: TRelativePanel;
     NominateCenteredPanel: TPanel;
+    NominateQuickPick: TRelativePanel;
     NominateRightPanel: TRelativePanel;
-    HeatNavigationPanel: TRelativePanel;
-    HeatRightPanel: TPanel;
-    HeatLeftPanel: TPanel;
-    dbnavEventNavigateNext: TDBNavigator;
-    HeatNavigateControlList: TControlList;
-    vimgHeatStroke: TVirtualImage;
-    lblHeatNavigatorDistance: TLabel;
-    dbtxtEventCaption: TDBText;
-    BindSourceDB2: TBindSourceDB;
-    LinkGridToDataSourceBindSourceDB2: TLinkGridToDataSource;
-    LinkPropertyToFieldCaption4: TLinkPropertyToField;
-    LinkPropertyToFieldCaption3: TLinkPropertyToField;
-    lblHeatNavigatorEventNum: TLabel;
-    LinkPropertyToFieldCaption5: TLinkPropertyToField;
-    vimgHeatCircle: TVirtualImage;
-    lblHeatStrokeStr: TLabel;
-    HeatControlList: TControlList;
-    vimgHeatNum: TVirtualImage;
-    clbtnHeatStatus: TControlListButton;
-    Label1: TLabel;
-    BindSourceDB3: TBindSourceDB;
-    LinkGridToDataSourceBindSourceDB3: TLinkGridToDataSource;
-    LinkPropertyToFieldCaption2: TLinkPropertyToField;
-    ShapeHeatNavBlackLine: TShape;
-    pnlTitleBar: TRelativePanel;
-    dbimgSwimClubLogo: TDBImage;
-    pnlClubData: TRelativePanel;
-    btnClearSearch: TButton;
-    VirtualImageList3: TVirtualImageList;
-    spbtnEntrantSort: TSpeedButton;
-    ActionMainMenuBar1: TActionMainMenuBar;
-    File_ExportCarnival: TAction;
-    File_ImportCarnival: TAction;
-    Help_LocalHelp: TAction;
-    Help_OnlineHelp: TAction;
-    Help_Website: TAction;
-    VirtualImageListMenu: TVirtualImageList;
+    NominateRpt1: TMenuItem;
+    NominateWidgets: TRelativePanel;
+    Nominate_ClearEventNominations: TAction;
+    Nominate_ClearSessionNominations: TAction;
+    Nominate_ControlList: TControlList;
+    Nominate_Edit: TEdit;
+    Nominate_Grid: TDBGrid;
     Nominate_MemeberDetails: TAction;
-    Tools_DisqualifyCodes: TAction;
-    Event_AutoSchedule: TAction;
-    SQLQuery1: TSQLQuery;
-    FDMoniRemoteClientLink1: TFDMoniRemoteClientLink;
+    Nominate_Report: TAction;
+    Nominate_SortMembers: TAction;
+    oggleSessionStatus1: TMenuItem;
+    oggleStatus1: TMenuItem;
+    PageControl1: TPageControl;
+    Panel7: TPanel;
+    pnlClubData: TRelativePanel;
+    pnlDebugInfo: TPanel;
+    pnlPageControl: TPanel;
+    pnlSessClientTop: TPanel;
+    pnlSessionClient: TPanel;
+    pnlSessionLeft: TPanel;
+    pnlSessLeftTop: TPanel;
+    pnlTitleBar: TRelativePanel;
+    pumEntrant: TPopupMenu;
+    pumEvent: TPopupMenu;
+    pumHeat: TPopupMenu;
+    pumNominate: TPopupMenu;
+    pumSession: TPopupMenu;
+    Renumber1: TMenuItem;
+    Renumber2: TMenuItem;
+    sbtnMembers: TSpeedButton;
+    sbtnRefresh: TSpeedButton;
+    SCM_ManageMembers: TAction;
+    SCM_Refresh: TAction;
     SCM_StatusBar: TAction;
-    procedure FormCreate(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
-    procedure SCM_RefreshExecute(Sender: TObject);
-    procedure Session_CloneExecute(Sender: TObject);
-    procedure Session_ReportExecute(Sender: TObject);
-    procedure Session_SortExecute(Sender: TObject);
-    procedure Session_SortUpdate(Sender: TObject);
-    procedure Session_EditUpdate(Sender: TObject);
-    procedure Session_NewExecute(Sender: TObject);
-    procedure Session_DeleteExecute(Sender: TObject);
-    procedure Event_MoveUpExecute(Sender: TObject);
-    procedure Event_MoveDownExecute(Sender: TObject);
-    procedure Event_RenumberExecute(Sender: TObject);
-    procedure Event_GridKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
-    procedure Event_ReportExecute(Sender: TObject);
-    procedure Event_DeleteExecute(Sender: TObject);
-    procedure Event_NewRecordExecute(Sender: TObject);
-    procedure Event_MoveUpOrDownUpdate(Sender: TObject);
-    procedure Event_NewRecordUpdate(Sender: TObject);
-    procedure Heat_AutoBuildExecute(Sender: TObject);
-    procedure Help_AboutExecute(Sender: TObject);
-    procedure File_ExitExecute(Sender: TObject);
-    procedure Session_CloneUpdate(Sender: TObject);
-    procedure Session_DeleteUpdate(Sender: TObject);
-    procedure Tools_PreferencesExecute(Sender: TObject);
-    procedure Session_ReportUpdate(Sender: TObject);
-    procedure Nominate_ReportExecute(Sender: TObject);
-    procedure Tools_QualifyTimesExecute(Sender: TObject);
-    procedure Event_RenumberUpdate(Sender: TObject);
-    procedure Entrant_MoveUpExecute(Sender: TObject);
+    SessionRpt1: TMenuItem;
+    SessionWidgets: TRelativePanel;
+    Session_Clone: TAction;
+    Session_Delete: TAction;
+    Session_Edit: TAction;
+    Session_Export: TAction;
+    Session_Grid: TDBGrid;
+    Session_Import: TAction;
+    Session_New: TAction;
+    Session_Report: TAction;
+    Session_Sort: TAction;
+    Session_ToggleLock: TAction;
+    Session_ToggleVisible: TAction;
+    ShapeBarEv1: TShape;
+    ShapeBarEv2: TShape;
+    ShapeDotEv1: TShape;
+    ShapeHeatBar1: TShape;
+    ShapeHeatBar2: TShape;
+    ShapeHeatBar3: TShape;
+    ShapeHeatDot1: TShape;
+    ShapeHeatDot2: TShape;
+    ShapeHeatDot3: TShape;
+    ShapeHeatNavBlackLine: TShape;
+    ShapeNomBar1: TShape;
+    ShapeNomDot1: TShape;
+    ShapeSessBar1: TShape;
+    ShapeSessBar2: TShape;
+    ShapeSessDot1: TShape;
+    Sort1: TMenuItem;
+    Sort2: TMenuItem;
+    spbtnEntrantDown: TSpeedButton;
+    spbtnEntrantEmptyLane: TSpeedButton;
+    spbtnEntrantScratchLane: TSpeedButton;
+    spbtnEntrantSort: TSpeedButton;
+    spbtnEntrantSwapLanes: TSpeedButton;
+    spbtnEntrantUp: TSpeedButton;
+    spbtnEventDelete: TSpeedButton;
+    spbtnEventMoveDown: TSpeedButton;
+    spbtnEventMoveUp: TSpeedButton;
+    spbtnEventNew: TSpeedButton;
+    spbtnEventReport: TSpeedButton;
+    spbtnEventToggleGridView: TSpeedButton;
+    spbtnHeatAutoBuild: TSpeedButton;
+    spbtnHeatBatchPrintSet: TSpeedButton;
+    spbtnHeatDelete: TSpeedButton;
+    spbtnHeatDown: TSpeedButton;
+    spbtnHeatMarshall: TSpeedButton;
+    spbtnHeatNew: TSpeedButton;
+    spbtnHeatReport: TSpeedButton;
+    spbtnHeatTimeKeeper: TSpeedButton;
+    spbtnHeatToggleStatus: TSpeedButton;
+    spbtnHeatUp: TSpeedButton;
+    spbtnNominateReport: TSpeedButton;
+    spbtnNominateSortMember: TSpeedButton;
+    spbtnSessionDelete: TSpeedButton;
+    spbtnSessionNew: TSpeedButton;
+    spbtnSessionReport: TSpeedButton;
+    spbtnSessionToggleLock: TSpeedButton;
+    spbtnSessionToggleVisible: TSpeedButton;
+    SQLQuery1: TSQLQuery;
+    StatusBar1: TStatusBar;
+    StrikeEntrant1: TMenuItem;
+    SwapLanes1: TMenuItem;
+    TabSheet1: TTabSheet;
+    TabSheet2: TTabSheet;
+    TabSheet3: TTabSheet;
+    Tools_ConnectionManager: TAction;
+    Tools_DisqualifyCodes: TAction;
+    Tools_Divisions: TAction;
+    Tools_House: TAction;
+    Tools_LeaderBoard: TAction;
+    Tools_Preferences: TAction;
+    Tools_QualifyTimes: TAction;
+    Tools_Score: TAction;
+    Tools_Swimmercategory: TAction;
+    vimage: TVirtualImage;
+    vimgHeatCircle: TVirtualImage;
+    vimgHeatNum: TVirtualImage;
+    vimgHeatStroke: TVirtualImage;
+    VirtualImage1: TVirtualImage;
+    VirtualImageList1: TVirtualImageList;
+    VirtualImageList2: TVirtualImageList;
+    VirtualImageList3: TVirtualImageList;
+    VirtualImageListMenu: TVirtualImageList;
+    procedure ActionManager1Update(Action: TBasicAction; var Handled: boolean);
+    procedure btnClearSearchClick(Sender: TObject);
+    procedure clistCheckBoxClick(Sender: TObject);
     procedure Entrant_EmptyLaneExecute(Sender: TObject);
     procedure Entrant_EmptyLaneUpdate(Sender: TObject);
+    procedure Entrant_GotoMemberDetailsExecute(Sender: TObject);
+    procedure Entrant_GotoMemberDetailsUpdate(Sender: TObject);
+    procedure Entrant_GridCellClick(Column: TColumn);
+    procedure Entrant_GridColEnter(Sender: TObject);
+    procedure Entrant_GridColExit(Sender: TObject);
+    procedure Entrant_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: integer; Column: TColumn; State: TGridDrawState);
+    procedure Entrant_GridEditButtonClick(Sender: TObject);
+    procedure Entrant_GridEnter(Sender: TObject);
+    procedure Entrant_GridKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
     procedure Entrant_MoveDownExecute(Sender: TObject);
     procedure Entrant_MoveDownUpdate(Sender: TObject);
+    procedure Entrant_MoveUpExecute(Sender: TObject);
     procedure Entrant_MoveUpUpdate(Sender: TObject);
-    procedure Entrant_StrikeExecute(Sender: TObject);
-    procedure Entrant_StrikeUpdate(Sender: TObject);
     procedure Entrant_SortExecute(Sender: TObject);
     procedure Entrant_SortUpdate(Sender: TObject);
-    procedure Event_DeleteUpdate(Sender: TObject);
-    procedure Heat_ToggleStatusExecute(Sender: TObject);
-    procedure Heat_ToggleStatusUpdate(Sender: TObject);
-    procedure Heat_NewRecordExecute(Sender: TObject);
-    procedure Heat_NewRecordUpdate(Sender: TObject);
-    procedure Heat_DeleteExecute(Sender: TObject);
-    procedure Heat_DeleteUpdate(Sender: TObject);
-    procedure Heat_AutoBuildUpdate(Sender: TObject);
-    procedure Event_ReportUpdate(Sender: TObject);
-    procedure Session_ToggleLockExecute(Sender: TObject);
-    procedure Session_ToggleLockUpdate(Sender: TObject);
-    procedure Nominate_SortMembersExecute(Sender: TObject);
-    procedure Nominate_SortMembersUpdate(Sender: TObject);
-    procedure Tools_SwimmercategoryExecute(Sender: TObject);
-    procedure Tools_ConnectionManagerExecute(Sender: TObject);
-    procedure SCM_ManageMembersExecute(Sender: TObject);
-    procedure SCM_ManageMembersUpdate(Sender: TObject);
-    procedure Heat_PrintSetExecute(Sender: TObject);
-    procedure Heat_PrintSetUpdate(Sender: TObject);
-    procedure Tools_HouseExecute(Sender: TObject);
-    procedure Tools_HouseUpdate(Sender: TObject);
-    procedure Session_ToggleVisibleExecute(Sender: TObject);
-    procedure Session_ToggleVisibleUpdate(Sender: TObject);
-    procedure Session_ToggleGridUpdate(Sender: TObject);
-    procedure Event_BuildSemiFinalsExecute(Sender: TObject);
+    procedure Entrant_StrikeExecute(Sender: TObject);
+    procedure Entrant_StrikeUpdate(Sender: TObject);
+    procedure Entrant_SwapLanesExecute(Sender: TObject);
+    procedure Entrant_SwapLanesUpdate(Sender: TObject);
+    procedure Event_AutoScheduleExecute(Sender: TObject);
+    procedure Event_AutoScheduleUpdate(Sender: TObject);
     procedure Event_BuildFinalsExecute(Sender: TObject);
     procedure Event_BuildQuarterFinalsExecute(Sender: TObject);
     procedure Event_BuildSCMEventTypeUpdate(Sender: TObject);
-    procedure Session_EditExecute(Sender: TObject);
-    procedure Tools_ScoreExecute(Sender: TObject);
-    procedure Tools_ScoreUpdate(Sender: TObject);
-    procedure Tools_DivisionsExecute(Sender: TObject);
-    procedure Tools_DivisionsUpdate(Sender: TObject);
-    procedure Tools_LeaderBoardExecute(Sender: TObject);
-    procedure Tools_LeaderBoardUpdate(Sender: TObject);
-    procedure Entrant_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: integer; Column: TColumn; State: TGridDrawState);
-    procedure Entrant_GridColEnter(Sender: TObject);
-    procedure Entrant_GridColExit(Sender: TObject);
-    procedure Entrant_GridKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
-    procedure Entrant_GridEnter(Sender: TObject);
-    procedure Heat_BatchBuildHeatsExecute(Sender: TObject);
-    procedure Heat_BatchBuildHeatsUpdate(Sender: TObject);
-    procedure Entrant_GridEditButtonClick(Sender: TObject);
-    procedure Entrant_GridCellClick(Column: TColumn);
-    procedure Nominate_EditChange(Sender: TObject);
-    procedure Nominate_GridDblClick(Sender: TObject);
-    procedure FormMouseWheel(Sender: TObject; Shift: TShiftState;
-      WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
-    procedure PageControl1Change(Sender: TObject);
-    procedure PageControl1Changing(Sender: TObject; var AllowChange: boolean);
-    procedure FormShow(Sender: TObject);
-    procedure ActionManager1Update(Action: TBasicAction; var Handled: boolean);
+    procedure Event_BuildSemiFinalsExecute(Sender: TObject);
+    procedure Event_DeleteExecute(Sender: TObject);
+    procedure Event_DeleteUpdate(Sender: TObject);
     procedure Event_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: integer; Column: TColumn; State: TGridDrawState);
-    procedure Session_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: integer; Column: TColumn; State: TGridDrawState);
+    procedure Event_GridKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Event_MoveDownExecute(Sender: TObject);
+    procedure Event_MoveUpExecute(Sender: TObject);
+    procedure Event_MoveUpOrDownUpdate(Sender: TObject);
+    procedure Event_NewRecordExecute(Sender: TObject);
+    procedure Event_NewRecordUpdate(Sender: TObject);
+    procedure Event_RenumberExecute(Sender: TObject);
+    procedure Event_RenumberUpdate(Sender: TObject);
+    procedure Event_ReportExecute(Sender: TObject);
+    procedure Event_ReportUpdate(Sender: TObject);
     procedure Event_ToggleGridViewExecute(Sender: TObject);
     procedure Event_ToggleGridViewUpdate(Sender: TObject);
-    procedure Heat_BatchMarshallReportExecute(Sender: TObject);
-    procedure Heat_BatchTimeKeeperReportExecute(Sender: TObject);
-    procedure Heat_BatchMarshallReportUpdate(Sender: TObject);
-    procedure Heat_BatchTimeKeeperReportUpdate(Sender: TObject);
-    procedure Nominate_ControlListBeforeDrawItem(AIndex: integer;
-      ACanvas: TCanvas; ARect: TRect; AState: TOwnerDrawState);
-    procedure clistCheckBoxClick(Sender: TObject);
-    procedure HeatNavigateControlListBeforeDrawItem(AIndex: integer;
-      ACanvas: TCanvas; ARect: TRect; AState: TOwnerDrawState);
+    procedure File_ExitExecute(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure FormMouseWheel(Sender: TObject; Shift: TShiftState;
+      WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
+    procedure FormShow(Sender: TObject);
     procedure HeatControlListBeforeDrawItem(AIndex: integer; ACanvas: TCanvas;
       ARect: TRect; AState: TOwnerDrawState);
-    procedure Heat_MoveUpExecute(Sender: TObject);
-    procedure Heat_MoveUpUpdate(Sender: TObject);
+    procedure HeatNavigateControlListBeforeDrawItem(AIndex: integer;
+      ACanvas: TCanvas; ARect: TRect; AState: TOwnerDrawState);
+    procedure Heat_AutoBuildExecute(Sender: TObject);
+    procedure Heat_AutoBuildUpdate(Sender: TObject);
+    procedure Heat_BatchBuildHeatsExecute(Sender: TObject);
+    procedure Heat_BatchBuildHeatsUpdate(Sender: TObject);
+    procedure Heat_BatchMarshallReportExecute(Sender: TObject);
+    procedure Heat_BatchMarshallReportUpdate(Sender: TObject);
+    procedure Heat_BatchTimeKeeperReportExecute(Sender: TObject);
+    procedure Heat_BatchTimeKeeperReportUpdate(Sender: TObject);
+    procedure Heat_DeleteExecute(Sender: TObject);
+    procedure Heat_DeleteUpdate(Sender: TObject);
+    procedure Heat_MarshallReportExecute(Sender: TObject);
+    procedure Heat_MarshallReportUpdate(Sender: TObject);
     procedure Heat_MoveDownExecute(Sender: TObject);
     procedure Heat_MoveDownUpdate(Sender: TObject);
-    procedure Session_NewUpdate(Sender: TObject);
-    procedure Heat_MarshallReportUpdate(Sender: TObject);
-    procedure Heat_MarshallReportExecute(Sender: TObject);
-    procedure Heat_TimeKeeperReportUpdate(Sender: TObject);
-    procedure Heat_TimeKeeperReportExecute(Sender: TObject);
-    procedure btnClearSearchClick(Sender: TObject);
-    procedure Entrant_SwapLanesExecute(Sender: TObject);
-    procedure Entrant_SwapLanesUpdate(Sender: TObject);
-    procedure Tools_SwimmercategoryUpdate(Sender: TObject);
-    procedure Nominate_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: integer; Column: TColumn; State: TGridDrawState);
-    procedure SCM_RefreshUpdate(Sender: TObject);
-    procedure Help_LocalHelpExecute(Sender: TObject);
-    procedure Help_OnlineHelpExecute(Sender: TObject);
-    procedure Help_WebsiteExecute(Sender: TObject);
-    procedure Nominate_ReportUpdate(Sender: TObject);
+    procedure Heat_MoveUpExecute(Sender: TObject);
+    procedure Heat_MoveUpUpdate(Sender: TObject);
+    procedure Heat_NewRecordExecute(Sender: TObject);
+    procedure Heat_NewRecordUpdate(Sender: TObject);
+    procedure Heat_PrintSetExecute(Sender: TObject);
+    procedure Heat_PrintSetUpdate(Sender: TObject);
     procedure Heat_ReportExecute(Sender: TObject);
     procedure Heat_ReportUpdate(Sender: TObject);
+    procedure Heat_TimeKeeperReportExecute(Sender: TObject);
+    procedure Heat_TimeKeeperReportUpdate(Sender: TObject);
+    procedure Heat_ToggleStatusExecute(Sender: TObject);
+    procedure Heat_ToggleStatusUpdate(Sender: TObject);
+    procedure Help_AboutExecute(Sender: TObject);
+    procedure Help_LocalHelpExecute(Sender: TObject);
+    procedure Help_OnlineHelpExecute(Sender: TObject);
     procedure Help_OnlineHelpUpdate(Sender: TObject);
+    procedure Help_WebsiteExecute(Sender: TObject);
     procedure Help_WebsiteUpdate(Sender: TObject);
+    procedure Nominate_ControlListBeforeDrawItem(AIndex: integer;
+      ACanvas: TCanvas; ARect: TRect; AState: TOwnerDrawState);
+    procedure Nominate_EditChange(Sender: TObject);
+    procedure Nominate_GridDblClick(Sender: TObject);
+    procedure Nominate_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: integer; Column: TColumn; State: TGridDrawState);
     procedure Nominate_MemeberDetailsExecute(Sender: TObject);
     procedure Nominate_MemeberDetailsUpdate(Sender: TObject);
-    procedure Entrant_GotoMemberDetailsUpdate(Sender: TObject);
-    procedure Entrant_GotoMemberDetailsExecute(Sender: TObject);
-    procedure Tools_DisqualifyCodesExecute(Sender: TObject);
-    procedure Event_AutoScheduleExecute(Sender: TObject);
-    procedure Event_AutoScheduleUpdate(Sender: TObject);
+    procedure Nominate_ReportExecute(Sender: TObject);
+    procedure Nominate_ReportUpdate(Sender: TObject);
+    procedure Nominate_SortMembersExecute(Sender: TObject);
+    procedure Nominate_SortMembersUpdate(Sender: TObject);
+    procedure PageControl1Change(Sender: TObject);
+    procedure PageControl1Changing(Sender: TObject; var AllowChange: boolean);
+    procedure SCM_ManageMembersExecute(Sender: TObject);
+    procedure SCM_ManageMembersUpdate(Sender: TObject);
+    procedure SCM_RefreshExecute(Sender: TObject);
+    procedure SCM_RefreshUpdate(Sender: TObject);
     procedure SCM_StatusBarExecute(Sender: TObject);
     procedure SCM_StatusBarUpdate(Sender: TObject);
+    procedure Session_CloneExecute(Sender: TObject);
+    procedure Session_CloneUpdate(Sender: TObject);
+    procedure Session_DeleteExecute(Sender: TObject);
+    procedure Session_DeleteUpdate(Sender: TObject);
+    procedure Session_EditExecute(Sender: TObject);
+    procedure Session_EditUpdate(Sender: TObject);
+    procedure Session_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: integer; Column: TColumn; State: TGridDrawState);
+    procedure Session_NewExecute(Sender: TObject);
+    procedure Session_NewUpdate(Sender: TObject);
+    procedure Session_ReportExecute(Sender: TObject);
+    procedure Session_ReportUpdate(Sender: TObject);
+    procedure Session_SortExecute(Sender: TObject);
+    procedure Session_SortUpdate(Sender: TObject);
+    procedure Session_ToggleGridUpdate(Sender: TObject);
+    procedure Session_ToggleLockExecute(Sender: TObject);
+    procedure Session_ToggleLockUpdate(Sender: TObject);
+    procedure Session_ToggleVisibleExecute(Sender: TObject);
+    procedure Session_ToggleVisibleUpdate(Sender: TObject);
+    procedure Tools_ConnectionManagerExecute(Sender: TObject);
+    procedure Tools_DisqualifyCodesExecute(Sender: TObject);
+    procedure Tools_DivisionsExecute(Sender: TObject);
+    procedure Tools_DivisionsUpdate(Sender: TObject);
+    procedure Tools_HouseExecute(Sender: TObject);
+    procedure Tools_HouseUpdate(Sender: TObject);
+    procedure Tools_LeaderBoardExecute(Sender: TObject);
+    procedure Tools_LeaderBoardUpdate(Sender: TObject);
+    procedure Tools_PreferencesExecute(Sender: TObject);
+    procedure Tools_QualifyTimesExecute(Sender: TObject);
+    procedure Tools_ScoreExecute(Sender: TObject);
+    procedure Tools_ScoreUpdate(Sender: TObject);
+    procedure Tools_SwimmercategoryExecute(Sender: TObject);
+    procedure Tools_SwimmercategoryUpdate(Sender: TObject);
   private
-    { Private declarations }
-    // For scroll wheel tracking on mouse ...
-    FOrgDBGridWndProc: TWndMethod;
+    bootprogress: TBootProgress;
+    fEntrantBgColor: TColor;
+    fEntrantEditBoxFocused: TColor;
+    fEntrantEditBoxNormal: TColor;
     // TRACK the MemberID of the last known member to have their
     // IsQualified status checked via Nominee_UpdateCheckListBoxQualified();
     fLastMemberQualified: integer;
-    bootprogress: TBootProgress;
-    fSessionClosedFontColor: TColor;
-    fSessionClosedBgColor: TColor;
-    fEntrantEditBoxFocused: TColor;
-    fEntrantEditBoxNormal: TColor;
-    fEntrantBgColor: TColor;
-    fscmStyleName: String;
-    prefEnableTeamEvents: boolean;
-    prefEnableDCode: boolean;
-    prefDisplaySwimmerCAT: boolean;
-    prefDisplayDivisions: boolean;
-
     // Internet connection state
     fMyInternetConnected: boolean;
-
+    { Private declarations }
+    // For scroll wheel tracking on mouse ...
+    FOrgDBGridWndProc: TWndMethod;
+    fscmStyleName: String;
+    fSessionClosedBgColor: TColor;
+    fSessionClosedFontColor: TColor;
+    prefDisplayDivisions: boolean;
+    prefDisplaySwimmerCAT: boolean;
+    prefEnableDCode: boolean;
+    prefEnableTeamEvents: boolean;
     SCMEventList: TObjectList;
-
+    // ASSERT CONNECTION TO MSSQL DATABASE
+    function AssertConnection(): boolean;
     procedure DBGridWndProc(var Msg: TMessage);
-
-    // REFRESH
-    procedure Refresh_Event();
-    procedure Refresh_Heat();
-    procedure Refresh_Entrant();
-    procedure Refresh_Nominate();
-
-    // ENTRANT_GRID Toggle column display
-    procedure ToggleDCode(EnableFINA: boolean);
-    procedure ToggleSwimmerCAT(SetVisible: boolean);
-    procedure ToggleDivisions(SetVisible: boolean);
-
-    // Miscellaneous - uncatagorized
-    procedure GetSCMPreferences();
-
     // D R A W   C H E C K   B O X E S .
     procedure DrawCheckBoxes(oGrid: TObject; Rect: TRect; Column: TColumn;
       fontColor: TColor; bgColor: TColor);
     procedure DrawEventStatus(oGrid: TObject; Rect: TRect; Column: TColumn);
-    // ASSERT CONNECTION TO MSSQL DATABASE
-    function AssertConnection(): boolean;
-
     procedure EnableEntrant_GridEllipse();
     // procedure EnableEvent_GridEllipse();
     procedure Event_BuildSCMEventType(Sender: TObject;
       EventType: scmEventFinalsType);
-
+    // Miscellaneous - uncatagorized
+    procedure GetSCMPreferences();
+    procedure Refresh_Entrant();
+    // REFRESH
+    procedure Refresh_Event();
+    procedure Refresh_Heat();
+    procedure Refresh_Nominate();
     // Generic TAction onExecute (extended params) for BATCH PRINT
     procedure Session_BatchReportExecute(Sender: TObject; RptType: scmRptType);
-    // -----------------------------------------------------------
-
+    // ENTRANT_GRID Toggle column display
+    procedure ToggleDCode(EnableFINA: boolean);
+    procedure ToggleDivisions(SetVisible: boolean);
+    procedure ToggleSwimmerCAT(SetVisible: boolean);
   protected
-    // windows messages ....
-    procedure Session_Scroll(var Msg: TMessage); message SCM_SESSIONSCROLL;
-    procedure Session_AssertStatusState(var Msg: TMessage);
-      message SCM_SESSIONASSERTSTATUSSTATE;
-    procedure Event_Scroll(var Msg: TMessage); message SCM_EVENTSCROLL;
+    // posted by dmSCMNom : a refresh of the entrant grid is required.
+    procedure Entrant_LaneWasCleaned(var Msg: TMessage);
+      message SCM_LANEWASCLEANED;
+    procedure Entrant_Scroll(var Msg: TMessage); message SCM_ENTRANTSCROLL;
     procedure Event_AssertState(var Msg: TMessage);
       message SCM_EVENTASSERTSTATE;
     procedure Event_AssertStatusState(var Msg: TMessage);
       message SCM_EVENTASSERTSTATUSSTATE;
+    procedure Event_Scroll(var Msg: TMessage); message SCM_EVENTSCROLL;
     procedure Heat_Scroll(var Msg: TMessage); message SCM_HEATSCROLL;
-    procedure Entrant_Scroll(var Msg: TMessage); message SCM_ENTRANTSCROLL;
     // Posted by TSCM.qryMemberQuickPick : AfterScroll
     procedure Nominate_Scroll(var Msg: TMessage); message SCM_NOMINATESCROLL;
-    // posted by dmSCMNom : a refresh of the entrant grid is required.
-    procedure Entrant_LaneWasCleaned(var Msg: TMessage);
-      message SCM_LANEWASCLEANED;
-
+    procedure Session_AssertStatusState(var Msg: TMessage);
+      message SCM_SESSIONASSERTSTATUSSTATE;
+    // windows messages ....
+    procedure Session_Scroll(var Msg: TMessage); message SCM_SESSIONSCROLL;
   public
     { Public declarations }
     fDoStatusBarUpdate: boolean; // FLAG ACTION - SCM_StatusBar.Enabled
     fSCMisInitializing: boolean; // FLAG FormCreate
     prefGenerateEventDescription: boolean;
     prefGenerateEventDescStr: string;
-
   end;
 
 var
@@ -1495,6 +1482,16 @@ begin
   TAction(Sender).Enabled := DoEnable;
 end;
 
+procedure TMain.Event_BuildFinalsExecute(Sender: TObject);
+begin
+  Event_BuildSCMEventType(Sender, ftFinals);
+end;
+
+procedure TMain.Event_BuildQuarterFinalsExecute(Sender: TObject);
+begin
+  Event_BuildSCMEventType(Sender, ftSemi);
+end;
+
 procedure TMain.Event_BuildSCMEventType(Sender: TObject;
   EventType: scmEventFinalsType);
 var
@@ -1527,11 +1524,6 @@ begin
   end;
 end;
 
-procedure TMain.Event_BuildFinalsExecute(Sender: TObject);
-begin
-  Event_BuildSCMEventType(Sender, ftFinals);
-end;
-
 procedure TMain.Event_BuildSCMEventTypeUpdate(Sender: TObject);
 var
   DoEnable: boolean;
@@ -1541,11 +1533,6 @@ begin
     if not SCM.dsSession.DataSet.IsEmpty then
       DoEnable := true;
   TAction(Sender).Enabled := DoEnable;
-end;
-
-procedure TMain.Event_BuildQuarterFinalsExecute(Sender: TObject);
-begin
-  Event_BuildSCMEventType(Sender, ftSemi);
 end;
 
 procedure TMain.Event_BuildSemiFinalsExecute(Sender: TObject);
@@ -4557,21 +4544,6 @@ begin
   TAction(Sender).Enabled := DoEnable;
 end;
 
-procedure TMain.ToggleDivisions(SetVisible: boolean);
-var
-  fld: TField;
-begin
-  // NOTE: Swimmer Category and Divisions mutally exclusive.
-  with SCM.dsEntrant.DataSet do
-  begin
-  DisableControls;
-  fld := Fields.FindField('luDivision');
-  if Assigned(fld) then
-    fld.Visible := SetVisible;
-  EnableControls;
-  end;
-end;
-
 procedure TMain.ToggleDCode(EnableFINA: boolean);
 var
   fld: TField;
@@ -4627,6 +4599,21 @@ begin
 //    end;
 //  end;
 
+  EnableControls;
+  end;
+end;
+
+procedure TMain.ToggleDivisions(SetVisible: boolean);
+var
+  fld: TField;
+begin
+  // NOTE: Swimmer Category and Divisions mutally exclusive.
+  with SCM.dsEntrant.DataSet do
+  begin
+  DisableControls;
+  fld := Fields.FindField('luDivision');
+  if Assigned(fld) then
+    fld.Visible := SetVisible;
   EnableControls;
   end;
 end;
@@ -4784,28 +4771,6 @@ begin
   TAction(Sender).Enabled := DoEnable;
 end;
 
-procedure TMain.Tools_SwimmercategoryExecute(Sender: TObject);
-var
-  dlg: TSwimmerCategory;
-begin
-  // display the membership type dialogue
-  dlg := TSwimmerCategory.Create(self);
-  dlg.Connection := SCM.scmConnection;
-  dlg.ShowModal;
-  dlg.Free;
-end;
-
-procedure TMain.Tools_SwimmercategoryUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  // Are we connected?
-  if AssertConnection then
-    DoEnable := true;
-  TAction(Sender).Enabled := DoEnable;
-end;
-
 procedure TMain.Tools_PreferencesExecute(Sender: TObject);
 var
   dlg: TPreferences;
@@ -4867,6 +4832,28 @@ begin
 end;
 
 procedure TMain.Tools_ScoreUpdate(Sender: TObject);
+var
+  DoEnable: boolean;
+begin
+  DoEnable := false;
+  // Are we connected?
+  if AssertConnection then
+    DoEnable := true;
+  TAction(Sender).Enabled := DoEnable;
+end;
+
+procedure TMain.Tools_SwimmercategoryExecute(Sender: TObject);
+var
+  dlg: TSwimmerCategory;
+begin
+  // display the membership type dialogue
+  dlg := TSwimmerCategory.Create(self);
+  dlg.Connection := SCM.scmConnection;
+  dlg.ShowModal;
+  dlg.Free;
+end;
+
+procedure TMain.Tools_SwimmercategoryUpdate(Sender: TObject);
 var
   DoEnable: boolean;
 begin

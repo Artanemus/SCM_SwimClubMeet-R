@@ -14,9 +14,9 @@ type
     qryHeatsToDelete: TFDQuery;
     qryNominees: TFDQuery;
     qryRenumberHeats: TFDQuery;
-    qryGenderMemberTypeCount: TFDQuery;
+    qryGenderSwimmerCATCount: TFDQuery;
     qryGenderCount: TFDQuery;
-    qryMemberTypeCount: TFDQuery;
+    qrySwimmerCATCount: TFDQuery;
     qryAgeCount: TFDQuery;
     qryGenderAgeCount: TFDQuery;
     qryGenericCount: TFDQuery;
@@ -152,7 +152,7 @@ begin
         ds := qryGenderAgeCount;
       2:
         // GroupBy Swimming Category
-        ds := qryGenderMemberTypeCount;
+        ds := qryGenderSwimmerCATCount;
       3:
         { TODO -oBSA -cGeneral : Sperate gender and GroupBy Division }
         ;
@@ -169,7 +169,7 @@ begin
       1: // Gender
         ds := qryAgeCount;
       2: // Membership type.
-        ds := qryMemberTypeCount;
+        ds := qrySwimmerCATCount;
       { TODO -oBSA -cGeneral : CASE 3: GroupBy Division }
     else
       // DON'T GROUP.
@@ -541,6 +541,16 @@ begin
   begin
     if (Verbose) then
       MessageDlg('Master Champion seeding is in development' + sLineBreak +
+        'and was made not available for this build.' + sLineBreak +
+        'Auto-Build Heats will abort.', mtError, [mbOK], 0, mbOK);
+    exit;
+  end;
+
+  // G R O U P B Y   D I V I S I O N S . . .
+  if (prefGroupBy = 3) then
+  begin
+    if (Verbose) then
+      MessageDlg('GroupBy Divisions is in development' + sLineBreak +
         'and was made not available for this build.' + sLineBreak +
         'Auto-Build Heats will abort.', mtError, [mbOK], 0, mbOK);
     exit;
@@ -975,7 +985,7 @@ begin
     raise Exception.Create('SCM data module not assigned.');
 
   // As SCM is a TEMPORY connection - ASSERT assignment for FireDAC.
-  qryMemberTypeCount.Connection := SCM.scmConnection;
+  qrySwimmerCATCount.Connection := SCM.scmConnection;
   qryGenderCount.Connection := SCM.scmConnection;
   qryHeatsToDelete.Connection := SCM.scmConnection;
   qryUnplaced.Connection := SCM.scmConnection;
@@ -988,7 +998,7 @@ begin
   qryGenericCount.Connection := SCM.scmConnection;
   qryGenderAgeCount.Connection := SCM.scmConnection;
   qryAgeCount.Connection := SCM.scmConnection;
-  qryGenderMemberTypeCount.Connection := SCM.scmConnection;
+  qryGenderSwimmerCATCount.Connection := SCM.scmConnection;
   qryNominees.Connection := SCM.scmConnection;
   tbl_ABEntrant.Connection := SCM.scmConnection;
   tbl_ABHeat.Connection := SCM.scmConnection;
