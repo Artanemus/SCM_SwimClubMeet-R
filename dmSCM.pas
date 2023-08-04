@@ -146,6 +146,23 @@ type
     tblSwimmerCAT: TFDTable;
     luSwimmerCAT: TDataSource;
     qryEntrantluSwimmerCAT: TStringField;
+    qryTeamHeatLaneCount: TFDQuery;
+    qryTeam: TFDQuery;
+    IntegerField1: TIntegerField;
+    FDAutoIncField1: TFDAutoIncField;
+    IntegerField2: TIntegerField;
+    IntegerField3: TIntegerField;
+    WideStringField1: TWideStringField;
+    TimeField1: TTimeField;
+    TimeField2: TTimeField;
+    TimeField3: TTimeField;
+    BooleanField1: TBooleanField;
+    BooleanField2: TBooleanField;
+    IntegerField4: TIntegerField;
+    WideStringField2: TWideStringField;
+    StringField1: TStringField;
+    IntegerField5: TIntegerField;
+    dsTeam: TDataSource;
     procedure DataModuleCreate(Sender: TObject);
     procedure qryEntrantAfterScroll(DataSet: TDataSet);
     procedure qryEntrantBeforeInsert(DataSet: TDataSet);
@@ -211,6 +228,9 @@ type
     function Entrant_Sort(aHeatID: integer): Boolean;
     function Entrant_Strike(): Boolean;
     function Event_AllHeatsAreClosed(aEventID: integer): Boolean;
+    // TEAM
+    function Team_CountLanes(aTeamHeatID: integer): integer;
+    procedure Team_InsertEmptyLanes(aHeatID: integer);
     // EVENTS
     procedure Event_Delete(aEventID: integer);
     procedure Event_FNameEllipse();
@@ -396,6 +416,7 @@ begin
             qryHeat.Open;
             if (qryHeat.Active) and (qryNominee.Active) then
             begin
+              qryTeam.Open;
               qryEntrant.Open;
               if (qryEntrant.Active) then
               begin
@@ -2032,31 +2053,48 @@ end;
 procedure TSCM.qryHeatAfterPost(DataSet: TDataSet);
 var
   HeatID, EntrantID, NumOfLanes, i: integer;
+  aEventTypeID: integer;
 begin
   // AFTER every post to heats ...
   // THIS ROUTINE ASSERTS CORRECT NUMBER OF LANES
   HeatID := DataSet.FieldByName('HeatID').AsInteger;
-  NumOfLanes := SwimClub_NumberOfLanes;
+  if (HeatID = 0) then
+    exit;
 
-  if (HeatID > 0) then
-  begin
-    i := Entrant_CountLanes(HeatID); // current number of pool lanes
-    if (i = 0) then
-    begin
-      // new heats don't have lanes.
-      Entrant_InsertEmptyLanes(HeatID);
-      dsEntrant.DataSet.Refresh; // required
-    end
-    else
-    begin
-      EntrantID := dsEntrant.DataSet.FieldByName('EntrantID').AsInteger;
-      if (i < NumOfLanes) then
-        Entrant_PadWithEmptyLanes(HeatID)
-      else if (i > NumOfLanes) then
-        Entrant_DeleteExcessLanes(HeatID);
-      dsEntrant.DataSet.Refresh; // required
-      Entrant_Locate(EntrantID);
-    end;
+  NumOfLanes := SwimClub_NumberOfLanes;
+  // Type Individual or Team...
+  aEventTypeID := dsEvent.DataSet.FieldByName('EventTypeID').AsInteger;
+
+  case aEventTypeID of
+    0, 1:
+      begin
+        i := Entrant_CountLanes(HeatID); // current number of pool lanes
+        if (i = 0) then
+        begin
+          // new heats don't have lanes.
+          Entrant_InsertEmptyLanes(HeatID);
+          dsEntrant.DataSet.Refresh; // required
+        end
+        else
+        begin
+          EntrantID := dsEntrant.DataSet.FieldByName('EntrantID').AsInteger;
+          if (i < NumOfLanes) then
+            Entrant_PadWithEmptyLanes(HeatID)
+          else if (i > NumOfLanes) then
+            Entrant_DeleteExcessLanes(HeatID);
+          dsEntrant.DataSet.Refresh; // required
+          Entrant_Locate(EntrantID);
+        end;
+      end;
+    2:
+      begin
+        i := Team_CountLanes(HeatID); // current number of pool lanes
+        if (i = 0) then
+        begin
+
+
+        end;
+      end;
   end;
 
 end;
@@ -2071,8 +2109,8 @@ end;
 procedure TSCM.qryHeatNewRecord(DataSet: TDataSet);
 begin
   DataSet.FieldByName('HeatStatusID').AsInteger := 1; // Open
-  DataSet.FieldByName('HeatTypeID').AsInteger := 1; // Individual (not Team)
   DataSet.FieldByName('HeatNum').AsInteger := DataSet.RecordCount + 1;
+  DataSet.FieldByName('HeatTypeID').AsInteger := 1; // Heat, quarter, semi, final
 end;
 
 procedure TSCM.qryMemberQuickPickAfterScroll(DataSet: TDataSet);
@@ -2860,6 +2898,38 @@ begin
       end;
     end;
   end;
+end;
+
+function TSCM.Team_CountLanes(aTeamHeatID: integer): integer;
+begin
+  { TODO -oBSA -cGeneral : original C++ code init result as -1 }
+  result := 0;
+  if not fSCMActive then
+    exit;
+  qryTeamHeatLaneCount.Close;
+  qryTeamHeatLaneCount.ParamByName('HeatID').AsInteger := aTeamHeatID;
+  qryTeamHeatLaneCount.Prepare;
+  qryTeamHeatLaneCount.Open;
+  if (qryTeamHeatLaneCount.Active) then
+    if not qryTeamHeatLaneCount.IsEmpty then
+      result := qryTeamHeatLaneCount.FieldByName('Count_Lane').AsInteger;
+  qryTeamHeatLaneCount.Close;
+end;
+
+procedure TSCM.Team_InsertEmptyLanes(aHeatID: integer);
+var
+  i, LanesToBuild: integer;
+begin
+  // CALLED BY : qryHeat AfterInsert ...
+  // New heats, do not have any lanes assigned to them.
+  // BUILD POOL LANES in entrant table.
+  if not fSCMActive then
+    exit;
+  LanesToBuild := SwimClub_NumberOfLanes;
+  dsTeam.DataSet.DisableControls;
+  for i := 1 to LanesToBuild do
+    Team_CreateEmptyLane(aHeatID, i);
+  dsTeam.DataSet.EnableControls;
 end;
 
 {

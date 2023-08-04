@@ -1852,7 +1852,7 @@ object Main: TMain
             Height = 622
             Align = alLeft
             BorderStyle = bsNone
-            ItemCount = 3
+            ItemCount = 4
             ItemIndex = 0
             ItemMargins.Left = 0
             ItemMargins.Top = 0
