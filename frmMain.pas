@@ -14,7 +14,8 @@ uses
   Vcl.Bind.DBEngExt, Vcl.Bind.ControlList, System.Rtti, System.Bindings.Outputs,
   Vcl.Bind.Editors, Data.Bind.Components, Data.Bind.Grid, Data.Bind.DBScope,
   Vcl.ToolWin, Vcl.ActnCtrls, Vcl.ActnMenus, Vcl.PlatformVclStylesActnCtrls,
-  Data.FMTBcd, Data.SqlExpr, FireDAC.Moni.Base, FireDAC.Moni.RemoteClient;
+  Data.FMTBcd, Data.SqlExpr, FireDAC.Moni.Base, FireDAC.Moni.RemoteClient,
+  frame_INDV, frame_TEAM;
 
 type
 
@@ -53,7 +54,6 @@ type
     EntrantWidgets: TRelativePanel;
     Entrant_EmptyLane: TAction;
     Entrant_GotoMemberDetails: TAction;
-    Entrant_Grid: TDBGrid;
     Entrant_MoveDown: TAction;
     Entrant_MoveUp: TAction;
     Entrant_Renumber: TAction;
@@ -269,6 +269,10 @@ type
     VirtualImageList2: TVirtualImageList;
     VirtualImageList3: TVirtualImageList;
     VirtualImageListMenu: TVirtualImageList;
+    INDV: TframeINDV;
+    pnlRight: TPanel;
+    pnlClient: TPanel;
+    TEAM: TframeTEAM;
     procedure ActionManager1Update(Action: TBasicAction; var Handled: boolean);
     procedure btnClearSearchClick(Sender: TObject);
     procedure clistCheckBoxClick(Sender: TObject);
@@ -276,15 +280,6 @@ type
     procedure Entrant_EmptyLaneUpdate(Sender: TObject);
     procedure Entrant_GotoMemberDetailsExecute(Sender: TObject);
     procedure Entrant_GotoMemberDetailsUpdate(Sender: TObject);
-    procedure Entrant_GridCellClick(Column: TColumn);
-    procedure Entrant_GridColEnter(Sender: TObject);
-    procedure Entrant_GridColExit(Sender: TObject);
-    procedure Entrant_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: integer; Column: TColumn; State: TGridDrawState);
-    procedure Entrant_GridEditButtonClick(Sender: TObject);
-    procedure Entrant_GridEnter(Sender: TObject);
-    procedure Entrant_GridKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
     procedure Entrant_MoveDownExecute(Sender: TObject);
     procedure Entrant_MoveDownUpdate(Sender: TObject);
     procedure Entrant_MoveUpExecute(Sender: TObject);
@@ -441,7 +436,6 @@ type
     procedure DrawCheckBoxes(oGrid: TObject; Rect: TRect; Column: TColumn;
       fontColor: TColor; bgColor: TColor);
     procedure DrawEventStatus(oGrid: TObject; Rect: TRect; Column: TColumn);
-    procedure EnableEntrant_GridEllipse();
     // procedure EnableEvent_GridEllipse();
     procedure Event_BuildSCMEventType(Sender: TObject;
       EventType: scmEventFinalsType);
@@ -695,23 +689,6 @@ begin
 
 end;
 
-procedure TMain.EnableEntrant_GridEllipse;
-var
-  i: integer;
-  col: TColumn;
-begin
-  for i := 0 to Entrant_Grid.Columns.Count - 1 do
-  begin
-    col := Entrant_Grid.Columns.Items[i];
-    // MOD 23.06.27
-    if (col.FieldName = 'FullName') or (col.FieldName = 'DCode') then
-    begin
-      col.ButtonStyle := cbsEllipsis;
-      Entrant_Grid.Repaint;
-      break;
-    end;
-  end;
-end;
 
 // procedure TMain.EnableEvent_GridEllipse;
 // var
@@ -741,12 +718,23 @@ begin
     0, mbYes);
   if (rtnValue = mrYes) then
   begin
-    success := SCM.Entrant_EmptyLane;
+    // Generic routine for INDV and TEAM
+    success := SCM.EmptyLane;
     if not success then
       beep;
   end;
-  if Entrant_Grid.CanFocus then
-    Entrant_Grid.SetFocus;
+
+  if SCM.Event_IsINDV then
+  begin
+  if INDV.Grid.CanFocus then
+    INDV.Grid.SetFocus;
+  end
+  else
+  begin
+  if TEAM.Grid.CanFocus then
+    TEAM.Grid.SetFocus;
+  end;
+
 end;
 
 procedure TMain.Entrant_EmptyLaneUpdate(Sender: TObject);
@@ -796,352 +784,6 @@ begin
   TAction(Sender).Enabled := DoEnable;
 end;
 
-procedure TMain.Entrant_GridCellClick(Column: TColumn);
-begin
-  // --------------------------------------------------------------------
-  // H A N D L E   A   C U S T O M   P A I N T E D   C H E C K B O X .
-  // --------------------------------------------------------------------
-  if Assigned(Column.Field) and (Column.Field.DataType = ftBoolean) then
-  begin
-    // Editing must be enabled for FUllName, RaceTime and DCode
-    // ...BUT if editing is enabled and focus is on CheckBoxes
-    // then 'true/false' text appears!
-    // The custom paint routine isn't called during editing as the
-    // inline editor is made visible and covers the cell.
-
-    Entrant_Grid.BeginUpdate;
-    Column.Grid.DataSource.DataSet.Edit;
-    Column.Field.value := not Column.Field.AsBoolean;
-    if Column.Field.AsBoolean = false then
-      Column.Grid.DataSource.DataSet.FieldByName('DisqualifyCodeID').Clear
-    else
-    begin
-      if Column.FieldName = 'IsScratched' then
-        Column.Grid.DataSource.DataSet.FieldByName('DisqualifyCodeID')
-          .AsInteger := 53
-      else if Column.FieldName = 'IsDisqualified' then
-        Column.Grid.DataSource.DataSet.FieldByName('DisqualifyCodeID')
-          .AsInteger := 54;
-    end;
-    Column.Grid.DataSource.DataSet.Post;
-    Entrant_Grid.EndUpdate;
-
-    // --------------------------------------------------------------------
-    // FIXED - FINALLY ...
-    // BSA 31/07/2023
-    // --------------------------------------------------------------------
-    // If the user clicks the cell a 2nd time, the inline editor paints.
-    // This is system WM_PAINT and cannot be ommitted.
-    // UNLESS ...
-    // 1.CHANGE OPTIONS. REMOVE editing. (MAGIC - I don't why this works.)
-    // 2.NOW EditorMode correctly flags and the final step is to disable it.
-    // NOTE: A REPAINT IS NOT NECESSARY as the inline editor is made invisible
-    // to reveal the custom painted cell.
-    Entrant_Grid.Options := Entrant_Grid.Options - [dgEditing];
-    if Entrant_Grid.EditorMode then
-      Entrant_Grid.EditorMode := false;
-
-  end;
-end;
-
-procedure TMain.Entrant_GridColEnter(Sender: TObject);
-var
-  fld: TField;
-begin
-  // If the field is boolean, switch OFF Grid editing.
-  fld := Entrant_Grid.SelectedField;
-  if Assigned(fld) then
-  begin
-    if (fld.FieldName = 'RaceTime') or (fld.FieldName = 'DCode') or
-      (fld.FieldName = 'FullName') then
-      Entrant_Grid.EditorMode := true
-    else
-      Entrant_Grid.EditorMode := false;
-  end
-end;
-
-procedure TMain.Entrant_GridColExit(Sender: TObject);
-begin
-  // Editing must be enabled for FullName, RaceTime and DCode
-  // If the field is boolean, switch ON Grid editing.
-  // if Assigned(Entrant_Grid.SelectedField) and
-  // (Entrant_Grid.SelectedField.DataType = ftBoolean) then
-  // begin
-  // Entrant_Grid.BeginUpdate;
-  // Entrant_Grid.Options := Entrant_Grid.Options + [dgEditing, dgAlwaysShowEditor];
-  // Entrant_Grid.EndUpdate;
-  // end;
-end;
-
-procedure TMain.Entrant_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
-  DataCol: integer; Column: TColumn; State: TGridDrawState);
-var
-  clFont, clBg: TColor;
-begin
-  // NOTE : DEFAULT DRAWING IS DISABLED ....
-  if (Column.Field.FieldName = 'IsScratched') or
-    (Column.Field.FieldName = 'IsDisqualified') then
-  begin
-    if gdFocused in State then
-      clFont := fEntrantEditBoxFocused
-    else
-      clFont := fEntrantEditBoxNormal;
-    clBg := fEntrantBgColor;
-    DrawCheckBoxes(Entrant_Grid, Rect, Column, clFont, clBg);
-    // draw 'Focused' frame  (for boolean datatype only)
-    if gdFocused in State then
-      Entrant_Grid.Canvas.DrawFocusRect(Rect);
-  end
-  else if (Column.Field.FieldName = 'FullName') or (Column.FieldName = 'DCode')
-  then
-  begin
-    // ENABLE the button if not enabled
-    if (Column.ButtonStyle <> TColumnButtonStyle.cbsEllipsis) then
-      Column.ButtonStyle := TColumnButtonStyle.cbsEllipsis;
-    Entrant_Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
-    if gdFocused in State then
-      Entrant_Grid.Canvas.DrawFocusRect(Rect);
-  end
-  else
-  begin
-    // default drawing DOESN'T draw a themed (yellow) background color
-    Entrant_Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
-    if gdFocused in State then
-      Entrant_Grid.Canvas.DrawFocusRect(Rect);
-  end;
-end;
-
-procedure TMain.Entrant_GridEditButtonClick(Sender: TObject);
-var
-  passed: boolean;
-  dlg: TEntrantPicker;
-  dlgCntrl: TEntrantPickerCTRL;
-  dlgDCode: TDCodePicker;
-  EntrantID: integer;
-  rtnValue: TModalResult;
-  fld: TField;
-begin
-  if not AssertConnection then
-    exit;
-  rtnValue := mrCancel;
-
-  SCM.dsEntrant.DataSet.DisableControls;
-  EntrantID := SCM.dsEntrant.DataSet.FieldByName('EntrantID').AsInteger;
-
-  // handle the ellipse button for the disqualification code
-  fld := TDBGrid(Sender).SelectedField;
-  if fld.FieldName = 'DCode' then
-  begin
-    if not SCM.dsEntrant.DataSet.FieldByName('MemberID').IsNull then
-    begin
-      dlgDCode := TDCodePicker.CreateWithConnection(self, SCM.scmConnection);
-      dlgDCode.EntrantID := EntrantID;
-      rtnValue := dlgDCode.ShowModal;
-      dlgDCode.Free;
-      if IsPositiveResult(rtnValue) then
-      begin
-        SCM.dsEntrant.DataSet.Refresh;
-        SCM.Entrant_Locate(EntrantID);
-      end;
-    end;
-  end
-  // handle the ellipse entrant
-  else if fld.FieldName = 'FullName' then
-  begin
-    if ((GetKeyState(VK_CONTROL) and 128) = 128) then
-    begin
-      // if (GetKeyState(VK_CONTROL) < 0) then begin
-      dlgCntrl := TEntrantPickerCTRL.Create(self);
-      passed := dlgCntrl.Prepare(SCM.scmConnection, EntrantID);
-      if passed then
-        rtnValue := dlgCntrl.ShowModal;
-      dlgCntrl.Free;
-
-    end
-    else
-    begin
-      dlg := TEntrantPicker.Create(self);
-      passed := dlg.Prepare(SCM.scmConnection, EntrantID);
-      if passed then
-        rtnValue := dlg.ShowModal;
-      dlg.Free;
-    end;
-    // require a refresh to update members details
-    if passed and IsPositiveResult(rtnValue) then
-    begin
-      SCM.dsEntrant.DataSet.Refresh;
-      SCM.Entrant_Locate(EntrantID);
-    end;
-
-  end;
-
-  SCM.dsEntrant.DataSet.EnableControls;
-
-  // S T A T U S B A R .
-  // Changes to entrants effect totals in statusbar
-  fDoStatusBarUpdate := true; // flag set false after SCM_StatusBarExecute.
-  SCM_StatusBar.Update; // Asserts enabled state.
-  SCM_StatusBar.Execute; // Fire actions
-
-end;
-
-procedure TMain.Entrant_GridEnter(Sender: TObject);
-begin
-  // Ensure that correct editing options are applied on
-  // first use. SelectedIndex defaults to the first column,
-  // if you tab into the grid or your first click goes to
-  // the first column then OnColEnter doesn't fire.
-  Entrant_GridColEnter(Entrant_Grid);
-end;
-
-procedure TMain.Entrant_GridKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
-var
-  Opts: TLocateOptions;
-  i, j: integer;
-  success: boolean;
-begin
-  Opts := [];
-
-  if (Key = VK_UP) and (ssCtrl in Shift) then
-  begin
-    Entrant_MoveUpExecute(self); // SWAP LANES
-    Key := NULL;
-    exit;
-  end
-  else if (Key = VK_UP) then
-  begin
-    // Move UP to next heat.
-    if AssertConnection then
-    begin
-      // Navigate to prev heats if current location is on the first lane
-      if (SCM.dsEntrant.DataSet.FieldByName('Lane').AsInteger = 1) then
-      begin
-        // Can't move if we are at the top of the heat.
-        if (SCM.dsHeat.DataSet.FieldByName('HeatNum').AsInteger > 1) then
-        begin
-          // move to prev heat
-          i := SCM.dsHeat.DataSet.FieldByName('HeatNum').AsInteger;
-          i := i - 1;
-          success := SCM.dsHeat.DataSet.Locate('HeatNum', i, Opts);
-          // found previous heat move to last lane
-          if (success) then
-          begin
-            j := SCM.SwimClub_NumberOfLanes;
-            SCM.dsEntrant.DataSet.Locate('Lane', j, Opts);
-            Key := 0;
-          end;
-        end;
-      end;
-    end;
-  end;
-
-  if (Key = VK_DOWN) and (ssCtrl in Shift) then
-  begin
-    Entrant_MoveDownExecute(self); // SWAP LANES?
-    Key := 0;
-    exit;
-  end
-  else if (Key = VK_DOWN) then
-  begin
-    // Move DOWN to next heat ....
-    if (AssertConnection) then
-    begin
-      // Navigate to next heats if current location is on the last lane
-      if (SCM.dsEntrant.DataSet.FieldByName('Lane')
-        .AsInteger = SCM.SwimClub_NumberOfLanes) then
-      begin
-        // Can't move if we are at the bottom of the last heat stack.
-        if (SCM.dsHeat.DataSet.FieldByName('HeatNum').AsInteger <
-          SCM.dsHeat.DataSet.RecordCount) then
-        begin
-          // move to next heat
-          i := SCM.dsHeat.DataSet.FieldByName('HeatNum').AsInteger;
-          i := i + 1;
-          success := SCM.dsHeat.DataSet.Locate('HeatNum', i, Opts);
-          // found next heat move to first  lane
-          if (success) then
-          begin
-            SCM.dsEntrant.DataSet.Locate('Lane', 1, Opts);
-            Key := 0;
-          end;
-        end;
-      end;
-    end;
-  end;
-
-  // PAGE UP - navigate to the previous heat. Cue to same lane as org.heat;
-  if (Key = VK_PRIOR) and (Shift = []) then
-  begin
-    // Move up to next heat ....
-    if AssertConnection then
-    begin
-      if (SCM.dsHeat.DataSet.FieldByName('HeatNum').AsInteger > 1) then
-      begin
-        // move to prev heat
-        i := SCM.dsHeat.DataSet.FieldByName('HeatNum').AsInteger;
-        Dec(i);
-        j := SCM.dsEntrant.DataSet.FieldByName('Lane').AsInteger;
-        success := SCM.dsHeat.DataSet.Locate('HeatNum', i, Opts);
-        if (success) then
-        begin
-          SCM.dsEntrant.DataSet.Locate('Lane', j, Opts);
-          Key := 0;
-        end;
-      end;
-    end;
-  end
-  // PAGE DOWN - navigate to the next heat. Cue to same lane as org.heat;
-  else if (Key = VK_NEXT) and (Shift = []) then
-  begin
-    // Move DOWN to next heat ....
-    if AssertConnection then
-    begin
-      // Move only if NOT a bottom of heats
-      if (SCM.dsHeat.DataSet.FieldByName('HeatNum').AsInteger <
-        SCM.dsHeat.DataSet.RecordCount) then
-      begin
-        // move to prev heat
-        i := SCM.dsHeat.DataSet.FieldByName('HeatNum').AsInteger;
-        Inc(i);
-        j := SCM.dsEntrant.DataSet.FieldByName('Lane').AsInteger;
-        success := SCM.dsHeat.DataSet.Locate('HeatNum', i, Opts);
-        if (success) then
-        begin
-          SCM.dsEntrant.DataSet.Locate('Lane', j, Opts);
-          Key := 0;
-        end;
-      end;
-    end;
-
-  end;
-
-  // TOGGLE THE CHECKBOX WITH THE SPACE KEY.
-  if Assigned(Entrant_Grid.SelectedField) and
-    (Entrant_Grid.SelectedField.DataType = ftBoolean) and (Key = VK_SPACE) then
-  begin
-    Entrant_Grid.DataSource.DataSet.Edit;
-    Entrant_Grid.SelectedField.value :=
-      not Entrant_Grid.SelectedField.AsBoolean;
-    Entrant_Grid.DataSource.DataSet.Post;
-    Key := 0;
-  end;
-
-  // FINALIZE THE EDIT
-  if (Key = VK_RETURN) then
-  begin
-    if AssertConnection then
-    begin
-      if (SCM.dsEntrant.DataSet.State = dsEdit) then
-      begin
-        SCM.dsEntrant.DataSet.Post;
-        Key := NULL;
-      end;
-    end;
-  end;
-
-end;
-
 procedure TMain.Entrant_LaneWasCleaned(var Msg: TMessage);
 begin
   // message posted by TSCMNom SCM_LANEWASCLEANED
@@ -1153,20 +795,9 @@ var
   success: boolean;
   MaxLane: integer;
 begin
-  // ...Update traps illegal calls.
-  // already at bottom of stack?  Last lane in pool.
-  MaxLane := SCM.SwimClub_NumberOfLanes;
-  if (Entrant_Grid.DataSource.DataSet.FieldByName('Lane').AsInteger = MaxLane)
-  then
-  begin
-    success := SCM.SwapMoveDownHeat(Entrant_Grid.DataSource.DataSet);
-    // move to next heat  (By default, will position on first entrant.)
-    SCM.dsHeat.DataSet.Next;
-  end
-  else
-    success := SCM.SwapMoveDown(Entrant_Grid.DataSource.DataSet);
-  if not success then
-    beep;
+  if SCM.Event_IsINDV then
+    INDV.GridMoveDown(Sender);
+  {TODO -oBSA -cGeneral : TEAM.GridMoveDown}
 end;
 
 procedure TMain.Entrant_MoveDownUpdate(Sender: TObject);
@@ -1181,9 +812,20 @@ begin
       if not SCM.dsHeat.DataSet.IsEmpty then
         // is the current heat closed?
         if not SCM.Heat_IsClosed then
-          // is there any entrants?
-          if not SCM.dsEntrant.DataSet.IsEmpty then
-            DoEnable := true;
+        begin
+          if SCM.Event_IsINDV then
+          begin
+            // is there any entrants?
+            if not SCM.dsEntrant.DataSet.IsEmpty then
+              DoEnable := true;
+          end
+          else
+          begin
+            // is there any Relays?
+            if not SCM.dsTeam.DataSet.IsEmpty then
+              DoEnable := true;
+          end;
+        end;
   TAction(Sender).Enabled := DoEnable;
 end;
 
@@ -1191,20 +833,9 @@ procedure TMain.Entrant_MoveUpExecute(Sender: TObject);
 var
   success: boolean;
 begin
-  // ...Update traps illegal calls.
-  // already at top of stack? First lane in pool.
-  if (Entrant_Grid.DataSource.DataSet.FieldByName('Lane').AsInteger = 1) then
-  begin
-    success := SCM.SwapMoveUpHeat(Entrant_Grid.DataSource.DataSet);
-    // move to the previous heat ....
-    SCM.dsHeat.DataSet.Prior;
-    // move to last entrant ....
-    SCM.dsEntrant.DataSet.Last;
-  end
-  else
-    success := SCM.SwapMoveUp(Entrant_Grid.DataSource.DataSet);
-  if not success then
-    beep;
+  if SCM.Event_IsINDV then
+    INDV.GridMoveUp(Sender);
+  {TODO -oBSA -cGeneral : TEAM.GridMoveUp}
 end;
 
 procedure TMain.Entrant_MoveUpUpdate(Sender: TObject);
@@ -1219,9 +850,20 @@ begin
       if not SCM.dsHeat.DataSet.IsEmpty then
         // is the current heat closed?
         if not SCM.Heat_IsClosed then
-          // is there any entrants?
-          if not SCM.dsEntrant.DataSet.IsEmpty then
-            DoEnable := true;
+        begin
+          if SCM.Event_IsINDV then
+          begin
+            // is there any entrants?
+            if not SCM.dsEntrant.DataSet.IsEmpty then
+              DoEnable := true;
+          end
+          else
+          begin
+            // is there any Relays?
+            if not SCM.dsTeam.DataSet.IsEmpty then
+              DoEnable := true;
+          end;
+        end;
   TAction(Sender).Enabled := DoEnable;
 end;
 
@@ -1230,22 +872,23 @@ var
   fld: TField;
 begin
   // messages posted by TSCM.qryMemberQuickPickAfterScroll
+  {TODO -oBSA -cGeneral : TEAM Entrant_Scroll}
   if not AssertConnection then
     exit;
-  if Entrant_Grid.Focused then
+  if SCM.Event_IsINDV  and INDV.Grid.Focused then
   begin
     // After moving row re-engage editing for selected fields.
-    fld := Entrant_Grid.SelectedField;
+    fld := INDV.Grid.SelectedField;
     if Assigned(fld) then
     begin
       if (fld.FieldName = 'RaceTime') or (fld.FieldName = 'DCode') or
         (fld.FieldName = 'FullName') then
       begin
-        Entrant_Grid.EditorMode := true;
-        // Entrant_Grid.SelectAll;
+        INDV.Grid.EditorMode := true;
+        // INDV.Grid.SelectAll;
       end
       else
-        Entrant_Grid.EditorMode := false;
+        INDV.Grid.EditorMode := false;
     end;
   end;
 end;
@@ -1307,8 +950,8 @@ begin
     if not success then
       beep;
   end;
-  if Entrant_Grid.CanFocus then
-    Entrant_Grid.SetFocus;
+  if INDV.Grid.CanFocus then
+    INDV.Grid.SetFocus;
 end;
 
 procedure TMain.Entrant_StrikeUpdate(Sender: TObject);
@@ -1338,8 +981,8 @@ begin
   if IsPositiveResult(dlg.ShowModal) then
     Refresh_Entrant;
   dlg.Free;
-  if Entrant_Grid.CanFocus then
-    Entrant_Grid.SetFocus;
+  if INDV.Grid.CanFocus then
+    INDV.Grid.SetFocus;
 end;
 
 procedure TMain.Entrant_SwapLanesUpdate(Sender: TObject);
@@ -1939,10 +1582,10 @@ begin
     if (SCM.dsHeat.DataSet.FieldByName('HeatStatusID').AsInteger <> 3) then
       EnabledState := true;
   end;
-  // SYNC the enabled state of the Entrant_Grid to the
+  // SYNC the enabled state of the INDV.Grid to the
   // session/heat status.
-  if (Entrant_Grid.Enabled <> EnabledState) then
-    Entrant_Grid.Enabled := EnabledState;
+  if (INDV.Grid.Enabled <> EnabledState) then
+    INDV.Grid.Enabled := EnabledState;
 end;
 
 procedure TMain.Event_ToggleGridViewExecute(Sender: TObject);
@@ -2135,7 +1778,7 @@ begin
   // H E A T   . . .
   // ---------------------------------------------------------
   // LEGACY depreciated - left here for reference only.
-  // Entrant_Grid->DefaultDrawing = false;
+  // INDV.Grid->DefaultDrawing = false;
 
   bootprogress.lblProgress.Caption := 'Checking user preferences.';
   bootprogress.lblProgress.Repaint;
@@ -2240,14 +1883,20 @@ begin
   // inhibits statusbar updates in TActionManager.Update
   fSCMisInitializing := false;
 
-  // 20.10.3 - MOD 23.06.27
-  EnableEntrant_GridEllipse;
+
+
+  // 23.08.06 - FRAMES
+  INDV.Enable_GridEllipse;
+  // WIP
+  TEAM.Enable_GridEllipse;
+
 
   // 22/12/22
   // L I N K   G R I D S   T O   D A T A S O U R C E S .
   Event_Grid.DataSource := SCM.dsEvent;
   Nominate_Grid.DataSource := SCM.dsNominateMembers;
-  Entrant_Grid.DataSource := SCM.dsEntrant;
+  INDV.Grid.DataSource := SCM.dsEntrant;
+  TEAM.Grid.DataSource := SCM.dsTeam;
 
   // L I N K   T D B T e x t
   dbtxtSwimClubCaption.DataSource := SCM.dsSwimClub;
@@ -2300,9 +1949,9 @@ begin
   ActionManager1.Style := PlatformVclStylesStyle;
 
   // ASSERT ENTRANT_GRID OPTION STATE
-  // (Entrant_Grid.EditorMode used to toggle individual cell editing)
-  Entrant_Grid.Options := Entrant_Grid.Options + [dgEditing];
-  Entrant_Grid.Options := Entrant_Grid.Options - [dgAlwaysShowEditor];
+  // (INDV.Grid.EditorMode used to toggle individual cell editing)
+  INDV.Grid.Options := INDV.Grid.Options + [dgEditing];
+  INDV.Grid.Options := INDV.Grid.Options - [dgAlwaysShowEditor];
 
   {
     When the Columns.State property of the grid is csDefault, grid columns
@@ -2311,7 +1960,7 @@ begin
   }
   Session_Grid.Columns.State := csDefault;
   Event_Grid.Columns.State := csDefault;
-  Entrant_Grid.Columns.State := csDefault;
+  INDV.Grid.Columns.State := csDefault;
   Nominate_Grid.Columns.State := csDefault;
 
   // PREPARE ENTRANT GRID COLUMN VISIBILITY
@@ -3256,8 +2905,8 @@ begin
       DoEnable := true;
   end;
   // Set the entrant grid's 'disabled' state.
-  if (Entrant_Grid.Enabled <> DoEnable) then
-    Entrant_Grid.Enabled := DoEnable;
+  if (INDV.Grid.Enabled <> DoEnable) then
+    INDV.Grid.Enabled := DoEnable;
 end;
 
 procedure TMain.Heat_TimeKeeperReportExecute(Sender: TObject);
@@ -3313,9 +2962,9 @@ begin
   // i := SCM.dsHeat.DataSet.FieldByName('HeatStatusID').AsInteger;
   case i of
     1, 2:
-      Entrant_Grid.Enabled := true;
+      INDV.Grid.Enabled := true;
     3:
-      Entrant_Grid.Enabled := false;
+      INDV.Grid.Enabled := false;
   end;
   if HeatControlList.CanFocus then
     HeatControlList.SetFocus;
@@ -4433,13 +4082,13 @@ begin
       // entrant data and race times. Buttons and menu items will be disabled
       // via the ActionManager.
       Event_Grid.Enabled := false;
-      Entrant_Grid.Enabled := false;
+      INDV.Grid.Enabled := false;
       Nominate_ControlList.Enabled := false;
     end
     else
     begin
       Event_Grid.Enabled := true;
-      Entrant_Grid.Enabled := true;
+      INDV.Grid.Enabled := true;
       Nominate_ControlList.Enabled := true;
     end;
   end;
@@ -4584,18 +4233,18 @@ begin
 
    end;
 
-//  for i := 0 to Entrant_Grid.Columns.Count - 1 do
+//  for i := 0 to INDV.Grid.Columns.Count - 1 do
 //  begin
-//    if (Entrant_Grid.Columns[i].Field <> Nil) then
+//    if (INDV.Grid.Columns[i].Field <> Nil) then
 //    begin
-//      if (CompareText(Entrant_Grid.Columns[i].FieldName, 'DCode') = 0) then
-//        Entrant_Grid.Columns[i].Visible := EnableFINA;
-//      if (CompareText(Entrant_Grid.Columns[i].FieldName, 'IsScratched') = 0)
+//      if (CompareText(INDV.Grid.Columns[i].FieldName, 'DCode') = 0) then
+//        INDV.Grid.Columns[i].Visible := EnableFINA;
+//      if (CompareText(INDV.Grid.Columns[i].FieldName, 'IsScratched') = 0)
 //      then
-//        Entrant_Grid.Columns[i].Visible := not EnableFINA;
-//      if (CompareText(Entrant_Grid.Columns[i].FieldName, 'IsDisqualified') = 0)
+//        INDV.Grid.Columns[i].Visible := not EnableFINA;
+//      if (CompareText(INDV.Grid.Columns[i].FieldName, 'IsDisqualified') = 0)
 //      then
-//        Entrant_Grid.Columns[i].Visible := not EnableFINA;
+//        INDV.Grid.Columns[i].Visible := not EnableFINA;
 //    end;
 //  end;
 

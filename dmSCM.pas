@@ -203,14 +203,17 @@ type
     prefGenerateEventDescStr: string;
     procedure Entrant_ClearLane(aEntrantID: integer);
     procedure Entrant_CreateEmptyLane(aHeatID, aLane: integer);
+    function Entrant_EmptyLane(): Boolean;
     procedure ReadPreferences(IniFileName: string);
-    procedure Team_ClearLane(aTeamID: integer);
-    procedure Team_CreateEmptyLane(aHeatID, aLane: integer);
+    procedure TEAM_ClearLane(aTeamID: integer);
+    procedure TEAM_CreateEmptyLane(aHeatID, aLane: integer);
+    function TEAM_EmptyLane(): Boolean;
+
   public
     { Public declarations }
     procedure ActivateTable();
     procedure DeActivateTable();
-    // ENTRANT
+    // ENTRANT  INDV - INDIVIDUAL LANES (ENTRANTS)
     function Entrant_CountLanes(aHeatID: integer): integer;
     procedure Entrant_Delete(aEntrantID: integer);
     procedure Entrant_DeleteALL(aHeatID: integer);
@@ -219,7 +222,6 @@ type
     procedure Entrant_DeleteExcessLanes(aHeatID: integer);
     procedure Entrant_DeleteExclude(aEntrantID: integer;
       DoExclude: Boolean = true); // exclude closed or raced heats
-    function Entrant_EmptyLane(): Boolean;
     function Entrant_HeatStatusID(aEntrantID: integer): integer;
     procedure Entrant_InsertEmptyLanes(aHeatID: integer);
     function Entrant_Locate(EntrantID: integer): Boolean;
@@ -240,6 +242,8 @@ type
     function Event_HasNominees(EventID: integer): Boolean;
     function Event_HasRacedHeats(): Boolean; // current event
     function Event_ID(): integer;
+    function Event_IsINDV(): Boolean; // current event
+    function Event_IsTEAM(): Boolean; // current event
     function Event_IsSafeToDelete(aEventID: integer): Boolean;
     function Event_Locate(aEventID: integer): Boolean; overload;
     function Event_Locate(aDistanceID, aStrokeID: integer): Boolean; overload;
@@ -293,7 +297,7 @@ type
     // SPLIT  (INDV + TEAM)
     procedure Split_DeleteALLSplitTimesINDV(aEntrantID: integer);
     procedure Split_DeleteALLSplitTimesTEAM(aTeamEntrantID: integer);
-    // SWAP
+    // SWAP  - ENTRANTS (INDV ONLY)
     function SwapLanes(EntrantIDA, EntrantIDB: integer): Boolean; overload;
     function SwapLanes(HeatIDA, LaneA, HeatIDB, LaneB: integer)
       : Boolean; overload;
@@ -313,24 +317,28 @@ type
     function SwimClub_StartOfSwimSeason(): TDateTime; overload;
     function SwimClub_StartOfSwimSeason(SwimClubID: integer)
       : TDateTime; overload;
-    // TEAM
-    function Team_CountLanes(aHeatID: integer): integer;
-    procedure Team_Delete(aTeamID: integer);
-    procedure Team_DeleteALL(aHeatID: integer);
-    procedure Team_DeleteALLExclude(aHeatID: integer;
+    // TEAM LANES (RELAYS)
+    function TEAM_CountLanes(aHeatID: integer): integer;
+    procedure TEAM_Delete(aTeamID: integer);
+    procedure TEAM_DeleteALL(aHeatID: integer);
+    procedure TEAM_DeleteALLExclude(aHeatID: integer;
       DoExclude: Boolean = true); // exclude closed or raced heats
-    procedure Team_DeleteExcessLanes(aHeatID: integer);
-    procedure Team_DeleteExclude(aTeamID: integer; DoExclude: Boolean);
+    procedure TEAM_DeleteALLTeamEntrant(aTeamID: integer);
+    procedure TEAM_DeleteExcessLanes(aHeatID: integer);
+    procedure TEAM_DeleteExclude(aTeamID: integer; DoExclude: Boolean);
     // exclude closed or raced heats
-    function Team_EmptyLane(): Boolean;
-    function Team_HeatStatusID(aTeamID: integer): integer;
-    procedure Team_InsertEmptyLanes(aHeatID: integer);
-    function Team_Locate(TeamID: integer): Boolean;
-    function Team_NextAvailLaneNum(aHeatID, aSeedNumber: integer): integer;
-    procedure Team_PadWithEmptyLanes(aHeatID: integer);
-    procedure Team_RenumberLanes(aHeatID: integer);
-    function Team_Sort(aHeatID: integer): Boolean;
-    function Team_Strike(): Boolean;
+    function TEAM_HeatStatusID(aTeamID: integer): integer;
+    procedure TEAM_InsertEmptyLanes(aHeatID: integer);
+    function TEAM_Locate(TeamID: integer): Boolean;
+    function TEAM_NextAvailLaneNum(aHeatID, aSeedNumber: integer): integer;
+    procedure TEAM_PadWithEmptyLanes(aHeatID: integer);
+    procedure TEAM_RenumberLanes(aHeatID: integer);
+    function TEAM_Sort(aHeatID: integer): Boolean;
+    function TEAM_Strike(): Boolean;
+
+    function EmptyLane(): Boolean;
+
+
   published
     property SCMActive: Boolean read fSCMActive write fSCMActive;
   end;
@@ -490,6 +498,14 @@ begin
   tblHouse.Active := false;
   qryNominateEvent.Active := false;
   qryNominateMembers.Active := false;
+end;
+
+function TSCM.EmptyLane: Boolean;
+begin
+  if SCM.Event_IsINDV then
+    result := Entrant_EmptyLane
+  else
+    result := TEAM_EmptyLane;
 end;
 
 procedure TSCM.Entrant_ClearLane(aEntrantID: integer);
@@ -1226,6 +1242,20 @@ begin
       result := dsEvent.DataSet.FieldByName('EventID').AsInteger;
 end;
 
+function TSCM.Event_IsINDV: Boolean;
+var
+i: integer;
+begin
+  result := true;
+  if fSCMActive and dsEvent.DataSet.Active then
+    if not dsEvent.DataSet.IsEmpty then
+    begin
+      i := dsEvent.DataSet.FieldByName('EventTypeID').AsInteger;
+      if not (i = 1) or not (i = 0) then
+        result := false;
+    end;
+end;
+
 function TSCM.Event_IsSafeToDelete(aEventID: integer): Boolean;
 begin
   result := false;
@@ -1246,6 +1276,12 @@ begin
       qryIsSafeToDelEvent.Close;
     end;
   end;
+end;
+
+function TSCM.Event_IsTEAM: Boolean;
+
+begin
+  result := not Event_IsTEAM;
 end;
 
 function TSCM.Event_Locate(aEventID: integer): Boolean;
@@ -1332,11 +1368,19 @@ begin
 end;
 
 function TSCM.Event_Type(aEventID: integer): integer;
+var
+v: variant;
+SQL: string;
 begin
   result := 0;
   if fSCMActive and dsEvent.DataSet.Active then
     if not dsEvent.DataSet.IsEmpty then
-      result := dsEvent.DataSet.FieldByName('EventTypeID').AsInteger;
+    begin
+      SQL := 'SELECT [EventTypeID] FROM [SwimClubMeet].[dbo].[Event] WHERE EventID = :ID';
+      v := scmConnection.ExecSQLScalar(SQL, [aEventID]);
+      if not VarIsEmpty(v) or VarIsNull(v) then
+        result := v;
+    end;
 end;
 
 procedure TSCM.Heat_Delete(aHeatID: integer);
@@ -2096,7 +2140,7 @@ begin
       end;
     2:
       begin
-        i := Team_CountLanes(HeatID); // current number of pool lanes
+        i := TEAM_CountLanes(HeatID); // current number of pool lanes
         if (i = 0) then
         begin
 
@@ -2908,7 +2952,7 @@ begin
   end;
 end;
 
-procedure TSCM.Team_ClearLane(aTeamID: integer);
+procedure TSCM.TEAM_ClearLane(aTeamID: integer);
 var
   SearchOptions: TLocateOptions;
   tbl: TFDTable;
@@ -2939,7 +2983,7 @@ begin
       tbl.FieldByName('IsScratched').AsBoolean := false;
       tbl.Post;
 
-      Team_DeleteALLTeamEntrant(aTeamID);
+      TEAM_DeleteALLTeamEntrant(aTeamID);
       Split_DeleteALLSplitTimesTEAM(aTeamID);
     end;
   end;
@@ -2947,7 +2991,7 @@ begin
   tbl.Free;
 end;
 
-function TSCM.Team_CountLanes(aHeatID: integer): integer;
+function TSCM.TEAM_CountLanes(aHeatID: integer): integer;
 begin
   { TODO -oBSA -cGeneral : original C++ code init result as -1 }
   result := 0;
@@ -2963,7 +3007,7 @@ begin
   qryTeamHeatLaneCount.Close;
 end;
 
-procedure TSCM.Team_CreateEmptyLane(aHeatID, aLane: integer);
+procedure TSCM.TEAM_CreateEmptyLane(aHeatID, aLane: integer);
 var
   tbl: TFDTable;
 begin
@@ -2987,17 +3031,17 @@ begin
   tbl.Free;
 end;
 
-procedure TSCM.Team_Delete(aTeamID: integer);
+procedure TSCM.TEAM_Delete(aTeamID: integer);
 begin
-  Team_DeleteExclude(aTeamID, false); // Ignore HeatStatusID
+  TEAM_DeleteExclude(aTeamID, false); // Ignore HeatStatusID
 end;
 
-procedure TSCM.Team_DeleteALL(aHeatID: integer);
+procedure TSCM.TEAM_DeleteALL(aHeatID: integer);
 begin
-  Team_DeleteALLExclude(aHeatID, false);
+  TEAM_DeleteALLExclude(aHeatID, false);
 end;
 
-procedure TSCM.Team_DeleteALLExclude(aHeatID: integer; DoExclude: Boolean);
+procedure TSCM.TEAM_DeleteALLExclude(aHeatID: integer; DoExclude: Boolean);
 var
   SQL: string;
   qry: TFDQuery;
@@ -3018,7 +3062,7 @@ begin
       aTeamID := qry.FieldByName('TeamID').AsInteger;
       if (qry.FieldByName('HeatStatusID').AsInteger = 1) or (DoExclude = false)
       then
-        Team_DeleteExclude(aTeamID, DoExclude);
+        TEAM_DeleteExclude(aTeamID, DoExclude);
       qry.Next;
     end;
   end;
@@ -3026,7 +3070,12 @@ begin
   qry.Free;
 end;
 
-procedure TSCM.Team_DeleteExcessLanes(aHeatID: integer);
+procedure TSCM.TEAM_DeleteALLTeamEntrant(aTeamID: integer);
+begin
+  {TODO -oBSA -cGeneral : CODE : delete ALL team entrants ...}
+end;
+
+procedure TSCM.TEAM_DeleteExcessLanes(aHeatID: integer);
 var
   NumOfLanes, i: integer;
 begin
@@ -3055,7 +3104,7 @@ begin
       // previous record becomes the current record.
       while not Eof do
       begin
-        Team_EmptyLane; // nomination remains alive.
+        TEAM_EmptyLane; // nomination remains alive.
         Delete;
       end;
     end;
@@ -3063,13 +3112,13 @@ begin
   end;
 end;
 
-procedure TSCM.Team_DeleteExclude(aTeamID: integer; DoExclude: Boolean);
+procedure TSCM.TEAM_DeleteExclude(aTeamID: integer; DoExclude: Boolean);
 var
   SQL: string;
   qry: TFDQuery;
   HeatStatusID: integer;
 begin
-  HeatStatusID := Team_HeatStatusID(aTeamID);
+  HeatStatusID := TEAM_HeatStatusID(aTeamID);
   if (HeatStatusID = 1) or (DoExclude = false) then
   begin
     dsEntrant.DataSet.DisableControls;
@@ -3085,7 +3134,7 @@ begin
   end;
 end;
 
-function TSCM.Team_EmptyLane: Boolean;
+function TSCM.TEAM_EmptyLane: Boolean;
 var
   TeamID: integer;
   nom: TSCMNom;
@@ -3110,13 +3159,13 @@ begin
 
     Refresh;
     // cue-to ID
-    Team_Locate(TeamID);
+    TEAM_Locate(TeamID);
     EnableControls;
   end;
 
 end;
 
-function TSCM.Team_HeatStatusID(aTeamID: integer): integer;
+function TSCM.TEAM_HeatStatusID(aTeamID: integer): integer;
 var
   SQL: string;
   v: variant;
@@ -3133,7 +3182,7 @@ begin
   end;
 end;
 
-procedure TSCM.Team_InsertEmptyLanes(aHeatID: integer);
+procedure TSCM.TEAM_InsertEmptyLanes(aHeatID: integer);
 var
   i, LanesToBuild: integer;
 begin
@@ -3145,11 +3194,11 @@ begin
   LanesToBuild := SwimClub_NumberOfLanes;
   dsTeam.DataSet.DisableControls;
   for i := 1 to LanesToBuild do
-    Team_CreateEmptyLane(aHeatID, i);
+    TEAM_CreateEmptyLane(aHeatID, i);
   dsTeam.DataSet.EnableControls;
 end;
 
-function TSCM.Team_Locate(TeamID: integer): Boolean;
+function TSCM.TEAM_Locate(TeamID: integer): Boolean;
 var
   SearchOptions: TLocateOptions;
 begin
@@ -3163,7 +3212,7 @@ begin
     result := dsTeam.DataSet.Locate('TeamID', TeamID, SearchOptions);
 end;
 
-function TSCM.Team_NextAvailLaneNum(aHeatID, aSeedNumber: integer): integer;
+function TSCM.TEAM_NextAvailLaneNum(aHeatID, aSeedNumber: integer): integer;
 var
   i, rtnValue: integer;
   NumOfLanes: integer;
@@ -3197,7 +3246,7 @@ begin
   end;
 end;
 
-procedure TSCM.Team_PadWithEmptyLanes(aHeatID: integer);
+procedure TSCM.TEAM_PadWithEmptyLanes(aHeatID: integer);
 var
   NumOfLanes, CountLanesInHeat, i, j, LanesToBuild: integer;
 begin
@@ -3206,7 +3255,7 @@ begin
   j := 1;
   // create empty lanes
   NumOfLanes := SwimClub_NumberOfLanes;
-  CountLanesInHeat := Team_CountLanes(aHeatID);
+  CountLanesInHeat := TEAM_CountLanes(aHeatID);
 
   if (CountLanesInHeat > NumOfLanes) then
   begin
@@ -3229,7 +3278,7 @@ begin
       // previous record becomes the current record.
       while not dsTeam.DataSet.Eof do
       begin
-        Team_EmptyLane;
+        TEAM_EmptyLane;
         dsTeam.DataSet.Delete;
       end;
     end;
@@ -3243,14 +3292,14 @@ begin
     LanesToBuild := NumOfLanes - CountLanesInHeat;
     for i := 1 to LanesToBuild do
     begin
-      j := Team_NextAvailLaneNum(aHeatID, j);
-      Team_CreateEmptyLane(aHeatID, j);
+      j := TEAM_NextAvailLaneNum(aHeatID, j);
+      TEAM_CreateEmptyLane(aHeatID, j);
     end;
     dsTeam.DataSet.EnableControls;
   end;
 end;
 
-procedure TSCM.Team_RenumberLanes(aHeatID: integer);
+procedure TSCM.TEAM_RenumberLanes(aHeatID: integer);
 var
   i: integer;
   s: String;
@@ -3284,12 +3333,12 @@ begin
   qry.Free;
 end;
 
-function TSCM.Team_Sort(aHeatID: integer): Boolean;
+function TSCM.TEAM_Sort(aHeatID: integer): Boolean;
 begin
 
 end;
 
-function TSCM.Team_Strike: Boolean;
+function TSCM.TEAM_Strike: Boolean;
 var
   TeamID: integer;
   nom: TSCMNom;

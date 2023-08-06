@@ -416,9 +416,6 @@ Coordinates=807,1017,117,36
 [Event_BuildFinals]
 Coordinates=326,1579,118,36
 
-[Entrant_Grid]
-Coordinates=356,1076,88,36
-
 [pnlSessionLeft]
 Coordinates=1252,786,99,58
 
@@ -753,7 +750,7 @@ Coordinates=930,250,114,58
 LayerNames=NominateCotrolList
 
 []
-Coordinates=923,1615,125,33
+Coordinates=356,1076,88,36
 
 [dbtxtNominateFullName]
 Coordinates=1009,709,152,58

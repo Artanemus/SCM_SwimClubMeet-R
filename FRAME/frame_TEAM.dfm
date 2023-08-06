@@ -1,4 +1,4 @@
-object EventTeamFrame: TEventTeamFrame
+object frameTEAM: TframeTEAM
   Left = 0
   Top = 0
   Width = 1033
@@ -22,8 +22,7 @@ object EventTeamFrame: TEventTeamFrame
     BevelOuter = bvNone
     Caption = 'Panel1'
     TabOrder = 0
-    ExplicitWidth = 845
-    object DBGrid1: TDBGrid
+    object Grid: TDBGrid
       Left = 0
       Top = 0
       Width = 1033
@@ -46,11 +45,7 @@ object EventTeamFrame: TEventTeamFrame
     BevelOuter = bvNone
     Caption = 'Panel2'
     TabOrder = 1
-    ExplicitLeft = 328
-    ExplicitTop = 224
-    ExplicitWidth = 185
-    ExplicitHeight = 41
-    object DBGrid2: TDBGrid
+    object GridEntrant: TDBGrid
       Left = 0
       Top = 0
       Width = 1033

@@ -1,14 +1,14 @@
-object EventIndvFrame: TEventIndvFrame
+object frameINDV: TframeINDV
   Left = 0
   Top = 0
   Width = 1075
-  Height = 582
+  Height = 324
   TabOrder = 0
-  object Entrant_Grid: TDBGrid
+  object Grid: TDBGrid
     Left = 0
     Top = 0
     Width = 1075
-    Height = 582
+    Height = 324
     Margins.Left = 60
     Align = alClient
     Anchors = []
@@ -20,13 +20,13 @@ object EventIndvFrame: TEventIndvFrame
     TitleFont.Height = -12
     TitleFont.Name = 'Segoe UI'
     TitleFont.Style = []
-    OnCellClick = Entrant_GridCellClick
-    OnColEnter = Entrant_GridColEnter
-    OnColExit = Entrant_GridColExit
-    OnDrawColumnCell = Entrant_GridDrawColumnCell
-    OnEditButtonClick = Entrant_GridEditButtonClick
-    OnEnter = Entrant_GridEnter
-    OnKeyDown = Entrant_GridKeyDown
+    OnCellClick = GridCellClick
+    OnColEnter = GridColEnter
+    OnColExit = GridColExit
+    OnDrawColumnCell = GridDrawColumnCell
+    OnEditButtonClick = GridEditButtonClick
+    OnEnter = GridEnter
+    OnKeyDown = GridKeyDown
     Columns = <
       item
         Expanded = False

@@ -65,8 +65,8 @@ uses
   dlgAbout in '..\SCM_SHARED\dlgAbout.pas' {About},
   frmDisqualificationCodes in 'TOOLS\frmDisqualificationCodes.pas' {DisqualificationCodes},
   dlgAutoSchedule in 'TOOLS\dlgAutoSchedule.pas' {AutoSchedule},
-  frameEventTeam in 'FRAME\frameEventTeam.pas' {EventTeamFrame: TFrame},
-  frameEventIndv in 'FRAME\frameEventIndv.pas' {EventIndvFrame: TFrame},
+  frame_TEAM in 'FRAME\frame_TEAM.pas' {frameTEAM: TFrame},
+  frame_INDV in 'FRAME\frame_INDV.pas' {frameINDV: TFrame},
   dlgDCodePicker in 'dlgDCodePicker.pas' {DCodePicker},
   AutoBuildRelayAlgorithm in 'AutoBuildRelayAlgorithm.pas',
   dlgAutoBuild_Relay in 'dlgAutoBuild_Relay.pas' {AutoBuild_Relay};

@@ -998,253 +998,237 @@ object Main: TMain
         Caption = 'Heats'
         ImageIndex = 2
         object HeatRightPanel: TPanel
-          AlignWithMargins = True
           Left = 282
-          Top = 147
-          Width = 1104
-          Height = 602
+          Top = 137
+          Width = 1124
+          Height = 622
           Margins.Left = 0
           Margins.Top = 10
           Margins.Right = 20
           Margins.Bottom = 10
           Align = alClient
           BevelOuter = bvNone
-          Caption = 'HeatRightPanel'
           TabOrder = 0
-          ExplicitWidth = 1100
-          ExplicitHeight = 601
-          object Entrant_Grid: TDBGrid
+          ExplicitWidth = 1120
+          ExplicitHeight = 621
+          object pnlRight: TPanel
+            Left = 1036
+            Top = 0
+            Width = 88
+            Height = 622
+            Align = alRight
+            BevelOuter = bvNone
+            TabOrder = 0
+            ExplicitLeft = 1032
+            ExplicitHeight = 621
+            object EntrantWidgets: TRelativePanel
+              Left = 0
+              Top = 0
+              Width = 88
+              Height = 622
+              ControlCollection = <
+                item
+                  Control = spbtnEntrantDown
+                  AlignBottomWithPanel = False
+                  AlignHorizontalCenterWithPanel = True
+                  AlignLeftWithPanel = False
+                  AlignRightWithPanel = False
+                  AlignTopWithPanel = False
+                  AlignVerticalCenterWithPanel = False
+                  Below = spbtnEntrantUp
+                end
+                item
+                  Control = spbtnEntrantEmptyLane
+                  AlignBottomWithPanel = False
+                  AlignHorizontalCenterWithPanel = True
+                  AlignLeftWithPanel = False
+                  AlignRightWithPanel = False
+                  AlignTopWithPanel = False
+                  AlignVerticalCenterWithPanel = False
+                  Below = spbtnEntrantSwapLanes
+                end
+                item
+                  Control = spbtnEntrantScratchLane
+                  AlignBottomWithPanel = False
+                  AlignHorizontalCenterWithPanel = True
+                  AlignLeftWithPanel = False
+                  AlignRightWithPanel = False
+                  AlignTopWithPanel = False
+                  AlignVerticalCenterWithPanel = False
+                  Below = spbtnEntrantEmptyLane
+                end
+                item
+                  Control = spbtnEntrantSwapLanes
+                  AlignBottomWithPanel = False
+                  AlignHorizontalCenterWithPanel = True
+                  AlignLeftWithPanel = False
+                  AlignRightWithPanel = False
+                  AlignTopWithPanel = False
+                  AlignVerticalCenterWithPanel = False
+                  Below = spbtnEntrantDown
+                end
+                item
+                  Control = spbtnEntrantUp
+                  AlignBottomWithPanel = False
+                  AlignHorizontalCenterWithPanel = True
+                  AlignLeftWithPanel = False
+                  AlignRightWithPanel = False
+                  AlignTopWithPanel = True
+                  AlignVerticalCenterWithPanel = False
+                end
+                item
+                  Control = spbtnEntrantSort
+                  AlignBottomWithPanel = False
+                  AlignHorizontalCenterWithPanel = True
+                  AlignLeftWithPanel = False
+                  AlignRightWithPanel = False
+                  AlignTopWithPanel = False
+                  AlignVerticalCenterWithPanel = False
+                  Below = spbtnEntrantScratchLane
+                end>
+              Align = alClient
+              BevelOuter = bvNone
+              TabOrder = 0
+              ExplicitHeight = 621
+              DesignSize = (
+                88
+                622)
+              object spbtnEntrantDown: TSpeedButton
+                Left = 20
+                Top = 48
+                Width = 48
+                Height = 48
+                Action = Entrant_MoveDown
+                Anchors = []
+                Images = VirtualImageList1
+                Flat = True
+                Layout = blGlyphTop
+                Margin = 0
+                NumGlyphs = 2
+              end
+              object spbtnEntrantEmptyLane: TSpeedButton
+                Left = 20
+                Top = 144
+                Width = 48
+                Height = 48
+                Action = Entrant_EmptyLane
+                Anchors = []
+                Images = VirtualImageList1
+                Flat = True
+                Layout = blGlyphTop
+                Margin = 0
+                NumGlyphs = 2
+              end
+              object spbtnEntrantScratchLane: TSpeedButton
+                Left = 20
+                Top = 192
+                Width = 48
+                Height = 48
+                Action = Entrant_Strike
+                Anchors = []
+                Images = VirtualImageList1
+                Flat = True
+                Layout = blGlyphTop
+                Margin = 0
+                NumGlyphs = 2
+              end
+              object spbtnEntrantSwapLanes: TSpeedButton
+                Left = 20
+                Top = 96
+                Width = 48
+                Height = 48
+                Action = Entrant_SwapLanes
+                Anchors = []
+                Images = VirtualImageList1
+                Flat = True
+                Layout = blGlyphTop
+                Margin = 0
+                NumGlyphs = 2
+              end
+              object spbtnEntrantUp: TSpeedButton
+                Left = 20
+                Top = 0
+                Width = 48
+                Height = 48
+                Action = Entrant_MoveUp
+                Anchors = []
+                Images = VirtualImageList1
+                Flat = True
+                Layout = blGlyphTop
+                Margin = 0
+                NumGlyphs = 2
+              end
+              object spbtnEntrantSort: TSpeedButton
+                Left = 20
+                Top = 240
+                Width = 48
+                Height = 48
+                Action = Entrant_Sort
+                Anchors = []
+                ImageIndex = 37
+                ImageName = 'Sort'
+                Images = VirtualImageList1
+                Flat = True
+                Layout = blGlyphTop
+                Margin = 0
+                NumGlyphs = 2
+              end
+            end
+          end
+          object pnlClient: TPanel
             Left = 0
             Top = 0
-            Width = 1044
-            Height = 602
-            Margins.Left = 60
+            Width = 1036
+            Height = 622
             Align = alClient
-            Anchors = []
-            DataSource = SCM.dsEntrant
-            DefaultDrawing = False
-            PopupMenu = pumEntrant
-            TabOrder = 0
-            TitleFont.Charset = DEFAULT_CHARSET
-            TitleFont.Color = clWindowText
-            TitleFont.Height = -16
-            TitleFont.Name = 'Segoe UI'
-            TitleFont.Style = []
-            OnCellClick = Entrant_GridCellClick
-            OnColEnter = Entrant_GridColEnter
-            OnColExit = Entrant_GridColExit
-            OnDrawColumnCell = Entrant_GridDrawColumnCell
-            OnEditButtonClick = Entrant_GridEditButtonClick
-            OnEnter = Entrant_GridEnter
-            OnKeyDown = Entrant_GridKeyDown
-            Columns = <
-              item
-                Expanded = False
-                FieldName = 'Lane'
-                Width = 60
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'FullName'
-                Width = 340
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'RaceTime'
-                Width = 100
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'TimeToBeat'
-                Width = 100
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'PersonalBest'
-                Width = 100
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'IsScratched'
-                Width = 30
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'IsDisqualified'
-                Width = 30
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'DCode'
-                Width = 80
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'luCategory'
-                Visible = True
-              end>
-          end
-          object EntrantWidgets: TRelativePanel
-            Left = 1044
-            Top = 0
-            Width = 60
-            Height = 602
-            ControlCollection = <
-              item
-                Control = spbtnEntrantDown
-                AlignBottomWithPanel = False
-                AlignHorizontalCenterWithPanel = True
-                AlignLeftWithPanel = False
-                AlignRightWithPanel = False
-                AlignTopWithPanel = False
-                AlignVerticalCenterWithPanel = False
-                Below = spbtnEntrantUp
-              end
-              item
-                Control = spbtnEntrantEmptyLane
-                AlignBottomWithPanel = False
-                AlignHorizontalCenterWithPanel = True
-                AlignLeftWithPanel = False
-                AlignRightWithPanel = False
-                AlignTopWithPanel = False
-                AlignVerticalCenterWithPanel = False
-                Below = spbtnEntrantSwapLanes
-              end
-              item
-                Control = spbtnEntrantScratchLane
-                AlignBottomWithPanel = False
-                AlignHorizontalCenterWithPanel = True
-                AlignLeftWithPanel = False
-                AlignRightWithPanel = False
-                AlignTopWithPanel = False
-                AlignVerticalCenterWithPanel = False
-                Below = spbtnEntrantEmptyLane
-              end
-              item
-                Control = spbtnEntrantSwapLanes
-                AlignBottomWithPanel = False
-                AlignHorizontalCenterWithPanel = True
-                AlignLeftWithPanel = False
-                AlignRightWithPanel = False
-                AlignTopWithPanel = False
-                AlignVerticalCenterWithPanel = False
-                Below = spbtnEntrantDown
-              end
-              item
-                Control = spbtnEntrantUp
-                AlignBottomWithPanel = False
-                AlignHorizontalCenterWithPanel = True
-                AlignLeftWithPanel = False
-                AlignRightWithPanel = False
-                AlignTopWithPanel = True
-                AlignVerticalCenterWithPanel = False
-              end
-              item
-                Control = spbtnEntrantSort
-                AlignBottomWithPanel = False
-                AlignHorizontalCenterWithPanel = True
-                AlignLeftWithPanel = False
-                AlignRightWithPanel = False
-                AlignTopWithPanel = False
-                AlignVerticalCenterWithPanel = False
-                Below = spbtnEntrantScratchLane
-              end>
-            Align = alRight
-            Anchors = []
             BevelOuter = bvNone
             TabOrder = 1
-            ExplicitLeft = 1040
-            ExplicitHeight = 601
-            DesignSize = (
-              60
-              602)
-            object spbtnEntrantDown: TSpeedButton
-              Left = 6
-              Top = 48
-              Width = 48
-              Height = 48
-              Action = Entrant_MoveDown
-              Anchors = []
-              Images = VirtualImageList1
-              Flat = True
-              Layout = blGlyphTop
-              Margin = 0
-              NumGlyphs = 2
-            end
-            object spbtnEntrantEmptyLane: TSpeedButton
-              Left = 6
-              Top = 144
-              Width = 48
-              Height = 48
-              Action = Entrant_EmptyLane
-              Anchors = []
-              Images = VirtualImageList1
-              Flat = True
-              Layout = blGlyphTop
-              Margin = 0
-              NumGlyphs = 2
-            end
-            object spbtnEntrantScratchLane: TSpeedButton
-              Left = 6
-              Top = 192
-              Width = 48
-              Height = 48
-              Action = Entrant_Strike
-              Anchors = []
-              Images = VirtualImageList1
-              Flat = True
-              Layout = blGlyphTop
-              Margin = 0
-              NumGlyphs = 2
-            end
-            object spbtnEntrantSwapLanes: TSpeedButton
-              Left = 6
-              Top = 96
-              Width = 48
-              Height = 48
-              Action = Entrant_SwapLanes
-              Anchors = []
-              Images = VirtualImageList1
-              Flat = True
-              Layout = blGlyphTop
-              Margin = 0
-              NumGlyphs = 2
-            end
-            object spbtnEntrantUp: TSpeedButton
-              Left = 6
+            ExplicitWidth = 1032
+            ExplicitHeight = 621
+            inline INDV: TframeINDV
+              Left = 0
               Top = 0
-              Width = 48
-              Height = 48
-              Action = Entrant_MoveUp
-              Anchors = []
-              Images = VirtualImageList1
-              Flat = True
-              Layout = blGlyphTop
-              Margin = 0
-              NumGlyphs = 2
+              Width = 1036
+              Height = 273
+              Align = alTop
+              TabOrder = 0
+              ExplicitWidth = 1036
+              ExplicitHeight = 273
+              inherited Grid: TDBGrid
+                Width = 1036
+                Height = 273
+                TitleFont.Height = -16
+              end
             end
-            object spbtnEntrantSort: TSpeedButton
-              Left = 6
-              Top = 240
-              Width = 48
-              Height = 48
-              Action = Entrant_Sort
-              Anchors = []
-              ImageIndex = 37
-              ImageName = 'Sort'
-              Images = VirtualImageList1
-              Flat = True
-              Layout = blGlyphTop
-              Margin = 0
-              NumGlyphs = 2
+            inline TEAM: TframeTEAM
+              Left = 0
+              Top = 304
+              Width = 1036
+              Height = 318
+              Align = alBottom
+              TabOrder = 1
+              ExplicitTop = 304
+              ExplicitWidth = 1036
+              ExplicitHeight = 318
+              inherited Splitter1: TSplitter
+                Width = 1036
+              end
+              inherited Panel1: TPanel
+                Width = 1036
+                inherited Grid: TDBGrid
+                  Width = 1036
+                  TitleFont.Height = -16
+                end
+              end
+              inherited Panel2: TPanel
+                Width = 1036
+                Height = 99
+                inherited GridEntrant: TDBGrid
+                  Width = 1036
+                  Height = 99
+                  TitleFont.Height = -16
+                end
+              end
             end
           end
         end

@@ -370,13 +370,13 @@
             <Form>AutoSchedule</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="FRAME\frameEventTeam.pas">
-            <Form>EventTeamFrame</Form>
+        <DCCReference Include="FRAME\frame_TEAM.pas">
+            <Form>frameTEAM</Form>
             <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
-        <DCCReference Include="FRAME\frameEventIndv.pas">
-            <Form>EventIndvFrame</Form>
+        <DCCReference Include="FRAME\frame_INDV.pas">
+            <Form>frameINDV</Form>
             <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>

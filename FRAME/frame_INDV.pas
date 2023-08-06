@@ -1,4 +1,4 @@
-unit frameEventIndv;
+unit frame_INDV;
 
 interface
 
@@ -8,16 +8,16 @@ uses
   Vcl.DBGrids, dmSCM, vcl.ActnList;
 
 type
-  TEventIndvFrame = class(TFrame)
-    Entrant_Grid: TDBGrid;
-    procedure Entrant_GridCellClick(Column: TColumn);
-    procedure Entrant_GridColEnter(Sender: TObject);
-    procedure Entrant_GridColExit(Sender: TObject);
-    procedure Entrant_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
+  TframeINDV = class(TFrame)
+    Grid: TDBGrid;
+    procedure GridCellClick(Column: TColumn);
+    procedure GridColEnter(Sender: TObject);
+    procedure GridColExit(Sender: TObject);
+    procedure GridDrawColumnCell(Sender: TObject; const Rect: TRect;
         DataCol: Integer; Column: TColumn; State: TGridDrawState);
-    procedure Entrant_GridEditButtonClick(Sender: TObject);
-    procedure Entrant_GridEnter(Sender: TObject);
-    procedure Entrant_GridKeyDown(Sender: TObject; var Key: Word; Shift:
+    procedure GridEditButtonClick(Sender: TObject);
+    procedure GridEnter(Sender: TObject);
+    procedure GridKeyDown(Sender: TObject; var Key: Word; Shift:
         TShiftState);
   private
     { Private declarations }
@@ -30,14 +30,14 @@ type
     // ASSERT CONNECTION TO MSSQL DATABASE
     function AssertConnection(): boolean;
 
-    procedure Entrant_MoveDownExecute(Sender: TObject);
-    procedure Entrant_MoveDownUpdate(Sender: TObject);
-    procedure Entrant_MoveUpExecute(Sender: TObject);
-    procedure Entrant_MoveUpUpdate(Sender: TObject);
 
   public
     { Public declarations }
     fDoStatusBarUpdate: boolean; // FLAG ACTION - SCM_StatusBar.Enabled
+    procedure Enable_GridEllipse();
+    // TActionManager:  Sender: TAction
+    procedure GridMoveDown(Sender: TObject);
+    procedure GridMoveUp(Sender: TObject);
 
   end;
 
@@ -47,7 +47,7 @@ implementation
 
 uses dlgEntrantPickerCTRL, dlgEntrantPicker, dlgDCodePicker, system.UITypes;
 
-function TEventIndvFrame.AssertConnection: boolean;
+function TframeINDV.AssertConnection: boolean;
 begin
   result := false;
   // test datamodule construction
@@ -59,7 +59,7 @@ begin
   end;
 end;
 
-procedure TEventIndvFrame.DrawCheckBoxes(oGrid: TObject; Rect: TRect;
+procedure TframeINDV.DrawCheckBoxes(oGrid: TObject; Rect: TRect;
   Column: TColumn; fontColor, bgColor: TColor);
 var
   MyRect: TRect;
@@ -129,7 +129,25 @@ begin
 
 end;
 
-procedure TEventIndvFrame.Entrant_GridCellClick(Column: TColumn);
+procedure TframeINDV.Enable_GridEllipse;
+var
+  i: integer;
+  col: TColumn;
+begin
+  for i := 0 to Grid.Columns.Count - 1 do
+  begin
+    col := Grid.Columns.Items[i];
+    // MOD 23.06.27
+    if (col.FieldName = 'FullName') or (col.FieldName = 'DCode') then
+    begin
+      col.ButtonStyle := cbsEllipsis;
+      Grid.Repaint;
+      break;
+    end;
+  end;
+end;
+
+procedure TframeINDV.GridCellClick(Column: TColumn);
 begin
   // --------------------------------------------------------------------
   // H A N D L E   A   C U S T O M   P A I N T E D   C H E C K B O X .
@@ -142,7 +160,7 @@ begin
     // The custom paint routine isn't called during editing as the
     // inline editor is made visible and covers the cell.
 
-    Entrant_Grid.BeginUpdate;
+    Grid.BeginUpdate;
     Column.Grid.DataSource.DataSet.Edit;
     Column.Field.value := not Column.Field.AsBoolean;
     if Column.Field.AsBoolean = false then
@@ -157,7 +175,7 @@ begin
           .AsInteger := 54;
     end;
     Column.Grid.DataSource.DataSet.Post;
-    Entrant_Grid.EndUpdate;
+    Grid.EndUpdate;
 
     // --------------------------------------------------------------------
     // FIXED - FINALLY ...
@@ -170,43 +188,43 @@ begin
     // 2.NOW EditorMode correctly flags and the final step is to disable it.
     // NOTE: A REPAINT IS NOT NECESSARY as the inline editor is made invisible
     // to reveal the custom painted cell.
-    Entrant_Grid.Options := Entrant_Grid.Options - [dgEditing];
-    if Entrant_Grid.EditorMode then
-      Entrant_Grid.EditorMode := false;
+    Grid.Options := Grid.Options - [dgEditing];
+    if Grid.EditorMode then
+      Grid.EditorMode := false;
 
   end;
 end;
 
-procedure TEventIndvFrame.Entrant_GridColEnter(Sender: TObject);
+procedure TframeINDV.GridColEnter(Sender: TObject);
 var
   fld: TField;
 begin
   // If the field is boolean, switch OFF Grid editing.
-  fld := Entrant_Grid.SelectedField;
+  fld := Grid.SelectedField;
   if Assigned(fld) then
   begin
     if (fld.FieldName = 'RaceTime') or (fld.FieldName = 'DCode') or
       (fld.FieldName = 'FullName') then
-      Entrant_Grid.EditorMode := true
+      Grid.EditorMode := true
     else
-      Entrant_Grid.EditorMode := false;
+      Grid.EditorMode := false;
   end
 end;
 
-procedure TEventIndvFrame.Entrant_GridColExit(Sender: TObject);
+procedure TframeINDV.GridColExit(Sender: TObject);
 begin
   // Editing must be enabled for FullName, RaceTime and DCode
   // If the field is boolean, switch ON Grid editing.
-  // if Assigned(Entrant_Grid.SelectedField) and
-  // (Entrant_Grid.SelectedField.DataType = ftBoolean) then
+  // if Assigned(Grid.SelectedField) and
+  // (Grid.SelectedField.DataType = ftBoolean) then
   // begin
-  // Entrant_Grid.BeginUpdate;
-  // Entrant_Grid.Options := Entrant_Grid.Options + [dgEditing, dgAlwaysShowEditor];
-  // Entrant_Grid.EndUpdate;
+  // Grid.BeginUpdate;
+  // Grid.Options := Grid.Options + [dgEditing, dgAlwaysShowEditor];
+  // Grid.EndUpdate;
   // end;
 end;
 
-procedure TEventIndvFrame.Entrant_GridDrawColumnCell(Sender: TObject; const
+procedure TframeINDV.GridDrawColumnCell(Sender: TObject; const
     Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
 var
   clFont, clBg: TColor;
@@ -220,10 +238,10 @@ begin
     else
       clFont := fEntrantEditBoxNormal;
     clBg := fEntrantBgColor;
-    DrawCheckBoxes(Entrant_Grid, Rect, Column, clFont, clBg);
+    DrawCheckBoxes(Grid, Rect, Column, clFont, clBg);
     // draw 'Focused' frame  (for boolean datatype only)
     if gdFocused in State then
-      Entrant_Grid.Canvas.DrawFocusRect(Rect);
+      Grid.Canvas.DrawFocusRect(Rect);
   end
   else if (Column.Field.FieldName = 'FullName') or (Column.FieldName = 'DCode')
   then
@@ -231,20 +249,20 @@ begin
     // ENABLE the button if not enabled
     if (Column.ButtonStyle <> TColumnButtonStyle.cbsEllipsis) then
       Column.ButtonStyle := TColumnButtonStyle.cbsEllipsis;
-    Entrant_Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+    Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
     if gdFocused in State then
-      Entrant_Grid.Canvas.DrawFocusRect(Rect);
+      Grid.Canvas.DrawFocusRect(Rect);
   end
   else
   begin
     // default drawing DOESN'T draw a themed (yellow) background color
-    Entrant_Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+    Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
     if gdFocused in State then
-      Entrant_Grid.Canvas.DrawFocusRect(Rect);
+      Grid.Canvas.DrawFocusRect(Rect);
   end;
 end;
 
-procedure TEventIndvFrame.Entrant_GridEditButtonClick(Sender: TObject);
+procedure TframeINDV.GridEditButtonClick(Sender: TObject);
 var
   passed: boolean;
   dlg: TEntrantPicker;
@@ -323,16 +341,16 @@ begin
 
 end;
 
-procedure TEventIndvFrame.Entrant_GridEnter(Sender: TObject);
+procedure TframeINDV.GridEnter(Sender: TObject);
 begin
   // Ensure that correct editing options are applied on
   // first use. SelectedIndex defaults to the first column,
   // if you tab into the grid or your first click goes to
   // the first column then OnColEnter doesn't fire.
-  Entrant_GridColEnter(Entrant_Grid);
+  GridColEnter(Grid);
 end;
 
-procedure TEventIndvFrame.Entrant_GridKeyDown(Sender: TObject; var Key: Word;
+procedure TframeINDV.GridKeyDown(Sender: TObject; var Key: Word;
     Shift: TShiftState);
 var
   Opts: TLocateOptions;
@@ -343,7 +361,7 @@ begin
 
   if (Key = VK_UP) and (ssCtrl in Shift) then
   begin
-    Entrant_MoveUpExecute(self); // SWAP LANES
+    GridMoveUp(self); // SWAP LANES
     Key := NULL;
     exit;
   end
@@ -376,7 +394,7 @@ begin
 
   if (Key = VK_DOWN) and (ssCtrl in Shift) then
   begin
-    Entrant_MoveDownExecute(self); // SWAP LANES?
+    GridMoveDown(self); // SWAP LANES?
     Key := 0;
     exit;
   end
@@ -455,13 +473,13 @@ begin
   end;
 
   // TOGGLE THE CHECKBOX WITH THE SPACE KEY.
-  if Assigned(Entrant_Grid.SelectedField) and
-    (Entrant_Grid.SelectedField.DataType = ftBoolean) and (Key = VK_SPACE) then
+  if Assigned(Grid.SelectedField) and
+    (Grid.SelectedField.DataType = ftBoolean) and (Key = VK_SPACE) then
   begin
-    Entrant_Grid.DataSource.DataSet.Edit;
-    Entrant_Grid.SelectedField.value :=
-      not Entrant_Grid.SelectedField.AsBoolean;
-    Entrant_Grid.DataSource.DataSet.Post;
+    Grid.DataSource.DataSet.Edit;
+    Grid.SelectedField.value :=
+      not Grid.SelectedField.AsBoolean;
+    Grid.DataSource.DataSet.Post;
     Key := 0;
   end;
 
@@ -480,7 +498,7 @@ begin
 
 end;
 
-procedure TEventIndvFrame.Entrant_MoveDownExecute(Sender: TObject);
+procedure TframeINDV.GridMoveDown(Sender: TObject);
 var
   success: boolean;
   MaxLane: integer;
@@ -488,73 +506,41 @@ begin
   // ...Update traps illegal calls.
   // already at bottom of stack?  Last lane in pool.
   MaxLane := SCM.SwimClub_NumberOfLanes;
-  if (Entrant_Grid.DataSource.DataSet.FieldByName('Lane').AsInteger = MaxLane)
+  if (Grid.DataSource.DataSet.FieldByName('Lane').AsInteger = MaxLane)
   then
   begin
-    success := SCM.SwapMoveDownHeat(Entrant_Grid.DataSource.DataSet);
+    success := SCM.SwapMoveDownHeat(Grid.DataSource.DataSet);
     // move to next heat  (By default, will position on first entrant.)
     SCM.dsHeat.DataSet.Next;
   end
   else
-    success := SCM.SwapMoveDown(Entrant_Grid.DataSource.DataSet);
+    success := SCM.SwapMoveDown(Grid.DataSource.DataSet);
   if not success then
     beep;
 end;
 
-procedure TEventIndvFrame.Entrant_MoveDownUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  if AssertConnection then
-    // Checks if session is Empty. Then checks if locked..
-    if not SCM.Session_IsLocked then
-      // are there any heats?
-      if not SCM.dsHeat.DataSet.IsEmpty then
-        // is the current heat closed?
-        if not SCM.Heat_IsClosed then
-          // is there any entrants?
-          if not SCM.dsEntrant.DataSet.IsEmpty then
-            DoEnable := true;
-  TAction(Sender).Enabled := DoEnable;
-end;
 
-procedure TEventIndvFrame.Entrant_MoveUpExecute(Sender: TObject);
+
+procedure TframeINDV.GridMoveUp(Sender: TObject);
 var
   success: boolean;
 begin
   // ...Update traps illegal calls.
   // already at top of stack? First lane in pool.
-  if (Entrant_Grid.DataSource.DataSet.FieldByName('Lane').AsInteger = 1) then
+  if (Grid.DataSource.DataSet.FieldByName('Lane').AsInteger = 1) then
   begin
-    success := SCM.SwapMoveUpHeat(Entrant_Grid.DataSource.DataSet);
+    success := SCM.SwapMoveUpHeat(Grid.DataSource.DataSet);
     // move to the previous heat ....
     SCM.dsHeat.DataSet.Prior;
     // move to last entrant ....
     SCM.dsEntrant.DataSet.Last;
   end
   else
-    success := SCM.SwapMoveUp(Entrant_Grid.DataSource.DataSet);
+    success := SCM.SwapMoveUp(Grid.DataSource.DataSet);
   if not success then
     beep;
 end;
 
-procedure TEventIndvFrame.Entrant_MoveUpUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  if AssertConnection then
-    // Checks if session is Empty. Then checks if locked..
-    if not SCM.Session_IsLocked then
-      // are there any heats?
-      if not SCM.dsHeat.DataSet.IsEmpty then
-        // is the current heat closed?
-        if not SCM.Heat_IsClosed then
-          // is there any entrants?
-          if not SCM.dsEntrant.DataSet.IsEmpty then
-            DoEnable := true;
-  TAction(Sender).Enabled := DoEnable;
-end;
+
 
 end.
