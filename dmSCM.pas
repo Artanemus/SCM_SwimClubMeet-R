@@ -30,12 +30,9 @@ type
     dsSession: TDataSource;
     dsSwimClub: TDataSource;
     dsTeam: TDataSource;
-    FDAutoIncField1: TFDAutoIncField;
     IntegerField1: TIntegerField;
-    IntegerField2: TIntegerField;
     IntegerField3: TIntegerField;
     IntegerField4: TIntegerField;
-    IntegerField5: TIntegerField;
     luDisqualifyCode: TDataSource;
     luDistance: TDataSource;
     luEventStatus: TDataSource;
@@ -145,7 +142,6 @@ type
     qryTeamHeatLaneCount: TFDQuery;
     qryTestForNominees: TFDQuery;
     scmConnection: TFDConnection;
-    StringField1: TStringField;
     tblDisqualifyCode: TFDTable;
     tblDistance: TFDTable;
     tblEventStatus: TFDTable;
@@ -159,9 +155,22 @@ type
     tblSwimmerCAT: TFDTable;
     TimeField1: TTimeField;
     TimeField2: TTimeField;
-    TimeField3: TTimeField;
-    WideStringField1: TWideStringField;
     WideStringField2: TWideStringField;
+    qryTeamTeamID: TFDAutoIncField;
+    qryTeamTeamNameID: TIntegerField;
+    qryTeamTeamName: TWideStringField;
+    qryTeamEntrant: TFDQuery;
+    IntegerField5: TIntegerField;
+    WideStringField1: TWideStringField;
+    TimeField3: TTimeField;
+    TimeField4: TTimeField;
+    TimeField5: TTimeField;
+    dsTeamEntrant: TDataSource;
+    qryTeamEntrantTeamEntrantID: TFDAutoIncField;
+    qryTeamEntrantTeamID: TIntegerField;
+    qryTeamEntrantSwimOrder: TIntegerField;
+    qryTeamEntrantStrokeID: TIntegerField;
+    qryTeamEntrantluStroke: TStringField;
     procedure DataModuleCreate(Sender: TObject);
     procedure qryEntrantAfterScroll(DataSet: TDataSet);
     procedure qryEntrantBeforeInsert(DataSet: TDataSet);
@@ -431,6 +440,7 @@ begin
             if (qryHeat.Active) and (qryNominee.Active) then
             begin
               qryTeam.Open;
+              qryTeamEntrant.Open;
               qryEntrant.Open;
               if (qryEntrant.Active) then
               begin
@@ -476,6 +486,8 @@ procedure TSCM.DeActivateTable;
 begin
   fSCMActive := false;
   // CORE PARENT..CHILD TABLES
+  qryTeamEntrant.Close;
+  qryTeam.Close;
   qryEntrant.Close;
   qryHeat.Close;
   qryNominee.Close;
@@ -1251,7 +1263,7 @@ begin
     if not dsEvent.DataSet.IsEmpty then
     begin
       i := dsEvent.DataSet.FieldByName('EventTypeID').AsInteger;
-      if not (i = 1) or not (i = 0) then
+      if (i > 1) then
         result := false;
     end;
 end;
@@ -1279,9 +1291,8 @@ begin
 end;
 
 function TSCM.Event_IsTEAM: Boolean;
-
 begin
-  result := not Event_IsTEAM;
+  result := not Event_IsINDV;
 end;
 
 function TSCM.Event_Locate(aEventID: integer): Boolean;

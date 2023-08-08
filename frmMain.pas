@@ -452,6 +452,7 @@ type
     procedure ToggleDCode(EnableFINA: boolean);
     procedure ToggleDivisions(SetVisible: boolean);
     procedure ToggleSwimmerCAT(SetVisible: boolean);
+    procedure ToggleTeamEvents(SetVisible: boolean);
   protected
     // posted by dmSCMNom : a refresh of the entrant grid is required.
     procedure Entrant_LaneWasCleaned(var Msg: TMessage);
@@ -1582,10 +1583,28 @@ begin
     if (SCM.dsHeat.DataSet.FieldByName('HeatStatusID').AsInteger <> 3) then
       EnabledState := true;
   end;
-  // SYNC the enabled state of the INDV.Grid to the
-  // session/heat status.
-  if (INDV.Grid.Enabled <> EnabledState) then
-    INDV.Grid.Enabled := EnabledState;
+
+  // FRAMES
+  // if prefEnableTeamEvents then
+
+  // --------------------------------------------------------------
+  // TOGGLE VISIBILITY OF INDV or TEAM GRIDS
+  // --------------------------------------------------------------
+  if SCM.Event_IsTEAM then
+  begin
+    if not TEAM.Visible then  TEAM.Visible := true;
+    if INDV.Visible then INDV.Visible := false;
+  end
+  else // DEFAULT SETUP
+  begin
+    if TEAM.Visible then  TEAM.Visible := false;
+    if not INDV.Visible then INDV.Visible := true;
+    // SYNC the enabled state of the INDV.Grid to the
+    // session/heat status.
+    if (INDV.Grid.Enabled <> EnabledState) then
+      INDV.Grid.Enabled := EnabledState;
+  end;
+
 end;
 
 procedure TMain.Event_ToggleGridViewExecute(Sender: TObject);
@@ -1887,9 +1906,7 @@ begin
 
   // 23.08.06 - FRAMES
   INDV.Enable_GridEllipse;
-  // WIP
   TEAM.Enable_GridEllipse;
-
 
   // 22/12/22
   // L I N K   G R I D S   T O   D A T A S O U R C E S .
@@ -1967,6 +1984,7 @@ begin
   ToggleDCode(prefEnableDCode);
   ToggleSwimmerCAT(prefDisplaySwimmerCAT);
   ToggleDivisions(prefDisplayDivisions);
+  ToggleTeamEvents(prefEnableTeamEvents);
 
 end;
 
@@ -2024,6 +2042,12 @@ begin
 
   if Session_Grid.CanFocus then
     Session_Grid.SetFocus;
+
+  INDV.Align := alClient;
+  INDV.Visible := true;
+  TEAM.Align := alClient;
+  TEAM.Visible := false;
+
 end;
 
 procedure TMain.GetSCMPreferences();
@@ -4282,6 +4306,22 @@ begin
   end;
 end;
 
+procedure TMain.ToggleTeamEvents(SetVisible: boolean);
+var
+  fld: TField;
+begin
+  with SCM.dsEvent.DataSet do
+  begin
+  DisableControls;
+  fld := Fields.FindField('luEventType');
+  if Assigned(fld) then
+    fld.Visible := SetVisible;
+  EnableControls;
+  end;
+  // FRAMES
+  {TODO -oBSa -cGeneral : OMIT EVENT TYPE TEAM if visibility = false}
+end;
+
 procedure TMain.Tools_ConnectionManagerExecute(Sender: TObject);
 var
   sConnStr: String;
@@ -4448,7 +4488,7 @@ begin
   ToggleDCode(prefEnableDCode);
   ToggleSwimmerCAT(prefDisplaySwimmerCAT);
   ToggleDivisions(prefDisplayDivisions);
-
+  ToggleTeamEvents(prefEnableTeamEvents);
 
   // deals with some repaint issues if event title is enabled/disabled
   { TODO -oBSA -cGeneral : Call action SCMRefresh? }

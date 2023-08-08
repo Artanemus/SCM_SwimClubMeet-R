@@ -167,7 +167,7 @@ object SCM: TSCM
   end
   object dsNomateEvent: TDataSource
     DataSet = qryNominateEvent
-    Left = 295
+    Left = 311
     Top = 200
   end
   object luHeatStatus: TDataSource
@@ -580,7 +580,6 @@ object SCM: TSCM
   end
   object qryEvent: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     BeforeEdit = qryEventBeforeEdit
     BeforePost = qryEventBeforePost
     AfterPost = qryEventAfterPost
@@ -826,9 +825,8 @@ object SCM: TSCM
       FieldName = 'luEventType'
       LookupDataSet = tblEventType
       LookupKeyFields = 'EventTypeID'
-      LookupResultField = 'Caption'
+      LookupResultField = 'ABREV'
       KeyFields = 'EventTypeID'
-      Visible = False
       Size = 5
       Lookup = True
     end
@@ -1085,7 +1083,7 @@ object SCM: TSCM
   end
   object dsNominee: TDataSource
     DataSet = qryNominee
-    Left = 296
+    Left = 312
     Top = 256
   end
   object qryNomineeCount: TFDQuery
@@ -2258,6 +2256,7 @@ object SCM: TSCM
   end
   object qryTeam: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     BeforeInsert = qryEntrantBeforeInsert
     AfterScroll = qryEntrantAfterScroll
     IndexFieldNames = 'HeatID'
@@ -2270,8 +2269,8 @@ object SCM: TSCM
     UpdateOptions.AssignedValues = [uvEInsert, uvCheckRequired]
     UpdateOptions.EnableInsert = False
     UpdateOptions.CheckRequired = False
-    UpdateOptions.UpdateTableName = 'SwimClubMeet..Entrant'
-    UpdateOptions.KeyFields = 'EntrantID'
+    UpdateOptions.UpdateTableName = 'SwimClubMeet.dbo.Team'
+    UpdateOptions.KeyFields = 'TeamID'
     SQL.Strings = (
       '-- Format of TTime occurs in OnGetText() '#39'nn:ss.zzz'#39
       ''
@@ -2283,39 +2282,17 @@ object SCM: TSCM
       'SELECT Team.TeamID'
       '     , Team.HeatID'
       '     , Team.Lane'
-      '     , Team.TeamTime'
-      '--     , Team.TimeToBeat'
+      '     , Team.RaceTime'
+      '     , Team.TimeToBeat'
       '     , Team.IsDisqualified'
       '     , Team.IsScratched'
-      '--     , Team.MemberID'
-      '--     , Team.PersonalBest'
-      ''
-      '/*'
-      '     , CASE'
-      '           WHEN Member.MemberID IS NOT NULL THEN'
-      '               CONCAT('
-      
-        '                         FORMAT(dbo.SwimmerAge(Session.SessionSt' +
-        'art, Member.DOB), '#39'00'#39')'
-      '                       , '#39'.'#39
-      
-        '                       , dbo.SwimmerGenderToString(Member.Member' +
-        'ID)'
-      '                       , '#39'  '#39
-      '                       , Member.FirstName'
-      '                       , '#39' '#39
-      '                       , UPPER(Member.LastName)'
-      '                     )'
-      '       END AS FullName'
-      '*/'
+      '     , Team.TeamNameID'
+      '     , TeamName.Caption AS TeamName'
       '     , DisqualifyCode.ABREV AS DCode'
       '     , Team.DisqualifyCodeID'
-      
-        '--     , dbo.MembersSwimmerCategory(Team.MemberID, @SwimClubID, ' +
-        'Session.SessionStart) AS CATID'
       'FROM Team'
-      '--    LEFT OUTER JOIN Member'
-      '--        ON Team.MemberID = Member.MemberID'
+      '    LEFT OUTER JOIN TeamName'
+      '        ON Team.TeamNameID = TeamName.TeamNameID'
       '    INNER JOIN HeatIndividual'
       '        ON Team.HeatID = HeatIndividual.HeatID'
       '    INNER JOIN Event'
@@ -2330,24 +2307,24 @@ object SCM: TSCM
       ''
       ''
       '')
-    Left = 48
-    Top = 472
+    Left = 200
+    Top = 392
+    object qryTeamTeamID: TFDAutoIncField
+      FieldName = 'TeamID'
+      Origin = 'TeamID'
+      ProviderFlags = [pfInWhere, pfInKey]
+      ReadOnly = True
+      Visible = False
+    end
     object IntegerField1: TIntegerField
       FieldName = 'HeatID'
       Origin = 'HeatID'
       Required = True
       Visible = False
     end
-    object FDAutoIncField1: TFDAutoIncField
-      FieldName = 'EntrantID'
-      Origin = 'EntrantID'
-      ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
-      Visible = False
-    end
-    object IntegerField2: TIntegerField
-      FieldName = 'MemberID'
-      Origin = 'MemberID'
+    object qryTeamTeamNameID: TIntegerField
+      FieldName = 'TeamNameID'
+      Origin = 'TeamNameID'
       Visible = False
     end
     object IntegerField3: TIntegerField
@@ -2359,13 +2336,13 @@ object SCM: TSCM
       ReadOnly = True
       DisplayFormat = '00'
     end
-    object WideStringField1: TWideStringField
-      DisplayLabel = 'Entrant'#39's Name'
+    object qryTeamTeamName: TWideStringField
+      DisplayLabel = 'Team Name'
       DisplayWidth = 34
-      FieldName = 'FullName'
-      Origin = 'FullName'
+      FieldName = 'TeamName'
+      Origin = 'TeamName'
       ReadOnly = True
-      Size = 257
+      Size = 128
     end
     object TimeField1: TTimeField
       Alignment = taRightJustify
@@ -2382,16 +2359,6 @@ object SCM: TSCM
       DisplayWidth = 10
       FieldName = 'TimeToBeat'
       Origin = 'TimeToBeat'
-      ReadOnly = True
-      OnGetText = qryEntrantTIMEGetText
-      DisplayFormat = 'nn:ss.zzz'
-      EditMask = '!00:00.000;1;0'
-    end
-    object TimeField3: TTimeField
-      Alignment = taRightJustify
-      DisplayWidth = 10
-      FieldName = 'PersonalBest'
-      Origin = 'PersonalBest'
       ReadOnly = True
       OnGetText = qryEntrantTIMEGetText
       DisplayFormat = 'nn:ss.zzz'
@@ -2422,28 +2389,173 @@ object SCM: TSCM
       ReadOnly = True
       Size = 8
     end
-    object StringField1: TStringField
-      DisplayLabel = 'Category'
-      DisplayWidth = 9
-      FieldKind = fkLookup
-      FieldName = 'luCategory'
-      LookupDataSet = tblSwimmerCAT
-      LookupKeyFields = 'SwimmerCategoryID'
-      LookupResultField = 'ABREV'
-      KeyFields = 'CATID'
-      Lookup = True
-    end
-    object IntegerField5: TIntegerField
-      DisplayWidth = 5
-      FieldName = 'CATID'
-      Origin = 'CATID'
-      ReadOnly = True
-      Visible = False
-    end
   end
   object dsTeam: TDataSource
     DataSet = qryTeam
-    Left = 120
+    Left = 288
+    Top = 392
+  end
+  object qryTeamEntrant: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    Active = True
+    BeforeInsert = qryEntrantBeforeInsert
+    AfterScroll = qryEntrantAfterScroll
+    IndexFieldNames = 'TeamID'
+    MasterSource = dsTeam
+    MasterFields = 'TeamID'
+    DetailFields = 'TeamID'
+    Connection = scmConnection
+    FormatOptions.AssignedValues = [fvFmtDisplayDateTime, fvFmtDisplayTime]
+    FormatOptions.FmtDisplayTime = 'nn:ss.zzz'
+    UpdateOptions.AssignedValues = [uvEInsert, uvCheckRequired]
+    UpdateOptions.EnableInsert = False
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.UpdateTableName = 'SwimClubMeet.dbo.TeamEntrant'
+    UpdateOptions.KeyFields = 'TeamEntrantID'
+    SQL.Strings = (
+      '-- Format of TTime occurs in OnGetText() '#39'nn:ss.zzz'#39
+      ''
+      'USE SwimClubMeet'
+      ''
+      'DECLARE @SwimClubID AS INT;'
+      'SET @SwimClubID = 1;'
+      ''
+      'SELECT TeamEntrant.TeamEntrantID'
+      '     , TeamEntrant.TeamID'
+      '     , TeamEntrant.SwimOrder'
+      '     , TeamEntrant.RaceTime'
+      '     , TeamEntrant.TimeToBeat'
+      '     --, TeamEntrant.IsDisqualified'
+      '     --, TeamEntrant.IsScratched'
+      '     , TeamEntrant.MemberID'
+      '     , TeamEntrant.PersonalBest'
+      '     , CASE'
+      '           WHEN Member.MemberID IS NOT NULL THEN'
+      '               CONCAT('
+      
+        '                         FORMAT(dbo.SwimmerAge(Session.SessionSt' +
+        'art, Member.DOB), '#39'00'#39')'
+      '                       , '#39'.'#39
+      
+        '                       , dbo.SwimmerGenderToString(Member.Member' +
+        'ID)'
+      '                       , '#39'  '#39
+      '                       , Member.FirstName'
+      '                       , '#39' '#39
+      '                       , UPPER(Member.LastName)'
+      '                     )'
+      '       END AS FullName'
+      '     --, DisqualifyCode.ABREV AS DCode'
+      '     --, TeamEntrant.DisqualifyCodeID'
+      
+        '     --, dbo.MembersSwimmerCategory(TeamEntrant.MemberID, @SwimC' +
+        'lubID, Session.SessionStart) AS CATID'
+      '     , TeamEntrant.StrokeID'
+      'FROM TeamEntrant'
+      '    LEFT OUTER JOIN Member'
+      '        ON TeamEntrant.MemberID = Member.MemberID'
+      '    INNER JOIN Team'
+      '        ON TeamEntrant.TeamID = Team.TeamID'
+      '    INNER JOIN HeatIndividual'
+      '        ON Team.HeatID = HeatIndividual.HeatID'
+      '    INNER JOIN Event'
+      '        ON HeatIndividual.EventID = Event.EventID'
+      '    INNER JOIN Session'
+      '        ON Event.SessionID = Session.SessionID'
+      '    --LEFT OUTER JOIN DisqualifyCode'
+      
+        '        --ON TeamEntrant.DisqualifyCodeID = DisqualifyCode.Disqu' +
+        'alifyCodeID'
+      'ORDER BY TeamEntrant.SwimOrder'
+      ''
+      ''
+      '')
+    Left = 200
+    Top = 472
+    object qryTeamEntrantTeamEntrantID: TFDAutoIncField
+      FieldName = 'TeamEntrantID'
+      Origin = 'TeamEntrantID'
+      ProviderFlags = [pfInWhere, pfInKey]
+      ReadOnly = True
+      Visible = False
+    end
+    object qryTeamEntrantTeamID: TIntegerField
+      FieldName = 'TeamID'
+      Origin = 'TeamID'
+      Visible = False
+    end
+    object IntegerField5: TIntegerField
+      FieldName = 'MemberID'
+      Origin = 'MemberID'
+      Visible = False
+    end
+    object qryTeamEntrantSwimOrder: TIntegerField
+      Alignment = taCenter
+      DisplayLabel = 'Swim Order'
+      FieldName = 'SwimOrder'
+      Origin = 'SwimOrder'
+    end
+    object WideStringField1: TWideStringField
+      DisplayLabel = 'Entrant'#39's Name'
+      DisplayWidth = 34
+      FieldName = 'FullName'
+      Origin = 'FullName'
+      ReadOnly = True
+      Size = 257
+    end
+    object TimeField3: TTimeField
+      Alignment = taRightJustify
+      DisplayWidth = 10
+      FieldName = 'RaceTime'
+      Origin = 'RaceTime'
+      Visible = False
+      OnGetText = qryEntrantTIMEGetText
+      OnSetText = qryEntrantTIMESetText
+      DisplayFormat = 'nn:ss.zzz'
+      EditMask = '!00:00.000;1;0'
+    end
+    object TimeField4: TTimeField
+      Alignment = taRightJustify
+      DisplayWidth = 10
+      FieldName = 'TimeToBeat'
+      Origin = 'TimeToBeat'
+      ReadOnly = True
+      Visible = False
+      OnGetText = qryEntrantTIMEGetText
+      DisplayFormat = 'nn:ss.zzz'
+      EditMask = '!00:00.000;1;0'
+    end
+    object TimeField5: TTimeField
+      Alignment = taRightJustify
+      DisplayWidth = 10
+      FieldName = 'PersonalBest'
+      Origin = 'PersonalBest'
+      ReadOnly = True
+      Visible = False
+      OnGetText = qryEntrantTIMEGetText
+      DisplayFormat = 'nn:ss.zzz'
+      EditMask = '!00:00.000;1;0'
+    end
+    object qryTeamEntrantStrokeID: TIntegerField
+      FieldName = 'StrokeID'
+      Origin = 'StrokeID'
+      Visible = False
+    end
+    object qryTeamEntrantluStroke: TStringField
+      DisplayLabel = 'Stroke'
+      DisplayWidth = 16
+      FieldKind = fkLookup
+      FieldName = 'luStroke'
+      LookupDataSet = tblStroke
+      LookupKeyFields = 'StrokeID'
+      LookupResultField = 'Caption'
+      KeyFields = 'StrokeID'
+      Lookup = True
+    end
+  end
+  object dsTeamEntrant: TDataSource
+    DataSet = qryTeamEntrant
+    Left = 288
     Top = 472
   end
 end

@@ -1192,7 +1192,7 @@ object Main: TMain
               Height = 273
               Align = alTop
               TabOrder = 0
-              ExplicitWidth = 1036
+              ExplicitWidth = 1032
               ExplicitHeight = 273
               inherited Grid: TDBGrid
                 Width = 1036
@@ -1206,27 +1206,39 @@ object Main: TMain
               Width = 1036
               Height = 318
               Align = alBottom
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -16
+              Font.Name = 'Segoe UI'
+              Font.Style = []
+              ParentFont = False
               TabOrder = 1
-              ExplicitTop = 304
-              ExplicitWidth = 1036
+              ExplicitTop = 303
+              ExplicitWidth = 1032
               ExplicitHeight = 318
               inherited Splitter1: TSplitter
+                Top = 195
                 Width = 1036
+                ExplicitWidth = 1036
               end
               inherited Panel1: TPanel
                 Width = 1036
+                Height = 195
+                ExplicitWidth = 1036
                 inherited Grid: TDBGrid
                   Width = 1036
-                  TitleFont.Height = -16
+                  DataSource = nil
                 end
               end
               inherited Panel2: TPanel
+                Top = 209
                 Width = 1036
-                Height = 99
+                Height = 109
+                ExplicitWidth = 1036
+                ExplicitHeight = 109
                 inherited GridEntrant: TDBGrid
                   Width = 1036
-                  Height = 99
-                  TitleFont.Height = -16
+                  Height = 109
                 end
               end
             end
@@ -1314,10 +1326,8 @@ object Main: TMain
             Margins.Right = 66
             Margins.Bottom = 0
             Anchors = []
-            ItemCount = 2
             ItemWidth = 200
             ItemHeight = 68
-            ItemIndex = 0
             ItemMargins.Left = 10
             ItemMargins.Top = 0
             ItemMargins.Right = 10
@@ -1389,7 +1399,6 @@ object Main: TMain
               Alignment = taCenter
               Anchors = []
               AutoSize = False
-              Caption = '1'
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWindowText
               Font.Height = -32
@@ -1421,7 +1430,6 @@ object Main: TMain
               Alignment = taCenter
               Anchors = []
               AutoSize = False
-              Caption = '25'
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWindowText
               Font.Height = -27
@@ -1836,8 +1844,8 @@ object Main: TMain
             Height = 622
             Align = alLeft
             BorderStyle = bsNone
-            ItemCount = 4
-            ItemIndex = 0
+            ItemCount = 76
+            ItemIndex = 72
             ItemMargins.Left = 0
             ItemMargins.Top = 0
             ItemMargins.Right = 0
@@ -1846,7 +1854,6 @@ object Main: TMain
             PopupMenu = pumHeat
             TabOrder = 1
             OnBeforeDrawItem = HeatControlListBeforeDrawItem
-            ExplicitHeight = 621
             object vimgHeatNum: TVirtualImage
               Left = 16
               Top = 11

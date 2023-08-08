@@ -57,7 +57,7 @@ object Preferences: TPreferences
       654
       48)
     object btnClose: TButton
-      Left = 500
+      Left = 496
       Top = 6
       Width = 101
       Height = 33
@@ -65,7 +65,7 @@ object Preferences: TPreferences
       Caption = 'Close'
       TabOrder = 0
       OnClick = btnCloseClick
-      ExplicitLeft = 496
+      ExplicitLeft = 492
     end
   end
   object PageControl1: TPageControl
@@ -368,7 +368,7 @@ object Preferences: TPreferences
         ParentFont = False
       end
       object btn1: TSpeedButton
-        Left = 169
+        Left = 165
         Top = 15
         Width = 33
         Height = 33
@@ -550,7 +550,6 @@ object Preferences: TPreferences
         Width = 241
         Height = 19
         Caption = 'Enable Team Events.'
-        Enabled = False
         TabOrder = 0
       end
       object prefEnableDCodes: TCheckBox
