@@ -338,6 +338,40 @@ object Main: TMain
               TitleFont.Style = []
               OnDrawColumnCell = Event_GridDrawColumnCell
               OnKeyDown = Event_GridKeyDown
+              Columns = <
+                item
+                  Expanded = False
+                  FieldName = 'EventNum'
+                  Visible = True
+                end
+                item
+                  DropDownRows = 8
+                  Expanded = False
+                  FieldName = 'luDistance'
+                  Width = 126
+                  Visible = True
+                end
+                item
+                  DropDownRows = 3
+                  Expanded = False
+                  FieldName = 'luStroke'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'luEventStatus'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'NomineeCount'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'EntrantCount'
+                  Visible = True
+                end>
             end
             object EventWidgets: TRelativePanel
               Left = 617
@@ -1011,6 +1045,23 @@ object Main: TMain
           TabOrder = 0
           ExplicitWidth = 1120
           ExplicitHeight = 621
+          object lblNoHeatsMessage: TLabel
+            Left = 0
+            Top = 0
+            Width = 1036
+            Height = 622
+            Align = alClient
+            Alignment = taCenter
+            Caption = 'NO HEATS TO DISPLAY. Use NEW or AutoBuild to get started.'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -32
+            Font.Name = 'Segoe UI'
+            Font.Style = []
+            ParentFont = False
+            ExplicitWidth = 871
+            ExplicitHeight = 45
+          end
           object pnlRight: TPanel
             Left = 1036
             Top = 0
@@ -1187,24 +1238,9 @@ object Main: TMain
             ExplicitHeight = 621
             inline INDV: TframeINDV
               Left = 0
-              Top = 0
+              Top = 445
               Width = 1036
-              Height = 273
-              Align = alTop
-              TabOrder = 0
-              ExplicitWidth = 1032
-              ExplicitHeight = 273
-              inherited Grid: TDBGrid
-                Width = 1036
-                Height = 273
-                TitleFont.Height = -16
-              end
-            end
-            inline TEAM: TframeTEAM
-              Left = 0
-              Top = 304
-              Width = 1036
-              Height = 318
+              Height = 177
               Align = alBottom
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWindowText
@@ -1212,33 +1248,57 @@ object Main: TMain
               Font.Name = 'Segoe UI'
               Font.Style = []
               ParentFont = False
-              TabOrder = 1
-              ExplicitTop = 303
+              TabOrder = 0
+              ExplicitTop = 444
               ExplicitWidth = 1032
-              ExplicitHeight = 318
-              inherited Splitter1: TSplitter
-                Top = 195
+              ExplicitHeight = 177
+              inherited Grid: TDBGrid
                 Width = 1036
+                Height = 177
+              end
+            end
+            inline TEAM: TframeTEAM
+              Left = 0
+              Top = 0
+              Width = 1036
+              Height = 439
+              Align = alTop
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -16
+              Font.Name = 'Segoe UI'
+              Font.Style = []
+              ParentFont = False
+              TabOrder = 1
+              ExplicitWidth = 1032
+              ExplicitHeight = 439
+              inherited Splitter1: TSplitter
+                Top = 297
+                Width = 1036
+                ExplicitTop = 50
                 ExplicitWidth = 1036
               end
               inherited Panel1: TPanel
                 Width = 1036
-                Height = 195
-                ExplicitWidth = 1036
+                Height = 297
+                ExplicitWidth = 1032
+                ExplicitHeight = 297
                 inherited Grid: TDBGrid
                   Width = 1036
+                  Height = 297
                   DataSource = nil
                 end
               end
               inherited Panel2: TPanel
-                Top = 209
+                Top = 311
                 Width = 1036
-                Height = 109
-                ExplicitWidth = 1036
-                ExplicitHeight = 109
+                Height = 128
+                ExplicitTop = 311
+                ExplicitWidth = 1032
+                ExplicitHeight = 128
                 inherited GridEntrant: TDBGrid
                   Width = 1036
-                  Height = 109
+                  Height = 128
                 end
               end
             end
@@ -1423,9 +1483,9 @@ object Main: TMain
               ParentFont = False
             end
             object lblHeatNavigatorDistance: TLabel
-              Left = 67
+              Left = 48
               Top = 8
-              Width = 65
+              Width = 105
               Height = 39
               Alignment = taCenter
               Anchors = []
@@ -1437,6 +1497,17 @@ object Main: TMain
               Font.Style = [fsBold]
               ParentFont = False
               Layout = tlCenter
+            end
+            object vimgRelayDot: TVirtualImage
+              Left = 6
+              Top = 2
+              Width = 32
+              Height = 32
+              ImageCollection = ImageCollection1
+              ImageWidth = 0
+              ImageHeight = 0
+              ImageIndex = 72
+              ImageName = 'RELAY_DOT'
             end
           end
         end
@@ -1844,8 +1915,8 @@ object Main: TMain
             Height = 622
             Align = alLeft
             BorderStyle = bsNone
-            ItemCount = 76
-            ItemIndex = 72
+            ItemCount = 72
+            ItemIndex = 0
             ItemMargins.Left = 0
             ItemMargins.Top = 0
             ItemMargins.Right = 0
@@ -1854,6 +1925,7 @@ object Main: TMain
             PopupMenu = pumHeat
             TabOrder = 1
             OnBeforeDrawItem = HeatControlListBeforeDrawItem
+            ExplicitHeight = 621
             object vimgHeatNum: TVirtualImage
               Left = 16
               Top = 11
@@ -2203,7 +2275,6 @@ object Main: TMain
     Top = 0
     Width = 1414
     Height = 31
-    UseSystemFont = False
     ActionManager = ActionManager1
     Caption = 'ActionMainMenuBar1'
     Color = clMenuBar
@@ -2212,7 +2283,7 @@ object Main: TMain
     ColorMap.BtnSelectedFont = clBlack
     ColorMap.UnusedColor = clWhite
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clBlack
+    Font.Color = clWindowText
     Font.Height = -16
     Font.Name = 'Segoe UI'
     Font.Style = []
@@ -2391,7 +2462,6 @@ object Main: TMain
                 ImageName = 'TimeAuto'
               end
               item
-                Visible = False
                 Action = Event_Renumber
                 Caption = '&Renumber Lanes...'
                 ImageIndex = 7
@@ -3078,7 +3148,6 @@ object Main: TMain
       Enabled = False
       ImageIndex = 7
       ImageName = 'Cycle'
-      Visible = False
       OnExecute = Event_RenumberExecute
       OnUpdate = Event_RenumberUpdate
     end
@@ -6708,6 +6777,101 @@ object Main: TMain
               48355B1BBB9B0EAEB49176580E86CDB24D6951A269FD3E860129638F87E1D0C1
               96ABC9B86668875A2EF348FACF8C418AF7BEED53499945E2B13D308BAAB6B39E
               33E07FDFF24CE03FD753E231353844E00000000049454E44AE426082}
+          end>
+      end
+      item
+        Name = 'RELAY_DOT'
+        SourceImages = <
+          item
+            Image.Data = {
+              89504E470D0A1A0A0000000D4948445200000030000000301006000000079225
+              C40000000473424954080808087C086488000000097048597300000EC300000E
+              C301C76FA8640000001974455874536F667477617265007777772E696E6B7363
+              6170652E6F72679BEE3C1A00000A7049444154789CDD5C6B501357143EF7EEB2
+              4920210809C107288808F8C05245040B3E18A76A6D7F38636B1F5AEBA83FFBAB
+              0FA733A5D1E96BFAAFFFADDAD1B1C599FEB1F531556B475130A88306EA633051
+              446B1E1820AF4DB2F7F6C7ED365401D93501C2F72793ECEEB967EFB9F7ECD973
+              BE134429A594C20480D53A674E66268024693473E7022044E9AC5900182364B1
+              0000506A32B1733332D8A746F37F19A2C83E03010000843C1E0042287DFC1800
+              638C1D0E008070F8F66D80C6C63B77FAFBC7E0C646041A7B037CF45145454606
+              805E4FC89225008448D2D2A50008615C5030767A2044C8BD7B00001C77F93280
+              DF8FB1CD06F0DD77EDEDCC8063A245F20D60B5BEF4525616004034DAD0004029
+              21B5B50000180B423247560A4222110049C2B8B91980E70381D3A7011A1B1D0E
+              9F2F596326C1009B366DDAC4710065659D9D7575001813B2610300A5183FED32
+              263698412805387D1A00638BE5D42980C6C63FFE88C5123546020DF0D9670B16
+              582C008240C8F6ED009422347D7A22244F0C504AE983070018F3FCBE7D008D8D
+              EDED2ED78B4A4D8001ACD6F9F3172D02002064CB1679A513C28EFA7C8140349A
+              BC95AFD5F23CC692949EAED1705CE256E6F04088D27018409210FAF147803D7B
+              ECF6F676D5D2D41BC06A2D2FAFAE662BFD9D77986A18CB4783415194249EDFB5
+              EBD0A1BB7777EE54ABE0E8811000A51A0DC7611C89E8748280713068361B0C3C
+              EFF54E9F9E95A5D1783C3535C5C50683C351569697A7D33D79F262E311022049
+              94363501ECD9D3D171FEBC6229CA0D60B5CE9FBF7C39F38D9B370F77D6D81B40
+              194C26BD3E2DCDE359BF7EC18229535A5B1B1ACACB8D461615A90342081D3D0A
+              D0D878E3C6B973A3BD0A3FFF1419715703F0E69B0AB59B70F078FCFE68D4643A
+              78F0D225976BFDFABD7B8F1D7BF060CD1A518C462589E3D4C8A474E34680CF3F
+              9F3FBFA262B4D78CC2005F7F5D596936B387D07BEFB1958F15182E3570FBB6CB
+              150A1517EFDDFBDB6F3D3DAFBE1A8DC662942AB94F795E388E90AD5B01BEFA8A
+              052523638401ACD6952B791E201211C51D3B000010D26A47AF506AE2DE3DAF57
+              1467CE3C7AF4EAD5DEDEF272E512E4703B1AA574DBB678583E3446B4B0C7B36A
+              D5E40B274787B3676FDEF4F9AAAAD4BB244A01F2F301E6CDB3DB57AE1CEE2CFE
+              D99FACD6C2C2AC2C004A75BAB56B01C6C7E114169A4C1A8DD3B967CF1B6F1414
+              1C3F3EDC796EF7C04024A2D57674F4F48442B9B9E7CEDDB9D3DF5F5EDED5E572
+              85C345456AC717C5689410ADF6D22587231098366DC58A9292CCCCEE6E75D2D6
+              AD03F8F4D3D9B36D36806FBEE9EAEAEB938F0C39B519190D0D00132F553014CC
+              66834110C2E1152B4A4B8DC6FBF7BFF862C386FCFC932757AD2A2DCDCABA74E9
+              45E5DBED3D3DC1E08C19EA25C82E49A71384D5AB9F3E3AC80072922C9EAB4965
+              6CDD5A5B6B365FBB969D9D91C1F35EAF5A397D7DA1502C969EFEE21A518AD02B
+              AFC4E799619001E4EC646AACFCE741769B73E6582C3ADDFDFB6AE584C3A22849
+              3A5D62741204009D8ED2C58BFFFB2D7E584E0B4F2E188D3A1DC7A94F2FF33CCF
+              631C8D264E238462B1AA2AF91B660F07A391152CF2F31337D0C44030188910A2
+              7E4767666AB51C170C264E238C319E3913E0934F4A4B0D060C20083A5D49090B
+              9B104ADC4013034EA7C7130E4F9BA6F6FAE2628B45AB7DF428711AC9F3ACD120
+              545282E3A5BFC985961687A3BF7FEAD49E9E274F2211E5514C5A1AC721148DD6
+              D6CE9E6D30A80D3F4702A51C57588807D75C270358D89893B37FFF850B6EF79A
+              356A53ED0B17E6E7A7A7777666676764A4A5C9B5E64482E70172737996E3319B
+              012696038AC508A114E3DEDEA1EB097EBF28129296D6DDEDF5462246E3E5CBF7
+              EE0D0C1416B6B777770783E5E5924408A5FC102F9A2343AFD76A31F6FBB76DAB
+              A9C9CDB5D91273374383D2DC5C9EA551753AE69B260EBABB7B7B239182820F3F
+              FCE927A773FBF6648F27081C875024B273675D5D5EDE891346A34EC7F39148F2
+              46A414219DEEDF1DC056D844DA0163058341ABE5B8BEBE5DBBEAEA2C9653A72A
+              2AF2F333323C9EB1189B52AD56F1164D75701C420849D2CB2FCF9AA5D75FBFBE
+              65CBB26526D3952BC95FF143E35F17248ACC0529F799A982A54B8B8A0C866BD7
+              366F5EBC383BFBDAB59C1C96431A4F9D100A87317341A1D0782A3216B0D91C0E
+              BF7FE1C25F7FB5DBFBFAE6CE1D6F7D58F81F0A61B603DCEEF15627D92084524A
+              39EEF4E9CE4E9FAFB6F6FBEFCF9C79F8B0A6663C7542C8E5E2E3DC4984102A2B
+              1B4F850663B87AC0FDFB5EAF28EAF5870FB7B6BADD55559D9D8F1E8542A5A54A
+              E5DB6C4E6720B068D1A1432D2D6EF7C0C0BBEF56579BCD376E24F62E46422C06
+              E072E1C1A4D5544041414E8E46E3F7EFDEBD6EDD8C1967CF2E5F5E5C6C30B4B5
+              A995F7FBEF1D1D3E5F6D6D5B9BD3E9F78FE50B29CF1372F72E060806A3D15BB7
+              645ECDD8299018ECD8515F9F9777F9725191C9A4D53A9D4AAF6704328C0F1EBC
+              78D1ED5EBD5AA6D3245CD1FF20CF733048C89D3B18E0DB6F6FDE1C1860CAA8CF
+              9B8F17E4BCFFCE9D757516CB9F7FB21C8EF270D2E70B8562B1ACAC7DFB9A9BDD
+              6E5617491628753AE579FF5F4992D1B45313D3A74F99220881C0CA95A5A546A3
+              FAFB686B733806062A2A3A3A1E3E0C85B2B313A9A30C4AE3FA0D3280CC8F9759
+              C1A989B7DE5ABCD864B2DBD59622659774E04073B3CB555F2F735C130136AF7E
+              7F5ADA952BF26F830C203726C8FCF8D4445A1ACF2344C8C68D95953939EAEFE3
+              EFBFFBFB2391A9537FF9E5EA558F477994F52C10A2F4FCF9A71B40866045C88D
+              09A9BD13EAEA4A4A32331F3C282C3499B45AF551DEC993767B5F5F4D8D4C7F51
+              2E41665303C4626C5E07630803C81D2192C471274E281F7062E1FDF76B6A7273
+              9B9BE51C90D2EB657ED00F3F34377B3CD5D5CA352004E0F8F1E17AD246A05CDD
+              BA555676E60C0B9B9251111A1B141599CD1A4D7FFF922585857ABD7A1E7F4747
+              4F4F20505EDED2D2D5D5DF3F75EAF3AF90E7EDAFBFE6CD1B9E2D3D82019A9A9A
+              9A240940100461DF3E0000792BA522B66C59B6CC6CBE72253D5D103056CE9290
+              DF908E1CB1D9BCDEFAFA6894158C9E3D132142441120124168FFFEF83C0E8D51
+              900E77EFBE7AD5ED0620847584C88D09A90596F78F46D7AE9D372F2BABA545AD
+              9CDEDE402016CBCE3E7CB8B5D5E359B8307E243E2F1C77E000C0975FDEB8F1F8
+              F1F3E429607D0E6EC5F9F967455A4F20BCFE7A65654ECEAD5B7979999982A09E
+              ED70EEDCCD9B7D7D55554E676FAF28EAF500009274E4086BD0B87E7DB47254BC
+              723736DAED172EB016A5586CB816258EC31880D239732C16ADB6AB4BE928ACA5
+              28F1595A59C3B7DFAEAE36992E5C3876ACBDBDB7B7B252A91CE692286D6A6A6D
+              75BB1F3DFAF8E3D6569FEFE245A57212D0A4277784701CA5AC496FB2F711B067
+              2142181F3CA874C53F8D04B6A95AAD1515B9B9000092F4C107717EFC64811CD5
+              C84189FC6C7C41A9896FD4B65AAD568C0108397AB4BE1E00634A5F7B2D157746
+              8A356A0F07997BAAD1084243032BFC2C5F0E30F158D86CC2E59481FCE69ADC3F
+              F518C73FEBC8CC6434ED588CB18565D26AB239AAF1BA074B0B4B12C7D96C00A1
+              10426D6D93F0CF3A460BC6169649AB327792C52D160BFBCCC961E7EAF583F94C
+              0C32BB0300C0EF6731B9D7CB3E59C955921C0E0051A4F4F6EDC17590F1C43F13
+              A12C6AE7AECFC30000000049454E44AE426082}
           end>
       end>
     Left = 424

@@ -202,6 +202,7 @@ object SCM: TSCM
   end
   object qryEntrant: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     BeforeInsert = qryEntrantBeforeInsert
     AfterScroll = qryEntrantAfterScroll
     IndexFieldNames = 'HeatID'
@@ -603,7 +604,8 @@ object SCM: TSCM
       
         '       Concat('#39'#'#39', Event.EventNum, '#39' - '#39', Distance.Caption, '#39' '#39',' +
         ' Stroke.Caption) AS EventStr,'
-      '       Distance.Meters'
+      '       Distance.Meters,'
+      '       Distance.ABREV'
       'FROM Event'
       '     LEFT OUTER JOIN Stroke ON Stroke.StrokeID = Event.StrokeID'
       
@@ -762,7 +764,7 @@ object SCM: TSCM
     end
     object qryEventluStroke: TStringField
       DisplayLabel = 'Stroke'
-      DisplayWidth = 16
+      DisplayWidth = 14
       FieldKind = fkLookup
       FieldName = 'luStroke'
       LookupDataSet = tblStroke
@@ -827,6 +829,7 @@ object SCM: TSCM
       LookupKeyFields = 'EventTypeID'
       LookupResultField = 'ABREV'
       KeyFields = 'EventTypeID'
+      Visible = False
       Size = 5
       Lookup = True
     end
@@ -859,6 +862,12 @@ object SCM: TSCM
       OnSetText = qryEventScheduleDTSetText
       DisplayFormat = 'hh:nn'
       EditMask = '!90:00;1;_'
+    end
+    object qryEventABREV: TWideStringField
+      FieldName = 'ABREV'
+      Origin = 'ABREV'
+      Visible = False
+      Size = 8
     end
   end
   object qryFNameEllipse: TFDQuery
@@ -2208,6 +2217,7 @@ object SCM: TSCM
   end
   object tblSwimmerCAT: TFDTable
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'SwimmerCategoryID'
     Connection = scmConnection
     UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]

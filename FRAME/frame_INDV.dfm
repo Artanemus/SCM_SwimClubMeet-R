@@ -3,6 +3,12 @@ object frameINDV: TframeINDV
   Top = 0
   Width = 1075
   Height = 324
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -16
+  Font.Name = 'Segoe UI'
+  Font.Style = []
+  ParentFont = False
   TabOrder = 0
   object Grid: TDBGrid
     Left = 0
@@ -17,7 +23,7 @@ object frameINDV: TframeINDV
     TabOrder = 0
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
-    TitleFont.Height = -12
+    TitleFont.Height = -16
     TitleFont.Name = 'Segoe UI'
     TitleFont.Style = []
     OnCellClick = GridCellClick

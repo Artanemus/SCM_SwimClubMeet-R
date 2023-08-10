@@ -171,6 +171,7 @@ type
     qryTeamEntrantSwimOrder: TIntegerField;
     qryTeamEntrantStrokeID: TIntegerField;
     qryTeamEntrantluStroke: TStringField;
+    qryEventABREV: TWideStringField;
     procedure DataModuleCreate(Sender: TObject);
     procedure qryEntrantAfterScroll(DataSet: TDataSet);
     procedure qryEntrantBeforeInsert(DataSet: TDataSet);
@@ -2097,15 +2098,31 @@ end;
 procedure TSCM.qryEventScheduleDTGetText(Sender: TField; var Text: string;
   DisplayText: Boolean);
 begin
+  if Sender.IsNull then
+  Text := ''
+  else
   Text := FormatDateTime('hh:nn', Sender.AsDateTime);
 end;
 
 procedure TSCM.qryEventScheduleDTSetText(Sender: TField; const Text: string);
+var
+dt: TDateTime;
+fs: TFormatSettings;
+s: string;
 begin
-  if Pos(' ', Text) > 0 then
-    Sender.AsDateTime := StrToTime(ReplaceText(Text, ' ', '0'))
-  else
-    Sender.AsDateTime := StrToTime(Text);
+  if Length(Text) = 0 then
+  begin
+    Sender.Clear;
+    exit;
+  end;
+
+  s := ReplaceText(Text, ' ', '0');  // tidy-up : replace editmask spaces
+  fs := TFormatSettings.Create;  // class record - free not required.
+  if TryStrToTime(s, dt, fs) then
+  begin
+    Sender.AsDateTime := dt; // NOTE: Only time portion is used by DB.
+  end;
+
 end;
 
 procedure TSCM.qryHeatAfterDelete(DataSet: TDataSet);

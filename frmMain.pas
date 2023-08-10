@@ -18,6 +18,14 @@ uses
   frame_INDV, frame_TEAM;
 
 type
+  TGridHelper = class helper for TDBGrid
+    function ColumnByName(const AName : String) : TColumn;
+  end;
+
+
+
+
+type
 
   TMain = class(TForm)
     ActionMainMenuBar1: TActionMainMenuBar;
@@ -273,6 +281,8 @@ type
     pnlRight: TPanel;
     pnlClient: TPanel;
     TEAM: TframeTEAM;
+    vimgRelayDot: TVirtualImage;
+    lblNoHeatsMessage: TLabel;
     procedure ActionManager1Update(Action: TBasicAction; var Handled: boolean);
     procedure btnClearSearchClick(Sender: TObject);
     procedure clistCheckBoxClick(Sender: TObject);
@@ -441,11 +451,11 @@ type
       EventType: scmEventFinalsType);
     // Miscellaneous - uncatagorized
     procedure GetSCMPreferences();
-    procedure Refresh_Entrant();
     // REFRESH
-    procedure Refresh_Event();
-    procedure Refresh_Heat();
-    procedure Refresh_Nominate();
+    procedure Refresh_Entrant(DoBookmark: boolean = true);
+    procedure Refresh_Event(DoBookmark: boolean = true);
+    procedure Refresh_Heat(DoBookmark: boolean = true);
+    procedure Refresh_Nominate(DoBookmark: boolean = true);
     // Generic TAction onExecute (extended params) for BATCH PRINT
     procedure Session_BatchReportExecute(Sender: TObject; RptType: scmRptType);
     // ENTRANT_GRID Toggle column display
@@ -1231,6 +1241,7 @@ begin
   if (rtnValue = mrYes) then
   begin
     SCM.Event_Delete(SCM.Event_ID); // delete the current selected event.
+    // do not bookmark ----
     Refresh_Event;
   end;
 end;
@@ -1590,20 +1601,31 @@ begin
   // --------------------------------------------------------------
   // TOGGLE VISIBILITY OF INDV or TEAM GRIDS
   // --------------------------------------------------------------
-  if SCM.Event_IsTEAM then
+  if SCM.dsHeat.DataSet.IsEmpty then
   begin
-    if not TEAM.Visible then  TEAM.Visible := true;
-    if INDV.Visible then INDV.Visible := false;
+    INDV.Visible := false;
+    TEAM.Visible := false;
   end
-  else // DEFAULT SETUP
+  else
   begin
-    if TEAM.Visible then  TEAM.Visible := false;
-    if not INDV.Visible then INDV.Visible := true;
-    // SYNC the enabled state of the INDV.Grid to the
-    // session/heat status.
-    if (INDV.Grid.Enabled <> EnabledState) then
-      INDV.Grid.Enabled := EnabledState;
+    if SCM.Event_IsTEAM then
+    begin
+      TEAM.Visible := true;
+      INDV.Visible := false;
+    end
+    else // DEFAULT SETUP
+    begin
+      TEAM.Visible := false;
+      INDV.Visible := true;
+    end;
   end;
+
+  // SYNC the enabled state of the INDV.Grid to the
+  // session/heat status.
+  if (INDV.Grid.Enabled <> EnabledState) then
+    INDV.Grid.Enabled := EnabledState;
+  if (TEAM.Grid.Enabled <> EnabledState) then
+    TEAM.Grid.Enabled := EnabledState;
 
 end;
 
@@ -1639,10 +1661,11 @@ begin
     fld := SCM.qryEvent.FindField('ScheduleDT');
     if Assigned(fld) then
       fld.Visible := Checked;
+
     // INDV or RELAY event type ....
-    fld := SCM.qryEvent.FindField('luEventType');
-    if Assigned(fld) then
-      fld.Visible := Checked;
+//    fld := SCM.qryEvent.FindField('luEventType');
+//    if Assigned(fld) then
+//      fld.Visible := Checked;
 
     // Fields that are always visible in either grid display mode.
     // n o m i n a t i o n s  ...
@@ -1692,6 +1715,7 @@ var
   // 24/04/2020 uses simple INI access
   result: TModalResult;
   hf: NativeUInt;
+  col: TColumn;
 begin
   bootprogress := nil;
   SCMEventList := nil;
@@ -1980,6 +2004,19 @@ begin
   INDV.Grid.Columns.State := csDefault;
   Nominate_Grid.Columns.State := csDefault;
 
+  {
+    Small tidy-up on the grid displays.
+    Set the drop-downs rowcount.
+    Uses developer's Class Helper
+  }
+  col := Event_Grid.ColumnByName('luDistance');
+  if Assigned(col) then  col.DropDownRows := 12;
+  col := Event_Grid.ColumnByName('luStroke');
+  if Assigned(col) then  col.DropDownRows := 6;
+  col := Event_Grid.ColumnByName('luEventType');
+  if Assigned(col) then  col.DropDownRows := 3;
+
+
   // PREPARE ENTRANT GRID COLUMN VISIBILITY
   ToggleDCode(prefEnableDCode);
   ToggleSwimmerCAT(prefDisplaySwimmerCAT);
@@ -2187,14 +2224,21 @@ procedure TMain.HeatNavigateControlListBeforeDrawItem(AIndex: integer;
   ACanvas: TCanvas; ARect: TRect; AState: TOwnerDrawState);
 var
   s: string;
-  i: integer;
+  i, j: integer;
 begin
   with BindSourceDB2.DataSet do
   begin
-    lblHeatNavigatorDistance.Caption := FieldByName('Meters').AsString;
+    lblHeatNavigatorDistance.Caption := FieldByName('ABREV').AsString;
     s := FieldByName('luStroke').AsString;
     i := FieldByName('StrokeID').AsInteger;
+    j := FieldByName('EventTypeID').AsInteger;
     s := s.SubString(0, 4);
+
+    // RELAY DOT VISIBILITY
+    if (j=0) or (j=1) then
+      vimgRelayDot.Visible := false
+    else
+      vimgRelayDot.Visible := true;
 
     lblHeatStrokeStr.Visible := false;
     case i of
@@ -2723,6 +2767,11 @@ end;
 procedure TMain.Heat_NewRecordExecute(Sender: TObject);
 begin
   SCM.Heat_NewRecord;
+  // ASSERT GRID VISIBILITY
+  if SCM.Event_IsTEAM then
+    TEAM.Visible := true
+  else
+    INDV.Visible := false;
 end;
 
 procedure TMain.Heat_NewRecordUpdate(Sender: TObject);
@@ -2914,13 +2963,15 @@ begin
 end;
 
 procedure TMain.Heat_Scroll(var Msg: TMessage);
-var
-  DoEnable: boolean;
+//var
+//  DoEnable: boolean;
 begin
+  {
   DoEnable := false;
   // Would we see a scroll-msg if a there was no connection?
   if not AssertConnection then
     exit;
+
   // Is the session is locked?
   if (SCM.dsSession.DataSet.FieldByName('SessionStatusID').AsInteger = 1) then
   begin
@@ -2928,9 +2979,13 @@ begin
     if (SCM.dsHeat.DataSet.FieldByName('HeatStatusID').AsInteger <> 3) then
       DoEnable := true;
   end;
-  // Set the entrant grid's 'disabled' state.
+  // Set the INDV grid's 'disabled' state.
   if (INDV.Grid.Enabled <> DoEnable) then
     INDV.Grid.Enabled := DoEnable;
+  // Set the TEAM 'disabled' state.
+  if (TEAM.Grid.Enabled <> DoEnable) then
+    TEAM.Grid.Enabled := DoEnable;
+  }
 end;
 
 procedure TMain.Heat_TimeKeeperReportExecute(Sender: TObject);
@@ -3388,7 +3443,7 @@ begin
   end;
 end;
 
-procedure TMain.Refresh_Entrant;
+procedure TMain.Refresh_Entrant(DoBookmark: boolean = true);
 var
   bm: TBookmark;
 begin
@@ -3412,7 +3467,7 @@ begin
   end;
 end;
 
-procedure TMain.Refresh_Event;
+procedure TMain.Refresh_Event(DoBookmark: boolean = true);
 var
   bm: TBookmark;
 begin
@@ -3426,6 +3481,7 @@ begin
     Open;
     if Active then
     begin
+      SCM.Event_Renumber;
       try
         GotoBookmark(bm);
       except
@@ -3436,7 +3492,7 @@ begin
   end;
 end;
 
-procedure TMain.Refresh_Heat;
+procedure TMain.Refresh_Heat(DoBookmark: boolean = true);
 var
   bm: TBookmark;
 begin
@@ -3460,7 +3516,7 @@ begin
   end;
 end;
 
-procedure TMain.Refresh_Nominate;
+procedure TMain.Refresh_Nominate(DoBookmark: boolean = true);
 var
   bm: TBookmark;
 begin
@@ -3887,6 +3943,9 @@ begin
       exit;
   end;
 
+  // MOVE INTO SCM AS DELETE SESSION
+  {TODO -oBSA -cGeneral : MOVE CODE TO dmSCM}
+
   SCM.dsSession.DataSet.DisableControls;
   SCM.dsEvent.DataSet.DisableControls;
   SCM.dsHeat.DataSet.DisableControls;
@@ -3906,7 +3965,9 @@ begin
         SCM.dsHeat.DataSet.First;
         while not SCM.dsHeat.DataSet.Eof do
         begin
-          SQLstr := 'DELETE FROM dbo.Entrant WHERE Entrant.HeatID := ' +
+          // FRAMES WIP
+          {TODO -oBSA -cGeneral : TEAM : TEAMENTRANT to be included.}
+          SQLstr := 'DELETE FROM SwimClubMeet.dbo.Entrant WHERE Entrant.HeatID = ' +
             IntToStr(SCM.dsHeat.DataSet.FieldByName('HeatID').AsInteger);
           SCM.scmConnection.ExecSQL(SQLstr);
           SCM.dsHeat.DataSet.Next;
@@ -3914,12 +3975,12 @@ begin
       end;
 
       // DELETE HEATS  .. FROM EVENT
-      SQLstr := 'DELETE FROM dbo.HeatIndividual WHERE HeatIndividual.EventID := '
+      SQLstr := 'DELETE FROM SwimClubMeet.dbo.HeatIndividual WHERE HeatIndividual.EventID = '
         + IntToStr(SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger);
       SCM.scmConnection.ExecSQL(SQLstr);
 
       // DELETE NOMINATIONS  ... FROM EVENT
-      SQLstr := 'DELETE FROM dbo.Nominee WHERE Nominee.EventID := ' +
+      SQLstr := 'DELETE FROM SwimClubMeet.dbo.Nominee WHERE Nominee.EventID = ' +
         IntToStr(SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger);
       SCM.scmConnection.ExecSQL(SQLstr);
 
@@ -3928,12 +3989,12 @@ begin
   end;
 
   // DELETE ALL EVENTS associated with current selected session
-  SQLstr := 'DELETE FROM dbo.Event WHERE Event.SessionID := ' +
+  SQLstr := 'DELETE FROM SwimClubMeet.dbo.Event WHERE Event.SessionID = ' +
     IntToStr(SCM.dsSession.DataSet.FieldByName('SessionID').AsInteger);
   SCM.scmConnection.ExecSQL(SQLstr);
 
   // FINALLY ... DELETE the SESSION
-  SQLstr := 'DELETE FROM dbo.Session WHERE Session.SessionID := ' +
+  SQLstr := 'DELETE FROM SwimClubMeet.dbo.Session WHERE Session.SessionID = ' +
     IntToStr(SCM.dsSession.DataSet.FieldByName('SessionID').AsInteger);
   SCM.scmConnection.ExecSQL(SQLstr);
 
@@ -4551,6 +4612,21 @@ begin
   if AssertConnection then
     DoEnable := true;
   TAction(Sender).Enabled := DoEnable;
+end;
+
+{ TGridHelper }
+
+function TGridHelper.ColumnByName(const AName: String): TColumn;
+var
+  i : Integer;
+begin
+  Result := Nil;
+  for i := 0 to Columns.Count - 1 do begin
+     if (Columns[i].Field <> Nil) and (CompareText(Columns[i].FieldName, AName) = 0) then begin
+       Result := Columns[i];
+       exit;
+     end;
+  end;
 end;
 
 end.
