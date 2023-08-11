@@ -282,7 +282,7 @@ type
     pnlClient: TPanel;
     TEAM: TframeTEAM;
     vimgRelayDot: TVirtualImage;
-    lblNoHeatsMessage: TLabel;
+    vimgNoHeatsMsg: TVirtualImage;
     procedure ActionManager1Update(Action: TBasicAction; var Handled: boolean);
     procedure btnClearSearchClick(Sender: TObject);
     procedure clistCheckBoxClick(Sender: TObject);
@@ -463,6 +463,7 @@ type
     procedure ToggleDivisions(SetVisible: boolean);
     procedure ToggleSwimmerCAT(SetVisible: boolean);
     procedure ToggleTeamEvents(SetVisible: boolean);
+    procedure ToggleVisibileINDVTEAM;
   protected
     // posted by dmSCMNom : a refresh of the entrant grid is required.
     procedure Entrant_LaneWasCleaned(var Msg: TMessage);
@@ -1595,30 +1596,7 @@ begin
       EnabledState := true;
   end;
 
-  // FRAMES
-  // if prefEnableTeamEvents then
-
-  // --------------------------------------------------------------
-  // TOGGLE VISIBILITY OF INDV or TEAM GRIDS
-  // --------------------------------------------------------------
-  if SCM.dsHeat.DataSet.IsEmpty then
-  begin
-    INDV.Visible := false;
-    TEAM.Visible := false;
-  end
-  else
-  begin
-    if SCM.Event_IsTEAM then
-    begin
-      TEAM.Visible := true;
-      INDV.Visible := false;
-    end
-    else // DEFAULT SETUP
-    begin
-      TEAM.Visible := false;
-      INDV.Visible := true;
-    end;
-  end;
+  ToggleVisibileINDVTEAM;
 
   // SYNC the enabled state of the INDV.Grid to the
   // session/heat status.
@@ -2565,6 +2543,8 @@ begin
   // -----------------------------------------------------------------
   if (results = mrYes) then
     SCM.Heat_Delete(SCM.dsHeat.DataSet.FieldByName('HeatID').AsInteger);
+
+  ToggleVisibileINDVTEAM;
 end;
 
 procedure TMain.Heat_DeleteUpdate(Sender: TObject);
@@ -2767,11 +2747,7 @@ end;
 procedure TMain.Heat_NewRecordExecute(Sender: TObject);
 begin
   SCM.Heat_NewRecord;
-  // ASSERT GRID VISIBILITY
-  if SCM.Event_IsTEAM then
-    TEAM.Visible := true
-  else
-    INDV.Visible := false;
+  ToggleVisibileINDVTEAM;
 end;
 
 procedure TMain.Heat_NewRecordUpdate(Sender: TObject);
@@ -4007,6 +3983,8 @@ begin
   // update the grid views
   SCM_RefreshExecute(self);
 
+
+
 end;
 
 procedure TMain.Session_DeleteUpdate(Sender: TObject);
@@ -4183,6 +4161,34 @@ begin
   fDoStatusBarUpdate := true; // permits ACTION (flag sets false after update)
   SCM_StatusBar.Update;
   SCM_StatusBar.Execute;
+end;
+
+procedure TMain.ToggleVisibileINDVTEAM;
+begin
+  // FRAMES
+  // if prefEnableTeamEvents then
+  // --------------------------------------------------------------
+  // TOGGLE VISIBILITY OF INDV or TEAM GRIDS
+  // --------------------------------------------------------------
+  if SCM.dsHeat.DataSet.IsEmpty then
+  begin
+    INDV.Visible := false;
+    TEAM.Visible := false;
+  end
+  else
+  begin
+    if SCM.Event_IsTEAM then
+    begin
+      TEAM.Visible := true;
+      INDV.Visible := false;
+    end
+    else
+    // DEFAULT SETUP
+    begin
+      TEAM.Visible := false;
+      INDV.Visible := true;
+    end;
+  end;
 end;
 
 procedure TMain.Session_SortExecute(Sender: TObject);

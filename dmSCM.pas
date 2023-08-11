@@ -30,9 +30,11 @@ type
     dsSession: TDataSource;
     dsSwimClub: TDataSource;
     dsTeam: TDataSource;
+    dsTeamEntrant: TDataSource;
     IntegerField1: TIntegerField;
     IntegerField3: TIntegerField;
     IntegerField4: TIntegerField;
+    IntegerField5: TIntegerField;
     luDisqualifyCode: TDataSource;
     luDistance: TDataSource;
     luEventStatus: TDataSource;
@@ -65,6 +67,7 @@ type
     qryEntrantTIME: TTimeField;
     qryEntrantTimeToBeat: TTimeField;
     qryEvent: TFDQuery;
+    qryEventABREV: TWideStringField;
     qryEventCaption: TWideStringField;
     qryEventClosedDT: TSQLTimeStampField;
     qryEventDistanceID: TIntegerField;
@@ -139,7 +142,16 @@ type
     qrySwapEntrants: TFDQuery;
     qrySwimClub: TFDQuery;
     qryTeam: TFDQuery;
+    qryTeamEntrant: TFDQuery;
+    qryTeamEntrantluStroke: TStringField;
+    qryTeamEntrantStrokeID: TIntegerField;
+    qryTeamEntrantSwimOrder: TIntegerField;
+    qryTeamEntrantTeamEntrantID: TFDAutoIncField;
+    qryTeamEntrantTeamID: TIntegerField;
     qryTeamHeatLaneCount: TFDQuery;
+    qryTeamTeamID: TFDAutoIncField;
+    qryTeamTeamName: TWideStringField;
+    qryTeamTeamNameID: TIntegerField;
     qryTestForNominees: TFDQuery;
     scmConnection: TFDConnection;
     tblDisqualifyCode: TFDTable;
@@ -155,23 +167,11 @@ type
     tblSwimmerCAT: TFDTable;
     TimeField1: TTimeField;
     TimeField2: TTimeField;
-    WideStringField2: TWideStringField;
-    qryTeamTeamID: TFDAutoIncField;
-    qryTeamTeamNameID: TIntegerField;
-    qryTeamTeamName: TWideStringField;
-    qryTeamEntrant: TFDQuery;
-    IntegerField5: TIntegerField;
-    WideStringField1: TWideStringField;
     TimeField3: TTimeField;
     TimeField4: TTimeField;
     TimeField5: TTimeField;
-    dsTeamEntrant: TDataSource;
-    qryTeamEntrantTeamEntrantID: TFDAutoIncField;
-    qryTeamEntrantTeamID: TIntegerField;
-    qryTeamEntrantSwimOrder: TIntegerField;
-    qryTeamEntrantStrokeID: TIntegerField;
-    qryTeamEntrantluStroke: TStringField;
-    qryEventABREV: TWideStringField;
+    WideStringField1: TWideStringField;
+    WideStringField2: TWideStringField;
     procedure DataModuleCreate(Sender: TObject);
     procedure qryEntrantAfterScroll(DataSet: TDataSet);
     procedure qryEntrantBeforeInsert(DataSet: TDataSet);
@@ -218,11 +218,11 @@ type
     procedure TEAM_ClearLane(aTeamID: integer);
     procedure TEAM_CreateEmptyLane(aHeatID, aLane: integer);
     function TEAM_EmptyLane(): Boolean;
-
   public
     { Public declarations }
     procedure ActivateTable();
     procedure DeActivateTable();
+    function EmptyLane(): Boolean;
     // ENTRANT  INDV - INDIVIDUAL LANES (ENTRANTS)
     function Entrant_CountLanes(aHeatID: integer): integer;
     procedure Entrant_Delete(aEntrantID: integer);
@@ -253,8 +253,8 @@ type
     function Event_HasRacedHeats(): Boolean; // current event
     function Event_ID(): integer;
     function Event_IsINDV(): Boolean; // current event
-    function Event_IsTEAM(): Boolean; // current event
     function Event_IsSafeToDelete(aEventID: integer): Boolean;
+    function Event_IsTEAM(): Boolean; // current event
     function Event_Locate(aEventID: integer): Boolean; overload;
     function Event_Locate(aDistanceID, aStrokeID: integer): Boolean; overload;
     procedure Event_Renumber(DoLocate: Boolean = true);
@@ -306,7 +306,7 @@ type
     procedure Session_ToggleLockState();
     // SPLIT  (INDV + TEAM)
     procedure Split_DeleteALLSplitTimesINDV(aEntrantID: integer);
-    procedure Split_DeleteALLSplitTimesTEAM(aTeamEntrantID: integer);
+    procedure Split_DeleteALLSplitTimesTEAM(aTeamID: integer);
     // SWAP  - ENTRANTS (INDV ONLY)
     function SwapLanes(EntrantIDA, EntrantIDB: integer): Boolean; overload;
     function SwapLanes(HeatIDA, LaneA, HeatIDB, LaneB: integer)
@@ -327,13 +327,15 @@ type
     function SwimClub_StartOfSwimSeason(): TDateTime; overload;
     function SwimClub_StartOfSwimSeason(SwimClubID: integer)
       : TDateTime; overload;
+    // TEAMENTRANT (TEAMS-RELAYS)
+    procedure TEAMENTRANT_Delete(aTeamEntrantID: integer);
+    procedure TEAMENTRANT_DeleteALL(aTeamID: integer);
     // TEAM LANES (RELAYS)
     function TEAM_CountLanes(aHeatID: integer): integer;
     procedure TEAM_Delete(aTeamID: integer);
     procedure TEAM_DeleteALL(aHeatID: integer);
     procedure TEAM_DeleteALLExclude(aHeatID: integer;
       DoExclude: Boolean = true); // exclude closed or raced heats
-    procedure TEAM_DeleteALLTeamEntrant(aTeamID: integer);
     procedure TEAM_DeleteExcessLanes(aHeatID: integer);
     procedure TEAM_DeleteExclude(aTeamID: integer; DoExclude: Boolean);
     // exclude closed or raced heats
@@ -345,10 +347,6 @@ type
     procedure TEAM_RenumberLanes(aHeatID: integer);
     function TEAM_Sort(aHeatID: integer): Boolean;
     function TEAM_Strike(): Boolean;
-
-    function EmptyLane(): Boolean;
-
-
   published
     property SCMActive: Boolean read fSCMActive write fSCMActive;
   end;
@@ -2653,7 +2651,7 @@ begin
   // dsSplitINDV.DataSet.EnableControls;
 end;
 
-procedure TSCM.Split_DeleteALLSplitTimesTEAM(aTeamEntrantID: integer);
+procedure TSCM.Split_DeleteALLSplitTimesTEAM(aTeamID: integer);
 var
   SQL: string;
 begin
@@ -2662,8 +2660,8 @@ begin
   { TODO -oBSA -cGeneral : Add qrySplitTEAM - master-detail... }
   // dsSplitTEAM.DataSet.DisableControls;
   // DELETE SPLIT DATA FOR TEAM ENTRANT  (RELAYS)
-  SQL := 'DELETE FROM dbo.TeamSplit WHERE Split.TeamEntrantID = :ID';
-  scmConnection.ExecSQL(SQL, [aTeamEntrantID]);
+  SQL := 'DELETE FROM dbo.TeamSplit WHERE Split.TeamID = :ID';
+  scmConnection.ExecSQL(SQL, [aTeamID]);
   // dsSplitTEAM.DataSet.EnableControls;
 end;
 
@@ -2980,6 +2978,39 @@ begin
   end;
 end;
 
+procedure TSCM.TEAMENTRANT_Delete(aTeamEntrantID: integer);
+var
+  SQL: string;
+begin
+    dsTeamEntrant.DataSet.DisableControls;
+    { DELETE SPLIT TIMES
+    Not implemented for team entrants. Refer to TeamSplit
+    //    Split_DeleteALLSplitTimesTEAMENTRANT(aTeamEntrantID);
+    }
+    // DELETE THE ENTRANT FROM THE TEAM
+    // Note: State of heat (raced/closed) not considered.
+    // Note: Does not remove nomination to Event.
+    SQL := 'DELETE FROM [SwimClubMeet].[dbo].[TeamEntrant] WHERE [TeamEntrantID] = :ID';
+    scmConnection.ExecSQL(SQL, [aTeamEntrantID]);
+    dsTeamEntrant.DataSet.EnableControls;
+end;
+
+procedure TSCM.TEAMENTRANT_DeleteALL(aTeamID: integer);
+var
+  SQL: string;
+begin
+    dsTeamEntrant.DataSet.DisableControls;
+    { DELETE SPLIT TIMES
+    Not implemented for team entrants. Refer to TeamSplit
+    //    Split_DeleteALLSplitTimesTEAMENTRANT(aTeamEntrantID);
+    }
+    // DELETE ALL TEAM-ENTRANTS FROM TEAM
+    // Note: State of heat (raced/closed) not considered.
+    SQL := 'DELETE FROM [SwimClubMeet].[dbo].[TeamEntrant] WHERE [TeamID] = :ID';
+    scmConnection.ExecSQL(SQL, [aTeamID]);
+    dsTeamEntrant.DataSet.EnableControls;
+end;
+
 procedure TSCM.TEAM_ClearLane(aTeamID: integer);
 var
   SearchOptions: TLocateOptions;
@@ -3011,7 +3042,7 @@ begin
       tbl.FieldByName('IsScratched').AsBoolean := false;
       tbl.Post;
 
-      TEAM_DeleteALLTeamEntrant(aTeamID);
+      TEAMENTRANT_DeleteALL(aTeamID);
       Split_DeleteALLSplitTimesTEAM(aTeamID);
     end;
   end;
@@ -3061,12 +3092,12 @@ end;
 
 procedure TSCM.TEAM_Delete(aTeamID: integer);
 begin
-  TEAM_DeleteExclude(aTeamID, false); // Ignore HeatStatusID
+  TEAM_DeleteExclude(aTeamID, false); // Even if team is in race or closed heat.
 end;
 
 procedure TSCM.TEAM_DeleteALL(aHeatID: integer);
 begin
-  TEAM_DeleteALLExclude(aHeatID, false);
+  TEAM_DeleteALLExclude(aHeatID, false); // Including teams in race or closed heat.
 end;
 
 procedure TSCM.TEAM_DeleteALLExclude(aHeatID: integer; DoExclude: Boolean);
@@ -3079,7 +3110,7 @@ begin
   qry.Connection := scmConnection;
   qry.SQL.Text := 'SELECT [Team].[TeamID], [HeatIndividual].[HeatStatusID] ' +
     'FROM [SwimClubMeet].[dbo].[Team] ' +
-    'INNER JOIN HeatIndividual ON Entrant.HeatID = HeatIndividual.HeatID ' +
+    'INNER JOIN HeatIndividual ON Team.HeatID = HeatIndividual.HeatID ' +
     'WHERE [Team].HeatID = ' + IntToStr(aHeatID);
   qry.IndexFieldNames := 'TeamID';
   qry.Open;
@@ -3090,17 +3121,14 @@ begin
       aTeamID := qry.FieldByName('TeamID').AsInteger;
       if (qry.FieldByName('HeatStatusID').AsInteger = 1) or (DoExclude = false)
       then
-        TEAM_DeleteExclude(aTeamID, DoExclude);
+      begin
+        TEAM_DeleteExclude(aTeamID, false); // Also performs - Delete TeamSplit/TeamEntrant.
+      end;
       qry.Next;
     end;
   end;
   qry.Close;
   qry.Free;
-end;
-
-procedure TSCM.TEAM_DeleteALLTeamEntrant(aTeamID: integer);
-begin
-  {TODO -oBSA -cGeneral : CODE : delete ALL team entrants ...}
 end;
 
 procedure TSCM.TEAM_DeleteExcessLanes(aHeatID: integer);
@@ -3149,16 +3177,15 @@ begin
   HeatStatusID := TEAM_HeatStatusID(aTeamID);
   if (HeatStatusID = 1) or (DoExclude = false) then
   begin
-    dsEntrant.DataSet.DisableControls;
+    dsTeam.DataSet.DisableControls;
     // DELETE SPLIT TIMES
-    Split_DeleteALLSplitTimesINDV(aTeamID);
+    Split_DeleteALLSplitTimesTEAM(aTeamID);
     // DELETE TEAM-ENTRANTS FROM RELAY
-    SQL := 'DELETE FROM [SwimClubMeet].[dbo].[TeamEntrant] WHERE [TeamID] = :ID';
-    scmConnection.ExecSQL(SQL, [aTeamID]);
+    TEAMENTRANT_DeleteALL(aTeamID);
     // FINALLY DELETE TEAM RECORD
     SQL := 'DELETE FROM [SwimClubMeet].[dbo].[Team] WHERE [TeamID] = :ID';
     scmConnection.ExecSQL(SQL, [aTeamID]);
-    dsEntrant.DataSet.EnableControls;
+    dsTeam.DataSet.EnableControls;
   end;
 end;
 
