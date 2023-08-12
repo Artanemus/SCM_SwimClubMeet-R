@@ -2706,8 +2706,8 @@ object CloneSession: TCloneSession
     Height = 42
     Align = alBottom
     TabOrder = 0
-    ExplicitTop = 123
-    ExplicitWidth = 347
+    ExplicitTop = 121
+    ExplicitWidth = 339
     object btnCancel: TButton
       Left = 96
       Top = 8
@@ -2739,7 +2739,6 @@ object CloneSession: TCloneSession
       '      ,[EventNum]'
       '      ,[Caption]'
       '      ,[SessionID]'
-      '      ,[EventTypeID]'
       '      ,[StrokeID]'
       '      ,[DistanceID]'
       '      ,[EventStatusID]'

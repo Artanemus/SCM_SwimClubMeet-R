@@ -1169,10 +1169,10 @@ object AutoBuildV2: TAutoBuildV2
       ''
       
         'INSERT INTO [Event] (Caption, DistanceID, StrokeID, EventStatusI' +
-        'D, SessionID, EventNum, EventTypeID)'
+        'D, SessionID, EventNum)'
       
         'VALUES (@Caption, @DistanceID, @StrokeID, 1, @SessionID, (@MaxEv' +
-        'entNum+1), 1);'
+        'entNum+1));'
       ''
       ''
       ' '

@@ -1,4 +1,25 @@
 unit frmMain;
+{
+ RUNNING FireDAC Monitor
+ RUN FireDAC Monitor tool
+ Place TFDMoniRemoteClientLink  onto main form
+ Insert into connection definition (SEE - SCMSimpleConnect.pas)
+}
+//{$IFDEF DEBUG}
+//  fDBConnection.Params.Add('MonitorBy=Remote');
+//{$ENDIF}
+{
+WRAP SECTION TO ENABLE AND DISABLE MONITORING.
+}
+//{$IFDEF DEBUG}
+//  { TODO -oBSA -cGeneral : FireDAC Tracing - DISABLE DEBBUG }
+//  SCM.scmConnection.ConnectionIntf.Tracing := false;
+//{$ENDIF}
+
+//{$IFDEF DEBUG}
+//        { TODO -oBSA -cGeneral : FireDAC- DISABLE DEBBUG }
+//        SCM.scmConnection.ConnectionIntf.Tracing := true;
+//{$ENDIF}
 
 interface
 
@@ -82,7 +103,6 @@ type
     Event_Renumber: TAction;
     Event_Report: TAction;
     Event_ToggleGridView: TAction;
-    FDMoniRemoteClientLink1: TFDMoniRemoteClientLink;
     File_Exit: TAction;
     File_ExportCarnival: TAction;
     File_ImportCarnival: TAction;
@@ -252,7 +272,6 @@ type
     spbtnSessionReport: TSpeedButton;
     spbtnSessionToggleLock: TSpeedButton;
     spbtnSessionToggleVisible: TSpeedButton;
-    SQLQuery1: TSQLQuery;
     StatusBar1: TStatusBar;
     StrikeEntrant1: TMenuItem;
     SwapLanes1: TMenuItem;
@@ -462,7 +481,7 @@ type
     procedure ToggleDCode(EnableFINA: boolean);
     procedure ToggleDivisions(SetVisible: boolean);
     procedure ToggleSwimmerCAT(SetVisible: boolean);
-    procedure ToggleTeamEvents(SetVisible: boolean);
+//    procedure ToggleTeamEvents(SetVisible: boolean);
     procedure ToggleVisibileINDVTEAM;
   protected
     // posted by dmSCMNom : a refresh of the entrant grid is required.
@@ -481,6 +500,7 @@ type
       message SCM_SESSIONASSERTSTATUSSTATE;
     // windows messages ....
     procedure Session_Scroll(var Msg: TMessage); message SCM_SESSIONSCROLL;
+    procedure UpdateINDVTEAM(var Msg: TMessage); message SCM_UPDATEINDVTEAM;
   public
     { Public declarations }
     fDoStatusBarUpdate: boolean; // FLAG ACTION - SCM_StatusBar.Enabled
@@ -1991,15 +2011,15 @@ begin
   if Assigned(col) then  col.DropDownRows := 12;
   col := Event_Grid.ColumnByName('luStroke');
   if Assigned(col) then  col.DropDownRows := 6;
-  col := Event_Grid.ColumnByName('luEventType');
-  if Assigned(col) then  col.DropDownRows := 3;
+//  col := Event_Grid.ColumnByName('luEventType');
+//  if Assigned(col) then  col.DropDownRows := 3;
 
 
   // PREPARE ENTRANT GRID COLUMN VISIBILITY
   ToggleDCode(prefEnableDCode);
   ToggleSwimmerCAT(prefDisplaySwimmerCAT);
   ToggleDivisions(prefDisplayDivisions);
-  ToggleTeamEvents(prefEnableTeamEvents);
+//  ToggleTeamEvents(prefEnableTeamEvents);
 
 end;
 
@@ -3326,10 +3346,7 @@ end;
 procedure TMain.PageControl1Change(Sender: TObject);
 begin
 
-{$IFDEF DEBUG}
-  { TODO -oBSA -cGeneral : FireDAC Tracing - DISABLE DEBBUG }
-  SCM.scmConnection.ConnectionIntf.Tracing := false;
-{$ENDIF}
+
   // Update page
   case (PageControl1.TabIndex) of
     // 0: // S e s s i o n .
@@ -3371,10 +3388,7 @@ begin
       begin
         if HeatControlList.CanFocus then
           HeatControlList.SetFocus;
-{$IFDEF DEBUG}
-        { TODO -oBSA -cGeneral : FireDAC- DISABLE DEBBUG }
-        SCM.scmConnection.ConnectionIntf.Tracing := true;
-{$ENDIF}
+
       end;
   end;
 end;
@@ -4372,7 +4386,7 @@ begin
   EnableControls;
   end;
 end;
-
+{
 procedure TMain.ToggleTeamEvents(SetVisible: boolean);
 var
   fld: TField;
@@ -4385,9 +4399,8 @@ begin
     fld.Visible := SetVisible;
   EnableControls;
   end;
-  // FRAMES
-  {TODO -oBSa -cGeneral : OMIT EVENT TYPE TEAM if visibility = false}
 end;
+}
 
 procedure TMain.Tools_ConnectionManagerExecute(Sender: TObject);
 var
@@ -4555,7 +4568,7 @@ begin
   ToggleDCode(prefEnableDCode);
   ToggleSwimmerCAT(prefDisplaySwimmerCAT);
   ToggleDivisions(prefDisplayDivisions);
-  ToggleTeamEvents(prefEnableTeamEvents);
+//  ToggleTeamEvents(prefEnableTeamEvents);
 
   // deals with some repaint issues if event title is enabled/disabled
   { TODO -oBSA -cGeneral : Call action SCMRefresh? }
@@ -4618,6 +4631,12 @@ begin
   if AssertConnection then
     DoEnable := true;
   TAction(Sender).Enabled := DoEnable;
+end;
+
+procedure TMain.UpdateINDVTEAM(var Msg: TMessage);
+begin
+  Refresh_Event;
+  ToggleVisibileINDVTEAM;
 end;
 
 { TGridHelper }

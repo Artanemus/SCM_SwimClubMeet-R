@@ -25,9 +25,6 @@ Coordinates=721,405,65,33
 [luSessionStatus]
 Coordinates=90,860,94,33
 
-[qryEventluEventType]
-Coordinates=877,333,119,33
-
 [luGender]
 Coordinates=82,196,59,33
 
@@ -102,9 +99,6 @@ Coordinates=721,963,111,33
 
 [qryIsSafeToDelEvent]
 Coordinates=10,553,117,51
-
-[qryEventEventTypeID]
-Coordinates=930,593,120,33
 
 [tblHeatType]
 Coordinates=165,614,73,51
@@ -387,5 +381,5 @@ EditingLayerName=Heat
 ActiveLayerNames=
 
 []
-Coordinates=1264,1,149,33
+Coordinates=877,333,119,33
 

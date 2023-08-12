@@ -29,7 +29,6 @@ object SCM: TSCM
   end
   object tblStroke: TFDTable
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'StrokeID'
     Connection = scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Stroke'
@@ -50,7 +49,6 @@ object SCM: TSCM
   end
   object tblDistance: TFDTable
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'DistanceID'
     Connection = scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Distance'
@@ -76,7 +74,6 @@ object SCM: TSCM
   end
   object tblEventType: TFDTable
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'EventTypeID'
     Connection = scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..EventType'
@@ -117,7 +114,6 @@ object SCM: TSCM
   end
   object tblEventStatus: TFDTable
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'EventStatusID'
     Connection = scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..EventStatus'
@@ -133,7 +129,6 @@ object SCM: TSCM
   end
   object qryNominateEvent: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'SessionID'
     MasterSource = dsSession
     MasterFields = 'SessionID'
@@ -202,7 +197,6 @@ object SCM: TSCM
   end
   object qryEntrant: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     BeforeInsert = qryEntrantBeforeInsert
     AfterScroll = qryEntrantAfterScroll
     IndexFieldNames = 'HeatID'
@@ -390,7 +384,6 @@ object SCM: TSCM
   end
   object qrySession: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     BeforePost = qrySessionBeforePost
     AfterPost = qrySessionAfterPost
     AfterDelete = qrySessionAfterDelete
@@ -605,7 +598,8 @@ object SCM: TSCM
         '       Concat('#39'#'#39', Event.EventNum, '#39' - '#39', Distance.Caption, '#39' '#39',' +
         ' Stroke.Caption) AS EventStr,'
       '       Distance.Meters,'
-      '       Distance.ABREV'
+      '       Distance.ABREV,'
+      '       Distance.EventTypeID'
       'FROM Event'
       '     LEFT OUTER JOIN Stroke ON Stroke.StrokeID = Event.StrokeID'
       
@@ -725,12 +719,6 @@ object SCM: TSCM
       Origin = 'SessionID'
       Visible = False
     end
-    object qryEventEventTypeID: TIntegerField
-      DisplayWidth = 4
-      FieldName = 'EventTypeID'
-      Origin = 'EventTypeID'
-      Visible = False
-    end
     object qryEventStrokeID: TIntegerField
       DisplayWidth = 4
       FieldName = 'StrokeID'
@@ -742,6 +730,12 @@ object SCM: TSCM
       FieldName = 'DistanceID'
       Origin = 'DistanceID'
       Visible = False
+      OnValidate = qryEventDistanceIDValidate
+    end
+    object qryEventEventTypeID: TIntegerField
+      FieldName = 'EventTypeID'
+      Origin = 'EventTypeID'
+      Visible = False
     end
     object qryEventEventNum: TIntegerField
       Alignment = taCenter
@@ -750,6 +744,7 @@ object SCM: TSCM
       FieldName = 'EventNum'
       Origin = 'EventNum'
       ReadOnly = True
+      Visible = False
     end
     object qryEventluDistance: TStringField
       DisplayLabel = 'Distance'
@@ -819,19 +814,6 @@ object SCM: TSCM
       Origin = 'EntrantCount'
       ReadOnly = True
       DisplayFormat = '00'
-    end
-    object qryEventluEventType: TStringField
-      DisplayLabel = 'Type'
-      DisplayWidth = 7
-      FieldKind = fkLookup
-      FieldName = 'luEventType'
-      LookupDataSet = tblEventType
-      LookupKeyFields = 'EventTypeID'
-      LookupResultField = 'ABREV'
-      KeyFields = 'EventTypeID'
-      Visible = False
-      Size = 5
-      Lookup = True
     end
     object qryEventClosedDT: TSQLTimeStampField
       FieldName = 'ClosedDT'
@@ -1060,7 +1042,6 @@ object SCM: TSCM
   end
   object qryNominee: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     Indexes = <
       item
         Active = True
@@ -1588,7 +1569,6 @@ object SCM: TSCM
   end
   object qryHeat: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     AfterPost = qryHeatAfterPost
     AfterDelete = qryHeatAfterDelete
     AfterScroll = qryHeatAfterScroll
@@ -1812,7 +1792,6 @@ object SCM: TSCM
       end>
   end
   object qrySwimClub: TFDQuery
-    Active = True
     IndexFieldNames = 'SwimClubID'
     Connection = scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..SwimClub'
@@ -2061,6 +2040,7 @@ object SCM: TSCM
   end
   object qryNominateControlList: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'SessionID;EventNum'
     Connection = scmConnection
     UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
@@ -2080,7 +2060,7 @@ object SCM: TSCM
       'SELECT EventID'
       '     , [Event].EventNum'
       '     , [Event].SessionID'
-      '     , [Event].[EventTypeID]'
+      '     , [Distance].[EventTypeID]'
       '     , [Event].StrokeID'
       '     , [Event].DistanceID'
       '     , [Event].EventStatusID'
@@ -2217,7 +2197,6 @@ object SCM: TSCM
   end
   object tblSwimmerCAT: TFDTable
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'SwimmerCategoryID'
     Connection = scmConnection
     UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
@@ -2266,7 +2245,6 @@ object SCM: TSCM
   end
   object qryTeam: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     BeforeInsert = qryEntrantBeforeInsert
     AfterScroll = qryEntrantAfterScroll
     IndexFieldNames = 'HeatID'
@@ -2407,7 +2385,6 @@ object SCM: TSCM
   end
   object qryTeamEntrant: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     BeforeInsert = qryEntrantBeforeInsert
     AfterScroll = qryEntrantAfterScroll
     IndexFieldNames = 'TeamID'

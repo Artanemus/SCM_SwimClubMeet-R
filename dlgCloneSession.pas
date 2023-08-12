@@ -96,8 +96,6 @@ begin
     tblEvent.FieldByName('EventNum').AsInteger := i;
     tblEvent.FieldByName('Caption').AsString :=
       qrySrcEvent.FieldByName('Caption').AsString;;
-    // Individual event = 1, (not-implimented) Team event = 2
-    tblEvent.FieldByName('EventTypeID').AsInteger := 1;
     // Stroke
     tblEvent.FieldByName('StrokeID').AsInteger :=
       qrySrcEvent.FieldByName('StrokeID').AsInteger;

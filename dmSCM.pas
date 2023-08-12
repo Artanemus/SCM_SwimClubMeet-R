@@ -76,10 +76,8 @@ type
     qryEventEventNum: TIntegerField;
     qryEventEventStatusID: TIntegerField;
     qryEventEventStr: TWideStringField;
-    qryEventEventTypeID: TIntegerField;
     qryEventluDistance: TStringField;
     qryEventluEventStatus: TStringField;
-    qryEventluEventType: TStringField;
     qryEventluStroke: TStringField;
     qryEventMeters: TIntegerField;
     qryEventNomineeCount: TIntegerField;
@@ -172,6 +170,7 @@ type
     TimeField5: TTimeField;
     WideStringField1: TWideStringField;
     WideStringField2: TWideStringField;
+    qryEventEventTypeID: TIntegerField;
     procedure DataModuleCreate(Sender: TObject);
     procedure qryEntrantAfterScroll(DataSet: TDataSet);
     procedure qryEntrantBeforeInsert(DataSet: TDataSet);
@@ -183,6 +182,7 @@ type
     procedure qryEventAfterScroll(DataSet: TDataSet);
     procedure qryEventBeforeEdit(DataSet: TDataSet);
     procedure qryEventBeforePost(DataSet: TDataSet);
+    procedure qryEventDistanceIDValidate(Sender: TField);
     procedure qryEventEventStatusIDGetText(Sender: TField; var Text: string;
       DisplayText: Boolean);
     procedure qryEventNewRecord(DataSet: TDataSet);
@@ -258,7 +258,7 @@ type
     function Event_Locate(aEventID: integer): Boolean; overload;
     function Event_Locate(aDistanceID, aStrokeID: integer): Boolean; overload;
     procedure Event_Renumber(DoLocate: Boolean = true);
-    function Event_Type(aEventID: integer): integer; // INDV...TEAM
+    function Event_TypeID(aEventID: integer): integer; // INDV...TEAM
     // HEATS
     procedure Heat_Delete(aHeatID: integer); // delete heat
     procedure Heat_DeleteALL(aEventID: integer); // delete ALL heats in event
@@ -1049,7 +1049,7 @@ begin
   // D E L E T E   E V E N T .
   // --------------------------------------------------------
   dsEvent.DataSet.DisableControls;
-  case Event_Type(aEventID) of
+  case Event_TypeID(aEventID) of
     0, 1:
       begin
         Heat_DeleteALL(aEventID); // DELETE HEATS ---> ENTRANTS --> SPLIT
@@ -1377,7 +1377,7 @@ begin
   ds.EnableControls();
 end;
 
-function TSCM.Event_Type(aEventID: integer): integer;
+function TSCM.Event_TypeID(aEventID: integer): integer;
 var
 v: variant;
 SQL: string;
@@ -2011,6 +2011,10 @@ begin
     if Assigned(fld) then
       fld.ReadOnly := true;
   end;
+
+  if Owner is TForm then
+    PostMessage(TForm(Owner).Handle, SCM_UPDATEINDVTEAM, 0, 0);
+
 end;
 
 procedure TSCM.qryEventAfterScroll(DataSet: TDataSet);
@@ -2067,6 +2071,29 @@ begin
   end;
 end;
 
+procedure TSCM.qryEventDistanceIDValidate(Sender: TField);
+var
+v1, v2, v3: variant;
+i: integer;
+SQL: string;
+begin
+  // INDV or TEAM
+  SQL := 'SELECT EventTypeID FROM SwimClubMeet.dbo.Distance WHERE [DistanceID] = :ID';
+  v1 := scmConnection.ExecSQLScalar(SQL, [Sender.CurValue]);
+  v2 := scmConnection.ExecSQLScalar(SQL, [Sender.Value]);
+  if v1 <> v2 then // switching event type ...
+  begin
+    // test for Heats
+    SQL := 'SELECT Count(HeatID) FROM SwimClubMeet.dbo.HeatIndividual WHERE [EventID] = :ID';
+    i := Event_ID;
+    v3 := scmConnection.ExecSQLScalar(SQL, [i]);
+    if (v3 <> 0) then
+    begin
+      Raise Exception.Create('When an event has heats it cannot be switched between INDV and RELAY');
+    end;
+  end;
+end;
+
 procedure TSCM.qryEventEventStatusIDGetText(Sender: TField; var Text: string;
   DisplayText: Boolean);
 begin
@@ -2086,7 +2113,6 @@ begin
 
   DataSet.Edit;
   DataSet.FieldByName('EventStatusID').AsInteger := 1;
-  DataSet.FieldByName('EventTypeID').AsInteger := 1;
   DataSet.Post;
 
   if Assigned(fld) then
@@ -2140,7 +2166,7 @@ begin
     exit;
 
   NumOfLanes := SwimClub_NumberOfLanes;
-  // Type Individual or Team...
+  // Type INDV or TEAM
   aEventTypeID := dsEvent.DataSet.FieldByName('EventTypeID').AsInteger;
 
   case aEventTypeID of
@@ -2166,7 +2192,7 @@ begin
       end;
     2:
       begin
-        i := TEAM_CountLanes(HeatID); // current number of pool lanes
+        i := TEAM_CountLanes(HeatID); // TEAMS
         if (i = 0) then
         begin
 
