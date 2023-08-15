@@ -823,9 +823,6 @@ begin
 end;
 
 procedure TMain.Entrant_MoveDownExecute(Sender: TObject);
-var
-  success: boolean;
-  MaxLane: integer;
 begin
   if SCM.Event_IsINDV then
     INDV.GridMoveDown(Sender);
@@ -862,8 +859,6 @@ begin
 end;
 
 procedure TMain.Entrant_MoveUpExecute(Sender: TObject);
-var
-  success: boolean;
 begin
   if SCM.Event_IsINDV then
     INDV.GridMoveUp(Sender);
@@ -1217,12 +1212,13 @@ end;
 
 procedure TMain.Event_DeleteExecute(Sender: TObject);
 var
-  rtnValue: integer;
+  rtnValue, aEventID: integer;
   SQL: String;
   HasClosedHeats, HasRacedHeats: boolean;
 begin
-  HasClosedHeats := SCM.Event_HasClosedHeats;
-  HasRacedHeats := SCM.Event_HasRacedHeats;
+  aEventID := SCM.Event_ID;
+  HasClosedHeats := SCM.Event_HasClosedHeats(aEventID);
+  HasRacedHeats := SCM.Event_HasRacedHeats(aEventID);
   if HasClosedHeats then
   begin
     SQL := 'Unable to delete the event ';

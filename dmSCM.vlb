@@ -28,9 +28,6 @@ Coordinates=90,860,94,33
 [luGender]
 Coordinates=82,196,59,33
 
-[qryIsSafeToDelSession]
-Coordinates=288,492,128,51
-
 [qryCountHeatsNotClosed]
 Coordinates=282,553,139,51
 
@@ -96,9 +93,6 @@ Coordinates=577,1,69,33
 
 [qryEventDistanceID]
 Coordinates=721,963,111,33
-
-[qryIsSafeToDelEvent]
-Coordinates=10,553,117,51
 
 [tblHeatType]
 Coordinates=165,614,73,51
@@ -381,5 +375,5 @@ EditingLayerName=Heat
 ActiveLayerNames=
 
 []
-Coordinates=877,333,119,33
+Coordinates=288,492,128,51
 

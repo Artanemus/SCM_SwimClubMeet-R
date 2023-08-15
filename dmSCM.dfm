@@ -1,5 +1,6 @@
 object SCM: TSCM
   OnCreate = DataModuleCreate
+  OnDestroy = DataModuleDestroy
   Height = 984
   Width = 1286
   object scmConnection: TFDConnection
@@ -1103,84 +1104,6 @@ object SCM: TSCM
         DataType = ftInteger
         ParamType = ptInput
         Value = 340
-      end>
-  end
-  object qryIsSafeToDelEvent: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    IndexFieldNames = 'EventID'
-    Connection = scmConnection
-    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
-    UpdateOptions.EnableDelete = False
-    UpdateOptions.EnableInsert = False
-    UpdateOptions.EnableUpdate = False
-    SQL.Strings = (
-      'USE SwimClubMeet'
-      ''
-      'DECLARE @EventID INT'
-      'SET @EventID = :EVENTID'
-      ''
-      'SELECT Event.EventID'
-      'FROM Event'
-      
-        'INNER JOIN HeatIndividual ON Event.EventID = HeatIndividual.Even' +
-        'tID '
-      
-        'WHERE Event.EventID = @EventID AND (HeatIndividual.HeatStatusID ' +
-        '> 1)')
-    Left = 608
-    Top = 800
-    ParamData = <
-      item
-        Name = 'EVENTID'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = 238
-      end>
-  end
-  object qryIsSafeToDelSession: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    Indexes = <
-      item
-        Name = 'idxSession'
-      end>
-    IndexFieldNames = 'SessionID'
-    Connection = scmConnection
-    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
-    UpdateOptions.EnableDelete = False
-    UpdateOptions.EnableInsert = False
-    UpdateOptions.EnableUpdate = False
-    SQL.Strings = (
-      'USE SwimClubMeet;'
-      ''
-      'DECLARE @SessionID INT'
-      ''
-      'SET @SessionID = :SESSIONID;'
-      ''
-      'SELECT'
-      '    HeatIndividual.HeatStatusID'
-      '  , Event.EventStatusID'
-      '  , Session.SessionStatusID'
-      '  , Session.SessionID'
-      'FROM Session'
-      'LEFT OUTER JOIN Event ON Session.SessionID = Event.SessionID'
-      
-        'LEFT OUTER JOIN HeatIndividual ON Event.EventID = HeatIndividual' +
-        '.EventID'
-      'WHERE'
-      '     (Session.SessionID = @SessionID) AND '
-      '    ('
-      '    (HeatIndividual.HeatStatusID > 1) '
-      '     OR (Event.EventStatusID > 1) '
-      '     OR (Session.SessionStatusID > 1)'
-      '    );')
-    Left = 600
-    Top = 872
-    ParamData = <
-      item
-        Name = 'SESSIONID'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = 28
       end>
   end
   object qrySessionNomineeCount: TFDQuery
