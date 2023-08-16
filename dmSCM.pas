@@ -272,6 +272,7 @@ type
     procedure Heat_DeleteALL(aEventID: integer); // ignore closed or raced heats
     procedure Heat_DeleteALLExclude(aEventID: integer;
       DoExclude: Boolean = true); // exclude closed or raced heats
+    function Heat_EventTypeID(aHeatID: integer): Integer;
     function Heat_HasEntrants(aHeatID: integer): Boolean;
     function Heat_ID(): integer;
     function Heat_IsClosed(): Boolean; // current heat
@@ -354,6 +355,7 @@ type
     procedure TEAM_DeleteExcessLanes(aHeatID: integer);
     procedure TEAM_DeleteExclude(aTeamID: integer; DoExclude: Boolean);
     // exclude closed or raced heats
+    function Team_HasTeamEntrants(aHeatID: integer): Boolean;
     function TEAM_HeatStatusID(aTeamID: integer): integer;
     procedure TEAM_InsertEmptyLanes(aHeatID: integer);
     function TEAM_Locate(TeamID: integer): Boolean;
@@ -1455,6 +1457,7 @@ procedure TSCM.Heat_DeleteExclude(aHeatID: integer; DoExclude: Boolean);
 var
   SQL: string;
   aHeatStatusID: integer;
+  DoDelete: Boolean;
 begin
   if not fSCMActive then
     exit;
@@ -1464,17 +1467,40 @@ begin
   aHeatStatusID := Heat_HeatStatusID(aHeatID); // Always within range.
   if (aHeatStatusID = 1) or (DoExclude = false) then
   begin
-    Entrant_DeleteALLExclude(aHeatID, DoExclude); // Entrants + Split data
-    if not Heat_HasEntrants(aHeatID) then
+    { NOTE: It's OK to delete both INDV and TEAM linked to the heat.}
+    Entrant_DeleteALLExclude(aHeatID, DoExclude); // Entrants+Split data
+    TEAM_DeleteALLExclude(aHeatID, DoExclude); // Team+TeamEntrants+Split data
+    DoDelete := false;
+    case Heat_EventTypeID(aHeatID) of
+      1: // INDV
+        if not Heat_HasEntrants(aHeatID) then
+          DoDelete := true;
+      2: // TEAM
+        if not Team_HasTeamEntrants(aHeatID) then
+          DoDelete := true;
+    end;
+    if DoDelete then
     begin
       SQL := 'DELETE FROM [SwimClubMeet].[dbo].[HeatIndividual] WHERE HeatID = :ID';
       scmConnection.ExecSQL(SQL, [aHeatID]);
-      // Heat_Renumber();
-      if (fHandle <> nil) then
-        PostMessage(fHandle, SCM_RENUMBERHEATS, 0, 0);
+      PostMessage(fHandle, SCM_RENUMBERHEATS, 0, 0); // Heat_Renumber();
     end;
   end;
   dsHeat.DataSet.EnableControls();
+end;
+
+function TSCM.Heat_EventTypeID(aHeatID: integer): Integer;
+var
+  SQL: string;
+  v: variant;
+begin
+  result := 0;
+  SQL := 'SELECT EventTypeID FROM  [SwimClubMeet].[dbo].[HeatIndividual] ' +
+  'INNER JOIN [Event] ON [HeatIndividual].[EventID] = [Event].[EventID] ' +
+  'WHERE HeatID = :ID';
+  v := scmConnection.ExecSQLScalar(SQL, [aHeatID]);
+  if not VarIsNull(v) or not VarIsEmpty(v) or (v > 0) then
+    result := v;
 end;
 
 function TSCM.Heat_ID: integer;
@@ -3315,6 +3341,23 @@ begin
     EnableControls;
   end;
 
+end;
+
+function TSCM.Team_HasTeamEntrants(aHeatID: integer): Boolean;
+var
+  SQL: string;
+  v: variant;
+begin
+  result := false;
+  if not fSCMActive then
+    exit;
+  SQL := 'SELECT COUNT(TeamEntrantID) FROM [SwimClubMeet].[dbo].[HeatIndividual] ' +
+    ' INNER JOIN [Team] ON [HeatIndividual].HeatID = [Team].HeatID ' +
+    ' INNER JOIN [TeamEntrant] ON [Team].TeamID = [TeamEntrant].TeamID ' +
+    ' WHERE HeatID = :ID;';
+  v := scmConnection.ExecSQLScalar(SQL, [aHeatID]);
+  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
+    result := true;
 end;
 
 function TSCM.TEAM_HeatStatusID(aTeamID: integer): integer;
