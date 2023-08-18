@@ -458,12 +458,9 @@ type
     prefEnableDCode: boolean;
     prefEnableTeamEvents: boolean;
     SCMEventList: TObjectList;
-    // ASSERT CONNECTION TO MSSQL DATABASE
-    function AssertConnection(): boolean;
+
+    function AssertConnection(): boolean; // Check connection to MSSQL DATABASE
     procedure DBGridWndProc(var Msg: TMessage);
-    // D R A W   C H E C K   B O X E S .
-    procedure DrawCheckBoxes(oGrid: TObject; Rect: TRect; Column: TColumn;
-      fontColor: TColor; bgColor: TColor);
     procedure DrawEventStatus(oGrid: TObject; Rect: TRect; Column: TColumn);
     // procedure EnableEvent_GridEllipse();
     procedure Event_BuildSCMEventType(Sender: TObject;
@@ -614,75 +611,6 @@ begin
     Msg.WParamLo := SB_THUMBPOSITION;
   if Assigned(FOrgDBGridWndProc) then
     FOrgDBGridWndProc(Msg);
-end;
-
-procedure TMain.DrawCheckBoxes(oGrid: TObject; Rect: TRect; Column: TColumn;
-  fontColor, bgColor: TColor);
-var
-  MyRect: TRect;
-  oField: TField;
-  iPos, iFactor: integer;
-  bValue: boolean;
-  g: TDBGrid;
-  points: Array [0 .. 4] of TPoint;
-begin
-  // ---------------------------------------------------------------------------
-  // Draw a very basic checkbox (ticked) - not a nice as TCheckListBox
-  // ---------------------------------------------------------------------------
-
-  g := TDBGrid(oGrid);
-  // is the cell checked?
-  oField := Column.Field;
-  if (oField.value = -1) then
-    bValue := true
-  else
-    bValue := false;
-
-  g.Canvas.Pen.Color := fontColor; //
-  g.Canvas.Brush.Color := bgColor;
-  g.Canvas.Brush.Style := bsSolid;
-  g.Canvas.FillRect(Rect);
-
-  // calculate margins
-  MyRect.Top := Trunc((Rect.Bottom - Rect.Top - 9) / 2) + Rect.Top;
-  MyRect.Left := Trunc((Rect.Right - Rect.Left - 9) / 2) + Rect.Left;
-  MyRect.Bottom := MyRect.Top + 8;
-  MyRect.Right := MyRect.Left + 8;
-
-  // USES PEN - draw the box (with cell margins)
-  points[0].x := MyRect.Left;
-  points[0].y := MyRect.Top;
-  points[1].x := MyRect.Right;
-  points[1].y := MyRect.Top;
-  points[2].x := MyRect.Right;
-  points[2].y := MyRect.Bottom;
-  points[3].x := MyRect.Left;
-  points[3].y := MyRect.Bottom;
-  points[4].x := MyRect.Left;
-  points[4].y := MyRect.Top;
-
-  g.Canvas.Polyline(points);
-
-  iPos := MyRect.Left;
-  iFactor := 1;
-  // USES PEN - DRAW A TICK - Cross would be nicer?
-  if bValue then
-  begin
-    g.Canvas.MoveTo(iPos + (iFactor * 2), MyRect.Top + 4);
-    g.Canvas.LineTo(iPos + (iFactor * 2), MyRect.Top + 7);
-    g.Canvas.MoveTo(iPos + (iFactor * 3), MyRect.Top + 5);
-    g.Canvas.LineTo(iPos + (iFactor * 3), MyRect.Top + 8);
-    g.Canvas.MoveTo(iPos + (iFactor * 4), MyRect.Top + 6);
-    g.Canvas.LineTo(iPos + (iFactor * 4), MyRect.Top + 9);
-    g.Canvas.MoveTo(iPos + (iFactor * 5), MyRect.Top + 5);
-    g.Canvas.LineTo(iPos + (iFactor * 5), MyRect.Top + 8);
-    g.Canvas.MoveTo(iPos + (iFactor * 6), MyRect.Top + 4);
-    g.Canvas.LineTo(iPos + (iFactor * 6), MyRect.Top + 7);
-    g.Canvas.MoveTo(iPos + (iFactor * 7), MyRect.Top + 3);
-    g.Canvas.LineTo(iPos + (iFactor * 7), MyRect.Top + 6);
-    g.Canvas.MoveTo(iPos + (iFactor * 8), MyRect.Top + 2);
-    g.Canvas.LineTo(iPos + (iFactor * 8), MyRect.Top + 5);
-  end;
 end;
 
 procedure TMain.DrawEventStatus(oGrid: TObject; Rect: TRect; Column: TColumn);
@@ -1257,7 +1185,7 @@ begin
 
   if (rtnValue = mrYes) then
   begin
-    SCM.Event_Delete(SCM.Event_ID); // delete the current selected event.
+    SCM.Event_DeleteExclude(SCM.Event_ID, false); // delete the current selected event.
     // do not bookmark ----
     Refresh_Event;
   end;
@@ -2406,7 +2334,7 @@ begin
       end;
       // 2023.02.16
       // DELETE HEATS ...  For current event. Only open heats are deleted.
-      SCM.Heat_DeleteALL(FieldByName('EventID').AsInteger);
+      SCM.Heat_DeleteALLExclude(FieldByName('EventID').AsInteger);
       // QUICK TEST - Do we have NOMINEES?
       if not SCM.Event_HasNominees(FieldByName('EventID').AsInteger) then
       begin
@@ -2558,7 +2486,7 @@ begin
   // d e l e t e   t h e   c u r r e n t   s e l e c t e d   h e a t .
   // -----------------------------------------------------------------
   if (results = mrYes) then
-    SCM.Heat_Delete(SCM.dsHeat.DataSet.FieldByName('HeatID').AsInteger);
+    SCM.Heat_DeleteExclude(SCM.dsHeat.DataSet.FieldByName('HeatID').AsInteger, false);
 
   ToggleVisibileINDVTEAM;
 end;

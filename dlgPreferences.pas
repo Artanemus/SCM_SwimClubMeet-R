@@ -94,8 +94,6 @@ type
     procedure btnSaveClubLogoClick(Sender: TObject);
   private
     FConnection: TFDConnection;
-    fDBVersion, fDBMajor, fDBMinor: integer;
-    { Private declarations }
     procedure WritePreferences(IniFileName: string);
     procedure ReadPreferences(IniFileName: string);
     procedure AssignClubLogoToImage(AImage: TImage);
@@ -103,7 +101,6 @@ type
     procedure AssignStartOfSwimSeasonToDT();
 
   public
-    { Public declarations }
     constructor Create(AOwner: TComponent; AConnection: TFDConnection);
       reintroduce; overload;
     property Connection: TFDConnection read FConnection write FConnection;
