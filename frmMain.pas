@@ -3788,18 +3788,27 @@ end;
 
 procedure TMain.Session_DeleteExecute(Sender: TObject);
 var
-  rtnValue: integer;
+  rtnValue, aSessionID: integer;
+{
   SQLstr: string;
   ContainsClosedHeats, ContainsRacedHeats: boolean;
+}
 begin
+  {
   ContainsClosedHeats := false;
   ContainsRacedHeats := false;
-
+  }
   if not AssertConnection then
     exit;
   if SCM.dsSession.DataSet.IsEmpty then
     exit;
+
+  aSessionID := SCM.dsSession.DataSet.FieldByName('SessionID').AsInteger;
+  {
   if (SCM.dsSession.DataSet.FieldByName('SessionStatusID').AsInteger = 2) then
+  }
+
+  if SCM.Session_IsLocked then
   begin
     MessageDlg('A locked session can''t be deleted.', mtInformation,
       [mbOK], 0, mbOK);
@@ -3808,13 +3817,27 @@ begin
 
   // WARNING #1
   rtnValue := MessageDlg('Delete the selected session?' + sLineBreak +
-    'Including it''s events, nominees, heats and entrants.', mtConfirmation,
+    'Including it''s events, nominees, heats, entrants, relays, etc.', mtConfirmation,
     [mbYes, mbNo], 0, mbNo);
   // DON'T USE (rtnValue = mrNo) AS IT DOESN'T ACCOUNT FOR OS CLOSE 'X' BTN.
   // mrCancel=2 mrNo=7 mrYes=6
   if (rtnValue <> mrYes) then
     exit;
+  // WARNING #2
+  if SCM.Session_HasClosedOrRacedHeats(aSessionID) then
+  begin
+    rtnValue := MessageDlg('The session contains CLOSED and/or RACED heats.' +
+      sLineBreak +
+      'Racetimes and entrant data will be lost if you delete this session.' +
+      sLineBreak + 'Do you wish to delete the session?', mtWarning,
+      [mbYes, mbNo], 0, mbNo);
+    // DON'T USE (results = mrNo) AS IT DOESN'T ACCOUNT FOR OS CLOSE 'X' BTN.
+    // mrCancel=2 mrNo=7 mrYes=6
+    if (rtnValue <> mrYes) then
+      exit;
+  end;
 
+  {
   // look for closed heats
   SCM.dsHeat.DataSet.DisableControls;
   SCM.dsHeat.DataSet.First;
@@ -3842,6 +3865,7 @@ begin
 
   SCM.dsHeat.DataSet.EnableControls;
 
+
   // WARNING #2
   if (ContainsClosedHeats or ContainsRacedHeats) then
   begin
@@ -3856,10 +3880,10 @@ begin
     if (rtnValue <> mrYes) then
       exit;
   end;
-
+  }
   // MOVE INTO SCM AS DELETE SESSION
   {TODO -oBSA -cGeneral : MOVE CODE TO dmSCM}
-
+  {
   SCM.dsSession.DataSet.DisableControls;
   SCM.dsEvent.DataSet.DisableControls;
   SCM.dsHeat.DataSet.DisableControls;
@@ -3880,7 +3904,6 @@ begin
         while not SCM.dsHeat.DataSet.Eof do
         begin
           // FRAMES WIP
-          {TODO -oBSA -cGeneral : TEAM : TEAMENTRANT to be included.}
           SQLstr := 'DELETE FROM SwimClubMeet.dbo.Entrant WHERE Entrant.HeatID = ' +
             IntToStr(SCM.dsHeat.DataSet.FieldByName('HeatID').AsInteger);
           SCM.scmConnection.ExecSQL(SQLstr);
@@ -3917,11 +3940,11 @@ begin
   SCM.dsHeat.DataSet.EnableControls;
   SCM.dsEvent.DataSet.EnableControls;
   SCM.dsSession.DataSet.EnableControls;
+  }
 
+  SCM.Session_DeleteExclude(aSessionID, false);
   // update the grid views
   SCM_RefreshExecute(self);
-
-
 
 end;
 

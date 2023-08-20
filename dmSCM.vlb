@@ -1,7 +1,4 @@
-﻿[qryTestForNominees]
-Coordinates=617,395,117,51
-
-[dsEntrant]
+﻿[dsEntrant]
 Coordinates=189,717,62,33
 
 [qryEntrantIsScratched]
@@ -375,5 +372,5 @@ EditingLayerName=Heat
 ActiveLayerNames=
 
 []
-Coordinates=288,492,128,51
+Coordinates=617,395,117,51
 

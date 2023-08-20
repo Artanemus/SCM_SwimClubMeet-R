@@ -2,7 +2,7 @@ object SCM: TSCM
   OnCreate = DataModuleCreate
   OnDestroy = DataModuleDestroy
   Height = 984
-  Width = 1286
+  Width = 1370
   object scmConnection: TFDConnection
     Params.Strings = (
       'ConnectionDef=MSSQL_SwimClubMeet')
@@ -962,7 +962,7 @@ object SCM: TSCM
       '  AND Entrant.HeatID = :HEATID'
       ''
       '  ORDER BY SORTORDER, TimeToBeat')
-    Left = 984
+    Left = 1016
     Top = 216
     ParamData = <
       item
@@ -991,7 +991,7 @@ object SCM: TSCM
       '  Entrant.MemberID IS NULL AND'
       '  Entrant.HeatID = :HEATID'
       '  ORDER BY TimeToBeat')
-    Left = 984
+    Left = 1016
     Top = 272
     ParamData = <
       item
@@ -1180,8 +1180,8 @@ object SCM: TSCM
       'SELECT        COUNT(HeatStatusID) AS CountStatus'
       'FROM            HeatIndividual'
       'WHERE        (EventID = @EventID ) AND (HeatStatusID < 3)')
-    Left = 984
-    Top = 352
+    Left = 1016
+    Top = 408
     ParamData = <
       item
         Name = 'EVENTID'
@@ -1206,8 +1206,8 @@ object SCM: TSCM
       'SELECT        COUNT(EventStatusID) AS CountStatus'
       'FROM            Event'
       'WHERE        (SessionID = @SessionID ) AND (EventStatusID < 2)')
-    Left = 984
-    Top = 416
+    Left = 1016
+    Top = 472
     ParamData = <
       item
         Name = 'SESSIONID'
@@ -1218,7 +1218,7 @@ object SCM: TSCM
   end
   object dsIsQualified: TDataSource
     DataSet = qryIsQualifiedALT
-    Left = 1144
+    Left = 1200
     Top = 408
   end
   object luHouse: TDataSource
@@ -1456,7 +1456,7 @@ object SCM: TSCM
       #9'AND Qualify.StrokeID = @StrokeID'
       #9'AND Qualify.GenderID = #tblMember.GenderID'
       'AND IIF(#tblMember.TrialTimePB <= TrialTime, 1, 0) = 1')
-    Left = 1144
+    Left = 1200
     Top = 296
     ParamData = <
       item
@@ -1612,7 +1612,7 @@ object SCM: TSCM
       #9'AND (Qualify.IsShortCourse = @IsShortCourse)'
       #9'AND (Qualify.GenderID = @GenderID)'
       'ORDER BY Entrant.RaceTime')
-    Left = 1144
+    Left = 1200
     Top = 352
     ParamData = <
       item
@@ -1644,41 +1644,6 @@ object SCM: TSCM
         DataType = ftInteger
         ParamType = ptInput
         Value = 1
-      end>
-  end
-  object qryTestForNominees: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    IndexFieldNames = 'NomineeID'
-    Connection = scmConnection
-    FormatOptions.AssignedValues = [fvFmtDisplayTime]
-    FormatOptions.FmtDisplayTime = 'nn:ss.zzz'
-    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
-    UpdateOptions.EnableDelete = False
-    UpdateOptions.EnableInsert = False
-    UpdateOptions.EnableUpdate = False
-    UpdateOptions.UpdateTableName = 'SwimClubMeet..Nominee'
-    UpdateOptions.KeyFields = 'NomineeID'
-    SQL.Strings = (
-      'USE SwimClubMeet'
-      ''
-      'DECLARE @EventID AS INT'
-      'SET @EventID = :EVENTID;'
-      ''
-      'SELECT'
-      'Nominee.NomineeID '
-      ',Nominee.MemberID'
-      ',Nominee.EventID'
-      'FROM Nominee'
-      'WHERE Nominee.EventID = @EventID AND MemberID IS NOT NULL'
-      '')
-    Left = 1144
-    Top = 224
-    ParamData = <
-      item
-        Name = 'EVENTID'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = 208
       end>
   end
   object qryRenumberHeats: TFDQuery
@@ -1865,7 +1830,7 @@ object SCM: TSCM
       ''
       'SKIP:'
       '')
-    Left = 840
+    Left = 832
     Top = 64
     ParamData = <
       item
@@ -2467,5 +2432,69 @@ object SCM: TSCM
     DataSet = qryTeamEntrant
     Left = 288
     Top = 472
+  end
+  object qrySortHeatTeam: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    IndexFieldNames = 'SORTORDER;TimeToBeat'
+    Connection = scmConnection
+    UpdateOptions.UpdateTableName = 'SwimClubMeet..Entrant'
+    UpdateOptions.KeyFields = 'EntrantID'
+    SQL.Strings = (
+      'SELECT'
+      '  Team.TimeToBeat,'
+      ''
+      '  CASE WHEN '
+      '     (CAST(CAST(Team.TimeToBeat AS DATETIME) AS FLOAT) = 0)'
+      '     THEN 1 ELSE 0 END AS SORTORDER, '
+      ''
+      '  Team.HeatID,'
+      '  Team.TeamNameID,'
+      '  Team.Lane,'
+      'Team.TeamID'
+      'FROM'
+      '  Team'
+      'WHERE'
+      '  Team.TeamNameID IS NOT NULL'
+      '  AND Team.HeatID = :HEATID'
+      ''
+      '  ORDER BY SORTORDER, TimeToBeat')
+    Left = 1016
+    Top = 136
+    ParamData = <
+      item
+        Name = 'HEATID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = 82
+      end>
+  end
+  object qrySortHeatTeam_EmptyLanes: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    IndexFieldNames = 'TimeToBeat;HeatID'
+    Connection = scmConnection
+    UpdateOptions.UpdateTableName = 'SwimClubMeet..Entrant'
+    UpdateOptions.KeyFields = 'EntrantID'
+    SQL.Strings = (
+      'SELECT'
+      '  Team.TimeToBeat,'
+      '  Team.HeatID,'
+      '  Team.TeamNameID,'
+      '  Team.Lane,'
+      'Team.TeamID'
+      'FROM'
+      '  Team'
+      'WHERE'
+      '  Team.TeamNameID IS NULL AND'
+      '  Team.HeatID = :HEATID'
+      '  ORDER BY TimeToBeat')
+    Left = 1016
+    Top = 88
+    ParamData = <
+      item
+        Name = 'HEATID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = 82
+      end>
   end
 end
