@@ -135,6 +135,7 @@ type
     Help_Website: TAction;
     ImageCollection1: TImageCollection;
     imeKeeper1: TMenuItem;
+    INDV: TframeINDV;
     Label1: TLabel;
     Label11: TLabel;
     Label12: TLabel;
@@ -192,10 +193,12 @@ type
     oggleSessionStatus1: TMenuItem;
     oggleStatus1: TMenuItem;
     PageControl1: TPageControl;
-    Panel7: TPanel;
+    pnlEventGrid: TPanel;
+    pnlClient: TPanel;
     pnlClubData: TRelativePanel;
     pnlDebugInfo: TPanel;
     pnlPageControl: TPanel;
+    pnlRight: TPanel;
     pnlSessClientTop: TPanel;
     pnlSessionClient: TPanel;
     pnlSessionLeft: TPanel;
@@ -278,6 +281,7 @@ type
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
     TabSheet3: TTabSheet;
+    TEAM: TframeTEAM;
     Tools_ConnectionManager: TAction;
     Tools_DisqualifyCodes: TAction;
     Tools_Divisions: TAction;
@@ -291,17 +295,14 @@ type
     vimgHeatCircle: TVirtualImage;
     vimgHeatNum: TVirtualImage;
     vimgHeatStroke: TVirtualImage;
+    vimgNoHeatsMsg: TVirtualImage;
+    vimgNoEventsMsg: TVirtualImage;
+    vimgRelayDot: TVirtualImage;
     VirtualImage1: TVirtualImage;
     VirtualImageList1: TVirtualImageList;
     VirtualImageList2: TVirtualImageList;
     VirtualImageList3: TVirtualImageList;
     VirtualImageListMenu: TVirtualImageList;
-    INDV: TframeINDV;
-    pnlRight: TPanel;
-    pnlClient: TPanel;
-    TEAM: TframeTEAM;
-    vimgRelayDot: TVirtualImage;
-    vimgNoHeatsMsg: TVirtualImage;
     procedure ActionManager1Update(Action: TBasicAction; var Handled: boolean);
     procedure btnClearSearchClick(Sender: TObject);
     procedure clistCheckBoxClick(Sender: TObject);
@@ -458,7 +459,6 @@ type
     prefEnableDCode: boolean;
     prefEnableTeamEvents: boolean;
     SCMEventList: TObjectList;
-
     function AssertConnection(): boolean; // Check connection to MSSQL DATABASE
     procedure DBGridWndProc(var Msg: TMessage);
     procedure DrawEventStatus(oGrid: TObject; Rect: TRect; Column: TColumn);
@@ -480,6 +480,7 @@ type
     procedure ToggleSwimmerCAT(SetVisible: boolean);
 //    procedure ToggleTeamEvents(SetVisible: boolean);
     procedure ToggleVisibileINDVTEAM;
+    procedure ToggleVisibileEVENTGRID;
   protected
     // posted by dmSCMNom : a refresh of the entrant grid is required.
     procedure Entrant_LaneWasCleaned(var Msg: TMessage);
@@ -648,7 +649,6 @@ begin
   g.Canvas.LineTo(iPos + (iFactor * 8), MyRect.Top + 5);
 
 end;
-
 
 // procedure TMain.EnableEvent_GridEllipse;
 // var
@@ -1188,7 +1188,9 @@ begin
     SCM.Event_DeleteExclude(SCM.Event_ID, false); // delete the current selected event.
     // do not bookmark ----
     Refresh_Event;
+    ToggleVisibileEVENTGRID;
   end;
+
 end;
 
 procedure TMain.Event_DeleteUpdate(Sender: TObject);
@@ -1445,6 +1447,7 @@ begin
     exit;
   SCM.dsEvent.DataSet.CheckBrowseMode;
   SCM.dsEvent.DataSet.Append();
+  ToggleVisibileEVENTGRID;
 end;
 
 procedure TMain.Event_NewRecordUpdate(Sender: TObject);
@@ -1646,7 +1649,6 @@ begin
   fSessionClosedFontColor := clWebTomato;
   fSessionClosedBgColor := clAppWorkSpace;
   fMyInternetConnected := true;
-  // an assumption is presumed.
 
   prefEnableTeamEvents := false;
   prefEnableDCode := false;
@@ -3279,7 +3281,6 @@ begin
       begin
         if AssertConnection then
         begin
-
           (*
             What nominate refresh does:
             ----------------------------------------------------
@@ -3292,7 +3293,13 @@ begin
           if (SCM.qryEvent.IsEmpty) then
           begin
             lblNomWarning.Font.Color := clWindowText;
-            lblNomWarning.Caption := 'No Members';
+            lblNomWarning.Caption := 'No Events in Session';
+            lblNomWarning.Visible := true;
+          end
+          else if (SCM.qrySession.IsEmpty) then
+          begin
+            lblNomWarning.Font.Color := clWebTomato;
+            lblNomWarning.Caption := 'Session is Empty';
             lblNomWarning.Visible := true;
           end
           else if SCM.Session_IsLocked then
@@ -3789,33 +3796,19 @@ end;
 procedure TMain.Session_DeleteExecute(Sender: TObject);
 var
   rtnValue, aSessionID: integer;
-{
-  SQLstr: string;
-  ContainsClosedHeats, ContainsRacedHeats: boolean;
-}
 begin
-  {
-  ContainsClosedHeats := false;
-  ContainsRacedHeats := false;
-  }
   if not AssertConnection then
     exit;
   if SCM.dsSession.DataSet.IsEmpty then
     exit;
-
   aSessionID := SCM.dsSession.DataSet.FieldByName('SessionID').AsInteger;
-  {
-  if (SCM.dsSession.DataSet.FieldByName('SessionStatusID').AsInteger = 2) then
-  }
-
   if SCM.Session_IsLocked then
   begin
     MessageDlg('A locked session can''t be deleted.', mtInformation,
       [mbOK], 0, mbOK);
     exit;
   end;
-
-  // WARNING #1
+  { WARNING #1  }
   rtnValue := MessageDlg('Delete the selected session?' + sLineBreak +
     'Including it''s events, nominees, heats, entrants, relays, etc.', mtConfirmation,
     [mbYes, mbNo], 0, mbNo);
@@ -3823,7 +3816,7 @@ begin
   // mrCancel=2 mrNo=7 mrYes=6
   if (rtnValue <> mrYes) then
     exit;
-  // WARNING #2
+  { WARNING #2  }
   if SCM.Session_HasClosedOrRacedHeats(aSessionID) then
   begin
     rtnValue := MessageDlg('The session contains CLOSED and/or RACED heats.' +
@@ -3836,116 +3829,10 @@ begin
     if (rtnValue <> mrYes) then
       exit;
   end;
-
-  {
-  // look for closed heats
-  SCM.dsHeat.DataSet.DisableControls;
-  SCM.dsHeat.DataSet.First;
-  while not SCM.dsHeat.DataSet.Eof do
-  begin
-    if (SCM.dsHeat.DataSet.FieldByName('HeatStatusID').AsInteger = 3) then
-    begin
-      ContainsClosedHeats := true;
-      break;
-    end;
-    SCM.dsHeat.DataSet.Next;
-  end;
-
-  // look for raced heats
-  SCM.dsHeat.DataSet.First;
-  while not SCM.dsHeat.DataSet.Eof do
-  begin
-    if (SCM.dsHeat.DataSet.FieldByName('HeatStatusID').AsInteger = 2) then
-    begin
-      ContainsRacedHeats := true;
-      break;
-    end;
-    SCM.dsHeat.DataSet.Next;
-  end;
-
-  SCM.dsHeat.DataSet.EnableControls;
-
-
-  // WARNING #2
-  if (ContainsClosedHeats or ContainsRacedHeats) then
-  begin
-    rtnValue := MessageDlg('The session contains CLOSED and/or RACED heats.' +
-      sLineBreak +
-      'Racetimes and entrant data will be lost if you delete this session.' +
-      sLineBreak + 'Do you wish to delete the session?', mtWarning,
-      [mbYes, mbNo], 0, mbNo);
-
-    // DON'T USE (results = mrNo) AS IT DOESN'T ACCOUNT FOR OS CLOSE 'X' BTN.
-    // mrCancel=2 mrNo=7 mrYes=6
-    if (rtnValue <> mrYes) then
-      exit;
-  end;
-  }
-  // MOVE INTO SCM AS DELETE SESSION
-  {TODO -oBSA -cGeneral : MOVE CODE TO dmSCM}
-  {
-  SCM.dsSession.DataSet.DisableControls;
-  SCM.dsEvent.DataSet.DisableControls;
-  SCM.dsHeat.DataSet.DisableControls;
-  SCM.dsEntrant.DataSet.DisableControls;
-  SCM.dsNominee.DataSet.DisableControls;
-
-  // DB parent...child sync
-  if not SCM.dsEvent.DataSet.IsEmpty then
-  begin
-    // ITERATE OVER EVENTS .. WITHIN CURRENT SESSION
-    SCM.dsEvent.DataSet.First;
-    while not SCM.dsEvent.DataSet.Eof do
-    begin
-      if not SCM.dsHeat.DataSet.IsEmpty then
-      begin
-        // DELETE ENTRANTS ... FROM HEATS
-        SCM.dsHeat.DataSet.First;
-        while not SCM.dsHeat.DataSet.Eof do
-        begin
-          // FRAMES WIP
-          SQLstr := 'DELETE FROM SwimClubMeet.dbo.Entrant WHERE Entrant.HeatID = ' +
-            IntToStr(SCM.dsHeat.DataSet.FieldByName('HeatID').AsInteger);
-          SCM.scmConnection.ExecSQL(SQLstr);
-          SCM.dsHeat.DataSet.Next;
-        end;
-      end;
-
-      // DELETE HEATS  .. FROM EVENT
-      SQLstr := 'DELETE FROM SwimClubMeet.dbo.HeatIndividual WHERE HeatIndividual.EventID = '
-        + IntToStr(SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger);
-      SCM.scmConnection.ExecSQL(SQLstr);
-
-      // DELETE NOMINATIONS  ... FROM EVENT
-      SQLstr := 'DELETE FROM SwimClubMeet.dbo.Nominee WHERE Nominee.EventID = ' +
-        IntToStr(SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger);
-      SCM.scmConnection.ExecSQL(SQLstr);
-
-      SCM.dsEvent.DataSet.Next;
-    end;
-  end;
-
-  // DELETE ALL EVENTS associated with current selected session
-  SQLstr := 'DELETE FROM SwimClubMeet.dbo.Event WHERE Event.SessionID = ' +
-    IntToStr(SCM.dsSession.DataSet.FieldByName('SessionID').AsInteger);
-  SCM.scmConnection.ExecSQL(SQLstr);
-
-  // FINALLY ... DELETE the SESSION
-  SQLstr := 'DELETE FROM SwimClubMeet.dbo.Session WHERE Session.SessionID = ' +
-    IntToStr(SCM.dsSession.DataSet.FieldByName('SessionID').AsInteger);
-  SCM.scmConnection.ExecSQL(SQLstr);
-
-  SCM.dsNominee.DataSet.EnableControls;
-  SCM.dsEntrant.DataSet.EnableControls;
-  SCM.dsHeat.DataSet.EnableControls;
-  SCM.dsEvent.DataSet.EnableControls;
-  SCM.dsSession.DataSet.EnableControls;
-  }
-
+  {  D E L E T E  }
   SCM.Session_DeleteExclude(aSessionID, false);
   // update the grid views
   SCM_RefreshExecute(self);
-
 end;
 
 procedure TMain.Session_DeleteUpdate(Sender: TObject);
@@ -4117,39 +4004,13 @@ begin
     end;
   end;
 
+  ToggleVisibileEVENTGRID;
+
   // S T A T U S B A R .
   // Session scroll will change statusbar totals for the session
   fDoStatusBarUpdate := true; // permits ACTION (flag sets false after update)
   SCM_StatusBar.Update;
   SCM_StatusBar.Execute;
-end;
-
-procedure TMain.ToggleVisibileINDVTEAM;
-begin
-  // FRAMES
-  // if prefEnableTeamEvents then
-  // --------------------------------------------------------------
-  // TOGGLE VISIBILITY OF INDV or TEAM GRIDS
-  // --------------------------------------------------------------
-  if SCM.dsHeat.DataSet.IsEmpty then
-  begin
-    INDV.Visible := false;
-    TEAM.Visible := false;
-  end
-  else
-  begin
-    if SCM.Event_IsTEAM then
-    begin
-      TEAM.Visible := true;
-      INDV.Visible := false;
-    end
-    else
-    // DEFAULT SETUP
-    begin
-      TEAM.Visible := false;
-      INDV.Visible := true;
-    end;
-  end;
 end;
 
 procedure TMain.Session_SortExecute(Sender: TObject);
@@ -4333,21 +4194,75 @@ begin
   EnableControls;
   end;
 end;
-{
-procedure TMain.ToggleTeamEvents(SetVisible: boolean);
-var
-  fld: TField;
+
+procedure TMain.ToggleVisibileINDVTEAM;
 begin
-  with SCM.dsEvent.DataSet do
+  {
+  --------------------------------------------------------------
+   TOGGLE VISIBILITY OF INDV or TEAM GRIDS
+   Reveals vimgNoHeatsMsg
+  --------------------------------------------------------------
+  }
+  if SCM.dsSession.DataSet.IsEmpty then
   begin
-  DisableControls;
-  fld := Fields.FindField('luEventType');
-  if Assigned(fld) then
-    fld.Visible := SetVisible;
-  EnableControls;
+    INDV.Visible := false;
+    TEAM.Visible := false;
+    vimgNoHeatsMsg.Visible := true;
+    vimgNoHeatsMsg.ImageName := 'NoSessions 512x512'
+  end
+  else if SCM.dsEvent.DataSet.IsEmpty then
+  begin
+    INDV.Visible := false;
+    TEAM.Visible := false;
+    vimgNoHeatsMsg.Visible := true;
+    vimgNoHeatsMsg.ImageName := 'NoEvents 512x512'
+  end
+  else if SCM.dsHeat.DataSet.IsEmpty then
+  begin
+    INDV.Visible := false;
+    TEAM.Visible := false;
+    vimgNoHeatsMsg.Visible := true;
+    vimgNoHeatsMsg.ImageName := 'NoHeats 512x512';
+  end
+  else
+  begin
+    vimgNoHeatsMsg.Visible := false;
+    if SCM.Event_IsTEAM then
+    begin  // RELAYS
+      TEAM.Visible := true;
+      INDV.Visible := false;
+    end
+    else
+    begin // INDIVIDUAL EVENT
+      TEAM.Visible := false;
+      INDV.Visible := true;
+    end;
   end;
 end;
-}
+
+procedure TMain.ToggleVisibileEVENTGRID;
+begin
+  {
+  --------------------------------------------------------------
+   TOGGLE VISIBILITY OF EVENT GRID PANEL
+   Reveals vimgNoEventsMsg
+  --------------------------------------------------------------
+  }
+  if SCM.dsEvent.DataSet.IsEmpty then
+  begin
+    Event_Grid.Visible := false;
+    vimgNoEventsMsg.Visible := true;
+    if SCM.dsSession.DataSet.IsEmpty then
+      vimgNoEventsMsg.ImageName := 'NoSessions 512x512'
+    else
+      vimgNoEventsMsg.ImageName := 'NoEvents A 512x512';
+  end
+  else
+  begin
+    Event_Grid.Visible := true;
+    vimgNoEventsMsg.Visible := false;
+  end;
+end;
 
 procedure TMain.Tools_ConnectionManagerExecute(Sender: TObject);
 var

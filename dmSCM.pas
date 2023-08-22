@@ -2162,10 +2162,13 @@ var
   i: integer;
   SQL: string;
 begin
+  // Check unknown (typically occurs on 'new event')
+  if VarIsNull(Sender.CurValue) or VarIsEmpty(Sender.CurValue) then exit;
+
   // INDV or TEAM
   SQL := 'SELECT EventTypeID FROM SwimClubMeet.dbo.Distance WHERE [DistanceID] = :ID';
-  v1 := scmConnection.ExecSQLScalar(SQL, [Sender.CurValue]);
-  v2 := scmConnection.ExecSQLScalar(SQL, [Sender.Value]);
+  v1 := scmConnection.ExecSQLScalar(SQL, [Sender.CurValue], [ftInteger]);
+  v2 := scmConnection.ExecSQLScalar(SQL, [Sender.Value], [ftInteger]);
   if v1 <> v2 then // switching event type ...
   begin
     // test for Heats
@@ -2564,6 +2567,7 @@ begin
     while not qry.Eof do
     begin
       aEventID := qry.FieldByName('EventID').AsInteger;
+      // delete nominees, heats, entrants, teams, team entrants, splits, etc
       Event_DeleteExclude(aEventID, DoExclude);
       qry.Next;
     end;

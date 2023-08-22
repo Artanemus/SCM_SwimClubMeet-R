@@ -262,9 +262,6 @@ Coordinates=407,1478,108,36
 [spbtnEntrantSwapLanes]
 Coordinates=1479,940,154,36
 
-[Panel7]
-Coordinates=1017,863,55,58
-
 [dbtxtDebugHeat]
 Coordinates=1301,709,107,58
 
@@ -951,4 +948,7 @@ Coordinates=381,1,104,58
 
 [Tools_Swimmercategory]
 Coordinates=1781,1,152,36
+
+[pnlEventGrid]
+Coordinates=1017,863,55,58
 
