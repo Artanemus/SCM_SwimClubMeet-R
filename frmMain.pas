@@ -303,6 +303,9 @@ type
     VirtualImageList2: TVirtualImageList;
     VirtualImageList3: TVirtualImageList;
     VirtualImageListMenu: TVirtualImageList;
+    pnlHeatsTabSheet: TPanel;
+    vimgHeatsNotifications: TVirtualImage;
+    lblMsgNoNominees: TLabel;
     procedure ActionManager1Update(Action: TBasicAction; var Handled: boolean);
     procedure btnClearSearchClick(Sender: TObject);
     procedure clistCheckBoxClick(Sender: TObject);
@@ -424,6 +427,8 @@ type
     procedure Session_ToggleLockUpdate(Sender: TObject);
     procedure Session_ToggleVisibleExecute(Sender: TObject);
     procedure Session_ToggleVisibleUpdate(Sender: TObject);
+    procedure TEAMGridEnter(Sender: TObject);
+    procedure TEAMGridEntrantEnter(Sender: TObject);
     procedure Tools_ConnectionManagerExecute(Sender: TObject);
     procedure Tools_DisqualifyCodesExecute(Sender: TObject);
     procedure Tools_DivisionsExecute(Sender: TObject);
@@ -459,6 +464,7 @@ type
     prefEnableDCode: boolean;
     prefEnableTeamEvents: boolean;
     SCMEventList: TObjectList;
+    fTeamActiveGrid: integer;
     function AssertConnection(): boolean; // Check connection to MSSQL DATABASE
     procedure DBGridWndProc(var Msg: TMessage);
     procedure DrawEventStatus(oGrid: TObject; Rect: TRect; Column: TColumn);
@@ -479,8 +485,8 @@ type
     procedure ToggleDivisions(SetVisible: boolean);
     procedure ToggleSwimmerCAT(SetVisible: boolean);
 //    procedure ToggleTeamEvents(SetVisible: boolean);
-    procedure ToggleVisibileINDVTEAM;
-    procedure ToggleVisibileEVENTGRID;
+    procedure ToggleVisibileTabSheet3;
+    procedure ToggleVisibileTabSheet1;
   protected
     // posted by dmSCMNom : a refresh of the entrant grid is required.
     procedure Entrant_LaneWasCleaned(var Msg: TMessage);
@@ -905,8 +911,17 @@ begin
     if not success then
       beep;
   end;
+
+  if SCM.Event_IsINDV then
+  begin
   if INDV.Grid.CanFocus then
     INDV.Grid.SetFocus;
+  end
+  else
+  begin
+  if TEAM.Grid.CanFocus then
+    TEAM.Grid.SetFocus;
+  end;
 end;
 
 procedure TMain.Entrant_StrikeUpdate(Sender: TObject);
@@ -1186,11 +1201,9 @@ begin
   if (rtnValue = mrYes) then
   begin
     SCM.Event_DeleteExclude(SCM.Event_ID, false); // delete the current selected event.
-    // do not bookmark ----
     Refresh_Event;
-    ToggleVisibileEVENTGRID;
+    ToggleVisibileTabSheet1;
   end;
-
 end;
 
 procedure TMain.Event_DeleteUpdate(Sender: TObject);
@@ -1447,7 +1460,7 @@ begin
     exit;
   SCM.dsEvent.DataSet.CheckBrowseMode;
   SCM.dsEvent.DataSet.Append();
-  ToggleVisibileEVENTGRID;
+  ToggleVisibileTabSheet1;
 end;
 
 procedure TMain.Event_NewRecordUpdate(Sender: TObject);
@@ -1543,7 +1556,7 @@ begin
       EnabledState := true;
   end;
 
-  ToggleVisibileINDVTEAM;
+  ToggleVisibileTabSheet3;
 
   // SYNC the enabled state of the INDV.Grid to the
   // session/heat status.
@@ -1649,6 +1662,12 @@ begin
   fSessionClosedFontColor := clWebTomato;
   fSessionClosedBgColor := clAppWorkSpace;
   fMyInternetConnected := true;
+
+  // UI indicator for focused TEAM GRID vs TEAMENTRANT GRID
+  // (TPanel OnEnter event... displays maroon border.)
+  fTeamActiveGrid := 0;
+  Team.Panel2.BorderWidth := 0;
+  Team.Panel1.BorderWidth := 0;
 
   prefEnableTeamEvents := false;
   prefEnableDCode := false;
@@ -2488,9 +2507,11 @@ begin
   // d e l e t e   t h e   c u r r e n t   s e l e c t e d   h e a t .
   // -----------------------------------------------------------------
   if (results = mrYes) then
+  begin
     SCM.Heat_DeleteExclude(SCM.dsHeat.DataSet.FieldByName('HeatID').AsInteger, false);
-
-  ToggleVisibileINDVTEAM;
+    Refresh_Heat();
+    ToggleVisibileTabSheet3;
+  end;
 end;
 
 procedure TMain.Heat_DeleteUpdate(Sender: TObject);
@@ -2691,9 +2712,15 @@ begin
 end;
 
 procedure TMain.Heat_NewRecordExecute(Sender: TObject);
+var
+aEventID: integer;
 begin
+  // The event must have DistanceID Assigned!!!
+  aEventID := SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger;
+  if SCM.Event_TypeID(aEventID) = 0 then
+    raise Exception.Create('Error: The event has not been assigned a distance.');
   SCM.Heat_NewRecord;
-  ToggleVisibileINDVTEAM;
+  ToggleVisibileTabSheet3;
 end;
 
 procedure TMain.Heat_NewRecordUpdate(Sender: TObject);
@@ -3290,21 +3317,27 @@ begin
           *)
           lblNomWarning.Visible := false;
           Refresh_Nominate;
-          if (SCM.qryEvent.IsEmpty) then
+          if (SCM.dsMember.DataSet.IsEmpty) then
           begin
-            lblNomWarning.Font.Color := clWindowText;
+//            lblNomWarning.Font.Color := clWebTomato;
+            lblNomWarning.Caption := 'No Members';
+            lblNomWarning.Visible := true;
+          end
+          else if (SCM.dsEvent.DataSet.IsEmpty) then
+          begin
+//            lblNomWarning.Font.Color := clWebTomato;
             lblNomWarning.Caption := 'No Events in Session';
             lblNomWarning.Visible := true;
           end
-          else if (SCM.qrySession.IsEmpty) then
+          else if (SCM.dsSession.DataSet.IsEmpty) then
           begin
-            lblNomWarning.Font.Color := clWebTomato;
+//            lblNomWarning.Font.Color := clWebTomato;
             lblNomWarning.Caption := 'Session is Empty';
             lblNomWarning.Visible := true;
           end
           else if SCM.Session_IsLocked then
           begin
-            lblNomWarning.Font.Color := clWebTomato;
+//            lblNomWarning.Font.Color := clWebTomato;
             lblNomWarning.Caption := 'Session is Locked';
             lblNomWarning.Visible := true;
           end;
@@ -3317,6 +3350,7 @@ begin
     2:
       // H e a t s .
       begin
+        ToggleVisibileTabSheet3;
         if HeatControlList.CanFocus then
           HeatControlList.SetFocus;
 
@@ -4004,7 +4038,7 @@ begin
     end;
   end;
 
-  ToggleVisibileEVENTGRID;
+  ToggleVisibileTabSheet1;
 
   // S T A T U S B A R .
   // Session scroll will change statusbar totals for the session
@@ -4106,6 +4140,20 @@ begin
   TAction(Sender).Enabled := DoEnable;
 end;
 
+procedure TMain.TEAMGridEnter(Sender: TObject);
+begin
+  fTeamActiveGrid := 1;
+  Team.Panel2.BorderWidth := 0;
+  Team.Panel1.BorderWidth := 4;
+end;
+
+procedure TMain.TEAMGridEntrantEnter(Sender: TObject);
+begin
+  fTeamActiveGrid := 2;
+  Team.Panel2.BorderWidth := 4;
+  Team.Panel1.BorderWidth := 0;
+end;
+
 procedure TMain.ToggleDCode(EnableFINA: boolean);
 var
   fld: TField;
@@ -4195,7 +4243,7 @@ begin
   end;
 end;
 
-procedure TMain.ToggleVisibileINDVTEAM;
+procedure TMain.ToggleVisibileTabSheet3;
 begin
   {
   --------------------------------------------------------------
@@ -4205,28 +4253,44 @@ begin
   }
   if SCM.dsSession.DataSet.IsEmpty then
   begin
-    INDV.Visible := false;
-    TEAM.Visible := false;
-    vimgNoHeatsMsg.Visible := true;
-    vimgNoHeatsMsg.ImageName := 'NoSessions 512x512'
+    // hides tab sheet panel and displays notification image.
+    vimgNoHeatsMsg.Visible := false;
+    pnlHeatsTabSheet.Visible := false;
+    vimgHeatsNotifications.ImageName := 'NoSessions 512x512';
+    vimgHeatsNotifications.Visible := true;
   end
   else if SCM.dsEvent.DataSet.IsEmpty then
   begin
-    INDV.Visible := false;
-    TEAM.Visible := false;
-    vimgNoHeatsMsg.Visible := true;
-    vimgNoHeatsMsg.ImageName := 'NoEvents 512x512'
+    // hides tab sheet panel and displays notification image.
+    vimgNoHeatsMsg.Visible := false;
+    pnlHeatsTabSheet.Visible := false;
+    vimgHeatsNotifications.ImageName := 'NoEvents 512x512';
+    vimgHeatsNotifications.Visible := true;
   end
   else if SCM.dsHeat.DataSet.IsEmpty then
   begin
-    INDV.Visible := false;
-    TEAM.Visible := false;
-    vimgNoHeatsMsg.Visible := true;
+    // hides INDV/TEAM GRIDS and displays 'No Heats' image.
+    vimgHeatsNotifications.Visible := false;
+    pnlHeatsTabSheet.Visible := true;
+    pnlClient.Visible := false;
+    pnlRight.Visible := false;
     vimgNoHeatsMsg.ImageName := 'NoHeats 512x512';
+    vimgNoHeatsMsg.Visible := true;
   end
   else
   begin
+    // Restores tab sheet panel and clears any notifications.
+    vimgHeatsNotifications.Visible := false;
     vimgNoHeatsMsg.Visible := false;
+    pnlHeatsTabSheet.Visible := true;
+    pnlClient.Visible := true;
+    if not SCM.Event_HasNominees(SCM.dsEvent.DataSet.FieldByName('EventID')
+      .AsInteger) then
+      lblMsgNoNominees.Visible := true
+    else
+      lblMsgNoNominees.Visible := false;
+
+    pnlRight.Visible := true;
     if SCM.Event_IsTEAM then
     begin  // RELAYS
       TEAM.Visible := true;
@@ -4240,7 +4304,7 @@ begin
   end;
 end;
 
-procedure TMain.ToggleVisibileEVENTGRID;
+procedure TMain.ToggleVisibileTabSheet1;
 begin
   {
   --------------------------------------------------------------
@@ -4248,17 +4312,23 @@ begin
    Reveals vimgNoEventsMsg
   --------------------------------------------------------------
   }
-  if SCM.dsEvent.DataSet.IsEmpty then
+  if SCM.dsSession.DataSet.IsEmpty then
   begin
     Event_Grid.Visible := false;
+    EventWidgets.Visible := false;
     vimgNoEventsMsg.Visible := true;
-    if SCM.dsSession.DataSet.IsEmpty then
-      vimgNoEventsMsg.ImageName := 'NoSessions 512x512'
-    else
-      vimgNoEventsMsg.ImageName := 'NoEvents A 512x512';
+    vimgNoEventsMsg.ImageName := 'NoSessions 512x512';
+  end
+  else if SCM.dsEvent.DataSet.IsEmpty then
+  begin
+    EventWidgets.Visible := true;
+    Event_Grid.Visible := false;
+    vimgNoEventsMsg.Visible := true;
+    vimgNoEventsMsg.ImageName := 'NoEvents 512x512';
   end
   else
   begin
+    EventWidgets.Visible := true;
     Event_Grid.Visible := true;
     vimgNoEventsMsg.Visible := false;
   end;
@@ -4498,7 +4568,7 @@ end;
 procedure TMain.UpdateINDVTEAM(var Msg: TMessage);
 begin
   Refresh_Event;
-  ToggleVisibileINDVTEAM;
+  ToggleVisibileTabSheet3;
 end;
 
 { TGridHelper }

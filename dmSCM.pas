@@ -1395,10 +1395,14 @@ begin
   result := 0;
   if fSCMActive and dsEvent.DataSet.Active then
     if not dsEvent.DataSet.IsEmpty then
+    // v := dsEvent.DataSet.FieldByName('DistanceID').AsVariant;
+    // if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0)  then
     begin
-      SQL := 'SELECT [EventTypeID] FROM [SwimClubMeet].[dbo].[Event] WHERE EventID = :ID';
+      SQL := 'SELECT [EventTypeID] FROM [SwimClubMeet].[dbo].[Event] ' +
+        'INNER JOIN Distance ON [Event].DistanceID = Distance.DistanceID ' +
+        'WHERE EventID = :ID';
       v := scmConnection.ExecSQLScalar(SQL, [aEventID]);
-      if not VarIsEmpty(v) or VarIsNull(v) then
+      if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0)  then
         result := v;
     end;
 end;
@@ -2256,10 +2260,15 @@ begin
 
   NumOfLanes := SwimClub_NumberOfLanes;
   // Type INDV or TEAM
-  aEventTypeID := dsEvent.DataSet.FieldByName('EventTypeID').AsInteger;
+  aEventTypeID := SCM.Event_TypeID( dsEvent.DataSet.FieldByName('EventID').AsInteger);
 
   case aEventTypeID of
-    0, 1:
+    0:
+    begin
+      // Distance has not been assigned to event....
+      raise Exception.Create('Error: Event has no DistanceID assigned - no EventTypeID... ');
+    end;
+    1:
       begin
         i := Entrant_CountLanes(HeatID); // current number of pool lanes
         if (i = 0) then
@@ -2284,7 +2293,19 @@ begin
         i := Team_CountLanes(HeatID); // TEAMS
         if (i = 0) then
         begin
-
+          // new heats don't have lanes.
+          Team_InsertEmptyLanes(HeatID);
+          dsTeam.DataSet.Refresh; // required
+        end
+        else
+        begin
+//          TeamID := dsTeam.DataSet.FieldByName('TeamID').AsInteger;
+//          if (i < NumOfLanes) then
+//            Team_PadWithEmptyLanes(HeatID)
+//          else if (i > NumOfLanes) then
+//            Team_DeleteExcessLanes(HeatID);
+//          dsTeam.DataSet.Refresh; // required
+//          Team_Locate(TeamID);
         end;
       end;
   end;

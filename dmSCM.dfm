@@ -2112,15 +2112,16 @@ object SCM: TSCM
     UpdateOptions.KeyFields = 'HeatID'
     SQL.Strings = (
       'SELECT'
-      '  TeamHeat.HeatID,'
+      '  HeatIndividual.HeatID,'
       '  Count(Team.Lane) AS Count_Lane'
       'FROM'
-      '  TeamHeat'
-      '  LEFT JOIN Team ON Team.HeatID = TeamHeat.HeatID'
+      '  HeatIndividual'
+      '  LEFT JOIN Team ON Team.HeatID = Team.HeatID'
       'WHERE'
-      '  TeamHeat.HeatID = :HEATID'
+      '  HeatIndividual.HeatID = :HEATID'
       'GROUP BY'
-      '  TeamHeat.HeatID')
+      '  HeatIndividual.HeatID'
+      '')
     Left = 832
     Top = 368
     ParamData = <
