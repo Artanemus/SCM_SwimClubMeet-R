@@ -427,8 +427,6 @@ type
     procedure Session_ToggleLockUpdate(Sender: TObject);
     procedure Session_ToggleVisibleExecute(Sender: TObject);
     procedure Session_ToggleVisibleUpdate(Sender: TObject);
-    procedure TEAMGridEnter(Sender: TObject);
-    procedure TEAMGridEntrantEnter(Sender: TObject);
     procedure Tools_ConnectionManagerExecute(Sender: TObject);
     procedure Tools_DisqualifyCodesExecute(Sender: TObject);
     procedure Tools_DivisionsExecute(Sender: TObject);
@@ -4138,20 +4136,6 @@ begin
     if not SCM.dsSession.DataSet.IsEmpty then
       DoEnable := true;
   TAction(Sender).Enabled := DoEnable;
-end;
-
-procedure TMain.TEAMGridEnter(Sender: TObject);
-begin
-  fTeamActiveGrid := 1;
-  Team.Panel2.BorderWidth := 0;
-  Team.Panel1.BorderWidth := 4;
-end;
-
-procedure TMain.TEAMGridEntrantEnter(Sender: TObject);
-begin
-  fTeamActiveGrid := 2;
-  Team.Panel2.BorderWidth := 4;
-  Team.Panel1.BorderWidth := 0;
 end;
 
 procedure TMain.ToggleDCode(EnableFINA: boolean);

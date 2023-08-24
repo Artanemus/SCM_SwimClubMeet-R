@@ -642,8 +642,6 @@ object Main: TMain
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitWidth = 1402
-          ExplicitHeight = 758
           DesignSize = (
             1406
             759)
@@ -705,7 +703,6 @@ object Main: TMain
               Align = alLeft
               BevelOuter = bvNone
               TabOrder = 0
-              ExplicitHeight = 738
               DesignSize = (
                 352
                 739)
@@ -834,7 +831,6 @@ object Main: TMain
               Align = alLeft
               BevelOuter = bvNone
               TabOrder = 1
-              ExplicitHeight = 710
               DesignSize = (
                 60
                 711)
@@ -921,8 +917,6 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 2
-              ExplicitLeft = 514
-              ExplicitHeight = 738
               object Nominate_ControlList: TControlList
                 Left = 57
                 Top = 0
@@ -1078,9 +1072,8 @@ object Main: TMain
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitLeft = 10
-          ExplicitWidth = 1399
-          ExplicitHeight = 757
+          ExplicitWidth = 1402
+          ExplicitHeight = 758
           object HeatRightPanel: TPanel
             Left = 282
             Top = 127
@@ -1093,10 +1086,8 @@ object Main: TMain
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 1
-            ExplicitLeft = 0
-            ExplicitTop = 137
-            ExplicitWidth = 1406
-            ExplicitHeight = 622
+            ExplicitWidth = 1120
+            ExplicitHeight = 631
             object vimgNoHeatsMsg: TVirtualImage
               Left = 0
               Top = 0
@@ -1121,8 +1112,8 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 0
-              ExplicitLeft = 1318
-              ExplicitHeight = 622
+              ExplicitLeft = 1032
+              ExplicitHeight = 631
               object EntrantWidgets: TRelativePanel
                 Left = 0
                 Top = 0
@@ -1201,7 +1192,7 @@ object Main: TMain
                 Align = alClient
                 BevelOuter = bvNone
                 TabOrder = 0
-                ExplicitHeight = 622
+                ExplicitHeight = 631
                 DesignSize = (
                   88
                   632)
@@ -1318,8 +1309,8 @@ object Main: TMain
               Align = alClient
               BevelOuter = bvNone
               TabOrder = 1
-              ExplicitWidth = 1318
-              ExplicitHeight = 622
+              ExplicitWidth = 1032
+              ExplicitHeight = 631
               inline INDV: TframeINDV
                 Left = 0
                 Top = 455
@@ -1327,10 +1318,16 @@ object Main: TMain
                 Height = 177
                 Align = alBottom
                 Color = clBtnFace
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -16
+                Font.Name = 'Segoe UI'
+                Font.Style = []
                 ParentColor = False
+                ParentFont = False
                 TabOrder = 0
-                ExplicitTop = 455
-                ExplicitWidth = 1036
+                ExplicitTop = 454
+                ExplicitWidth = 1032
                 ExplicitHeight = 177
                 inherited Grid: TDBGrid
                   Width = 1036
@@ -1344,51 +1341,32 @@ object Main: TMain
                 Width = 1036
                 Height = 439
                 Align = alTop
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -16
+                Font.Name = 'Segoe UI'
+                Font.Style = []
+                ParentFont = False
                 TabOrder = 1
-                ExplicitWidth = 1318
+                ExplicitWidth = 1032
                 ExplicitHeight = 439
                 inherited Splitter1: TSplitter
-                  Top = 297
                   Width = 1036
                   ExplicitTop = 50
                   ExplicitWidth = 1036
                 end
                 inherited Panel1: TPanel
                   Width = 1036
-                  Height = 297
-                  BorderWidth = 4
-                  Color = clMaroon
-                  ParentBackground = False
-                  StyleElements = [seFont]
-                  ExplicitWidth = 1318
-                  ExplicitHeight = 297
                   inherited Grid: TDBGrid
-                    Left = 4
-                    Top = 4
-                    Width = 1028
-                    Height = 289
-                    DataSource = nil
-                    OnEnter = TEAMGridEnter
+                    Width = 1032
                   end
                 end
                 inherited Panel2: TPanel
-                  Top = 311
                   Width = 1036
-                  Height = 128
-                  BorderWidth = 4
-                  BorderStyle = bsSingle
-                  Color = clMaroon
-                  ParentBackground = False
-                  StyleElements = [seFont]
-                  ExplicitTop = 311
-                  ExplicitWidth = 1036
-                  ExplicitHeight = 128
+                  Height = 191
                   inherited GridEntrant: TDBGrid
-                    Left = 4
-                    Top = 4
-                    Width = 1024
-                    Height = 116
-                    OnEnter = TEAMGridEntrantEnter
+                    Width = 1032
+                    Height = 187
                   end
                 end
               end
@@ -1435,6 +1413,7 @@ object Main: TMain
             Align = alTop
             BevelOuter = bvNone
             TabOrder = 2
+            ExplicitWidth = 1402
             DesignSize = (
               1406
               107)
@@ -1617,8 +1596,7 @@ object Main: TMain
             Align = alLeft
             BevelOuter = bvNone
             TabOrder = 0
-            ExplicitTop = 137
-            ExplicitHeight = 622
+            ExplicitHeight = 631
             object HeatWidgets: TRelativePanel
               AlignWithMargins = True
               Left = 192
@@ -1792,7 +1770,7 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 0
-              ExplicitHeight = 602
+              ExplicitHeight = 611
               DesignSize = (
                 60
                 612)
@@ -2019,7 +1997,7 @@ object Main: TMain
               PopupMenu = pumHeat
               TabOrder = 1
               OnBeforeDrawItem = HeatControlListBeforeDrawItem
-              ExplicitHeight = 622
+              ExplicitHeight = 631
               object vimgHeatNum: TVirtualImage
                 Left = 16
                 Top = 11

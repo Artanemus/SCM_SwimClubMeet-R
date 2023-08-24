@@ -26,22 +26,32 @@ object frameTEAM: TframeTEAM
     Height = 234
     Align = alTop
     BevelOuter = bvNone
+    BorderWidth = 2
     Caption = 'Panel1'
+    Color = clMaroon
+    ParentBackground = False
     TabOrder = 0
-    ExplicitHeight = 290
+    StyleElements = [seFont]
     object Grid: TDBGrid
-      Left = 0
-      Top = 0
-      Width = 1033
-      Height = 234
+      Left = 2
+      Top = 2
+      Width = 1029
+      Height = 230
       Align = alClient
       DataSource = SCM.dsTeam
+      DefaultDrawing = False
       TabOrder = 0
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -16
       TitleFont.Name = 'Segoe UI'
       TitleFont.Style = []
+      OnCellClick = GridCellClick
+      OnColEnter = GridColEnter
+      OnColExit = GridColExit
+      OnDrawColumnCell = GridDrawColumnCell
+      OnEditButtonClick = GridEditButtonClick
+      OnEnter = GridEnter
       Columns = <
         item
           Expanded = False
@@ -87,13 +97,17 @@ object frameTEAM: TframeTEAM
     Height = 241
     Align = alClient
     BevelOuter = bvNone
+    BorderWidth = 2
     Caption = 'Panel2'
+    Color = clMaroon
+    ParentBackground = False
     TabOrder = 1
+    StyleElements = [seFont]
     object GridEntrant: TDBGrid
-      Left = 0
-      Top = 0
-      Width = 1033
-      Height = 241
+      Left = 2
+      Top = 2
+      Width = 1029
+      Height = 237
       Align = alClient
       DataSource = SCM.dsTeamEntrant
       TabOrder = 0
@@ -102,6 +116,8 @@ object frameTEAM: TframeTEAM
       TitleFont.Height = -16
       TitleFont.Name = 'Segoe UI'
       TitleFont.Style = []
+      OnEditButtonClick = GridEntrantEditButtonClick
+      OnEnter = GridEntrantEnter
       Columns = <
         item
           Expanded = False
