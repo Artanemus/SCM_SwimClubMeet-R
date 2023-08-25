@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Data.DB,
-  Vcl.Grids, Vcl.DBGrids, dmSCM;
+  Vcl.Grids, Vcl.DBGrids, vcl.Themes, dmSCM;
 
 type
   TframeTEAM = class(TFrame)
@@ -27,6 +27,7 @@ type
     fTeamEditBoxFocused: TColor;
     fTeamEditBoxNormal: TColor;
     fTeamBgColor: TColor;
+    fTeamFontColor: TColor;
     fTeamActiveGrid: integer;
     // D R A W   C H E C K   B O X E S .
     procedure DrawCheckBoxes(oGrid: TObject; Rect: TRect; Column: TColumn;
@@ -49,9 +50,12 @@ implementation
 {$R *.dfm}
 
 { TframeTEAM }
-uses dlgEntrantPickerCTRL, dlgEntrantPicker, dlgDCodePicker, system.UITypes;
+uses dlgEntrantPickerCTRL, dlgEntrantPicker, dlgDCodePicker, system.UITypes,
+  dlgTeamNameMenu;
 
 procedure TframeTEAM.AfterConstruction;
+var
+  css: TCustomStyleServices;
 begin
   inherited;
   fTeamActiveGrid := 0;
@@ -59,6 +63,24 @@ begin
   Panel2.Color := clWebTomato;
   Panel1.BorderWidth := 0;
   Panel2.BorderWidth := 0;
+
+  // Special color assignment - used in TDBGrid painting...
+  // -------------------------------------------
+  css := TStyleManager.Style[TStyleManager.ActiveStyle.Name];
+  if Assigned(css) then
+  begin
+    fTeamEditBoxFocused := css.GetStyleFontColor(sfEditBoxTextFocused);
+    fTeamEditBoxNormal := css.GetStyleFontColor(sfEditBoxTextNormal);
+    fTeamBgColor := css.GetStyleColor(scGrid);
+    fTeamFontColor := css.GetStyleFontColor(sfWindowTextNormal);
+  end
+  else
+  begin
+    fTeamEditBoxFocused := clWebTomato;
+    fTeamEditBoxNormal := clWindowText;
+    fTeamBgColor := clAppWorkSpace;
+    fTeamFontColor := clWindowText;
+  end;
 end;
 
 function TframeTEAM.AssertConnection: boolean;
@@ -242,6 +264,10 @@ procedure TframeTEAM.GridDrawColumnCell(Sender: TObject; const Rect: TRect;
     DataCol: Integer; Column: TColumn; State: TGridDrawState);
 var
   clFont, clBg: TColor;
+  s: variant;
+  Size: TSize;
+  topMargin: integer;
+  MyRect: TRect;
 begin
   // NOTE : DEFAULT DRAWING IS DISABLED ....
   if (Column.Field.FieldName = 'IsScratched') or
@@ -257,13 +283,45 @@ begin
     if gdFocused in State then
       Grid.Canvas.DrawFocusRect(Rect);
   end
-  else if (Column.Field.FieldName = 'FullName') or (Column.FieldName = 'DCode')
+  else if (Column.FieldName = 'DCode')
   then
   begin
     // ENABLE the button if not enabled
     if (Column.ButtonStyle <> TColumnButtonStyle.cbsEllipsis) then
       Column.ButtonStyle := TColumnButtonStyle.cbsEllipsis;
     Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+    if gdFocused in State then
+      Grid.Canvas.DrawFocusRect(Rect);
+  end
+  else if (Column.Field.FieldName = 'FullName')
+  then
+  begin
+    // ENABLE the button if not enabled
+    if (Column.ButtonStyle <> TColumnButtonStyle.cbsEllipsis) then
+      Column.ButtonStyle := TColumnButtonStyle.cbsEllipsis;
+    s := Grid.DataSource.DataSet.FieldByName('Caption').AsString;
+    if Length(s) = 0 then
+      Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State)
+    else
+    begin
+      // Display the team's custom name given by the user.
+      // CLEAR THE CANVAS
+      Grid.Canvas.Brush.Color := fTeamBgColor;
+      Grid.Canvas.Brush.Style := bsSolid;
+      Grid.Canvas.FillRect(Rect);
+      // CALC EXTENT
+      Grid.Canvas.Font.Color := fTeamFontColor;
+      Size := Grid.Canvas.TextExtent(s);
+      topMargin := Round((Rect.Height - Size.Height) / 2);
+      // CALC MARGINS
+      MyRect.Top := Rect.Top + topMargin;
+      MyRect.Left := Rect.Left + topMargin;
+      MyRect.Bottom := Rect.Bottom;
+      MyRect.Right := Rect.Right;
+      // PRINT THE TEXT
+      Grid.Canvas.TextRect(Rect, Rect.Left, Rect.Top, s);
+    end;
+
     if gdFocused in State then
       Grid.Canvas.DrawFocusRect(Rect);
   end
@@ -278,9 +336,10 @@ end;
 
 procedure TframeTEAM.GridEditButtonClick(Sender: TObject);
 var
-  passed: boolean;
   dlgDCode: TDCodePicker;
-  TeamID: integer;
+  dlgTeamName: TTeamNameMenu;
+  v: variant;
+  TeamID, TeamNameID: integer;
   rtnValue: TModalResult;
   fld: TField;
 begin
@@ -290,13 +349,15 @@ begin
 
   SCM.dsTeam.DataSet.DisableControls;
   TeamID := SCM.dsTeam.DataSet.FieldByName('TeamID').AsInteger;
+  v := SCM.dsTeam.DataSet.FieldByName('TeamNameID').AsVariant;
+  if varIsNull(v) or varIsempty(v) then TeamNameID := 0 else TeamNameID := v;
 
   // handle the ellipse button for the disqualification code
   {TODO -oBSA -cGeneral : DCode Team Specific}
   fld := TDBGrid(Sender).SelectedField;
   if fld.FieldName = 'DCode' then
   begin
-    if not SCM.dsTeam.DataSet.FieldByName('TeamNameID').IsNull then
+    if (TeamNameID <> 0) then
     begin
       dlgDCode := TDCodePicker.CreateWithConnection(self, SCM.scmConnection);
       {TODO -oBSA -cGeneral : Flag DCodePicker to switch to relay mode.}
@@ -313,17 +374,12 @@ begin
   // handle the ellipse entrant
   else if fld.FieldName = 'TeamName' then
   begin
-    {
-
-      dlg := TeamPicker.Create(self);
-      passed := dlg.Prepare(SCM.scmConnection, TeamID);
-      if passed then
-      rtnValue := dlg.ShowModal;
-      dlg.Free;
-      }
-
+    dlgTeamName := TTeamNameMenu.Create(self);
+    dlgTeamName.Prepare(SCM.scmConnection, TeamID);
+    rtnValue := dlgTeamName.ShowModal;
+    dlgTeamName.Free;
     // require a refresh to update members details
-    if passed and IsPositiveResult(rtnValue) then
+    if IsPositiveResult(rtnValue) then
     begin
       SCM.dsTeam.DataSet.Refresh;
       SCM.Team_Locate(TeamID);
@@ -470,7 +526,7 @@ begin
     // move to the previous heat ....
     SCM.dsHeat.DataSet.Prior;
     // move to last entrant ....
-    SCM.dsEntrant.DataSet.Last;
+    SCM.dsTeam.DataSet.Last;
   end
   else
     success := SCM.SwapMoveUp(Grid.DataSource.DataSet);

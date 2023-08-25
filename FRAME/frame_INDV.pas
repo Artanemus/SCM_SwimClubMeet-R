@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.Grids,
-  Vcl.DBGrids, dmSCM, vcl.ActnList;
+  Vcl.DBGrids, vcl.Themes, vcl.ActnList, dmSCM;
 
 type
   TframeINDV = class(TFrame)
@@ -38,6 +38,7 @@ type
     // TActionManager:  Sender: TAction
     procedure GridMoveDown(Sender: TObject);
     procedure GridMoveUp(Sender: TObject);
+    procedure AfterConstruction; override;
 
   end;
 
@@ -46,6 +47,28 @@ implementation
 {$R *.dfm}
 
 uses dlgEntrantPickerCTRL, dlgEntrantPicker, dlgDCodePicker, system.UITypes;
+
+procedure TframeINDV.AfterConstruction;
+var
+  css: TCustomStyleServices;
+begin
+  inherited;
+  // Special color assignment - used in TDBGrid painting...
+  // -------------------------------------------
+  css := TStyleManager.Style[TStyleManager.ActiveStyle.Name];
+  if Assigned(css) then
+  begin
+    fEntrantEditBoxFocused := css.GetStyleFontColor(sfEditBoxTextFocused);
+    fEntrantEditBoxNormal := css.GetStyleFontColor(sfEditBoxTextNormal);
+    fEntrantBgColor := css.GetStyleColor(scGrid);
+  end
+  else
+  begin
+    fEntrantEditBoxFocused := clWebTomato;
+    fEntrantEditBoxNormal := clWindowText;
+    fEntrantBgColor := clAppWorkSpace;
+  end;
+end;
 
 function TframeINDV.AssertConnection: boolean;
 begin

@@ -69,7 +69,8 @@ uses
   frame_INDV in 'FRAME\frame_INDV.pas' {frameINDV: TFrame},
   dlgDCodePicker in 'dlgDCodePicker.pas' {DCodePicker},
   AutoBuildRelayAlgorithm in 'AutoBuildRelayAlgorithm.pas',
-  dlgAutoBuild_Relay in 'dlgAutoBuild_Relay.pas' {AutoBuild_Relay};
+  dlgAutoBuild_Relay in 'dlgAutoBuild_Relay.pas' {AutoBuild_Relay},
+  dlgTeamNameMenu in 'FRAME\dlgTeamNameMenu.pas' {TeamNameMenu};
 
 {$R *.res}
 

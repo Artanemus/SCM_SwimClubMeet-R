@@ -389,6 +389,10 @@
             <Form>AutoBuild_Relay</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="FRAME\dlgTeamNameMenu.pas">
+            <Form>TeamNameMenu</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

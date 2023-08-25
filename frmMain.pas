@@ -443,9 +443,9 @@ type
     procedure Tools_SwimmercategoryUpdate(Sender: TObject);
   private
     bootprogress: TBootProgress;
-    fEntrantBgColor: TColor;
-    fEntrantEditBoxFocused: TColor;
-    fEntrantEditBoxNormal: TColor;
+//    fEntrantBgColor: TColor;
+//    fEntrantEditBoxFocused: TColor;
+//    fEntrantEditBoxNormal: TColor;
     // TRACK the MemberID of the last known member to have their
     // IsQualified status checked via Nominee_UpdateCheckListBoxQualified();
     fLastMemberQualified: integer;
@@ -757,8 +757,9 @@ end;
 procedure TMain.Entrant_MoveDownExecute(Sender: TObject);
 begin
   if SCM.Event_IsINDV then
-    INDV.GridMoveDown(Sender);
-  {TODO -oBSA -cGeneral : TEAM.GridMoveDown}
+    INDV.GridMoveDown(Sender)
+  else
+    TEAM.GridMoveDown(Sender);
 end;
 
 procedure TMain.Entrant_MoveDownUpdate(Sender: TObject);
@@ -793,8 +794,9 @@ end;
 procedure TMain.Entrant_MoveUpExecute(Sender: TObject);
 begin
   if SCM.Event_IsINDV then
-    INDV.GridMoveUp(Sender);
-  {TODO -oBSA -cGeneral : TEAM.GridMoveUp}
+    INDV.GridMoveUp(Sender)
+  else
+    TEAM.GridMoveUp(Sender);
 end;
 
 procedure TMain.Entrant_MoveUpUpdate(Sender: TObject);
@@ -856,24 +858,31 @@ procedure TMain.Entrant_SortExecute(Sender: TObject);
 var
   HeatID, EntrantID: integer;
 begin
-  // ...Update traps illegal calls.
-  with SCM.dsEntrant.DataSet do
+  if SCM.Event_IsINDV then
   begin
-    DisableControls;
-    // needed to cue-to-entrant
-    EntrantID := FieldByName('EntrantID').AsInteger;
-    // the heat to pad
-    HeatID := FieldByName('HeatID').AsInteger;
-    SCM.Entrant_PadWithEmptyLanes(HeatID);
-    SCM.Entrant_RenumberLanes(HeatID);
-    // sort
-    if (SCM.Entrant_Sort(HeatID)) then
+    {TODO -oBSA -cGeneral : Routine should be placed in data module...}
+    with SCM.dsEntrant.DataSet do
     begin
-      Refresh;
-      // go cue-to-entrant
-      SCM.Entrant_Locate(EntrantID);
+      DisableControls;
+      // needed to cue-to-entrant
+      EntrantID := FieldByName('EntrantID').AsInteger;
+      // the heat to pad
+      HeatID := FieldByName('HeatID').AsInteger;
+      SCM.Entrant_PadWithEmptyLanes(HeatID);
+      SCM.Entrant_RenumberLanes(HeatID);
+      // sort
+      if (SCM.Entrant_Sort(HeatID)) then
+      begin
+        Refresh;
+        // go cue-to-entrant
+        SCM.Entrant_Locate(EntrantID);
+      end;
+      EnableControls;
     end;
-    EnableControls;
+  end
+  else
+  begin
+    {TODO -oBSA -cGeneral : SortExecute Event_IsTEAM....}
   end;
 end;
 
@@ -944,13 +953,24 @@ procedure TMain.Entrant_SwapLanesExecute(Sender: TObject);
 var
   dlg: TSwapLanes;
 begin
+  if SCM.Event_IsINDV then
+  begin
   dlg := TSwapLanes.Create(self);
-  // DEPENDANT ON THE SCM DATA MODULE
   if IsPositiveResult(dlg.ShowModal) then
     Refresh_Entrant;
   dlg.Free;
+  end
+  else
+  begin
+    { TODO -oBSA -cGeneral : Dialogue - Swap relay teams in lanes }
+    { dlg := TSwapLanesTEAM.Create(self);
+      if IsPositiveResult(dlg.ShowModal) then
+      Refresh_Entrant;
+      dlg.Free; }
+  end;
+
   if INDV.Grid.CanFocus then
-    INDV.Grid.SetFocus;
+    INDV.Grid.SetFocus else TEAM.Grid.SetFocus;
 end;
 
 procedure TMain.Entrant_SwapLanesUpdate(Sender: TObject);
@@ -1657,8 +1677,8 @@ begin
   SCMEventList := nil;
   fDoStatusBarUpdate := false; // false : aborts StatusBar Update procedure.
   fSCMisInitializing := true;
-  fSessionClosedFontColor := clWebTomato;
-  fSessionClosedBgColor := clAppWorkSpace;
+  fSessionClosedFontColor := clWebTomato; // Use to custom draw closed session
+  fSessionClosedBgColor := clAppWorkSpace; // Use to custom draw closed session
   fMyInternetConnected := true;
 
   // UI indicator for focused TEAM GRID vs TEAMENTRANT GRID
@@ -2078,25 +2098,20 @@ begin
   else if (TStyleManager.ActiveStyle.Name <> fscmStyleName) then
     TStyleManager.TrySetStyle(fscmStyleName);
 
-  // Special color assignment - used in TDBGrid painting...
+  // Color assignment to custom paint closed sessions in grid.
   // -------------------------------------------
   css := TStyleManager.Style[TStyleManager.ActiveStyle.Name];
   if Assigned(css) then
   begin
     fSessionClosedFontColor := css.GetStyleFontColor(sfEditBoxTextDisabled);
     fSessionClosedBgColor := css.GetStyleColor(scGrid);
-    fEntrantEditBoxFocused := css.GetStyleFontColor(sfEditBoxTextFocused);
-    fEntrantEditBoxNormal := css.GetStyleFontColor(sfEditBoxTextNormal);
-    fEntrantBgColor := css.GetStyleColor(scGrid);
   end
   else
   begin
     fSessionClosedFontColor := clWebTomato;
     fSessionClosedBgColor := clAppWorkSpace;
-    fEntrantEditBoxFocused := clWebTomato;
-    fEntrantEditBoxNormal := clWindowText;
-    fEntrantBgColor := clAppWorkSpace;
   end;
+
 
   // 2023.06.26
   prefEnableTeamEvents := iFile.ReadBool('Preferences', 'EnableTeamEvents', false);
@@ -3927,8 +3942,7 @@ begin
     Session_Grid.Canvas.Brush.Style := bsSolid;
     Session_Grid.Canvas.FillRect(Rect);
     // PRINT THE TEXT
-    // Session_Grid.Canvas.Pen.Color = clWebTomato;
-    Session_Grid.Canvas.Font.Color := clWebTomato;
+    Session_Grid.Canvas.Font.Color := fSessionClosedFontColor;
     Size := Session_Grid.Canvas.TextExtent(Column.Field.DisplayText);
     topMargin := Round((Rect.Height - Size.Height) / 2);
     // calculate margins
