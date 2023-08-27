@@ -3,8 +3,8 @@ object SwapLanes: TSwapLanes
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Swap Lanes ...'
-  ClientHeight = 157
-  ClientWidth = 664
+  ClientHeight = 156
+  ClientWidth = 660
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,22 +12,21 @@ object SwapLanes: TSwapLanes
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poOwnerFormCenter
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
-  PixelsPerInch = 96
   TextHeight = 19
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 664
-    Height = 110
+    Width = 660
+    Height = 109
     Align = alClient
     TabOrder = 0
     ExplicitTop = 8
     ExplicitWidth = 705
+    ExplicitHeight = 110
     object Label1: TLabel
       Left = 19
       Top = 23
@@ -225,17 +224,18 @@ object SwapLanes: TSwapLanes
   end
   object Panel2: TPanel
     Left = 0
-    Top = 110
-    Width = 664
+    Top = 109
+    Width = 660
     Height = 47
     Align = alBottom
     TabOrder = 1
+    ExplicitTop = 110
     ExplicitWidth = 705
     DesignSize = (
-      664
+      660
       47)
     object btnCancel: TButton
-      Left = 403
+      Left = 395
       Top = 6
       Width = 91
       Height = 35
@@ -248,7 +248,7 @@ object SwapLanes: TSwapLanes
       ExplicitLeft = 444
     end
     object btnSwapLanes: TButton
-      Left = 500
+      Left = 492
       Top = 6
       Width = 108
       Height = 35
@@ -258,6 +258,7 @@ object SwapLanes: TSwapLanes
       ModalResult = 1
       TabOrder = 1
       OnClick = btnSwapLanesClick
+      ExplicitLeft = 500
     end
   end
   object tblEntrantA: TFDTable

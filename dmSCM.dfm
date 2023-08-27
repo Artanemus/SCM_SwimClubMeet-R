@@ -2085,6 +2085,7 @@ object SCM: TSCM
   end
   object tblSwimmerCAT: TFDTable
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'SwimmerCategoryID'
     Connection = scmConnection
     UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
@@ -2497,5 +2498,61 @@ object SCM: TSCM
         ParamType = ptInput
         Value = 82
       end>
+  end
+  object qrySplit: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    BeforeInsert = qryEntrantBeforeInsert
+    AfterScroll = qryEntrantAfterScroll
+    IndexFieldNames = 'EntrantID'
+    MasterSource = dsEntrant
+    MasterFields = 'EntrantID'
+    DetailFields = 'EntrantID'
+    Connection = scmConnection
+    FormatOptions.AssignedValues = [fvFmtDisplayDateTime, fvFmtDisplayTime]
+    FormatOptions.FmtDisplayTime = 'nn:ss.zzz'
+    UpdateOptions.AssignedValues = [uvEInsert, uvCheckRequired]
+    UpdateOptions.EnableInsert = False
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.UpdateTableName = 'SwimClubMeet.dbo.Split'
+    UpdateOptions.KeyFields = 'SplitID'
+    SQL.Strings = (
+      '-- Format of TTime occurs in OnGetText() '#39'nn:ss.zzz'#39
+      ''
+      'USE SwimClubMeet'
+      ''
+      'DECLARE @SwimClubID AS INT;'
+      'SET @SwimClubID = 1;'
+      ''
+      'SELECT Split.SplitID'
+      '     , Split.EntrantID'
+      '     , Split.SplitTime'
+      ''
+      'FROM Split'
+      'ORDER BY SplitTime ASC;'
+      ''
+      ''
+      '')
+    Left = 48
+    Top = 536
+    object qrySplitSplitID: TFDAutoIncField
+      FieldName = 'SplitID'
+      ReadOnly = True
+      Visible = False
+    end
+    object qrySplitEntrantID: TIntegerField
+      FieldName = 'EntrantID'
+      Visible = False
+    end
+    object qrySplitSplitTime: TTimeField
+      Alignment = taRightJustify
+      FieldName = 'SplitTime'
+      DisplayFormat = 'nn:ss.zzz'
+      EditMask = '!00:00.000;1;0'
+    end
+  end
+  object dsSplit: TDataSource
+    DataSet = qrySplit
+    Left = 112
+    Top = 536
   end
 end

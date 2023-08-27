@@ -532,12 +532,12 @@ begin
   if (Grid.DataSource.DataSet.FieldByName('Lane').AsInteger = MaxLane)
   then
   begin
-    success := SCM.SwapMoveDownHeat(Grid.DataSource.DataSet);
+    success := SCM.Heat_MoveDown(Grid.DataSource.DataSet);
     // move to next heat  (By default, will position on first entrant.)
     SCM.dsHeat.DataSet.Next;
   end
   else
-    success := SCM.SwapMoveDown(Grid.DataSource.DataSet);
+    success := SCM.Entrant_MoveDownLane(Grid.DataSource.DataSet);
   if not success then
     beep;
 end;
@@ -552,14 +552,14 @@ begin
   // already at top of stack? First lane in pool.
   if (Grid.DataSource.DataSet.FieldByName('Lane').AsInteger = 1) then
   begin
-    success := SCM.SwapMoveUpHeat(Grid.DataSource.DataSet);
+    success := SCM.Heat_MoveUp(Grid.DataSource.DataSet);
     // move to the previous heat ....
     SCM.dsHeat.DataSet.Prior;
     // move to last entrant ....
     SCM.dsEntrant.DataSet.Last;
   end
   else
-    success := SCM.SwapMoveUp(Grid.DataSource.DataSet);
+    success := SCM.Entrant_MoveUpLane(Grid.DataSource.DataSet);
   if not success then
     beep;
 end;

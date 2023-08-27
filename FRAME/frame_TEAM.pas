@@ -3,9 +3,10 @@ unit frame_TEAM;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Data.DB,
-  Vcl.Grids, Vcl.DBGrids, vcl.Themes, dmSCM;
+  Vcl.Grids, Vcl.DBGrids, Vcl.Themes, dmSCM;
 
 type
   TframeTEAM = class(TFrame)
@@ -17,8 +18,8 @@ type
     procedure GridCellClick(Column: TColumn);
     procedure GridColEnter(Sender: TObject);
     procedure GridColExit(Sender: TObject);
-    procedure GridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol:
-        Integer; Column: TColumn; State: TGridDrawState);
+    procedure GridDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure GridEditButtonClick(Sender: TObject);
     procedure GridEnter(Sender: TObject);
     procedure GridEntrantEditButtonClick(Sender: TObject);
@@ -28,7 +29,7 @@ type
     fTeamEditBoxNormal: TColor;
     fTeamBgColor: TColor;
     fTeamFontColor: TColor;
-    fTeamActiveGrid: integer;
+    fTeamActiveGrid: Integer;
     // D R A W   C H E C K   B O X E S .
     procedure DrawCheckBoxes(oGrid: TObject; Rect: TRect; Column: TColumn;
       fontColor: TColor; bgColor: TColor);
@@ -50,7 +51,7 @@ implementation
 {$R *.dfm}
 
 { TframeTEAM }
-uses dlgEntrantPickerCTRL, dlgEntrantPicker, dlgDCodePicker, system.UITypes,
+uses dlgEntrantPickerCTRL, dlgEntrantPicker, dlgDCodePicker, System.UITypes,
   dlgTeamNameMenu;
 
 procedure TframeTEAM.AfterConstruction;
@@ -100,7 +101,7 @@ procedure TframeTEAM.DrawCheckBoxes(oGrid: TObject; Rect: TRect;
 var
   MyRect: TRect;
   oField: TField;
-  iPos, iFactor: integer;
+  iPos, iFactor: Integer;
   bValue: boolean;
   g: TDBGrid;
   points: Array [0 .. 4] of TPoint;
@@ -163,12 +164,11 @@ begin
     g.Canvas.LineTo(iPos + (iFactor * 8), MyRect.Top + 5);
   end;
 
-
 end;
 
 procedure TframeTEAM.Enable_GridEllipse;
 var
-  i: integer;
+  i: Integer;
   col: TColumn;
 begin
   for i := 0 to Grid.Columns.Count - 1 do
@@ -261,12 +261,12 @@ begin
 end;
 
 procedure TframeTEAM.GridDrawColumnCell(Sender: TObject; const Rect: TRect;
-    DataCol: Integer; Column: TColumn; State: TGridDrawState);
+  DataCol: Integer; Column: TColumn; State: TGridDrawState);
 var
   clFont, clBg: TColor;
   s: variant;
   Size: TSize;
-  topMargin: integer;
+  topMargin: Integer;
   MyRect: TRect;
 begin
   // NOTE : DEFAULT DRAWING IS DISABLED ....
@@ -283,8 +283,7 @@ begin
     if gdFocused in State then
       Grid.Canvas.DrawFocusRect(Rect);
   end
-  else if (Column.FieldName = 'DCode')
-  then
+  else if (Column.FieldName = 'DCode') then
   begin
     // ENABLE the button if not enabled
     if (Column.ButtonStyle <> TColumnButtonStyle.cbsEllipsis) then
@@ -293,8 +292,7 @@ begin
     if gdFocused in State then
       Grid.Canvas.DrawFocusRect(Rect);
   end
-  else if (Column.Field.FieldName = 'FullName')
-  then
+  else if (Column.Field.FieldName = 'FullName') then
   begin
     // ENABLE the button if not enabled
     if (Column.ButtonStyle <> TColumnButtonStyle.cbsEllipsis) then
@@ -339,29 +337,31 @@ var
   dlgDCode: TDCodePicker;
   dlgTeamName: TTeamNameMenu;
   v: variant;
-  TeamID, TeamNameID: integer;
+  TeamID, TeamNameID: Integer;
   rtnValue: TModalResult;
   fld: TField;
 begin
   if not AssertConnection then
     exit;
-  rtnValue := mrCancel;
 
   SCM.dsTeam.DataSet.DisableControls;
   TeamID := SCM.dsTeam.DataSet.FieldByName('TeamID').AsInteger;
   v := SCM.dsTeam.DataSet.FieldByName('TeamNameID').AsVariant;
-  if varIsNull(v) or varIsempty(v) then TeamNameID := 0 else TeamNameID := v;
+  if varIsNull(v) or varIsempty(v) then
+    TeamNameID := 0
+  else
+    TeamNameID := v;
 
   // handle the ellipse button for the disqualification code
-  {TODO -oBSA -cGeneral : DCode Team Specific}
+  { TODO -oBSA -cGeneral : DCode Team Specific }
   fld := TDBGrid(Sender).SelectedField;
   if fld.FieldName = 'DCode' then
   begin
     if (TeamNameID <> 0) then
     begin
       dlgDCode := TDCodePicker.CreateWithConnection(self, SCM.scmConnection);
-      {TODO -oBSA -cGeneral : Flag DCodePicker to switch to relay mode.}
-      {      dlgDCode.TeamID := TeamID;}
+      { TODO -oBSA -cGeneral : Flag DCodePicker to switch to relay mode. }
+      { dlgDCode.TeamID := TeamID; }
       rtnValue := dlgDCode.ShowModal;
       dlgDCode.Free;
       if IsPositiveResult(rtnValue) then
@@ -409,7 +409,7 @@ var
   dlg: TEntrantPicker;
   dlgCntrl: TEntrantPickerCTRL;
   dlgDCode: TDCodePicker;
-  EntrantID: integer;
+  EntrantID: Integer;
   rtnValue: TModalResult;
   fld: TField;
 begin
@@ -421,7 +421,7 @@ begin
   EntrantID := SCM.dsEntrant.DataSet.FieldByName('EntrantID').AsInteger;
 
   // handle the ellipse button for the disqualification code
-  {TODO -oBSA -cGeneral : DCode Team Specific}
+  { TODO -oBSA -cGeneral : DCode Team Specific }
   fld := TDBGrid(Sender).SelectedField;
   if fld.FieldName = 'DCode' then
   begin
@@ -474,13 +474,12 @@ begin
   // Changes to entrants effect totals in statusbar
   fDoStatusBarUpdate := true; // flag set false after SCM_StatusBarExecute.
 
-  {TODO -oBSA -cGeneral : POST MESSAGE TO UPDATE STATUS BAR ON PARENT FORM}
+  { TODO -oBSA -cGeneral : POST MESSAGE TO UPDATE STATUS BAR ON PARENT FORM }
 
   {
-  SCM_StatusBar.Update; // Asserts enabled state.
-  SCM_StatusBar.Execute; // Fire actions
+    SCM_StatusBar.Update; // Asserts enabled state.
+    SCM_StatusBar.Execute; // Fire actions
   }
-
 
 end;
 
@@ -494,21 +493,30 @@ end;
 procedure TframeTEAM.GridMoveDown(Sender: TObject);
 var
   success: boolean;
-  MaxLane: integer;
+  MaxLane: Integer;
+  aDataSet: TDataSet;
 begin
-  // ...Update traps illegal calls.
-  // already at bottom of stack?  Last lane in pool.
-  {TODO -oBSA -cGeneral : Swap methods needed for team}
+  if fTeamActiveGrid = 1 then
+    aDataSet := Grid.DataSource.DataSet
+  else if fTeamActiveGrid = 2 then
+    aDataSet := GridEntrant.DataSource.DataSet
+  else exit;
+
   MaxLane := SCM.SwimClub_NumberOfLanes;
-  if (Grid.DataSource.DataSet.FieldByName('Lane').AsInteger = MaxLane)
-  then
+  success := false;
+  if (aDataSet.FieldByName('Lane').AsInteger = MaxLane) then
   begin
-    success := SCM.SwapMoveDownHeat(Grid.DataSource.DataSet);
-    // move to next heat  (By default, will position on first entrant.)
-    SCM.dsHeat.DataSet.Next;
+    if fTeamActiveGrid = 1 then
+    begin
+      success := SCM.Heat_MoveDown(aDataSet);
+      // Move Team to next heat (By default, will position on first entrant.)
+      { TODO -oBSA -cGeneral : CHECK that this routine works for Entrant/Team. }
+      SCM.dsHeat.DataSet.Next;
+    end;
   end
   else
-    success := SCM.SwapMoveDown(Grid.DataSource.DataSet);
+    // Generic move for either Team or TeamEntrant
+    success := SCM.MoveDownLane(aDataSet);
   if not success then
     beep;
 end;
@@ -516,20 +524,27 @@ end;
 procedure TframeTEAM.GridMoveUp(Sender: TObject);
 var
   success: boolean;
+  aDataSet: TDataSet;
 begin
-  // ...Update traps illegal calls.
-  // already at top of stack? First lane in pool.
-  {TODO -oBSA -cGeneral : Swap methods needed for team}
-  if (Grid.DataSource.DataSet.FieldByName('Lane').AsInteger = 1) then
+  if fTeamActiveGrid = 1 then
+    aDataSet := Grid.DataSource.DataSet
+  else if fTeamActiveGrid = 2 then
+    aDataSet := GridEntrant.DataSource.DataSet
+  else exit;
+  success := false;
+  if (aDataSet.FieldByName('Lane').AsInteger = 1) then
   begin
-    success := SCM.SwapMoveUpHeat(Grid.DataSource.DataSet);
-    // move to the previous heat ....
-    SCM.dsHeat.DataSet.Prior;
-    // move to last entrant ....
-    SCM.dsTeam.DataSet.Last;
+    if fTeamActiveGrid = 1 then
+    begin
+      success := SCM.Heat_MoveUp(aDataSet); // Locate Team to 'prior' heat.
+      { TODO -oBSA -cGeneral : CHECK that this routine works for Entrant/Team. }
+      SCM.dsHeat.DataSet.Prior; // move to the previous heat ....
+      aDataSet.Last; // move to last entrant ....
+    end;
   end
   else
-    success := SCM.SwapMoveUp(Grid.DataSource.DataSet);
+    // Generic move for either Team or TeamEntrant
+    success := SCM.MoveUpLane(aDataSet);
   if not success then
     beep;
 end;
