@@ -28,6 +28,7 @@ type
     dsNominateMembers: TDataSource;
     dsNominee: TDataSource;
     dsSession: TDataSource;
+    dsSplit: TDataSource;
     dsSwimClub: TDataSource;
     dsTeam: TDataSource;
     dsTeamEntrant: TDataSource;
@@ -138,6 +139,10 @@ type
     qrySortHeatTeam: TFDQuery;
     qrySortHeatTeam_EmptyLanes: TFDQuery;
     qrySortHeat_EmptyLanes: TFDQuery;
+    qrySplit: TFDQuery;
+    qrySplitEntrantID: TIntegerField;
+    qrySplitSplitID: TFDAutoIncField;
+    qrySplitSplitTime: TTimeField;
     qrySwapEntrants: TFDQuery;
     qrySwimClub: TFDQuery;
     qryTeam: TFDQuery;
@@ -170,11 +175,6 @@ type
     TimeField5: TTimeField;
     WideStringField1: TWideStringField;
     WideStringField2: TWideStringField;
-    qrySplit: TFDQuery;
-    dsSplit: TDataSource;
-    qrySplitSplitID: TFDAutoIncField;
-    qrySplitEntrantID: TIntegerField;
-    qrySplitSplitTime: TTimeField;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
     procedure qryEntrantAfterScroll(DataSet: TDataSet);
@@ -224,8 +224,6 @@ type
     procedure Team_ClearLane(aTeamID: integer);
     procedure Team_CreateEmptyLane(aHeatID, aLane: integer);
     function Team_EmptyLane(): Boolean;
-
-
   protected
     procedure WndProc(var wndMsg: TMessage); virtual;
   public
@@ -233,9 +231,6 @@ type
     procedure ActivateTable();
     procedure DeActivateTable();
     function EmptyLane(): Boolean;
-    function MoveDownLane(aDataSet: TDataSet): Boolean;
-    function MoveUpLane(aDataSet: TDataSet): Boolean;
-
     // ENTRANT
     function Entrant_CountLanes(aHeatID: integer): integer;
     procedure Entrant_DeleteALLExclude(aHeatID: integer;
@@ -247,7 +242,9 @@ type
     procedure Entrant_InsertEmptyLanes(aHeatID: integer);
     function Entrant_Locate(EntrantID: integer): Boolean;
     function Entrant_MoveDownLane(EntrantDS: TDataSet): Boolean;
+    function Entrant_MoveDownToNextHeat(EntrantDS: TDataSet): Boolean;
     function Entrant_MoveUpLane(EntrantDS: TDataSet): Boolean;
+    function Entrant_MoveUpToPrevHeat(EntrantDS: TDataSet): Boolean;
     function Entrant_NextAvailLaneNum(aHeatID, aSeedNumber: integer): integer;
     procedure Entrant_PadWithEmptyLanes(aHeatID: integer);
     procedure Entrant_RenumberLanes(aHeatID: integer);
@@ -293,8 +290,6 @@ type
     function Heat_IsClosed(): Boolean; // current heat
     function Heat_IsRaced(): Boolean; // current heat
     function Heat_Locate(aHeatID: integer): Boolean;
-    function Heat_MoveDown(EntrantDS: TDataSet): Boolean;
-    function Heat_MoveUp(EntrantDS: TDataSet): Boolean;
     procedure Heat_NewRecord();
     function Heat_NextID(aHeatID: integer): integer; // uses HeatNum
     function Heat_PrevID(aHeatID: integer): integer; // uses HeatNum
@@ -307,6 +302,11 @@ type
     // MEMBER
     function Member_IsQualified(aMemberID, aGenderID, aQualifyDistID,
       aStrokeID: integer; IsShortCourse: Boolean): Boolean;
+    // MOVE - GENERIC LANE FUNCTIONS
+    function MoveDownLane(aDataSet: TDataSet): Boolean;
+    function MoveUpLane(aDataSet: TDataSet): Boolean;
+    function MoveDownToNextHeat(aDataSet: TDataSet): Boolean;
+    function MoveUpToPrevHeat(aDataSet: TDataSet): Boolean;
     // NOMINATE
     function Nominate_Locate(MemberID: integer): Boolean;
     function Nominate_LocateEventNum(ADataSet: TDataSet;
@@ -319,6 +319,9 @@ type
     function Nominee_DeleteExclude(aNomineeID, aEventID: integer;
       DoExclude: Boolean = true): Boolean;
     function Nominee_InEvent(aNomineeID, aEventID: integer): integer;
+    // SWAPLANE - GENERIC LANE FUNCTIONS
+    function SwapLanes(EntrantIDA, EntrantIDB: integer): Boolean; overload;
+    function SwapLanes(HeatIDA, LaneA, HeatIDB, LaneB: integer): Boolean; overload;
     // SWIMCLUBMEET SYSTEM
     function SCM_VerInfoMajor(): integer;
     // SESSION
@@ -340,9 +343,9 @@ type
     procedure Split_DeleteALLExclude(aEntrantID: integer;
       DoExclude: Boolean = true); // exclude closed or raced heats
     function Split_DeleteExclude(aSplitID: integer; DoExclude: Boolean): Boolean;
+    function Split_HeatStatusID(aSplitID: integer): integer;
     // exclude closed or raced heats
     function Split_SessionIsLocked(aSplitID: integer): Boolean;
-    function Split_HeatStatusID(aSplitID: integer): integer;
     // SWIMCLUB
     function SwimClub_ClubName(): string;
     function SwimClub_ID(): integer;
@@ -361,17 +364,15 @@ type
     function TeamEntrant_DeleteExclude(aTeamEntrantID: integer;
       DoExclude: Boolean = true): Boolean;
     function TeamEntrant_HeatStatusID(aTeamEntrantID: integer): integer;
-
     function TeamEntrant_MoveDownLane(aDataSet: TDataSet): Boolean;
     function TeamEntrant_MoveUpLane(aDataSet: TDataSet): Boolean;
-
     function TeamEntrant_SessionIsLocked(aTeamEntrantID: integer): Boolean;
     // TEAMSPLIT
     procedure TeamSplit_DeleteALLExclude(aTeamID: integer;
       DoExclude: Boolean = true);
     function TeamSplit_DeleteExclude(aSplitID: integer; DoExclude: Boolean): Boolean;
-    function TeamSplit_SessionIsLocked(aTeamSplitID: integer): Boolean;
     function TeamSplit_HeatStatusID(aSplitID: integer): integer;
+    function TeamSplit_SessionIsLocked(aTeamSplitID: integer): Boolean;
     // TEAM
     function Team_CountLanes(aHeatID: integer): integer;
     procedure Team_DeleteALLExclude(aHeatID: integer;
@@ -383,10 +384,10 @@ type
     function Team_HeatStatusID(aTeamID: integer): integer;
     procedure Team_InsertEmptyLanes(aHeatID: integer);
     function Team_Locate(TeamID: integer): Boolean;
-
-    function Team_MoveDownLane(aDataSet: TDataSet): Boolean;
-    function Team_MoveUpLane(aDataSet: TDataSet): Boolean;
-
+    function Team_MoveDownLane(TeamDS: TDataSet): Boolean;
+    function Team_MoveDownToNextHeat(TeamDS: TDataSet): Boolean;
+    function Team_MoveUpLane(TeamDS: TDataSet): Boolean;
+    function Team_MoveUpToPrevHeat(TeamDS: TDataSet): Boolean;
     function Team_NextAvailLaneNum(aHeatID, aSeedNumber: integer): integer;
     procedure Team_PadWithEmptyLanes(aHeatID: integer);
     procedure Team_RenumberLanes(aHeatID: integer);
@@ -818,218 +819,25 @@ begin
     result := dsEntrant.DataSet.Locate('EntrantID', EntrantID, SearchOptions);
 end;
 
-
-function TSCM.MoveDownLane(aDataSet: TDataSet): Boolean;
-var
-  bm: TBookMark;
-  enA, enB: integer;
-  fld: TField;
-begin
-  result := false;
-  if not IsLastRecord(aDataSet) then
-  begin
-    try
-      begin;
-        aDataSet.DisableControls;
-        // E n a b l e   r e a d   o n   f i e l d .
-        fld := aDataSet.FindField('Lane');
-        if Assigned(fld) then
-          fld.ReadOnly := false;
-        // bookmark current entrant and store lane number.
-        bm := aDataSet.Bookmark;
-        enA := aDataSet.FieldByName('Lane').AsInteger;
-        enB := 0;
-        try
-          begin
-            // peek at prior entrant
-            aDataSet.Next;
-            enB := aDataSet.FieldByName('Lane').AsInteger;
-            aDataSet.Edit;
-            // swap lane number
-            aDataSet.FieldByName('Lane').AsInteger := enA;
-            aDataSet.Post;
-            result := true;
-          end
-        finally
-          // restore current entrant
-          aDataSet.Bookmark := bm;
-          aDataSet.Edit;
-          // swap lane number
-          aDataSet.FieldByName('Lane').AsInteger := enB;
-          aDataSet.Post;
-        end;
-        // D i s a b l e   r e a d   o n   f i e l d .
-        if Assigned(fld) then
-          fld.ReadOnly := true;
-      end
-    finally
-      // resort lanes
-      aDataSet.Refresh;
-      // endable entrant grid control
-      aDataSet.EnableControls;
-    end;
-  end
-end;
-
-
-
-function TSCM.MoveUpLane(aDataSet: TDataSet): Boolean;
-var
-  bm: TBookMark;
-  enA, enB: integer;
-  fld: TField;
-begin
-  result := false;
-  enB := 0;
-  if not IsFirstRecord(aDataSet) then
-  begin
-    try
-      begin;
-        aDataSet.DisableControls;
-        // E n a b l e   r e a d   o n   f i e l d .
-        fld := aDataSet.FindField('Lane');
-        if Assigned(fld) then
-          fld.ReadOnly := false;
-        // bookmark current entrant and store lane number.
-        bm := aDataSet.Bookmark;
-        enA := aDataSet.FieldByName('Lane').AsInteger;
-        try
-          begin
-            // peek at prior entrant
-            aDataSet.Prior;
-            enB := aDataSet.FieldByName('Lane').AsInteger;
-            aDataSet.Edit;
-            // swap lane number
-            aDataSet.FieldByName('Lane').AsInteger := enA;
-            aDataSet.Post;
-            result := true;
-          end
-        finally
-          // restore current entrant
-          aDataSet.Bookmark := bm;
-          aDataSet.Edit;
-          // swap lane number
-          aDataSet.FieldByName('Lane').AsInteger := enB;
-          aDataSet.Post;
-        end;
-        // D i s a b l e   r e a d   o n   f i e l d .
-        if Assigned(fld) then
-          fld.ReadOnly := true;
-      end
-    finally
-      // resort lanes
-      aDataSet.Refresh;
-      // endable entrant grid control
-      aDataSet.EnableControls;
-    end;
-  end
-
-
-end;
-
-
 function TSCM.Entrant_MoveDownLane(EntrantDS: TDataSet): Boolean;
-var
-  bm: TBookMark;
-  enA, enB: integer;
-  fld: TField;
 begin
-  result := false;
-  if not IsLastRecord(EntrantDS) then
-  begin
-    try
-      begin;
-        EntrantDS.DisableControls;
-        // E n a b l e   r e a d   o n   f i e l d .
-        fld := qryEntrant.FindField('Lane');
-        if Assigned(fld) then
-          fld.ReadOnly := false;
-        // bookmark current entrant and store lane number.
-        bm := EntrantDS.Bookmark;
-        enA := EntrantDS.FieldByName('Lane').AsInteger;
-        enB := 0;
-        try
-          begin
-            // peek at prior entrant
-            EntrantDS.Next;
-            enB := EntrantDS.FieldByName('Lane').AsInteger;
-            EntrantDS.Edit;
-            // swap lane number
-            EntrantDS.FieldByName('Lane').AsInteger := enA;
-            EntrantDS.Post;
-            result := true;
-          end
-        finally
-          // restore current entrant
-          EntrantDS.Bookmark := bm;
-          EntrantDS.Edit;
-          // swap lane number
-          EntrantDS.FieldByName('Lane').AsInteger := enB;
-          EntrantDS.Post;
-        end;
-        // D i s a b l e   r e a d   o n   f i e l d .
-        if Assigned(fld) then
-          fld.ReadOnly := true;
-      end
-    finally
-      // resort lanes
-      EntrantDS.Refresh;
-      // endable entrant grid control
-      EntrantDS.EnableControls;
-    end;
-  end
+  MoveDownLane(EntrantDS);
+end;
+
+function TSCM.Entrant_MoveDownToNextHeat(EntrantDS: TDataSet): Boolean;
+begin
+  MoveDownToNextHeat(EntrantDS);
 end;
 
 function TSCM.Entrant_MoveUpLane(EntrantDS: TDataSet): Boolean;
-var
-  bm: TBookMark;
-  enA, enB: integer;
-  fld: TField;
 begin
-  result := false;
-  enB := 0;
-  if not IsFirstRecord(EntrantDS) then
-  begin
-    try
-      begin;
-        EntrantDS.DisableControls;
-        // E n a b l e   r e a d   o n   f i e l d .
-        fld := qryEntrant.FindField('Lane');
-        if Assigned(fld) then
-          fld.ReadOnly := false;
-        // bookmark current entrant and store lane number.
-        bm := EntrantDS.Bookmark;
-        enA := EntrantDS.FieldByName('Lane').AsInteger;
-        try
-          begin
-            // peek at prior entrant
-            EntrantDS.Prior;
-            enB := EntrantDS.FieldByName('Lane').AsInteger;
-            EntrantDS.Edit;
-            // swap lane number
-            EntrantDS.FieldByName('Lane').AsInteger := enA;
-            EntrantDS.Post;
-            result := true;
-          end
-        finally
-          // restore current entrant
-          EntrantDS.Bookmark := bm;
-          EntrantDS.Edit;
-          // swap lane number
-          EntrantDS.FieldByName('Lane').AsInteger := enB;
-          EntrantDS.Post;
-        end;
-        // D i s a b l e   r e a d   o n   f i e l d .
-        if Assigned(fld) then
-          fld.ReadOnly := true;
-      end
-    finally
-      // resort lanes
-      EntrantDS.Refresh;
-      // endable entrant grid control
-      EntrantDS.EnableControls;
-    end;
-  end
+  MoveUpLane(EntrantDS);
+end;
+
+
+function TSCM.Entrant_MoveUpToPrevHeat(EntrantDS: TDataSet): Boolean;
+begin
+  MoveUpToPrevHeat(EntrantDS);
 end;
 
 function TSCM.Entrant_NextAvailLaneNum(aHeatID, aSeedNumber: integer): integer;
@@ -1864,54 +1672,6 @@ begin
     result := dsHeat.DataSet.Locate('HeatID', aHeatID, SearchOptions);
 end;
 
-function TSCM.Heat_MoveDown(EntrantDS: TDataSet): Boolean;
-var
-  HeatIDA, LaneA, HeatIDB, LaneB: integer;
-begin
-  result := false;
-  try
-    EntrantDS.DisableControls;
-    HeatIDA := EntrantDS.FieldByName('HeatID').AsInteger;
-    LaneA := EntrantDS.FieldByName('Lane').AsInteger;
-    HeatIDB := Heat_NextID(HeatIDA);
-    LaneB := 1;
-    if (HeatIDB > 0)  then
-    begin
-      Entrant_SwapLanes(HeatIDA, LaneA, HeatIDB, LaneB);
-      result := true;
-    end;
-  finally
-    // resort lanes
-    EntrantDS.Refresh;
-    // endable entrant grid control
-    EntrantDS.EnableControls;
-  end;
-end;
-
-function TSCM.Heat_MoveUp(EntrantDS: TDataSet): Boolean;
-var
-  HeatIDA, LaneA, HeatIDB, LaneB: integer;
-begin
-  result := false;
-  try
-    EntrantDS.DisableControls;
-    HeatIDA := EntrantDS.FieldByName('HeatID').AsInteger;
-    LaneA := EntrantDS.FieldByName('Lane').AsInteger;
-    HeatIDB := Heat_PrevID(HeatIDA);
-    LaneB := SwimClub_NumberOfLanes;
-    if (HeatIDB > 0)  then
-    begin
-      Entrant_SwapLanes(HeatIDA, LaneA, HeatIDB, LaneB);
-      result := true;
-    end;
-  finally
-    // resort lanes
-    EntrantDS.Refresh;
-    // endable entrant grid control
-    EntrantDS.EnableControls;
-  end;
-end;
-
 procedure TSCM.Heat_NewRecord;
 var
   fld: TField;
@@ -2157,6 +1917,159 @@ begin
   end;
   qryIsQualifiedALT.Close;
 end;
+
+function TSCM.MoveDownLane(aDataSet: TDataSet): Boolean;
+var
+  bm: TBookMark;
+  enA, enB: integer;
+  fld: TField;
+begin
+  result := false;
+  if not IsLastRecord(aDataSet) then
+  begin
+    try
+      begin;
+        aDataSet.DisableControls;
+        // E n a b l e   r e a d   o n   f i e l d .
+        fld := aDataSet.FindField('Lane');
+        if Assigned(fld) then
+          fld.ReadOnly := false;
+        // bookmark current entrant and store lane number.
+        bm := aDataSet.Bookmark;
+        enA := aDataSet.FieldByName('Lane').AsInteger;
+        enB := 0;
+        try
+          begin
+            // peek at prior entrant
+            aDataSet.Next;
+            enB := aDataSet.FieldByName('Lane').AsInteger;
+            aDataSet.Edit;
+            // swap lane number
+            aDataSet.FieldByName('Lane').AsInteger := enA;
+            aDataSet.Post;
+            result := true;
+          end
+        finally
+          // restore current entrant
+          aDataSet.Bookmark := bm;
+          aDataSet.Edit;
+          // swap lane number
+          aDataSet.FieldByName('Lane').AsInteger := enB;
+          aDataSet.Post;
+        end;
+        // D i s a b l e   r e a d   o n   f i e l d .
+        if Assigned(fld) then
+          fld.ReadOnly := true;
+      end
+    finally
+      // resort lanes
+      aDataSet.Refresh;
+      // endable entrant grid control
+      aDataSet.EnableControls;
+    end;
+  end
+end;
+
+function TSCM.MoveDownToNextHeat(aDataSet: TDataSet): Boolean;
+var
+  HeatIDA, LaneA, HeatIDB, LaneB: integer;
+begin
+  result := false;
+  try
+    aDataSet.DisableControls;
+    HeatIDA := aDataSet.FieldByName('HeatID').AsInteger;
+    LaneA := aDataSet.FieldByName('Lane').AsInteger;
+    HeatIDB := Heat_NextID(HeatIDA);
+    LaneB := 1;
+    if (HeatIDB > 0)  then
+    begin
+      Entrant_SwapLanes(HeatIDA, LaneA, HeatIDB, LaneB);
+      result := true;
+    end;
+  finally
+    // resort lanes
+    aDataSet.Refresh;
+    // endable entrant grid control
+    aDataSet.EnableControls;
+  end;
+end;
+
+function TSCM.MoveUpLane(aDataSet: TDataSet): Boolean;
+var
+  bm: TBookMark;
+  enA, enB: integer;
+  fld: TField;
+begin
+  result := false;
+  enB := 0;
+  if not IsFirstRecord(aDataSet) then
+  begin
+    try
+      begin;
+        aDataSet.DisableControls;
+        // E n a b l e   r e a d   o n   f i e l d .
+        fld := aDataSet.FindField('Lane');
+        if Assigned(fld) then
+          fld.ReadOnly := false;
+        // bookmark current entrant and store lane number.
+        bm := aDataSet.Bookmark;
+        enA := aDataSet.FieldByName('Lane').AsInteger;
+        try
+          begin
+            // peek at prior entrant
+            aDataSet.Prior;
+            enB := aDataSet.FieldByName('Lane').AsInteger;
+            aDataSet.Edit;
+            // swap lane number
+            aDataSet.FieldByName('Lane').AsInteger := enA;
+            aDataSet.Post;
+            result := true;
+          end
+        finally
+          // restore current entrant
+          aDataSet.Bookmark := bm;
+          aDataSet.Edit;
+          // swap lane number
+          aDataSet.FieldByName('Lane').AsInteger := enB;
+          aDataSet.Post;
+        end;
+        // D i s a b l e   r e a d   o n   f i e l d .
+        if Assigned(fld) then
+          fld.ReadOnly := true;
+      end
+    finally
+      // resort lanes
+      aDataSet.Refresh;
+      // endable entrant grid control
+      aDataSet.EnableControls;
+    end;
+  end
+
+
+end;
+
+function TSCM.MoveUpToPrevHeat(aDataSet: TDataSet): Boolean;
+var
+  HeatIDA, LaneA, HeatIDB, LaneB: integer;
+begin
+  result := false;
+  try
+    aDataSet.DisableControls;
+    HeatIDA := aDataSet.FieldByName('HeatID').AsInteger;
+    LaneA := aDataSet.FieldByName('Lane').AsInteger;
+    HeatIDB := Heat_PrevID(HeatIDA);
+    LaneB := SwimClub_NumberOfLanes;
+    if (HeatIDB > 0)  then
+    begin
+      Entrant_SwapLanes(HeatIDA, LaneA, HeatIDB, LaneB);
+      result := true;
+    end;
+  finally
+    // resort lanes
+    aDataSet.Refresh;
+    // endable entrant grid control
+    aDataSet.EnableControls;
+  end;end;
 
 function TSCM.Nominate_Locate(MemberID: integer): Boolean;
 var
@@ -3128,7 +3041,6 @@ begin
   end;
 end;
 
-
 procedure TSCM.Split_DeleteALLExclude(aEntrantID: integer; DoExclude: Boolean);
 var
   qry: TFDQuery;
@@ -3451,7 +3363,6 @@ begin
   if not VarIsNull(v) and not VarIsEmpty(v) and (v = 2) then
     result := true;
 end;
-
 
 procedure TSCM.TeamSplit_DeleteALLExclude(aTeamID: integer; DoExclude: Boolean);
 var
@@ -3813,14 +3724,24 @@ begin
     result := dsTeam.DataSet.Locate('TeamID', TeamID, SearchOptions);
 end;
 
-function TSCM.Team_MoveDownLane(aDataSet: TDataSet): Boolean;
+function TSCM.Team_MoveDownLane(TeamDS: TDataSet): Boolean;
 begin
-  MoveDownLane(aDataSet);
+  MoveDownLane(TeamDS);
 end;
 
-function TSCM.Team_MoveUpLane(aDataSet: TDataSet): Boolean;
+function TSCM.Team_MoveDownToNextHeat(TeamDS: TDataSet): Boolean;
 begin
-  MoveUpLane(aDataSet);
+  MoveDownToNextHeat(TeamDS);
+end;
+
+function TSCM.Team_MoveUpLane(TeamDS: TDataSet): Boolean;
+begin
+  MoveUpLane(TeamDS);
+end;
+
+function TSCM.Team_MoveUpToPrevHeat(TeamDS: TDataSet): Boolean;
+begin
+  MoveUpToPrevHeat(TeamDS);
 end;
 
 function TSCM.Team_NextAvailLaneNum(aHeatID, aSeedNumber: integer): integer;
@@ -4110,5 +4031,10 @@ begin
       end;
   end;
 end;
+
+
+
+
+
 
 end.

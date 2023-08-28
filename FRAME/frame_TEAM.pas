@@ -508,7 +508,7 @@ begin
   begin
     if fTeamActiveGrid = 1 then
     begin
-      success := SCM.Heat_MoveDown(aDataSet);
+      success := SCM.Entrant_MoveDownToNextHeat(aDataSet);
       // Move Team to next heat (By default, will position on first entrant.)
       { TODO -oBSA -cGeneral : CHECK that this routine works for Entrant/Team. }
       SCM.dsHeat.DataSet.Next;
@@ -536,7 +536,7 @@ begin
   begin
     if fTeamActiveGrid = 1 then
     begin
-      success := SCM.Heat_MoveUp(aDataSet); // Locate Team to 'prior' heat.
+      success := SCM.Entrant_MoveUpToPrevHeat(aDataSet); // Locate Team to 'prior' heat.
       { TODO -oBSA -cGeneral : CHECK that this routine works for Entrant/Team. }
       SCM.dsHeat.DataSet.Prior; // move to the previous heat ....
       aDataSet.Last; // move to last entrant ....
