@@ -84,6 +84,7 @@ end;
 
 procedure TTeamNameMenu.FormCreate(Sender: TObject);
 begin
+  btnCreateNewTeam.Enabled := true;
   btnRenameTeam.Enabled := false;
   btnClearTeam.Enabled := false;
   btnStrikeTeam.Enabled := false;
@@ -103,7 +104,7 @@ procedure TTeamNameMenu.FormShow(Sender: TObject);
 begin
   if not Assigned(fConnection) then ModalResult := mrCancel; // close;
 
-  if fTeamNameID = 0 then
+  if fTeamNameID <> 0 then
   begin
     btnCreateNewTeam.Enabled := false;
     btnRenameTeam.Enabled := true;

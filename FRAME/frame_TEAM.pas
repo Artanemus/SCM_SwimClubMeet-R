@@ -40,10 +40,11 @@ type
     fDoStatusBarUpdate: boolean; // FLAG ACTION - SCM_StatusBar.Enabled
     procedure AfterConstruction; override;
     procedure Enable_GridEllipse();
+    procedure Enable_GridEntrantEllipse();
     // TActionManager:  Sender: TAction
     procedure GridMoveDown(Sender: TObject);
     procedure GridMoveUp(Sender: TObject);
-
+    procedure ToggleDCode(DoEnable: boolean);
   end;
 
 implementation
@@ -82,6 +83,22 @@ begin
     fTeamBgColor := clAppWorkSpace;
     fTeamFontColor := clWindowText;
   end;
+  {
+    When the Columns.State property of the grid is csDefault, grid columns
+    are dynamically generated from the visible fields of the dataset and the
+    order of columns in the grid matches the order of fields in the dataset.
+  }
+  Grid.Columns.State := csDefault;
+  Grid.Options := Grid.Options + [dgEditing];
+  Grid.Options := Grid.Options - [dgAlwaysShowEditor];
+
+  GridEntrant.Columns.State := csDefault;
+  GridEntrant.Options := GridEntrant.Options + [dgEditing];
+  GridEntrant.Options := GridEntrant.Options - [dgAlwaysShowEditor];
+
+  Enable_GridEllipse;
+  Enable_GridEntrantEllipse;
+
 end;
 
 function TframeTEAM.AssertConnection: boolean;
@@ -179,6 +196,24 @@ begin
     begin
       col.ButtonStyle := cbsEllipsis;
       Grid.Repaint;
+      break;
+    end;
+  end;
+end;
+
+procedure TframeTEAM.Enable_GridEntrantEllipse;
+var
+  i: Integer;
+  col: TColumn;
+begin
+  for i := 0 to GridEntrant.Columns.Count - 1 do
+  begin
+    col := GridEntrant.Columns.Items[i];
+    // MOD 23.06.27
+    if (col.FieldName = 'FullName') then
+    begin
+      col.ButtonStyle := cbsEllipsis;
+      GridEntrant.Repaint;
       break;
     end;
   end;
@@ -292,12 +327,12 @@ begin
     if gdFocused in State then
       Grid.Canvas.DrawFocusRect(Rect);
   end
-  else if (Column.Field.FieldName = 'FullName') then
+  else if (Column.Field.FieldName = 'TeamName') then
   begin
     // ENABLE the button if not enabled
     if (Column.ButtonStyle <> TColumnButtonStyle.cbsEllipsis) then
       Column.ButtonStyle := TColumnButtonStyle.cbsEllipsis;
-    s := Grid.DataSource.DataSet.FieldByName('Caption').AsString;
+    s := Grid.DataSource.DataSet.FieldByName('TeamName').AsString;
     if Length(s) = 0 then
       Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State)
     else
@@ -508,7 +543,7 @@ begin
   begin
     if fTeamActiveGrid = 1 then
     begin
-      success := SCM.Entrant_MoveDownToNextHeat(aDataSet);
+      success := SCM.MoveDownToNextHeat(aDataSet);
       // Move Team to next heat (By default, will position on first entrant.)
       { TODO -oBSA -cGeneral : CHECK that this routine works for Entrant/Team. }
       SCM.dsHeat.DataSet.Next;
@@ -536,7 +571,7 @@ begin
   begin
     if fTeamActiveGrid = 1 then
     begin
-      success := SCM.Entrant_MoveUpToPrevHeat(aDataSet); // Locate Team to 'prior' heat.
+      success := SCM.MoveUpToPrevHeat(aDataSet); // Locate Team to 'prior' heat.
       { TODO -oBSA -cGeneral : CHECK that this routine works for Entrant/Team. }
       SCM.dsHeat.DataSet.Prior; // move to the previous heat ....
       aDataSet.Last; // move to last entrant ....
@@ -547,6 +582,11 @@ begin
     success := SCM.MoveUpLane(aDataSet);
   if not success then
     beep;
+end;
+
+procedure TframeTEAM.ToggleDCode(DoEnable: boolean);
+begin
+  SCM.ToggleDCode(Grid.DataSource.DataSet, DoEnable);
 end;
 
 end.

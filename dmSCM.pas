@@ -175,10 +175,11 @@ type
     TimeField5: TTimeField;
     WideStringField1: TWideStringField;
     WideStringField2: TWideStringField;
+    qrySwapTeams: TFDQuery;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
     procedure qryEntrantAfterScroll(DataSet: TDataSet);
-    procedure qryEntrantBeforeInsert(DataSet: TDataSet);
+    procedure qryEvTypeBeforeInsert(DataSet: TDataSet);
     procedure qryEntrantTIMEGetText(Sender: TField; var Text: string;
       DisplayText: Boolean);
     procedure qryEntrantTIMESetText(Sender: TField; const Text: string);
@@ -208,6 +209,7 @@ type
     procedure qrySessionSessionStartGetText(Sender: TField; var Text: string;
       DisplayText: Boolean);
     procedure qrySessionSessionStartSetText(Sender: TField; const Text: string);
+    procedure qryTeamAfterScroll(DataSet: TDataSet);
     procedure scmConnectionAfterDisconnect(Sender: TObject);
   private
     fHandle: HWND; // needed to handle SCM_RENUMBERHEATS Message.
@@ -241,10 +243,10 @@ type
     function Entrant_HeatStatusID(aEntrantID: integer): integer;
     procedure Entrant_InsertEmptyLanes(aHeatID: integer);
     function Entrant_Locate(EntrantID: integer): Boolean;
-    function Entrant_MoveDownLane(EntrantDS: TDataSet): Boolean;
-    function Entrant_MoveDownToNextHeat(EntrantDS: TDataSet): Boolean;
-    function Entrant_MoveUpLane(EntrantDS: TDataSet): Boolean;
-    function Entrant_MoveUpToPrevHeat(EntrantDS: TDataSet): Boolean;
+//    function Entrant_MoveDownLane(EntrantDS: TDataSet): Boolean;
+//    function Entrant_MoveDownToNextHeat(EntrantDS: TDataSet): Boolean;
+//    function Entrant_MoveUpLane(EntrantDS: TDataSet): Boolean;
+//    function Entrant_MoveUpToPrevHeat(EntrantDS: TDataSet): Boolean;
     function Entrant_NextAvailLaneNum(aHeatID, aSeedNumber: integer): integer;
     procedure Entrant_PadWithEmptyLanes(aHeatID: integer);
     procedure Entrant_RenumberLanes(aHeatID: integer);
@@ -319,8 +321,8 @@ type
     function Nominee_DeleteExclude(aNomineeID, aEventID: integer;
       DoExclude: Boolean = true): Boolean;
     function Nominee_InEvent(aNomineeID, aEventID: integer): integer;
-    // SWAPLANE - GENERIC LANE FUNCTIONS
-    function SwapLanes(EntrantIDA, EntrantIDB: integer): Boolean; overload;
+    // SWAPLANES - GENERIC LANE FUNCTIONS
+    function SwapLanes(IDA, IDB, aEventTypeID: integer): Boolean; overload;
     function SwapLanes(HeatIDA, LaneA, HeatIDB, LaneB: integer): Boolean; overload;
     // SWIMCLUBMEET SYSTEM
     function SCM_VerInfoMajor(): integer;
@@ -384,16 +386,18 @@ type
     function Team_HeatStatusID(aTeamID: integer): integer;
     procedure Team_InsertEmptyLanes(aHeatID: integer);
     function Team_Locate(TeamID: integer): Boolean;
-    function Team_MoveDownLane(TeamDS: TDataSet): Boolean;
-    function Team_MoveDownToNextHeat(TeamDS: TDataSet): Boolean;
-    function Team_MoveUpLane(TeamDS: TDataSet): Boolean;
-    function Team_MoveUpToPrevHeat(TeamDS: TDataSet): Boolean;
+//    function Team_MoveDownLane(TeamDS: TDataSet): Boolean;
+//    function Team_MoveDownToNextHeat(TeamDS: TDataSet): Boolean;
+//    function Team_MoveUpLane(TeamDS: TDataSet): Boolean;
+//    function Team_MoveUpToPrevHeat(TeamDS: TDataSet): Boolean;
     function Team_NextAvailLaneNum(aHeatID, aSeedNumber: integer): integer;
     procedure Team_PadWithEmptyLanes(aHeatID: integer);
     procedure Team_RenumberLanes(aHeatID: integer);
     function Team_SessionIsLocked(aTeamID: integer): Boolean;
     function Team_Sort(aHeatID: integer): Boolean;
     function Team_Strike(): Boolean;
+    // TOGGLE
+    procedure ToggleDCode(aDataSet: TDataSet; DoEnable: boolean);
   published
     property Handle: HWND read fHandle;
     property SCMActive: Boolean read fSCMActive write fSCMActive;
@@ -817,27 +821,6 @@ begin
   SearchOptions := [];
   if dsEntrant.DataSet.Active then
     result := dsEntrant.DataSet.Locate('EntrantID', EntrantID, SearchOptions);
-end;
-
-function TSCM.Entrant_MoveDownLane(EntrantDS: TDataSet): Boolean;
-begin
-  MoveDownLane(EntrantDS);
-end;
-
-function TSCM.Entrant_MoveDownToNextHeat(EntrantDS: TDataSet): Boolean;
-begin
-  MoveDownToNextHeat(EntrantDS);
-end;
-
-function TSCM.Entrant_MoveUpLane(EntrantDS: TDataSet): Boolean;
-begin
-  MoveUpLane(EntrantDS);
-end;
-
-
-function TSCM.Entrant_MoveUpToPrevHeat(EntrantDS: TDataSet): Boolean;
-begin
-  MoveUpToPrevHeat(EntrantDS);
 end;
 
 function TSCM.Entrant_NextAvailLaneNum(aHeatID, aSeedNumber: integer): integer;
@@ -2061,7 +2044,7 @@ begin
     LaneB := SwimClub_NumberOfLanes;
     if (HeatIDB > 0)  then
     begin
-      Entrant_SwapLanes(HeatIDA, LaneA, HeatIDB, LaneB);
+      SwapLanes(HeatIDA, LaneA, HeatIDB, LaneB);
       result := true;
     end;
   finally
@@ -2252,7 +2235,7 @@ begin
     PostMessage(TForm(Owner).Handle, SCM_ENTRANTSCROLL, 0, 0);
 end;
 
-procedure TSCM.qryEntrantBeforeInsert(DataSet: TDataSet);
+procedure TSCM.qryEvTypeBeforeInsert(DataSet: TDataSet);
 begin
   // lanes are created when new heat is called
   // .. user cannnot enter new lanes from here...
@@ -2757,6 +2740,12 @@ begin
 
 end;
 
+procedure TSCM.qryTeamAfterScroll(DataSet: TDataSet);
+begin
+  if Owner is TForm then
+    PostMessage(TForm(Owner).Handle, SCM_TEAMSCROLL, 0, 0);
+end;
+
 procedure TSCM.ReadPreferences(IniFileName: string);
 var
   iFile: TIniFile;
@@ -3064,7 +3053,7 @@ begin
     while not qry.Eof do
     begin
       aSplitID := qry.FieldByName('SplitID').AsInteger;
-      Split_DeleteExclude(aEntrantID, DoExclude);
+      Split_DeleteExclude(aSplitID, DoExclude);
       qry.Next;
     end;
   end;
@@ -3133,6 +3122,59 @@ begin
   v := scmConnection.ExecSQLScalar(SQL, [aSplitID]);
   if not VarIsNull(v) and not VarIsEmpty(v) and (v = 2) then
     result := true;
+end;
+
+function TSCM.SwapLanes(HeatIDA, LaneA, HeatIDB, LaneB: integer): Boolean;
+var
+  IDA, IDB, aEventTypeID: integer;
+  SQL: string;
+begin
+  result := false;
+  if not fSCMActive then
+    exit;
+  aEventTypeID := Heat_EventTypeID(HeatIDA);
+  { TODO -oBSA -cGeneral : Create swap lane function }
+  if aEventTypeID = 1 then // INDV
+      SQL := 'SELECT TOP 1 [EntrantID] FROM [SwimClubMeet].[dbo].[Entrant] ' +
+          ' WHERE HeatID = :HEAT AND Lane = :LANE'
+  else if aEventTypeID = 2 then
+      SQL := 'SELECT TOP 1 [TeamID] FROM [SwimClubMeet].[dbo].[Team] ' +
+          ' WHERE HeatID = :HEAT AND Lane = :LANE'
+  else
+    exit;
+  IDA := scmConnection.ExecSQLScalar(SQL, [HeatIDA, LaneA]);
+  IDB := scmConnection.ExecSQLScalar(SQL, [HeatIDB, LaneB]);
+  SwapLanes(IDA, IDB, aEventTypeID);
+  result := true;
+end;
+
+function TSCM.SwapLanes(IDA, IDB, aEventTypeID: integer): Boolean;
+begin
+  result := false;
+  if (IDA = IDB) then
+    exit;
+  if (IDA = 0) OR (IDB = 0) then
+    exit;
+  if aEventTypeID = 1 then
+  begin
+    qrySwapEntrants.Connection := scmConnection;
+    qrySwapEntrants.ParamByName('ENTRANTIDA').AsInteger := IDA;
+    qrySwapEntrants.ParamByName('ENTRANTIDB').AsInteger := IDB;
+    qrySwapEntrants.Prepare;
+    // does not return a cursor - hence execute (UPDATE).
+    qrySwapEntrants.Execute();
+  end
+  else if aEventTypeID = 2 then
+  begin
+    qrySwapTeams.Connection := scmConnection;
+    qrySwapTeams.ParamByName('TEAMIDA').AsInteger := IDA;
+    qrySwapTeams.ParamByName('TEAMIDB').AsInteger := IDB;
+    qrySwapTeams.Prepare;
+    // does not return a cursor - hence execute (UPDATE).
+    qrySwapEntrants.Execute();
+  end
+  else exit;
+  result := true;
 end;
 
 function TSCM.SwimClub_ClubName: string;
@@ -3724,26 +3766,6 @@ begin
     result := dsTeam.DataSet.Locate('TeamID', TeamID, SearchOptions);
 end;
 
-function TSCM.Team_MoveDownLane(TeamDS: TDataSet): Boolean;
-begin
-  MoveDownLane(TeamDS);
-end;
-
-function TSCM.Team_MoveDownToNextHeat(TeamDS: TDataSet): Boolean;
-begin
-  MoveDownToNextHeat(TeamDS);
-end;
-
-function TSCM.Team_MoveUpLane(TeamDS: TDataSet): Boolean;
-begin
-  MoveUpLane(TeamDS);
-end;
-
-function TSCM.Team_MoveUpToPrevHeat(TeamDS: TDataSet): Boolean;
-begin
-  MoveUpToPrevHeat(TeamDS);
-end;
-
 function TSCM.Team_NextAvailLaneNum(aHeatID, aSeedNumber: integer): integer;
 var
   i, rtnValue: integer;
@@ -4018,6 +4040,47 @@ begin
         nom.Free;
       }
     end;
+  end;
+end;
+
+procedure TSCM.ToggleDCode(aDataSet: TDataSet; DoEnable: boolean);
+var
+  fld: TField;
+begin
+  // Toggle FINA codes of simple scratch/disqualified
+  with aDataSet do
+  begin
+  DisableControls;
+  {
+    When the Columns.State property of the grid is csDefault, grid columns
+    are dynamically generated from the visible fields of the dataset and the
+    order of columns in the grid matches the order of fields in the dataset.
+  }
+  if DoEnable then
+  begin
+    fld := Fields.FindField('IsDisqualified');
+    if Assigned(fld) then
+      fld.Visible := false;
+    fld := Fields.FindField('IsScratched');
+    if Assigned(fld) then
+      fld.Visible := false;
+    fld := Fields.FindField('DCode');
+    if Assigned(fld) then
+      fld.Visible := true;
+   end
+   else
+   begin
+    fld := Fields.FindField('IsDisqualified');
+    if Assigned(fld) then
+      fld.Visible := true;
+    fld := Fields.FindField('IsScratched');
+    if Assigned(fld) then
+      fld.Visible := true;
+    fld := Fields.FindField('DCode');
+    if Assigned(fld) then
+      fld.Visible := false;
+   end;
+  EnableControls;
   end;
 end;
 

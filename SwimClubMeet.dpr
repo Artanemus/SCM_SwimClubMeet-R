@@ -70,7 +70,8 @@ uses
   dlgDCodePicker in 'dlgDCodePicker.pas' {DCodePicker},
   AutoBuildRelayAlgorithm in 'AutoBuildRelayAlgorithm.pas',
   dlgAutoBuild_Relay in 'dlgAutoBuild_Relay.pas' {AutoBuild_Relay},
-  dlgTeamNameMenu in 'FRAME\dlgTeamNameMenu.pas' {TeamNameMenu};
+  dlgTeamNameMenu in 'FRAME\dlgTeamNameMenu.pas' {TeamNameMenu},
+  SCMHelpers in '..\SCM_SHARED\SCMHelpers.pas';
 
 {$R *.res}
 

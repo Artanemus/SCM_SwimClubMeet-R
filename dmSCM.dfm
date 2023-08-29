@@ -198,7 +198,7 @@ object SCM: TSCM
   end
   object qryEntrant: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    BeforeInsert = qryEntrantBeforeInsert
+    BeforeInsert = qryEvTypeBeforeInsert
     AfterScroll = qryEntrantAfterScroll
     IndexFieldNames = 'HeatID'
     MasterSource = dsHeat
@@ -1813,6 +1813,7 @@ object SCM: TSCM
       #9#9',[PersonalBest]=#tmpEntB.PersonalBest'
       #9#9',[IsDisqualified]=#tmpEntB.IsDisqualified'
       #9#9',[IsScratched]=#tmpEntB.IsScratched'
+      #9#9',[DisqualifyCodeID]=#tmpEntB.DisqualifyCodeID    '
       'FROM Entrant, #tmpEntA, #tmpEntB'
       'WHERE [Entrant].[EntrantID] = @EntA;'
       ''
@@ -1825,6 +1826,7 @@ object SCM: TSCM
       #9#9',[PersonalBest]=#tmpEntA.PersonalBest'
       #9#9',[IsDisqualified]=#tmpEntA.IsDisqualified'
       #9#9',[IsScratched]=#tmpEntA.IsDisqualified'
+      #9#9',[DisqualifyCodeID]=#tmpEntA.DisqualifyCodeID'
       'FROM Entrant, #tmpEntA, #tmpEntB'#9#9
       'WHERE [Entrant].[EntrantID] = @EntB;'
       ''
@@ -2135,8 +2137,8 @@ object SCM: TSCM
   end
   object qryTeam: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    BeforeInsert = qryEntrantBeforeInsert
-    AfterScroll = qryEntrantAfterScroll
+    BeforeInsert = qryEvTypeBeforeInsert
+    AfterScroll = qryTeamAfterScroll
     IndexFieldNames = 'HeatID'
     MasterSource = dsHeat
     MasterFields = 'HeatID'
@@ -2275,7 +2277,7 @@ object SCM: TSCM
   end
   object qryTeamEntrant: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    BeforeInsert = qryEntrantBeforeInsert
+    BeforeInsert = qryEvTypeBeforeInsert
     AfterScroll = qryEntrantAfterScroll
     IndexFieldNames = 'TeamID'
     MasterSource = dsTeam
@@ -2501,7 +2503,7 @@ object SCM: TSCM
   end
   object qrySplit: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    BeforeInsert = qryEntrantBeforeInsert
+    BeforeInsert = qryEvTypeBeforeInsert
     AfterScroll = qryEntrantAfterScroll
     IndexFieldNames = 'EntrantID'
     MasterSource = dsEntrant
@@ -2554,5 +2556,96 @@ object SCM: TSCM
     DataSet = qrySplit
     Left = 112
     Top = 536
+  end
+  object qrySwapTeams: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    Connection = scmConnection
+    SQL.Strings = (
+      'USE SwimClubMeet;'
+      ''
+      'DECLARE @IDA AS INT;'
+      'DECLARE @IDB AS INT;'
+      ''
+      'SET @IDA = :TEAMIDA; --10367;'
+      'SET @IDB = :TEAMIDB; --10368;'
+      ''
+      ''
+      'IF (@IDA = @IDB)'
+      'BEGIN'
+      '    GOTO SKIP;'
+      'END;'
+      ''
+      ''
+      '-- Drop a temporary table called '#39'#tmpEntA'#39
+      '-- Drop the table if it already exists'
+      'IF OBJECT_ID('#39'tempDB..#tmpEntA'#39', '#39'U'#39') IS NOT NULL'
+      'DROP TABLE #tmpEntA;'
+      ''
+      
+        '-- Create the temporary table from the physical table [Team] in ' +
+        'schema '#39'dbo'#39' in database '#39'SwimClubMeet'#39
+      'SELECT TOP 1 *'
+      'INTO #tmpEntA'
+      'FROM [SwimClubMeet].[dbo].[Team]'
+      'WHERE TeamID = @IDA'
+      ''
+      '-- Drop a temporary table called '#39'#tmpEntB'#39
+      '-- Drop the table if it already exists'
+      'IF OBJECT_ID('#39'tempDB..#tmpEntB'#39', '#39'U'#39') IS NOT NULL'
+      'DROP TABLE #tmpEntB;'
+      ''
+      
+        '-- Create the temporary table from the physical table [Team] in ' +
+        'schema '#39'dbo'#39' in database '#39'SwimClubMeet'#39
+      'SELECT TOP 1 *'
+      'INTO #tmpEntB'
+      'FROM [SwimClubMeet].[dbo].[Team]'
+      'WHERE TeamID = @IDB'
+      ''
+      'IF(NOT EXISTS(SELECT 1 FROM #tmpEntA))'
+      'BEGIN'
+      '  GOTO SKIP;'
+      'END;'
+      ''
+      'IF(NOT EXISTS(SELECT 1 FROM #tmpEntB))'
+      'BEGIN'
+      '  GOTO SKIP;'
+      'END;'
+      ''
+      'UPDATE [SwimClubMeet].[dbo].[Team] '
+      'SET'
+      #9#9' [TeamNameID]=#tmpEntB.TeamNameID'
+      #9#9',[RaceTime]=#tmpEntB.RaceTime'
+      #9#9',[TimeToBeat]=#tmpEntB.TimeToBeat'
+      #9#9',[IsDisqualified]=#tmpEntB.IsDisqualified'
+      #9#9',[IsScratched]=#tmpEntB.IsScratched'
+      #9#9',[DisqualifyCodeID]=#tmpEntB.DisqualifyCodeID'
+      'FROM Team, #tmpEntA, #tmpEntB'
+      'WHERE [Team].[TeamID] = @IDA;'
+      ''
+      'UPDATE [SwimClubMeet].[dbo].[Team] '
+      'SET'
+      #9#9' [TeamNameID]=#tmpEntA.TeamNameID'
+      #9#9',[RaceTime]=#tmpEntA.RaceTime'
+      #9#9',[TimeToBeat]=#tmpEntA.TimeToBeat'
+      #9#9',[IsDisqualified]=#tmpEntA.IsDisqualified'
+      #9#9',[IsScratched]=#tmpEntA.IsDisqualified'
+      #9#9',[DisqualifyCodeID]=#tmpEntA.DisqualifyCodeID'
+      'FROM Team, #tmpEntA, #tmpEntB'#9#9
+      'WHERE [Team].[TeamID] = @IDB;'
+      ''
+      'SKIP:'
+      '')
+    Left = 832
+    Top = 128
+    ParamData = <
+      item
+        Name = 'TEAMIDA'
+        ParamType = ptInput
+      end
+      item
+        Name = 'TEAMIDB'
+        ParamType = ptInput
+      end>
   end
 end

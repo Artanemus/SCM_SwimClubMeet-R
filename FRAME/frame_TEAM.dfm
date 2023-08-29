@@ -59,6 +59,7 @@ object frameTEAM: TframeTEAM
           Visible = True
         end
         item
+          ButtonStyle = cbsEllipsis
           Expanded = False
           FieldName = 'TeamName'
           Visible = True
@@ -84,6 +85,7 @@ object frameTEAM: TframeTEAM
           Visible = True
         end
         item
+          ButtonStyle = cbsEllipsis
           Expanded = False
           FieldName = 'DCode'
           Visible = True

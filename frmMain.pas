@@ -36,15 +36,7 @@ uses
   Vcl.Bind.Editors, Data.Bind.Components, Data.Bind.Grid, Data.Bind.DBScope,
   Vcl.ToolWin, Vcl.ActnCtrls, Vcl.ActnMenus, Vcl.PlatformVclStylesActnCtrls,
   Data.FMTBcd, Data.SqlExpr, FireDAC.Moni.Base, FireDAC.Moni.RemoteClient,
-  frame_INDV, frame_TEAM;
-
-type
-  TGridHelper = class helper for TDBGrid
-    function ColumnByName(const AName : String) : TColumn;
-  end;
-
-
-
+  frame_INDV, frame_TEAM, SCMHelpers;
 
 type
 
@@ -476,10 +468,12 @@ type
     procedure Refresh_Event(DoBookmark: boolean = true);
     procedure Refresh_Heat(DoBookmark: boolean = true);
     procedure Refresh_Nominate(DoBookmark: boolean = true);
+    procedure Refresh_Team(DoBookmark: boolean = true);
+    procedure Refresh_TeamEntrant(DoBookmark: boolean = true);
     // Generic TAction onExecute (extended params) for BATCH PRINT
     procedure Session_BatchReportExecute(Sender: TObject; RptType: scmRptType);
     // ENTRANT_GRID Toggle column display
-    procedure ToggleDCode(EnableFINA: boolean);
+    procedure ToggleDCode(DoEnable: boolean);
     procedure ToggleDivisions(SetVisible: boolean);
     procedure ToggleSwimmerCAT(SetVisible: boolean);
 //    procedure ToggleTeamEvents(SetVisible: boolean);
@@ -487,8 +481,7 @@ type
     procedure ToggleVisibileTabSheet1;
   protected
     // posted by dmSCMNom : a refresh of the entrant grid is required.
-    procedure Entrant_LaneWasCleaned(var Msg: TMessage);
-      message SCM_LANEWASCLEANED;
+    procedure Entrant_LaneWasCleaned(var Msg: TMessage); message SCM_LANEWASCLEANED;
     procedure Entrant_Scroll(var Msg: TMessage); message SCM_ENTRANTSCROLL;
     procedure Event_AssertState(var Msg: TMessage);
       message SCM_EVENTASSERTSTATE;
@@ -503,6 +496,7 @@ type
     // windows messages ....
     procedure Session_Scroll(var Msg: TMessage); message SCM_SESSIONSCROLL;
     procedure UpdateINDVTEAM(var Msg: TMessage); message SCM_UPDATEINDVTEAM;
+    procedure Team_Scroll(var Msg: TMessage); message SCM_TEAMSCROLL;
   public
     { Public declarations }
     fDoStatusBarUpdate: boolean; // FLAG ACTION - SCM_StatusBar.Enabled
@@ -1889,9 +1883,10 @@ begin
 
 
 
-  // 23.08.06 - FRAMES
-  INDV.Enable_GridEllipse;
-  TEAM.Enable_GridEllipse;
+  // 23.08.06 - HANDLED WITHIN AfterConstruction FRAMES
+//  INDV.Enable_GridEllipse;
+//  TEAM.Enable_GridEllipse;
+//  TEAM.Enable_GridEntrantEllipse;
 
   // 22/12/22
   // L I N K   G R I D S   T O   D A T A S O U R C E S .
@@ -1899,6 +1894,7 @@ begin
   Nominate_Grid.DataSource := SCM.dsNominateMembers;
   INDV.Grid.DataSource := SCM.dsEntrant;
   TEAM.Grid.DataSource := SCM.dsTeam;
+  TEAM.GridEntrant.DataSource := SCM.dsTeamEntrant;
 
   // L I N K   T D B T e x t
   dbtxtSwimClubCaption.DataSource := SCM.dsSwimClub;
@@ -1952,8 +1948,8 @@ begin
 
   // ASSERT ENTRANT_GRID OPTION STATE
   // (INDV.Grid.EditorMode used to toggle individual cell editing)
-  INDV.Grid.Options := INDV.Grid.Options + [dgEditing];
-  INDV.Grid.Options := INDV.Grid.Options - [dgAlwaysShowEditor];
+//  INDV.Grid.Options := INDV.Grid.Options + [dgEditing];
+//  INDV.Grid.Options := INDV.Grid.Options - [dgAlwaysShowEditor];
 
   {
     When the Columns.State property of the grid is csDefault, grid columns
@@ -1962,7 +1958,7 @@ begin
   }
   Session_Grid.Columns.State := csDefault;
   Event_Grid.Columns.State := csDefault;
-  INDV.Grid.Columns.State := csDefault;
+//  INDV.Grid.Columns.State := csDefault;
   Nominate_Grid.Columns.State := csDefault;
 
   {
@@ -3512,6 +3508,54 @@ begin
   end;
 end;
 
+procedure TMain.Refresh_Team(DoBookmark: boolean);
+var
+  bm: TBookmark;
+begin
+  if not AssertConnection then
+    exit;
+  With SCM.dsTeam.DataSet do
+  begin
+    DisableControls;
+    bm := GetBookmark;
+    Close;
+    Open;
+    if Active then
+    begin
+      try
+        GotoBookmark(bm);
+      except
+        on E: Exception do
+      end;
+    end;
+    EnableControls;
+  end;
+end;
+
+procedure TMain.Refresh_TeamEntrant(DoBookmark: boolean);
+var
+  bm: TBookmark;
+begin
+  if not AssertConnection then
+    exit;
+  With SCM.dsTeamEntrant.DataSet do
+  begin
+    DisableControls;
+    bm := GetBookmark;
+    Close;
+    Open;
+    if Active then
+    begin
+      try
+        GotoBookmark(bm);
+      except
+        on E: Exception do
+      end;
+    end;
+    EnableControls;
+  end;
+end;
+
 procedure TMain.SCM_ManageMembersExecute(Sender: TObject);
 var
   dlg: TManageMember;
@@ -3544,6 +3588,8 @@ begin
   SCM.dsEvent.DataSet.DisableControls;
   SCM.dsHeat.DataSet.DisableControls;
   SCM.dsEntrant.DataSet.DisableControls;
+  SCM.dsTeam.DataSet.DisableControls;
+  SCM.dsTeamEntrant.DataSet.DisableControls;
   // SESSION
   Session_SortExecute(self);
   // EVENT
@@ -3554,10 +3600,16 @@ begin
   Refresh_Heat;
   // ENTRANT
   Refresh_Entrant;
+  // TEAM
+  Refresh_Team;
+  // TEAMENTRANT
+  Refresh_Team;
   SCM.dsSession.DataSet.EnableControls;
   SCM.dsEvent.DataSet.EnableControls;
   SCM.dsHeat.DataSet.EnableControls;
   SCM.dsEntrant.DataSet.EnableControls;
+  SCM.dsTeam.DataSet.EnableControls;
+  SCM.dsTeamEntrant.DataSet.EnableControls;
 end;
 
 procedure TMain.SCM_RefreshUpdate(Sender: TObject);
@@ -4152,63 +4204,38 @@ begin
   TAction(Sender).Enabled := DoEnable;
 end;
 
-procedure TMain.ToggleDCode(EnableFINA: boolean);
+procedure TMain.Team_Scroll(var Msg: TMessage);
 var
   fld: TField;
 begin
-  // Toggle FINA codes of simple scratch/disqualified
-  with SCM.dsEntrant.DataSet do
+  // messages posted by TSCM.qryMemberQuickPickAfterScroll
+  {TODO -oBSA -cGeneral : TEAM Entrant_Scroll}
+  if not AssertConnection then
+    exit;
+  if SCM.Event_IsTEAM  and TEAM.Grid.Focused then
   begin
-  DisableControls;
-  {
-    When the Columns.State property of the grid is csDefault, grid columns
-    are dynamically generated from the visible fields of the dataset and the
-    order of columns in the grid matches the order of fields in the dataset.
-  }
-
-  if EnableFINA then
-  begin
-    fld := Fields.FindField('IsDisqualified');
+    // After moving row re-engage editing for selected fields.
+    fld := TEAM.Grid.SelectedField;
     if Assigned(fld) then
-      fld.Visible := false;
-    fld := Fields.FindField('IsScratched');
-    if Assigned(fld) then
-      fld.Visible := false;
-    fld := Fields.FindField('DCode');
-    if Assigned(fld) then
-      fld.Visible := true;
-   end
-   else
-   begin
-    fld := Fields.FindField('IsDisqualified');
-    if Assigned(fld) then
-      fld.Visible := true;
-    fld := Fields.FindField('IsScratched');
-    if Assigned(fld) then
-      fld.Visible := true;
-    fld := Fields.FindField('DCode');
-    if Assigned(fld) then
-      fld.Visible := false;
-
-   end;
-
-//  for i := 0 to INDV.Grid.Columns.Count - 1 do
-//  begin
-//    if (INDV.Grid.Columns[i].Field <> Nil) then
-//    begin
-//      if (CompareText(INDV.Grid.Columns[i].FieldName, 'DCode') = 0) then
-//        INDV.Grid.Columns[i].Visible := EnableFINA;
-//      if (CompareText(INDV.Grid.Columns[i].FieldName, 'IsScratched') = 0)
-//      then
-//        INDV.Grid.Columns[i].Visible := not EnableFINA;
-//      if (CompareText(INDV.Grid.Columns[i].FieldName, 'IsDisqualified') = 0)
-//      then
-//        INDV.Grid.Columns[i].Visible := not EnableFINA;
-//    end;
-//  end;
-
-  EnableControls;
+    begin
+      if (fld.FieldName = 'RaceTime') or (fld.FieldName = 'DCode') or
+        (fld.FieldName = 'TeamName') then
+      begin
+        INDV.Grid.EditorMode := true;
+        // INDV.Grid.SelectAll;
+      end
+      else
+        INDV.Grid.EditorMode := false;
+    end;
   end;
+end;
+
+procedure TMain.ToggleDCode(DoEnable: boolean);
+
+begin
+  // USE FINA codes or use simple scratch/disqualified method
+  INDV.ToggleDCode(DoEnable);
+  TEAM.ToggleDCode(DoEnable);
 end;
 
 procedure TMain.ToggleDivisions(SetVisible: boolean);
@@ -4569,19 +4596,6 @@ begin
   ToggleVisibileTabSheet3;
 end;
 
-{ TGridHelper }
 
-function TGridHelper.ColumnByName(const AName: String): TColumn;
-var
-  i : Integer;
-begin
-  Result := Nil;
-  for i := 0 to Columns.Count - 1 do begin
-     if (Columns[i].Field <> Nil) and (CompareText(Columns[i].FieldName, AName) = 0) then begin
-       Result := Columns[i];
-       exit;
-     end;
-  end;
-end;
 
 end.

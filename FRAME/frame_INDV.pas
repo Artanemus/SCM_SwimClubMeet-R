@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.Grids,
-  Vcl.DBGrids, vcl.Themes, vcl.ActnList, dmSCM;
+  Vcl.DBGrids, vcl.Themes, vcl.ActnList, dmSCM, SCMHelpers;
 
 type
   TframeINDV = class(TFrame)
@@ -20,26 +20,24 @@ type
     procedure GridKeyDown(Sender: TObject; var Key: Word; Shift:
         TShiftState);
   private
+    fEntrantBgColor: TColor;
     { Private declarations }
     fEntrantEditBoxFocused: TColor;
     fEntrantEditBoxNormal: TColor;
-    fEntrantBgColor: TColor;
+    // ASSERT CONNECTION TO MSSQL DATABASE
+    function AssertConnection(): boolean;
     // D R A W   C H E C K   B O X E S .
     procedure DrawCheckBoxes(oGrid: TObject; Rect: TRect; Column: TColumn;
       fontColor: TColor; bgColor: TColor);
-    // ASSERT CONNECTION TO MSSQL DATABASE
-    function AssertConnection(): boolean;
-
-
   public
     { Public declarations }
     fDoStatusBarUpdate: boolean; // FLAG ACTION - SCM_StatusBar.Enabled
+    procedure AfterConstruction; override;
     procedure Enable_GridEllipse();
     // TActionManager:  Sender: TAction
     procedure GridMoveDown(Sender: TObject);
     procedure GridMoveUp(Sender: TObject);
-    procedure AfterConstruction; override;
-
+    procedure ToggleDCode(DoEnable: boolean);
   end;
 
 implementation
@@ -51,6 +49,7 @@ uses dlgEntrantPickerCTRL, dlgEntrantPicker, dlgDCodePicker, system.UITypes;
 procedure TframeINDV.AfterConstruction;
 var
   css: TCustomStyleServices;
+  col: TColumn;
 begin
   inherited;
   // Special color assignment - used in TDBGrid painting...
@@ -68,6 +67,27 @@ begin
     fEntrantEditBoxNormal := clWindowText;
     fEntrantBgColor := clAppWorkSpace;
   end;
+  {
+    When the Columns.State property of the grid is csDefault, grid columns
+    are dynamically generated from the visible fields of the dataset and the
+    order of columns in the grid matches the order of fields in the dataset.
+  }
+  Grid.Columns.State := csDefault;
+  Grid.Options := Grid.Options + [dgEditing];
+  Grid.Options := Grid.Options - [dgAlwaysShowEditor];
+  Enable_GridEllipse;
+  {
+    Small tidy-up on the grid displays.
+    Set the drop-downs rowcount.
+    Uses developer's TDBGrid Class Helper found in SHARED.
+  }
+  col := Grid.ColumnByName('luDistance');
+  if Assigned(col) then  col.DropDownRows := 12;
+  col := Grid.ColumnByName('luStroke');
+  if Assigned(col) then  col.DropDownRows := 6;
+//  col := Event_Grid.ColumnByName('luEventType');
+//  if Assigned(col) then  col.DropDownRows := 3;
+
 end;
 
 function TframeINDV.AssertConnection: boolean;
@@ -532,17 +552,15 @@ begin
   if (Grid.DataSource.DataSet.FieldByName('Lane').AsInteger = MaxLane)
   then
   begin
-    success := SCM.Entrant_MoveDownToNextHeat(Grid.DataSource.DataSet);
+    success := SCM.MoveDownToNextHeat(Grid.DataSource.DataSet);
     // move to next heat  (By default, will position on first entrant.)
     SCM.dsHeat.DataSet.Next;
   end
   else
-    success := SCM.Entrant_MoveDownLane(Grid.DataSource.DataSet);
+    success := SCM.MoveDownLane(Grid.DataSource.DataSet);
   if not success then
     beep;
 end;
-
-
 
 procedure TframeINDV.GridMoveUp(Sender: TObject);
 var
@@ -552,18 +570,21 @@ begin
   // already at top of stack? First lane in pool.
   if (Grid.DataSource.DataSet.FieldByName('Lane').AsInteger = 1) then
   begin
-    success := SCM.Entrant_MoveUpToPrevHeat(Grid.DataSource.DataSet);
+    success := SCM.MoveUpToPrevHeat(Grid.DataSource.DataSet);
     // move to the previous heat ....
     SCM.dsHeat.DataSet.Prior;
     // move to last entrant ....
     SCM.dsEntrant.DataSet.Last;
   end
   else
-    success := SCM.Entrant_MoveUpLane(Grid.DataSource.DataSet);
+    success := SCM.MoveUpLane(Grid.DataSource.DataSet);
   if not success then
     beep;
 end;
 
-
+procedure TframeINDV.ToggleDCode(DoEnable: boolean);
+begin
+  SCM.ToggleDCode(Grid.DataSource.DataSet, DoEnable);
+end;
 
 end.
