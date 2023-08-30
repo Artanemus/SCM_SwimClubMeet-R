@@ -89,12 +89,12 @@ begin
     order of columns in the grid matches the order of fields in the dataset.
   }
   Grid.Columns.State := csDefault;
-  Grid.Options := Grid.Options + [dgEditing];
   Grid.Options := Grid.Options - [dgAlwaysShowEditor];
+  Grid.Options := Grid.Options + [dgEditing];
 
   GridEntrant.Columns.State := csDefault;
-  GridEntrant.Options := GridEntrant.Options + [dgEditing];
   GridEntrant.Options := GridEntrant.Options - [dgAlwaysShowEditor];
+  GridEntrant.Options := GridEntrant.Options + [dgEditing];
 
   Enable_GridEllipse;
   Enable_GridEntrantEllipse;
@@ -221,17 +221,14 @@ end;
 
 procedure TframeTEAM.GridCellClick(Column: TColumn);
 begin
+  if not Assigned(Column.Field) then
+    exit;
+
   // --------------------------------------------------------------------
   // H A N D L E   A   C U S T O M   P A I N T E D   C H E C K B O X .
   // --------------------------------------------------------------------
-  if Assigned(Column.Field) and (Column.Field.DataType = ftBoolean) then
+  if (Column.Field.DataType = ftBoolean) then
   begin
-    // Editing must be enabled for FUllName, RaceTime and DCode
-    // ...BUT if editing is enabled and focus is on CheckBoxes
-    // then 'true/false' text appears!
-    // The custom paint routine isn't called during editing as the
-    // inline editor is made visible and covers the cell.
-
     Grid.BeginUpdate;
     Column.Grid.DataSource.DataSet.Edit;
     Column.Field.value := not Column.Field.AsBoolean;
@@ -248,21 +245,6 @@ begin
     end;
     Column.Grid.DataSource.DataSet.Post;
     Grid.EndUpdate;
-
-    // --------------------------------------------------------------------
-    // FIXED - FINALLY ...
-    // BSA 31/07/2023
-    // --------------------------------------------------------------------
-    // If the user clicks the cell a 2nd time, the inline editor paints.
-    // This is system WM_PAINT and cannot be ommitted.
-    // UNLESS ...
-    // 1.CHANGE OPTIONS. REMOVE editing. (MAGIC - I don't why this works.)
-    // 2.NOW EditorMode correctly flags and the final step is to disable it.
-    // NOTE: A REPAINT IS NOT NECESSARY as the inline editor is made invisible
-    // to reveal the custom painted cell.
-    Grid.Options := Grid.Options - [dgEditing];
-    if Grid.EditorMode then
-      Grid.EditorMode := false;
   end;
 end;
 
@@ -270,29 +252,41 @@ procedure TframeTEAM.GridColEnter(Sender: TObject);
 var
   fld: TField;
 begin
-  // If the field is boolean, switch OFF Grid editing.
+  {
+   ONLY TIME [dgEditing] is DISABLED.
+   When moving into a col with custom painted checkboxes, the [dgEditing]
+   must be killed. Else, two clicks of the checkbox reveal the inline
+   editbox, hiding the cell's custom painted checkbox.
+  }
   fld := Grid.SelectedField;
   if Assigned(fld) then
   begin
     if (fld.FieldName = 'RaceTime') or (fld.FieldName = 'DCode') or
       (fld.FieldName = 'TeamName') then
-      Grid.EditorMode := true
-    else
+    begin
+      Grid.Options := Grid.Options + [dgEditing];
+      Grid.EditorMode := true;
+    end
+    else if (fld.FieldName = 'IsScratched') or (fld.FieldName = 'IsDisqualified')
+    then
+    begin
       Grid.EditorMode := false;
+      Grid.Options := Grid.Options - [dgEditing];
+    end;
   end
 end;
 
 procedure TframeTEAM.GridColExit(Sender: TObject);
+var
+  fld: TField;
 begin
-  // Editing must be enabled for FullName, RaceTime and DCode
-  // If the field is boolean, switch ON Grid editing.
-  // if Assigned(Grid.SelectedField) and
-  // (Grid.SelectedField.DataType = ftBoolean) then
-  // begin
-  // Grid.BeginUpdate;
-  // Grid.Options := Grid.Options + [dgEditing, dgAlwaysShowEditor];
-  // Grid.EndUpdate;
-  // end;
+  // ONLY TIME [dgEditing] is RE-ENABLED.
+  fld := Grid.SelectedField;
+  if Assigned(fld) then
+  begin
+    Grid.Options := Grid.Options + [dgEditing];
+    Grid.EditorMode := false;
+  end
 end;
 
 procedure TframeTEAM.GridDrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -535,7 +529,8 @@ begin
     aDataSet := Grid.DataSource.DataSet
   else if fTeamActiveGrid = 2 then
     aDataSet := GridEntrant.DataSource.DataSet
-  else exit;
+  else
+    exit;
 
   MaxLane := SCM.SwimClub_NumberOfLanes;
   success := false;
@@ -565,7 +560,8 @@ begin
     aDataSet := Grid.DataSource.DataSet
   else if fTeamActiveGrid = 2 then
     aDataSet := GridEntrant.DataSource.DataSet
-  else exit;
+  else
+    exit;
   success := false;
   if (aDataSet.FieldByName('Lane').AsInteger = 1) then
   begin

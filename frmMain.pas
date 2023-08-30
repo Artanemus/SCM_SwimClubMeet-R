@@ -1946,11 +1946,6 @@ begin
   Screen.MenuFont.Size := 12;
   ActionManager1.Style := PlatformVclStylesStyle;
 
-  // ASSERT ENTRANT_GRID OPTION STATE
-  // (INDV.Grid.EditorMode used to toggle individual cell editing)
-//  INDV.Grid.Options := INDV.Grid.Options + [dgEditing];
-//  INDV.Grid.Options := INDV.Grid.Options - [dgAlwaysShowEditor];
-
   {
     When the Columns.State property of the grid is csDefault, grid columns
     are dynamically generated from the visible fields of the dataset and the
@@ -1958,7 +1953,6 @@ begin
   }
   Session_Grid.Columns.State := csDefault;
   Event_Grid.Columns.State := csDefault;
-//  INDV.Grid.Columns.State := csDefault;
   Nominate_Grid.Columns.State := csDefault;
 
   {
@@ -1974,11 +1968,10 @@ begin
 //  if Assigned(col) then  col.DropDownRows := 3;
 
 
-  // PREPARE ENTRANT GRID COLUMN VISIBILITY
+  // PREPARE NON-FRAMED GRIDS - COLUMN VISIBILITY
   ToggleDCode(prefEnableDCode);
   ToggleSwimmerCAT(prefDisplaySwimmerCAT);
   ToggleDivisions(prefDisplayDivisions);
-//  ToggleTeamEvents(prefEnableTeamEvents);
 
 end;
 
@@ -4221,11 +4214,10 @@ begin
       if (fld.FieldName = 'RaceTime') or (fld.FieldName = 'DCode') or
         (fld.FieldName = 'TeamName') then
       begin
-        INDV.Grid.EditorMode := true;
-        // INDV.Grid.SelectAll;
+        TEAM.Grid.EditorMode := true;
       end
       else
-        INDV.Grid.EditorMode := false;
+        TEAM.Grid.EditorMode := false;
     end;
   end;
 end;

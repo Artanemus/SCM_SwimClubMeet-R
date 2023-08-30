@@ -3,8 +3,8 @@ object TeamNameMenu: TTeamNameMenu
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Team Name '
-  ClientHeight = 252
-  ClientWidth = 214
+  ClientHeight = 251
+  ClientWidth = 210
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -22,7 +22,7 @@ object TeamNameMenu: TTeamNameMenu
     Top = 16
     Width = 193
     Height = 41
-    Caption = 'Create New Team'
+    Caption = 'Create Relay Team'
     TabOrder = 0
     OnClick = btnCreateNewTeamClick
   end

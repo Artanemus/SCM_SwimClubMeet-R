@@ -3,9 +3,10 @@ unit frame_INDV;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.Grids,
-  Vcl.DBGrids, vcl.Themes, vcl.ActnList, dmSCM, SCMHelpers;
+  Vcl.DBGrids, Vcl.Themes, Vcl.ActnList, dmSCM, SCMHelpers;
 
 type
   TframeINDV = class(TFrame)
@@ -14,11 +15,10 @@ type
     procedure GridColEnter(Sender: TObject);
     procedure GridColExit(Sender: TObject);
     procedure GridDrawColumnCell(Sender: TObject; const Rect: TRect;
-        DataCol: Integer; Column: TColumn; State: TGridDrawState);
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure GridEditButtonClick(Sender: TObject);
     procedure GridEnter(Sender: TObject);
-    procedure GridKeyDown(Sender: TObject; var Key: Word; Shift:
-        TShiftState);
+    procedure GridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     fEntrantBgColor: TColor;
     { Private declarations }
@@ -44,7 +44,7 @@ implementation
 
 {$R *.dfm}
 
-uses dlgEntrantPickerCTRL, dlgEntrantPicker, dlgDCodePicker, system.UITypes;
+uses dlgEntrantPickerCTRL, dlgEntrantPicker, dlgDCodePicker, System.UITypes;
 
 procedure TframeINDV.AfterConstruction;
 var
@@ -73,8 +73,8 @@ begin
     order of columns in the grid matches the order of fields in the dataset.
   }
   Grid.Columns.State := csDefault;
-  Grid.Options := Grid.Options + [dgEditing];
   Grid.Options := Grid.Options - [dgAlwaysShowEditor];
+  Grid.Options := Grid.Options + [dgEditing];
   Enable_GridEllipse;
   {
     Small tidy-up on the grid displays.
@@ -82,11 +82,11 @@ begin
     Uses developer's TDBGrid Class Helper found in SHARED.
   }
   col := Grid.ColumnByName('luDistance');
-  if Assigned(col) then  col.DropDownRows := 12;
+  if Assigned(col) then
+    col.DropDownRows := 12;
   col := Grid.ColumnByName('luStroke');
-  if Assigned(col) then  col.DropDownRows := 6;
-//  col := Event_Grid.ColumnByName('luEventType');
-//  if Assigned(col) then  col.DropDownRows := 3;
+  if Assigned(col) then
+    col.DropDownRows := 6;
 
 end;
 
@@ -107,7 +107,7 @@ procedure TframeINDV.DrawCheckBoxes(oGrid: TObject; Rect: TRect;
 var
   MyRect: TRect;
   oField: TField;
-  iPos, iFactor: integer;
+  iPos, iFactor: Integer;
   bValue: boolean;
   g: TDBGrid;
   points: Array [0 .. 4] of TPoint;
@@ -174,7 +174,7 @@ end;
 
 procedure TframeINDV.Enable_GridEllipse;
 var
-  i: integer;
+  i: Integer;
   col: TColumn;
 begin
   for i := 0 to Grid.Columns.Count - 1 do
@@ -192,17 +192,13 @@ end;
 
 procedure TframeINDV.GridCellClick(Column: TColumn);
 begin
+  if not Assigned(Column.Field) then
+    exit;
   // --------------------------------------------------------------------
   // H A N D L E   A   C U S T O M   P A I N T E D   C H E C K B O X .
   // --------------------------------------------------------------------
-  if Assigned(Column.Field) and (Column.Field.DataType = ftBoolean) then
+  if (Column.Field.DataType = ftBoolean) then
   begin
-    // Editing must be enabled for FUllName, RaceTime and DCode
-    // ...BUT if editing is enabled and focus is on CheckBoxes
-    // then 'true/false' text appears!
-    // The custom paint routine isn't called during editing as the
-    // inline editor is made visible and covers the cell.
-
     Grid.BeginUpdate;
     Column.Grid.DataSource.DataSet.Edit;
     Column.Field.value := not Column.Field.AsBoolean;
@@ -219,56 +215,53 @@ begin
     end;
     Column.Grid.DataSource.DataSet.Post;
     Grid.EndUpdate;
-
-    // --------------------------------------------------------------------
-    // FIXED - FINALLY ...
-    // BSA 31/07/2023
-    // --------------------------------------------------------------------
-    // If the user clicks the cell a 2nd time, the inline editor paints.
-    // This is system WM_PAINT and cannot be ommitted.
-    // UNLESS ...
-    // 1.CHANGE OPTIONS. REMOVE editing. (MAGIC - I don't why this works.)
-    // 2.NOW EditorMode correctly flags and the final step is to disable it.
-    // NOTE: A REPAINT IS NOT NECESSARY as the inline editor is made invisible
-    // to reveal the custom painted cell.
-    Grid.Options := Grid.Options - [dgEditing];
-    if Grid.EditorMode then
-      Grid.EditorMode := false;
-
   end;
+
 end;
 
 procedure TframeINDV.GridColEnter(Sender: TObject);
 var
   fld: TField;
 begin
-  // If the field is boolean, switch OFF Grid editing.
+  {
+   ONLY TIME [dgEditing] is DISABLED.
+   When moving into a col with custom painted checkboxes, the [dgEditing]
+   must be killed. Else, two clicks of the checkbox reveal the inline
+   editbox, hiding the cell's custom painted checkbox.
+  }
   fld := Grid.SelectedField;
   if Assigned(fld) then
   begin
     if (fld.FieldName = 'RaceTime') or (fld.FieldName = 'DCode') or
       (fld.FieldName = 'FullName') then
-      Grid.EditorMode := true
-    else
+    begin
+      Grid.Options := Grid.Options + [dgEditing];
+      Grid.EditorMode := true;
+    end
+    else if (fld.FieldName = 'IsScratched') or (fld.FieldName = 'IsDisqualified')
+    then
+    begin
       Grid.EditorMode := false;
+      Grid.Options := Grid.Options - [dgEditing];
+    end;
   end
 end;
 
 procedure TframeINDV.GridColExit(Sender: TObject);
+var
+  fld: TField;
 begin
-  // Editing must be enabled for FullName, RaceTime and DCode
-  // If the field is boolean, switch ON Grid editing.
-  // if Assigned(Grid.SelectedField) and
-  // (Grid.SelectedField.DataType = ftBoolean) then
-  // begin
-  // Grid.BeginUpdate;
-  // Grid.Options := Grid.Options + [dgEditing, dgAlwaysShowEditor];
-  // Grid.EndUpdate;
-  // end;
+  // ONLY TIME [dgEditing] is RE-ENABLED.
+  fld := Grid.SelectedField;
+  if Assigned(fld) then
+  begin
+    Grid.Options := Grid.Options + [dgEditing];
+    Grid.EditorMode := false;
+  end
 end;
 
-procedure TframeINDV.GridDrawColumnCell(Sender: TObject; const
-    Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+procedure TframeINDV.GridDrawColumnCell(Sender: TObject; const Rect: TRect;
+  DataCol: Integer; Column: TColumn; State: TGridDrawState);
 var
   clFont, clBg: TColor;
 begin
@@ -311,7 +304,7 @@ var
   dlg: TEntrantPicker;
   dlgCntrl: TEntrantPickerCTRL;
   dlgDCode: TDCodePicker;
-  EntrantID: integer;
+  EntrantID: Integer;
   rtnValue: TModalResult;
   fld: TField;
 begin
@@ -375,11 +368,11 @@ begin
   // Changes to entrants effect totals in statusbar
   fDoStatusBarUpdate := true; // flag set false after SCM_StatusBarExecute.
 
-  {TODO -oBSA -cGeneral : POST MESSAGE TO UPDATE STATUS BAR ON PARENT FORM}
+  { TODO -oBSA -cGeneral : POST MESSAGE TO UPDATE STATUS BAR ON PARENT FORM }
 
   {
-  SCM_StatusBar.Update; // Asserts enabled state.
-  SCM_StatusBar.Execute; // Fire actions
+    SCM_StatusBar.Update; // Asserts enabled state.
+    SCM_StatusBar.Execute; // Fire actions
   }
 
 end;
@@ -394,10 +387,10 @@ begin
 end;
 
 procedure TframeINDV.GridKeyDown(Sender: TObject; var Key: Word;
-    Shift: TShiftState);
+  Shift: TShiftState);
 var
   Opts: TLocateOptions;
-  i, j: integer;
+  i, j: Integer;
   success: boolean;
 begin
   Opts := [];
@@ -516,12 +509,11 @@ begin
   end;
 
   // TOGGLE THE CHECKBOX WITH THE SPACE KEY.
-  if Assigned(Grid.SelectedField) and
-    (Grid.SelectedField.DataType = ftBoolean) and (Key = VK_SPACE) then
+  if Assigned(Grid.SelectedField) and (Grid.SelectedField.DataType = ftBoolean)
+    and (Key = VK_SPACE) then
   begin
     Grid.DataSource.DataSet.Edit;
-    Grid.SelectedField.value :=
-      not Grid.SelectedField.AsBoolean;
+    Grid.SelectedField.value := not Grid.SelectedField.AsBoolean;
     Grid.DataSource.DataSet.Post;
     Key := 0;
   end;
@@ -544,13 +536,12 @@ end;
 procedure TframeINDV.GridMoveDown(Sender: TObject);
 var
   success: boolean;
-  MaxLane: integer;
+  MaxLane: Integer;
 begin
   // ...Update traps illegal calls.
   // already at bottom of stack?  Last lane in pool.
   MaxLane := SCM.SwimClub_NumberOfLanes;
-  if (Grid.DataSource.DataSet.FieldByName('Lane').AsInteger = MaxLane)
-  then
+  if (Grid.DataSource.DataSet.FieldByName('Lane').AsInteger = MaxLane) then
   begin
     success := SCM.MoveDownToNextHeat(Grid.DataSource.DataSet);
     // move to next heat  (By default, will position on first entrant.)
