@@ -2104,37 +2104,6 @@ object SCM: TSCM
     Left = 688
     Top = 528
   end
-  object qryTeamHeatLaneCount: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    IndexFieldNames = 'HeatID'
-    Connection = scmConnection
-    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
-    UpdateOptions.EnableDelete = False
-    UpdateOptions.EnableInsert = False
-    UpdateOptions.EnableUpdate = False
-    UpdateOptions.KeyFields = 'HeatID'
-    SQL.Strings = (
-      'SELECT'
-      '  HeatIndividual.HeatID,'
-      '  Count(Team.Lane) AS Count_Lane'
-      'FROM'
-      '  HeatIndividual'
-      '  LEFT JOIN Team ON Team.HeatID = Team.HeatID'
-      'WHERE'
-      '  HeatIndividual.HeatID = :HEATID'
-      'GROUP BY'
-      '  HeatIndividual.HeatID'
-      '')
-    Left = 832
-    Top = 368
-    ParamData = <
-      item
-        Name = 'HEATID'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = 1
-      end>
-  end
   object qryTeam: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     BeforeInsert = qryEvTypeBeforeInsert

@@ -908,7 +908,7 @@ begin
     mtConfirmation, [mbNo, mbYes], 0, mbYes);
   if (rtnValue = mrYes) then
   begin
-    success := SCM.Entrant_Strike;
+    success := SCM.StrikeLane;
     if not success then
       beep;
   end;

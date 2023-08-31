@@ -192,7 +192,8 @@ begin
   begin
     col := Grid.Columns.Items[i];
     // MOD 23.06.27
-    if (col.FieldName = 'TeamName') then
+    if (col.FieldName = 'TeamName')  or (col.FieldName = 'RaceTime') or
+      (col.FieldName = 'DCode') then
     begin
       col.ButtonStyle := cbsEllipsis;
       Grid.Repaint;
@@ -209,7 +210,7 @@ begin
   for i := 0 to GridEntrant.Columns.Count - 1 do
   begin
     col := GridEntrant.Columns.Items[i];
-    // MOD 23.06.27
+    // MOD 23.06.27  - 23.08.31
     if (col.FieldName = 'FullName') then
     begin
       col.ButtonStyle := cbsEllipsis;
@@ -372,32 +373,25 @@ var
 begin
   if not AssertConnection then
     exit;
+  if SCM.dsTeam.DataSet.FieldByName('TeamNameID').IsNull then
+    exit;
 
   SCM.dsTeam.DataSet.DisableControls;
   TeamID := SCM.dsTeam.DataSet.FieldByName('TeamID').AsInteger;
-  v := SCM.dsTeam.DataSet.FieldByName('TeamNameID').AsVariant;
-  if varIsNull(v) or varIsempty(v) then
-    TeamNameID := 0
-  else
-    TeamNameID := v;
 
   // handle the ellipse button for the disqualification code
   { TODO -oBSA -cGeneral : DCode Team Specific }
   fld := TDBGrid(Sender).SelectedField;
   if fld.FieldName = 'DCode' then
   begin
-    if (TeamNameID <> 0) then
+    dlgDCode := TDCodePicker.CreateWithConnection(self, SCM.scmConnection);
+    dlgDCode.TeamID := TeamID;
+    rtnValue := dlgDCode.ShowModal;
+    dlgDCode.Free;
+    if IsPositiveResult(rtnValue) then
     begin
-      dlgDCode := TDCodePicker.CreateWithConnection(self, SCM.scmConnection);
-      { TODO -oBSA -cGeneral : Flag DCodePicker to switch to relay mode. }
-      { dlgDCode.TeamID := TeamID; }
-      rtnValue := dlgDCode.ShowModal;
-      dlgDCode.Free;
-      if IsPositiveResult(rtnValue) then
-      begin
-        SCM.dsTeam.DataSet.Refresh;
-        SCM.Team_Locate(TeamID);
-      end;
+      SCM.dsTeam.DataSet.Refresh;
+      SCM.Team_Locate(TeamID);
     end;
   end
   // handle the ellipse entrant

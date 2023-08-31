@@ -305,12 +305,13 @@ var
   dlgCntrl: TEntrantPickerCTRL;
   dlgDCode: TDCodePicker;
   EntrantID: Integer;
-  rtnValue: TModalResult;
   fld: TField;
+  rtnValue: TModalResult;
 begin
   if not AssertConnection then
     exit;
-  rtnValue := mrCancel;
+  if SCM.dsEntrant.DataSet.FieldByName('MemberID').IsNull then
+    exit;
 
   SCM.dsEntrant.DataSet.DisableControls;
   EntrantID := SCM.dsEntrant.DataSet.FieldByName('EntrantID').AsInteger;
@@ -319,17 +320,14 @@ begin
   fld := TDBGrid(Sender).SelectedField;
   if fld.FieldName = 'DCode' then
   begin
-    if not SCM.dsEntrant.DataSet.FieldByName('MemberID').IsNull then
+    dlgDCode := TDCodePicker.CreateWithConnection(self, SCM.scmConnection);
+    dlgDCode.EntrantID := EntrantID;
+    rtnValue := dlgDCode.ShowModal;
+    dlgDCode.Free;
+    if IsPositiveResult(rtnValue) then
     begin
-      dlgDCode := TDCodePicker.CreateWithConnection(self, SCM.scmConnection);
-      dlgDCode.EntrantID := EntrantID;
-      rtnValue := dlgDCode.ShowModal;
-      dlgDCode.Free;
-      if IsPositiveResult(rtnValue) then
-      begin
-        SCM.dsEntrant.DataSet.Refresh;
-        SCM.Entrant_Locate(EntrantID);
-      end;
+      SCM.dsEntrant.DataSet.Refresh;
+      SCM.Entrant_Locate(EntrantID);
     end;
   end
   // handle the ellipse entrant

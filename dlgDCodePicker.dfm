@@ -169,7 +169,7 @@ object DCodePicker: TDCodePicker
         Name = 'DISQUALIFYTYPEID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = 3
+        Value = 7
       end>
   end
   object qryStroke: TFDQuery
