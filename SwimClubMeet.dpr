@@ -71,7 +71,8 @@ uses
   AutoBuildRelayAlgorithm in 'AutoBuildRelayAlgorithm.pas',
   dlgAutoBuild_Relay in 'dlgAutoBuild_Relay.pas' {AutoBuild_Relay},
   dlgTeamNameMenu in 'FRAME\dlgTeamNameMenu.pas' {TeamNameMenu},
-  SCMHelpers in '..\SCM_SHARED\SCMHelpers.pas';
+  SCMHelpers in '..\SCM_SHARED\SCMHelpers.pas',
+  SCMNomination in 'SCMNomination.pas';
 
 {$R *.res}
 

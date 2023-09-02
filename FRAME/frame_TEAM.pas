@@ -366,8 +366,7 @@ procedure TframeTEAM.GridEditButtonClick(Sender: TObject);
 var
   dlgDCode: TDCodePicker;
   dlgTeamName: TTeamNameMenu;
-  v: variant;
-  TeamID, TeamNameID: Integer;
+  TeamID: Integer;
   rtnValue: TModalResult;
   fld: TField;
 begin

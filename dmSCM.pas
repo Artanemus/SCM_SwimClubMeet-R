@@ -564,7 +564,7 @@ end;
 
 function TSCM.EmptyLane: Boolean;
 var
-aTeamID, aTeamNameID: integer;
+aTeamID: integer;
 begin
   if SCM.Event_IsINDV then
     result := Entrant_EmptyLane // USES NOM ...
@@ -3518,7 +3518,7 @@ var
   SearchOptions: TLocateOptions;
   tbl: TFDTable;
   success: Boolean;
-  rows, aHeatStatusID: integer;
+  aHeatStatusID: integer;
   v: variant;
 begin
   result := false;
@@ -3551,13 +3551,12 @@ begin
         begin
           { CLEAR THE LANE. Does not remove lanes... }
           tbl.Edit;
-          tbl.FieldByName('RelayID').Clear;
-          tbl.FieldByName('DisqualifyCodeID').Clear;
           tbl.FieldByName('RaceTime').Clear;
           tbl.FieldByName('TimeToBeat').Clear;
-          tbl.FieldByName('TeamNameID').Clear;
           tbl.FieldByName('IsDisqualified').AsBoolean := false;
           tbl.FieldByName('IsScratched').AsBoolean := false;
+          tbl.FieldByName('DisqualifyCodeID').Clear;
+          tbl.FieldByName('TeamNameID').Clear;
           tbl.Post;
           TeamEntrant_DeleteALLExclude(aTeamID, false); // remove Entrants.
           TeamSplit_DeleteALLExclude(aTeamID, false); // remove Split times.
@@ -4038,7 +4037,7 @@ end;
 
 function TSCM.Team_StrikeNominees(aTeamID: integer): Boolean;
 begin
-
+  // WIP
 end;
 
 procedure TSCM.ToggleDCode(aDataSet: TDataSet; DoEnable: boolean);
