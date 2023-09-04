@@ -72,7 +72,7 @@ uses
   dlgAutoBuild_Relay in 'dlgAutoBuild_Relay.pas' {AutoBuild_Relay},
   dlgTeamNameMenu in 'FRAME\dlgTeamNameMenu.pas' {TeamNameMenu},
   SCMHelpers in '..\SCM_SHARED\SCMHelpers.pas',
-  SCMNomination in 'SCMNomination.pas';
+  dmSCMHelper in 'dmSCMHelper.pas';
 
 {$R *.res}
 

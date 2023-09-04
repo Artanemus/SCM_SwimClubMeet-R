@@ -2719,7 +2719,7 @@ aEventID: integer;
 begin
   // The event must have DistanceID Assigned!!!
   aEventID := SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger;
-  if SCM.Event_TypeID(aEventID) = 0 then
+  if SCM.Event_EventTypeID(aEventID) = 0 then
     raise Exception.Create('Error: The event has not been assigned a distance.');
   SCM.Heat_NewRecord;
   ToggleVisibileTabSheet3;

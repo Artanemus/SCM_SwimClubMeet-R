@@ -394,7 +394,7 @@
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\SCM_SHARED\SCMHelpers.pas"/>
-        <DCCReference Include="SCMNomination.pas"/>
+        <DCCReference Include="dmSCMHelper.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
