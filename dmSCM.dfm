@@ -483,66 +483,6 @@ object SCM: TSCM
       Visible = False
     end
   end
-  object qryEntrantCount: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    Connection = scmConnection
-    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
-    UpdateOptions.EnableDelete = False
-    UpdateOptions.EnableInsert = False
-    UpdateOptions.EnableUpdate = False
-    SQL.Strings = (
-      'USE SwimClubMeet'
-      ''
-      'DECLARE @EventID AS INT;'
-      'SET @EventID = :EVENTID;'
-      ''
-      'SELECT'
-      '  dbo.EntrantCount(@EventID) AS EntrantCount'
-      'FROM'
-      '    Event'
-      'WHERE Event.EventID = @EventID')
-    Left = 832
-    Top = 752
-    ParamData = <
-      item
-        Name = 'EVENTID'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = 340
-      end>
-  end
-  object qryHeatCount: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    IndexFieldNames = 'EventID'
-    Connection = scmConnection
-    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
-    UpdateOptions.EnableDelete = False
-    UpdateOptions.EnableInsert = False
-    UpdateOptions.EnableUpdate = False
-    UpdateOptions.KeyFields = 'EventID'
-    SQL.Strings = (
-      'SELECT'
-      '  Event.EventID,'
-      '  Count(HeatIndividual.HeatID) AS Count_HeatID'
-      'FROM'
-      '  Event'
-      
-        '  LEFT JOIN HeatIndividual ON HeatIndividual.EventID = Event.Eve' +
-        'ntID'
-      'WHERE'
-      '  Event.EventID = :EID'
-      'GROUP BY'
-      '  Event.EventID')
-    Left = 832
-    Top = 224
-    ParamData = <
-      item
-        Name = 'EID'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = 1
-      end>
-  end
   object qryFName: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'MemberID'
@@ -1076,35 +1016,6 @@ object SCM: TSCM
     DataSet = qryNominee
     Left = 312
     Top = 256
-  end
-  object qryNomineeCount: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    Connection = scmConnection
-    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
-    UpdateOptions.EnableDelete = False
-    UpdateOptions.EnableInsert = False
-    UpdateOptions.EnableUpdate = False
-    SQL.Strings = (
-      'USE SwimClubMeet'
-      ''
-      'DECLARE @EventID AS INT;'
-      'SET @EventID = :EVENTID;'
-      ''
-      ''
-      'SELECT'
-      '  dbo.NomineeCount(@EventID) AS NomineeCount'
-      'FROM'
-      '    Event'
-      'WHERE Event.EventID = @EventID')
-    Left = 829
-    Top = 696
-    ParamData = <
-      item
-        Name = 'EVENTID'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = 340
-      end>
   end
   object qrySessionNomineeCount: TFDQuery
     ActiveStoredUsage = [auDesignTime]

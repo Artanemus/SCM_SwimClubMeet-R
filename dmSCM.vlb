@@ -79,9 +79,6 @@ Coordinates=645,492,73,51
 [qryFNameEllipse]
 Coordinates=862,553,97,51
 
-[qryHeatCount]
-Coordinates=10,492,82,51
-
 [qryEventClosedDT]
 Coordinates=721,911,106,33
 
@@ -141,9 +138,6 @@ Coordinates=298,483,54,33
 
 [qryEntrantEntrantID]
 Coordinates=156,1022,112,33
-
-[qryNomineeCount]
-Coordinates=426,492,103,51
 
 [qryHeatHeatNum]
 Coordinates=57,1022,97,33
@@ -229,9 +223,6 @@ Coordinates=504,1093,89,33
 
 [qryEventCaption]
 Coordinates=405,1093,96,33
-
-[qryEntrantCount]
-Coordinates=539,492,96,51
 
 [dsHeat]
 Coordinates=13,196,48,33
@@ -372,5 +363,5 @@ EditingLayerName=Heat
 ActiveLayerNames=
 
 []
-Coordinates=617,395,117,51
+Coordinates=426,492,103,51
 

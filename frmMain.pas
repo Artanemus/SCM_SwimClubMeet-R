@@ -1881,13 +1881,6 @@ begin
   // inhibits statusbar updates in TActionManager.Update
   fSCMisInitializing := false;
 
-
-
-  // 23.08.06 - HANDLED WITHIN AfterConstruction FRAMES
-//  INDV.Enable_GridEllipse;
-//  TEAM.Enable_GridEllipse;
-//  TEAM.Enable_GridEntrantEllipse;
-
   // 22/12/22
   // L I N K   G R I D S   T O   D A T A S O U R C E S .
   Event_Grid.DataSource := SCM.dsEvent;
@@ -1968,7 +1961,7 @@ begin
 //  if Assigned(col) then  col.DropDownRows := 3;
 
 
-  // PREPARE NON-FRAMED GRIDS - COLUMN VISIBILITY
+  // PREPARE GRIDS (not framed) - COLUMN VISIBILITY
   ToggleDCode(prefEnableDCode);
   ToggleSwimmerCAT(prefDisplaySwimmerCAT);
   ToggleDivisions(prefDisplayDivisions);
@@ -2109,6 +2102,11 @@ begin
   prefDisplayDivisions := iFile.ReadBool('Preferences', 'DisplayDivisions', false);
 
   iFile.Free;
+
+  // Update the preferences used by dmSCM
+  if AssertConnection then
+    SCM.ReadPreferences(IniFileName);
+
 end;
 
 procedure TMain.HeatControlListBeforeDrawItem(AIndex: integer; ACanvas: TCanvas;
