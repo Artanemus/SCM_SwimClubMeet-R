@@ -73,7 +73,7 @@ end;
 
 procedure TSwapLanes.btnSwapLanesClick(Sender: TObject);
 begin
-  SCM.SwapLanes(tblEntrantA.FieldByName('EntrantID').AsInteger,
+  SCM.Entrant_SwapLanes(tblEntrantA.FieldByName('EntrantID').AsInteger,
     tblEntrantB.FieldByName('EntrantID').AsInteger);
   ModalResult := mrOk;
 end;

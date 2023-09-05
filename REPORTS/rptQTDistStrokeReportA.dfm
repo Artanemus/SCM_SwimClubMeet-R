@@ -1,5 +1,4 @@
 object QTDistStrokeReportA: TQTDistStrokeReportA
-  OldCreateOrder = False
   OnCreate = DataModuleCreate
   Height = 351
   Width = 295

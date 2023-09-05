@@ -45,7 +45,7 @@ var
   aSessionID: integer;
 begin
   qryReport.Connection := SCM.scmConnection;
-  aSessionID := SCM.GetSessionID;
+  aSessionID := SCM.Session_ID;
   if (aSessionID > 0) then
   begin
     qryReport.ParamByName('SID').AsInteger := aSessionID;

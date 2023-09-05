@@ -1,5 +1,4 @@
 object SCMNom: TSCMNom
-  OldCreateOrder = False
   OnCreate = DataModuleCreate
   Height = 355
   Width = 424
@@ -59,7 +58,6 @@ object SCMNom: TSCMNom
       'SELECT [EventID]'
       '      ,[EventNum]'
       '      ,[SessionID]'
-      '      ,[EventTypeID]'
       '      ,[StrokeID]'
       '      ,[DistanceID]'
       '      ,[EventStatusID]'

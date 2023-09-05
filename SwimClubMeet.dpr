@@ -20,7 +20,7 @@ uses
   dlgAutoBuild_Heats in 'dlgAutoBuild_Heats.pas' {AutoBuild_Heats},
   dlgQualifyTimes in 'dlgQualifyTimes.pas' {QualifyTimes},
   dlgSwapLanes in 'dlgSwapLanes.pas' {SwapLanes},
-  dlgMembershipType in 'dlgMembershipType.pas' {MembershipType},
+  dlgSwimmerCategory in 'dlgSwimmerCategory.pas' {SwimmerCategory},
   dlgDeleteMember in 'MEMBERS\dlgDeleteMember.pas' {DeleteMember},
   dlgFindMember in 'MEMBERS\dlgFindMember.pas' {FindMember},
   dlgGotoMember in 'MEMBERS\dlgGotoMember.pas' {GotoMember},
@@ -45,7 +45,7 @@ uses
   dlgAutoBuild_Finals in 'dlgAutoBuild_Finals.pas' {AutoBuild_Finals},
   dlgSelectPrinter in 'dlgSelectPrinter.pas' {SelectPrinter},
   dlgBatchProgress in 'dlgBatchProgress.pas' {BatchProgress},
-  dlgAutoBuildPref in 'dlgAutoBuildPref.pas' {AutoBuildPref},
+  dlgAutoBuild_Batch in 'dlgAutoBuild_Batch.pas' {AutoBuildPref},
   dlgEntrantPicker in 'dlgEntrantPicker.pas' {EntrantPicker},
   dlgEntrantPickerCTRL in 'dlgEntrantPickerCTRL.pas' {EntrantPickerCTRL},
   rptMemberDetail in 'MEMBERS\rptMemberDetail.pas' {MemberDetail: TDataModule},
@@ -62,7 +62,17 @@ uses
   dlgBasicLogin in '..\SCM_SHARED\dlgBasicLogin.pas' {BasicLogin},
   UEnvVars in '..\SCM_SHARED\UEnvVars.pas',
   Vcl.PlatformVclStylesActnCtrls in '..\SCM_SHARED\Vcl.PlatformVclStylesActnCtrls.pas',
-  dlgAbout in '..\SCM_SHARED\dlgAbout.pas' {About};
+  dlgAbout in '..\SCM_SHARED\dlgAbout.pas' {About},
+  frmDisqualificationCodes in 'TOOLS\frmDisqualificationCodes.pas' {DisqualificationCodes},
+  dlgAutoSchedule in 'TOOLS\dlgAutoSchedule.pas' {AutoSchedule},
+  frame_TEAM in 'FRAME\frame_TEAM.pas' {frameTEAM: TFrame},
+  frame_INDV in 'FRAME\frame_INDV.pas' {frameINDV: TFrame},
+  dlgDCodePicker in 'dlgDCodePicker.pas' {DCodePicker},
+  AutoBuildRelayAlgorithm in 'AutoBuildRelayAlgorithm.pas',
+  dlgAutoBuild_Relay in 'dlgAutoBuild_Relay.pas' {AutoBuild_Relay},
+  dlgTeamNameMenu in 'FRAME\dlgTeamNameMenu.pas' {TeamNameMenu},
+  SCMHelpers in '..\SCM_SHARED\SCMHelpers.pas',
+  dmSCMHelper in 'dmSCMHelper.pas';
 
 {$R *.res}
 

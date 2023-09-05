@@ -1,5 +1,4 @@
 object MembersList: TMembersList
-  OldCreateOrder = False
   Height = 458
   Width = 395
   object frxReport1: TfrxReport
@@ -99,7 +98,7 @@ object MembersList: TMembersList
         end
         object Memo2: TfrxMemoView
           AllowVectorExport = True
-          Left = 820.158010000000000000
+          Left = 572.658010000000000000
           Top = 37.795300000000000000
           Width = 86.929190000000000000
           Height = 34.015770000000000000
@@ -195,40 +194,6 @@ object MembersList: TMembersList
             'Active')
           ParentFont = False
         end
-        object Memo7: TfrxMemoView
-          AllowVectorExport = True
-          Left = 570.709030000000000000
-          Top = 52.913420000000000000
-          Width = 249.448980000000000000
-          Height = 18.897650000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'segoe UI'
-          Font.Style = []
-          Frame.Typ = []
-          Memo.UTF8W = (
-            'Membership Type')
-          ParentFont = False
-        end
-        object Memo8: TfrxMemoView
-          AllowVectorExport = True
-          Left = 907.087200000000000000
-          Top = 37.795300000000000000
-          Width = 120.944960000000000000
-          Height = 34.015770000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'segoe UI'
-          Font.Style = []
-          Frame.Typ = []
-          HAlign = haCenter
-          Memo.UTF8W = (
-            'Membership'
-            'Due')
-          ParentFont = False
-        end
         object Memo9: TfrxMemoView
           AllowVectorExport = True
           Left = 3.779530000000000000
@@ -315,7 +280,7 @@ object MembersList: TMembersList
         RowCount = 0
         object frxDSMembershipNum: TfrxMemoView
           AllowVectorExport = True
-          Left = 820.158010000000000000
+          Left = 572.658010000000000000
           Width = 75.590600000000000000
           Height = 18.897650000000000000
           DataSet = frxDSReport
@@ -389,30 +354,6 @@ object MembersList: TMembersList
           Memo.UTF8W = (
             '[frxDS."IsActive"]')
         end
-        object frxDScMembershipType: TfrxMemoView
-          AllowVectorExport = True
-          Left = 570.709030000000000000
-          Width = 249.448980000000000000
-          Height = 18.897650000000000000
-          DataField = 'cMembershipType'
-          DataSet = frxDSReport
-          DataSetName = 'frxDS'
-          Frame.Typ = []
-          Memo.UTF8W = (
-            '[frxDS."cMembershipType"]')
-        end
-        object frxDSMembershipDue: TfrxMemoView
-          AllowVectorExport = True
-          Left = 903.307670000000000000
-          Width = 124.724490000000000000
-          Height = 18.897650000000000000
-          DataField = 'MembershipDue'
-          DataSet = frxDSReport
-          DataSetName = 'frxDS'
-          Frame.Typ = []
-          Memo.UTF8W = (
-            '[frxDS."MembershipDue"]')
-        end
         object frxDSMemberID: TfrxMemoView
           AllowVectorExport = True
           Width = 60.472480000000000000
@@ -439,13 +380,10 @@ object MembersList: TMembersList
       'ucFName=ucFName'
       'DOB=DOB'
       'IsActive=IsActive'
-      'MembershipDue=MembershipDue'
       'Email=Email'
       'cGender=cGender'
       'GenderID=GenderID'
       'SwimClubID=SwimClubID'
-      'MembershipTypeID=MembershipTypeID'
-      'cMembershipType=cMembershipType'
       'cSwimClub=cSwimClub'
       'NickName=NickName'
       'Age=Age')
@@ -529,6 +467,7 @@ object MembersList: TMembersList
   end
   object qryReport: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     Connection = SCM.scmConnection
     SQL.Strings = (
       'USE SwimClubMeet'
@@ -543,14 +482,11 @@ object MembersList: TMembersList
       ', UPPER(Member.LastName) + '#39', '#39' + Member.FirstName  AS ucFName'
       ', Member.DOB'
       ', Member.IsActive'
-      ', Member.MembershipDue'
       ', Member.Email'
       '-- , Member.DoEmailSessionReport'
       ', Gender.Caption AS cGender'
       ', Member.GenderID'
       ', Member.SwimClubID'
-      ', Member.MembershipTypeID'
-      ', MembershipType.Caption AS cMembershipType'
       ', SwimClub.Caption AS cSwimClub'
       ', SwimClub.NickName'
       ', dbo.SwimmerAge(GETDATE(), Member.DOB) AS Age'
@@ -560,9 +496,6 @@ object MembersList: TMembersList
         'LEFT OUTER JOIN SwimClub ON Member.SwimClubID = SwimClub.SwimClu' +
         'bID '
       'LEFT OUTER JOIN Gender ON Member.GenderID = Gender.GenderID '
-      
-        'LEFT OUTER JOIN MembershipType ON Member.MembershipTypeID = Memb' +
-        'ershipType.MembershipTypeID'
       'WHERE        (Member.SwimClubID = @SwimClubID )'
       'ORDER BY Member.LastName')
     Left = 72

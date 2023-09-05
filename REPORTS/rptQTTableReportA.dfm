@@ -1,5 +1,4 @@
 object QTTableReportA: TQTTableReportA
-  OldCreateOrder = False
   OnCreate = DataModuleCreate
   Height = 391
   Width = 319

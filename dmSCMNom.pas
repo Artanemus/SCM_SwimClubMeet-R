@@ -408,14 +408,11 @@ begin
     HeatStatusID := GetHeatStatusID(aMemberID, aEventID);
     if (HeatStatusID = 1) then
     begin
-      // remove nomination ...
-      DeleteNomination(aMemberID, aEventID);
-      // clear Entrant Data - clear lane
+      DeleteNomination(aMemberID, aEventID); // remove nomination ...
       aEntrantID := GetEntrantID(aMemberID, aEventID);
       if (aEntrantID > 0) then
       begin
-        // NOTE: not using EmptyLane as heat status has been checked.
-        CleanLane(aEntrantID);
+        CleanLane(aEntrantID); // Update Entrant Data
         result := true;
       end;
     end
@@ -439,12 +436,8 @@ begin
     if (HeatStatusID = 1) then
     begin
       if (GetMemberAndEvent(aEntrantID, aMemberID, aEventID)) then
-        // remove nomination ...
-        DeleteNomination(aMemberID, aEventID);
-
-      // c l e a r   l a n e .
-      // NOTE: not using EmptyLane as the heat status has been checked.
-      CleanLane(aEntrantID);
+        DeleteNomination(aMemberID, aEventID); // remove nomination ...
+      CleanLane(aEntrantID); // Update Entrant Data
       result := true;
     end
     else

@@ -10,7 +10,7 @@ uses
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, Data.DB,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.Buttons,
   Vcl.Samples.Spin, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.Mask, Vcl.DBCtrls,
-  Vcl.ExtDlgs;
+  Vcl.ExtDlgs, Vcl.WinXCtrls;
 
 type
   TPreferences = class(TForm)
@@ -79,6 +79,11 @@ type
     qrySwimClub: TFDQuery;
     Label9: TLabel;
     Label17: TLabel;
+    TabSheet6: TTabSheet;
+    prefEnableTeamEvents: TCheckBox;
+    prefEnableDCodes: TCheckBox;
+    prefDisplaySwimmerCAT: TCheckBox;
+    prefDisplayDivisions: TCheckBox;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
@@ -89,17 +94,13 @@ type
     procedure btnSaveClubLogoClick(Sender: TObject);
   private
     FConnection: TFDConnection;
-    fDBVersion, fDBMajor, fDBMinor: integer;
-    { Private declarations }
     procedure WritePreferences(IniFileName: string);
     procedure ReadPreferences(IniFileName: string);
     procedure AssignClubLogoToImage(AImage: TImage);
     procedure AssignDTtoStartOfSwimSeason();
     procedure AssignStartOfSwimSeasonToDT();
-    function GetDBVerInfo(): Boolean;
 
   public
-    { Public declarations }
     constructor Create(AOwner: TComponent; AConnection: TFDConnection);
       reintroduce; overload;
     property Connection: TFDConnection read FConnection write FConnection;
@@ -305,15 +306,6 @@ begin
   // test table is connected and open
   if not(qrySwimClub.Active) then
     exit;
-  // test if qrySwimClub is running 1.6 or greater
-  if not GetDBVerInfo then
-  begin
-    MessageDlg('Your SCM database must be running v1.6 or greater' + sLineBreak
-      + 'to support Club Logos. Use SCM_UpdateDataBase and version up.',
-      TMsgDlgType.mtInformation, [mbOk], 0);
-    exit;
-  end;
-
   if (SavePictureDialog1.Execute) then
   begin
     FileStream := TFileStream.Create(SavePictureDialog1.FileName, fmCreate);
@@ -353,19 +345,7 @@ begin
   // ensures a data connection is viable - if the main data module is active
   if Assigned(FConnection) then
   begin
-    // test if qrySwimClub is running 1.6 or greater
-    if GetDBVerInfo then
-    begin
-      // Version control v1,1,5,0 - v1,1,5,1
-      if (fDBMajor = 5) AND ((fDBMinor = 0) or (fDBMinor = 1)) then
-      begin
-        DBImage1.DataField := '';
-        TabSheet5.TabVisible := false;
-      end
-      // Version control v1,1,6,0
-      else
-        DBImage1.DataField := 'LogoImg';
-    end;
+    DBImage1.DataField := 'LogoImg';
     qrySwimClub.Connection := FConnection;
     qrySwimClub.Open;
     if (qrySwimClub.Active = true) then
@@ -394,24 +374,6 @@ begin
     // By default all database changes are saved.
     btnCloseClick(self);
     Key := 0;
-  end;
-end;
-
-function TPreferences.GetDBVerInfo: Boolean;
-begin
-  result := false;
-  if Assigned(FConnection) then
-  begin
-    tblSystem.Connection := FConnection;
-    tblSystem.Open;
-    if tblSystem.Active then
-    begin
-      fDBVersion := tblSystem.FieldByName('DBVersion').AsInteger;
-      fDBMajor := tblSystem.FieldByName('Major').AsInteger;
-      fDBMinor := tblSystem.FieldByName('Minor').AsInteger;
-      result := true;
-    end;
-    tblSystem.Close;
   end;
 end;
 
@@ -481,6 +443,16 @@ begin
   { /* 2020-11-01 auto-build v2 seed depth for Circle Seed */ }
   spnSeedDepth.Value := (iFile.ReadInteger('Preferences', 'SeedDepth', 3));
 
+  // 2023.06.26
+  prefEnableTeamEvents.Checked := iFile.ReadBool('Preferences',
+    'EnableTeamEvents', false);
+  prefEnableDCodes.Checked := iFile.ReadBool('Preferences',
+    'EnableDCodes', false);
+  prefDisplaySwimmerCAT.Checked := iFile.ReadBool('Preferences',
+    'DisplaySwimmerCAT', false);
+  prefDisplayDivisions.Checked := iFile.ReadBool('Preferences',
+    'DisplayDivisions', false);
+
   iFile.free;
 end;
 
@@ -519,6 +491,15 @@ begin
   iFile.WriteInteger('Preferences', 'SeedMethod', rgpSeedMethod.ItemIndex);
   { 2020-11-01 auto-build v2 seed depth for Circle Seed }
   iFile.WriteInteger('Preferences', 'SeedDepth', (spnSeedDepth.Value));
+
+  // 2023.06.26
+  iFile.WriteBool('Preferences', 'EnableTeamEvents',
+    prefEnableTeamEvents.Checked);
+  iFile.WriteBool('Preferences', 'EnableDCodes',
+    prefEnableDCodes.Checked);
+  iFile.WriteBool('Preferences', 'DisplaySwimmerCAT', prefDisplaySwimmerCAT.Checked);
+  iFile.WriteBool('Preferences', 'DisplayDivision',   prefDisplayDivisions.Checked);
+
   iFile.free;
 end;
 

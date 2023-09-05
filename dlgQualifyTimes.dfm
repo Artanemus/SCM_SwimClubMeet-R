@@ -3,8 +3,8 @@ object QualifyTimes: TQualifyTimes
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Qualification Times...'
-  ClientHeight = 680
-  ClientWidth = 621
+  ClientHeight = 679
+  ClientWidth = 617
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,13 +18,11 @@ object QualifyTimes: TQualifyTimes
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 621
-    Height = 639
+    Width = 617
+    Height = 638
     ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 617
-    ExplicitHeight = 638
     object TabSheet1: TTabSheet
       Caption = 'Setup'
       object DBGrid1: TDBGrid
@@ -50,12 +48,12 @@ object QualifyTimes: TQualifyTimes
         TabOrder = 1
         ExplicitWidth = 609
         DesignSize = (
-          613
+          609
           33)
         object Label3: TLabel
           Left = 4
           Top = 8
-          Width = 602
+          Width = 598
           Height = 19
           Alignment = taCenter
           Anchors = [akLeft, akTop, akRight]
@@ -73,12 +71,11 @@ object QualifyTimes: TQualifyTimes
       object Panel3: TPanel
         Left = 0
         Top = 0
-        Width = 613
+        Width = 609
         Height = 99
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 2
-        ExplicitWidth = 609
         object Label4: TLabel
           Left = 26
           Top = 25
@@ -259,19 +256,17 @@ object QualifyTimes: TQualifyTimes
   end
   object Panel2: TPanel
     Left = 0
-    Top = 639
-    Width = 621
+    Top = 638
+    Width = 617
     Height = 41
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 638
-    ExplicitWidth = 617
     DesignSize = (
-      621
+      617
       41)
     object BtnClose: TButton
-      Left = 527
+      Left = 519
       Top = 6
       Width = 75
       Height = 25

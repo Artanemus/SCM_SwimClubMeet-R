@@ -1,5 +1,4 @@
 object SessionReportA: TSessionReportA
-  OldCreateOrder = False
   OnCreate = DataModuleCreate
   Height = 394
   Width = 377

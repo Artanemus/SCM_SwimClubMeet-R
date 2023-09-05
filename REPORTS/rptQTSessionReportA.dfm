@@ -1,5 +1,4 @@
 object QTSessionReportA: TQTSessionReportA
-  OldCreateOrder = False
   OnCreate = DataModuleCreate
   Height = 351
   Width = 272

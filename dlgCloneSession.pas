@@ -63,7 +63,7 @@ begin
     exit;
 
   qrySrcEvent.Connection := SCM.scmConnection;
-  qrySrcEvent.ParamByName('SESSIONID').AsInteger := SCM.GetSessionID;
+  qrySrcEvent.ParamByName('SESSIONID').AsInteger := SCM.Session_ID;
   qrySrcEvent.Prepare;
   qrySrcEvent.Open;
   if not qrySrcEvent.Active then
@@ -96,8 +96,6 @@ begin
     tblEvent.FieldByName('EventNum').AsInteger := i;
     tblEvent.FieldByName('Caption').AsString :=
       qrySrcEvent.FieldByName('Caption').AsString;;
-    // Individual event = 1, (not-implimented) Team event = 2
-    tblEvent.FieldByName('EventTypeID').AsInteger := 1;
     // Stroke
     tblEvent.FieldByName('StrokeID').AsInteger :=
       qrySrcEvent.FieldByName('StrokeID').AsInteger;

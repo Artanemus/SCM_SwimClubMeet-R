@@ -44,7 +44,7 @@ end;
 procedure THeatReportB.RunReport;
 begin
 	qryReport.Connection := SCM.scmConnection;
-	qryReport.ParamByName('EVENTID').AsInteger := SCM.GetEventID;
+	qryReport.ParamByName('EVENTID').AsInteger := SCM.Event_ID;
 	qryReport.Prepare;
 	qryReport.Open;
 	if qryReport.Active then

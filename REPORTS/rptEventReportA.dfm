@@ -1,5 +1,4 @@
 object EventReportA: TEventReportA
-  OldCreateOrder = False
   OnCreate = DataModuleCreate
   Height = 366
   Width = 325
@@ -112,9 +111,9 @@ object EventReportA: TEventReportA
         Condition = 'frxDS."SessionID"'
         object Memo1: TfrxMemoView
           AllowVectorExport = True
-          Left = 3.779530000000000000
+          Left = 7.779530000000000000
           Top = 7.559060000000000000
-          Width = 56.692950000000000000
+          Width = 38.359616670000000000
           Height = 18.897650000000000000
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
@@ -124,14 +123,14 @@ object EventReportA: TEventReportA
           Frame.Typ = []
           HAlign = haCenter
           Memo.UTF8W = (
-            'Event #')
+            'Ev#')
           ParentFont = False
         end
         object Memo3: TfrxMemoView
           AllowVectorExport = True
-          Left = 71.811070000000000000
+          Left = 52.477736670000000000
           Top = 7.559060000000000000
-          Width = 60.472480000000000000
+          Width = 56.972480000000000000
           Height = 18.897650000000000000
           Frame.Typ = []
           Memo.UTF8W = (
@@ -139,7 +138,7 @@ object EventReportA: TEventReportA
         end
         object Memo2: TfrxMemoView
           AllowVectorExport = True
-          Left = 134.622140000000000000
+          Left = 113.122140000000000000
           Top = 7.559060000000000000
           Width = 113.385900000000000000
           Height = 18.897650000000000000
@@ -149,13 +148,13 @@ object EventReportA: TEventReportA
         end
         object Memo4: TfrxMemoView
           AllowVectorExport = True
-          Left = 510.236550000000000000
+          Left = 514.903216670000000000
           Top = 7.559060000000000000
-          Width = 68.031486300000000000
+          Width = 54.864819630000000000
           Height = 18.897650000000000000
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
-          Font.Height = -13
+          Font.Height = -11
           Font.Name = 'Arial'
           Font.Style = []
           Frame.Typ = []
@@ -166,13 +165,13 @@ object EventReportA: TEventReportA
         end
         object Memo5: TfrxMemoView
           AllowVectorExport = True
-          Left = 578.268090000000000000
+          Left = 572.434756670000000000
           Top = 7.559060000000000000
-          Width = 68.031486300000000000
+          Width = 44.031486300000000000
           Height = 18.897650000000000000
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
-          Font.Height = -13
+          Font.Height = -11
           Font.Name = 'Arial'
           Font.Style = []
           Frame.Typ = []
@@ -183,13 +182,13 @@ object EventReportA: TEventReportA
         end
         object Memo7: TfrxMemoView
           AllowVectorExport = True
-          Left = 646.299630000000000000
+          Left = 618.299630000000000000
           Top = 7.559060000000000000
-          Width = 68.031486300000000000
+          Width = 35.031486300000000000
           Height = 18.897650000000000000
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
-          Font.Height = -13
+          Font.Height = -11
           Font.Name = 'Arial'
           Font.Style = []
           Frame.Typ = []
@@ -200,7 +199,7 @@ object EventReportA: TEventReportA
         end
         object Memo6: TfrxMemoView
           AllowVectorExport = True
-          Left = 252.244280000000000000
+          Left = 229.410946670000000000
           Top = 7.559060000000000000
           Width = 219.212740000000000000
           Height = 18.897650000000000000
@@ -210,12 +209,29 @@ object EventReportA: TEventReportA
         end
         object Line1: TfrxLineView
           AllowVectorExport = True
-          Left = 3.779530000000000000
+          Left = 2.446196670000000000
           Top = 32.236240000000000000
           Width = 710.551640000000000000
           Color = clBlack
           Frame.Typ = [ftTop]
           Frame.Width = 2.000000000000000000
+        end
+        object Memo8: TfrxMemoView
+          AllowVectorExport = True
+          Left = 653.000000000000000000
+          Top = 7.436920000000000000
+          Width = 58.531486300000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -11
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = []
+          HAlign = haRight
+          Memo.UTF8W = (
+            'Scheduled')
+          ParentFont = False
         end
       end
       object MasterData1: TfrxMasterData
@@ -230,7 +246,7 @@ object EventReportA: TEventReportA
         object frxDSEventNum: TfrxMemoView
           AllowVectorExport = True
           Left = 3.779530000000000000
-          Width = 52.913420000000000000
+          Width = 37.246753330000000000
           Height = 18.897650000000000000
           DataSet = frxDSReport
           DataSetName = 'frxDS'
@@ -247,8 +263,8 @@ object EventReportA: TEventReportA
         end
         object frxDScDistance: TfrxMemoView
           AllowVectorExport = True
-          Left = 65.811070000000000000
-          Width = 60.472480000000000000
+          Left = 44.477736670000000000
+          Width = 58.972480000000000000
           Height = 18.897650000000000000
           DataSet = frxDSReport
           DataSetName = 'frxDS'
@@ -265,7 +281,7 @@ object EventReportA: TEventReportA
         end
         object frxDScStroke: TfrxMemoView
           AllowVectorExport = True
-          Left = 134.622140000000000000
+          Left = 111.788806670000000000
           Width = 113.385900000000000000
           Height = 18.897650000000000000
           DataSet = frxDSReport
@@ -276,8 +292,8 @@ object EventReportA: TEventReportA
         end
         object frxDSNomineeCount: TfrxMemoView
           AllowVectorExport = True
-          Left = 510.236550000000000000
-          Width = 60.472426300000000000
+          Left = 514.903216670000000000
+          Width = 55.472426300000000000
           Height = 18.897650000000000000
           DataSet = frxDSReport
           DataSetName = 'frxDS'
@@ -296,8 +312,9 @@ object EventReportA: TEventReportA
         end
         object frxDSHeatCount: TfrxMemoView
           AllowVectorExport = True
-          Left = 578.268090000000000000
-          Width = 60.472426300000000000
+          Left = 572.434756670000000000
+          Top = -0.500000000000000000
+          Width = 43.472426300000000000
           Height = 18.897650000000000000
           DataSet = frxDSReport
           DataSetName = 'frxDS'
@@ -316,8 +333,8 @@ object EventReportA: TEventReportA
         end
         object frxDSHeatCount1: TfrxMemoView
           AllowVectorExport = True
-          Left = 646.299630000000000000
-          Width = 60.472426300000000000
+          Left = 617.466296670000000000
+          Width = 34.472426300000000000
           Height = 18.897650000000000000
           DataSet = frxDSReport
           DataSetName = 'frxDS'
@@ -334,8 +351,8 @@ object EventReportA: TEventReportA
         end
         object frxDScEvent: TfrxMemoView
           AllowVectorExport = True
-          Left = 252.244280000000000000
-          Width = 219.212740000000000000
+          Left = 229.410946670000000000
+          Width = 283.712740000000000000
           Height = 18.897650000000000000
           DataSet = frxDSReport
           DataSetName = 'frxDS'
@@ -347,6 +364,27 @@ object EventReportA: TEventReportA
           Frame.Typ = []
           Memo.UTF8W = (
             '[frxDS."cEvent"]')
+          ParentFont = False
+        end
+        object frxDSScheduleDT: TfrxMemoView
+          IndexTag = 1
+          AllowVectorExport = True
+          Left = 653.500000000000000000
+          Top = -0.035560000000000000
+          Width = 53.370130000000000000
+          Height = 18.897650000000000000
+          DataField = 'ScheduleDT'
+          DataSet = frxDSReport
+          DataSetName = 'frxDS'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = []
+          HAlign = haRight
+          Memo.UTF8W = (
+            '[frxDS."ScheduleDT"]')
           ParentFont = False
         end
       end
@@ -392,8 +430,11 @@ object EventReportA: TEventReportA
   end
   object qryReport: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'SessionID'
     Connection = SCM.scmConnection
+    FormatOptions.AssignedValues = [fvFmtDisplayTime]
+    FormatOptions.FmtDisplayTime = 'hh:nn'
     SQL.Strings = (
       'USE SwimClubMeet'
       ''
@@ -413,6 +454,8 @@ object EventReportA: TEventReportA
       #9',Session.SessionStart'
       #9',Event.SessionID'
       #9',Event.Caption AS cEvent'
+      ' -- 05.06.2023'
+      ' ,Event.ScheduleDT'
       'FROM Event'
       'INNER JOIN Distance ON Event.DistanceID = Distance.DistanceID'
       'INNER JOIN Stroke ON Event.StrokeID = Stroke.StrokeID'
@@ -436,7 +479,7 @@ object EventReportA: TEventReportA
         Name = 'SESSIONID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = 9
+        Value = 1
       end>
   end
   object frxXLSExport1: TfrxXLSExport

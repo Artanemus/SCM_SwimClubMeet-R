@@ -14,9 +14,9 @@ type
     qryHeatsToDelete: TFDQuery;
     qryNominees: TFDQuery;
     qryRenumberHeats: TFDQuery;
-    qryGenderMemberTypeCount: TFDQuery;
+    qryGenderSwimmerCATCount: TFDQuery;
     qryGenderCount: TFDQuery;
-    qryMemberTypeCount: TFDQuery;
+    qrySwimmerCATCount: TFDQuery;
     qryAgeCount: TFDQuery;
     qryGenderAgeCount: TFDQuery;
     qryGenericCount: TFDQuery;
@@ -64,7 +64,7 @@ type
     function CircleSeed(DataSet: TFDQuery; seedDepth: integer): integer;
     function AssignNominees(DataSet: TFDQuery; EventID: integer;
       Age: integer = 0; GenderID: integer = 0;
-      MembershipTypeID: integer = 0): boolean;
+      SwimmerCategoryID: integer = 0): boolean;
 
     // Autobuild startup functions
     function GetNumOfSwimmingLanes(var NumOfPoolLanes: integer;
@@ -125,7 +125,7 @@ function TAutoBuildV2.AssignHeats(EventID, numOfSwimmingLanes, GroupBy,
 var
   Success: boolean;
   numberOfHeats, numOfNominees, totalNumberOfHeats: integer;
-  fAge, fGenderID, fMembershipTypeID: integer;
+  fAge, fGenderID, fSwimmerCategoryID: integer;
   ds: TFDQuery;
   Param: TFDParam;
 begin
@@ -135,7 +135,7 @@ begin
   { INFO: group on....
     0-No (DEFAULT),
     1-Entrant Age,
-    2-Entrant MembershipType,
+    2-Entrant Swimming Category,
     3-Division
   }
 
@@ -151,8 +151,8 @@ begin
       1: // GroupBy Gender. may produce a very large amount of heats!
         ds := qryGenderAgeCount;
       2:
-        // GroupBy MembershipType
-        ds := qryGenderMemberTypeCount;
+        // GroupBy Swimming Category
+        ds := qryGenderSwimmerCATCount;
       3:
         { TODO -oBSA -cGeneral : Sperate gender and GroupBy Division }
         ;
@@ -169,7 +169,7 @@ begin
       1: // Gender
         ds := qryAgeCount;
       2: // Membership type.
-        ds := qryMemberTypeCount;
+        ds := qrySwimmerCATCount;
       { TODO -oBSA -cGeneral : CASE 3: GroupBy Division }
     else
       // DON'T GROUP.
@@ -198,7 +198,7 @@ begin
     if Assigned(Param) then
     begin
       if (GroupBy = 1) then // Group by AGE
-        Param.AsDateTime := SCM.GetSessionStart
+        Param.AsDateTime := SCM.Session_Start
       else
         Param.Clear; // SESSIONSTART = <null>;
     end;
@@ -244,7 +244,7 @@ begin
       // ***************************************************************
       fAge := 0;
       fGenderID := 0;
-      fMembershipTypeID := 0;
+      fSwimmerCategoryID := 0;
 
       // FINALIZE DATA PARAM ASSIGNMENT
       // Specific queries need specific data prior to calling AssignNominees.
@@ -255,13 +255,13 @@ begin
         1: // Group on age.
           fAge := ds.FieldByName('Age').AsInteger;
         2: // Group on membership type.
-          fMembershipTypeID := ds.FieldByName('MembershipTypeID').AsInteger;
+          fSwimmerCategoryID := ds.FieldByName('SwimmerCategoryID').AsInteger;
         { TODO -oBSA -cGeneral : CASE 3: GroupBy Division }
       end;
 
       // C A L L   T O   C O L L A T E   E N T R A N T S
       Success := AssignNominees(qryNominees, EventID, fAge, fGenderID,
-        fMembershipTypeID);
+        fSwimmerCategoryID);
 
       if not Success then
       begin
@@ -392,7 +392,7 @@ begin
   entrantsAssigned := 0;
   // The total number of pool lanes must be passed to scatter
   // (ignore: preExcludeOutsideLanes)
-  NumOfPoolLanes := SCM.GetNumberOfLanes;
+  NumOfPoolLanes := SCM.SwimClub_NumberOfLanes;
   for i := 0 to numOfNomineesInHeat - 1 do
   begin
     if DataSet.Eof then
@@ -419,21 +419,21 @@ end;
 // C O L L A T E    E N T R A N T S . . . .
 // ***********************************************************************
 function TAutoBuildV2.AssignNominees(DataSet: TFDQuery;
-  EventID, Age, GenderID, MembershipTypeID: integer): boolean;
+  EventID, Age, GenderID, SwimmerCategoryID: integer): boolean;
 begin
   {
     BASED ON THE GIVEN EVENTID ...
     Prepare a list of swimmer who have nominated for the
     event - they will be sorted by TimeToBeat
     (this excluding nominees in closed or raced heats)
-    Default assignment - age, GenderID, MembershipTypeID , DivisionID = 0
+    Default assignment - age, GenderID, SwimmerCategoryID , DivisionID = 0
     The MSSQL is written - such that CASE statements...
     Values > zero enables filtering to INCLUDE SPECIFIC records.
   }
   DataSet.Close;
   DataSet.ParamByName('AGE').AsInteger := Age;
   DataSet.ParamByName('GENDERID').AsInteger := GenderID;
-  DataSet.ParamByName('MEMBERSHIPTYPEID').AsInteger := MembershipTypeID;
+  DataSet.ParamByName('SWIMMERCATEGORYID').AsInteger := SwimmerCategoryID;
   { TODO -oBSA -cGeneral : dataset.ParamByName('DIVISIONID').AsInteger := DivisionID }
   DataSet.ParamByName('EVENTID').AsInteger := EventID;
 
@@ -442,7 +442,7 @@ begin
   if (prefImportSeedTime > 0) then
     DataSet.ParamByName('SESSIONSTART').AsDateTime := Now
   else
-    DataSet.ParamByName('SESSIONSTART').AsDateTime := SCM.GetSessionStart;
+    DataSet.ParamByName('SESSIONSTART').AsDateTime := SCM.Session_Start;
 
   DataSet.ParamByName('ALGORITHM').AsInteger := prefHeatAlgorithm;
   DataSet.ParamByName('CALCDEFAULT').AsInteger := integer(prefUseDefRaceTime);
@@ -507,7 +507,7 @@ function TAutoBuildV2.AutoBuildExecute(DatasetHeat: TDataSet; EventID: integer;
 //
 var
   Unplaced, NumberOfPoolLanes, numOfSwimmingLanes, numberOfHeats: integer;
-  s, strSQL: string;
+  s: string;
 begin
   result := false;
   Unplaced := 0;
@@ -546,6 +546,16 @@ begin
     exit;
   end;
 
+  // G R O U P B Y   D I V I S I O N S . . .
+  if (prefGroupBy = 3) then
+  begin
+    if (Verbose) then
+      MessageDlg('GroupBy Divisions is in development' + sLineBreak +
+        'and was made not available for this build.' + sLineBreak +
+        'Auto-Build Heats will abort.', mtError, [mbOK], 0, mbOK);
+    exit;
+  end;
+
   // TODO : Test/Locate SwimClubID ... for future multi-club DB.
   numOfSwimmingLanes := GetNumOfSwimmingLanes(NumberOfPoolLanes,
     prefExcludeOutsideLanes);
@@ -574,38 +584,9 @@ begin
   // CLEAN UP HEATS - make readyfor auto build
   if not DatasetHeat.IsEmpty then
   begin
-    // ITERATE OVER HEATS
-    DatasetHeat.First;
-    while not DatasetHeat.Eof do
-    begin
-      // SKIP HEAT (if not CLOSED OR RACED)
-      if (DatasetHeat.FieldByName('HeatStatusID').AsInteger <> 1) then
-      begin
-        DatasetHeat.Next();
-        Continue;
-      end;
-      SCM.dsEntrant.DataSet.First;
-      while not SCM.dsEntrant.DataSet.Eof do
-      begin
-        // DELETE SPLIT DATA FOR ENTRANT
-        strSQL := 'DELETE FROM dbo.Split WHERE Split.EntrantID = ' +
-          IntToStr(SCM.dsEntrant.DataSet.FieldByName('EntrantID').AsInteger);
-        SCM.scmConnection.ExecSQL(strSQL);
-        // Deletes the active record and positions the dataset on the next record.
-        SCM.dsEntrant.DataSet.Delete;
-      end;
-      // after each delete - TSCM::HeatAfterDelete(TDataSet *DataSet)
-      // the heat dataset for this event is renumbered....
-      // IMPORTANT NOTE:
-      // TMain's instance of the Heat DataSet must be sent to AutoBuildExecute(...)
-      // Normally a call SCM.dsHeat.DataSet.Delete would be use but this
-      // doesn't work!... (tbl is locked?)
-      DatasetHeat.Delete;
-    end;
-    // tidy up the lane numbering for the remaining closed or raced heats
-    // always returns 1 if no heats to renumber.
-    // NOTE ORDER BY HeatNum ASC - NULL IS LAST
-    RenumberHeats(EventID);
+    // EXCLUDE RACED OR CLOSED HEATS
+    SCM.Heat_DeleteALLExclude(EventID); // also renumbers heats.
+    // RenumberHeats(EventID);
   end;
 
   {
@@ -779,7 +760,7 @@ begin
         qryNomineesExt.ParamByName('SRCEVENTID').AsInteger := SourceEventID;
         qryNomineesExt.ParamByName('DESTEVENTID').AsInteger := destEventID;
         qryNomineesExt.ParamByName('SESSIONSTART').AsDateTime :=
-          SCM.GetSessionStart;
+          SCM.Session_Start;
         qryNomineesExt.ParamByName('GENDERID').AsInteger :=
           SCM.luGender.DataSet.FieldByName('GenderID').AsInteger;
         qryNomineesExt.Prepare;
@@ -807,7 +788,7 @@ begin
       qryNomineesExt.ParamByName('DESTEVENTID').AsInteger := destEventID;
       // for PersonalBest PB
       qryNomineesExt.ParamByName('SESSIONSTART').AsDateTime :=
-        SCM.GetSessionStart;
+        SCM.Session_Start;
       // display all genders ....
       qryNomineesExt.ParamByName('GENDERID').AsInteger := 0;
       qryNomineesExt.Prepare;
@@ -845,7 +826,7 @@ begin
   // ********************************
   // The total number of pool lanes must be passed to scatter
   // (the routine ignores preExcludeOutsideLanes)
-  NumOfPoolLanes := SCM.GetNumberOfLanes;
+  NumOfPoolLanes := SCM.SwimClub_NumberOfLanes;
   // seedDepth is BASE 1 - brackets needed!
   lowBounds := (High(HeatIDs) - (seedDepth - 1)); // must have brackets!
   if (lowBounds < Low(HeatIDs)) then
@@ -910,7 +891,7 @@ begin
   SearchOptions := [];
 
   // GET a lane count for ALL pool lanes. (ignore prefExcludeOutsideLanes)
-  NumberOfLanes := SCM.GetNumberOfLanes;
+  NumberOfLanes := SCM.SwimClub_NumberOfLanes;
   // find the next heat number **tblEvent.tbl_ABHeat.MAX(HeatNum)+1**
   // if no heats in event or error ... returns 0
   NextHeatNum := GetHeatMaxSeedNumber(EventID) + 1;
@@ -972,7 +953,7 @@ begin
     SourceEvent.FieldByName('DistanceID').AsInteger;;
   qryInsertEvent.ParamByName('STROKEID').AsInteger :=
     SourceEvent.FieldByName('StrokeID').AsInteger;;
-  qryInsertEvent.ParamByName('SESSIONID').AsInteger := SCM.GetSessionID();
+  qryInsertEvent.ParamByName('SESSIONID').AsInteger := SCM.Session_ID();
   qryInsertEvent.Prepare();
   qryInsertEvent.Execute();
   { TODO -oBSA -cGeneral : Check new Scalar function. }
@@ -1004,7 +985,7 @@ begin
     raise Exception.Create('SCM data module not assigned.');
 
   // As SCM is a TEMPORY connection - ASSERT assignment for FireDAC.
-  qryMemberTypeCount.Connection := SCM.scmConnection;
+  qrySwimmerCATCount.Connection := SCM.scmConnection;
   qryGenderCount.Connection := SCM.scmConnection;
   qryHeatsToDelete.Connection := SCM.scmConnection;
   qryUnplaced.Connection := SCM.scmConnection;
@@ -1017,7 +998,7 @@ begin
   qryGenericCount.Connection := SCM.scmConnection;
   qryGenderAgeCount.Connection := SCM.scmConnection;
   qryAgeCount.Connection := SCM.scmConnection;
-  qryGenderMemberTypeCount.Connection := SCM.scmConnection;
+  qryGenderSwimmerCATCount.Connection := SCM.scmConnection;
   qryNominees.Connection := SCM.scmConnection;
   tbl_ABEntrant.Connection := SCM.scmConnection;
   tbl_ABHeat.Connection := SCM.scmConnection;
@@ -1051,7 +1032,7 @@ begin
   result := 0;
   if AssertConnection then
   begin
-    NumOfPoolLanes := SCM.GetNumberOfLanes;
+    NumOfPoolLanes := SCM.SwimClub_NumberOfLanes;
     result := NumOfPoolLanes;
     if (DoExcludeOutsideLanes) then
       result := result - 2;
@@ -1135,7 +1116,7 @@ begin
   { /group on....
     Don't (DEFAULT),
     Entrant Age,
-    Entrant MembershipType,
+    Entrant Swimming Category,
     Division
   }
   prefGroupBy := iFile.ReadInteger('Preferences', 'GroupBy', 0);

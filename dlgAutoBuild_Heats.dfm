@@ -3,7 +3,7 @@ object AutoBuild_Heats: TAutoBuild_Heats
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Auto Build Heats'
-  ClientHeight = 478
+  ClientHeight = 542
   ClientWidth = 508
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -2675,12 +2675,10 @@ object AutoBuild_Heats: TAutoBuild_Heats
     0000000000000000000000000000000000000000000000000000000000000000
     0000000000000000000000000000000000000000000000000000000000000000
     000000000000000000000000000000000000000000000000000000000000}
-  OldCreateOrder = False
   Position = poMainFormCenter
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 16
   object Panel1: TPanel
     Left = 0
@@ -2690,6 +2688,7 @@ object AutoBuild_Heats: TAutoBuild_Heats
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 504
     object Label1: TLabel
       Left = 86
       Top = 20
@@ -2799,7 +2798,7 @@ object AutoBuild_Heats: TAutoBuild_Heats
   end
   object Panel2: TPanel
     Left = 0
-    Top = 432
+    Top = 496
     Width = 508
     Height = 46
     Align = alBottom
@@ -2807,6 +2806,8 @@ object AutoBuild_Heats: TAutoBuild_Heats
     BevelKind = bkFlat
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitTop = 431
+    ExplicitWidth = 504
     object btnCancel: TButton
       Left = 257
       Top = 6
@@ -2832,27 +2833,29 @@ object AutoBuild_Heats: TAutoBuild_Heats
     Left = 0
     Top = 61
     Width = 508
-    Height = 371
+    Height = 435
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitWidth = 504
+    ExplicitHeight = 370
     object Label7: TLabel
       Left = 22
-      Top = 106
+      Top = 130
       Width = 203
       Height = 16
       Caption = 'For members without race times ...'
     end
     object Label8: TLabel
       Left = 106
-      Top = 152
+      Top = 176
       Width = 280
       Height = 16
       Caption = 'percent. (With consideration to age and gender.)'
     end
     object lblSeedDepth1: TLabel
-      Left = 262
-      Top = 319
+      Left = 266
+      Top = 367
       Width = 70
       Height = 16
       Caption = 'Seed depth:'
@@ -2861,7 +2864,7 @@ object AutoBuild_Heats: TAutoBuild_Heats
       Left = 22
       Top = 6
       Width = 361
-      Height = 94
+      Height = 107
       Caption = 'Entrant'#39's TimeToBeat (TTB) - Heat algorithm ... '
       ItemIndex = 1
       Items.Strings = (
@@ -2872,7 +2875,7 @@ object AutoBuild_Heats: TAutoBuild_Heats
     end
     object prefUseDefRaceTime: TCheckBox
       Left = 22
-      Top = 125
+      Top = 149
       Width = 442
       Height = 21
       Caption = 'Calculate a race time based on the mean average of the bottom '
@@ -2883,7 +2886,7 @@ object AutoBuild_Heats: TAutoBuild_Heats
     end
     object prefRaceTimeTopPercent: TSpinEdit
       Left = 59
-      Top = 149
+      Top = 173
       Width = 41
       Height = 26
       MaxValue = 100
@@ -2893,7 +2896,7 @@ object AutoBuild_Heats: TAutoBuild_Heats
     end
     object prefExcludeOutsideLanes: TCheckBox
       Left = 22
-      Top = 213
+      Top = 245
       Width = 160
       Height = 17
       Caption = 'Exclude outside lanes.'
@@ -2901,7 +2904,7 @@ object AutoBuild_Heats: TAutoBuild_Heats
     end
     object prefSeperateGender: TCheckBox
       Left = 22
-      Top = 190
+      Top = 222
       Width = 134
       Height = 17
       Caption = 'Seperate gender.'
@@ -2909,21 +2912,22 @@ object AutoBuild_Heats: TAutoBuild_Heats
     end
     object prefGroupBy: TRadioGroup
       Left = 14
-      Top = 240
+      Top = 272
       Width = 215
-      Height = 97
+      Height = 137
       Caption = 'Group by ...'
       Items.Strings = (
         'Don'#39't group.'
         'Entrant'#39's age.'
-        'Entrant'#39's membership type.')
+        'Swimmer Category.'
+        'Divisions.')
       TabOrder = 5
     end
     object rgpSeedMethod: TRadioGroup
       Left = 235
-      Top = 240
+      Top = 272
       Width = 254
-      Height = 73
+      Height = 86
       Hint = 'Decides what lane an entrant is given.'
       Caption = 'Seed Method.'
       ItemIndex = 0
@@ -2933,8 +2937,8 @@ object AutoBuild_Heats: TAutoBuild_Heats
       TabOrder = 6
     end
     object spnSeedDepth: TSpinEdit
-      Left = 338
-      Top = 316
+      Left = 342
+      Top = 364
       Width = 41
       Height = 26
       MaxValue = 10

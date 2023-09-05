@@ -1,0 +1,581 @@
+unit frame_TEAM;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Data.DB,
+  Vcl.Grids, Vcl.DBGrids, Vcl.Themes, dmSCM;
+
+type
+  TframeTEAM = class(TFrame)
+    Panel1: TPanel;
+    Splitter1: TSplitter;
+    Panel2: TPanel;
+    Grid: TDBGrid;
+    GridEntrant: TDBGrid;
+    procedure GridCellClick(Column: TColumn);
+    procedure GridColEnter(Sender: TObject);
+    procedure GridColExit(Sender: TObject);
+    procedure GridDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure GridEditButtonClick(Sender: TObject);
+    procedure GridEnter(Sender: TObject);
+    procedure GridEntrantEditButtonClick(Sender: TObject);
+    procedure GridEntrantEnter(Sender: TObject);
+  private
+    fTeamEditBoxFocused: TColor;
+    fTeamEditBoxNormal: TColor;
+    fTeamBgColor: TColor;
+    fTeamFontColor: TColor;
+    fTeamActiveGrid: Integer;
+    // D R A W   C H E C K   B O X E S .
+    procedure DrawCheckBoxes(oGrid: TObject; Rect: TRect; Column: TColumn;
+      fontColor: TColor; bgColor: TColor);
+    // ASSERT CONNECTION TO MSSQL DATABASE
+    function AssertConnection(): boolean;
+
+  public
+    fDoStatusBarUpdate: boolean; // FLAG ACTION - SCM_StatusBar.Enabled
+    procedure AfterConstruction; override;
+    procedure Enable_GridEllipse();
+    procedure Enable_GridEntrantEllipse();
+    // TActionManager:  Sender: TAction
+    procedure GridMoveDown(Sender: TObject);
+    procedure GridMoveUp(Sender: TObject);
+    procedure ToggleDCode(DoEnable: boolean);
+  end;
+
+implementation
+
+{$R *.dfm}
+
+{ TframeTEAM }
+uses dlgEntrantPickerCTRL, dlgEntrantPicker, dlgDCodePicker, System.UITypes,
+  dlgTeamNameMenu;
+
+procedure TframeTEAM.AfterConstruction;
+var
+  css: TCustomStyleServices;
+begin
+  inherited;
+  fTeamActiveGrid := 0;
+  Panel1.Color := clWebTomato;
+  Panel2.Color := clWebTomato;
+  Panel1.BorderWidth := 0;
+  Panel2.BorderWidth := 0;
+
+  // Special color assignment - used in TDBGrid painting...
+  // -------------------------------------------
+  css := TStyleManager.Style[TStyleManager.ActiveStyle.Name];
+  if Assigned(css) then
+  begin
+    fTeamEditBoxFocused := css.GetStyleFontColor(sfEditBoxTextFocused);
+    fTeamEditBoxNormal := css.GetStyleFontColor(sfEditBoxTextNormal);
+    fTeamBgColor := css.GetStyleColor(scGrid);
+    fTeamFontColor := css.GetStyleFontColor(sfWindowTextNormal);
+  end
+  else
+  begin
+    fTeamEditBoxFocused := clWebTomato;
+    fTeamEditBoxNormal := clWindowText;
+    fTeamBgColor := clAppWorkSpace;
+    fTeamFontColor := clWindowText;
+  end;
+  {
+    When the Columns.State property of the grid is csDefault, grid columns
+    are dynamically generated from the visible fields of the dataset and the
+    order of columns in the grid matches the order of fields in the dataset.
+  }
+  Grid.Columns.State := csDefault;
+  Grid.Options := Grid.Options - [dgAlwaysShowEditor];
+  Grid.Options := Grid.Options + [dgEditing];
+
+  GridEntrant.Columns.State := csDefault;
+  GridEntrant.Options := GridEntrant.Options - [dgAlwaysShowEditor];
+  GridEntrant.Options := GridEntrant.Options + [dgEditing];
+
+  Enable_GridEllipse;
+  Enable_GridEntrantEllipse;
+
+end;
+
+function TframeTEAM.AssertConnection: boolean;
+begin
+  result := false;
+  // test datamodule construction
+  if Assigned(SCM) then
+  begin
+    // IsActive if TFDConnection::scmConnection && FireDAC tables are active
+    if SCM.SCMActive then
+      result := true;
+  end;
+end;
+
+procedure TframeTEAM.DrawCheckBoxes(oGrid: TObject; Rect: TRect;
+  Column: TColumn; fontColor, bgColor: TColor);
+var
+  MyRect: TRect;
+  oField: TField;
+  iPos, iFactor: Integer;
+  bValue: boolean;
+  g: TDBGrid;
+  points: Array [0 .. 4] of TPoint;
+begin
+  // ---------------------------------------------------------------------------
+  // Draw a very basic checkbox (ticked) - not a nice as TCheckListBox
+  // ---------------------------------------------------------------------------
+
+  g := TDBGrid(oGrid);
+  // is the cell checked?
+  oField := Column.Field;
+  if (oField.value = -1) then
+    bValue := true
+  else
+    bValue := false;
+
+  g.Canvas.Pen.Color := fontColor; //
+  g.Canvas.Brush.Color := bgColor;
+  g.Canvas.Brush.Style := bsSolid;
+  g.Canvas.FillRect(Rect);
+
+  // calculate margins
+  MyRect.Top := Trunc((Rect.Bottom - Rect.Top - 9) / 2) + Rect.Top;
+  MyRect.Left := Trunc((Rect.Right - Rect.Left - 9) / 2) + Rect.Left;
+  MyRect.Bottom := MyRect.Top + 8;
+  MyRect.Right := MyRect.Left + 8;
+
+  // USES PEN - draw the box (with cell margins)
+  points[0].x := MyRect.Left;
+  points[0].y := MyRect.Top;
+  points[1].x := MyRect.Right;
+  points[1].y := MyRect.Top;
+  points[2].x := MyRect.Right;
+  points[2].y := MyRect.Bottom;
+  points[3].x := MyRect.Left;
+  points[3].y := MyRect.Bottom;
+  points[4].x := MyRect.Left;
+  points[4].y := MyRect.Top;
+
+  g.Canvas.Polyline(points);
+
+  iPos := MyRect.Left;
+  iFactor := 1;
+  // USES PEN - DRAW A TICK - Cross would be nicer?
+  if bValue then
+  begin
+    g.Canvas.MoveTo(iPos + (iFactor * 2), MyRect.Top + 4);
+    g.Canvas.LineTo(iPos + (iFactor * 2), MyRect.Top + 7);
+    g.Canvas.MoveTo(iPos + (iFactor * 3), MyRect.Top + 5);
+    g.Canvas.LineTo(iPos + (iFactor * 3), MyRect.Top + 8);
+    g.Canvas.MoveTo(iPos + (iFactor * 4), MyRect.Top + 6);
+    g.Canvas.LineTo(iPos + (iFactor * 4), MyRect.Top + 9);
+    g.Canvas.MoveTo(iPos + (iFactor * 5), MyRect.Top + 5);
+    g.Canvas.LineTo(iPos + (iFactor * 5), MyRect.Top + 8);
+    g.Canvas.MoveTo(iPos + (iFactor * 6), MyRect.Top + 4);
+    g.Canvas.LineTo(iPos + (iFactor * 6), MyRect.Top + 7);
+    g.Canvas.MoveTo(iPos + (iFactor * 7), MyRect.Top + 3);
+    g.Canvas.LineTo(iPos + (iFactor * 7), MyRect.Top + 6);
+    g.Canvas.MoveTo(iPos + (iFactor * 8), MyRect.Top + 2);
+    g.Canvas.LineTo(iPos + (iFactor * 8), MyRect.Top + 5);
+  end;
+
+end;
+
+procedure TframeTEAM.Enable_GridEllipse;
+var
+  i: Integer;
+  col: TColumn;
+begin
+  for i := 0 to Grid.Columns.Count - 1 do
+  begin
+    col := Grid.Columns.Items[i];
+    // MOD 23.06.27
+    if (col.FieldName = 'TeamName')  or (col.FieldName = 'RaceTime') or
+      (col.FieldName = 'DCode') then
+    begin
+      col.ButtonStyle := cbsEllipsis;
+      Grid.Repaint;
+      break;
+    end;
+  end;
+end;
+
+procedure TframeTEAM.Enable_GridEntrantEllipse;
+var
+  i: Integer;
+  col: TColumn;
+begin
+  for i := 0 to GridEntrant.Columns.Count - 1 do
+  begin
+    col := GridEntrant.Columns.Items[i];
+    // MOD 23.06.27  - 23.08.31
+    if (col.FieldName = 'FullName') then
+    begin
+      col.ButtonStyle := cbsEllipsis;
+      GridEntrant.Repaint;
+      break;
+    end;
+  end;
+end;
+
+procedure TframeTEAM.GridCellClick(Column: TColumn);
+begin
+  if not Assigned(Column.Field) then
+    exit;
+
+  // --------------------------------------------------------------------
+  // H A N D L E   A   C U S T O M   P A I N T E D   C H E C K B O X .
+  // --------------------------------------------------------------------
+  if (Column.Field.DataType = ftBoolean) then
+  begin
+    Grid.BeginUpdate;
+    Column.Grid.DataSource.DataSet.Edit;
+    Column.Field.value := not Column.Field.AsBoolean;
+    if Column.Field.AsBoolean = false then
+      Column.Grid.DataSource.DataSet.FieldByName('DisqualifyCodeID').Clear
+    else
+    begin
+      if Column.FieldName = 'IsScratched' then
+        Column.Grid.DataSource.DataSet.FieldByName('DisqualifyCodeID')
+          .AsInteger := 53
+      else if Column.FieldName = 'IsDisqualified' then
+        Column.Grid.DataSource.DataSet.FieldByName('DisqualifyCodeID')
+          .AsInteger := 54;
+    end;
+    Column.Grid.DataSource.DataSet.Post;
+    Grid.EndUpdate;
+  end;
+end;
+
+procedure TframeTEAM.GridColEnter(Sender: TObject);
+var
+  fld: TField;
+begin
+  {
+   ONLY TIME [dgEditing] is DISABLED.
+   When moving into a col with custom painted checkboxes, the [dgEditing]
+   must be killed. Else, two clicks of the checkbox reveal the inline
+   editbox, hiding the cell's custom painted checkbox.
+  }
+  fld := Grid.SelectedField;
+  if Assigned(fld) then
+  begin
+    if (fld.FieldName = 'RaceTime') or (fld.FieldName = 'DCode') or
+      (fld.FieldName = 'TeamName') then
+    begin
+      Grid.Options := Grid.Options + [dgEditing];
+      Grid.EditorMode := true;
+    end
+    else if (fld.FieldName = 'IsScratched') or (fld.FieldName = 'IsDisqualified')
+    then
+    begin
+      Grid.EditorMode := false;
+      Grid.Options := Grid.Options - [dgEditing];
+    end;
+  end
+end;
+
+procedure TframeTEAM.GridColExit(Sender: TObject);
+var
+  fld: TField;
+begin
+  // ONLY TIME [dgEditing] is RE-ENABLED.
+  fld := Grid.SelectedField;
+  if Assigned(fld) then
+  begin
+    Grid.Options := Grid.Options + [dgEditing];
+    Grid.EditorMode := false;
+  end
+end;
+
+procedure TframeTEAM.GridDrawColumnCell(Sender: TObject; const Rect: TRect;
+  DataCol: Integer; Column: TColumn; State: TGridDrawState);
+var
+  clFont, clBg: TColor;
+  s: variant;
+  Size: TSize;
+  topMargin: Integer;
+  MyRect: TRect;
+begin
+  // NOTE : DEFAULT DRAWING IS DISABLED ....
+  if (Column.Field.FieldName = 'IsScratched') or
+    (Column.Field.FieldName = 'IsDisqualified') then
+  begin
+    if gdFocused in State then
+      clFont := fTeamEditBoxFocused
+    else
+      clFont := fTeamEditBoxNormal;
+    clBg := fTeamBgColor;
+    DrawCheckBoxes(Grid, Rect, Column, clFont, clBg);
+    // draw 'Focused' frame  (for boolean datatype only)
+    if gdFocused in State then
+      Grid.Canvas.DrawFocusRect(Rect);
+  end
+  else if (Column.FieldName = 'DCode') then
+  begin
+    // ENABLE the button if not enabled
+    if (Column.ButtonStyle <> TColumnButtonStyle.cbsEllipsis) then
+      Column.ButtonStyle := TColumnButtonStyle.cbsEllipsis;
+    Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+    if gdFocused in State then
+      Grid.Canvas.DrawFocusRect(Rect);
+  end
+  else if (Column.Field.FieldName = 'TeamName') then
+  begin
+    // ENABLE the button if not enabled
+    if (Column.ButtonStyle <> TColumnButtonStyle.cbsEllipsis) then
+      Column.ButtonStyle := TColumnButtonStyle.cbsEllipsis;
+    s := Grid.DataSource.DataSet.FieldByName('TeamName').AsString;
+    if Length(s) = 0 then
+      Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State)
+    else
+    begin
+      // Display the team's custom name given by the user.
+      // CLEAR THE CANVAS
+      Grid.Canvas.Brush.Color := fTeamBgColor;
+      Grid.Canvas.Brush.Style := bsSolid;
+      Grid.Canvas.FillRect(Rect);
+      // CALC EXTENT
+      Grid.Canvas.Font.Color := fTeamFontColor;
+      Size := Grid.Canvas.TextExtent(s);
+      topMargin := Round((Rect.Height - Size.Height) / 2);
+      // CALC MARGINS
+      MyRect.Top := Rect.Top + topMargin;
+      MyRect.Left := Rect.Left + topMargin;
+      MyRect.Bottom := Rect.Bottom;
+      MyRect.Right := Rect.Right;
+      // PRINT THE TEXT
+      Grid.Canvas.TextRect(Rect, Rect.Left, Rect.Top, s);
+    end;
+
+    if gdFocused in State then
+      Grid.Canvas.DrawFocusRect(Rect);
+  end
+  else
+  begin
+    // default drawing DOESN'T draw a themed (yellow) background color
+    Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+    if gdFocused in State then
+      Grid.Canvas.DrawFocusRect(Rect);
+  end;
+end;
+
+procedure TframeTEAM.GridEditButtonClick(Sender: TObject);
+var
+  dlgDCode: TDCodePicker;
+  dlgTeamName: TTeamNameMenu;
+  TeamID: Integer;
+  rtnValue: TModalResult;
+  fld: TField;
+begin
+  if not AssertConnection then
+    exit;
+  if SCM.dsTeam.DataSet.FieldByName('TeamNameID').IsNull then
+    exit;
+
+  SCM.dsTeam.DataSet.DisableControls;
+  TeamID := SCM.dsTeam.DataSet.FieldByName('TeamID').AsInteger;
+
+  // handle the ellipse button for the disqualification code
+  { TODO -oBSA -cGeneral : DCode Team Specific }
+  fld := TDBGrid(Sender).SelectedField;
+  if fld.FieldName = 'DCode' then
+  begin
+    dlgDCode := TDCodePicker.CreateWithConnection(self, SCM.scmConnection);
+    dlgDCode.TeamID := TeamID;
+    rtnValue := dlgDCode.ShowModal;
+    dlgDCode.Free;
+    if IsPositiveResult(rtnValue) then
+    begin
+      SCM.dsTeam.DataSet.Refresh;
+      SCM.Team_Locate(TeamID);
+    end;
+  end
+  // handle the ellipse entrant
+  else if fld.FieldName = 'TeamName' then
+  begin
+    dlgTeamName := TTeamNameMenu.Create(self);
+    dlgTeamName.Prepare(SCM.scmConnection, TeamID);
+    rtnValue := dlgTeamName.ShowModal;
+    dlgTeamName.Free;
+    // require a refresh to update members details
+    if IsPositiveResult(rtnValue) then
+    begin
+      SCM.dsTeam.DataSet.Refresh;
+      SCM.Team_Locate(TeamID);
+    end;
+
+  end;
+  SCM.dsTeam.DataSet.EnableControls;
+  // S T A T U S B A R .
+  fDoStatusBarUpdate := true;
+end;
+
+procedure TframeTEAM.GridEnter(Sender: TObject);
+begin
+  fTeamActiveGrid := 1;
+  Panel2.BorderWidth := 0;
+  Panel1.BorderWidth := 2;
+  // Ensure that correct editing options are applied on
+  // first use. SelectedIndex defaults to the first column,
+  // if you tab into the grid or your first click goes to
+  // the first column then OnColEnter doesn't fire.
+  GridColEnter(Grid);
+end;
+
+procedure TframeTEAM.GridEntrantEditButtonClick(Sender: TObject);
+var
+  passed: boolean;
+  dlg: TEntrantPicker;
+  dlgCntrl: TEntrantPickerCTRL;
+  dlgDCode: TDCodePicker;
+  EntrantID: Integer;
+  rtnValue: TModalResult;
+  fld: TField;
+begin
+  if not AssertConnection then
+    exit;
+  rtnValue := mrCancel;
+
+  SCM.dsEntrant.DataSet.DisableControls;
+  EntrantID := SCM.dsEntrant.DataSet.FieldByName('EntrantID').AsInteger;
+
+  // handle the ellipse button for the disqualification code
+  { TODO -oBSA -cGeneral : DCode Team Specific }
+  fld := TDBGrid(Sender).SelectedField;
+  if fld.FieldName = 'DCode' then
+  begin
+    if not SCM.dsEntrant.DataSet.FieldByName('MemberID').IsNull then
+    begin
+      dlgDCode := TDCodePicker.CreateWithConnection(self, SCM.scmConnection);
+      dlgDCode.EntrantID := EntrantID;
+      rtnValue := dlgDCode.ShowModal;
+      dlgDCode.Free;
+      if IsPositiveResult(rtnValue) then
+      begin
+        SCM.dsEntrant.DataSet.Refresh;
+        SCM.Entrant_Locate(EntrantID);
+      end;
+    end;
+  end
+  // handle the ellipse entrant
+  else if fld.FieldName = 'FullName' then
+  begin
+    if ((GetKeyState(VK_CONTROL) and 128) = 128) then
+    begin
+      // if (GetKeyState(VK_CONTROL) < 0) then begin
+      dlgCntrl := TEntrantPickerCTRL.Create(self);
+      passed := dlgCntrl.Prepare(SCM.scmConnection, EntrantID);
+      if passed then
+        rtnValue := dlgCntrl.ShowModal;
+      dlgCntrl.Free;
+
+    end
+    else
+    begin
+      dlg := TEntrantPicker.Create(self);
+      passed := dlg.Prepare(SCM.scmConnection, EntrantID);
+      if passed then
+        rtnValue := dlg.ShowModal;
+      dlg.Free;
+    end;
+    // require a refresh to update members details
+    if passed and IsPositiveResult(rtnValue) then
+    begin
+      SCM.dsEntrant.DataSet.Refresh;
+      SCM.Entrant_Locate(EntrantID);
+    end;
+
+  end;
+
+  SCM.dsEntrant.DataSet.EnableControls;
+
+  // S T A T U S B A R .
+  // Changes to entrants effect totals in statusbar
+  fDoStatusBarUpdate := true; // flag set false after SCM_StatusBarExecute.
+
+  { TODO -oBSA -cGeneral : POST MESSAGE TO UPDATE STATUS BAR ON PARENT FORM }
+
+  {
+    SCM_StatusBar.Update; // Asserts enabled state.
+    SCM_StatusBar.Execute; // Fire actions
+  }
+
+end;
+
+procedure TframeTEAM.GridEntrantEnter(Sender: TObject);
+begin
+  fTeamActiveGrid := 2;
+  Panel2.BorderWidth := 2;
+  Panel1.BorderWidth := 0;
+end;
+
+procedure TframeTEAM.GridMoveDown(Sender: TObject);
+var
+  success: boolean;
+  MaxLane: Integer;
+  aDataSet: TDataSet;
+begin
+  if fTeamActiveGrid = 1 then
+    aDataSet := Grid.DataSource.DataSet
+  else if fTeamActiveGrid = 2 then
+    aDataSet := GridEntrant.DataSource.DataSet
+  else
+    exit;
+
+  MaxLane := SCM.SwimClub_NumberOfLanes;
+  success := false;
+  if (aDataSet.FieldByName('Lane').AsInteger = MaxLane) then
+  begin
+    if fTeamActiveGrid = 1 then
+    begin
+      success := SCM.MoveDownToNextHeat(aDataSet);
+      // Move Team to next heat (By default, will position on first entrant.)
+      { TODO -oBSA -cGeneral : CHECK that this routine works for Entrant/Team. }
+      SCM.dsHeat.DataSet.Next;
+    end;
+  end
+  else
+    // Generic move for either Team or TeamEntrant
+    success := SCM.MoveDownLane(aDataSet);
+  if not success then
+    beep;
+end;
+
+procedure TframeTEAM.GridMoveUp(Sender: TObject);
+var
+  success: boolean;
+  aDataSet: TDataSet;
+begin
+  if fTeamActiveGrid = 1 then
+    aDataSet := Grid.DataSource.DataSet
+  else if fTeamActiveGrid = 2 then
+    aDataSet := GridEntrant.DataSource.DataSet
+  else
+    exit;
+  success := false;
+  if (aDataSet.FieldByName('Lane').AsInteger = 1) then
+  begin
+    if fTeamActiveGrid = 1 then
+    begin
+      success := SCM.MoveUpToPrevHeat(aDataSet); // Locate Team to 'prior' heat.
+      { TODO -oBSA -cGeneral : CHECK that this routine works for Entrant/Team. }
+      SCM.dsHeat.DataSet.Prior; // move to the previous heat ....
+      aDataSet.Last; // move to last entrant ....
+    end;
+  end
+  else
+    // Generic move for either Team or TeamEntrant
+    success := SCM.MoveUpLane(aDataSet);
+  if not success then
+    beep;
+end;
+
+procedure TframeTEAM.ToggleDCode(DoEnable: boolean);
+begin
+  SCM.ToggleDCode(Grid.DataSource.DataSet, DoEnable);
+end;
+
+end.

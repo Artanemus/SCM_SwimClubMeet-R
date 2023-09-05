@@ -15,131 +15,150 @@ uses
   Vcl.ExtCtrls, Vcl.Menus, Vcl.WinXCalendars, dmManageMemberData, SCMDefines,
   Vcl.VirtualImageList, Vcl.BaseImageCollection, Vcl.ImageCollection,
   System.Actions, Vcl.ActnList, Vcl.PlatformDefaultStyleActnCtrls, Vcl.ActnMan,
-  Vcl.ToolWin, Vcl.ActnCtrls, Vcl.ActnMenus;
+  Vcl.ToolWin, Vcl.ActnCtrls, Vcl.ActnMenus, Data.Bind.EngExt,
+  Vcl.Bind.DBEngExt, System.Rtti, System.Bindings.Outputs, Vcl.Bind.Editors,
+  Data.Bind.Components, Data.Bind.DBScope, Vcl.VirtualImage;
 
 type
   TManageMember = class(TForm)
-    Panel1: TPanel;
-    lblMemberCount: TLabel;
-    chkbHideInActive: TCheckBox;
-    chkbHideArchived: TCheckBox;
-    chkbHideNonSwimmers: TCheckBox;
-    Panel3: TPanel;
-    DBNavigator1: TDBNavigator;
-    PageControl1: TPageControl;
-    TabSheet1: TTabSheet;
-    Panel7: TPanel;
-    Label3: TLabel;
-    Label4: TLabel;
-    Label2: TLabel;
-    Label1: TLabel;
-    Label10: TLabel;
-    DBText3: TDBText;
-    Label6: TLabel;
-    Label7: TLabel;
-    Label12: TLabel;
-    dblblMemberID: TDBText;
-    Label21: TLabel;
-    Label22: TLabel;
-    Label24: TLabel;
-    DBlucboGender: TDBLookupComboBox;
-    DBedtFirstName: TDBEdit;
-    DBedtLastName: TDBEdit;
-    DBlucboMembershipType: TDBLookupComboBox;
-    DBedtMembershipNum: TDBEdit;
-    DBchkIsActive: TDBCheckBox;
-    DBEdtEmail: TDBEdit;
-    DBlucboHouse: TDBLookupComboBox;
-    DBchkIsSwimmer: TDBCheckBox;
-    DBchkIsArchived: TDBCheckBox;
-    btnClearHouse: TButton;
-    btnClearMembershipType: TButton;
+    ActnManagerMember: TActionManager;
+    ActnMemberMenuBar: TActionMainMenuBar;
     btnClearGender: TButton;
-    TabSheet2: TTabSheet;
-    DBGrid3: TDBGrid;
-    ImageList1: TImageList;
+    btnClearHouse: TButton;
+    btnClubMembersDetailed: TButton;
+    btnClubMembersList: TButton;
+    btnClubMembersSummary: TButton;
     btnFindMember: TButton;
     btnGotoMemberID: TButton;
-    Label18: TLabel;
-    RegistrationNum: TDBEdit;
-    Label8: TLabel;
-    dtpickDOB: TCalendarPicker;
-    lblCount: TLabel;
     btnGotoMembership: TButton;
-    DBgridHistoryPB: TDBGrid;
-    Label23: TLabel;
-    Label13: TLabel;
-    DBgridContactInfo: TDBGrid;
+    btnMemberDetail: TButton;
+    btnMemberHistory: TButton;
+    chkbHideArchived: TCheckBox;
+    chkbHideInActive: TCheckBox;
+    chkbHideNonSwimmers: TCheckBox;
+    DBchkIsActive: TDBCheckBox;
+    DBchkIsArchived: TDBCheckBox;
+    DBchkIsSwimmer: TDBCheckBox;
     DBContactNumNavigator: TDBNavigator;
-    TabSheet3: TTabSheet;
-    Label5: TLabel;
+    DBEdtEmail: TDBEdit;
+    DBedtFirstName: TDBEdit;
+    DBedtLastName: TDBEdit;
+    DBedtMembershipNum: TDBEdit;
+    DBGrid3: TDBGrid;
+    DBgridContactInfo: TDBGrid;
+    DBgridHistoryPB: TDBGrid;
+    DBGridRole: TDBGrid;
+    dblblMemberID: TDBText;
+    DBlucboGender: TDBLookupComboBox;
+    DBlucboHouse: TDBLookupComboBox;
+    DBMemo1: TDBMemo;
+    DBNavigator1: TDBNavigator;
+    DBNavigator2: TDBNavigator;
+    dtpickDOB: TCalendarPicker;
+    ImageCollectMember: TImageCollection;
+    ImageList1: TImageList;
+    Label1: TLabel;
+    Label10: TLabel;
+    Label11: TLabel;
+    Label12: TLabel;
+    Label13: TLabel;
     Label14: TLabel;
     Label16: TLabel;
     Label17: TLabel;
-    Label9: TLabel;
+    Label18: TLabel;
     Label19: TLabel;
+    Label2: TLabel;
     Label20: TLabel;
-    btnMemberDetail: TButton;
-    btnClubMembersSummary: TButton;
-    btnMemberHistory: TButton;
-    btnClubMembersDetailed: TButton;
-    btnClubMembersList: TButton;
-    ActnMemberMenuBar: TActionMainMenuBar;
-    ActnManagerMember: TActionManager;
+    Label21: TLabel;
+    Label22: TLabel;
+    Label23: TLabel;
+    Label24: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+    lblCount: TLabel;
+    lblMemberCount: TLabel;
     MemFile_AutoEdit: TAction;
     MemFile_Exit: TAction;
-    MemSearch_GotoMembershipNum: TAction;
-    MemSearch_GotoMemberID: TAction;
     MemSearch_FindMember: TAction;
-    ImageCollectMember: TImageCollection;
+    MemSearch_GotoMemberID: TAction;
+    MemSearch_GotoMembershipNum: TAction;
+    PageControl1: TPageControl;
+    Panel1: TPanel;
+    Panel3: TPanel;
+    Panel7: TPanel;
+    RegistrationNum: TDBEdit;
+    TabSheet1: TTabSheet;
+    TabSheet2: TTabSheet;
+    TabSheet3: TTabSheet;
     VirtlImageListMember: TVirtualImageList;
-    procedure FormCreate(Sender: TObject);
+    BalloonHint1: TBalloonHint;
+    VirtualImageList1: TVirtualImageList;
+    btnInfoRoles: TVirtualImage;
+    btnInfoContact: TVirtualImage;
+    btnClearDOB: TButton;
+    lblMembersAge: TLabel;
     procedure About2Click(Sender: TObject);
-    procedure DBGrid3CellClick(Column: TColumn);
-    procedure DBGrid3ColEnter(Sender: TObject);
-    procedure DBGrid3ColExit(Sender: TObject);
-    procedure DBGrid3DrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: Integer; Column: TColumn; State: TGridDrawState);
-    procedure DBGrid3KeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
-    procedure DrawCheckBoxes(oGrid: TObject; Rect: TRect; Column: TColumn;
-  fontColor, bgColor: TColor);
-    procedure dtpickDOBChange(Sender: TObject);
-    procedure chkbHideArchivedClick(Sender: TObject);
-    procedure chkbHideInActiveClick(Sender: TObject);
-    procedure chkbHideNonSwimmersClick(Sender: TObject);
-    procedure DBGrid3EditButtonClick(Sender: TObject);
     procedure btnClearClick(Sender: TObject);
+    procedure btnClearDOBClick(Sender: TObject);
+    procedure btnClubMembersDetailedClick(Sender: TObject);
+    procedure btnClubMembersListClick(Sender: TObject);
+    procedure btnClubMembersSummaryClick(Sender: TObject);
     procedure btnFindMemberClick(Sender: TObject);
     procedure btnGotoMemberIDClick(Sender: TObject);
     procedure btnGotoMembershipClick(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
-    procedure Onlinehelp1Click(Sender: TObject);
-    procedure SCMwebsite1Click(Sender: TObject);
-    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-    procedure DBNavigator1BeforeAction(Sender: TObject; Button: TNavigateBtn);
-    procedure DBNavigator1Click(Sender: TObject; Button: TNavigateBtn);
-    procedure FormShow(Sender: TObject);
+    procedure btnInfoContactClick(Sender: TObject);
+    procedure btnInfoRolesClick(Sender: TObject);
+    procedure btnInfoMouseLeave(Sender: TObject);
     procedure btnMemberDetailClick(Sender: TObject);
     procedure btnMemberHistoryClick(Sender: TObject);
-    procedure btnClubMembersSummaryClick(Sender: TObject);
-    procedure btnClubMembersDetailedClick(Sender: TObject);
-    procedure btnClubMembersListClick(Sender: TObject);
+    procedure chkbHideArchivedClick(Sender: TObject);
+    procedure chkbHideInActiveClick(Sender: TObject);
+    procedure chkbHideNonSwimmersClick(Sender: TObject);
+    procedure DBGridCellClick(Column: TColumn);
+    procedure DBGridColEnter(Sender: TObject);
+    procedure DBGridColExit(Sender: TObject);
+    procedure DBGridDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure DBGridEditButtonClick(Sender: TObject);
+    procedure DBGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure DBGridRoleCellClick(Column: TColumn);
+    procedure DBGridRoleEditButtonClick(Sender: TObject);
+    procedure DBGridGenericKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure DBNavigator1BeforeAction(Sender: TObject; Button: TNavigateBtn);
+    procedure DBNavigator1Click(Sender: TObject; Button: TNavigateBtn);
+    procedure DrawCheckBoxes(oGrid: TObject; Rect: TRect; Column: TColumn;
+      fontColor, bgColor: TColor);
+    procedure dtpickDOBChange(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure MemFile_ExitExecute(Sender: TObject);
     procedure MemSearch_FindMemberExecute(Sender: TObject);
-
+    procedure Onlinehelp1Click(Sender: TObject);
+    procedure SCMwebsite1Click(Sender: TObject);
   private
     { Private declarations }
-    fSwimClubID: Integer;
-    fDoDelete: Boolean;
-    FConnection: TFDConnection;
+    fColorBgColor: TColor;
     fColorEditBoxFocused: TColor;
     fColorEditBoxNormal: TColor;
-    fColorBgColor: TColor;
+    FConnection: TFDConnection;
+    fDoDelete: Boolean;
+    fSwimClubID: Integer;
+    // SPECIAL dtpickDOB : place here to remain persistent over life of DLG.
+    // Used to POST MESSAGE to DataModule.
+    fSystemTime: TSystemTime;
+    fKillOnChangeDOB: Boolean;
 
-    function FindMember(MemberID: Integer): Boolean;
     function AssertConnection: Boolean;
-
+    function FindMember(MemberID: Integer): Boolean;
+    function GetMembersAge(aMemberID: integer; aDate: TDate): string;
     procedure ReadPreferences();
     procedure WritePreferences();
 
@@ -147,15 +166,12 @@ type
     // windows messages ....
     procedure ManageMemberAfterScroll(var Msg: TMessage);
       message SCM_AFTERSCROLL;
-    procedure ManageMemberUpdate(var Msg: TMessage);
-      message SCM_UPDATE;
-
+    procedure ManageMemberUpdate(var Msg: TMessage); message SCM_UPDATE;
   public
+    procedure ClearAllFilters();
     { Public declarations }
     procedure Prepare(AConnection: TFDConnection; ASwimClubID: Integer = 1;
       AMemberID: Integer = 0);
-    procedure ClearAllFilters();
-
   end;
 
 const
@@ -171,8 +187,9 @@ implementation
 
 uses SCMUtility, dlgBasicLogin, System.IniFiles, System.UITypes, dlgAbout,
   dlgDOBPicker, dlgFindMember, dlgGotoMember, dlgGotoMembership,
-  System.IOUtils, Winapi.ShellAPI, dlgDeleteMember, vcl.Themes, rptMemberDetail,
-  rptMemberHistory, rptMembersList, rptMembersDetail, rptMembersSummary;
+  System.IOUtils, Winapi.ShellAPI, dlgDeleteMember, Vcl.Themes, rptMemberDetail,
+  rptMemberHistory, rptMembersList, rptMembersDetail, rptMembersSummary,
+  System.DateUtils;
 
 procedure TManageMember.About2Click(Sender: TObject);
 var
@@ -205,42 +222,54 @@ begin
     case TButton(Sender).Tag of
       1:
         ManageMemberData.qryMember.FieldByName('GenderID').Clear();
-      2:
-        ManageMemberData.qryMember.FieldByName('MembershipTypeID').Clear();
       3:
         ManageMemberData.qryMember.FieldByName('HouseID').Clear();
     end;
   end;
 end;
 
+procedure TManageMember.btnClearDOBClick(Sender: TObject);
+begin
+  if Assigned(ManageMemberData) and (ManageMemberData.qryMember.Active) then
+  begin
+//    if (ManageMemberData.qryMember.State <> dsInsert) or
+//      (ManageMemberData.qryMember.State <> dsEdit) then
+//      ManageMemberData.qryMember.Edit();
+    dtpickDOB.IsEmpty := true;
+  end;
+end;
+
 procedure TManageMember.btnClubMembersDetailedClick(Sender: TObject);
 var
-rpt: TMembersDetail;
+  rpt: TMembersDetail;
 begin
-  if not Assigned(ManageMemberData) then exit;
-    rpt := TMembersDetail.Create(self);
-    rpt.RunReport(FConnection, FSwimClubID);
-    rpt.Free;
+  if not Assigned(ManageMemberData) then
+    exit;
+  rpt := TMembersDetail.Create(Self);
+  rpt.RunReport(FConnection, fSwimClubID);
+  rpt.Free;
 end;
 
 procedure TManageMember.btnClubMembersListClick(Sender: TObject);
 var
-rpt: TMembersList;
+  rpt: TMembersList;
 begin
-  if not Assigned(ManageMemberData) then exit;
-    rpt := TMembersList.Create(self);
-    rpt.RunReport(FConnection, FSwimClubID);
-    rpt.Free;
+  if not Assigned(ManageMemberData) then
+    exit;
+  rpt := TMembersList.Create(Self);
+  rpt.RunReport(FConnection, fSwimClubID);
+  rpt.Free;
 end;
 
 procedure TManageMember.btnClubMembersSummaryClick(Sender: TObject);
 var
-rpt: TMembersSummary;
+  rpt: TMembersSummary;
 begin
-  if not Assigned(ManageMemberData) then exit;
-    rpt := TMembersSummary.Create(self);
-    rpt.RunReport(FConnection, FSwimClubID);
-    rpt.Free;
+  if not Assigned(ManageMemberData) then
+    exit;
+  rpt := TMembersSummary.Create(Self);
+  rpt.RunReport(FConnection, fSwimClubID);
+  rpt.Free;
 end;
 
 procedure TManageMember.btnFindMemberClick(Sender: TObject);
@@ -294,6 +323,30 @@ begin
     end;
     dlg.Free;
   end;
+end;
+
+procedure TManageMember.btnInfoContactClick(Sender: TObject);
+begin
+  BalloonHint1.Title := 'HINTS for Contact Number.';
+  BalloonHint1.Description := 'Contact Type is optional.' + sLinebreak +
+    'To clear the contact type, select the ' + sLinebreak +
+    'cell and type ALT-BACKSPACE.';
+  BalloonHint1.ShowHint(btnInfoContact);
+end;
+
+procedure TManageMember.btnInfoRolesClick(Sender: TObject);
+begin
+  BalloonHint1.Title := 'HINTS for Membership Roles.';
+  BalloonHint1.Description := 'Assignment of a role is required.' + sLinebreak +
+    'To enter a date use the ellipse button.' + sLinebreak +
+    'To clear a date, select the cell and ' + sLinebreak +
+    'type ALT-BACKSPACE.';
+  BalloonHint1.ShowHint(btnInfoRoles);
+end;
+
+procedure TManageMember.btnInfoMouseLeave(Sender: TObject);
+begin
+  BalloonHint1.HideHint;
 end;
 
 procedure TManageMember.btnMemberDetailClick(Sender: TObject);
@@ -357,7 +410,7 @@ begin
   end;
 end;
 
-procedure TManageMember.DBGrid3CellClick(Column: TColumn);
+procedure TManageMember.DBGridCellClick(Column: TColumn);
 begin
   if Assigned(Column.Field) and (Column.Field.DataType = ftBoolean) then
   begin
@@ -372,7 +425,7 @@ begin
   end;
 end;
 
-procedure TManageMember.DBGrid3ColEnter(Sender: TObject);
+procedure TManageMember.DBGridColEnter(Sender: TObject);
 begin
   // By default, two clicks on the same cell enacts the cell editing mode.
   // The grid draws a TEditBox over the cell, killing the checkbox draw UI.
@@ -385,19 +438,21 @@ begin
   end;
 end;
 
-procedure TManageMember.DBGrid3ColExit(Sender: TObject);
+procedure TManageMember.DBGridColExit(Sender: TObject);
 begin
   with Sender as TDBGrid do
-  if Assigned(SelectedField) and   (SelectedField.DataType = ftBoolean) then
-    Options := Options + [dgEditing];
+    if Assigned(SelectedField) and (SelectedField.DataType = ftBoolean) then
+      Options := Options + [dgEditing];
 end;
 
-procedure TManageMember.DBGrid3DrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+procedure TManageMember.DBGridDrawColumnCell(Sender: TObject; const Rect: TRect;
+  DataCol: Integer; Column: TColumn; State: TGridDrawState);
 var
   clFont, clBg: TColor;
 begin
-  // NOTE : DEFAULT DRAWING IS DISABLED ....
+  // NOTE: DEFAULT DRAWING IS DISABLED ....
+  // NOTE: DO NOT ENABLE TDBGRID OPTION dgAlwaysShowEditor.
+  // (inconsistent OS MESSAGING)
   if (Column.Field.FieldName = 'IsActive') or
     (Column.Field.FieldName = 'IsArchived') or
     (Column.Field.FieldName = 'IsSwimmer') then
@@ -420,7 +475,7 @@ begin
   end;
 end;
 
-procedure TManageMember.DBGrid3EditButtonClick(Sender: TObject);
+procedure TManageMember.DBGridEditButtonClick(Sender: TObject);
 var
   fld: TField;
   cal: TDOBPicker;
@@ -453,88 +508,174 @@ begin
   end;
 end;
 
-procedure TManageMember.DBGrid3KeyDown(Sender: TObject; var Key: Word;
+procedure TManageMember.DBGridKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 var
   fld: TField;
 begin
 
-  With Sender as TDBGrid do begin
-  if Assigned(SelectedField) then
+  With Sender as TDBGrid do
   begin
-
-    if (SelectedField.DataType = ftBoolean) then
+    if Assigned(SelectedField) then
     begin
-      // If the selected field is a boolean,
-      // then enable SPACE key to toggle the value.
-      fld := SelectedField;
-      if (Key = vkSpace) then
-      begin
-        if (DataSource.DataSet.State <> dsEdit) or
-          (DataSource.DataSet.State <> dsInsert) then
-        begin
-          DataSource.DataSet.Edit();
-        end;
-        fld.Value := not fld.AsBoolean;
-        Key := NULL;
-      end;
-      // Y, y, T, t
-      if (Key = $59) or (Key = $79) or (Key = $54) or (Key = $74) then
-      begin
-        if (DataSource.DataSet.State <> dsEdit) or
-          (DataSource.DataSet.State <> dsInsert) then
-        begin
-          DataSource.DataSet.Edit();
-        end;
-        fld.Value := 1;
-        Key := NULL;
-      end;
-      // N, n, F, f
-      if (Key = $4E) or (Key = $6E) or (Key = $46) or (Key = $66) then
-      begin
-        if (DataSource.DataSet.State <> dsEdit) or
-          (DataSource.DataSet.State <> dsInsert) then
-        begin
-          DataSource.DataSet.Edit();
-        end;
-        fld.Value := 0;
-        Key := NULL;
-      end;
-    end;
 
-    // DROPDOWN COMBOBOX
-    if (SelectedField.FieldKind = fkLookup) then
-    begin
-      // NullValueKey - Alt+BkSp - CLEAR
-      if (Key = vkBack) and (ssAlt in Shift) then
+      if (SelectedField.DataType = ftBoolean) then
       begin
+        // If the selected field is a boolean,
+        // then enable SPACE key to toggle the value.
         fld := SelectedField;
-        if (fld.FieldName = 'luHouse') then
+        if (Key = vkSpace) then
         begin
-          DataSource.DataSet.Edit();
-          DataSource.DataSet.FieldByName('HouseID').Clear();
-          DataSource.DataSet.Post();
+          if (DataSource.DataSet.State <> dsEdit) or
+            (DataSource.DataSet.State <> dsInsert) then
+          begin
+            DataSource.DataSet.Edit();
+          end;
+          fld.Value := not fld.AsBoolean;
           Key := NULL;
         end;
-        if (fld.FieldName = 'luMembershipType') then
+        // Y, y, T, t
+        if (Key = $59) or (Key = $79) or (Key = $54) or (Key = $74) then
         begin
-          DataSource.DataSet.Edit();
-          DataSource.DataSet.FieldByName('MembershipTypeID').Clear();
-          DataSource.DataSet.Post();
+          if (DataSource.DataSet.State <> dsEdit) or
+            (DataSource.DataSet.State <> dsInsert) then
+          begin
+            DataSource.DataSet.Edit();
+          end;
+          fld.Value := 1;
           Key := NULL;
         end;
-        if (fld.FieldName = 'luGender') then
+        // N, n, F, f
+        if (Key = $4E) or (Key = $6E) or (Key = $46) or (Key = $66) then
         begin
-          DataSource.DataSet.Edit();
-          DataSource.DataSet.FieldByName('GenderID').Clear();
-          DataSource.DataSet.Post();
+          if (DataSource.DataSet.State <> dsEdit) or
+            (DataSource.DataSet.State <> dsInsert) then
+          begin
+            DataSource.DataSet.Edit();
+          end;
+          fld.Value := 0;
           Key := NULL;
+        end;
+      end;
+
+      // DROPDOWN COMBOBOX
+      if (SelectedField.FieldKind = fkLookup) then
+      begin
+        // NullValueKey - Alt+BkSp - CLEAR
+        if (Key = vkBack) and (ssAlt in Shift) then
+        begin
+          fld := SelectedField;
+          if (fld.FieldName = 'luHouse') then
+          begin
+            DataSource.DataSet.Edit();
+            DataSource.DataSet.FieldByName('HouseID').Clear();
+            DataSource.DataSet.Post();
+            Key := NULL;
+          end;
+          if (fld.FieldName = 'luMembershipType') then
+          begin
+            DataSource.DataSet.Edit();
+            DataSource.DataSet.FieldByName('MembershipTypeID').Clear();
+            DataSource.DataSet.Post();
+            Key := NULL;
+          end;
+          if (fld.FieldName = 'luGender') then
+          begin
+            DataSource.DataSet.Edit();
+            DataSource.DataSet.FieldByName('GenderID').Clear();
+            DataSource.DataSet.Post();
+            Key := NULL;
+          end;
         end;
       end;
     end;
   end;
+
+end;
+
+procedure TManageMember.DBGridRoleCellClick(Column: TColumn);
+var
+  fld: TField;
+begin
+  if Assigned(Column.Field) and (Column.Field.DataType = ftBoolean) then
+  begin
+    fld := DBGridRole.DataSource.DataSet.FindField('MemberID');
+    if fld.IsNull then
+      exit;
+    if Column.Grid.DataSource.DataSet.State <> dsEdit then
+      Column.Grid.DataSource.DataSet.Edit;
+
+    // Column.Grid.DataSource.DataSet.CheckBrowseMode;
+    // Column.Grid.DataSource.DataSet.Edit;
+    Column.Field.AsBoolean := not Column.Field.AsBoolean;
   end;
 
+  if Assigned(Column.Field) and (Column.Field.FieldKind = fkLookup) then
+  begin
+    if Column.Grid.DataSource.DataSet.State <> dsEdit then
+      Column.Grid.DataSource.DataSet.Edit;
+    // Column.Grid.DataSource.DataSet.CheckBrowseMode;
+    // Column.Grid.DataSource.DataSet.Edit;
+  end;
+end;
+
+procedure TManageMember.DBGridRoleEditButtonClick(Sender: TObject);
+var
+  fld: TField;
+  dlg: TDOBPicker;
+  mrRtn: TModalResult;
+begin
+  // handle the ellipse button for TDateTime entry...
+  fld := TDBGrid(Sender).SelectedField;
+  if not Assigned(fld) then
+    exit;
+  if (fld.FieldName = 'ElectedOn') OR (fld.FieldName = 'RetiredOn') then
+  begin
+    dlg := TDOBPicker.Create(Self);
+    mrRtn := dlg.ShowModal; // open DATE PICKER ...
+    if (mrRtn = mrOk) then
+    begin
+      DateTimeToSystemTime(dlg.CalendarView1.Date, fSystemTime);
+      if (fld.FieldName = 'ElectedOn') then
+        PostMessage(ManageMemberData.Handle, SCM_ELECTEDONUPDATED,
+          longint(@fSystemTime), 0)
+      else
+        PostMessage(ManageMemberData.Handle, SCM_RETIREDONUPDATED,
+          longint(@fSystemTime), 0);
+    end;
+    dlg.Free;
+  end;
+end;
+
+procedure TManageMember.DBGridGenericKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+var
+  fld: TField;
+begin
+  if (Key = VK_BACK) and (ssAlt in Shift) then
+  BEGIN
+    with Sender as TDBGrid do
+    Begin
+      DataSource.DataSet.DisableControls;
+      fld := TDBGrid(Sender).SelectedField;
+      if Assigned(fld) then
+      BEGIN
+        // if the query is not in edit mode
+        if (DataSource.DataSet.State <> dsEdit) or
+          (DataSource.DataSet.State <> dsInsert) then
+          DataSource.DataSet.Edit;
+        // D B G r i d R o l e  ...
+        if (fld.FieldName = 'ElectedOn') or (fld.FieldName = 'RetiredOn') then
+          fld.Clear;
+        // D B G r i d C o n t a c t I n f o ...
+        if (fld.FieldName = 'luContactNumType') then
+          fld.Clear;
+      end;
+      DataSource.DataSet.EnableControls;
+      // signal finished with key;
+      Key := 0;
+    END;
+  END;
 end;
 
 procedure TManageMember.DBNavigator1BeforeAction(Sender: TObject;
@@ -580,24 +721,27 @@ end;
 // ---------------------------------------------------------------------------
 // Draw a very basic checkbox (ticked) - not a nice as TCheckListBox
 // ---------------------------------------------------------------------------
-procedure TManageMember.DrawCheckBoxes(oGrid: TObject; Rect: TRect; Column: TColumn;
-  fontColor, bgColor: TColor);
+procedure TManageMember.DrawCheckBoxes(oGrid: TObject; Rect: TRect;
+  Column: TColumn; fontColor, bgColor: TColor);
 var
   MyRect: TRect;
   oField: TField;
-  iPos, iFactor: integer;
-  bValue: boolean;
+  iPos, iFactor: Integer;
+  bValue: Boolean;
   g: TDBGrid;
   points: Array [0 .. 4] of TPoint;
 begin
   // ---------------------------------------------------------------------------
   // Draw a very basic checkbox (ticked) - not a nice as TCheckListBox
   // ---------------------------------------------------------------------------
+  // NOTE: DEFAULT DRAWING IS DISABLED ....
+  // NOTE: DO NOT ENABLE TDBGRID OPTION dgAlwaysShowEditor.
+  // (inconsistent OS MESSAGING)
 
   g := TDBGrid(oGrid);
   // is the cell checked?
   oField := Column.Field;
-  if (oField.value = -1) then
+  if (oField.Value = -1) then
     bValue := true
   else
     bValue := false;
@@ -671,13 +815,32 @@ end;
 
 procedure TManageMember.dtpickDOBChange(Sender: TObject);
 begin
-  if Assigned(ManageMemberData) and (ManageMemberData.qryMember.Active) then
+  // VCL Control dtpickDOB is DATA UN-AWARE.
+  if not fKillOnChangeDOB then
   begin
-    if (ManageMemberData.qryMember.State <> dsEdit) then
-      ManageMemberData.qryMember.Edit();
-    ManageMemberData.qryMember.FieldByName('DOB').AsDateTime := dtpickDOB.Date;
-    // let user perform manual post
-    // ManageMemberData.qryMember.Post();
+    with ManageMemberData.dsMember.DataSet do
+    BEGIN
+      // S Y N C R O N I Z E   D A T A M O D U L E   D O B  . . .
+      if FieldByName('DOB').AsDateTime <> dtpickDOB.Date then
+      Begin
+        // Send SystemTime to the Member's DataModule.
+        // POST helps avoid exceptions when DB not in correct state.
+        try
+          DateTimeToSystemTime(dtpickDOB.Date, fSystemTime);
+          PostMessage(ManageMemberData.Handle, SCM_DOBUPDATED,
+            longint(@fSystemTime), 0);
+        except
+          on E: Exception do
+            raise;
+        end;
+      End;
+      // calculate the age of the member
+      if dtpickDOB.IsEmpty or (dtpickDOB.Date <= 0) then
+        lblMembersAge.Caption := 'No DOB.'
+      else
+        lblMembersAge.Caption :=
+          GetMembersAge(FieldByName('MemberID').AsInteger, dtpickDOB.Date);
+    END;
   end;
 end;
 
@@ -693,7 +856,7 @@ begin
     result := true
   else
   begin
-    s := 'Filters must to be cleared to display this member.' + sLineBreak +
+    s := 'Filters must to be cleared to display this member.' + sLinebreak +
       'Clear the filters?';
     rtn := MessageDlg(s, TMsgDlgType.mtConfirmation, mbYesNo, 0);
     if IsPositiveResult(rtn) then
@@ -734,6 +897,7 @@ begin
   // I N I T I A L I Z E   P A R A M S .
   // ----------------------------------------------------
   fSwimClubID := 1;
+  fKillOnChangeDOB := true;
 
   // Special color assignment - used in TDBGrid painting...
   // -------------------------------------------
@@ -779,13 +943,46 @@ begin
     ManageMemberData.qrySwimClub.FieldByName('DetailStr').AsString;
 end;
 
-procedure TManageMember.ManageMemberAfterScroll(var Msg: TMessage);
+function TManageMember.GetMembersAge(aMemberID: Integer; aDate: TDate): string;
+var
+  SQL: string;
+  v: Variant;
 begin
   if not AssertConnection then
     exit;
-  // DATE-OF-BIRTH - DATETIME PICKER INIT
-  dtpickDOB.Date := ManageMemberData.qryMember.FieldByName('DOB').AsDateTime;
+  result := '';
+  SQL := 'SELECT dbo.SwimmerAge(GETDATE(), :ID1) AS SwimmerAge FROM ' +
+    '[SwimClubMeet].[dbo].[Member] WHERE MemberID = :ID2';
+  v := FConnection.ExecSQLScalar(SQL, [dtpickDOB.Date, aMemberID],
+    [ftDateTime, ftInteger]);
+  if not VarIsNull(v) then
+    result := v
+  else
+    result := 'DOB ERROR.'
+end;
 
+procedure TManageMember.ManageMemberAfterScroll(var Msg: TMessage);
+begin
+  // S Y N C R O N I Z E   D A T A M O D U L E   D O B   . . .
+  if not AssertConnection then
+    exit;
+  with ManageMemberData.dsMember.DataSet do
+  BEGIN
+    fKillOnChangeDOB := true;
+    if FieldByName('DOB').IsNull then
+      dtpickDOB.IsEmpty := true
+    else
+      dtpickDOB.Date := FieldByName('DOB').AsDateTime;
+    { TODO -oBSA -cGeneral : Application.ProcessMessages? }
+    fKillOnChangeDOB := false;
+
+    // calculate the age of the member
+    if dtpickDOB.IsEmpty or (dtpickDOB.Date <= 0) then
+      lblMembersAge.Caption := 'No DOB.'
+    else
+      lblMembersAge.Caption := GetMembersAge(FieldByName('MemberID').AsInteger,
+        dtpickDOB.Date);
+  END;
 end;
 
 procedure TManageMember.ManageMemberUpdate(var Msg: TMessage);
@@ -840,14 +1037,16 @@ begin
   ManageMemberData.ActivateTable;
   if not ManageMemberData.ManageMemberDataActive then
   begin
-    MessageDlg('An error occurred during MSSQL table activation.' + sLineBreak +
-      'The database''s schema may need updating.' + sLineBreak +
+    MessageDlg('An error occurred during MSSQL table activation.' + sLinebreak +
+      'The database''s schema may need updating.' + sLinebreak +
       'The application will terminate!', mtError, [mbOk], 0);
     raise Exception.Create('ManageMemberData Member not active.');
   end;
 
   // execute SQL. Make all null IsArchived, IsActive, IsSwimmer = 0;
-  //  ManageMemberData.FixNullBooleans;
+  // ManageMemberData.FixNullBooleans;
+
+
 
   // ----------------------------------------------------
   // Prepares all core queries  (Master+Child)

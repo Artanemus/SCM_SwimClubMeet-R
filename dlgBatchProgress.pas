@@ -82,7 +82,6 @@ function TBatchProgress.BatchPrint(RptType: scmRptType;
   PrinterOrFolderName: String; var ErrCount: integer; SendToMode: scmSendToMode;
   SendToFileType: scmSendToFileType): boolean;
 var
-  success: bool;
   ds: TDataSet;
   EventNum, HeatNum, EventID, HeatID: integer;
   rptDetails, s: String;
@@ -90,7 +89,6 @@ var
 begin
 
   ErrCount := 0;
-  success := false;
   rptDetails := '';
   PrintStatus := psOK;
 
@@ -130,7 +128,7 @@ begin
               EventNum, 0);
           end;
           // CALL PROCEDURE - OUTPUT
-          success := BatchPrintMarshall(PrinterOrFolderName, SendToMode,
+          BatchPrintMarshall(PrinterOrFolderName, SendToMode,
             SendToFileType, ErrCount, EventID, PrintStatus);
         end;
 
@@ -154,7 +152,7 @@ begin
                   EventNum, HeatNum);
               end;
               // CALL PROCEDURE - OUTPUT
-              success := BatchPrintTimeKeeper(PrinterOrFolderName, SendToMode,
+              BatchPrintTimeKeeper(PrinterOrFolderName, SendToMode,
                 SendToFileType, ErrCount, HeatID, PrintStatus);
               // ABORT ... ABORT Will Roberson ....
               if (PrintStatus <> psOK) then
@@ -382,7 +380,7 @@ var
   dt: TDateTime;
   s, fn: string;
 begin
-  dt := SCM.GetSessionStart;
+  dt := SCM.Session_Start;
   // SESSION DATE
   DateTimeToString(s, 'yyyymmdd', dt);
   fn := s;

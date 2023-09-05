@@ -4,7 +4,7 @@
         <ProjectVersion>19.5</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -94,8 +94,9 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>SwimClubMeet.ico</Icon_MainIcon>
         <VerInfo_MinorVer>5</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=Artanemus;FileDescription=$(MSBuildProjectName) - Manage club members and run your club nights.;FileVersion=1.5.5.0;InternalName=SwimClubMeet;LegalCopyright=Copyright (C) 2019-2023 Artanemus.  All rights reserved.;LegalTrademarks=;OriginalFilename=SwimClubMeet.exe;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.5;Comments=Manage club members and run your club nights.</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=Artanemus;FileDescription=$(MSBuildProjectName) - Manage club members and run your club nights.;FileVersion=1.5.5.3;InternalName=SwimClubMeet;LegalCopyright=Copyright (C) 2019-2023 Artanemus.  All rights reserved.;LegalTrademarks=;OriginalFilename=SwimClubMeet.exe;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.5;Comments=Manage club members and run your club nights.</VerInfo_Keys>
         <VerInfo_Release>5</VerInfo_Release>
+        <VerInfo_Build>3</VerInfo_Build>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -109,9 +110,9 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_MinorVer>5</VerInfo_MinorVer>
         <VerInfo_Release>5</VerInfo_Release>
-        <VerInfo_Keys>CompanyName=Artanemus;FileDescription=$(MSBuildProjectName) - Manage club members and run your club nights.;FileVersion=1.5.5.2;InternalName=SwimClubMeet;LegalCopyright=Copyright (C) 2019-2023 Artanemus.  All rights reserved.;LegalTrademarks=;OriginalFilename=SwimClubMeet.exe;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.5;Comments=Manage club members and run your club nights.</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=Artanemus;FileDescription=$(MSBuildProjectName) - Manage club members and run your club nights.;FileVersion=1.5.5.3;InternalName=SwimClubMeet;LegalCopyright=Copyright (C) 2019-2023 Artanemus.  All rights reserved.;LegalTrademarks=;OriginalFilename=SwimClubMeet.exe;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.5;Comments=Manage club members and run your club nights.</VerInfo_Keys>
         <Icon_MainIcon>SwimClubMeet.ico</Icon_MainIcon>
-        <VerInfo_Build>2</VerInfo_Build>
+        <VerInfo_Build>3</VerInfo_Build>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -185,8 +186,8 @@
             <Form>SwapLanes</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="dlgMembershipType.pas">
-            <Form>MembershipType</Form>
+        <DCCReference Include="dlgSwimmerCategory.pas">
+            <Form>SwimmerCategory</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="MEMBERS\dlgDeleteMember.pas">
@@ -300,7 +301,7 @@
             <Form>BatchProgress</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="dlgAutoBuildPref.pas">
+        <DCCReference Include="dlgAutoBuild_Batch.pas">
             <Form>AutoBuildPref</Form>
             <FormType>dfm</FormType>
         </DCCReference>
@@ -361,6 +362,39 @@
             <Form>About</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="TOOLS\frmDisqualificationCodes.pas">
+            <Form>DisqualificationCodes</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="TOOLS\dlgAutoSchedule.pas">
+            <Form>AutoSchedule</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="FRAME\frame_TEAM.pas">
+            <Form>frameTEAM</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="FRAME\frame_INDV.pas">
+            <Form>frameINDV</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="dlgDCodePicker.pas">
+            <Form>DCodePicker</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="AutoBuildRelayAlgorithm.pas"/>
+        <DCCReference Include="dlgAutoBuild_Relay.pas">
+            <Form>AutoBuild_Relay</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="FRAME\dlgTeamNameMenu.pas">
+            <Form>TeamNameMenu</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="..\SCM_SHARED\SCMHelpers.pas"/>
+        <DCCReference Include="dmSCMHelper.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -391,6 +425,12 @@
             <Deployment Version="4">
                 <DeployFile LocalName="Win32\Debug\SwimClubMeet.exe" Configuration="Debug" Class="ProjectOutput"/>
                 <DeployFile LocalName="Win32\Debug\SwimClubMeet.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>SwimClubMeet.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Win32\Release\SwimClubMeet.exe" Configuration="Release" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>SwimClubMeet.exe</RemoteName>
                         <Overwrite>true</Overwrite>
@@ -1224,6 +1264,15 @@
                 <Platform value="Win32">True</Platform>
                 <Platform value="Win64">False</Platform>
             </Platforms>
+            <MMX>
+                <UsesClauseFormatter AutoFormat="0">
+                    <GroupNames>Winapi;System.Win;System;Data;REST;Xml;Vcl;FMX</GroupNames>
+                </UsesClauseFormatter>
+                <Parser>
+                    <Defines/>
+                    <IfExpressions/>
+                </Parser>
+            </MMX>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>
     </ProjectExtensions>

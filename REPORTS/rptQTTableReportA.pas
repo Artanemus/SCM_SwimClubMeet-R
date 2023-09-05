@@ -43,9 +43,9 @@ end;
 procedure TQTTableReportA.RunReport;
 begin
 	qryReport.Connection := SCM.scmConnection;
-  qryReport.ParamByName('CLUBNAME').AsString := SCM.GetClubName;
-  qryReport.ParamByName('CLUBNICKNAME').AsString := SCM.GetClubNickName;
-  qryReport.ParamByName('ISSHORTCOURSE').AsBoolean := SCM.IsShortCourse;
+  qryReport.ParamByName('CLUBNAME').AsString := SCM.SwimClub_ClubName;
+  qryReport.ParamByName('CLUBNICKNAME').AsString := SCM.SwimClub_NickName;
+  qryReport.ParamByName('ISSHORTCOURSE').AsBoolean := SCM.SwimClub_IsShortCourse;
 	qryReport.Prepare;
 	qryReport.Open;
 	if qryReport.Active then

@@ -224,7 +224,7 @@ begin
   // current connection session  or on another station
   // then refreshing the SwimClub table
   // ensures LenOfPool reflects these changes.
-  if SCM.IsShortCourse then
+  if SCM.SwimClub_IsShortCourse then
   begin
     Label3.Caption := 'Qualification Times for Short Course Events (SC)';
     qryQualify.ParamByName('ISSHORTCOURSE').AsBoolean := true;

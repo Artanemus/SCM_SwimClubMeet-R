@@ -3,8 +3,8 @@ object CloneSession: TCloneSession
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Clone Session ...'
-  ClientHeight = 165
-  ClientWidth = 347
+  ClientHeight = 164
+  ClientWidth = 343
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,12 +12,10 @@ object CloneSession: TCloneSession
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
-  PixelsPerInch = 96
   TextHeight = 13
   object Image1: TImage
     Left = 18
@@ -2703,11 +2701,13 @@ object CloneSession: TCloneSession
   end
   object Panel1: TPanel
     Left = 0
-    Top = 123
-    Width = 347
+    Top = 122
+    Width = 343
     Height = 42
     Align = alBottom
     TabOrder = 0
+    ExplicitTop = 121
+    ExplicitWidth = 339
     object btnCancel: TButton
       Left = 96
       Top = 8
@@ -2739,7 +2739,6 @@ object CloneSession: TCloneSession
       '      ,[EventNum]'
       '      ,[Caption]'
       '      ,[SessionID]'
-      '      ,[EventTypeID]'
       '      ,[StrokeID]'
       '      ,[DistanceID]'
       '      ,[EventStatusID]'
