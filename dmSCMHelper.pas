@@ -41,7 +41,7 @@ type
     function Swimmer_SwimmerID(aSwimmerID: integer;
       aEventType: TEventType): integer;
 
-    // L A N E S .
+    // L A N E S .  05.09.2023
     function Lane_Count(aHeatID: integer): integer;
     function Lane_Trim(aHeatID: integer): integer;
     function Lane_Delete(aHeatID: integer): integer;
