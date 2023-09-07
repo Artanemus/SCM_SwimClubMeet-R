@@ -836,36 +836,6 @@ object SCM: TSCM
     Left = 1088
     Top = 776
   end
-  object qryHeatLaneCount: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    IndexFieldNames = 'HeatID'
-    Connection = scmConnection
-    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
-    UpdateOptions.EnableDelete = False
-    UpdateOptions.EnableInsert = False
-    UpdateOptions.EnableUpdate = False
-    UpdateOptions.KeyFields = 'HeatID'
-    SQL.Strings = (
-      'SELECT'
-      '  HeatIndividual.HeatID,'
-      '  Count(Entrant.Lane) AS Count_Lane'
-      'FROM'
-      '  HeatIndividual'
-      '  LEFT JOIN Entrant ON Entrant.HeatID = HeatIndividual.HeatID'
-      'WHERE'
-      '  HeatIndividual.HeatID = :HEATID'
-      'GROUP BY'
-      '  HeatIndividual.HeatID')
-    Left = 832
-    Top = 296
-    ParamData = <
-      item
-        Name = 'HEATID'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = 1
-      end>
-  end
   object qryMember: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'MemberID'
@@ -1580,8 +1550,8 @@ object SCM: TSCM
       
         'ORDER BY CASE WHEN HeatNum IS NULL then 2 else 1 end, HeatNum AS' +
         'C;')
-    Left = 608
-    Top = 728
+    Left = 536
+    Top = 640
     ParamData = <
       item
         Name = 'EVENTID'

@@ -130,9 +130,6 @@ Coordinates=384,1022,108,33
 [qryEventSessionID]
 Coordinates=275,1022,108,33
 
-[qryHeatLaneCount]
-Coordinates=728,492,106,51
-
 [dsEvent]
 Coordinates=298,483,54,33
 
@@ -363,5 +360,5 @@ EditingLayerName=Heat
 ActiveLayerNames=
 
 []
-Coordinates=426,492,103,51
+Coordinates=728,492,106,51
 

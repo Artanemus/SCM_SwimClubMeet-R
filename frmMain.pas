@@ -529,7 +529,7 @@ uses
   dlgSelectPrinter, ioutils, dlgBatchProgress, dlgAutoBuild_Batch, ShellAPI,
   UEnvVars, dlgEntrantPicker, dlgEntrantPickerCTRL, dmSCMNom, dlgSwapLanes,
   dlgDBVerInfo, rptHeatReportA, rptHeatReportB, frmDisqualificationCodes,
-  dlgAutoSchedule, dlgDCodePicker;
+  dlgAutoSchedule, dlgDCodePicker, dmSCMHelper;
 
 procedure TMain.ActionManager1Update(Action: TBasicAction;
   var Handled: boolean);
@@ -865,7 +865,7 @@ begin
       // the heat to pad
       HeatID := FieldByName('HeatID').AsInteger;
       SCM.Entrant_PadWithEmptyLanes(HeatID);
-      SCM.Entrant_RenumberLanes(HeatID);
+      SCM.Lane_RenumberLanes(HeatID, false); // force renumber
       // sort
       if (SCM.Entrant_Sort(HeatID)) then
       begin
