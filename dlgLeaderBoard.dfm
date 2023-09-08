@@ -2,30 +2,30 @@ object LeaderBoard: TLeaderBoard
   Left = 0
   Top = 0
   Caption = 'LeaderBoard'
-  ClientHeight = 972
-  ClientWidth = 1476
+  ClientHeight = 971
+  ClientWidth = 1472
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -13
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 17
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 1476
-    Height = 938
+    Width = 1472
+    Height = 937
     ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
+    ExplicitWidth = 1476
+    ExplicitHeight = 938
     object TabSheet5: TTabSheet
       Caption = 'Setup'
       ImageIndex = 4
@@ -352,10 +352,10 @@ object LeaderBoard: TLeaderBoard
         BevelOuter = bvNone
         TabOrder = 0
         DesignSize = (
-          1468
+          1464
           57)
         object DBtxtSwimClubCaption: TDBText
-          Left = 644
+          Left = 642
           Top = 5
           Width = 180
           Height = 21
@@ -371,7 +371,7 @@ object LeaderBoard: TLeaderBoard
           ParentFont = False
         end
         object DBtxtSwimClubNickName: TDBText
-          Left = 661
+          Left = 659
           Top = 28
           Width = 146
           Height = 17
@@ -396,7 +396,7 @@ object LeaderBoard: TLeaderBoard
           OnClick = spbGenericSPBtnClick
         end
         object spbExportPDF: TSpeedButton
-          Left = 1324
+          Left = 1320
           Top = 4
           Width = 48
           Height = 48
@@ -438,7 +438,7 @@ object LeaderBoard: TLeaderBoard
           OnClick = spbGenericSPBtnClick
         end
         object spbPrintReport: TSpeedButton
-          Left = 1372
+          Left = 1368
           Top = 4
           Width = 48
           Height = 48
@@ -450,7 +450,7 @@ object LeaderBoard: TLeaderBoard
           Flat = True
         end
         object sbtnRefresh: TSpeedButton
-          Left = 1420
+          Left = 1416
           Top = 4
           Width = 48
           Height = 48
@@ -465,8 +465,8 @@ object LeaderBoard: TLeaderBoard
       object frxPreview1: TfrxPreview
         Left = 0
         Top = 57
-        Width = 1468
-        Height = 849
+        Width = 1464
+        Height = 848
         Align = alClient
         BevelEdges = []
         BevelInner = bvNone
@@ -478,6 +478,8 @@ object LeaderBoard: TLeaderBoard
         FindFmVisible = False
         UseReportHints = True
         HideScrolls = False
+        ExplicitWidth = 1468
+        ExplicitHeight = 849
       end
     end
     object TabSheet2: TTabSheet
@@ -525,8 +527,8 @@ object LeaderBoard: TLeaderBoard
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 938
-    Width = 1476
+    Top = 937
+    Width = 1472
     Height = 34
     Panels = <
       item
@@ -534,6 +536,8 @@ object LeaderBoard: TLeaderBoard
         Text = 'Status and error messages are displayed here.'
         Width = 400
       end>
+    ExplicitTop = 938
+    ExplicitWidth = 1476
   end
   object ImageCollection1: TImageCollection
     Images = <
@@ -781,31 +785,25 @@ object LeaderBoard: TLeaderBoard
     Top = 192
   end
   object VirtualImageList1: TVirtualImageList
-    DisabledGrayscale = False
-    DisabledSuffix = '_Disabled'
     Images = <
       item
         CollectionIndex = 0
         CollectionName = 'outline_watch_later_black_48dp'
-        Disabled = False
         Name = 'outline_watch_later_black_48dp'
       end
       item
         CollectionIndex = 1
         CollectionName = 'outline_print_black_48dp'
-        Disabled = False
         Name = 'outline_print_black_48dp'
       end
       item
         CollectionIndex = 2
         CollectionName = 'outline_picture_as_pdf_black_48dp'
-        Disabled = False
         Name = 'outline_picture_as_pdf_black_48dp'
       end
       item
         CollectionIndex = 8
         CollectionName = 'outline_refresh_black_48dp'
-        Disabled = False
         Name = 'outline_refresh_black_48dp'
       end>
     ImageCollection = ImageCollection1
@@ -815,37 +813,30 @@ object LeaderBoard: TLeaderBoard
     Top = 192
   end
   object VirtualImageList2: TVirtualImageList
-    DisabledGrayscale = False
-    DisabledSuffix = '_Disabled'
     Images = <
       item
         CollectionIndex = 5
         CollectionName = 'outline_menu_black_48dp'
-        Disabled = False
         Name = 'outline_menu_black_48dp'
       end
       item
         CollectionIndex = 6
         CollectionName = 'outline_people_alt_black_48dp'
-        Disabled = False
         Name = 'outline_people_alt_black_48dp'
       end
       item
         CollectionIndex = 3
         CollectionName = 'outline_home_black_48dp'
-        Disabled = False
         Name = 'outline_home_black_48dp'
       end
       item
         CollectionIndex = 7
         CollectionName = 'outline_pool_black_48dp'
-        Disabled = False
         Name = 'outline_pool_black_48dp'
       end
       item
         CollectionIndex = 4
         CollectionName = 'outline_leaderboard_black_48dp'
-        Disabled = False
         Name = 'outline_leaderboard_black_48dp'
       end>
     ImageCollection = ImageCollection1

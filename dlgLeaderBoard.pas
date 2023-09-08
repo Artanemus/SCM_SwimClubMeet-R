@@ -122,8 +122,8 @@ type
 
     // TcmbxObj lookup value.
     function GetObjSessionID(): integer;
-    function GetObjSessionStart(): TDateTime;
-    function GetObjSessionCaption(): string;
+    function GetObjSessionStart(): TDateTime;  //--
+    function GetObjSessionCaption(): string;   //--
 
   public
     { Public declarations }

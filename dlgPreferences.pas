@@ -96,7 +96,7 @@ type
     FConnection: TFDConnection;
     procedure WritePreferences(IniFileName: string);
     procedure ReadPreferences(IniFileName: string);
-    procedure AssignClubLogoToImage(AImage: TImage);
+    procedure AssignClubLogoToImage(AImage: TImage); //--
     procedure AssignDTtoStartOfSwimSeason();
     procedure AssignStartOfSwimSeasonToDT();
 

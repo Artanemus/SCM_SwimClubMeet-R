@@ -5,12 +5,26 @@ interface
 uses
   System.SysUtils, System.Classes, System.DateUtils, System.Math,
   System.IniFiles, System.Variants, System.UITypes, Vcl.StdCtrls, Vcl.Dialogs,
-  Vcl.Forms, FireDAC.Comp.Client, Winapi.Windows,
-  SCMUtility, SCMDefines, dmSCM;
+  Vcl.Forms, FireDAC.Comp.Client, Winapi.Windows, SCMUtility, SCMDefines, dmSCM;
 
 type
   TSCMHelper = class helper for TSCM
-
+    {
+      H E A T .
+    }
+    function Heat_ClearALLLanes(aHeatID: integer;  DoExclude: Boolean = true): integer;
+    {
+      I n d v T e a m .
+      RTNs MemberID in ENTRANT OR TEAMENTRANT tables.
+    }
+    function IndvTeam_ClearLane(aIndvTeamID: integer; aEventType: TEventType;
+      DoExclude: Boolean = true): integer;
+    function IndvTeam_HeatID(aIndvTeamID: integer; aEventType: TEventType): integer;
+    function IndvTeam_HeatStatusID(aIndvTeamID: integer; aEventType: TEventType;
+      DoExclude: Boolean = true): integer;
+    function IndvTeam_StrikeLane(aIndvTeamID: integer; aEventType: TEventType;
+      DoExclude: Boolean = true): integer;
+    function Lane_ClearGutters(aHeatID: integer; DoExclude: Boolean = true): integer;
     {
       G E N E R I C     F U N C T I O N S .
       Finds the TEventType of the heat'
@@ -20,10 +34,6 @@ type
       Swimmers is specific to MemberID in ENTRANT OR TEAMENTRANT tables
     }
 
-    function Swimmer_StrikeSwimmer(aHeatID, SwimmerID: integer; DoExclude: Boolean = true): integer;
-    function Swimmer_ClearSwimmersFromTeam(aTeamID: integer; DoExclude: Boolean = true): integer;
-    function Swimmer_ClearSwimmer(aHeatID, SwimmerID: integer; DoExclude: Boolean = true): integer;
-
     {
       L A N E S .  05.09.2023
       Operates on dbo.Entrant (INDV) OR dbo.Team (TEAM).
@@ -32,13 +42,11 @@ type
       Checks TEventType.
     }
     function Lane_InsertLane(aHeatID: integer; DoExclude: Boolean = true): integer;
-    function Lane_TrimLanes(aHeatID: integer; DoExclude: Boolean = true): integer;
     function Lane_PadLanes(aHeatID: integer; DoExclude: Boolean = true): integer;
-    function Lane_ClearGutters(aHeatID: integer; DoExclude: Boolean = true): integer;
     function Lane_RenumberLanes(aHeatID: integer; DoExclude: Boolean = true)
       : integer;
     function Lane_SortLanes(aHeatID: integer; DoExclude: Boolean = true): integer;
-
+    function Lane_TrimLanes(aHeatID: integer; DoExclude: Boolean = true): integer;
     {
        N O M I N A T I O N S .
        Alternative to dmSCMNom class functions.
@@ -50,6 +58,7 @@ type
     function NOM_DeleteExclude(aMemberID, aEventID: integer;
       DoExclude: Boolean = true): integer;
     function NOM_HeatStatusID(aMemberID, aEventID: integer): integer;
+    function NOM_IndvTeamID(aMemberID, aEventID: integer): integer;
     function NOM_IsMemberInEvent(aMemberID, aEventID: integer): Boolean;
     function NOM_IsMemberNominated(aMemberID, aEventID: integer): Boolean;
     function NOM_IsNomineeInEvent(aNomineeID: integer): integer;
@@ -57,37 +66,18 @@ type
       DoExclude: Boolean = true): integer;
     function NOM_StrikeLane(aMemberID, aEventID: integer;
       DoExclude: Boolean = true): integer;
-    function NOM_SwimmerID(aMemberID, aEventID: integer): integer;
     function NOM_UnNominateMember(aMemberID, aEventID: integer;
       DoExclude: Boolean = true): integer;
-
-    {
-      S W I M M E R S .
-      Swimmers is specific to MemberID in ENTRANT OR TEAMENTRANT tables.
-    }
-    function Swimmer_ClearLane(aSwimmerID: integer;
-      aEventType: TEventType): integer;
-    function Swimmer_HeatStatusID(aSwimmerID: integer;
-      aEventType: TEventType): integer;
-    function Swimmer_StrikeLane(aSwimmerID: integer;
-      aEventType: TEventType): integer;
-    function Swimmer_SwimmerID(aSwimmerID: integer;
-      aEventType: TEventType): integer;
-
   end;
 
 implementation
 
-{ TSCMHelper }
-
-
-function TSCMHelper.Swimmer_StrikeSwimmer(aHeatID, SwimmerID: integer;
+function TSCMHelper.Heat_ClearALLLanes(aHeatID: integer;
   DoExclude: Boolean = true): integer;
 var
+  qry: TFDQuery;
+  aHeatStatusID, aMemberID, aEventID: integer;
   aEventType: TEventType;
-  aHeatStatusID, aEventID: integer;
-  SQL: string;
-  v: variant;
 begin
   result := 0;
   if not SCMActive then exit;
@@ -97,6 +87,130 @@ begin
   if (aHeatStatusID = 1) or (DoExclude = false) then
   begin
     aEventType := Heat_EventType(aHeatID);
+    qry := TFDQuery.Create(self);
+    if aEventType = etINDV then
+    begin
+      qry.SQL.Text :=
+        'SELECT [Entrant].[MemberID] FROM [SwimClubMeet].[dbo].[Entrant] ' +
+        'WHERE MemberID IS NOT NULL AND [Entrant].HeatID = ' +
+        IntToStr(aHeatID);
+      qry.IndexFieldNames := 'EntrantID';
+    end
+    else if aEventType = etTeam then
+    begin
+      qry.SQL.Text :=
+        'SELECT [TeamEntrant].[MemberID] FROM [SwimClubMeet].[dbo].[Team] ' +
+        'INNER JOIN TeamEntrant ON Team.TeamID = TeamEntrant.TeamID ' +
+        'WHERE MemberID IS NOT NULL AND [Team].HeatID = ' + IntToStr(aHeatID);
+      qry.IndexFieldNames := 'Team;TeamEntrantID';
+    end;
+
+    if (aEventType = etINDV) or (aEventType = etTeam) then
+    begin
+      aEventID := Heat_EventID(aHeatID);
+      qry.Connection := scmConnection;
+      qry.Open;
+      if qry.Active then
+      begin
+        while not qry.Eof do
+        begin
+          aMemberID := qry.FieldByName('MemberID').AsInteger;
+          result := NOM_ClearLane(aMemberID, aEventID, false);
+          qry.Next;
+        end;
+      end;
+      qry.Close;
+    end;
+    qry.Free;
+  end;
+end;
+
+function TSCMHelper.IndvTeam_ClearLane(aIndvTeamID: integer; aEventType: TEventType;
+  DoExclude: Boolean = true): integer;
+var
+  aHeatID, aHeatStatusID: integer;
+begin
+  result := 0;
+  if not SCMActive then exit;
+  if aIndvTeamID = 0 then exit;
+  aHeatID := IndvTeam_HeatID(aIndvTeamID,aEventType);
+  if (aHeatID = 0) then exit;
+
+  if Heat_SessionIsLocked(aHeatID) then exit;
+  aHeatStatusID := Heat_HeatStatusID(aHeatID);
+  if (aHeatStatusID = 1) or (DoExclude = false) then
+  begin
+    ClearLane(aIndvTeamID, aEventType);
+  end;
+end;
+
+function TSCMHelper.IndvTeam_HeatID(aIndvTeamID: integer;
+      aEventType: TEventType): integer;
+var
+  SQL: string;
+  v: variant;
+begin
+  result := 0;
+  if not SCMActive then exit;
+  if (aEventType <> etINDV) or (aEventType <> etTEAM) then exit;
+
+  if (aEventType = etINDV) then
+  begin
+    SQL := 'SELECT HeatID FROM [SwimClubMeet].[dbo].Entrant ' +
+      'WHERE [Entrant].[EntrantID] = :ID;';
+  end;
+  if (aEventType = etTEAM) then
+  begin
+    SQL := 'SELECT HeatID FROM [SwimClubMeet].[dbo].Team ' +
+      'WHERE [Team].[TeamID] = :ID;';
+  end;
+  v := scmConnection.ExecSQLScalar(SQL, [aIndvTeamID]);
+  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
+end;
+
+function TSCMHelper.IndvTeam_HeatStatusID(aIndvTeamID: integer;
+      aEventType: TEventType;DoExclude: Boolean = true): integer;
+var
+  SQL: string;
+  v: variant;
+begin
+  result := 0;
+  if not SCMActive then exit;
+  if (aEventType = etINDV) then
+  begin
+    SQL := 'SELECT HeatStatusID FROM [SwimClubMeet].[dbo].[HeatIndividual] ' +
+      'INNER JOIN Entrant ON [HeatIndividual].[HeatID] = Entrant.HeatID ' +
+      'WHERE [Entrant].[EntrantID] = :ID;';
+    v := scmConnection.ExecSQLScalar(SQL, [aIndvTeamID]);
+    if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
+  end;
+  if (aEventType = etTEAM) then
+  begin
+    SQL := 'SELECT HeatStatusID FROM [SwimClubMeet].[dbo].[HeatIndividual] ' +
+      'INNER JOIN Team ON [HeatIndividual].[HeatID] = Team.HeatID ' +
+      'INNER JOIN TeamEntrant ON [Team].[TeamID] = [TeamEntrant].[TeamID] ' +
+      'WHERE [TeamEntrant].[TeamEntrantID] = :ID;';
+    v := scmConnection.ExecSQLScalar(SQL, [aIndvTeamID]);
+    if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
+  end;
+end;
+
+function TSCMHelper.IndvTeam_StrikeLane(aIndvTeamID: integer; aEventType: TEventType;
+  DoExclude: Boolean = true): integer;
+var
+  aHeatID, aHeatStatusID, aEventID: integer;
+  SQL: string;
+  v: variant;
+begin
+  result := 0;
+  if not SCMActive then exit;
+  if aIndvTeamID = 0 then exit;
+  aHeatID := IndvTeam_HeatID(aIndvTeamID, aEventType);
+  if (aHeatID=0) then exit;
+  if Heat_SessionIsLocked(aHeatID) then exit;
+  aHeatStatusID := Heat_HeatStatusID(aHeatID);
+  if (aHeatStatusID = 1) or (DoExclude = false) then
+  begin
     if aEventType = etINDV then
     begin
       SQL := 'SELECT MemberID FROM SwimClubMeet.dbo.Entrant ' +
@@ -105,11 +219,11 @@ begin
     else if aEventType = etTEAM then
     begin
       SQL := 'SELECT MemberID FROM SwimClubMeet.dbo.Team ' +
-      'INNER JOIN TeamEntrant ON Team.TeamID = TeamEntrant.TeamID ' +
+        'INNER JOIN TeamEntrant ON Team.TeamID = TeamEntrant.TeamID ' +
         'WHERE Team.HeatID = :ID1 AND TeamEntrant.TeamEntrantID = :ID2'
     end
     else exit;
-    v := scmConnection.ExecSQLScalar(SQL, [aHeatID, SwimmerID]);
+    v := scmConnection.ExecSQLScalar(SQL, [aHeatID, aIndvTeamID]);
     if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
     begin
       aEventID := Heat_EventID(aHeatID);
@@ -119,79 +233,20 @@ begin
   end;
 end;
 
-function TSCMHelper.Lane_TrimLanes(aHeatID: integer;
+function TSCMHelper.Lane_ClearGutters(aHeatID: integer;
   DoExclude: Boolean = true): integer;
-var
-  NumOfLanes, Lanes, i, aHeatStatusID, aLaneID: integer;
 begin
-  { Lane_Trim
-    Removes excess lanes.
-    If the excess contains a swimmer, the routine clears the lane.
-    Nominations remain.
+  result := 0;
+  { Lane_ClearGutters
+    Only clears gutters if enabled in preferences.
   }
-  if not SCMActive then exit;
-  if aHeatID = 0 then exit;
-  if Heat_SessionIsLocked(aHeatID) then exit;
-  aHeatStatusID := Heat_HeatStatusID(aHeatID);
-  if (aHeatStatusID = 1) or (DoExclude = false) then
-  begin
-    NumOfLanes := SwimClub_NumberOfLanes; // number of lanes in club pool.
-    Lanes := CountLanes(aHeatID);
-    if Lanes > NumOfLanes then
-    begin
-      // too many lanes ... clear swimmer then trim.
-      for i := 1 to (Lanes - NumOfLanes) do
-      begin
-        aLaneID := LastLaneID(aHeatID);  //
-        Swimmer_ClearSwimmer(aHeatID, aLaneID); // remove swimmer.
-        DeleteLane(aHeatID, aLaneID); // note: protected method.
-      end;
-    end;
-  end;
+  {TODO -oBSA -cGeneral : CLEAR GUTTERS}
 end;
 
-function TSCMHelper.Swimmer_ClearSwimmersFromTeam(aTeamID: integer;
+function TSCMHelper.Lane_InsertLane(aHeatID: integer;
   DoExclude: Boolean = true): integer;
 var
-  qry: TFDQuery;
-  aHeatStatusID, aMemberID, aEventID: integer;
-begin
-  if not SCMActive then exit;
-  if aTeamID = 0 then exit;
-  if Team_SessionIsLocked(aTeamID) then exit;
-  aHeatStatusID := Team_HeatStatusID(aTeamID);
-  if (aHeatStatusID = 1) or (DoExclude = false) then
-  begin
-    aEventID := Team_EventID(aTeamID);
-    qry := TFDQuery.Create(self);
-    qry.Connection := scmConnection;
-    qry.SQL.Text :=
-      'SELECT [TeamEntrant].[MemberID] FROM [SwimClubMeet].[dbo].[Team] ' +
-      'INNER JOIN TeamEntrant ON Team.TeamID = TeamEntrant.TeamID ' +
-      'WHERE MemberID IS NOT NULL AND [Team].HeatID = ' + IntToStr(aTeamID);
-    qry.IndexFieldNames := 'TeamID';
-    qry.Open;
-    if qry.Active then
-    begin
-      while not qry.Eof do
-      begin
-        aMemberID := qry.FieldByName('MemberID').AsInteger;
-        result := NOM_ClearLane(aMemberID, aEventID, false);
-        qry.Next;
-      end;
-    end;
-    qry.Close;
-    qry.Free;
-  end;
-end;
-
-function TSCMHelper.Swimmer_ClearSwimmer(aHeatID, SwimmerID: integer;
-  DoExclude: Boolean = true): integer;
-var
-  SQL: string;
-  v: variant;
-  aEventType: TEventType;
-  aEventID, aHeatStatusID: integer;
+  aHeatStatusID: integer;
 begin
   result := 0;
   if not SCMActive then exit;
@@ -200,40 +255,14 @@ begin
   aHeatStatusID := Heat_HeatStatusID(aHeatID);
   if (aHeatStatusID = 1) or (DoExclude = false) then
   begin
-    aEventType := Heat_EventType(aHeatID);
-    aEventID := Heat_EventID(aHeatID);
-    if aEventType = etINDV then
-    begin
-      SQL := 'SELECT MemberID FROM SwimClubMeet.dbo.Entrant ' +
-        'WHERE Entrant.HeatID = :ID1 AND Entrant.EntrantID = :ID2'
-    end
-    else if aEventType = etTEAM then
-    begin
-      SQL := 'SELECT MemberID FROM SwimClubMeet.dbo.Team ' +
-      'INNER JOIN TeamEntrant ON Team.TeamID = TeamEntrant.TeamID ' +
-        'WHERE Team.HeatID = :ID1 AND TeamEntrant.TeamEntrantID = :ID2'
-    end
-    else exit;
-    v := scmConnection.ExecSQLScalar(SQL, [aHeatID, SwimmerID]);
-    if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
-      result := NOM_ClearLane(v, aEventID, false);
+    result := InsertEmptyLane(aHeatID);
   end;
-end;
-
-function TSCMHelper.Lane_ClearGutters(aHeatID: integer;
-  DoExclude: Boolean = true): integer;
-begin
-  { Lane_ClearGutters
-    Only clears gutters if enabled in preferences.
-  }
-
 end;
 
 function TSCMHelper.Lane_PadLanes(aHeatID: integer;
   DoExclude: Boolean = true): integer;
 var
   NumOfLanes, Lanes, i, aHeatStatusID: integer;
-  aEventType: TEventType;
 begin
   { Lane_Pad
     Fills the heat with empty lanes up too 'SwimClub_NumberOfLanes'.
@@ -257,24 +286,6 @@ begin
   end;
 end;
 
-function TSCMHelper.Lane_InsertLane(aHeatID: integer;
-  DoExclude: Boolean = true): integer;
-var
-  aEventType: TEventType;
-  aLane, aHeatStatusID: integer;
-begin
-  result := 0;
-  if not SCMActive then exit;
-  if aHeatID = 0 then exit;
-  if Heat_SessionIsLocked(aHeatID) then exit;
-  aHeatStatusID := Heat_HeatStatusID(aHeatID);
-  if (aHeatStatusID = 1) or (DoExclude = false) then
-  begin
-    result := InsertEmptyLane(aHeatID);
-  end;
-end;
-
-
 function TSCMHelper.Lane_RenumberLanes(aHeatID: integer;
   DoExclude: Boolean = true): integer;
 var
@@ -292,32 +303,59 @@ end;
 function TSCMHelper.Lane_SortLanes(aHeatID: integer;
   DoExclude: Boolean): integer;
 begin
+  result := 0;
+  {TODO -obsa -cGeneral : CODE SORT LANES}
+end;
 
+function TSCMHelper.Lane_TrimLanes(aHeatID: integer;
+  DoExclude: Boolean = true): integer;
+var
+  NumOfLanes, Lanes, i, aHeatStatusID: integer;
+begin
+  { Lane_Trim
+    Removes excess lanes.
+    If the excess contains a swimmer, the routine clears the lane.
+    Nominations remain.
+  }
+  result := 0;
+  if not SCMActive then exit;
+  if aHeatID = 0 then exit;
+  if Heat_SessionIsLocked(aHeatID) then exit;
+  aHeatStatusID := Heat_HeatStatusID(aHeatID);
+  if (aHeatStatusID = 1) or (DoExclude = false) then
+  begin
+    NumOfLanes := SwimClub_NumberOfLanes; // number of lanes in club pool.
+    Lanes := CountLanes(aHeatID);
+    if Lanes > NumOfLanes then
+    begin
+      // too many lanes ... clear swimmer then trim.
+      for i := 1 to (Lanes - NumOfLanes) do
+      begin
+{TODO -oBSA -cGeneral : TRIM LANES}
+      end;
+    end;
+  end;
 end;
 
 function TSCMHelper.NOM_ClearLane(aMemberID, aEventID: integer;
   DoExclude: Boolean): integer;
 var
-  aHeatStatusID, aSwimmerID: integer;
+  aHeatStatusID, aIndvTeamID: integer;
   aEventType: TEventType;
 begin
   result := 0;
   if not SCMActive then exit;
   if Event_SessionIsLocked(aEventID) then exit;
-  aSwimmerID := NOM_SwimmerID(aMemberID, aEventID);
-  // Member wasn't given a lane. Nothing to clear.
-  if aSwimmerID = 0 then exit;
   aEventType := Event_EventType(aEventID);
+  aIndvTeamID := NOM_IndvTeamID(aMemberID, aEventID);
+  // Member wasn't given a lane. Nothing to clear.
+  if aIndvTeamID = 0 then exit;
   // RTNs zero if no heats or the nominee wasn't given a lane.
   aHeatStatusID := NOM_HeatStatusID(aMemberID, aEventID);
   // The nominee was given a lane. Heat is 'open' or force delete.
   if (aHeatStatusID = 1) or (DoExclude = false) then
   begin
-    // Remove swimmer from lane.
-    if (aEventType = etINDV) then
-        Entrant_ClearLaneExclude(aSwimmerID, DoExclude)
-    else if (aEventType = etTEAM) then
-        Team_ClearLaneExclude(aSwimmerID, DoExclude);
+    ClearLane(aIndvTeamID, aEventType);// Remove swimmer from lane.
     result := 1;
   end;
 end;
@@ -358,10 +396,11 @@ var
   rows: integer;
 begin
   result := 0;
+  rows := 0;
   if not SCMActive then exit;
   if Event_SessionIsLocked(aEventID) then exit;
   // If the nominee was given a lane - remove swimmer from lane.
-  rows := NOM_ClearLane(aMemberID, aEventID, DoExclude);
+  NOM_ClearLane(aMemberID, aEventID, DoExclude);
   // Assert that the member hasn't been assigned a lane.
   if not(NOM_IsMemberInEvent(aMemberID, aEventID)) or not DoExclude then
   begin
@@ -409,10 +448,44 @@ begin
 
 end;
 
+function TSCMHelper.NOM_IndvTeamID(aMemberID, aEventID: integer): integer;
+var
+  SQL: string;
+  v: variant;
+  aEventType: TEventType;
+begin
+  result := 0;
+  if not SCMActive then exit;
+  aEventType := Event_EventType(aEventID);
+  if (aEventType = etINDV) then
+  begin
+    SQL := 'SELECT TOP 1 Entrant.EntrantID FROM [SwimClubMeet].[dbo].[Event] ' +
+      'INNER JOIN HeatIndividual ON [Event].EventID = HeatIndividual.EventID ' +
+      'INNER JOIN Entrant ON HeatIndividual.HeatID = Entrant.HeatID ' +
+      'WHERE [Event].EventID = :EventID AND (Entrant.MemberID = :MemberID)';
+    v := scmConnection.ExecSQLScalar(SQL, [aMemberID, aEventID]);
+    if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
+    begin
+      result := v;
+      exit;
+    end;
+  end
+  else if (aEventType = etTEAM) then
+  begin
+    SQL := 'SELECT TOP 1 TeamEntrant.TeamEntrantID FROM [SwimClubMeet].[dbo].[Event] '
+      + 'INNER JOIN HeatIndividual ON [Event].EventID = HeatIndividual.EventID '
+      + 'INNER JOIN Team ON HeatIndividual.HeatID = Team.HeatID ' +
+      'INNER JOIN TeamEntrant ON Team.TeamID = TeamEntrant.TeamID ' +
+      'WHERE [Event].EventID = :EventID AND (TeamEntrant.MemberID = :MemberID)';
+    v := scmConnection.ExecSQLScalar(SQL, [aMemberID, aEventID]);
+    if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
+  end;
+end;
+
 function TSCMHelper.NOM_IsMemberInEvent(aMemberID, aEventID: integer): Boolean;
 begin
   result := false;
-  if (NOM_SwimmerID(aMemberID, aEventID) > 0) then result := true;
+  if (NOM_IndvTeamID(aMemberID, aEventID) > 0) then result := true;
 end;
 
 function TSCMHelper.NOM_IsMemberNominated(aMemberID, aEventID: integer)
@@ -486,45 +559,10 @@ begin
   result := NOM_DeleteExclude(aMemberID, aEventID, DoExclude);
 end;
 
-function TSCMHelper.NOM_SwimmerID(aMemberID, aEventID: integer): integer;
-var
-  SQL: string;
-  v: variant;
-  aEventType: TEventType;
-begin
-  result := 0;
-  if not SCMActive then exit;
-  aEventType := Event_EventType(aEventID);
-  if (aEventType = etINDV) then
-  begin
-    SQL := 'SELECT TOP 1 Entrant.EntrantID FROM [SwimClubMeet].[dbo].[Event] ' +
-      'INNER JOIN HeatIndividual ON [Event].EventID = HeatIndividual.EventID ' +
-      'INNER JOIN Entrant ON HeatIndividual.HeatID = Entrant.HeatID ' +
-      'WHERE [Event].EventID = :EventID AND (Entrant.MemberID = :MemberID)';
-    v := scmConnection.ExecSQLScalar(SQL, [aMemberID, aEventID]);
-    if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
-    begin
-      result := v;
-      exit;
-    end;
-  end
-  else if (aEventType = etTEAM) then
-  begin
-    SQL := 'SELECT TOP 1 TeamEntrant.TeamEntrantID FROM [SwimClubMeet].[dbo].[Event] '
-      + 'INNER JOIN HeatIndividual ON [Event].EventID = HeatIndividual.EventID '
-      + 'INNER JOIN Team ON HeatIndividual.HeatID = Team.HeatID ' +
-      'INNER JOIN TeamEntrant ON Team.TeamID = TeamEntrant.TeamID ' +
-      'WHERE [Event].EventID = :EventID AND (TeamEntrant.MemberID = :MemberID)';
-    v := scmConnection.ExecSQLScalar(SQL, [aMemberID, aEventID]);
-    if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
-  end;
-end;
-
 function TSCMHelper.NOM_UnNominateMember(aMemberID, aEventID: integer;
   DoExclude: Boolean = true): integer;
 var
   rows, aHeatStatusID: integer;
-  SQL: string;
   response: TModalResult;
 begin
   result := 0;
@@ -565,73 +603,5 @@ begin
   end;
 
 end;
-
-function TSCMHelper.Swimmer_ClearLane(aSwimmerID: integer;
-  aEventType: TEventType): integer;
-begin
-
-end;
-
-function TSCMHelper.Swimmer_HeatStatusID(aSwimmerID: integer;
-  aEventType: TEventType): integer;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := 0;
-  if not SCMActive then exit;
-  if (aEventType = etINDV) then
-  begin
-    SQL := 'SELECT HeatStatusID FROM [SwimClubMeet].[dbo].[HeatIndividual] ' +
-      'INNER JOIN Entrant ON [HeatIndividual].[HeatID] = Entrant.HeatID ' +
-      'WHERE [Entrant].[EntrantID] = :ID;';
-    v := scmConnection.ExecSQLScalar(SQL, [aSwimmerID]);
-    if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
-  end;
-  if (aEventType = etTEAM) then
-  begin
-    SQL := 'SELECT HeatStatusID FROM [SwimClubMeet].[dbo].[HeatIndividual] ' +
-      'INNER JOIN Team ON [HeatIndividual].[HeatID] = Team.HeatID ' +
-      'INNER JOIN TeamEntrant ON [Team].[TeamID] = [TeamEntrant].[TeamID] ' +
-      'WHERE [TeamEntrant].[TeamEntrantID] = :ID;';
-    v := scmConnection.ExecSQLScalar(SQL, [aSwimmerID]);
-    if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
-  end;
-end;
-
-function TSCMHelper.Swimmer_StrikeLane(aSwimmerID: integer;
-  aEventType: TEventType): integer;
-begin
-
-end;
-
-function TSCMHelper.Swimmer_SwimmerID(aSwimmerID: integer;
-  aEventType: TEventType): integer;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := 0;
-  if not SCMActive then exit;
-  if (aEventType = etINDV) then
-  begin
-    SQL := 'SELECT Entrant.MemberID FROM [SwimClubMeet].[dbo].[Entrant] ' +
-      'WHERE Entrant.EntrantID = :aID';
-    v := scmConnection.ExecSQLScalar(SQL, [aSwimmerID]);
-    if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
-    begin
-      result := v;
-    end;
-  end
-  else if (aEventType = etTEAM) then
-  begin
-    SQL := 'SELECT TeamEntrant.MemberID FROM [SwimClubMeet].[dbo].[TeamEntrant] '
-      + 'WHERE TeamEntrant.TeamEntrantID = :aID';
-    v := scmConnection.ExecSQLScalar(SQL, [aSwimmerID]);
-    if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
-  end;
-end;
-
-
 
 end.

@@ -27,7 +27,7 @@ type
     procedure ReadPreferences(iniFileName: string);
 
     procedure DeleteNomination(aMemberID, aEventID: integer);
-    function IsMemberInEvent(aMemberID, aEventID: integer): boolean;
+    function IsMemberInEvent(aMemberID, aEventID: integer): boolean; // ---
     function IsMemberNominated(aMemberID, aEventID: integer): boolean;
     function IsMemberAssignedHeat(aMemberID, aEventID: integer): boolean;
     procedure CleanLane(aEntrantID: integer);

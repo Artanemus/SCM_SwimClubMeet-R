@@ -27,7 +27,7 @@ type
   private
     { Private declarations }
 	procedure ReadPreferences(AIniFileName: string);
-	procedure WritePreferences(AiniFileName: string);
+	procedure WritePreferences(AiniFileName: string); //--
   public
     { Public declarations }
     TypeOfEvent: scmEventFinalsType;

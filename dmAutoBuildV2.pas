@@ -70,8 +70,8 @@ type
     function GetNumOfSwimmingLanes(var NumOfPoolLanes: integer;
       DoExcludeOutsideLanes: boolean): integer;
     function GetHeatMaxSeedNumber(EventID: integer): integer;
-    function CountNominees(EventID: integer): integer;
-    function RenumberHeats(EventID: integer): integer;
+    function CountNominees(EventID: integer): integer; //--
+    function RenumberHeats(EventID: integer): integer; //--
 
     // Autobuild support functions
     // DEPRECIATED: 2023.02.21 - NOW SHARED CODE FOUND IN SCMUtility

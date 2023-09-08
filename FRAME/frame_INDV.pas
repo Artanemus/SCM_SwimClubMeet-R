@@ -333,6 +333,8 @@ begin
   // handle the ellipse entrant
   else if fld.FieldName = 'FullName' then
   begin
+    rtnValue := mrCancel;
+
     if ((GetKeyState(VK_CONTROL) and 128) = 128) then
     begin
       // if (GetKeyState(VK_CONTROL) < 0) then begin

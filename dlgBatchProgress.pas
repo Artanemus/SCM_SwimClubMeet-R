@@ -28,7 +28,7 @@ type
     fExportFileName: string;
     DoAbort: boolean;
 
-    function AssertConnection(): boolean;
+    function AssertConnection(): boolean;  //--
 
     function BuildExportFileName(RptType: scmRptType;
       SendToFileType: scmSendToFileType; EventNum, HeatNum: integer): string;

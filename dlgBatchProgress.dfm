@@ -3,8 +3,8 @@ object BatchProgress: TBatchProgress
   Top = 0
   BorderStyle = bsToolWindow
   Caption = 'Batch Process Reports'
-  ClientHeight = 184
-  ClientWidth = 513
+  ClientHeight = 172
+  ClientWidth = 505
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -19,7 +19,7 @@ object BatchProgress: TBatchProgress
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 513
+    Width = 505
     Height = 57
     Align = alTop
     Caption = 'Batch Process Reports.'
@@ -28,8 +28,8 @@ object BatchProgress: TBatchProgress
   end
   object Panel2: TPanel
     Left = 0
-    Top = 127
-    Width = 513
+    Top = 115
+    Width = 505
     Height = 57
     Align = alBottom
     TabOrder = 1
@@ -57,8 +57,8 @@ object BatchProgress: TBatchProgress
   object Panel3: TPanel
     Left = 0
     Top = 57
-    Width = 513
-    Height = 70
+    Width = 505
+    Height = 58
     Align = alClient
     TabOrder = 2
     ExplicitWidth = 521

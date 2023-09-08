@@ -3,8 +3,8 @@ object Preferences: TPreferences
   Top = 0
   BorderStyle = bsDialog
   Caption = 'SwimClubMeet Preferences...'
-  ClientHeight = 591
-  ClientWidth = 650
+  ClientHeight = 590
+  ClientWidth = 646
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,11 +21,12 @@ object Preferences: TPreferences
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 650
+    Width = 646
     Height = 41
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 650
     object DBText1: TDBText
       Left = 13
       Top = 9
@@ -44,17 +45,19 @@ object Preferences: TPreferences
   end
   object Panel2: TPanel
     Left = 0
-    Top = 543
-    Width = 650
+    Top = 542
+    Width = 646
     Height = 48
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitTop = 543
+    ExplicitWidth = 650
     DesignSize = (
-      650
+      646
       48)
     object btnClose: TButton
-      Left = 488
+      Left = 480
       Top = 6
       Width = 101
       Height = 33
@@ -68,12 +71,14 @@ object Preferences: TPreferences
   object PageControl1: TPageControl
     Left = 0
     Top = 41
-    Width = 650
-    Height = 502
+    Width = 646
+    Height = 501
     ActivePage = TabSheet6
     Align = alClient
     TabOrder = 2
     OnChanging = PageControl1Changing
+    ExplicitWidth = 650
+    ExplicitHeight = 502
     object TabSheet1: TTabSheet
       Caption = 'Club'
       object Label2: TLabel
@@ -347,8 +352,8 @@ object Preferences: TPreferences
       Caption = 'AutoBuild'
       ImageIndex = 2
       DesignSize = (
-        642
-        466)
+        638
+        465)
       object lbl3: TLabel
         Left = 9
         Top = 19
@@ -363,7 +368,7 @@ object Preferences: TPreferences
         ParentFont = False
       end
       object btn1: TSpeedButton
-        Left = 157
+        Left = 149
         Top = 15
         Width = 33
         Height = 33

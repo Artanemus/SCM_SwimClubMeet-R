@@ -471,7 +471,7 @@ type
     procedure Refresh_Heat(DoBookmark: boolean = true);
     procedure Refresh_Nominate(DoBookmark: boolean = true);
     procedure Refresh_Team(DoBookmark: boolean = true);
-    procedure Refresh_TeamEntrant(DoBookmark: boolean = true);
+    procedure Refresh_TeamEntrant(DoBookmark: boolean = true); //--
     // Generic TAction onExecute (extended params) for BATCH PRINT
     procedure Session_BatchReportExecute(Sender: TObject; RptType: scmRptType);
     // ENTRANT_GRID Toggle column display
