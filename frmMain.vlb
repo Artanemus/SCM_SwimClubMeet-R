@@ -88,9 +88,6 @@ Coordinates=1165,1404,134,36
 [pumHeat]
 Coordinates=1096,1404,66,36
 
-[Entrant_EmptyLane]
-Coordinates=967,1404,128,36
-
 [Heat_MoveDown]
 Coordinates=848,1404,112,36
 
@@ -434,9 +431,6 @@ Coordinates=1098,463,107,36
 [ShapeHeatBar2]
 Coordinates=585,1017,106,36
 
-[Entrant_Renumber]
-Coordinates=2036,441,123,36
-
 [SCM.qryNominee]
 Coordinates=1643,863,116,58
 
@@ -606,9 +600,6 @@ Coordinates=235,1653,93,36
 [SCM.qrySwimClub]
 Coordinates=438,632,122,58
 
-[Entrant_Sort]
-Coordinates=97,1653,87,36
-
 [spbtnHeatMarshall]
 Coordinates=578,1135,122,36
 
@@ -636,9 +627,6 @@ Coordinates=943,1135,139,36
 
 [SCM.luSessionStatus]
 Coordinates=1098,1,139,36
-
-[Entrant_Strike]
-Coordinates=2272,221,96,36
 
 [SCM.qrySortHeat]
 Coordinates=104,786,115,58
@@ -747,7 +735,7 @@ Coordinates=930,250,114,58
 LayerNames=NominateCotrolList
 
 []
-Coordinates=356,1076,88,36
+Coordinates=97,1653,87,36
 
 [dbtxtNominateFullName]
 Coordinates=1009,709,152,58
@@ -951,4 +939,13 @@ Coordinates=1781,1,152,36
 
 [pnlEventGrid]
 Coordinates=1017,863,55,58
+
+[IndvTeam_EmptyLane]
+Coordinates=967,1404,128,36
+
+[IndvTeam_Strike]
+Coordinates=2272,221,96,36
+
+[IndvTeam_Renumber]
+Coordinates=2036,441,123,36
 

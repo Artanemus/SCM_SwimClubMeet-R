@@ -27,7 +27,7 @@ type
     procedure ReadPreferences(iniFileName: string);
 
     procedure DeleteNomination(aMemberID, aEventID: integer);
-    function IsMemberInEvent(aMemberID, aEventID: integer): boolean; // ---
+//    function IsMemberInEvent(aMemberID, aEventID: integer): boolean; // ---
     function IsMemberNominated(aMemberID, aEventID: integer): boolean;
     function IsMemberAssignedHeat(aMemberID, aEventID: integer): boolean;
     procedure CleanLane(aEntrantID: integer);
@@ -271,7 +271,7 @@ begin
     qryHeat.Close;
   end;
 end;
-
+{
 function TSCMNom.IsMemberInEvent(aMemberID, aEventID: integer): boolean;
 begin
   result := false;
@@ -294,7 +294,7 @@ begin
     end;
   end
 end;
-
+}
 function TSCMNom.IsMemberNominated(aMemberID, aEventID: integer): boolean;
 begin
   // ------------------------------------------------------------------------

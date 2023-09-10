@@ -1215,7 +1215,7 @@ object Main: TMain
                   Top = 144
                   Width = 48
                   Height = 48
-                  Action = Entrant_EmptyLane
+                  Action = IndvTeam_EmptyLane
                   Anchors = []
                   Images = VirtualImageList1
                   Flat = True
@@ -1228,7 +1228,7 @@ object Main: TMain
                   Top = 192
                   Width = 48
                   Height = 48
-                  Action = Entrant_Strike
+                  Action = IndvTeam_Strike
                   Anchors = []
                   Images = VirtualImageList1
                   Flat = True
@@ -1269,8 +1269,8 @@ object Main: TMain
                   Width = 48
                   Height = 48
                   Hint = 'Sort lanes.'
-                  Action = Entrant_Sort
                   Anchors = []
+                  Caption = 'Sort on TTB'
                   ImageIndex = 37
                   ImageName = 'Sort'
                   Images = VirtualImageList1
@@ -1278,6 +1278,8 @@ object Main: TMain
                   Layout = blGlyphTop
                   Margin = 0
                   NumGlyphs = 2
+                  Visible = False
+                  OnClick = IndvTeam_RenumberExecute
                 end
                 object lblMsgNoNominees: TLabel
                   AlignWithMargins = True
@@ -2703,21 +2705,21 @@ object Main: TMain
                 ImageName = 'Shuffle'
               end
               item
-                Action = Entrant_EmptyLane
+                Action = IndvTeam_EmptyLane
                 Caption = '&Empty Lane'
                 ImageIndex = 19
                 ImageName = 'Delete'
                 ShortCut = 16472
               end
               item
-                Action = Entrant_Strike
+                Action = IndvTeam_Strike
                 Caption = 'S&trike Entrant'
                 ImageIndex = 18
                 ImageName = 'DeleteForever'
                 ShortCut = 16430
               end
               item
-                Action = Entrant_Renumber
+                Action = IndvTeam_Renumber
                 Caption = '&Renumber Lanes'
                 ImageIndex = 37
                 ImageName = 'Sort'
@@ -2727,10 +2729,6 @@ object Main: TMain
                 Caption = 'Mem&ber'#39's Details...'
                 ImageIndex = 1
                 ImageName = 'Members'
-              end
-              item
-                Visible = False
-                Action = Entrant_Sort
               end>
             Caption = 'En&trants'
           end
@@ -2990,7 +2988,7 @@ object Main: TMain
       OnUpdate = Event_ReportUpdate
     end
     object Entrant_MoveUp: TAction
-      Category = 'Entrants'
+      Category = 'IndvTeam'
       Caption = 'Move Up'
       Hint = 'Move the entrant up a lane.'
       ImageIndex = 12
@@ -3000,7 +2998,7 @@ object Main: TMain
       OnUpdate = Entrant_MoveUpUpdate
     end
     object Entrant_MoveDown: TAction
-      Category = 'Entrants'
+      Category = 'IndvTeam'
       Caption = 'Move Down'
       Hint = 'Move the entrant down a lane.'
       ImageIndex = 13
@@ -3010,7 +3008,7 @@ object Main: TMain
       OnUpdate = Entrant_MoveDownUpdate
     end
     object Entrant_SwapLanes: TAction
-      Category = 'Entrants'
+      Category = 'IndvTeam'
       Caption = 'Swap Lanes...'
       Hint = 'Opens the swap lanes dialogue.'
       ImageIndex = 10
@@ -3018,28 +3016,28 @@ object Main: TMain
       OnExecute = Entrant_SwapLanesExecute
       OnUpdate = Entrant_SwapLanesUpdate
     end
-    object Entrant_EmptyLane: TAction
-      Category = 'Entrants'
+    object IndvTeam_EmptyLane: TAction
+      Category = 'IndvTeam'
       Caption = 'Empty Lane'
       Hint = 'Empty the lane. The member remains nominated.'
       ImageIndex = 19
       ImageName = 'Delete'
       ShortCut = 16472
-      OnExecute = Entrant_EmptyLaneExecute
-      OnUpdate = Entrant_EmptyLaneUpdate
+      OnExecute = IndvTeam_EmptyLaneExecute
+      OnUpdate = IndvTeam_EmptyLaneUpdate
     end
-    object Entrant_Strike: TAction
-      Category = 'Entrants'
+    object IndvTeam_Strike: TAction
+      Category = 'IndvTeam'
       Caption = 'Strike Entrant'
       Hint = 'Remove nomination and empty the lane.'
       ImageIndex = 18
       ImageName = 'DeleteForever'
       ShortCut = 16430
-      OnExecute = Entrant_StrikeExecute
-      OnUpdate = Entrant_StrikeUpdate
+      OnExecute = IndvTeam_StrikeExecute
+      OnUpdate = IndvTeam_StrikeUpdate
     end
     object Entrant_GotoMemberDetails: TAction
-      Category = 'Entrants'
+      Category = 'IndvTeam'
       Caption = 'Member'#39's Details...'
       Hint = 'Show the selected member'#39's details.'
       ImageIndex = 1
@@ -3047,11 +3045,14 @@ object Main: TMain
       OnExecute = Entrant_GotoMemberDetailsExecute
       OnUpdate = Entrant_GotoMemberDetailsUpdate
     end
-    object Entrant_Renumber: TAction
-      Category = 'Entrants'
+    object IndvTeam_Renumber: TAction
+      Category = 'IndvTeam'
       Caption = 'Renumber Lanes'
+      Hint = 'Sort lane placements. '
       ImageIndex = 37
       ImageName = 'Sort'
+      OnExecute = IndvTeam_RenumberExecute
+      OnUpdate = IndvTeam_RenumberUpdate
     end
     object Heat_MoveUp: TAction
       Category = 'Heats'
@@ -3144,14 +3145,6 @@ object Main: TMain
       Caption = 'Swimmer Categories...'
       OnExecute = Tools_SwimmercategoryExecute
       OnUpdate = Tools_SwimmercategoryUpdate
-    end
-    object Entrant_Sort: TAction
-      Category = 'Entrants'
-      Caption = 'Sort on TTB'
-      Hint = 'Sort entrants and repair lanes.'
-      Visible = False
-      OnExecute = Entrant_SortExecute
-      OnUpdate = Entrant_SortUpdate
     end
     object Heat_PrintSet: TAction
       Category = 'Heats'
@@ -3444,13 +3437,16 @@ object Main: TMain
       Action = Entrant_SwapLanes
     end
     object EmptyLane1: TMenuItem
-      Action = Entrant_EmptyLane
+      Action = IndvTeam_EmptyLane
     end
     object StrikeEntrant1: TMenuItem
-      Action = Entrant_Strike
+      Action = IndvTeam_Strike
     end
     object Renumber2: TMenuItem
-      Action = Entrant_Sort
+      Caption = 'Sort on TTB'
+      Hint = 'Sort entrants and repair lanes.'
+      Visible = False
+      OnClick = IndvTeam_RenumberExecute
     end
     object N1: TMenuItem
       Caption = '-'

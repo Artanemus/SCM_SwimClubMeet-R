@@ -30,6 +30,7 @@ type
     fTeamBgColor: TColor;
     fTeamFontColor: TColor;
     fTeamActiveGrid: Integer;
+    FActiveGrid: integer;
     // D R A W   C H E C K   B O X E S .
     procedure DrawCheckBoxes(oGrid: TObject; Rect: TRect; Column: TColumn;
       fontColor: TColor; bgColor: TColor);
@@ -45,6 +46,10 @@ type
     procedure GridMoveDown(Sender: TObject);
     procedure GridMoveUp(Sender: TObject);
     procedure ToggleDCode(DoEnable: boolean);
+    function ClearLane(): integer;
+    function StrikeLane(): integer;
+    function RenumberLanes():integer;
+
   end;
 
 implementation
@@ -53,7 +58,7 @@ implementation
 
 { TframeTEAM }
 uses dlgEntrantPickerCTRL, dlgEntrantPicker, dlgDCodePicker, System.UITypes,
-  dlgTeamNameMenu;
+  dlgTeamNameMenu, dmSCMHelper;
 
 procedure TframeTEAM.AfterConstruction;
 var
@@ -181,6 +186,25 @@ begin
     g.Canvas.LineTo(iPos + (iFactor * 8), MyRect.Top + 5);
   end;
 
+end;
+
+function TframeTEAM.ClearLane(): integer;
+var
+aTeamID, aTeamEntrantID: integer;
+begin
+  result := 0;
+    if fActiveGrid = 1 then
+    begin
+      aTeamID := Grid.DataSource.DataSet.FieldByName('TeamID').AsInteger;
+      result := SCM.IndvTeam_ClearLane(aTeamID, etINDV);
+      if Grid.CanFocus then        Grid.SetFocus;
+    end
+    else if fActiveGrid = 2 then
+    begin
+      aTeamEntrantID := GridEntrant.DataSource.DataSet.FieldByName
+        ('TeamEntrantID').AsInteger;
+      result := SCM.TeamEntrant_Clear(aTeamEntrantID);
+    end;
 end;
 
 procedure TframeTEAM.Enable_GridEllipse;
@@ -390,7 +414,7 @@ begin
     if IsPositiveResult(rtnValue) then
     begin
       SCM.dsTeam.DataSet.Refresh;
-      SCM.Team_Locate(TeamID);
+      SCM.IndvTeam_LocateLane(TeamID, etTEAM);
     end;
   end
   // handle the ellipse entrant
@@ -404,7 +428,7 @@ begin
     if IsPositiveResult(rtnValue) then
     begin
       SCM.dsTeam.DataSet.Refresh;
-      SCM.Team_Locate(TeamID);
+      SCM.IndvTeam_LocateLane(TeamID, etTEAM);
     end;
 
   end;
@@ -456,7 +480,7 @@ begin
       if IsPositiveResult(rtnValue) then
       begin
         SCM.dsEntrant.DataSet.Refresh;
-        SCM.Entrant_Locate(EntrantID);
+        SCM.TeamEntrant_Locate(EntrantID);
       end;
     end;
   end
@@ -485,7 +509,7 @@ begin
     if passed and IsPositiveResult(rtnValue) then
     begin
       SCM.dsEntrant.DataSet.Refresh;
-      SCM.Entrant_Locate(EntrantID);
+      SCM.TeamEntrant_Locate(EntrantID);
     end;
 
   end;
@@ -571,6 +595,43 @@ begin
     success := SCM.MoveUpLane(aDataSet);
   if not success then
     beep;
+end;
+
+function TframeTEAM.RenumberLanes: integer;
+var
+aHeatID: integer;
+begin
+result := 0;
+    if fActiveGrid = 1 then
+    begin
+      aHeatID := Grid.DataSource.DataSet.FieldByName('HeatID').AsInteger;
+      result := SCM.Lane_RenumberLanes(aHeatID);
+      if Grid.CanFocus then Grid.SetFocus;
+    end
+    else if fActiveGrid = 2 then
+    begin
+//      aTeamEntrantID := GridEntrant.DataSource.DataSet.FieldByName
+//        ('TeamEntrantID').AsInteger;
+    end;
+end;
+
+function TframeTEAM.StrikeLane: integer;
+var
+aTeamID, aTeamEntrantID: integer;
+begin
+result := 0;
+    if fActiveGrid = 1 then
+    begin
+      aTeamID := Grid.DataSource.DataSet.FieldByName('TeamID').AsInteger;
+      result := SCM.IndvTeam_StrikeLane(aTeamID, etINDV);
+      if Grid.CanFocus then        Grid.SetFocus;
+    end
+    else if fActiveGrid = 2 then
+    begin
+      aTeamEntrantID := GridEntrant.DataSource.DataSet.FieldByName
+        ('TeamEntrantID').AsInteger;
+      result := SCM.TeamEntrant_Clear(aTeamEntrantID);
+    end;
 end;
 
 procedure TframeTEAM.ToggleDCode(DoEnable: boolean);

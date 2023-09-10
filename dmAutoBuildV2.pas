@@ -70,8 +70,8 @@ type
     function GetNumOfSwimmingLanes(var NumOfPoolLanes: integer;
       DoExcludeOutsideLanes: boolean): integer;
     function GetHeatMaxSeedNumber(EventID: integer): integer;
-    function CountNominees(EventID: integer): integer; //--
-    function RenumberHeats(EventID: integer): integer; //--
+//    function CountNominees(EventID: integer): integer; //--
+//    function RenumberHeats(EventID: integer): integer; //--
 
     // Autobuild support functions
     // DEPRECIATED: 2023.02.21 - NOW SHARED CODE FOUND IN SCMUtility
@@ -862,7 +862,7 @@ begin
   end;
   result := entrantsAssigned;
 end;
-
+{
 function TAutoBuildV2.CountNominees(EventID: integer): integer;
 begin
   result := 0;
@@ -880,7 +880,7 @@ begin
     qryGenericCount.Close;
   end;
 end;
-
+}
 function TAutoBuildV2.CreateNewEmptyHeat(EventID: integer): integer;
 var
   SearchOptions: TLocateOptions;
@@ -1130,6 +1130,7 @@ begin
   iFile.Free;
 end;
 
+{
 function TAutoBuildV2.RenumberHeats(EventID: integer): integer;
 var
   ds: TFDQuery;
@@ -1154,6 +1155,7 @@ begin
   ds.Close;
   result := iter;
 end;
+}
 
 (*
   function TAutoBuildV2.ScatterLanes(index, NumOfPoolLanes: integer): integer;

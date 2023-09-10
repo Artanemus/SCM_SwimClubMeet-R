@@ -75,13 +75,12 @@ type
     EditSession1: TMenuItem;
     EmptyLane1: TMenuItem;
     EntrantWidgets: TRelativePanel;
-    Entrant_EmptyLane: TAction;
+    IndvTeam_EmptyLane: TAction;
     Entrant_GotoMemberDetails: TAction;
     Entrant_MoveDown: TAction;
     Entrant_MoveUp: TAction;
-    Entrant_Renumber: TAction;
-    Entrant_Sort: TAction;
-    Entrant_Strike: TAction;
+    IndvTeam_Renumber: TAction;
+    IndvTeam_Strike: TAction;
     Entrant_SwapLanes: TAction;
     EventRpt1: TMenuItem;
     EventWidgets: TRelativePanel;
@@ -303,18 +302,18 @@ type
     procedure ActionManager1Update(Action: TBasicAction; var Handled: boolean);
     procedure btnClearSearchClick(Sender: TObject);
     procedure clistCheckBoxClick(Sender: TObject);
-    procedure Entrant_EmptyLaneExecute(Sender: TObject);
-    procedure Entrant_EmptyLaneUpdate(Sender: TObject);
+    procedure IndvTeam_EmptyLaneExecute(Sender: TObject);
+    procedure IndvTeam_EmptyLaneUpdate(Sender: TObject);
     procedure Entrant_GotoMemberDetailsExecute(Sender: TObject);
     procedure Entrant_GotoMemberDetailsUpdate(Sender: TObject);
     procedure Entrant_MoveDownExecute(Sender: TObject);
     procedure Entrant_MoveDownUpdate(Sender: TObject);
     procedure Entrant_MoveUpExecute(Sender: TObject);
     procedure Entrant_MoveUpUpdate(Sender: TObject);
-    procedure Entrant_SortExecute(Sender: TObject);
-    procedure Entrant_SortUpdate(Sender: TObject);
-    procedure Entrant_StrikeExecute(Sender: TObject);
-    procedure Entrant_StrikeUpdate(Sender: TObject);
+    procedure IndvTeam_RenumberExecute(Sender: TObject);
+    procedure IndvTeam_RenumberUpdate(Sender: TObject);
+    procedure IndvTeam_StrikeExecute(Sender: TObject);
+    procedure IndvTeam_StrikeUpdate(Sender: TObject);
     procedure Entrant_SwapLanesExecute(Sender: TObject);
     procedure Entrant_SwapLanesUpdate(Sender: TObject);
     procedure Event_AutoScheduleExecute(Sender: TObject);
@@ -668,9 +667,8 @@ end;
 // end;
 // end;
 
-procedure TMain.Entrant_EmptyLaneExecute(Sender: TObject);
+procedure TMain.IndvTeam_EmptyLaneExecute(Sender: TObject);
 var
-  success: boolean;
   rtnValue: integer;
 begin
   // ...Update traps illegal calls.
@@ -678,26 +676,14 @@ begin
     0, mbYes);
   if (rtnValue = mrYes) then
   begin
-    // Generic routine for INDV and TEAM
-    success := SCM.EmptyLane;
-    if not success then
-      beep;
+    if SCM.Event_IsINDV then
+      INDV.ClearLane
+    else if SCM.Event_IsTEAM then
+      TEAM.ClearLane;
   end;
-
-  if SCM.Event_IsINDV then
-  begin
-  if INDV.Grid.CanFocus then
-    INDV.Grid.SetFocus;
-  end
-  else
-  begin
-  if TEAM.Grid.CanFocus then
-    TEAM.Grid.SetFocus;
-  end;
-
 end;
 
-procedure TMain.Entrant_EmptyLaneUpdate(Sender: TObject);
+procedure TMain.IndvTeam_EmptyLaneUpdate(Sender: TObject);
 var
   DoEnable: boolean;
 begin
@@ -709,9 +695,16 @@ begin
       if not SCM.dsHeat.DataSet.IsEmpty then
         // is the current heat closed?
         if not SCM.Heat_IsClosed then
-          // is there any entrants?
-          if not SCM.dsEntrant.DataSet.IsEmpty then
-            DoEnable := true;
+        begin
+          if SCM.Event_IsINDV then
+          begin
+            if not SCM.dsEntrant.DataSet.IsEmpty then DoEnable := true;
+          end
+          else if SCM.Event_IsTEAM then
+          begin
+            if not SCM.dsTeam.DataSet.IsEmpty then DoEnable := true;
+          end;
+        end;
   TAction(Sender).Enabled := DoEnable;
 end;
 
@@ -850,39 +843,16 @@ begin
   end;
 end;
 
-procedure TMain.Entrant_SortExecute(Sender: TObject);
+procedure TMain.IndvTeam_RenumberExecute(Sender: TObject);
 var
-  HeatID, EntrantID: integer;
+  aHeatID,rows: integer;
 begin
-  if SCM.Event_IsINDV then
-  begin
-    {TODO -oBSA -cGeneral : Routine should be placed in data module...}
-    with SCM.dsEntrant.DataSet do
-    begin
-      DisableControls;
-      // needed to cue-to-entrant
-      EntrantID := FieldByName('EntrantID').AsInteger;
-      // the heat to pad
-      HeatID := FieldByName('HeatID').AsInteger;
-      SCM.Entrant_PadWithEmptyLanes(HeatID);
-      SCM.Lane_RenumberLanes(HeatID, false); // force renumber
-      // sort
-      if (SCM.Entrant_Sort(HeatID)) then
-      begin
-        Refresh;
-        // go cue-to-entrant
-        SCM.Entrant_Locate(EntrantID);
-      end;
-      EnableControls;
-    end;
-  end
-  else
-  begin
-    {TODO -oBSA -cGeneral : SortExecute Event_IsTEAM....}
-  end;
+  aHeatID := SCM.dsHeat.DataSet.FieldByName('Heat').AsInteger;
+  rows := SCM.Lane_RenumberLanes(aHeatID);
+  if rows > 0 then Refresh; {TODO -oBSA -cGeneral : TEST}
 end;
 
-procedure TMain.Entrant_SortUpdate(Sender: TObject);
+procedure TMain.IndvTeam_RenumberUpdate(Sender: TObject);
 var
   DoEnable: boolean;
 begin
@@ -900,9 +870,8 @@ begin
   TAction(Sender).Enabled := DoEnable;
 end;
 
-procedure TMain.Entrant_StrikeExecute(Sender: TObject);
+procedure TMain.IndvTeam_StrikeExecute(Sender: TObject);
 var
-  success: boolean;
   rtnValue: integer;
 begin
   // ...Update traps illegal calls.
@@ -910,24 +879,14 @@ begin
     mtConfirmation, [mbNo, mbYes], 0, mbYes);
   if (rtnValue = mrYes) then
   begin
-    success := SCM.StrikeLane;
-    if not success then
-      beep;
-  end;
-
-  if SCM.Event_IsINDV then
-  begin
-  if INDV.Grid.CanFocus then
-    INDV.Grid.SetFocus;
-  end
-  else
-  begin
-  if TEAM.Grid.CanFocus then
-    TEAM.Grid.SetFocus;
+    if SCM.Event_IsINDV then
+      INDV.StrikeLane
+    else if SCM.Event_IsTEAM then
+      TEAM.StrikeLane;
   end;
 end;
 
-procedure TMain.Entrant_StrikeUpdate(Sender: TObject);
+procedure TMain.IndvTeam_StrikeUpdate(Sender: TObject);
 var
   DoEnable: boolean;
 begin
@@ -2510,7 +2469,7 @@ begin
   // -----------------------------------------------------------------
   if (results = mrYes) then
   begin
-    SCM.Heat_DeleteExclude(SCM.dsHeat.DataSet.FieldByName('HeatID').AsInteger, false);
+    SCM.Heat_Delete(SCM.dsHeat.DataSet.FieldByName('HeatID').AsInteger, false);
     Refresh_Heat();
     ToggleVisibileTabSheet3;
   end;

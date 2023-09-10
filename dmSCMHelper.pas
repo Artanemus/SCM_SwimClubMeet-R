@@ -13,7 +13,7 @@ type
       H E A T .
     }
     function Heat_ClearLanes(aHeatID: integer;  DoExclude: Boolean = true): integer;
-
+    function Heat_Delete(aHeatID: integer;  DoExclude: Boolean = true): integer;
     {
       I n d v T e a m .
       RTNs MemberID in ENTRANT OR TEAMENTRANT tables.
@@ -27,7 +27,7 @@ type
       DoExclude: Boolean = true): integer;
     function IndvTeam_DeleteLane(aIndvTeamID: integer; aEventType: TEventType;
       DoExclude: Boolean = true): integer;
-
+    function IndvTeam_LocateLane(aIndvTeamID: integer; aEventType: TEventType): Boolean;
     {
       G E N E R I C     F U N C T I O N S .
       Finds the TEventType of the heat'
@@ -51,6 +51,14 @@ type
       : integer;
     function Lane_SortLanes(aHeatID: integer; DoExclude: Boolean = true): integer;
     function Lane_TrimLanes(aHeatID: integer; DoExclude: Boolean = true): integer;
+
+    // Checks if the heat has race data. Displays prompt. Use on Heat_ClearLanes
+    function PassOnRaceTimes(aHeatID: integer): boolean;
+
+    function TeamEntrant_Clear(aTeamEntrantID: integer; DoExclude: Boolean = true): integer;
+    function TeamEntrant_Strike(aTeamEntrantID: integer; DoExclude: Boolean = true): integer;
+
+
     {
        N O M I N A T I O N S .
        Alternative to dmSCMNom class functions.
@@ -79,7 +87,6 @@ implementation
 function TSCMHelper.Heat_ClearLanes(aHeatID: integer;
   DoExclude: Boolean = true): integer;
 var
-  qry: TFDQuery;
   aHeatStatusID: integer;
 begin
   result := 0;
@@ -89,10 +96,25 @@ begin
   aHeatStatusID := Heat_HeatStatusID(aHeatID);
   if (aHeatStatusID = 1) or (DoExclude = false) then
   begin
-    if PassedOnRaceTimes(aHeatID) then
+    if PassOnRaceTimes(aHeatID) then
       ClearLanes(aHeatID);
   end;
+end;
 
+function TSCMHelper.Heat_Delete(aHeatID: integer; DoExclude: Boolean): integer;
+var
+  aHeatStatusID: integer;
+begin
+  result := 0;
+  if not SCMActive then exit;
+  if aHeatID = 0 then exit;
+  if Heat_SessionIsLocked(aHeatID) then exit;
+  aHeatStatusID := Heat_HeatStatusID(aHeatID);
+  if (aHeatStatusID = 1) or (DoExclude = false) then
+  begin
+    if PassOnRaceTimes(aHeatID) then
+      DeleteHeat(aHeatID);
+  end;
 end;
 
 function TSCMHelper.IndvTeam_ClearLane(aIndvTeamID: integer; aEventType: TEventType;
@@ -180,6 +202,12 @@ begin
     v := scmConnection.ExecSQLScalar(SQL, [aIndvTeamID]);
     if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
   end;
+end;
+
+function TSCMHelper.IndvTeam_LocateLane(aIndvTeamID: integer;
+  aEventType: TEventType): Boolean;
+begin
+  result := LocateLane(aIndvTeamID,aEventType);
 end;
 
 function TSCMHelper.IndvTeam_StrikeLane(aIndvTeamID: integer; aEventType: TEventType;
@@ -377,7 +405,6 @@ var
   rows: integer;
 begin
   result := 0;
-  rows := 0;
   if not SCMActive then exit;
   if Event_SessionIsLocked(aEventID) then exit;
   // If the nominee was given a lane - remove swimmer from lane.
@@ -583,6 +610,75 @@ begin
     result := rows;
   end;
 
+end;
+
+function TSCMHelper.PassOnRaceTimes(aHeatID: integer): Boolean;
+var
+  SQL: string;
+  v: variant;
+  aEventType: TEventType;
+  rtnValue: TModalResult;
+begin
+  result := false;
+  aEventType := Heat_EventType(aHeatID);
+  if aEventType = etUnknown then exit;
+
+  if aEventType = etINDV then
+      SQL := 'SELECT Count(RaceTime) FROM HeatIndividual ' +
+      'INNER JOIN Entrant ON HeatIndividual.HeatID = Entrant.HeatID' +
+      'WHERE HeatIndividual.HeatID = :ID AND RaceTime IS NOT NULL AND' +
+      '(CAST(CAST(Entrant.TimeToBeat AS DATETIME) AS FLOAT) > 0)'
+  else SQL := 'SELECT Count(RaceTime) FROM HeatIndividual ' +
+      'INNER JOIN Team ON HeatIndividual.HeatID = Team.HeatID' +
+      'WHERE HeatIndividual.HeatID = :ID AND RaceTime IS NOT NULL AND' +
+      '(CAST(CAST(Team.TimeToBeat AS DATETIME) AS FLOAT) > 0)';
+
+  v := scmConnection.ExecSQLScalar(SQL, [aHeatID]);
+  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
+  begin
+    rtnValue := MessageDlg('WARNING: This heat contains RACE DATA.' +
+      sLineBreak +
+      'Racetimes and entrant data will be lost if you delete this heat.' +
+      sLineBreak + 'Do you wish to delete the heat?', mtWarning,
+      [mbYes, mbNo], 0, mbNo);
+
+    // DON'T USE (results == mrNo) as it doesn't account for VK_ESCAPE.
+    // mrCancel=2 mrNo=7 mrYes=6
+    if (rtnValue <> mrYes) then exit;
+  end;
+  result := true;
+end;
+
+function TSCMHelper.TeamEntrant_Clear(aTeamEntrantID: integer;
+  DoExclude: Boolean): integer;
+var
+  aHeatStatusID: integer;
+begin
+  result := 0;
+  if not SCMActive then exit;
+  if aTeamEntrantID = 0 then exit;
+  if TeamEntrant_SessionIsLocked(aTeamEntrantID) then exit;
+  aHeatStatusID := TeamEntrant_HeatStatusID(aTeamEntrantID);
+  if (aHeatStatusID = 1) or (DoExclude = false) then
+  begin
+//    result := ClearTeamEntrant(aHeatID);
+  end;
+end;
+
+function TSCMHelper.TeamEntrant_Strike(aTeamEntrantID: integer;
+  DoExclude: Boolean): integer;
+var
+  aHeatStatusID: integer;
+begin
+  result := 0;
+  if not SCMActive then exit;
+  if aTeamEntrantID = 0 then exit;
+  if TeamEntrant_SessionIsLocked(aTeamEntrantID) then exit;
+  aHeatStatusID := TeamEntrant_HeatStatusID(aTeamEntrantID);
+  if (aHeatStatusID = 1) or (DoExclude = false) then
+  begin
+//    result := StrikeTeamEntrant(aHeatID);
+  end;
 end;
 
 end.

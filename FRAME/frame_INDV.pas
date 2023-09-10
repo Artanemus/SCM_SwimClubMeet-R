@@ -38,13 +38,17 @@ type
     procedure GridMoveDown(Sender: TObject);
     procedure GridMoveUp(Sender: TObject);
     procedure ToggleDCode(DoEnable: boolean);
+    function ClearLane(): boolean;
+    function StrikeLane(): integer;
+    function RenumberLanes(): integer;
   end;
 
 implementation
 
 {$R *.dfm}
 
-uses dlgEntrantPickerCTRL, dlgEntrantPicker, dlgDCodePicker, System.UITypes;
+uses dlgEntrantPickerCTRL, dlgEntrantPicker, dlgDCodePicker, System.UITypes,
+  dmSCMHelper;
 
 procedure TframeINDV.AfterConstruction;
 var
@@ -170,6 +174,17 @@ begin
     g.Canvas.LineTo(iPos + (iFactor * 8), MyRect.Top + 5);
   end;
 
+end;
+
+function TframeINDV.ClearLane: boolean;
+var
+aEntrantID, rows: integer;
+begin
+  result := false;
+  aEntrantID := Grid.DataSource.DataSet.FieldByName('EntrantID').AsInteger;
+  rows := SCM.IndvTeam_ClearLane(aEntrantID, etINDV);
+  if rows > 0 then result := true;
+  if Grid.CanFocus then Grid.SetFocus;
 end;
 
 procedure TframeINDV.Enable_GridEllipse;
@@ -327,7 +342,7 @@ begin
     if IsPositiveResult(rtnValue) then
     begin
       SCM.dsEntrant.DataSet.Refresh;
-      SCM.Entrant_Locate(EntrantID);
+      SCM.IndvTeam_Locatelane(EntrantID, etINDV);
     end;
   end
   // handle the ellipse entrant
@@ -357,7 +372,7 @@ begin
     if passed and IsPositiveResult(rtnValue) then
     begin
       SCM.dsEntrant.DataSet.Refresh;
-      SCM.Entrant_Locate(EntrantID);
+      SCM.IndvTeam_LocateLane(EntrantID, etINDV);
     end;
 
   end;
@@ -571,6 +586,24 @@ begin
     success := SCM.MoveUpLane(Grid.DataSource.DataSet);
   if not success then
     beep;
+end;
+
+function TframeINDV.RenumberLanes: integer;
+var
+aHeatID: integer;
+begin
+  aHeatID := Grid.DataSource.DataSet.FieldByName('HeatID').AsInteger;
+  result := SCM.Lane_RenumberLanes(aHeatID);
+  if Grid.CanFocus then Grid.SetFocus;
+end;
+
+function TframeINDV.StrikeLane: integer;
+var
+aEntrantID: integer;
+begin
+  aEntrantID := Grid.DataSource.DataSet.FieldByName('EntrantID').AsInteger;
+  result := SCM.IndvTeam_StrikeLane(aEntrantID, etINDV);
+  if Grid.CanFocus then Grid.SetFocus;
 end;
 
 procedure TframeINDV.ToggleDCode(DoEnable: boolean);
