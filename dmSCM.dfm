@@ -847,70 +847,6 @@ object SCM: TSCM
     Left = 224
     Top = 96
   end
-  object qrySortHeat: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    IndexFieldNames = 'SORTORDER;TimeToBeat'
-    Connection = scmConnection
-    UpdateOptions.UpdateTableName = 'SwimClubMeet..Entrant'
-    UpdateOptions.KeyFields = 'EntrantID'
-    SQL.Strings = (
-      'SELECT'
-      '  Entrant.TimeToBeat,'
-      ''
-      '  CASE WHEN '
-      '     (CAST(CAST(Entrant.TimeToBeat AS DATETIME) AS FLOAT) = 0)'
-      '     THEN 1 ELSE 0 END AS SORTORDER, '
-      ''
-      '  Entrant.HeatID,'
-      '  Entrant.MemberID,'
-      '  Entrant.Lane,'
-      'Entrant.EntrantID'
-      'FROM'
-      '  Entrant'
-      'WHERE'
-      '  Entrant.MemberID IS NOT NULL'
-      '  AND Entrant.HeatID = :HEATID'
-      ''
-      '  ORDER BY SORTORDER, TimeToBeat')
-    Left = 1016
-    Top = 216
-    ParamData = <
-      item
-        Name = 'HEATID'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = 82
-      end>
-  end
-  object qrySortHeat_EmptyLanes: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    IndexFieldNames = 'TimeToBeat;HeatID'
-    Connection = scmConnection
-    UpdateOptions.UpdateTableName = 'SwimClubMeet..Entrant'
-    UpdateOptions.KeyFields = 'EntrantID'
-    SQL.Strings = (
-      'SELECT'
-      '  Entrant.TimeToBeat,'
-      '  Entrant.HeatID,'
-      '  Entrant.MemberID,'
-      '  Entrant.Lane,'
-      'Entrant.EntrantID'
-      'FROM'
-      '  Entrant'
-      'WHERE'
-      '  Entrant.MemberID IS NULL AND'
-      '  Entrant.HeatID = :HEATID'
-      '  ORDER BY TimeToBeat')
-    Left = 1016
-    Top = 272
-    ParamData = <
-      item
-        Name = 'HEATID'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = 82
-      end>
-  end
   object qryContactNum: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     Indexes = <
@@ -986,64 +922,6 @@ object SCM: TSCM
     DataSet = qryNominee
     Left = 312
     Top = 256
-  end
-  object qrySessionNomineeCount: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    Connection = scmConnection
-    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
-    UpdateOptions.EnableDelete = False
-    UpdateOptions.EnableInsert = False
-    UpdateOptions.EnableUpdate = False
-    SQL.Strings = (
-      'USE SwimClubMeet'
-      ''
-      'DECLARE @SessionID AS INT;'
-      'SET @SessionID = :SESSIONID;'
-      ''
-      ''
-      'SELECT'
-      '  dbo.SessionNomineeCount(@SessionID) AS SessionNomineeCount'
-      'FROM'
-      '    Session'
-      'WHERE Session.SessionID = @SessionID')
-    Left = 832
-    Top = 808
-    ParamData = <
-      item
-        Name = 'SESSIONID'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = 30
-      end>
-  end
-  object qrySessionEntrantCount: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    Connection = scmConnection
-    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
-    UpdateOptions.EnableDelete = False
-    UpdateOptions.EnableInsert = False
-    UpdateOptions.EnableUpdate = False
-    SQL.Strings = (
-      'USE SwimClubMeet'
-      ''
-      'DECLARE @SessionID AS INT;'
-      'SET @SessionID = :SESSIONID;'
-      ''
-      ''
-      'SELECT'
-      '  dbo.SessionEntrantCount(@SessionID) AS SessionEntrantCount'
-      'FROM'
-      '    Session'
-      'WHERE Session.SessionID = @SessionID')
-    Left = 832
-    Top = 864
-    ParamData = <
-      item
-        Name = 'SESSIONID'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = 30
-      end>
   end
   object qryCountHeatsNotClosed: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -2286,70 +2164,6 @@ object SCM: TSCM
     DataSet = qryTeamEntrant
     Left = 288
     Top = 472
-  end
-  object qrySortHeatTeam: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    IndexFieldNames = 'SORTORDER;TimeToBeat'
-    Connection = scmConnection
-    UpdateOptions.UpdateTableName = 'SwimClubMeet..Entrant'
-    UpdateOptions.KeyFields = 'EntrantID'
-    SQL.Strings = (
-      'SELECT'
-      '  Team.TimeToBeat,'
-      ''
-      '  CASE WHEN '
-      '     (CAST(CAST(Team.TimeToBeat AS DATETIME) AS FLOAT) = 0)'
-      '     THEN 1 ELSE 0 END AS SORTORDER, '
-      ''
-      '  Team.HeatID,'
-      '  Team.TeamNameID,'
-      '  Team.Lane,'
-      'Team.TeamID'
-      'FROM'
-      '  Team'
-      'WHERE'
-      '  Team.TeamNameID IS NOT NULL'
-      '  AND Team.HeatID = :HEATID'
-      ''
-      '  ORDER BY SORTORDER, TimeToBeat')
-    Left = 1016
-    Top = 136
-    ParamData = <
-      item
-        Name = 'HEATID'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = 82
-      end>
-  end
-  object qrySortHeatTeam_EmptyLanes: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    IndexFieldNames = 'TimeToBeat;HeatID'
-    Connection = scmConnection
-    UpdateOptions.UpdateTableName = 'SwimClubMeet..Entrant'
-    UpdateOptions.KeyFields = 'EntrantID'
-    SQL.Strings = (
-      'SELECT'
-      '  Team.TimeToBeat,'
-      '  Team.HeatID,'
-      '  Team.TeamNameID,'
-      '  Team.Lane,'
-      'Team.TeamID'
-      'FROM'
-      '  Team'
-      'WHERE'
-      '  Team.TeamNameID IS NULL AND'
-      '  Team.HeatID = :HEATID'
-      '  ORDER BY TimeToBeat')
-    Left = 1016
-    Top = 88
-    ParamData = <
-      item
-        Name = 'HEATID'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = 82
-      end>
   end
   object qrySplit: TFDQuery
     ActiveStoredUsage = [auDesignTime]

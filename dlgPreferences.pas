@@ -96,7 +96,7 @@ type
     FConnection: TFDConnection;
     procedure WritePreferences(IniFileName: string);
     procedure ReadPreferences(IniFileName: string);
-    procedure AssignClubLogoToImage(AImage: TImage); //--
+//    procedure AssignClubLogoToImage(AImage: TImage); //--
     procedure AssignDTtoStartOfSwimSeason();
     procedure AssignStartOfSwimSeasonToDT();
 
@@ -116,7 +116,7 @@ implementation
 uses SCMUtility, IniFiles, Imaging.jpeg, Imaging.pngimage, System.UITypes;
 
 { TPreferences }
-
+{
 procedure TPreferences.AssignClubLogoToImage(AImage: TImage);
 var
   Stream: TStream;
@@ -201,7 +201,7 @@ begin
     end;
   end;
 end;
-
+}
 procedure TPreferences.AssignDTtoStartOfSwimSeason;
 begin
   if (Assigned(FConnection) and (qrySwimClub.Active)) then

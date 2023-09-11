@@ -85,7 +85,7 @@ type
 
     procedure setPreviewCntrl(const Value: TfrxPreview);
     procedure setEndlessHeight(report: TfrxReport; IsEndless: Boolean);
-    procedure CloseAllQry();  //--
+//    procedure CloseAllQry();  //--
     procedure ReadPreferences(iniFileName: string);
     procedure AssignRangeValues(var DTStart: TDateTime; var DTEnd: TDateTime);
     function GetConnection: TFDConnection;
@@ -124,7 +124,7 @@ implementation
 uses
   vcl.Forms, System.IniFiles, System.DateUtils, vcl.Dialogs, SCMUtility,
   System.UITypes;
-
+{
 procedure TRPTS.CloseAllQry;
 begin
   // HEADER
@@ -144,7 +144,7 @@ begin
   qrySessREL.Close;
 
 end;
-
+}
 procedure TRPTS.DataModuleCreate(Sender: TObject);
 begin
   // I N I T I A L I Z E   P A R A M S  .

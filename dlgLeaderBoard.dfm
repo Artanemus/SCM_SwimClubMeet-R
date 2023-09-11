@@ -2,8 +2,8 @@ object LeaderBoard: TLeaderBoard
   Left = 0
   Top = 0
   Caption = 'LeaderBoard'
-  ClientHeight = 971
-  ClientWidth = 1472
+  ClientHeight = 970
+  ClientWidth = 1468
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,8 +19,8 @@ object LeaderBoard: TLeaderBoard
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 1472
-    Height = 937
+    Width = 1468
+    Height = 936
     ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
@@ -269,7 +269,7 @@ object LeaderBoard: TLeaderBoard
       object RelativePanel1: TRelativePanel
         Left = 0
         Top = 0
-        Width = 1468
+        Width = 1464
         Height = 57
         ControlCollection = <
           item
@@ -351,11 +351,12 @@ object LeaderBoard: TLeaderBoard
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 0
+        ExplicitWidth = 1468
         DesignSize = (
-          1464
+          1460
           57)
         object DBtxtSwimClubCaption: TDBText
-          Left = 642
+          Left = 640
           Top = 5
           Width = 180
           Height = 21
@@ -371,7 +372,7 @@ object LeaderBoard: TLeaderBoard
           ParentFont = False
         end
         object DBtxtSwimClubNickName: TDBText
-          Left = 659
+          Left = 657
           Top = 28
           Width = 146
           Height = 17
@@ -396,7 +397,7 @@ object LeaderBoard: TLeaderBoard
           OnClick = spbGenericSPBtnClick
         end
         object spbExportPDF: TSpeedButton
-          Left = 1320
+          Left = 1316
           Top = 4
           Width = 48
           Height = 48
@@ -438,7 +439,7 @@ object LeaderBoard: TLeaderBoard
           OnClick = spbGenericSPBtnClick
         end
         object spbPrintReport: TSpeedButton
-          Left = 1368
+          Left = 1364
           Top = 4
           Width = 48
           Height = 48
@@ -450,7 +451,7 @@ object LeaderBoard: TLeaderBoard
           Flat = True
         end
         object sbtnRefresh: TSpeedButton
-          Left = 1416
+          Left = 1412
           Top = 4
           Width = 48
           Height = 48
@@ -465,8 +466,8 @@ object LeaderBoard: TLeaderBoard
       object frxPreview1: TfrxPreview
         Left = 0
         Top = 57
-        Width = 1464
-        Height = 848
+        Width = 1460
+        Height = 847
         Align = alClient
         BevelEdges = []
         BevelInner = bvNone
@@ -478,8 +479,8 @@ object LeaderBoard: TLeaderBoard
         FindFmVisible = False
         UseReportHints = True
         HideScrolls = False
-        ExplicitWidth = 1468
-        ExplicitHeight = 849
+        ExplicitWidth = 1464
+        ExplicitHeight = 848
       end
     end
     object TabSheet2: TTabSheet
@@ -527,8 +528,8 @@ object LeaderBoard: TLeaderBoard
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 937
-    Width = 1472
+    Top = 936
+    Width = 1468
     Height = 34
     Panels = <
       item

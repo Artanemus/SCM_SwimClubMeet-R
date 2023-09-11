@@ -113,7 +113,7 @@ begin
   end;
 
   // Calculate the fitness as the inverse of the standard deviation of the lane race times
-  Result := Mean(LaneRaceTimes);
+  //  Result := Mean(LaneRaceTimes);
   Result := StandardDeviation(LaneRaceTimes);
   if Result <> 0 then Result := 1 / Result else Result := MaxInt;
 end;

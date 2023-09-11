@@ -28,7 +28,7 @@ type
     fExportFileName: string;
     DoAbort: boolean;
 
-    function AssertConnection(): boolean;  //--
+//    function AssertConnection(): boolean;  //--
 
     function BuildExportFileName(RptType: scmRptType;
       SendToFileType: scmSendToFileType; EventNum, HeatNum: integer): string;
@@ -69,7 +69,7 @@ implementation
 uses rptTimeKeeperReportA, rptMarshallReportA, Data.DB, system.UITypes;
 
 { TBatchProgress }
-
+{
 function TBatchProgress.AssertConnection: boolean;
 begin
   result := false;
@@ -77,7 +77,7 @@ begin
     if SCM.SCMActive then
       result := true;
 end;
-
+}
 function TBatchProgress.BatchPrint(RptType: scmRptType;
   PrinterOrFolderName: String; var ErrCount: integer; SendToMode: scmSendToMode;
   SendToFileType: scmSendToFileType): boolean;

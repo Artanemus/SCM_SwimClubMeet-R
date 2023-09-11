@@ -122,8 +122,8 @@ type
 
     // TcmbxObj lookup value.
     function GetObjSessionID(): integer;
-    function GetObjSessionStart(): TDateTime;  //--
-    function GetObjSessionCaption(): string;   //--
+//    function GetObjSessionStart(): TDateTime;  //--
+//    function GetObjSessionCaption(): string;   //--
 
   public
     { Public declarations }
@@ -685,7 +685,7 @@ begin
     DBtxtStartOfSwimmingSeason.DataSource := dsLBHeader;
   end;
 end;
-
+{
 function TLeaderBoard.GetObjSessionCaption: string;
 var
   obj: TObject;
@@ -698,7 +698,7 @@ begin
       result := TcmbxObj(obj).Caption;
   end;
 end;
-
+}
 function TLeaderBoard.GetObjSessionID: integer;
 var
   obj: TObject;
@@ -711,7 +711,7 @@ begin
       result := TcmbxObj(obj).SessionID;
   end;
 end;
-
+{
 function TLeaderBoard.GetObjSessionStart: TDateTime;
 var
   obj: TObject;
@@ -724,7 +724,7 @@ begin
       result := TcmbxObj(obj).SessionStart;
   end;
 end;
-
+}
 procedure TLeaderBoard.WritePreferences(iniFileName: string);
 var
   iFile: TIniFile;

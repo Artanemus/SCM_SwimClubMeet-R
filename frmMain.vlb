@@ -133,9 +133,6 @@ Coordinates=1534,221,85,36
 [MoveUp2]
 Coordinates=1534,276,69,36
 
-[SCM.qrySessionNomineeCount]
-Coordinates=868,632,196,58
-
 [SCM.dsEvent]
 Coordinates=40,418,93,36
 
@@ -180,9 +177,6 @@ Coordinates=360,632,60,58
 
 [Event_MoveDown]
 Coordinates=1534,771,118,36
-
-[SCM.qrySessionEntrantCount]
-Coordinates=1420,709,186,58
 
 [SCM.qrySession]
 Coordinates=10,429,110,212
@@ -482,9 +476,6 @@ Coordinates=2036,1211,114,36
 [SwapLanes1]
 Coordinates=2036,1321,88,36
 
-[SCM.qrySortHeat_EmptyLanes]
-Coordinates=10,632,193,58
-
 [oggleSessionStatus1]
 Coordinates=2036,1376,135,36
 
@@ -627,9 +618,6 @@ Coordinates=943,1135,139,36
 
 [SCM.luSessionStatus]
 Coordinates=1098,1,139,36
-
-[SCM.qrySortHeat]
-Coordinates=104,786,115,58
 
 [SCM.luHouse]
 Coordinates=1304,309,94,36
@@ -948,4 +936,7 @@ Coordinates=2272,221,96,36
 
 [IndvTeam_Renumber]
 Coordinates=2036,441,123,36
+
+[SCM.]
+Coordinates=10,632,193,58
 

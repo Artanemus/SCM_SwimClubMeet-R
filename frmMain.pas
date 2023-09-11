@@ -3555,7 +3555,7 @@ begin
   // TEAM
   Refresh_Team;
   // TEAMENTRANT
-  Refresh_Team;
+  Refresh_TeamEntrant;
   SCM.dsSession.DataSet.EnableControls;
   SCM.dsEvent.DataSet.EnableControls;
   SCM.dsHeat.DataSet.EnableControls;
@@ -3971,8 +3971,7 @@ begin
   dlg.SessionMode := smNewSession;
   if IsPositiveResult(dlg.ShowModal) then
   begin
-    SCM.dsSession.DataSet.Refresh;
-    // Requery, Sort.
+    SCM.dsSession.DataSet.Refresh; // Requery, Sort.
     SCM.Session_Locate(dlg.SessionID); // CUE-TO NEW session.
     PostMessage(self.Handle, SCM_EVENTASSERTSTATE, 0, 0);
   end;

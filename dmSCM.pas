@@ -126,17 +126,11 @@ type
     qrySession: TFDQuery;
     qrySessionCaption: TWideStringField;
     qrySessionClosedDT: TSQLTimeStampField;
-    qrySessionEntrantCount: TFDQuery;
-    qrySessionNomineeCount: TFDQuery;
     qrySessionSessionID: TFDAutoIncField;
     qrySessionSessionStart: TSQLTimeStampField;
     qrySessionSessionStatusID: TIntegerField;
     qrySessionStatus: TWideStringField;
     qrySessionSwimClubID: TIntegerField;
-    qrySortHeat: TFDQuery;
-    qrySortHeatTeam: TFDQuery;
-    qrySortHeatTeam_EmptyLanes: TFDQuery;
-    qrySortHeat_EmptyLanes: TFDQuery;
     qrySplit: TFDQuery;
     qrySplitEntrantID: TIntegerField;
     qrySplitSplitID: TFDAutoIncField;
@@ -832,20 +826,18 @@ end;
 
 function TSCM.Event_AllHeatsAreClosed(aEventID: integer): Boolean;
 var
-  i: integer;
+  SQL: string;
+  v: variant;
 begin
   result := false;
   if not fSCMActive then exit;
-  qryCountHeatsNotClosed.Close;
-  qryCountHeatsNotClosed.ParamByName('EVENTID').AsInteger := aEventID;
-  qryCountHeatsNotClosed.Prepare;
-  qryCountHeatsNotClosed.Open;
-  if (qryCountHeatsNotClosed.Active) then
-  begin
-    i := qryCountHeatsNotClosed.FieldByName('CountStatus').AsInteger;
-    if (i = 0) then result := true;
-  end;
-  qryCountHeatsNotClosed.Close;
+  if aEventID = 0 then exit;
+  if Event_GetHeatCount(aEventID) = 0 then exit;  // NO HEATS.
+  SQL := 'SELECT COUNT(HeatStatusID) FROM SwimClubMeet.dbo.HeatIndividual ' +
+    'WHERE (EventID = :ID ) AND (HeatStatusID < 3)';
+  v := scmConnection.ExecSQLScalar(SQL, [aEventID]);
+  if not VarIsNull(v) and not VarIsEmpty(v) then
+    if v = 0 then result := true;
 end;
 
 function TSCM.Event_DeleteExclude(aEventID: integer;
@@ -973,7 +965,7 @@ var
   SQL: string;
   v: variant;
 begin
-  result := false; // DEFAULT - no closed heats
+  result := false;
   if not fSCMActive then exit;
   // count the closed heats.
   SQL := 'SELECT Count([HeatIndividual].[HeatID]) FROM [SwimClubMeet].[dbo].[Event] '
@@ -988,9 +980,9 @@ var
   SQL: string;
   v: variant;
 begin
-  result := false; // DEFAULT - not safe
+  result := false;
   if not fSCMActive then exit;
-  // count the heats closed or raced.
+  if not Event_HasHeats(aEventID) then exit;
   SQL := ' SELECT Count([HeatIndividual].[HeatID]) FROM [SwimClubMeet].[dbo].[Event] '
     + 'INNER JOIN HeatIndividual ON Event.EventID = HeatIndividual.EventID ' +
     'WHERE Event.EventID = :ID AND (HeatIndividual.HeatStatusID > 1) ';
@@ -2695,75 +2687,47 @@ begin
 end;
 
 function TSCM.Session_GetEntrantCount(aSessionID: integer): integer;
+var
+  SQL: string;
+  v: variant;
 begin
   result := 0;
   if not fSCMActive then exit;
-  if (aSessionID > 0) then
-  begin
-    qrySessionEntrantCount.Close;
-    qrySessionEntrantCount.ParamByName('SESSIONID').AsInteger := aSessionID;
-    qrySessionEntrantCount.Prepare;
-    qrySessionEntrantCount.Open;
-    if qrySessionEntrantCount.Active then
-    begin
-      if not qrySessionEntrantCount.IsEmpty then
-      begin
-        result := qrySessionEntrantCount.FieldByName('SessionEntrantCount')
-          .AsInteger;
-      end;
-    end;
-    qrySessionEntrantCount.Close;
-  end;
+  if aSessionID = 0 then exit;
+  SQL := 'SELECT dbo.SessionEntrantCount(:ID1) ' +
+    'FROM SwimClubMeet.dbo.Session WHERE Session.SessionID = :ID2';
+  v := scmConnection.ExecSQLScalar(SQL, [aSessionID, aSessionID]);
+  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
 end;
 
 function TSCM.Session_GetNomineeCount(aSessionID: integer): integer;
+var
+  SQL: string;
+  v: variant;
 begin
   result := 0;
   if not fSCMActive then exit;
-  if (aSessionID > 0) then
-  begin
-    qrySessionNomineeCount.Close;
-    qrySessionNomineeCount.ParamByName('SESSIONID').AsInteger := aSessionID;
-    qrySessionNomineeCount.Prepare;
-    qrySessionNomineeCount.Open;
-    if (qrySessionNomineeCount.Active) then
-    begin
-      if not(qrySessionNomineeCount.IsEmpty) then
-          result := qrySessionNomineeCount.FieldByName('SessionNomineeCount')
-          .AsInteger;
-    end;
-    qrySessionNomineeCount.Close;
-  end;
-
+  if aSessionID = 0 then exit;
+  SQL := 'SELECT dbo.SessionNomineeCount(:ID1) ' +
+        'FROM SwimClubMeet.dbo.Session WHERE Session.SessionID = :ID2';
+  v := scmConnection.ExecSQLScalar(SQL, [aSessionID, aSessionID]);
+  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
 end;
 
 function TSCM.Session_HasClosedOrRacedHeats(aSessionID: integer): Boolean;
 var
-  qry: TFDQuery;
+  SQL: string;
+  v: variant;
 begin
   result := false;
   if not fSCMActive then exit;
-  qry := TFDQuery.Create(self);
-  qry.Connection := scmConnection;
-  qry.SQL.Text := 'SELECT [Event].EventID FROM  [SwimClubMeet].[dbo].[Session] '
-    + ' INNER JOIN [Event] ON [Session].SessionID = [Event].SessionID ' +
-    ' WHERE [Session].SessionID = ' + IntToStr(aSessionID);
-  qry.IndexFieldNames := 'EventID';
-  qry.Open;
-  if qry.Active then
-  begin
-    while not qry.Eof do
-    begin
-      if Event_HasClosedOrRacedHeats(qry.FieldByName('EventID').AsInteger) then
-      begin
-        result := true;
-        break;
-      end;
-      qry.Next;
-    end;
-  end;
-  qry.Close;
-  qry.Free;
+  if aSessionID = 0 then exit;
+  SQL := 'SELECT Count(HeatID) FROM  [SwimClubMeet].[dbo].[Session] ' +
+    'INNER JOIN [Event] ON [Session].SessionID = [Event].SessionID ' +
+    'INNER JOIN [HeatIndividual] ON [Event].EventID = [HeatIndividual].EventID '
+    + 'WHERE [HeatIndividual].HeatStatusID > 1 AND [Session].SessionID = :ID';
+  v := scmConnection.ExecSQLScalar(SQL, [aSessionID]);
+  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := true;
 end;
 
 function TSCM.Session_HasEvents(aSessionID: integer): Boolean;

@@ -27,7 +27,7 @@ type
   private
     { Private declarations }
 	procedure ReadPreferences(AIniFileName: string);
-	procedure WritePreferences(AiniFileName: string); //--
+//	procedure WritePreferences(AiniFileName: string); //--
   public
     { Public declarations }
     TypeOfEvent: scmEventFinalsType;
@@ -108,7 +108,7 @@ begin
 	spnSeedDepth.Value := (iFile.ReadInteger('Preferences', 'SeedDepth_finals', 3));
 	iFile.Free;
 end;
-
+{
 procedure TAutoBuild_Finals.WritePreferences(AIniFileName: string);
 var
 iFile: TIniFile;
@@ -122,5 +122,5 @@ begin
 	iFile.WriteInteger('Preferences', 'SeedDepth_finals',	spnSeedDepth.Value);
 	iFile.Free;
 end;
-
+}
 end.
