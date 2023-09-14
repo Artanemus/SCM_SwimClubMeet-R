@@ -104,7 +104,7 @@ implementation
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
 uses SCMUtility, System.Math, vcl.Dialogs, System.Variants, dmSCMNom, IniFiles,
-  vcl.StdCtrls, System.UITypes;
+  vcl.StdCtrls, System.UITypes, dmSCMHelper;
 
 {$R *.dfm}
 
@@ -585,7 +585,7 @@ begin
   if not DatasetHeat.IsEmpty then
   begin
     // EXCLUDE RACED OR CLOSED HEATS
-    SCM.Heat_DeleteALLExclude(EventID); // also renumbers heats.
+    SCM.Heat_DeleteAll(EventID, true); // also renumbers heats.
     // RenumberHeats(EventID);
   end;
 

@@ -3,57 +3,62 @@ object QualifyTimes: TQualifyTimes
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Qualification Times...'
-  ClientHeight = 679
-  ClientWidth = 617
+  ClientHeight = 768
+  ClientWidth = 724
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -13
+  Font.Height = -16
   Font.Name = 'Segoe UI'
   Font.Style = []
   Position = poOwnerFormCenter
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  TextHeight = 17
+  TextHeight = 21
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 617
-    Height = 638
+    Width = 724
+    Height = 727
     ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
+    ExplicitWidth = 617
+    ExplicitHeight = 638
     object TabSheet1: TTabSheet
       Caption = 'Setup'
       object DBGrid1: TDBGrid
         Left = 0
-        Top = 132
-        Width = 613
-        Height = 475
+        Top = 130
+        Width = 716
+        Height = 561
         Align = alClient
+        BorderStyle = bsNone
+        DataSource = DSQualify
         Options = [dgEditing, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
         TabOrder = 0
         TitleFont.Charset = DEFAULT_CHARSET
         TitleFont.Color = clWindowText
-        TitleFont.Height = -13
+        TitleFont.Height = -16
         TitleFont.Name = 'Segoe UI'
         TitleFont.Style = []
       end
       object Panel1: TPanel
         Left = 0
-        Top = 99
-        Width = 613
+        Top = 97
+        Width = 716
         Height = 33
         Align = alTop
         TabOrder = 1
-        ExplicitWidth = 609
+        ExplicitTop = 99
+        ExplicitWidth = 605
         DesignSize = (
-          609
+          716
           33)
         object Label3: TLabel
           Left = 4
           Top = 8
-          Width = 598
+          Width = 701
           Height = 19
           Alignment = taCenter
           Anchors = [akLeft, akTop, akRight]
@@ -71,52 +76,52 @@ object QualifyTimes: TQualifyTimes
       object Panel3: TPanel
         Left = 0
         Top = 0
-        Width = 609
-        Height = 99
+        Width = 716
+        Height = 97
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 2
         object Label4: TLabel
           Left = 26
-          Top = 25
-          Width = 64
-          Height = 51
+          Top = 7
+          Width = 65
+          Height = 84
           Alignment = taCenter
           Caption = 'The distance to QUALIFY.'
           WordWrap = True
         end
         object Label5: TLabel
-          Left = 200
-          Top = 25
-          Width = 51
-          Height = 51
+          Left = 266
+          Top = 26
+          Width = 60
+          Height = 63
           Alignment = taCenter
           Caption = 'The TRIAL distance.'
           WordWrap = True
         end
         object Label6: TLabel
-          Left = 346
-          Top = 25
-          Width = 88
-          Height = 68
+          Left = 450
+          Top = 26
+          Width = 135
+          Height = 126
           Alignment = taCenter
           Caption = 'The TIME the TRIAL distance must be completed in.'
           WordWrap = True
         end
         object Label7: TLabel
           Left = 112
-          Top = 41
-          Width = 59
-          Height = 34
+          Top = 47
+          Width = 75
+          Height = 42
           Alignment = taCenter
           Caption = 'Swimming Stroke'
           WordWrap = True
         end
         object Label8: TLabel
-          Left = 280
-          Top = 45
-          Width = 43
-          Height = 17
+          Left = 363
+          Top = 68
+          Width = 51
+          Height = 21
           Alignment = taCenter
           Caption = 'Gender'
           WordWrap = True
@@ -256,17 +261,19 @@ object QualifyTimes: TQualifyTimes
   end
   object Panel2: TPanel
     Left = 0
-    Top = 638
-    Width = 617
+    Top = 727
+    Width = 724
     Height = 41
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitTop = 637
+    ExplicitWidth = 613
     DesignSize = (
-      617
+      724
       41)
     object BtnClose: TButton
-      Left = 519
+      Left = 622
       Top = 6
       Width = 75
       Height = 25
@@ -274,11 +281,12 @@ object QualifyTimes: TQualifyTimes
       Caption = 'Close'
       TabOrder = 0
       OnClick = BtnCloseClick
-      ExplicitLeft = 523
+      ExplicitLeft = 511
     end
   end
   object qryQualify: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'QualifyID'
     Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Qualify'
@@ -401,6 +409,7 @@ object QualifyTimes: TQualifyTimes
   end
   object tblQDistance: TFDTable
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'DistanceID'
     Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Distance'
@@ -410,6 +419,7 @@ object QualifyTimes: TQualifyTimes
   end
   object tblStroke: TFDTable
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'StrokeID'
     Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Stroke'
@@ -419,6 +429,7 @@ object QualifyTimes: TQualifyTimes
   end
   object tblGender: TFDTable
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'GenderID'
     Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Gender'
@@ -428,6 +439,7 @@ object QualifyTimes: TQualifyTimes
   end
   object tblTDistance: TFDTable
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'DistanceID'
     Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Distance'

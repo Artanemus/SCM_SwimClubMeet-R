@@ -971,7 +971,7 @@ procedure TMain.Event_AssertStatusState(var Msg: TMessage);
 var
   AllClosed: boolean;
   bm: TBookmark;
-  i, currStatusID: integer;
+  aEventID, newEventStatusID: integer;
   fld: TField;
 begin
 
@@ -980,10 +980,10 @@ begin
   // Toggle EVENT_GRID EventStatusID.
   // If all the heats for the event have been closed then a tick is displayed
   // in the UI.
-  i := SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger;
-  if (i > 0) then
+  aEventID := SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger;
+  if (aEventID > 0) then
   begin
-    AllClosed := SCM.Event_AllHeatsAreClosed(i);
+    AllClosed := SCM.Event_AllHeatsAreClosed(aEventID);
     if (((AllClosed = true) and
       (SCM.dsEvent.DataSet.FieldByName('EventStatusID').AsInteger = 1)) or
       ((AllClosed = false) and (SCM.dsEvent.DataSet.FieldByName('EventStatusID')
@@ -991,15 +991,23 @@ begin
     begin
       SCM.dsEvent.DataSet.DisableControls;
       if AllClosed then
-        currStatusID := 2
+        newEventStatusID := 2
       else
-        currStatusID := 1;
+        newEventStatusID := 1;
       // only modify the record if required ...
       if (SCM.dsEvent.DataSet.FieldByName('EventStatusID').AsInteger <>
-        currStatusID) then
+        newEventStatusID) then
       begin
-        // bookmark the current record
         bm := SCM.dsEvent.DataSet.GetBookmark;
+
+        { ALTERNATIVE METHOD
+        if SCM.Event_SetEventStatusID(aEventID, newEventStatusID) then
+        begin
+          SCM.dsEvent.DataSet.Refresh;
+          SCM.Event_Locate(aEventID);
+        end;
+        }
+
         // 13.10.2020 SCM.qryEvent.EventStatusID is READ ONLY
         fld := SCM.dsEvent.DataSet.FindField('EventStatusID');
         if Assigned(fld) then
@@ -1007,7 +1015,7 @@ begin
         // go update the status of the event
         SCM.dsEvent.DataSet.Edit;
         SCM.dsEvent.DataSet.FieldByName('EventStatusID').AsInteger :=
-          currStatusID;
+          newEventStatusID;
         // 22.09.2020 TimeStamp event closed date.
         // posted by TMain::Heat_ToggleStatusExecute(TObject *Sender)
         // used by SCM_LeaderBoard application to auto-update it's view
@@ -1173,7 +1181,7 @@ begin
 
   if (rtnValue = mrYes) then
   begin
-    SCM.Event_DeleteExclude(SCM.Event_ID, false); // delete the current selected event.
+    SCM.Event_Delete(SCM.Event_ID, false); // delete the current selected event.
     Refresh_Event;
     ToggleVisibileTabSheet1;
   end;
@@ -2316,7 +2324,7 @@ begin
       end;
       // 2023.02.16
       // DELETE HEATS ...  For current event. Only open heats are deleted.
-      SCM.Heat_DeleteALLExclude(FieldByName('EventID').AsInteger);
+      SCM.Heat_DeleteALL(FieldByName('EventID').AsInteger, true);
       // QUICK TEST - Do we have NOMINEES?
       if not SCM.Event_HasNominees(FieldByName('EventID').AsInteger) then
       begin
@@ -3880,8 +3888,8 @@ begin
     if (rtnValue <> mrYes) then
       exit;
   end;
-  {  D E L E T E  }
-  SCM.Session_DeleteExclude(aSessionID, false);
+  {  D E L E T E  S E S S I O N   D O   N O T   E X C L U D E ! }
+  SCM.Session_Delete(aSessionID, false);
   // update the grid views
   SCM_RefreshExecute(self);
 end;

@@ -50,6 +50,7 @@ object Main: TMain
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 0
+          ExplicitHeight = 758
           object pnlSessLeftTop: TPanel
             Left = 0
             Top = 0
@@ -176,6 +177,7 @@ object Main: TMain
             Align = alRight
             BevelOuter = bvNone
             TabOrder = 2
+            ExplicitHeight = 738
             DesignSize = (
               60
               739)
@@ -290,6 +292,8 @@ object Main: TMain
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
+          ExplicitWidth = 673
+          ExplicitHeight = 758
           object pnlSessClientTop: TPanel
             Left = 0
             Top = 0
@@ -298,6 +302,7 @@ object Main: TMain
             Align = alTop
             BevelOuter = bvNone
             TabOrder = 0
+            ExplicitWidth = 673
             object lblSessionEventCaption: TLabel
               Left = 6
               Top = -3
@@ -314,6 +319,8 @@ object Main: TMain
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 1
+            ExplicitWidth = 673
+            ExplicitHeight = 738
             object vimgNoEventsMsg: TVirtualImage
               Left = 0
               Top = 0
@@ -486,6 +493,8 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 1
+              ExplicitLeft = 613
+              ExplicitHeight = 738
               DesignSize = (
                 60
                 739)
@@ -2356,6 +2365,7 @@ object Main: TMain
     Top = 0
     Width = 1414
     Height = 31
+    UseSystemFont = False
     ActionManager = ActionManager1
     Caption = 'ActionMainMenuBar1'
     Color = clMenuBar
@@ -2364,7 +2374,7 @@ object Main: TMain
     ColorMap.BtnSelectedFont = clBlack
     ColorMap.UnusedColor = clWhite
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
+    Font.Color = clBlack
     Font.Height = -16
     Font.Name = 'Segoe UI'
     Font.Style = []
