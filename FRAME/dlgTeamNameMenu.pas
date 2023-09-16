@@ -70,7 +70,7 @@ begin
   if rows > 0 then
   begin
     // return the TeamID;
-    SQL := 'SELECT IDENT_CURRENT(''dbo.TeamName'') AS ID';
+    SQL := 'SELECT IDENT_CURRENT(''dbo.TeamName'') AS aID';
     v := fConnection.ExecSQLScalar(SQL);
     if not VarIsNull(v) and not VarIsEmpty(v) then
       fTeamID := v;

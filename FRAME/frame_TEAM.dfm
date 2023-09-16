@@ -28,7 +28,7 @@ object frameTEAM: TframeTEAM
     BevelOuter = bvNone
     BorderWidth = 2
     Caption = 'Panel1'
-    Color = clMaroon
+    Color = clGray
     ParentBackground = False
     TabOrder = 0
     StyleElements = [seFont]
@@ -101,7 +101,7 @@ object frameTEAM: TframeTEAM
     BevelOuter = bvNone
     BorderWidth = 2
     Caption = 'Panel2'
-    Color = clMaroon
+    Color = clGray
     ParentBackground = False
     TabOrder = 1
     StyleElements = [seFont]

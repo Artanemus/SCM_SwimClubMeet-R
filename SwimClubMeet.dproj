@@ -395,6 +395,11 @@
         </DCCReference>
         <DCCReference Include="..\SCM_SHARED\SCMHelpers.pas"/>
         <DCCReference Include="dmSCMHelper.pas"/>
+        <DCCReference Include="REPORTS\rptQTNotQualified.pas">
+            <Form>QTNotQualified</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

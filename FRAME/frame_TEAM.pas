@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Data.DB,
-  Vcl.Grids, Vcl.DBGrids, Vcl.Themes, dmSCM;
+  Vcl.Grids, Vcl.DBGrids, Vcl.Themes, dmSCM, SCMHelpers;
 
 type
   TframeTEAM = class(TFrame)
@@ -31,9 +31,6 @@ type
     fTeamFontColor: TColor;
     fTeamActiveGrid: Integer;
     FActiveGrid: integer;
-    // D R A W   C H E C K   B O X E S .
-    procedure DrawCheckBoxes(oGrid: TObject; Rect: TRect; Column: TColumn;
-      fontColor: TColor; bgColor: TColor);
     // ASSERT CONNECTION TO MSSQL DATABASE
     function AssertConnection(): boolean;
 
@@ -65,11 +62,11 @@ var
   css: TCustomStyleServices;
 begin
   inherited;
-  fTeamActiveGrid := 0;
+  fTeamActiveGrid := 1;
   Panel1.Color := clWebTomato;
-  Panel2.Color := clWebTomato;
-  Panel1.BorderWidth := 0;
-  Panel2.BorderWidth := 0;
+  Panel2.Color := clBlack;
+  Panel1.BorderWidth := 1;
+  Panel2.BorderWidth := 1;
 
   // Special color assignment - used in TDBGrid painting...
   // -------------------------------------------
@@ -118,75 +115,6 @@ begin
   end;
 end;
 
-procedure TframeTEAM.DrawCheckBoxes(oGrid: TObject; Rect: TRect;
-  Column: TColumn; fontColor, bgColor: TColor);
-var
-  MyRect: TRect;
-  oField: TField;
-  iPos, iFactor: Integer;
-  bValue: boolean;
-  g: TDBGrid;
-  points: Array [0 .. 4] of TPoint;
-begin
-  // ---------------------------------------------------------------------------
-  // Draw a very basic checkbox (ticked) - not a nice as TCheckListBox
-  // ---------------------------------------------------------------------------
-
-  g := TDBGrid(oGrid);
-  // is the cell checked?
-  oField := Column.Field;
-  if (oField.value = -1) then
-    bValue := true
-  else
-    bValue := false;
-
-  g.Canvas.Pen.Color := fontColor; //
-  g.Canvas.Brush.Color := bgColor;
-  g.Canvas.Brush.Style := bsSolid;
-  g.Canvas.FillRect(Rect);
-
-  // calculate margins
-  MyRect.Top := Trunc((Rect.Bottom - Rect.Top - 9) / 2) + Rect.Top;
-  MyRect.Left := Trunc((Rect.Right - Rect.Left - 9) / 2) + Rect.Left;
-  MyRect.Bottom := MyRect.Top + 8;
-  MyRect.Right := MyRect.Left + 8;
-
-  // USES PEN - draw the box (with cell margins)
-  points[0].x := MyRect.Left;
-  points[0].y := MyRect.Top;
-  points[1].x := MyRect.Right;
-  points[1].y := MyRect.Top;
-  points[2].x := MyRect.Right;
-  points[2].y := MyRect.Bottom;
-  points[3].x := MyRect.Left;
-  points[3].y := MyRect.Bottom;
-  points[4].x := MyRect.Left;
-  points[4].y := MyRect.Top;
-
-  g.Canvas.Polyline(points);
-
-  iPos := MyRect.Left;
-  iFactor := 1;
-  // USES PEN - DRAW A TICK - Cross would be nicer?
-  if bValue then
-  begin
-    g.Canvas.MoveTo(iPos + (iFactor * 2), MyRect.Top + 4);
-    g.Canvas.LineTo(iPos + (iFactor * 2), MyRect.Top + 7);
-    g.Canvas.MoveTo(iPos + (iFactor * 3), MyRect.Top + 5);
-    g.Canvas.LineTo(iPos + (iFactor * 3), MyRect.Top + 8);
-    g.Canvas.MoveTo(iPos + (iFactor * 4), MyRect.Top + 6);
-    g.Canvas.LineTo(iPos + (iFactor * 4), MyRect.Top + 9);
-    g.Canvas.MoveTo(iPos + (iFactor * 5), MyRect.Top + 5);
-    g.Canvas.LineTo(iPos + (iFactor * 5), MyRect.Top + 8);
-    g.Canvas.MoveTo(iPos + (iFactor * 6), MyRect.Top + 4);
-    g.Canvas.LineTo(iPos + (iFactor * 6), MyRect.Top + 7);
-    g.Canvas.MoveTo(iPos + (iFactor * 7), MyRect.Top + 3);
-    g.Canvas.LineTo(iPos + (iFactor * 7), MyRect.Top + 6);
-    g.Canvas.MoveTo(iPos + (iFactor * 8), MyRect.Top + 2);
-    g.Canvas.LineTo(iPos + (iFactor * 8), MyRect.Top + 5);
-  end;
-
-end;
 
 function TframeTEAM.ClearLane(): integer;
 var
@@ -332,7 +260,7 @@ begin
     else
       clFont := fTeamEditBoxNormal;
     clBg := fTeamBgColor;
-    DrawCheckBoxes(Grid, Rect, Column, clFont, clBg);
+    TDBGrid(Sender).DrawCheckBoxes(Grid, Rect, Column, clFont, clBg);
     // draw 'Focused' frame  (for boolean datatype only)
     if gdFocused in State then
       Grid.Canvas.DrawFocusRect(Rect);
@@ -440,8 +368,8 @@ end;
 procedure TframeTEAM.GridEnter(Sender: TObject);
 begin
   fTeamActiveGrid := 1;
-  Panel2.BorderWidth := 0;
-  Panel1.BorderWidth := 2;
+  Panel2.Color := clBlack;
+  Panel1.Color := clWebTomato;
   // Ensure that correct editing options are applied on
   // first use. SelectedIndex defaults to the first column,
   // if you tab into the grid or your first click goes to
@@ -532,8 +460,8 @@ end;
 procedure TframeTEAM.GridEntrantEnter(Sender: TObject);
 begin
   fTeamActiveGrid := 2;
-  Panel2.BorderWidth := 2;
-  Panel1.BorderWidth := 0;
+  Panel1.Color := clBlack;
+  Panel2.Color := clWebTomato;
 end;
 
 procedure TframeTEAM.GridMoveDown(Sender: TObject);

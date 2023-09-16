@@ -148,7 +148,6 @@ type
     qryTeamEntrantTeamID: TIntegerField;
     qryTeamSplit: TFDQuery;
     qryTeamTeamID: TFDAutoIncField;
-    qryTeamTeamName: TWideStringField;
     qryTeamTeamNameID: TIntegerField;
     scmConnection: TFDConnection;
     tblDisqualifyCode: TFDTable;
@@ -172,6 +171,7 @@ type
     qryTeamSplitTeamSplitID: TFDAutoIncField;
     qryTeamSplitTeamID: TIntegerField;
     qryTeamSplitSplitTime: TTimeField;
+    qryTeamTeamName: TWideStringField;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
     procedure qryEntrantAfterScroll(DataSet: TDataSet);
@@ -566,25 +566,24 @@ begin
   if aEventType = etINDV then
   begin
     qry.SQL.Text :=
-      'SELECT [Entrant].[EntrantID] AS ID FROM [SwimClubMeet].[dbo].[Entrant] ' +
+      'SELECT [Entrant].[EntrantID] AS aID FROM [SwimClubMeet].[dbo].[Entrant] ' +
       'WHERE MemberID IS NOT NULL AND [Entrant].HeatID = ' +
       IntToStr(aHeatID);
-    qry.IndexFieldNames := 'EntrantID';
   end
   else if aEventType = etTeam then
   begin
     qry.SQL.Text :=
-      'SELECT [Team].[TeamID] FROM [SwimClubMeet].[dbo].[Team] ' +
+      'SELECT [Team].[TeamID] AS aID FROM [SwimClubMeet].[dbo].[Team] ' +
       'WHERE MemberID IS NOT NULL AND [Team].HeatID = ' + IntToStr(aHeatID);
-    qry.IndexFieldNames := 'Team';
   end;
+  qry.IndexFieldNames := 'aID'; // Must use alias.
   qry.Connection := scmConnection;
   qry.Open;
   if qry.Active then
   begin
     while not qry.Eof do
     begin
-      aIndvTeamID := qry.FieldByName('ID').AsInteger;
+      aIndvTeamID := qry.FieldByName('aID').AsInteger;
       result := ClearLane(aIndvTeamID, aEventType);
       qry.Next;
     end;
@@ -761,23 +760,22 @@ begin
   if aEventType = etINDV then
   begin
   qry.SQL.Text :=
-    'SELECT [Entrant].[EntrantID] AS ID FROM [SwimClubMeet].[dbo].[Entrant] ' +
+    'SELECT [Entrant].[EntrantID] AS aID FROM [SwimClubMeet].[dbo].[Entrant] ' +
     'WHERE [Entrant].HeatID = ' + IntToStr(aHeatID);
-  qry.IndexFieldNames := 'EntrantID';
   end
   else
   begin
   qry.SQL.Text :=
-    'SELECT [Team].[TeamID] AS ID FROM [SwimClubMeet].[dbo].[Team] ' +
-    'WHERE [Team].HeatID = ' + IntToStr(aHeatID);
-  qry.IndexFieldNames := 'TeamID';
+    'SELECT TeamID AS aID FROM [SwimClubMeet].[dbo].[Team] ' +
+    'WHERE HeatID = ' + IntToStr(aHeatID);
   end;
+  qry.IndexFieldNames := 'aID';
   qry.Open;
   if qry.Active then
   begin
     while not qry.Eof do
     begin
-      aIndvTeamID := qry.FieldByName('ID').AsInteger;
+      aIndvTeamID := qry.FieldByName('aID').AsInteger;
       rows := rows + DeleteLane(aIndvTeamID, aEventType);
       qry.Next;
     end;
@@ -853,6 +851,7 @@ begin
   if not fSCMActive then exit;
   DeleteAllLanes(aHeatID);
   dsHeat.DataSet.DisableControls();
+  dsHeat.DataSet.CheckBrowseMode; // release edit mode.
   SQL := 'DELETE FROM [SwimClubMeet].[dbo].[HeatIndividual] WHERE HeatID = :ID';
   result := scmConnection.ExecSQL(SQL, [aHeatID]);
   dsHeat.DataSet.EnableControls();
@@ -2516,7 +2515,7 @@ begin
     SQL := 'SELECT Entrant.TimeToBeat, CASE ' +
       'WHEN (Entrant.MemberID IS NULL) THEN 2 ' +
       'WHEN (CAST(CAST(Entrant.TimeToBeat AS DATETIME) AS FLOAT) = 0) THEN 1 ' +
-      'ELSE 0 END AS SORTORDER, Entrant.Lane, Entrant.EntrantID AS ID ' +
+      'ELSE 0 END AS SORTORDER, Entrant.Lane ' +
       'FROM Entrant WHERE Entrant.HeatID = :HEATID ' +
       'ORDER BY SORTORDER, TimeToBeat ';
   end
@@ -2525,7 +2524,7 @@ begin
     SQL := 'SELECT Team.TimeToBeat, CASE ' +
       'WHEN (Team.MemberID IS NULL) THEN 2 ' +
       'WHEN (CAST(CAST(Team.TimeToBeat AS DATETIME) AS FLOAT) = 0) THEN 1 ' +
-      'ELSE 0 END AS SORTORDER, Team.Lane, Team.TeamID AS ID ' +
+      'ELSE 0 END AS SORTORDER, Team.Lane ' +
       'FROM Team WHERE Team.HeatID = :HEATID ' +
       'ORDER BY SORTORDER, TimeToBeat ';
   end;
@@ -2592,7 +2591,7 @@ begin
     SQL := 'SELECT Entrant.TimeToBeat, CASE ' +
       'WHEN (Entrant.MemberID IS NULL) THEN 2 ' +
       'WHEN (CAST(CAST(Entrant.TimeToBeat AS DATETIME) AS FLOAT) = 0) THEN 1 ' +
-      'ELSE 0 END AS SORTORDER, Entrant.Lane, Entrant.EntrantID AS ID ' +
+      'ELSE 0 END AS SORTORDER, Entrant.Lane, Entrant.EntrantID AS aID ' +
       'FROM Entrant WHERE Entrant.HeatID = :HEATID ' +
       'ORDER BY SORTORDER, TimeToBeat ';
   end
@@ -2601,7 +2600,7 @@ begin
     SQL := 'SELECT Team.TimeToBeat, CASE ' +
       'WHEN (Team.MemberID IS NULL) THEN 2 ' +
       'WHEN (CAST(CAST(Team.TimeToBeat AS DATETIME) AS FLOAT) = 0) THEN 1 ' +
-      'ELSE 0 END AS SORTORDER, Team.Lane, Team.TeamID AS ID ' +
+      'ELSE 0 END AS SORTORDER, Team.Lane, Team.TeamID AS aID ' +
       'FROM Team WHERE Team.HeatID = :HEATID ' +
       'ORDER BY SORTORDER, TimeToBeat ';
   end;
@@ -2635,7 +2634,7 @@ begin
       else
       begin
         // Too many lanes in heat!
-        aIndvTeamID := qry.FieldByName('ID').AsInteger;
+        aIndvTeamID := qry.FieldByName('aID').AsInteger;
         {
           Remove erronous lane. Session must not be locked.
           Removes entrant\team splits and TeamEntrants (if found).

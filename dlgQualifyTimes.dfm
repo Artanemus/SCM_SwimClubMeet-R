@@ -23,8 +23,8 @@ object QualifyTimes: TQualifyTimes
     ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 617
-    ExplicitHeight = 638
+    ExplicitWidth = 720
+    ExplicitHeight = 726
     object TabSheet1: TTabSheet
       Caption = 'Setup'
       object DBGrid1: TDBGrid
@@ -49,12 +49,15 @@ object QualifyTimes: TQualifyTimes
         Width = 716
         Height = 33
         Align = alTop
+        BevelEdges = [beTop]
+        BevelKind = bkFlat
+        BevelOuter = bvNone
+        BevelWidth = 4
         TabOrder = 1
-        ExplicitTop = 99
-        ExplicitWidth = 605
+        ExplicitWidth = 712
         DesignSize = (
           716
-          33)
+          31)
         object Label3: TLabel
           Left = 4
           Top = 8
@@ -81,6 +84,7 @@ object QualifyTimes: TQualifyTimes
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 2
+        ExplicitWidth = 712
         object Label4: TLabel
           Left = 26
           Top = 7
@@ -102,8 +106,8 @@ object QualifyTimes: TQualifyTimes
         object Label6: TLabel
           Left = 450
           Top = 26
-          Width = 135
-          Height = 126
+          Width = 133
+          Height = 63
           Alignment = taCenter
           Caption = 'The TIME the TRIAL distance must be completed in.'
           WordWrap = True
@@ -132,10 +136,10 @@ object QualifyTimes: TQualifyTimes
       Caption = 'Reports'
       ImageIndex = 1
       object Label1: TLabel
-        Left = 92
-        Top = 90
+        Left = 118
+        Top = 112
         Width = 513
-        Height = 39
+        Height = 42
         AutoSize = False
         Caption = 
           'Post-Session : Highlight qualified swimmers in the current sessi' +
@@ -143,8 +147,8 @@ object QualifyTimes: TQualifyTimes
         WordWrap = True
       end
       object Label2: TLabel
-        Left = 92
-        Top = 187
+        Left = 118
+        Top = 219
         Width = 514
         Height = 39
         AutoSize = False
@@ -154,8 +158,8 @@ object QualifyTimes: TQualifyTimes
         WordWrap = True
       end
       object Label10: TLabel
-        Left = 92
-        Top = 232
+        Left = 118
+        Top = 270
         Width = 514
         Height = 39
         AutoSize = False
@@ -165,8 +169,8 @@ object QualifyTimes: TQualifyTimes
         WordWrap = True
       end
       object Label12: TLabel
-        Left = 92
-        Top = 285
+        Left = 118
+        Top = 329
         Width = 514
         Height = 26
         AutoSize = False
@@ -176,14 +180,15 @@ object QualifyTimes: TQualifyTimes
         WordWrap = True
       end
       object Label9: TLabel
-        Left = 91
+        Left = 117
         Top = 43
         Width = 514
-        Height = 36
+        Height = 44
         AutoSize = False
         Caption = 
-          'Post-Nomination : List members who have nominated for events in ' +
-          'the current session but are not qualified to swim those events.'
+          'List members who have nominated for events in the current sessio' +
+          'n and have been given a lane but are not qualified to swim those' +
+          ' events.'
         WordWrap = True
       end
       object Label11: TLabel
@@ -201,7 +206,7 @@ object QualifyTimes: TQualifyTimes
       end
       object Label13: TLabel
         Left = 11
-        Top = 164
+        Top = 196
         Width = 156
         Height = 17
         Caption = 'OTHER GENERAL REPORTS'
@@ -214,36 +219,36 @@ object QualifyTimes: TQualifyTimes
       end
       object btnSessionReport: TButton
         Left = 11
-        Top = 91
-        Width = 75
-        Height = 25
+        Top = 112
+        Width = 90
+        Height = 35
         Caption = 'Session'
         TabOrder = 1
         OnClick = btnSessionReportClick
       end
       object btnMemberReport: TButton
         Left = 11
-        Top = 187
-        Width = 75
-        Height = 25
+        Top = 219
+        Width = 90
+        Height = 35
         Caption = 'Member'
         TabOrder = 2
         OnClick = btnMemberReportClick
       end
       object btnDistStrokeReport: TButton
         Left = 11
-        Top = 232
-        Width = 75
-        Height = 25
+        Top = 270
+        Width = 90
+        Height = 35
         Caption = 'Dist:Stroke'
         TabOrder = 3
         OnClick = btnDistStrokeReportClick
       end
       object btnTableReport: TButton
         Left = 11
-        Top = 285
-        Width = 75
-        Height = 25
+        Top = 329
+        Width = 90
+        Height = 35
         Caption = 'Table'
         TabOrder = 4
         OnClick = btnTableReportClick
@@ -251,11 +256,12 @@ object QualifyTimes: TQualifyTimes
       object btnNotQualifyReport: TButton
         Left = 11
         Top = 43
-        Width = 75
-        Height = 41
+        Width = 90
+        Height = 47
         Caption = 'Not Qualified'
         TabOrder = 0
         WordWrap = True
+        OnClick = btnNotQualifyReportClick
       end
     end
   end
@@ -267,13 +273,13 @@ object QualifyTimes: TQualifyTimes
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 637
-    ExplicitWidth = 613
+    ExplicitTop = 726
+    ExplicitWidth = 720
     DesignSize = (
       724
       41)
     object BtnClose: TButton
-      Left = 622
+      Left = 606
       Top = 6
       Width = 75
       Height = 25
@@ -281,7 +287,7 @@ object QualifyTimes: TQualifyTimes
       Caption = 'Close'
       TabOrder = 0
       OnClick = BtnCloseClick
-      ExplicitLeft = 511
+      ExplicitLeft = 602
     end
   end
   object qryQualify: TFDQuery
@@ -350,7 +356,7 @@ object QualifyTimes: TQualifyTimes
       DisplayWidth = 9
       FieldKind = fkLookup
       FieldName = 'luQDistance'
-      LookupDataSet = tblQDistance
+      LookupDataSet = qryQDistance
       LookupKeyFields = 'DistanceID'
       LookupResultField = 'Caption'
       KeyFields = 'QualifyDistID'
@@ -373,7 +379,7 @@ object QualifyTimes: TQualifyTimes
       DisplayWidth = 9
       FieldKind = fkLookup
       FieldName = 'luTDistance'
-      LookupDataSet = tblTDistance
+      LookupDataSet = qryTDistance
       LookupKeyFields = 'DistanceID'
       LookupResultField = 'Caption'
       KeyFields = 'TrialDistID'
@@ -407,16 +413,6 @@ object QualifyTimes: TQualifyTimes
     Left = 168
     Top = 496
   end
-  object tblQDistance: TFDTable
-    ActiveStoredUsage = [auDesignTime]
-    Active = True
-    IndexFieldNames = 'DistanceID'
-    Connection = SCM.scmConnection
-    UpdateOptions.UpdateTableName = 'SwimClubMeet..Distance'
-    TableName = 'SwimClubMeet..Distance'
-    Left = 288
-    Top = 504
-  end
   object tblStroke: TFDTable
     ActiveStoredUsage = [auDesignTime]
     Active = True
@@ -424,7 +420,7 @@ object QualifyTimes: TQualifyTimes
     Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Stroke'
     TableName = 'SwimClubMeet..Stroke'
-    Left = 360
+    Left = 368
     Top = 504
   end
   object tblGender: TFDTable
@@ -434,17 +430,43 @@ object QualifyTimes: TQualifyTimes
     Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Gender'
     TableName = 'SwimClubMeet..Gender'
-    Left = 360
-    Top = 560
+    Left = 368
+    Top = 568
   end
-  object tblTDistance: TFDTable
+  object qryQDistance: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     Active = True
     IndexFieldNames = 'DistanceID'
     Connection = SCM.scmConnection
-    UpdateOptions.UpdateTableName = 'SwimClubMeet..Distance'
-    TableName = 'SwimClubMeet..Distance'
+    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
+    UpdateOptions.EnableDelete = False
+    UpdateOptions.EnableInsert = False
+    UpdateOptions.EnableUpdate = False
+    UpdateOptions.UpdateTableName = 'SwimClubMeet.dbo.Distance'
+    UpdateOptions.KeyFields = 'DistanceID'
+    SQL.Strings = (
+      'USE SwimClubMeet'
+      ';'
+      'SELECT * FROM dbo.Distance WHERE [Distance].[EventTypeID] = 1;')
     Left = 288
-    Top = 560
+    Top = 504
+  end
+  object qryTDistance: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    Active = True
+    IndexFieldNames = 'DistanceID'
+    Connection = SCM.scmConnection
+    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
+    UpdateOptions.EnableDelete = False
+    UpdateOptions.EnableInsert = False
+    UpdateOptions.EnableUpdate = False
+    UpdateOptions.UpdateTableName = 'SwimClubMeet.dbo.Distance'
+    UpdateOptions.KeyFields = 'DistanceID'
+    SQL.Strings = (
+      'USE SwimClubMeet'
+      ';'
+      'SELECT * FROM dbo.Distance WHERE [Distance].[EventTypeID] = 1;')
+    Left = 288
+    Top = 568
   end
 end

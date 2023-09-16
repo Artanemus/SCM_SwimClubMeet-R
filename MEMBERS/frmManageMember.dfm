@@ -141,7 +141,7 @@ object ManageMember: TManageMember
     Top = 80
     Width = 1363
     Height = 696
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alClient
     MultiLine = True
     TabHeight = 40
@@ -373,7 +373,7 @@ object ManageMember: TManageMember
         object lblMembersAge: TLabel
           Left = 313
           Top = 168
-          Width = 61
+          Width = 128
           Height = 23
           Caption = 'lblMembersAge'
           Font.Charset = DEFAULT_CHARSET
@@ -955,7 +955,6 @@ object ManageMember: TManageMember
     Top = 0
     Width = 1363
     Height = 31
-    UseSystemFont = False
     ActionManager = ActnManagerMember
     Caption = 'Member Menu Bar'
     Color = clMenuBar
@@ -964,8 +963,8 @@ object ManageMember: TManageMember
     ColorMap.BtnSelectedFont = clBlack
     ColorMap.UnusedColor = clWhite
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clBlack
-    Font.Height = -13
+    Font.Color = clWindowText
+    Font.Height = -16
     Font.Name = 'Segoe UI'
     Font.Style = []
     HorzMargin = 10

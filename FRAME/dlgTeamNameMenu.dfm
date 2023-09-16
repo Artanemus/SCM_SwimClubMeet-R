@@ -3,8 +3,8 @@ object TeamNameMenu: TTeamNameMenu
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Team Name '
-  ClientHeight = 251
-  ClientWidth = 210
+  ClientHeight = 250
+  ClientWidth = 206
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

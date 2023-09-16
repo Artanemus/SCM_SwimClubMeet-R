@@ -72,7 +72,8 @@ uses
   dlgAutoBuild_Relay in 'dlgAutoBuild_Relay.pas' {AutoBuild_Relay},
   dlgTeamNameMenu in 'FRAME\dlgTeamNameMenu.pas' {TeamNameMenu},
   SCMHelpers in '..\SCM_SHARED\SCMHelpers.pas',
-  dmSCMHelper in 'dmSCMHelper.pas';
+  dmSCMHelper in 'dmSCMHelper.pas',
+  rptQTNotQualified in 'REPORTS\rptQTNotQualified.pas' {QTNotQualified: TDataModule};
 
 {$R *.res}
 

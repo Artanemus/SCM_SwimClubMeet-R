@@ -52,10 +52,10 @@ type
     qryQualifyluGender: TStringField;
     qryQualifyTrialTime: TTimeField;
     DSQualify: TDataSource;
-    tblQDistance: TFDTable;
     tblStroke: TFDTable;
     tblGender: TFDTable;
-    tblTDistance: TFDTable;
+    qryQDistance: TFDQuery;
+    qryTDistance: TFDQuery;
     procedure BtnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure qryQualifyTrialTimeGetText(Sender: TField; var Text: string;
@@ -65,6 +65,7 @@ type
     procedure btnTableReportClick(Sender: TObject);
     procedure btnMemberReportClick(Sender: TObject);
     procedure btnDistStrokeReportClick(Sender: TObject);
+    procedure btnNotQualifyReportClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
     { Private declarations }
@@ -80,7 +81,7 @@ implementation
 {$R *.dfm}
 
 uses rptQTSessionReportA, rptQTDistStrokeReportA, rptQTMemberReportA,
-  rptQTTableReportA;
+  rptQTTableReportA, rptQTNotQualified;
 
 procedure TQualifyTimes.BtnCloseClick(Sender: TObject);
 begin
@@ -145,33 +146,40 @@ begin
     BtnClose.SetFocus;
 end;
 
+procedure TQualifyTimes.btnNotQualifyReportClick(Sender: TObject);
+var
+  rptA: TQTNotQualified;
+begin
+  try
+    begin
+      rptA := TQTNotQualified.Create(self);
+      rptA.RunReport();
+      rptA.Free;
+    end
+  except
+    on E: Exception do
+      // illegal date..
+        ShowMessage('Error opening QualifyTimes : Session Report.');
+  end;
+  if BtnClose.CanFocus then BtnClose.SetFocus;
+end;
+
 procedure TQualifyTimes.btnSessionReportClick(Sender: TObject);
 var
   rptA: TQTSessionReportA;
-  // rptB: TQTSessionReportB;
 begin
-  // run qulify for session report
   try
-    // control key is pressed
-    if ((GetKeyState(VK_CONTROL) and 128) = 128) then
-    begin
-      // rptB := TQTSessionReportB.Create(self);
-      // rptB.RunReport;
-      // rptB.Free;
-    end
-    else
     begin
       rptA := TQTSessionReportA.Create(self);
       rptA.RunReport();
       rptA.Free;
-    end;
+    end
   except
     on E: Exception do
       // illegal date..
-      ShowMessage('Error opening QualifyTimes : Session Report.');
+        ShowMessage('Error opening QualifyTimes : Session Report.');
   end;
-  if BtnClose.CanFocus then
-    BtnClose.SetFocus;
+  if BtnClose.CanFocus then BtnClose.SetFocus;
 end;
 
 procedure TQualifyTimes.btnTableReportClick(Sender: TObject);
@@ -211,14 +219,14 @@ begin
 
   tblGender.Connection := SCM.scmConnection;
   tblStroke.Connection := SCM.scmConnection;
-  tblQDistance.Connection := SCM.scmConnection;
-  tblTDistance.Connection := SCM.scmConnection;
+  qryQDistance.Connection := SCM.scmConnection;
+  qryTDistance.Connection := SCM.scmConnection;
   qryQualify.Connection := SCM.scmConnection;
 
   tblGender.Active := true;
   tblStroke.Active := true;
-  tblQDistance.Active := true;
-  tblTDistance.Active := true;
+  qryQDistance.Active := true;
+  qryTDistance.Active := true;
 
   // If changes have been made in option dialogue during the
   // current connection session  or on another station
@@ -237,6 +245,8 @@ begin
   // ensures params changes are used
   qryQualify.Prepare();
   qryQualify.Open();
+  // Assert grid is connected
+  DBGrid1.DataSource := DSQualify;
   PageControl1.TabIndex := 0;
 end;
 

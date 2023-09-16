@@ -436,9 +436,6 @@ type
     procedure Tools_SwimmercategoryUpdate(Sender: TObject);
   private
     bootprogress: TBootProgress;
-//    fEntrantBgColor: TColor;
-//    fEntrantEditBoxFocused: TColor;
-//    fEntrantEditBoxNormal: TColor;
     // TRACK the MemberID of the last known member to have their
     // IsQualified status checked via Nominee_UpdateCheckListBoxQualified();
     fLastMemberQualified: integer;
@@ -455,7 +452,6 @@ type
     prefEnableDCode: boolean;
     prefEnableTeamEvents: boolean;
     SCMEventList: TObjectList;
-    fTeamActiveGrid: integer;
     function AssertConnection(): boolean; // Check connection to MSSQL DATABASE
     procedure DBGridWndProc(var Msg: TMessage);
     procedure DrawEventStatus(oGrid: TObject; Rect: TRect; Column: TColumn);
@@ -1401,11 +1397,10 @@ begin
       ds.Post;
     end;
   end;
-  ds.Refresh;
   if Assigned(fld) then
     fld.ReadOnly := true;
+  ds.Refresh;
   ds.EnableControls();
-
 end;
 
 procedure TMain.Event_MoveUpOrDownUpdate(Sender: TObject);
@@ -1643,12 +1638,6 @@ begin
   fSessionClosedFontColor := clWebTomato; // Use to custom draw closed session
   fSessionClosedBgColor := clAppWorkSpace; // Use to custom draw closed session
   fMyInternetConnected := true;
-
-  // UI indicator for focused TEAM GRID vs TEAMENTRANT GRID
-  // (TPanel OnEnter event... displays maroon border.)
-  fTeamActiveGrid := 0;
-  Team.Panel2.BorderWidth := 0;
-  Team.Panel1.BorderWidth := 0;
 
   prefEnableTeamEvents := false;
   prefEnableDCode := false;

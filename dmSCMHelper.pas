@@ -134,7 +134,10 @@ begin
   if Heat_SessionIsLocked(aHeatID) then exit;
   aHeatStatusID := Heat_HeatStatusID(aHeatID);
   if (aHeatStatusID = 1) or (DoExclude = false) then
-      DeleteHeat(aHeatID);
+  begin
+    dsHeat.DataSet.CheckBrowseMode;
+    DeleteHeat(aHeatID);
+  end;
 end;
 
 function TSCMHelper.Heat_DeleteAll(aEventID: integer;
