@@ -461,11 +461,11 @@ type
     // Miscellaneous - uncatagorized
     procedure GetSCMPreferences();
     // REFRESH
-    procedure Refresh_Entrant(DoBookmark: boolean = true);
-    procedure Refresh_Event(DoBookmark: boolean = true);
-    procedure Refresh_Heat(DoBookmark: boolean = true);
+    procedure Refresh_Entrant(DoBookmark: boolean = true; DoRenumber: boolean = false);
+    procedure Refresh_Event(DoBookmark: boolean = true; DoRenumber: boolean = false);
+    procedure Refresh_Heat(DoBookmark: boolean = true; DoRenumber: boolean = false);
     procedure Refresh_Nominate(DoBookmark: boolean = true);
-    procedure Refresh_Team(DoBookmark: boolean = true);
+    procedure Refresh_Team(DoBookmark: boolean = true; DoRenumber: boolean = false);
     procedure Refresh_TeamEntrant(DoBookmark: boolean = true); //--
     // Generic TAction onExecute (extended params) for BATCH PRINT
     procedure Session_BatchReportExecute(Sender: TObject; RptType: scmRptType);
@@ -494,6 +494,7 @@ type
     procedure Session_Scroll(var Msg: TMessage); message SCM_SESSIONSCROLL;
     procedure UpdateINDVTEAM(var Msg: TMessage); message SCM_UPDATEINDVTEAM;
     procedure Team_Scroll(var Msg: TMessage); message SCM_TEAMSCROLL;
+    procedure RenumberHeats(var Msg: TMessage); message SCM_RENUMBERHEATS;
   public
     { Public declarations }
     fDoStatusBarUpdate: boolean; // FLAG ACTION - SCM_StatusBar.Enabled
@@ -1454,8 +1455,8 @@ end;
 
 procedure TMain.Event_RenumberExecute(Sender: TObject);
 begin
-  if Assigned(SCM) then
-    SCM.Event_Renumber;
+  if AssertConnection then
+    SCM.Session_RenumberEvents(SCM.Session_ID, true);
 end;
 
 procedure TMain.Event_RenumberUpdate(Sender: TObject);
@@ -2431,7 +2432,8 @@ end;
 
 procedure TMain.Heat_DeleteExecute(Sender: TObject);
 var
-  results: integer;
+  results: TModalresult;
+  aHeatID: integer;
 begin
   // actn.Update dictates if this routine is accessable.
   // The heat is CLOSED.
@@ -2466,8 +2468,15 @@ begin
   // -----------------------------------------------------------------
   if (results = mrYes) then
   begin
-    SCM.Heat_Delete(SCM.dsHeat.DataSet.FieldByName('HeatID').AsInteger, false);
-    Refresh_Heat();
+    aHeatID := SCM.dsHeat.DataSet.FieldByName('HeatID').AsInteger;
+    // As SCM.qryHeat is connected to a TControlList via TBindSourceDB ...
+    // If the TBindSourceDB connection remains active then the low level
+    // TSCM.DeleteHeat(aHeatID: integer) - scmConnection.ExecSQL(...) command
+    // fails. The record is locked?
+    BindSourceDB3.DataSet.Active := false;
+    SCM.Heat_Delete(aHeatID, false);
+//    Refresh_Heat();
+    BindSourceDB3.DataSet.Active := true;
     ToggleVisibileTabSheet3;
   end;
 end;
@@ -3356,7 +3365,7 @@ begin
   end;
 end;
 
-procedure TMain.Refresh_Entrant(DoBookmark: boolean = true);
+procedure TMain.Refresh_Entrant(DoBookmark: boolean = true; DoRenumber: boolean = false);
 var
   bm: TBookmark;
 begin
@@ -3370,6 +3379,7 @@ begin
     Open;
     if Active then
     begin
+      if DoRenumber then SCM.Lane_RenumberLanes(SCM.Heat_ID, false);
       try
         GotoBookmark(bm);
       except
@@ -3380,7 +3390,7 @@ begin
   end;
 end;
 
-procedure TMain.Refresh_Event(DoBookmark: boolean = true);
+procedure TMain.Refresh_Event(DoBookmark: boolean = true; DoRenumber: boolean = false);
 var
   bm: TBookmark;
 begin
@@ -3394,7 +3404,8 @@ begin
     Open;
     if Active then
     begin
-      SCM.Event_Renumber;
+      if DoRenumber then
+        SCM.Session_RenumberEvents(SCM.Session_ID, false);
       try
         GotoBookmark(bm);
       except
@@ -3405,7 +3416,7 @@ begin
   end;
 end;
 
-procedure TMain.Refresh_Heat(DoBookmark: boolean = true);
+procedure TMain.Refresh_Heat(DoBookmark: boolean = true; DoRenumber: boolean = false);
 var
   bm: TBookmark;
 begin
@@ -3419,6 +3430,7 @@ begin
     Open;
     if Active then
     begin
+      if DoRenumber then SCM.Event_RenumberHeats(SCM.Event_ID, false);
       try
         GotoBookmark(bm);
       except
@@ -3457,7 +3469,7 @@ begin
   end;
 end;
 
-procedure TMain.Refresh_Team(DoBookmark: boolean);
+procedure TMain.Refresh_Team(DoBookmark: boolean = true; DoRenumber: boolean = false);
 var
   bm: TBookmark;
 begin
@@ -3471,6 +3483,7 @@ begin
     Open;
     if Active then
     begin
+      if DoRenumber then SCM.Lane_RenumberLanes(SCM.Heat_ID, false);
       try
         GotoBookmark(bm);
       except
@@ -3505,6 +3518,21 @@ begin
   end;
 end;
 
+procedure TMain.RenumberHeats(var Msg: TMessage);
+var
+aEventID: integer;
+begin
+  if not AssertConnection then exit;
+  aEventID := SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger;
+  // As SCM.qryHeat is connected to a TControlList via TBindSourceDB ...
+  // If the TBindSourceDB connection remains active then the low level
+  // calls like TSCM.DeleteHeat(aHeatID: integer) - scmConnection.ExecSQL(...)
+  // command fail. Renumbering should be OK, right?
+  // BindSourceDB3.DataSet.Active := false;
+  SCM.Event_RenumberHeats(aEventID, true);
+  // BindSourceDB3.DataSet.Active := true;
+end;
+
 procedure TMain.SCM_ManageMembersExecute(Sender: TObject);
 var
   dlg: TManageMember;
@@ -3529,9 +3557,15 @@ begin
 end;
 
 procedure TMain.SCM_RefreshExecute(Sender: TObject);
+var
+DoRenumber: boolean;
 begin
   if not AssertConnection then
     exit;
+  // Renumber the Events/Heats/Teams/Entrants
+  if ((GetKeyState(VK_CONTROL) and 128) = 128) then DoRenumber := true
+  else DoRenumber := false;
+
   // Disable everthing
   SCM.dsSession.DataSet.DisableControls;
   SCM.dsEvent.DataSet.DisableControls;
@@ -3542,15 +3576,15 @@ begin
   // SESSION
   Session_SortExecute(self);
   // EVENT
-  Refresh_Event;
+  Refresh_Event(true, DoRenumber);
   // NOMINEE + NOMINATE_GRID
   Refresh_Nominate;
   // HEAT
-  Refresh_Heat;
+  Refresh_Heat(true, DoRenumber);
   // ENTRANT
-  Refresh_Entrant;
+  Refresh_Entrant(true, DoRenumber);
   // TEAM
-  Refresh_Team;
+  Refresh_Team(true, DoRenumber);
   // TEAMENTRANT
   Refresh_TeamEntrant;
   SCM.dsSession.DataSet.EnableControls;

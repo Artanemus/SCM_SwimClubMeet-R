@@ -1,6 +1,5 @@
 object SCM: TSCM
   OnCreate = DataModuleCreate
-  OnDestroy = DataModuleDestroy
   Height = 748
   Width = 1376
   object scmConnection: TFDConnection
@@ -206,7 +205,7 @@ object SCM: TSCM
     Active = True
     BeforeInsert = qryEvTypeBeforeInsert
     AfterScroll = qryEntrantAfterScroll
-    IndexFieldNames = 'HeatID;EntrantID'
+    IndexFieldNames = 'HeatID'
     MasterSource = dsHeat
     MasterFields = 'HeatID'
     DetailFields = 'HeatID'
@@ -397,16 +396,6 @@ object SCM: TSCM
     AfterDelete = qrySessionAfterDelete
     AfterScroll = qrySessionAfterScroll
     OnNewRecord = qrySessionNewRecord
-    Indexes = <
-      item
-        Active = True
-        Selected = True
-        Name = 'idxSession'
-        Fields = 'SwimClubID;SessionID'
-        DescFields = 'SessionStart'
-        Options = [soDescending]
-      end>
-    IndexName = 'idxSession'
     MasterSource = dsSwimClub
     MasterFields = 'SwimClubID'
     DetailFields = 'SwimClubID'
@@ -532,20 +521,15 @@ object SCM: TSCM
   end
   object qryEvent: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
+    AfterInsert = qryEventAfterInsert
     BeforeEdit = qryEventBeforeEdit
     BeforePost = qryEventBeforePost
     AfterPost = qryEventAfterPost
     AfterDelete = qryEventAfterDelete
     AfterScroll = qryEventAfterScroll
     OnNewRecord = qryEventNewRecord
-    Indexes = <
-      item
-        Active = True
-        Selected = True
-        Name = 'idxEvent'
-        Fields = 'SessionID;EventID;EventNum'
-      end>
-    IndexName = 'idxEvent'
+    IndexFieldNames = 'SessionID'
     MasterSource = dsSession
     MasterFields = 'SessionID'
     DetailFields = 'SessionID'
@@ -1288,11 +1272,11 @@ object SCM: TSCM
   object qryHeat: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     Active = True
-    AfterPost = qryHeatAfterPost
+    AfterInsert = qryHeatAfterInsert
     AfterDelete = qryHeatAfterDelete
     AfterScroll = qryHeatAfterScroll
     OnNewRecord = qryHeatNewRecord
-    IndexFieldNames = 'EventID;HeatID'
+    IndexFieldNames = 'EventID'
     MasterSource = dsEvent
     MasterFields = 'EventID'
     DetailFields = 'EventID'
@@ -1442,15 +1426,56 @@ object SCM: TSCM
         Value = 1
       end>
   end
-  object qryRenumberHeats: TFDQuery
+  object qryRenumberLanes: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'HeatID'
     Connection = scmConnection
+    FormatOptions.AssignedValues = [fvFmtDisplayTime]
+    FormatOptions.FmtDisplayTime = 'nn:ss.zzz'
     UpdateOptions.UpdateTableName = 'SwimClubMeet..HeatIndividual'
-    UpdateOptions.KeyFields = 'HeatID'
+    UpdateOptions.KeyFields = 'aID'
     SQL.Strings = (
       'USE SwimClubMeet;'
       ''
+      ''
+      'DECLARE @HeatID AS INTEGER;'
+      'DECLARE @EventTypeID AS INTEGER;'
+      ''
+      'SET @HeatID = :HEATID;'
+      
+        'SET @EventTypeID = (SELECT TOP 1 EventTypeID FROM HeatIndividual' +
+        ' '
+      #9'INNER JOIN [Event] ON HeatIndividual.EventID = [Event].EventID'
+      
+        #9'INNER JOIN [Distance] ON [Event].DistanceID = [Distance].Distan' +
+        'ceID'
+      #9');'
+      ''
+      'IF @EventTypeID = 2'
+      ''
+      'SELECT Team.TimeToBeat, CASE '
+      '      WHEN (Team.TeamNameID IS NULL) THEN 2 '
+      
+        '      WHEN (CAST(CAST(Team.TimeToBeat AS DATETIME) AS FLOAT) = 0' +
+        ') THEN 1 '
+      '      ELSE 0 END AS mySort, Team.Lane '
+      '      ,TeamID as aID'
+      '      FROM Team WHERE Team.HeatID = 182'
+      #9'  ORDER BY mySort, timetobeat;'
+      'ELSE'
+      ''
+      'SELECT Entrant.TimeToBeat, CASE '
+      '      WHEN (Entrant.MemberID IS NULL) THEN 2 '
+      
+        '      WHEN (CAST(CAST(Entrant.TimeToBeat AS DATETIME) AS FLOAT) ' +
+        '= 0) THEN 1 '
+      '      ELSE 0 END AS mySort, Entrant.Lane '
+      '      ,EntrantID as aID'
+      '      FROM Entrant WHERE Entrant.HeatID = 182'
+      #9'  ORDER BY mySort, timetobeat;'
+      ';'
+      ''
+      '/*'
       'DECLARE @EventID int;'
       'SET @EventID = :EVENTID;'
       ''
@@ -1464,18 +1489,20 @@ object SCM: TSCM
       ''
       
         'ORDER BY CASE WHEN HeatNum IS NULL then 2 else 1 end, HeatNum AS' +
-        'C;')
+        'C;'
+      '*/')
     Left = 1064
     Top = 544
     ParamData = <
       item
-        Name = 'EVENTID'
+        Name = 'HEATID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = 835
+        Value = 182
       end>
   end
   object qrySwimClub: TFDQuery
+    Active = True
     IndexFieldNames = 'SwimClubID'
     Connection = scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..SwimClub'
@@ -1905,7 +1932,7 @@ object SCM: TSCM
     Active = True
     BeforeInsert = qryEvTypeBeforeInsert
     AfterScroll = qryTeamAfterScroll
-    IndexFieldNames = 'HeatID;TeamID'
+    IndexFieldNames = 'HeatID'
     MasterSource = dsHeat
     MasterFields = 'HeatID'
     DetailFields = 'HeatID'
@@ -2038,7 +2065,7 @@ object SCM: TSCM
     Active = True
     BeforeInsert = qryEvTypeBeforeInsert
     AfterScroll = qryEntrantAfterScroll
-    IndexFieldNames = 'TeamID;TeamEntrantID'
+    IndexFieldNames = 'TeamID'
     MasterSource = dsTeam
     MasterFields = 'TeamID'
     DetailFields = 'TeamID'
@@ -2184,8 +2211,7 @@ object SCM: TSCM
   end
   object qrySplit: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
-    IndexFieldNames = 'EntrantID;SplitID'
+    IndexFieldNames = 'EntrantID'
     MasterSource = dsEntrant
     MasterFields = 'EntrantID'
     DetailFields = 'EntrantID'
@@ -2329,7 +2355,7 @@ object SCM: TSCM
   object qryTeamSplit: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     Active = True
-    IndexFieldNames = 'TeamID;TeamSplitID'
+    IndexFieldNames = 'TeamID'
     MasterSource = dsTeam
     MasterFields = 'TeamID'
     DetailFields = 'TeamID'

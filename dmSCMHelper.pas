@@ -12,8 +12,12 @@ type
   TSCMHelper = class helper for TSCM
     { S E S S I O N .    }
     function Session_Delete(aSessionID: integer;  DoExclude: Boolean = true): integer;
+    function Session_RenumberEvents(aSessionID: integer; DoLocate: Boolean = true;
+      DoExclude: Boolean = true): integer;
     { E V E N T .    }
     function Event_Delete(aEventID: integer;  DoExclude: Boolean = true): integer;
+    function Event_RenumberHeats(aEventID: integer; DoLocate: Boolean = true;
+      DoExclude: Boolean = true): integer;
     { H E A T .    }
     function Heat_ClearLanes(aHeatID: integer;  DoExclude: Boolean = true): integer;
     function Heat_Delete(aHeatID: integer;  DoExclude: Boolean = true): integer;
@@ -110,6 +114,16 @@ begin
   end;
 end;
 
+function TSCMHelper.Event_RenumberHeats(aEventID: integer; DoLocate,
+  DoExclude: Boolean): integer;
+begin
+  result := 0;
+  if not SCMActive then exit;
+  if aEventID = 0 then exit;
+  if Event_SessionIsLocked(aEventID) then exit;
+  result := RenumberHeats(aEventID, DoLocate);
+end;
+
 function TSCMHelper.Heat_ClearLanes(aHeatID: integer;
   DoExclude: Boolean = true): integer;
 var
@@ -135,7 +149,6 @@ begin
   aHeatStatusID := Heat_HeatStatusID(aHeatID);
   if (aHeatStatusID = 1) or (DoExclude = false) then
   begin
-    dsHeat.DataSet.CheckBrowseMode;
     DeleteHeat(aHeatID);
   end;
 end;
@@ -736,6 +749,16 @@ begin
     result := rows;
     dsSession.DataSet.EnableControls;
   end;
+end;
+
+function TSCMHelper.Session_RenumberEvents(aSessionID: integer; DoLocate,
+  DoExclude: Boolean): integer;
+begin
+  result := 0;
+  if not SCMActive then exit;
+  if aSessionID = 0 then exit;
+  if Session_IsLocked(aSessionID) then exit;
+  result := RenumberEvents(aSessionID, DoLocate);
 end;
 
 function TSCMHelper.TeamEntrant_Clear(aTeamEntrantID: integer;

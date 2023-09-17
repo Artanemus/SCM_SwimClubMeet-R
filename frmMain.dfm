@@ -32,7 +32,7 @@ object Main: TMain
       Top = 0
       Width = 1414
       Height = 798
-      ActivePage = TabSheet1
+      ActivePage = TabSheet3
       Align = alClient
       Style = tsFlatButtons
       TabOrder = 0
@@ -1536,7 +1536,7 @@ object Main: TMain
                 Alignment = taCenter
                 Anchors = []
                 AutoSize = False
-                Caption = '3'
+                Caption = '1'
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -32
@@ -1568,7 +1568,7 @@ object Main: TMain
                 Alignment = taCenter
                 Anchors = []
                 AutoSize = False
-                Caption = '25'
+                Caption = '100'
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -27
@@ -1992,8 +1992,6 @@ object Main: TMain
               Height = 632
               Align = alLeft
               BorderStyle = bsNone
-              ItemCount = 1
-              ItemIndex = 0
               ItemMargins.Left = 0
               ItemMargins.Top = 0
               ItemMargins.Right = 0
@@ -2034,7 +2032,6 @@ object Main: TMain
                 Height = 32
                 Alignment = taCenter
                 AutoSize = False
-                Caption = '1'
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -24
@@ -2182,7 +2179,7 @@ object Main: TMain
       object dbtxtSwimClubCaption: TDBText
         Left = 0
         Top = 0
-        Width = 161
+        Width = 215
         Height = 19
         Anchors = []
         AutoSize = True
@@ -2198,7 +2195,7 @@ object Main: TMain
       object dbtxtSwimClubNickName: TDBText
         Left = 0
         Top = 30
-        Width = 179
+        Width = 218
         Height = 21
         Anchors = []
         AutoSize = True
