@@ -20,10 +20,12 @@ type
     procedure GridEnter(Sender: TObject);
     procedure GridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
-    fEntrantBgColor: TColor;
+    fGridBgColor: TColor;
     { Private declarations }
     fEntrantEditBoxFocused: TColor;
     fEntrantEditBoxNormal: TColor;
+    fRacedFontColor: TColor;
+
     // ASSERT CONNECTION TO MSSQL DATABASE
     function AssertConnection(): boolean;
 
@@ -61,13 +63,15 @@ begin
   begin
     fEntrantEditBoxFocused := css.GetStyleFontColor(sfEditBoxTextFocused);
     fEntrantEditBoxNormal := css.GetStyleFontColor(sfEditBoxTextNormal);
-    fEntrantBgColor := css.GetStyleColor(scGrid);
+    fGridBgColor := css.GetStyleColor(scGrid);
+    fRacedFontColor := clWebPeachPuff;
   end
   else
   begin
     fEntrantEditBoxFocused := clWebTomato;
     fEntrantEditBoxNormal := clWindowText;
-    fEntrantBgColor := clAppWorkSpace;
+    fGridBgColor := clAppWorkSpace;
+    fRacedFontColor := clWebPeachPuff;
   end;
   {
     When the Columns.State property of the grid is csDefault, grid columns
@@ -89,7 +93,6 @@ begin
   col := Grid.ColumnByName('luStroke');
   if Assigned(col) then
     col.DropDownRows := 6;
-
 end;
 
 function TframeINDV.AssertConnection: boolean;
@@ -207,7 +210,19 @@ procedure TframeINDV.GridDrawColumnCell(Sender: TObject; const Rect: TRect;
   DataCol: Integer; Column: TColumn; State: TGridDrawState);
 var
   clFont, clBg: TColor;
+  Size: TSize;
+  YMargin: integer;
+  MyRect: TRect;
+  aHeatID: integer;
 begin
+  aHeatID := TDBGrid(Sender).DataSource.DataSet.FieldByName('HeatID').AsInteger;
+  if (Column.Field.FieldName = 'FullName') or (Column.FieldName = 'DCode') then
+  begin
+    // ASSERT button visible in column
+    if (Column.ButtonStyle <> TColumnButtonStyle.cbsEllipsis) then
+        Column.ButtonStyle := TColumnButtonStyle.cbsEllipsis;
+  end;
+
   // NOTE : DEFAULT DRAWING IS DISABLED ....
   if (Column.Field.FieldName = 'IsScratched') or
     (Column.Field.FieldName = 'IsDisqualified') then
@@ -216,25 +231,45 @@ begin
       clFont := fEntrantEditBoxFocused
     else
       clFont := fEntrantEditBoxNormal;
-    clBg := fEntrantBgColor;
+    clBg := fGridBgColor;
     TDBGrid(Sender).DrawCheckBoxes(Grid, Rect, Column, clFont, clBg);
     // draw 'Focused' frame  (for boolean datatype only)
     if gdFocused in State then
       Grid.Canvas.DrawFocusRect(Rect);
   end
-  else if (Column.Field.FieldName = 'FullName') or (Column.FieldName = 'DCode')
-  then
+  // Recolor the text if the heat is RACED.
+  else if (SCM.Heat_HeatStatusID(aHeatID) = 2) then
   begin
-    // ENABLE the button if not enabled
-    if (Column.ButtonStyle <> TColumnButtonStyle.cbsEllipsis) then
-      Column.ButtonStyle := TColumnButtonStyle.cbsEllipsis;
-    Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+    // CLEAR THE CANVAS
+    TDBGrid(Sender).Canvas.Brush.Color := fGridBgColor;
+    TDBGrid(Sender).Canvas.Brush.Style := bsSolid;
+    TDBGrid(Sender).Canvas.FillRect(Rect);
+    // PRINT THE TEXT
+    TDBGrid(Sender).Canvas.Font.Color := fRacedFontColor;
+    Size := TDBGrid(Sender).Canvas.TextExtent(Column.Field.DisplayText);
+    YMargin := Round((Rect.Height - Size.Height) / 2 + 0.5);
+    // calculate margins
+    MyRect.Top := Rect.Top + YMargin;
+    if (Column.Field.FieldName = 'Lane') then
+      // center align
+        MyRect.Left := Rect.Left + Round((Rect.Width - Size.Width) / 2)
+      // right align
+    else if (Column.Field.FieldName = 'RaceTime') or
+      (Column.Field.FieldName = 'TimeToBeat') or
+      (Column.Field.FieldName = 'PersonalBest') then
+        MyRect.Left := Rect.Left + (Rect.Width - Size.Width - 3)
+    else
+      // left align
+        MyRect.Left := Rect.Left + 3;
+    MyRect.Bottom := Rect.Bottom;
+    MyRect.Right := Rect.Right;
+    TDBGrid(Sender).Canvas.TextRect(myRect, myRect.Left, myRect.Top,
+      Column.Field.DisplayText);
     if gdFocused in State then
       Grid.Canvas.DrawFocusRect(Rect);
   end
   else
   begin
-    // default drawing DOESN'T draw a themed (yellow) background color
     Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
     if gdFocused in State then
       Grid.Canvas.DrawFocusRect(Rect);

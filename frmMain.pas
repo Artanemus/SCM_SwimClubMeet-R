@@ -38,7 +38,7 @@ uses
   Vcl.Bind.Editors, Data.Bind.Components, Data.Bind.Grid, Data.Bind.DBScope,
   Vcl.ToolWin, Vcl.ActnCtrls, Vcl.ActnMenus, Vcl.PlatformVclStylesActnCtrls,
   Data.FMTBcd, Data.SqlExpr, FireDAC.Moni.Base, FireDAC.Moni.RemoteClient,
-  frame_INDV, frame_TEAM, SCMHelpers;
+  frame_INDV, frame_TEAM, SCMHelpers, dmSCM;
 
 type
 
@@ -461,11 +461,10 @@ type
     // Miscellaneous - uncatagorized
     procedure GetSCMPreferences();
     // REFRESH
-    procedure Refresh_Entrant(DoBookmark: boolean = true; DoRenumber: boolean = false);
+    procedure Refresh_IndvTeam(DoBookmark: boolean = true; DoRenumber: boolean = false);
     procedure Refresh_Event(DoBookmark: boolean = true; DoRenumber: boolean = false);
     procedure Refresh_Heat(DoBookmark: boolean = true; DoRenumber: boolean = false);
     procedure Refresh_Nominate(DoBookmark: boolean = true);
-    procedure Refresh_Team(DoBookmark: boolean = true; DoRenumber: boolean = false);
     procedure Refresh_TeamEntrant(DoBookmark: boolean = true); //--
     // Generic TAction onExecute (extended params) for BATCH PRINT
     procedure Session_BatchReportExecute(Sender: TObject; RptType: scmRptType);
@@ -479,7 +478,7 @@ type
   protected
     // posted by dmSCMNom : a refresh of the entrant grid is required.
     procedure Entrant_LaneWasCleaned(var Msg: TMessage); message SCM_LANEWASCLEANED;
-    procedure Entrant_Scroll(var Msg: TMessage); message SCM_ENTRANTSCROLL;
+    procedure INDV_Scroll(var Msg: TMessage); message SCM_ENTRANTSCROLL;
     procedure Event_AssertState(var Msg: TMessage);
       message SCM_EVENTASSERTSTATE;
     procedure Event_AssertStatusState(var Msg: TMessage);
@@ -495,6 +494,7 @@ type
     procedure UpdateINDVTEAM(var Msg: TMessage); message SCM_UPDATEINDVTEAM;
     procedure Team_Scroll(var Msg: TMessage); message SCM_TEAMSCROLL;
     procedure RenumberHeats(var Msg: TMessage); message SCM_RENUMBERHEATS;
+    procedure TeamEntrant_Scroll(var Msg: TMessage); message SCM_TEAMENTRANTSCROLL;
   public
     { Public declarations }
     fDoStatusBarUpdate: boolean; // FLAG ACTION - SCM_StatusBar.Enabled
@@ -512,7 +512,7 @@ implementation
 
 uses
 
-  System.UITypes, dmSCM, dlgBasicLogin, Vcl.Themes, SCMUtility,
+  System.UITypes, dlgBasicLogin, Vcl.Themes, SCMUtility,
   System.IniFiles, System.DateUtils,
   dlgCloneSession, rptSessionReportA, rptSessionReportB,
   dlgNewSession, dmAutoBuildV2, rptEventReportA, rptEventReportB,
@@ -737,7 +737,7 @@ end;
 procedure TMain.Entrant_LaneWasCleaned(var Msg: TMessage);
 begin
   // message posted by TSCMNom SCM_LANEWASCLEANED
-  Refresh_Entrant;
+  Refresh_IndvTeam;
 end;
 
 procedure TMain.Entrant_MoveDownExecute(Sender: TObject);
@@ -814,28 +814,24 @@ begin
   TAction(Sender).Enabled := DoEnable;
 end;
 
-procedure TMain.Entrant_Scroll(var Msg: TMessage);
+procedure TMain.INDV_Scroll(var Msg: TMessage);
 var
   fld: TField;
+  aEventType: TEventType;
 begin
-  // messages posted by TSCM.qryMemberQuickPickAfterScroll
-  {TODO -oBSA -cGeneral : TEAM Entrant_Scroll}
-  if not AssertConnection then
-    exit;
-  if SCM.Event_IsINDV  and INDV.Grid.Focused then
+  // messaged by TSCM.qryMemberQuickPickAfterScroll
+  // messaged by TSCM.qryHeatAfterScroll
+  if not AssertConnection then exit;
+  aEventType := SCM.Event_EventType(SCM.Event_ID);
+  if (aEventType = etINDV) and TEAM.Grid.Focused then
   begin
     // After moving row re-engage editing for selected fields.
     fld := INDV.Grid.SelectedField;
     if Assigned(fld) then
     begin
       if (fld.FieldName = 'RaceTime') or (fld.FieldName = 'DCode') or
-        (fld.FieldName = 'FullName') then
-      begin
-        INDV.Grid.EditorMode := true;
-        // INDV.Grid.SelectAll;
-      end
-      else
-        INDV.Grid.EditorMode := false;
+        (fld.FieldName = 'FullName') then INDV.Grid.EditorMode := true
+      else INDV.Grid.EditorMode := false;
     end;
   end;
 end;
@@ -909,7 +905,7 @@ begin
   begin
   dlg := TSwapLanes.Create(self);
   if IsPositiveResult(dlg.ShowModal) then
-    Refresh_Entrant;
+    Refresh_IndvTeam;
   dlg.Free;
   end
   else
@@ -1107,7 +1103,7 @@ begin
     begin
       // refresh...
       Refresh_Heat; // needed to display the new heats
-      Refresh_Entrant; // needed to display the new entrants
+      Refresh_IndvTeam; // needed to display the new entrants
       // the events appear in the grid but the nom and ent values
       // haven't been updated
       Refresh_Event;
@@ -2233,7 +2229,7 @@ begin
   if (success) then
   begin
     Refresh_Heat;
-    Refresh_Entrant;
+    Refresh_IndvTeam;
     // Event's grid need to be refreshed to update NOM# and ENT#
     SCM.dsEvent.DataSet.DisableControls;
     Refresh_Event;
@@ -2956,8 +2952,13 @@ begin
   i := BindSourceDB3.DataSource.DataSet.FieldByName('HeatStatusID').AsInteger;
   // i := SCM.dsHeat.DataSet.FieldByName('HeatStatusID').AsInteger;
   case i of
-    1, 2:
+    1:
       INDV.Grid.Enabled := true;
+    2: 
+    begin
+      INDV.Grid.Enabled := true;
+      INDV.Grid.Invalidate;  // Text color changes - needs a repaint. 
+    end;
     3:
       INDV.Grid.Enabled := false;
   end;
@@ -3365,26 +3366,40 @@ begin
   end;
 end;
 
-procedure TMain.Refresh_Entrant(DoBookmark: boolean = true; DoRenumber: boolean = false);
+procedure TMain.Refresh_IndvTeam(DoBookmark: boolean = true; DoRenumber: boolean = false);
 var
   bm: TBookmark;
+  aHeatID, aIndvTeamID: integer;
+  aEventType: TEventType;
 begin
   if not AssertConnection then
     exit;
+  bm := nil;
   With SCM.dsEntrant.DataSet do
   begin
     DisableControls;
-    bm := GetBookmark;
+    if Active and not IsEmpty then bm := GetBookmark;
     Close;
     Open;
     if Active then
     begin
-      if DoRenumber then SCM.Lane_RenumberLanes(SCM.Heat_ID, false);
       try
-        GotoBookmark(bm);
+        if Assigned(bm) then GotoBookmark(bm);
       except
         on E: Exception do
       end;
+    end;
+    if DoRenumber then
+    begin
+      aHeatID := SCM.Heat_ID;  // curr heat
+      aEventType := SCM.Heat_EventType(aHeatID);
+      aIndvTeamID := SCM.IndvTeam_ID; // curr Lane in Entrant/Team
+      // DoLocate - don't locate last selected.
+      // DoExclude - disabled. Will renumber/repair even when session is locked.
+      SCM.Lane_RenumberLanes(aHeatID, false);
+      if (aEventType = etINDV) then INDV.Grid.DataSource.DataSet.Refresh
+      else if (aEventType = etINDV) then TEAM.Grid.DataSource.DataSet.Refresh;
+      SCM.IndvTeam_LocateLane(aIndvTeamID, aEventType);
     end;
     EnableControls;
   end;
@@ -3393,25 +3408,36 @@ end;
 procedure TMain.Refresh_Event(DoBookmark: boolean = true; DoRenumber: boolean = false);
 var
   bm: TBookmark;
+  aEventID: integer;
 begin
   if not AssertConnection then
     exit;
+  bm := nil;
   with SCM.dsEvent.DataSet do
   begin
     DisableControls;
-    bm := GetBookmark;
+    if Active and not IsEmpty then bm := GetBookmark;
     Close;
     Open;
     if Active then
     begin
-      if DoRenumber then
-        SCM.Session_RenumberEvents(SCM.Session_ID, false);
       try
-        GotoBookmark(bm);
+        if Assigned(bm) then GotoBookmark(bm);
       except
         on E: Exception do
       end;
     end;
+
+    if DoRenumber then
+    begin
+      aEventID := SCM.Event_ID;
+      // DoLocate - don't locate last selected.
+      // DoExclude - disabled. Will renumber/repair even when session is locked.
+      SCM.Session_RenumberEvents(SCM.Session_ID, false, false);
+      Event_Grid.DataSource.DataSet.Refresh;
+      SCM.Event_Locate(aEventID);
+    end;
+
     EnableControls;
   end;
 end;
@@ -3419,23 +3445,32 @@ end;
 procedure TMain.Refresh_Heat(DoBookmark: boolean = true; DoRenumber: boolean = false);
 var
   bm: TBookmark;
+  aHeatID: integer;
 begin
-  if not AssertConnection then
-    exit;
+  if not AssertConnection then exit;
+  bm := nil;
   with SCM.dsHeat.DataSet do
   begin
     DisableControls;
-    bm := GetBookmark;
+    if Active and not IsEmpty then bm := GetBookmark;
     Close;
     Open;
     if Active then
     begin
-      if DoRenumber then SCM.Event_RenumberHeats(SCM.Event_ID, false);
       try
-        GotoBookmark(bm);
+        if Assigned(bm) then GotoBookmark(bm);
       except
         on E: Exception do
       end;
+    end;
+    if DoRenumber then
+    begin
+      aHeatID := SCM.Heat_ID;
+      // DoLocate - don't locate last selected.
+      // DoExclude - disabled. Will renumber/repair even when session is locked.
+      SCM.Event_RenumberHeats(SCM.Event_ID, false, false);
+      BindSourceDB3.DataSource.DataSet.Refresh;
+      SCM.Heat_Locate(aHeatID);
     end;
     EnableControls;
   end;
@@ -3447,20 +3482,21 @@ var
 begin
   if not AssertConnection then
     exit;
+  bm := nil;
   // Update the SCM.dsQmember's table
   // (may have changed if the user has been editing the member's table
   // in the member's dialogue)
   with SCM.dsNominateMembers.DataSet do
   begin
     DisableControls;
-    bm := GetBookmark;
+    if Active and not IsEmpty then bm := GetBookmark;
     Close;
     Open;
     if Active then
     begin
       try
         // NOTE: Posts nominate-scroll event - forces a nominate_controllist update.
-        GotoBookmark(bm);
+        if Assigned(bm) then GotoBookmark(bm);
       finally;
       end;
     end;
@@ -3469,47 +3505,23 @@ begin
   end;
 end;
 
-procedure TMain.Refresh_Team(DoBookmark: boolean = true; DoRenumber: boolean = false);
-var
-  bm: TBookmark;
-begin
-  if not AssertConnection then
-    exit;
-  With SCM.dsTeam.DataSet do
-  begin
-    DisableControls;
-    bm := GetBookmark;
-    Close;
-    Open;
-    if Active then
-    begin
-      if DoRenumber then SCM.Lane_RenumberLanes(SCM.Heat_ID, false);
-      try
-        GotoBookmark(bm);
-      except
-        on E: Exception do
-      end;
-    end;
-    EnableControls;
-  end;
-end;
 
 procedure TMain.Refresh_TeamEntrant(DoBookmark: boolean);
 var
   bm: TBookmark;
 begin
-  if not AssertConnection then
-    exit;
+  if not AssertConnection then exit;
+  bm := nil;
   With SCM.dsTeamEntrant.DataSet do
   begin
     DisableControls;
-    bm := GetBookmark;
+    if Active and not IsEmpty then bm := GetBookmark;
     Close;
     Open;
     if Active then
     begin
       try
-        GotoBookmark(bm);
+        if Assigned(bm) then GotoBookmark(bm);
       except
         on E: Exception do
       end;
@@ -3581,10 +3593,8 @@ begin
   Refresh_Nominate;
   // HEAT
   Refresh_Heat(true, DoRenumber);
-  // ENTRANT
-  Refresh_Entrant(true, DoRenumber);
-  // TEAM
-  Refresh_Team(true, DoRenumber);
+  // ENTRANT/TEAM
+  Refresh_IndvTeam(true, DoRenumber);
   // TEAMENTRANT
   Refresh_TeamEntrant;
   SCM.dsSession.DataSet.EnableControls;
@@ -4095,14 +4105,14 @@ end;
 
 procedure TMain.Session_SortExecute(Sender: TObject);
 var
-  bm: TBookmark;
+  aSessionID: integer;
 begin
   if AssertConnection then
   begin
-    bm := SCM.dsSession.DataSet.GetBookmark;
+    aSessionID := SCM.Session_ID;
     Session_Grid.DataSource.DataSet.Refresh;
     try
-      SCM.dsSession.DataSet.GotoBookmark(bm);
+      SCM.Session_Locate(aSessionID);
     except
       on E: Exception do;
     end;
@@ -4186,33 +4196,50 @@ begin
   TAction(Sender).Enabled := DoEnable;
 end;
 
+procedure TMain.TeamEntrant_Scroll(var Msg: TMessage);
+var
+  fld: TField;
+  aEventType: TEventType;
+begin
+  // messaged by TSCM.qryMemberQuickPickAfterScroll
+  // messaged by TSCM.qryTeamEntrantAfterScroll
+  if not AssertConnection then exit;
+  aEventType := SCM.Event_EventType(SCM.Event_ID);
+  if (aEventType = etTEAM) and TEAM.GridEntrant.Focused then
+  begin
+    // After moving row re-engage editing for selected fields.
+    fld := TEAM.GridEntrant.SelectedField;
+    if Assigned(fld) then
+    begin
+      if (fld.FieldName = 'RaceTime') or (fld.FieldName = 'DCode') or
+        (fld.FieldName = 'TeamName') then TEAM.GridEntrant.EditorMode := true
+      else TEAM.GridEntrant.EditorMode := false;
+    end;
+  end;
+end;
+
 procedure TMain.Team_Scroll(var Msg: TMessage);
 var
   fld: TField;
+  aEventType: TEventType;
 begin
-  // messages posted by TSCM.qryMemberQuickPickAfterScroll
-  {TODO -oBSA -cGeneral : TEAM Entrant_Scroll}
-  if not AssertConnection then
-    exit;
-  if SCM.Event_IsTEAM  and TEAM.Grid.Focused then
+  // messaged by TSCM.qryTeamAfterScroll
+  if not AssertConnection then exit;
+  aEventType := SCM.Event_EventType(SCM.Event_ID);
+  if (aEventType = etTEAM) and TEAM.Grid.Focused then
   begin
     // After moving row re-engage editing for selected fields.
     fld := TEAM.Grid.SelectedField;
     if Assigned(fld) then
     begin
       if (fld.FieldName = 'RaceTime') or (fld.FieldName = 'DCode') or
-        (fld.FieldName = 'TeamName') then
-      begin
-        TEAM.Grid.EditorMode := true;
-      end
-      else
-        TEAM.Grid.EditorMode := false;
+        (fld.FieldName = 'TeamName') then TEAM.Grid.EditorMode := true
+      else TEAM.Grid.EditorMode := false;
     end;
   end;
 end;
 
 procedure TMain.ToggleDCode(DoEnable: boolean);
-
 begin
   // USE FINA codes or use simple scratch/disqualified method
   INDV.ToggleDCode(DoEnable);

@@ -1974,7 +1974,7 @@ object SCM: TSCM
       ''
       ''
       '')
-    Left = 208
+    Left = 272
     Top = 376
     object qryTeamTeamID: TFDAutoIncField
       FieldName = 'TeamID'
@@ -2057,14 +2057,14 @@ object SCM: TSCM
   end
   object dsTeam: TDataSource
     DataSet = qryTeam
-    Left = 288
+    Left = 328
     Top = 376
   end
   object qryTeamEntrant: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     Active = True
     BeforeInsert = qryEvTypeBeforeInsert
-    AfterScroll = qryEntrantAfterScroll
+    AfterScroll = qryTeamEntrantAfterScroll
     IndexFieldNames = 'TeamID'
     MasterSource = dsTeam
     MasterFields = 'TeamID'
@@ -2121,8 +2121,8 @@ object SCM: TSCM
       ''
       ''
       '')
-    Left = 208
-    Top = 440
+    Left = 216
+    Top = 432
     object qryTeamEntrantTeamEntrantID: TFDAutoIncField
       FieldName = 'TeamEntrantID'
       Origin = 'TeamEntrantID'
@@ -2206,8 +2206,8 @@ object SCM: TSCM
   end
   object dsTeamEntrant: TDataSource
     DataSet = qryTeamEntrant
-    Left = 288
-    Top = 440
+    Left = 272
+    Top = 432
   end
   object qrySplit: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -2381,8 +2381,8 @@ object SCM: TSCM
       ''
       ''
       '')
-    Left = 360
-    Top = 440
+    Left = 328
+    Top = 432
     object qryTeamSplitTeamSplitID: TFDAutoIncField
       FieldName = 'TeamSplitID'
       Origin = 'TeamSplitID'
@@ -2403,7 +2403,7 @@ object SCM: TSCM
   end
   object dsTeamSplit: TDataSource
     DataSet = qryTeamSplit
-    Left = 440
-    Top = 440
+    Left = 384
+    Top = 432
   end
 end

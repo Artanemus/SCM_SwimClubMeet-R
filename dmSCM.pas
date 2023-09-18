@@ -206,6 +206,7 @@ type
       DisplayText: Boolean);
     procedure qrySessionSessionStartSetText(Sender: TField; const Text: string);
     procedure qryTeamAfterScroll(DataSet: TDataSet);
+    procedure qryTeamEntrantAfterScroll(DataSet: TDataSet);
     procedure scmConnectionAfterDisconnect(Sender: TObject);
   private
     fLastDistanceID: integer;
@@ -1535,14 +1536,15 @@ end;
 
 procedure TSCM.Heat_ToggleStatus;
 var
-  bm: TBookMark;
-  i: integer;
+//  bm: TBookMark;
+  i, aHeatID: integer;
 begin
   with dsHeat.DataSet do
   begin
     DisableControls;
     CheckBrowseMode;
-    bm := GetBookmark;
+    aHeatID := Heat_ID;
+//    bm := GetBookmark;
     i := FieldByName('HeatStatusID').AsInteger;
     Edit;
     case i of
@@ -1563,7 +1565,8 @@ begin
     Post;
     Refresh;
     try
-      GotoBookmark(bm);
+      Heat_Locate(aHeatID);
+//      GotoBookmark(bm);
     finally
       EnableControls;
     end;
@@ -1728,13 +1731,13 @@ begin
   SearchOptions := [];
   if aEventType = etINDV then
   begin
-    if dsEntrant.DataSet.Active then
+    if dsEntrant.DataSet.Active and not dsEntrant.DataSet.IsEmpty then
         result := dsEntrant.DataSet.Locate('EntrantID', aIndvTeamID,
         SearchOptions);
   end
   else
   begin
-    if dsTeam.DataSet.Active then
+    if dsTeam.DataSet.Active and not dsTeam.DataSet.IsEmpty then
         result := dsTeam.DataSet.Locate('TeamID', aIndvTeamID, SearchOptions);
   end;
 end;
@@ -2448,6 +2451,12 @@ begin
   if Owner is TForm then PostMessage(TForm(Owner).Handle, SCM_TEAMSCROLL, 0, 0);
 end;
 
+procedure TSCM.qryTeamEntrantAfterScroll(DataSet: TDataSet);
+begin
+  if Owner is TForm then
+      PostMessage(TForm(Owner).Handle, SCM_TEAMENTRANTSCROLL, 0, 0);
+end;
+
 procedure TSCM.ReadPreferences(IniFileName: string);
 var
   iFile: TIniFile;
@@ -2499,18 +2508,24 @@ begin
     SQL := 'SELECT Entrant.TimeToBeat, CASE ' +
       'WHEN (Entrant.MemberID IS NULL) THEN 2 ' +
       'WHEN (CAST(CAST(Entrant.TimeToBeat AS DATETIME) AS FLOAT) = 0) THEN 1 ' +
-      'ELSE 0 END AS mySort, Entrant.Lane, EntrantID as aID ' +
+      'ELSE 0 END AS mySort, Entrant.Lane, Entrant.EntrantID ' +
       'FROM Entrant WHERE Entrant.HeatID = :HEATID ' +
       'ORDER BY mySort, TimeToBeat ';
+      qry.SQL.Text := SQL;
+      qry.UpdateOptions.KeyFields := 'EntrantID';
+      qry.UpdateOptions.UpdateTableName := 'SwimClubMeet..Entrant';
   end
   else
   begin
     SQL := 'SELECT Team.TimeToBeat, CASE ' +
       'WHEN (Team.TeamNameID IS NULL) THEN 2 ' +
       'WHEN (CAST(CAST(Team.TimeToBeat AS DATETIME) AS FLOAT) = 0) THEN 1 ' +
-      'ELSE 0 END AS mySort, Team.Lane, TeamID as aID ' +
+      'ELSE 0 END AS mySort, Team.Lane, Team.TeamID ' +
       'FROM Team WHERE Team.HeatID = :HEATID ' +
       'ORDER BY mySort, TimeToBeat ';
+      qry.SQL.Text := SQL;
+      qry.UpdateOptions.KeyFields := 'TeamID';
+      qry.UpdateOptions.UpdateTableName := 'SwimClubMeet..Team';
   end;
 
   NumOfPoolLanes := SwimClub_NumberOfLanes;
@@ -2518,9 +2533,6 @@ begin
   if (aEventType = etINDV) then dsEntrant.DataSet.DisableControls
   else dsTeam.DataSet.DisableControls;
 
-  qry.SQL.Text := SQL;
-  qry.UpdateOptions.KeyFields := 'aID';
-  qry.UpdateOptions.UpdateTableName := 'SwimClubMeet..Entrant';
   qry.IndexFieldNames := 'mySort;TimeToBeat';
   qry.ParamByName('HEATID').AsInteger := aHeatID;
   qry.Prepare;
@@ -2564,6 +2576,8 @@ begin
 
   { Sort order is fastest to slowest.
     Time not given or empty lane are always last. }
+  qry := TFDQuery.Create(self);
+  qry.Connection := scmConnection;
 
   if (aEventType = etINDV) then
   {
@@ -2577,18 +2591,24 @@ begin
     SQL := 'SELECT Entrant.TimeToBeat, CASE ' +
       'WHEN (Entrant.MemberID IS NULL) THEN 2 ' +
       'WHEN (CAST(CAST(Entrant.TimeToBeat AS DATETIME) AS FLOAT) = 0) THEN 1 ' +
-      'ELSE 0 END AS mySort, Entrant.Lane, EntrantID AS aID ' +
+      'ELSE 0 END AS mySort, Entrant.Lane, Entrant.EntrantID ' +
       'FROM Entrant WHERE Entrant.HeatID = :HEATID ' +
       'ORDER BY mySort, TimeToBeat ';
+      qry.SQL.Text := SQL;
+      qry.UpdateOptions.KeyFields := 'EntrantID';
+      qry.UpdateOptions.UpdateTableName := 'SwimClubMeet..Entrant';
   end
   else
   begin
     SQL := 'SELECT Team.TimeToBeat, CASE ' +
       'WHEN (Team.TeamNameID IS NULL) THEN 2 ' +
       'WHEN (CAST(CAST(Team.TimeToBeat AS DATETIME) AS FLOAT) = 0) THEN 1 ' +
-      'ELSE 0 END AS mySort, Team.Lane, TeamID AS aID ' +
+      'ELSE 0 END AS mySort, Team.Lane, Team.TeamID ' +
       'FROM Team WHERE Team.HeatID = :HEATID ' +
       'ORDER BY mySort, TimeToBeat ';
+      qry.SQL.Text := SQL;
+      qry.UpdateOptions.KeyFields := 'TeamID';
+      qry.UpdateOptions.UpdateTableName := 'SwimClubMeet..Entrant';
   end;
 
   NumOfPoolLanes := SwimClub_NumberOfLanes;
@@ -2599,12 +2619,6 @@ begin
   if (aEventType = etINDV) then dsEntrant.DataSet.DisableControls
   else dsTeam.DataSet.DisableControls;
 
-  qry := TFDQuery.Create(self);
-  qry.Connection := scmConnection;
-
-    qry.SQL.Text := SQL;
-    qry.UpdateOptions.KeyFields := 'aID';
-    qry.UpdateOptions.UpdateTableName := 'SwimClubMeet..Entrant';
   qry.IndexFieldNames := 'mySort;TimeToBeat';
   qry.ParamByName('HEATID').AsInteger := aHeatID;
   qry.Prepare;
@@ -2624,7 +2638,10 @@ begin
       else
       begin
         // Too many lanes in heat!
-        aIndvTeamID := qry.FieldByName('aID').AsInteger;
+        if (aEventType = etINDV) then
+        aIndvTeamID := qry.FieldByName('EntrantID').AsInteger
+          else
+        aIndvTeamID := qry.FieldByName('TeamID').AsInteger;
         {
           Remove erronous lane. Session must not be locked.
           Removes entrant\team splits and TeamEntrants (if found).

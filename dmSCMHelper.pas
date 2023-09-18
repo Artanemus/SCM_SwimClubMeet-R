@@ -6,7 +6,8 @@ uses
   dmSCM,
   System.SysUtils, System.Classes, System.DateUtils, System.Math,
   System.IniFiles, System.Variants, System.UITypes, Vcl.StdCtrls, Vcl.Dialogs,
-  Vcl.Forms, FireDAC.Comp.Client, Winapi.Windows, SCMUtility, SCMDefines;
+  Vcl.Forms, FireDAC.Comp.Client, Winapi.Windows, SCMUtility, SCMDefines,
+  Data.DB;
 
 type
   TSCMHelper = class helper for TSCM
@@ -27,6 +28,7 @@ type
     }
     function IndvTeam_ClearLane(aIndvTeamID: integer; aEventType: TEventType;
       DoExclude: Boolean = true): integer;
+    function IndvTeam_ID(): integer; //current EntrantID or TeamID
     function IndvTeam_HeatID(aIndvTeamID: integer;
       aEventType: TEventType): integer;
     function IndvTeam_HeatStatusID(aIndvTeamID: integer; aEventType: TEventType;
@@ -301,6 +303,26 @@ begin
       'WHERE [TeamEntrant].[TeamEntrantID] = :ID;';
     v := scmConnection.ExecSQLScalar(SQL, [aIndvTeamID]);
     if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
+  end;
+end;
+
+function TSCMHelper.IndvTeam_ID: integer;
+var
+  aHeatID: integer;
+  aEventType: TEventType;
+begin
+  result := 0;
+  if not SCMActive then exit;
+  if dsHeat.DataSet.Active and not dsHeat.DataSet.IsEmpty then
+  begin
+    aHeatID := dsHeat.DataSet.FieldByName('HeatID').AsInteger;
+    aEventType := Heat_EventType(aHeatID);
+    if (aEventType = etINDV) and dsEntrant.DataSet.Active and
+      not dsEntrant.DataSet.IsEmpty then
+        result := dsEntrant.DataSet.FieldByName('EntrantID').AsInteger
+    else if (aEventType = etTEAM) and dsTeam.DataSet.Active and
+      not dsTeam.DataSet.IsEmpty then
+        result := dsTeam.DataSet.FieldByName('TeamID').AsInteger;
   end;
 end;
 
