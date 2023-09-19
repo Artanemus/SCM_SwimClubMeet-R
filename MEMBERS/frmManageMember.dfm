@@ -85,9 +85,14 @@ object ManageMember: TManageMember
     object btnFindMember: TButton
       Left = 890
       Top = 9
-      Width = 123
+      Width = 119
       Height = 34
       Caption = 'Find...'
+      ImageIndex = 4
+      ImageName = 'Search'
+      ImageMargins.Left = 4
+      ImageMargins.Right = -20
+      Images = BTNImageList32x32
       TabOrder = 3
       OnClick = btnFindMemberClick
     end
@@ -141,14 +146,12 @@ object ManageMember: TManageMember
     Top = 80
     Width = 1363
     Height = 696
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     Align = alClient
     MultiLine = True
     TabHeight = 40
     TabOrder = 2
-    TabWidth = 160
-    ExplicitWidth = 1359
-    ExplicitHeight = 695
+    TabWidth = 180
     object TabSheet1: TTabSheet
       Caption = 'Member'#39's Details'
       object Panel7: TPanel
@@ -159,19 +162,25 @@ object ManageMember: TManageMember
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitWidth = 1351
-        ExplicitHeight = 645
+        ExplicitLeft = 40
+        ExplicitTop = -3
         object Label3: TLabel
-          Left = 105
-          Top = 139
-          Width = 32
+          Left = 33
+          Top = 179
+          Width = 105
           Height = 19
           Alignment = taRightJustify
-          Caption = 'DOB'
+          Caption = 'Date of Birth'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'Tahoma'
+          Font.Style = [fsBold]
+          ParentFont = False
         end
         object Label4: TLabel
-          Left = 87
-          Top = 212
+          Left = 85
+          Top = 348
           Width = 51
           Height = 19
           Alignment = taRightJustify
@@ -206,21 +215,20 @@ object ManageMember: TManageMember
           ParentFont = False
         end
         object Label10: TLabel
-          Left = 100
-          Top = 486
+          Left = 732
+          Top = 174
           Width = 39
           Height = 19
           Alignment = taRightJustify
           Caption = 'Email'
         end
         object Label7: TLabel
-          Left = 11
-          Top = 418
-          Width = 128
-          Height = 38
+          Left = 586
+          Top = 95
+          Width = 185
+          Height = 19
           Alignment = taRightJustify
           Caption = 'Club Membership Number'
-          WordWrap = True
         end
         object Label12: TLabel
           Left = 17
@@ -239,7 +247,7 @@ object ManageMember: TManageMember
         object dblblMemberID: TDBText
           Left = 144
           Top = 27
-          Width = 108
+          Width = 177
           Height = 30
           DataField = 'MemberID'
           DataSource = ManageMemberData.dsMember
@@ -251,128 +259,46 @@ object ManageMember: TManageMember
           ParentFont = False
         end
         object Label21: TLabel
-          Left = 95
-          Top = 525
+          Left = 727
+          Top = 213
           Width = 44
           Height = 19
           Alignment = taRightJustify
           Caption = 'House'
         end
         object Label22: TLabel
-          Left = 116
-          Top = 170
+          Left = 144
+          Top = 248
           Width = 191
           Height = 19
           Alignment = taRightJustify
           Caption = 'Member'#39's age as of today :'
         end
         object Label24: TLabel
-          Left = 144
-          Top = 246
+          Left = 142
+          Top = 382
           Width = 204
           Height = 19
           Caption = '(Checkboxes use Specificity.)'
         end
         object Label18: TLabel
-          Left = 27
-          Top = 371
-          Width = 113
-          Height = 38
+          Left = 508
+          Top = 59
+          Width = 264
+          Height = 19
           Alignment = taRightJustify
-          Caption = 'Governing Body Registration'
-          WordWrap = True
+          Caption = 'Governing Body Registration Number'
         end
         object Label8: TLabel
-          Left = 221
-          Top = 418
+          Left = 853
+          Top = 95
           Width = 277
           Height = 19
           Caption = '(Recommended - minimum of 4 digits)'
         end
-        object Label23: TLabel
-          Left = 997
-          Top = 256
-          Width = 21
-          Height = 118
-          Alignment = taCenter
-          Caption = 'PERSONAL BEST'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -16
-          Font.Name = 'Tahoma'
-          Font.Orientation = 900
-          Font.Style = []
-          ParentFont = False
-        end
-        object Label13: TLabel
-          Left = 557
-          Top = 256
-          Width = 21
-          Height = 137
-          Alignment = taRightJustify
-          Caption = 'CONTACT DETAILS'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -16
-          Font.Name = 'Tahoma'
-          Font.Orientation = 900
-          Font.Style = []
-          ParentFont = False
-          Layout = tlCenter
-        end
-        object Label6: TLabel
-          Left = 557
-          Top = 8
-          Width = 21
-          Height = 47
-          Alignment = taRightJustify
-          Caption = 'ROLES'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -16
-          Font.Name = 'Tahoma'
-          Font.Orientation = 900
-          Font.Style = []
-          ParentFont = False
-          Layout = tlCenter
-        end
-        object Label11: TLabel
-          Left = 98
-          Top = 557
-          Width = 41
-          Height = 19
-          Alignment = taRightJustify
-          Caption = 'TAGS'
-        end
-        object btnInfoRoles: TVirtualImage
-          Left = 1265
-          Top = 10
-          Width = 25
-          Height = 26
-          ImageCollection = ImageCollectMember
-          ImageWidth = 0
-          ImageHeight = 0
-          ImageIndex = 4
-          ImageName = 'Info'
-          OnClick = btnInfoRolesClick
-          OnMouseLeave = btnInfoMouseLeave
-        end
-        object btnInfoContact: TVirtualImage
-          Left = 911
-          Top = 256
-          Width = 25
-          Height = 26
-          ImageCollection = ImageCollectMember
-          ImageWidth = 0
-          ImageHeight = 0
-          ImageIndex = 4
-          ImageName = 'Info'
-          OnClick = btnInfoContactClick
-          OnMouseLeave = btnInfoMouseLeave
-        end
         object lblMembersAge: TLabel
-          Left = 313
-          Top = 168
+          Left = 341
+          Top = 246
           Width = 128
           Height = 23
           Caption = 'lblMembersAge'
@@ -383,9 +309,29 @@ object ManageMember: TManageMember
           Font.Style = []
           ParentFont = False
         end
+        object Label11: TLabel
+          Left = 144
+          Top = 217
+          Width = 193
+          Height = 19
+          Caption = 'Locale Date Format Syntax '
+        end
+        object btnInfoDateTime: TVirtualImage
+          Left = 111
+          Top = 213
+          Width = 25
+          Height = 26
+          ImageCollection = ImageCollectMember
+          ImageWidth = 0
+          ImageHeight = 0
+          ImageIndex = 4
+          ImageName = 'Info'
+          OnClick = btnInfoDateTimeClick
+          OnMouseLeave = btnInfoMouseLeave
+        end
         object DBlucboGender: TDBLookupComboBox
-          Left = 145
-          Top = 208
+          Left = 143
+          Top = 344
           Width = 148
           Height = 27
           DataField = 'GenderID'
@@ -400,7 +346,7 @@ object ManageMember: TManageMember
           ListSource = ManageMemberData.dsGender
           NullValueKey = 32776
           ParentFont = False
-          TabOrder = 3
+          TabOrder = 2
         end
         object DBedtFirstName: TDBEdit
           Left = 144
@@ -421,36 +367,36 @@ object ManageMember: TManageMember
           TabOrder = 1
         end
         object DBedtMembershipNum: TDBEdit
-          Left = 145
-          Top = 415
+          Left = 777
+          Top = 92
           Width = 70
           Height = 27
           DataField = 'MembershipNum'
           DataSource = ManageMemberData.dsMember
-          TabOrder = 9
+          TabOrder = 8
         end
         object DBchkIsActive: TDBCheckBox
-          Left = 144
-          Top = 300
+          Left = 142
+          Top = 436
           Width = 292
           Height = 17
           Caption = 'Is Active - Indicates full membership. '
           DataField = 'IsActive'
           DataSource = ManageMemberData.dsMember
-          TabOrder = 6
+          TabOrder = 5
         end
         object DBEdtEmail: TDBEdit
-          Left = 145
-          Top = 483
+          Left = 777
+          Top = 171
           Width = 407
           Height = 27
           DataField = 'Email'
           DataSource = ManageMemberData.dsMember
-          TabOrder = 10
+          TabOrder = 9
         end
         object DBlucboHouse: TDBLookupComboBox
-          Left = 145
-          Top = 521
+          Left = 777
+          Top = 209
           Width = 233
           Height = 27
           Hint = 'Assign house (Clear .. Ctrl-Del)'
@@ -460,281 +406,373 @@ object ManageMember: TManageMember
           ListField = 'Caption'
           ListSource = ManageMemberData.dsHouse
           NullValueKey = 32776
-          TabOrder = 11
+          TabOrder = 10
         end
         object DBchkIsSwimmer: TDBCheckBox
-          Left = 144
-          Top = 327
+          Left = 142
+          Top = 463
           Width = 344
           Height = 17
           Caption = 'Is Swimmer - Participates in events.'
           DataField = 'IsSwimmer'
           DataSource = ManageMemberData.dsMember
-          TabOrder = 7
+          TabOrder = 6
         end
         object DBchkIsArchived: TDBCheckBox
-          Left = 144
-          Top = 273
+          Left = 142
+          Top = 409
           Width = 255
           Height = 17
           Caption = 'Is Archived - Retired from club.'
           DataField = 'IsArchived'
           DataSource = ManageMemberData.dsMember
-          TabOrder = 5
+          TabOrder = 4
         end
         object btnClearHouse: TButton
           Tag = 3
-          Left = 384
-          Top = 516
+          Left = 1016
+          Top = 204
           Width = 75
           Height = 32
           Hint = 'Clear the house name.'
           Caption = 'Clear'
-          ImageIndex = 0
-          Images = ImageList1
-          TabOrder = 12
+          ImageIndex = 3
+          ImageName = 'BackSpace_FILL'
+          Images = BTNImageList32x32
+          TabOrder = 11
           OnClick = btnClearClick
         end
         object btnClearGender: TButton
           Tag = 1
-          Left = 299
-          Top = 208
+          Left = 297
+          Top = 344
           Width = 75
           Height = 32
           Hint = 'Clear the house name.'
           Caption = 'Clear'
-          ImageIndex = 0
-          Images = ImageList1
-          TabOrder = 4
+          ImageIndex = 3
+          ImageName = 'BackSpace_FILL'
+          Images = BTNImageList32x32
+          TabOrder = 3
           OnClick = btnClearClick
         end
         object RegistrationNum: TDBEdit
-          Left = 146
-          Top = 368
+          Left = 778
+          Top = 56
           Width = 184
           Height = 27
           DataField = 'MembershipStr'
           DataSource = ManageMemberData.dsMember
-          TabOrder = 8
-        end
-        object dtpickDOB: TCalendarPicker
-          Left = 143
-          Top = 132
-          Height = 32
-          CalendarHeaderInfo.DaysOfWeekFont.Charset = DEFAULT_CHARSET
-          CalendarHeaderInfo.DaysOfWeekFont.Color = clWindowText
-          CalendarHeaderInfo.DaysOfWeekFont.Height = -13
-          CalendarHeaderInfo.DaysOfWeekFont.Name = 'Segoe UI'
-          CalendarHeaderInfo.DaysOfWeekFont.Style = []
-          CalendarHeaderInfo.Font.Charset = DEFAULT_CHARSET
-          CalendarHeaderInfo.Font.Color = clWindowText
-          CalendarHeaderInfo.Font.Height = -20
-          CalendarHeaderInfo.Font.Name = 'Segoe UI'
-          CalendarHeaderInfo.Font.Style = []
-          Color = clWindow
-          Date = 38466.000000000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clGray
-          Font.Height = -16
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          IsEmpty = False
-          OnChange = dtpickDOBChange
-          ParentFont = False
-          TabOrder = 2
-          TextHint = 'select a date'
-        end
-        object DBgridHistoryPB: TDBGrid
-          Left = 1024
-          Top = 256
-          Width = 301
-          Height = 381
-          DataSource = ManageMemberData.dsMemberPB
-          TabOrder = 13
-          TitleFont.Charset = DEFAULT_CHARSET
-          TitleFont.Color = clWindowText
-          TitleFont.Height = -16
-          TitleFont.Name = 'Tahoma'
-          TitleFont.Style = []
-          Columns = <
-            item
-              Expanded = False
-              FieldName = 'EventStr'
-              Title.Caption = 'Event'
-              Width = 155
-              Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'PB'
-              Width = 90
-              Visible = True
-            end>
-        end
-        object DBgridContactInfo: TDBGrid
-          Left = 584
-          Top = 256
-          Width = 321
-          Height = 210
-          DataSource = ManageMemberData.dsContactNum
-          Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
-          TabOrder = 14
-          TitleFont.Charset = DEFAULT_CHARSET
-          TitleFont.Color = clWindowText
-          TitleFont.Height = -16
-          TitleFont.Name = 'Tahoma'
-          TitleFont.Style = []
-          OnKeyDown = DBGridGenericKeyDown
-          Columns = <
-            item
-              Expanded = False
-              FieldName = 'Number'
-              Title.Caption = 'Contact Number'
-              Width = 150
-              Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'luContactNumType'
-              Title.Caption = 'Contact Type'
-              Width = 120
-              Visible = True
-            end>
-        end
-        object DBContactNumNavigator: TDBNavigator
-          Left = 911
-          Top = 288
-          Width = 60
-          Height = 176
-          DataSource = ManageMemberData.dsContactNum
-          VisibleButtons = [nbInsert, nbDelete, nbPost, nbCancel]
-          Hints.Strings = (
-            'First record'
-            'Prior record'
-            'Next record'
-            'Last record'
-            'Insert contact record'
-            'Delete contact record'
-            'Edit record'
-            'Post contact edit'
-            'Cancel contact edit'
-            'Refresh data'
-            'Apply updates'
-            'Cancel updates')
-          Kind = dbnVertical
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 15
-        end
-        object DBGridRole: TDBGrid
-          Left = 584
-          Top = 8
-          Width = 675
-          Height = 210
-          DataSource = ManageMemberData.dsMemberRoleLnk
-          DefaultDrawing = False
-          Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
-          TabOrder = 16
-          TitleFont.Charset = DEFAULT_CHARSET
-          TitleFont.Color = clWindowText
-          TitleFont.Height = -16
-          TitleFont.Name = 'Tahoma'
-          TitleFont.Style = []
-          OnCellClick = DBGridRoleCellClick
-          OnColEnter = DBGridColEnter
-          OnColExit = DBGridColExit
-          OnDrawColumnCell = DBGridDrawColumnCell
-          OnEditButtonClick = DBGridRoleEditButtonClick
-          OnKeyDown = DBGridGenericKeyDown
-          Columns = <
-            item
-              DropDownRows = 12
-              Expanded = False
-              FieldName = 'luMemberRoleStr'
-              Title.Caption = 'Member'#39's Roles'
-              Width = 250
-              Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'IsActive'
-              Title.Caption = 'Active'
-              Width = 72
-              Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'IsArchived'
-              Title.Caption = 'Archived'
-              Width = 72
-              Visible = True
-            end
-            item
-              ButtonStyle = cbsEllipsis
-              Expanded = False
-              FieldName = 'StartOn'
-              ReadOnly = True
-              Title.Caption = 'Start On'
-              Width = 110
-              Visible = True
-            end
-            item
-              ButtonStyle = cbsEllipsis
-              Expanded = False
-              FieldName = 'EndOn'
-              ReadOnly = True
-              Title.Caption = 'End On'
-              Width = 110
-              Visible = True
-            end>
-        end
-        object DBNavigator2: TDBNavigator
-          Left = 1265
-          Top = 42
-          Width = 60
-          Height = 176
-          DataSource = ManageMemberData.dsMemberRoleLnk
-          VisibleButtons = [nbInsert, nbDelete, nbPost, nbCancel]
-          Hints.Strings = (
-            'First record'
-            'Prior record'
-            'Next record'
-            'Last record'
-            'Insert role record'
-            'Delete role record'
-            'Edit record'
-            'Post role edit'
-            'Cancel role edit'
-            'Refresh data'
-            'Apply updates'
-            'Cancel updates')
-          Kind = dbnVertical
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 17
-        end
-        object DBMemo1: TDBMemo
-          Left = 145
-          Top = 554
-          Width = 407
-          Height = 89
-          DataField = 'TAGS'
-          DataSource = ManageMemberData.dsMember
-          TabOrder = 18
+          TabOrder = 7
         end
         object btnClearDOB: TButton
           Tag = 1
-          Left = 289
-          Top = 132
+          Left = 290
+          Top = 172
           Width = 75
           Height = 32
           Hint = 'Clear the house name.'
           Caption = 'Clear'
-          ImageIndex = 0
-          Images = ImageList1
-          TabOrder = 19
+          ImageIndex = 3
+          ImageName = 'BackSpace_FILL'
+          Images = BTNImageList32x32
+          TabOrder = 12
           OnClick = btnClearDOBClick
         end
+        object btnDOBPicker: TButton
+          Tag = 1
+          Left = 371
+          Top = 172
+          Width = 127
+          Height = 32
+          Hint = 'Clear the house name.'
+          Caption = 'DOB Picker'
+          ImageIndex = 1
+          ImageName = 'dialogs'
+          Images = BTNImageList32x32
+          TabOrder = 13
+          OnClick = btnDOBPickerClick
+        end
+        object DBedtDOB: TDBEdit
+          Left = 144
+          Top = 174
+          Width = 140
+          Height = 27
+          DataField = 'DOB'
+          DataSource = ManageMemberData.dsMember
+          TabOrder = 14
+        end
+      end
+    end
+    object TabSheet4: TTabSheet
+      Caption = 'More Member'#39's Details '
+      ImageIndex = 3
+      object Label6: TLabel
+        Left = 557
+        Top = 8
+        Width = 21
+        Height = 47
+        Alignment = taRightJustify
+        Caption = 'ROLES'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Tahoma'
+        Font.Orientation = 900
+        Font.Style = []
+        ParentFont = False
+        Layout = tlCenter
+      end
+      object btnInfoRoles: TVirtualImage
+        Left = 1265
+        Top = 10
+        Width = 25
+        Height = 26
+        ImageCollection = ImageCollectMember
+        ImageWidth = 0
+        ImageHeight = 0
+        ImageIndex = 4
+        ImageName = 'Info'
+        OnClick = btnInfoRolesClick
+        OnMouseLeave = btnInfoMouseLeave
+      end
+      object btnInfoContact: TVirtualImage
+        Left = 408
+        Top = 184
+        Width = 25
+        Height = 26
+        ImageCollection = ImageCollectMember
+        ImageWidth = 0
+        ImageHeight = 0
+        ImageIndex = 4
+        ImageName = 'Info'
+        OnClick = btnInfoContactClick
+        OnMouseLeave = btnInfoMouseLeave
+      end
+      object Label13: TLabel
+        Left = 54
+        Top = 184
+        Width = 21
+        Height = 137
+        Alignment = taRightJustify
+        Caption = 'CONTACT DETAILS'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Tahoma'
+        Font.Orientation = 900
+        Font.Style = []
+        ParentFont = False
+        Layout = tlCenter
+      end
+      object Label23: TLabel
+        Left = 557
+        Top = 237
+        Width = 21
+        Height = 118
+        Alignment = taCenter
+        Caption = 'PERSONAL BEST'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Tahoma'
+        Font.Orientation = 900
+        Font.Style = []
+        ParentFont = False
+      end
+      object Label15: TLabel
+        Left = 54
+        Top = 12
+        Width = 21
+        Height = 124
+        Alignment = taRightJustify
+        Caption = 'METADATA TAGS'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Tahoma'
+        Font.Orientation = 900
+        Font.Style = []
+        ParentFont = False
+        Layout = tlCenter
+      end
+      object DBGridRole: TDBGrid
+        Left = 584
+        Top = 8
+        Width = 675
+        Height = 210
+        DataSource = ManageMemberData.dsMemberRoleLnk
+        DefaultDrawing = False
+        Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+        TabOrder = 0
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -16
+        TitleFont.Name = 'Tahoma'
+        TitleFont.Style = []
+        OnCellClick = DBGridRoleCellClick
+        OnColEnter = DBGridColEnter
+        OnColExit = DBGridColExit
+        OnDrawColumnCell = DBGridDrawColumnCell
+        OnEditButtonClick = DBGridRoleEditButtonClick
+        OnKeyDown = DBGridGenericKeyDown
+        Columns = <
+          item
+            DropDownRows = 12
+            Expanded = False
+            FieldName = 'luMemberRoleStr'
+            Title.Caption = 'Member'#39's Roles'
+            Width = 250
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'IsActive'
+            Title.Caption = 'Active'
+            Width = 72
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'IsArchived'
+            Title.Caption = 'Archived'
+            Width = 72
+            Visible = True
+          end
+          item
+            ButtonStyle = cbsEllipsis
+            Expanded = False
+            FieldName = 'StartOn'
+            ReadOnly = True
+            Title.Caption = 'Start On'
+            Width = 110
+            Visible = True
+          end
+          item
+            ButtonStyle = cbsEllipsis
+            Expanded = False
+            FieldName = 'EndOn'
+            ReadOnly = True
+            Title.Caption = 'End On'
+            Width = 110
+            Visible = True
+          end>
+      end
+      object DBNavigator2: TDBNavigator
+        Left = 1265
+        Top = 42
+        Width = 60
+        Height = 176
+        DataSource = ManageMemberData.dsMemberRoleLnk
+        VisibleButtons = [nbInsert, nbDelete, nbPost, nbCancel]
+        Hints.Strings = (
+          'First record'
+          'Prior record'
+          'Next record'
+          'Last record'
+          'Insert role record'
+          'Delete role record'
+          'Edit record'
+          'Post role edit'
+          'Cancel role edit'
+          'Refresh data'
+          'Apply updates'
+          'Cancel updates')
+        Kind = dbnVertical
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 1
+      end
+      object DBContactNumNavigator: TDBNavigator
+        Left = 408
+        Top = 216
+        Width = 60
+        Height = 176
+        DataSource = ManageMemberData.dsContactNum
+        VisibleButtons = [nbInsert, nbDelete, nbPost, nbCancel]
+        Hints.Strings = (
+          'First record'
+          'Prior record'
+          'Next record'
+          'Last record'
+          'Insert contact record'
+          'Delete contact record'
+          'Edit record'
+          'Post contact edit'
+          'Cancel contact edit'
+          'Refresh data'
+          'Apply updates'
+          'Cancel updates')
+        Kind = dbnVertical
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 2
+      end
+      object DBgridContactInfo: TDBGrid
+        Left = 81
+        Top = 184
+        Width = 321
+        Height = 210
+        DataSource = ManageMemberData.dsContactNum
+        Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+        TabOrder = 3
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -16
+        TitleFont.Name = 'Tahoma'
+        TitleFont.Style = []
+        OnKeyDown = DBGridGenericKeyDown
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'Number'
+            Title.Caption = 'Contact Number'
+            Width = 150
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'luContactNumType'
+            Title.Caption = 'Contact Type'
+            Width = 120
+            Visible = True
+          end>
+      end
+      object DBgridHistoryPB: TDBGrid
+        Left = 584
+        Top = 240
+        Width = 301
+        Height = 381
+        DataSource = ManageMemberData.dsMemberPB
+        TabOrder = 4
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -16
+        TitleFont.Name = 'Tahoma'
+        TitleFont.Style = []
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'EventStr'
+            Title.Caption = 'Event'
+            Width = 155
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'PB'
+            Width = 90
+            Visible = True
+          end>
+      end
+      object DBMemo1: TDBMemo
+        Left = 81
+        Top = 8
+        Width = 407
+        Height = 124
+        DataField = 'TAGS'
+        DataSource = ManageMemberData.dsMember
+        TabOrder = 5
       end
     end
     object TabSheet2: TTabSheet
@@ -955,6 +993,7 @@ object ManageMember: TManageMember
     Top = 0
     Width = 1363
     Height = 31
+    UseSystemFont = False
     ActionManager = ActnManagerMember
     Caption = 'Member Menu Bar'
     Color = clMenuBar
@@ -963,323 +1002,13 @@ object ManageMember: TManageMember
     ColorMap.BtnSelectedFont = clBlack
     ColorMap.UnusedColor = clWhite
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
+    Font.Color = clBlack
     Font.Height = -16
     Font.Name = 'Segoe UI'
     Font.Style = []
     HorzMargin = 10
     Spacing = 10
     ExplicitWidth = 1359
-  end
-  object ImageList1: TImageList
-    Height = 24
-    Width = 24
-    Left = 504
-    Top = 392
-    Bitmap = {
-      494C010101000800040018001800FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
-      0000000000003600000028000000600000001800000001002000000000000024
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000040000001000000010000000100000
-      0010000000100000001000000010000000100000001000000010000000100000
-      0010000000100000001000000001000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000001000000C5000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF00000010000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000079000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF00000010000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000024000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF00000010000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      000000000004000000E2000000FF000000FF000000FF000000FF000000FF0000
-      0063000000FF000000FF000000FF000000FF0000008F000000FF000000FF0000
-      00FF000000FF000000FF00000010000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000AA000000FF000000FF000000FF000000FF000000FF000000240000
-      000000000024000000FF000000FF000000630000000000000024000000FF0000
-      00FF000000FF000000FF00000010000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0040000000FF000000FF000000FF000000FF000000FF00000091000000000000
-      0000000000000000002400000063000000000000000000000000000000640000
-      00FF000000FF000000FF00000010000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000100000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000640000
-      0000000000000000000000000000000000000000000000000024000000FF0000
-      00FF000000FF000000FF00000010000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000001000000C50000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00640000000000000000000000000000000000000024000000FF000000FF0000
-      00FF000000FF000000FF00000010000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000001000000C30000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00630000000000000000000000000000000000000024000000FF000000FF0000
-      00FF000000FF000000FF00000010000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000100000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000630000
-      0000000000000000000000000000000000000000000000000024000000FF0000
-      00FF000000FF000000FF00000010000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0040000000FF000000FF000000FF000000FF000000FF0000008F000000000000
-      0000000000000000002400000064000000000000000000000000000000640000
-      00FF000000FF000000FF00000010000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000AA000000FF000000FF000000FF000000FF000000FF000000240000
-      000000000024000000FF000000FF000000640000000000000024000000FF0000
-      00FF000000FF000000FF00000010000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      000000000004000000E0000000FF000000FF000000FF000000FF000000FF0000
-      0064000000FF000000FF000000FF000000FF00000091000000FF000000FF0000
-      00FF000000FF000000FF00000010000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000024000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF00000010000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000079000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF00000010000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000001000000C3000000FF000000FF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
-      00FF000000FF000000FF00000010000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000040000001000000010000000100000
-      0010000000100000001000000010000000100000001000000010000000100000
-      0010000000100000001000000001000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      000000000000000000000000000000000000424D3E000000000000003E000000
-      2800000060000000180000000100010000000000200100000000000000000000
-      000000000000000000000000FFFFFF00FFFFFF000000000000000000FFFFFF00
-      0000000000000000FFFFFF000000000000000000FE0001000000000000000000
-      FC0001000000000000000000FC0001000000000000000000F800010000000000
-      00000000F00001000000000000000000F01081000000000000000000E039C100
-      0000000000000000C01F81000000000000000000800F01000000000000000000
-      800F01000000000000000000C01F81000000000000000000E039C10000000000
-      00000000F01081000000000000000000F00001000000000000000000F8000100
-      0000000000000000FC0001000000000000000000FC0001000000000000000000
-      FE0001000000000000000000FFFFFF000000000000000000FFFFFF0000000000
-      00000000FFFFFF00000000000000000000000000000000000000000000000000
-      000000000000}
   end
   object ActnManagerMember: TActionManager
     ActionBars = <
@@ -1330,8 +1059,8 @@ object ManageMember: TManageMember
         ActionBar = ActnMemberMenuBar
       end>
     Images = VirtlImageListMember
-    Left = 504
-    Top = 152
+    Left = 1104
+    Top = 512
     StyleName = 'Platform Default'
     object MemFile_AutoEdit: TAction
       Category = 'File'
@@ -1527,9 +1256,84 @@ object ManageMember: TManageMember
               1ABD66155125C76B082A5FD4D9712901C4FA5049EF3B804ACB9740B9C5EFC017
               4EABDD310AD690EA0000000049454E44AE426082}
           end>
+      end
+      item
+        Name = 'dialogs'
+        SourceImages = <
+          item
+            Image.Data = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000017352474200AECE1CE900000128494441546843ED993D0EC2300C85
+              BF5E8701265881998320C121804380C4419881152618B80EA848954A9AD0A0FE
+              A42D2FB39BF8D9CF2F8D1DD1F215B5DC7F042074063B9F81213003C681227D06
+              0EC0D575FEB70CAC815520C7CD633740EC4F66B900F4815B439C4FDC180077D3
+              2717802DB06818801DB0F40570042629E350C5FE4CF97002A6025033AD948124
+              E09DAC81B8D0CB5C9902052AA590A95445C05815460072EE016520EF92128544
+              217F5D920A99B1F2F91B950A4985C0D9171285FC05E86D2915920AFD4819D35C
+              14FA5B0A1564CEC7E7B53F29CB74DEB557A56F6201F0888032D0DAC65693861B
+              4910AD430E57CB301E2D5D3C385AA7C9C8366AEAEC8829896C3C6A9A03BD3A43
+              9D3AEB01EC6DA3A5D0C5595A3C42B5CD0540142A8D0305377A01937C92313C82
+              72590000000049454E44AE426082}
+          end>
+      end
+      item
+        Name = 'ClearBackSpace'
+        SourceImages = <
+          item
+            Image.Data = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000017352474200AECE1CE900000252494441546843ED98E13105311485
+              CFAB0015A00274A00354800A50012A4005A80015D0012A400754C07C33C94C26
+              93CDCB4B6E981D9B5F8FD9BD7BBF7BCF3DC9EE4C235FB391E7AF09E0AF3B3875
+              60EA40630526093516B0F9F67FDF813549A7920E9A4B990EF029E946D2C950FC
+              960E6C4A7A94B4DC29F930EC95A4E3D4736A01489AE481F88D4527562C012E25
+              1DB9805F0EE4BD03C977103359EC9A0EEC4ABA0B02A34F807A2C7300A4F316E8
+              FE411240BD96390095F709231D5C087DC60B5024765E48B62FE93671AD29002E
+              70113C644FD2FD40F27EC0B1C0C33910D7CE8653D79A01C49639686B92CEDCDE
+              E0F3CE41F8E4FDB5C072BD5F6600CF81657EB8DF29E98449238B1C449C3C128A
+              37441380B8A25B925E0AB44D2587204A92E711CD00DB6EC3F2F932940095AE14
+              04F786954E55DE44423809D2C16958AF953B6F0C11C2E7926FEE406C990C72ED
+              6E9B8298977C330016B9E3CAC5C0A2FD5A8058F3842DB1D8A61940420CEBAA83
+              E037108BAE54F239770AE3370110A87588536E43DC79166B32C43E48AD8DE6AC
+              3267B1A61DF0C190CF86FB8339404AB98DACC4E74B209A25E40170A027494BEE
+              1F8B1C25726E1343C4FB8C1900792F729803968E9558A587609F61E6C2CE9A02
+              00115BEB7AE6380D70E9AECD75BC14C5B23407C05A99012F25803856F75AE600
+              296B1DD52BA5AF74F852DFBA4BE7BAD7A5033C1029F941ED259F302EAFAFC9EF
+              4F355F2586ACB52788F9872D9F2C476D1C243C1A588250796C36F9558E07B574
+              C032D1EA58134075E98C6E9C3A6054C8EA305307AA4B6774E3D401A342568719
+              7D077E00C2448C31F447C64B0000000049454E44AE426082}
+          end>
+      end
+      item
+        Name = 'BackSpace_FILL'
+        SourceImages = <
+          item
+            Image.Data = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000017352474200AECE1CE900000243494441546843ED98316815411086
+              BF07564A8440D0225D8890D24282B6826D8A80415014EC6C044108046C848020
+              083676560A924820695404D14A0D16621510D2246942C446EC42083FDCC1E3E5
+              DCDBD9D9DCF1F0B6BC9BF9E7FF766EEF76AFC7908FDE90FBA70368BB835D07BA
+              0E3867E0BF7F84CE01E3CE49B4A47F1A0CF676E03D70C5E2C0197BC4AF076001
+              58741AB2A66703B8047CB656CF109F0DE03B703E8321AB44168027C03D6BE54C
+              F16E8019602D9399141917C06960071849A99C29C705B004CC198DBC06AED6E4
+              C4C49412C900B781E746F38295B9E50084EE2B4E908AAB1B490013C0669DF2C0
+              FDD27C79B90AA2345FC6C44024017C032E1800568A593D18C8E98718341F02ED
+              9731033C041E18CC97A16F0A88BF1510BA54B596428F5AD21AB8087C49305FA6
+              7C2C8CFE8AD088312F1953077E03A311C543215F0B88ED4050AC7913C04BE0BA
+              D37C99FEA380F859A167316F027801DC18660079DF05CE38215A7B84E45BBB4D
+              ED3A53C7BF16F109603FF08A0DD5332D6209CD038F120842AF5101DC02FE2440
+              980154E30370D90011F3217B07DC04F68C104900631585EA7862B6123AA0AB13
+              5B8598CED6ABC0C980781280F46601CDAC65C46CE6D68B4E9C02DE02676B0A24
+              0348F72970D74250EC46EBB6D3FA4E08603242DB0520FD0D602AA2D07185B801
+              A601B5BDADE10690F1FBC0E39608B200C8BB0EF63AE0373DB201E87FA8D643D3
+              07FC6C009AF96BC0AB865B901540DE9F01771A84C80ED0A0F7EA529EBFD3AD9B
+              97810EA0ED36741DE83AE09C81EE11724EA03BFD10E1B95B31ED1AD310000000
+              0049454E44AE426082}
+          end>
       end>
-    Left = 504
-    Top = 224
+    Left = 1104
+    Top = 568
   end
   object VirtlImageListMember: TVirtualImageList
     Images = <
@@ -1556,25 +1360,50 @@ object ManageMember: TManageMember
     ImageCollection = ImageCollectMember
     Width = 32
     Height = 32
-    Left = 504
-    Top = 312
+    Left = 1184
+    Top = 600
   end
   object BalloonHint1: TBalloonHint
     Delay = 100
-    Left = 716
+    Left = 1108
     Top = 630
   end
-  object VirtualImageList1: TVirtualImageList
+  object BTNImageList32x32: TVirtualImageList
     Images = <
       item
         CollectionIndex = 4
         CollectionName = 'Info'
         Name = 'Info'
+      end
+      item
+        CollectionIndex = 5
+        CollectionName = 'dialogs'
+        Name = 'dialogs'
+      end
+      item
+        CollectionIndex = 6
+        CollectionName = 'ClearBackSpace'
+        Name = 'ClearBackSpace'
+      end
+      item
+        CollectionIndex = 7
+        CollectionName = 'BackSpace_FILL'
+        Name = 'BackSpace_FILL'
+      end
+      item
+        CollectionIndex = 2
+        CollectionName = 'Search'
+        Name = 'Search'
+      end
+      item
+        CollectionIndex = 3
+        CollectionName = 'Goto'
+        Name = 'Goto'
       end>
     ImageCollection = ImageCollectMember
-    Width = 24
-    Height = 24
-    Left = 816
-    Top = 632
+    Width = 32
+    Height = 32
+    Left = 1040
+    Top = 600
   end
 end

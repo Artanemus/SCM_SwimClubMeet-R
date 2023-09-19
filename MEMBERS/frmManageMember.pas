@@ -54,12 +54,9 @@ type
     DBMemo1: TDBMemo;
     DBNavigator1: TDBNavigator;
     DBNavigator2: TDBNavigator;
-    dtpickDOB: TCalendarPicker;
     ImageCollectMember: TImageCollection;
-    ImageList1: TImageList;
     Label1: TLabel;
     Label10: TLabel;
-    Label11: TLabel;
     Label12: TLabel;
     Label13: TLabel;
     Label14: TLabel;
@@ -97,21 +94,29 @@ type
     TabSheet3: TTabSheet;
     VirtlImageListMember: TVirtualImageList;
     BalloonHint1: TBalloonHint;
-    VirtualImageList1: TVirtualImageList;
     btnInfoRoles: TVirtualImage;
     btnInfoContact: TVirtualImage;
     btnClearDOB: TButton;
     lblMembersAge: TLabel;
+    TabSheet4: TTabSheet;
+    btnDOBPicker: TButton;
+    BTNImageList32x32: TVirtualImageList;
+    DBedtDOB: TDBEdit;
+    Label15: TLabel;
+    Label11: TLabel;
+    btnInfoDateTime: TVirtualImage;
     procedure About2Click(Sender: TObject);
     procedure btnClearClick(Sender: TObject);
     procedure btnClearDOBClick(Sender: TObject);
     procedure btnClubMembersDetailedClick(Sender: TObject);
     procedure btnClubMembersListClick(Sender: TObject);
     procedure btnClubMembersSummaryClick(Sender: TObject);
+    procedure btnDOBPickerClick(Sender: TObject);
     procedure btnFindMemberClick(Sender: TObject);
     procedure btnGotoMemberIDClick(Sender: TObject);
     procedure btnGotoMembershipClick(Sender: TObject);
     procedure btnInfoContactClick(Sender: TObject);
+    procedure btnInfoDateTimeClick(Sender: TObject);
     procedure btnInfoRolesClick(Sender: TObject);
     procedure btnInfoMouseLeave(Sender: TObject);
     procedure btnMemberDetailClick(Sender: TObject);
@@ -132,7 +137,6 @@ type
       Shift: TShiftState);
     procedure DBNavigator1BeforeAction(Sender: TObject; Button: TNavigateBtn);
     procedure DBNavigator1Click(Sender: TObject; Button: TNavigateBtn);
-    procedure dtpickDOBChange(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -149,14 +153,12 @@ type
     FConnection: TFDConnection;
     fDoDelete: Boolean;
     fSwimClubID: Integer;
-    // SPECIAL dtpickDOB : place here to remain persistent over life of DLG.
-    // Used to POST MESSAGE to DataModule.
+    // Used to convert DATETIME and then post TMessage to Member DataModule.
     fSystemTime: TSystemTime;
-    fKillOnChangeDOB: Boolean;
 
     function AssertConnection: Boolean;
     function FindMember(MemberID: Integer): Boolean;
-    function GetMembersAge(aMemberID: integer; aDate: TDate): string;
+    function GetMembersAge(aMemberID: Integer; aDate: TDate): integer;
     procedure ReadPreferences();
     procedure WritePreferences();
 
@@ -212,28 +214,26 @@ end;
 
 procedure TManageMember.btnClearClick(Sender: TObject);
 begin
-  if Assigned(ManageMemberData) and (ManageMemberData.qryMember.Active) then
+  if not Assigned(ManageMemberData) then exit;
+  with ManageMemberData.dsMember.DataSet do
   begin
-    if (ManageMemberData.qryMember.State <> dsInsert) or
-      (ManageMemberData.qryMember.State <> dsEdit) then
-      ManageMemberData.qryMember.Edit();
+    if not(Active) then exit;
+    if (State <> dsInsert) or (State <> dsEdit) then Edit;
     case TButton(Sender).Tag of
-      1:
-        ManageMemberData.qryMember.FieldByName('GenderID').Clear();
-      3:
-        ManageMemberData.qryMember.FieldByName('HouseID').Clear();
+      1: FieldByName('GenderID').Clear();
+      3: FieldByName('HouseID').Clear();
     end;
   end;
 end;
 
 procedure TManageMember.btnClearDOBClick(Sender: TObject);
 begin
-  if Assigned(ManageMemberData) and (ManageMemberData.qryMember.Active) then
+  if not Assigned(ManageMemberData) then exit;
+  with ManageMemberData.dsMember.DataSet do
   begin
-//    if (ManageMemberData.qryMember.State <> dsInsert) or
-//      (ManageMemberData.qryMember.State <> dsEdit) then
-//      ManageMemberData.qryMember.Edit();
-    dtpickDOB.IsEmpty := true;
+    if not(Active) then exit;
+    if (State <> dsInsert) or (State <> dsEdit) then Edit;
+    FieldByName('DOB').Clear;
   end;
 end;
 
@@ -268,6 +268,37 @@ begin
   rpt := TMembersSummary.Create(Self);
   rpt.RunReport(FConnection, fSwimClubID);
   rpt.Free;
+end;
+
+procedure TManageMember.btnDOBPickerClick(Sender: TObject);
+var
+  dlg: TDOBPicker;
+  Rect: TRect;
+  rtn: TmodalResult;
+begin
+  dlg := TDOBPicker.Create(Self);
+  if IsPositiveResult(dlg.ShowModal()) then
+  begin
+    // Assign date to DB Field.
+    Rect := TButton(Sender).ClientToScreen(TButton(Sender).ClientRect);
+    dlg.Left := Rect.Left;
+    dlg.Top := Rect.Top;
+    dlg.CalendarView1.Date := ManageMemberData.dsMember.DataSet.FieldByName
+      ('DOB').AsDateTime;
+    rtn := dlg.ShowModal;
+    if IsPositiveResult(rtn) then
+    begin
+      with ManageMemberData.dsMember.DataSet do
+      begin
+        if (State <> dsEdit) or (State <> dsInsert) then
+        begin
+          Edit;
+          FieldByName('DOB').AsDateTime := dlg.CalendarView1.Date;
+        end;
+      end;
+    end;
+  end;
+  dlg.Free;
 end;
 
 procedure TManageMember.btnFindMemberClick(Sender: TObject);
@@ -330,6 +361,16 @@ begin
     'To clear the contact type, select the ' + sLinebreak +
     'cell and type ALT-BACKSPACE.';
   BalloonHint1.ShowHint(btnInfoContact);
+end;
+
+procedure TManageMember.btnInfoDateTimeClick(Sender: TObject);
+begin
+  BalloonHint1.Title := 'Regional Date Format.';
+  BalloonHint1.Description := 'SCM uses ''Short Date'' locale format.' + sLinebreak +
+    'To modify how this is displayed (and entered) goto Settings - ' + sLinebreak +
+    '''Time and Language''. Then select ''Region''. Then select - ' + sLinebreak +
+    'change date formats.';
+  BalloonHint1.ShowHint(btnInfoDateTime);
 end;
 
 procedure TManageMember.btnInfoRolesClick(Sender: TObject);
@@ -570,13 +611,6 @@ begin
             DataSource.DataSet.Post();
             Key := NULL;
           end;
-          if (fld.FieldName = 'luMembershipType') then
-          begin
-            DataSource.DataSet.Edit();
-            DataSource.DataSet.FieldByName('MembershipTypeID').Clear();
-            DataSource.DataSet.Post();
-            Key := NULL;
-          end;
           if (fld.FieldName = 'luGender') then
           begin
             DataSource.DataSet.Edit();
@@ -716,37 +750,6 @@ begin
   end;
 end;
 
-procedure TManageMember.dtpickDOBChange(Sender: TObject);
-begin
-  // VCL Control dtpickDOB is DATA UN-AWARE.
-  if not fKillOnChangeDOB then
-  begin
-    with ManageMemberData.dsMember.DataSet do
-    BEGIN
-      // S Y N C R O N I Z E   D A T A M O D U L E   D O B  . . .
-      if FieldByName('DOB').AsDateTime <> dtpickDOB.Date then
-      Begin
-        // Send SystemTime to the Member's DataModule.
-        // POST helps avoid exceptions when DB not in correct state.
-        try
-          DateTimeToSystemTime(dtpickDOB.Date, fSystemTime);
-          PostMessage(ManageMemberData.Handle, SCM_DOBUPDATED,
-            longint(@fSystemTime), 0);
-        except
-          on E: Exception do
-            raise;
-        end;
-      End;
-      // calculate the age of the member
-      if dtpickDOB.IsEmpty or (dtpickDOB.Date <= 0) then
-        lblMembersAge.Caption := 'No DOB.'
-      else
-        lblMembersAge.Caption :=
-          GetMembersAge(FieldByName('MemberID').AsInteger, dtpickDOB.Date);
-    END;
-  end;
-end;
-
 function TManageMember.FindMember(MemberID: Integer): Boolean;
 var
   b: Boolean;
@@ -786,7 +789,7 @@ end;
 procedure TManageMember.FormCreate(Sender: TObject);
 var
   css: TCustomStyleServices;
-
+  LFormatSettings: TFormatSettings;
 begin
   // ----------------------------------------------------
   // R E G I S T E R   W I N D O W S   M E S S A G E S  .
@@ -800,7 +803,6 @@ begin
   // I N I T I A L I Z E   P A R A M S .
   // ----------------------------------------------------
   fSwimClubID := 1;
-  fKillOnChangeDOB := true;
 
   // Special color assignment - used in TDBGrid painting...
   // -------------------------------------------
@@ -820,7 +822,8 @@ begin
 
   // Display tabsheet
   PageControl1.TabIndex := 0;
-
+  LFormatSettings := TFormatSettings.Create;
+  Label11.Caption := 'Date Syntax : ' + LFormatSettings.ShortDateFormat;
 end;
 
 procedure TManageMember.FormDestroy(Sender: TObject);
@@ -846,45 +849,44 @@ begin
     ManageMemberData.qrySwimClub.FieldByName('DetailStr').AsString;
 end;
 
-function TManageMember.GetMembersAge(aMemberID: Integer; aDate: TDate): string;
+function TManageMember.GetMembersAge(aMemberID: Integer; aDate: TDate): integer;
 var
   SQL: string;
   v: Variant;
+  dt: TDateTime;
 begin
-  if not AssertConnection then
-    exit;
-  result := '';
-  SQL := 'SELECT dbo.SwimmerAge(GETDATE(), :ID1) AS SwimmerAge FROM ' +
-    '[SwimClubMeet].[dbo].[Member] WHERE MemberID = :ID2';
-  v := FConnection.ExecSQLScalar(SQL, [dtpickDOB.Date, aMemberID],
-    [ftDateTime, ftInteger]);
-  if not VarIsNull(v) then
-    result := v
-  else
-    result := 'DOB ERROR.'
+  result := 0;
+  if not AssertConnection then exit;
+  with ManageMemberData.dsMember.DataSet do
+  begin
+    if not Active or IsEmpty then exit;
+    if FieldByName('DOB').IsNull then exit;
+    dt := FieldByName('DOB').AsDateTime;
+    SQL := 'SELECT dbo.SwimmerAge(GETDATE(), :ID1) AS SwimmerAge FROM ' +
+      '[SwimClubMeet].[dbo].[Member] WHERE MemberID = :ID2';
+    v := FConnection.ExecSQLScalar(SQL, [dt, aMemberID],
+      [ftDateTime, ftInteger]);
+    if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
+  end;
 end;
 
 procedure TManageMember.ManageMemberAfterScroll(var Msg: TMessage);
+var
+  dt: TDate;
+  age: Integer;
 begin
-  // S Y N C R O N I Z E   D A T A M O D U L E   D O B   . . .
-  if not AssertConnection then
-    exit;
+  lblMembersAge.Caption := '';
+  if not AssertConnection then exit;
   with ManageMemberData.dsMember.DataSet do
-  BEGIN
-    fKillOnChangeDOB := true;
-    if FieldByName('DOB').IsNull then
-      dtpickDOB.IsEmpty := true
-    else
-      dtpickDOB.Date := FieldByName('DOB').AsDateTime;
-    { TODO -oBSA -cGeneral : Application.ProcessMessages? }
-    fKillOnChangeDOB := false;
-
-    // calculate the age of the member
-    if dtpickDOB.IsEmpty or (dtpickDOB.Date <= 0) then
-      lblMembersAge.Caption := 'No DOB.'
-    else
-      lblMembersAge.Caption := GetMembersAge(FieldByName('MemberID').AsInteger,
-        dtpickDOB.Date);
+  BEGIN // calculate the age of the member
+    if not Active or IsEmpty then exit;
+    if FieldByName('MemberID').IsNull then exit;
+    if FieldByName('DOB').IsNull then exit;
+    dt := FieldByName('DOB').AsDateTime;
+    if (dt <= 0) then exit;
+    age := GetMembersAge(FieldByName('MemberID').AsInteger, dt);
+    if (age <= 0) then exit;
+    lblMembersAge.Caption := IntToStr(age);
   END;
 end;
 

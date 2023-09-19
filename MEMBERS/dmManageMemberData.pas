@@ -90,6 +90,9 @@ type
     procedure qryMemberAfterScroll(DataSet: TDataSet);
     procedure qryMemberBeforeDelete(DataSet: TDataSet);
     procedure qryMemberBeforeScroll(DataSet: TDataSet);
+    procedure qryMemberDOBGetText(Sender: TField; var Text: string; DisplayText:
+        Boolean);
+    procedure qryMemberDOBSetText(Sender: TField; const Text: string);
     procedure qryMemberMETADATAGetText(Sender: TField; var Text: string;
       DisplayText: Boolean);
     procedure qryMemberMETADATASetText(Sender: TField; const Text: string);
@@ -368,6 +371,38 @@ procedure TManageMemberData.qryMemberBeforeScroll(DataSet: TDataSet);
 begin
   if (DataSet.State = dsEdit) or (DataSet.State = dsInsert) then
     DataSet.CheckBrowseMode; // auto-commit changes ...
+end;
+
+procedure TManageMemberData.qryMemberDOBGetText(Sender: TField;
+  var Text: string; DisplayText: Boolean);
+var
+  LFormatSettings: TFormatSettings;
+begin
+  LFormatSettings := TFormatSettings.Create; // Use the system locale
+  if (Sender.IsNull) or (DateOf(Sender.AsDateTime) = 0) then Text := ''
+  else Text := FormatDateTime('ddddd', Sender.AsDateTime, LFormatSettings);
+end;
+
+procedure TManageMemberData.qryMemberDOBSetText(Sender: TField;
+  const Text: string);
+var
+  dt: TDateTime;
+  LFormatSettings: TFormatSettings;
+begin
+  LFormatSettings := TFormatSettings.Create; // Use the system locale
+  if Text.IsNullOrEmpty(Text) then Sender.Clear
+  else
+  begin
+    try
+      dt := StrToDate(Text, LFormatSettings);
+      Sender.AsDateTime := dt;
+    except
+      on E: EConvertError do
+      begin
+        ShowMessage('Invalid date format: ' + E.Message);
+      end;
+    end;
+  end;
 end;
 
 procedure TManageMemberData.qryMemberMETADATAGetText(Sender: TField;

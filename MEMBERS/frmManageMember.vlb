@@ -73,9 +73,6 @@ Coordinates=1815,720,60,58
 [ManageMemberData.tblDistance]
 Coordinates=798,720,202,58
 
-[Label11]
-Coordinates=273,720,60,58
-
 [btnClearHouse]
 Coordinates=723,652,100,58
 
@@ -147,11 +144,6 @@ Coordinates=143,720,120,58
 
 [ActnManagerMember]
 Coordinates=1319,1178,138,36
-
-[dtpickDOB]
-Coordinates=470,420,76,58
-Visible=True
-ExplicitSubNodes=Date
 
 [MemFile_AutoEdit]
 Coordinates=1319,1288,120,36
@@ -243,9 +235,6 @@ Coordinates=887,540,53,58
 [ManageMemberData.tblMemberRole]
 Coordinates=1150,10,225,168
 
-[ImageList1]
-Coordinates=1599,221,77,36
-
 [chkbHideNonSwimmers]
 Coordinates=1694,652,151,58
 
@@ -292,7 +281,9 @@ Coordinates=497,914,224,36
 Coordinates=10,788,97,36
 
 []
-Coordinates=1126,720,108,58
+Coordinates=273,720,60,58
+Visible=True
+ExplicitSubNodes=Date
 
 [BalloonHint1]
 Coordinates=489,375,88,36
@@ -302,7 +293,4 @@ Coordinates=489,497,98,36
 
 [btnInfoRoles]
 Coordinates=729,843,87,36
-
-[VirtualImageList1]
-Coordinates=729,898,114,36
 

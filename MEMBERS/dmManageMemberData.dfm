@@ -50,7 +50,6 @@ object ManageMemberData: TManageMemberData
   end
   object qryMember: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     AfterInsert = qryMemberAfterInsert
     BeforeDelete = qryMemberBeforeDelete
     BeforeScroll = qryMemberBeforeScroll
@@ -211,6 +210,8 @@ object ManageMemberData: TManageMemberData
       DisplayWidth = 12
       FieldName = 'DOB'
       Origin = 'DOB'
+      OnGetText = qryMemberDOBGetText
+      OnSetText = qryMemberDOBSetText
       DisplayFormat = 'dd/mm/yyyy'
     end
     object qryMemberIsActive: TBooleanField
