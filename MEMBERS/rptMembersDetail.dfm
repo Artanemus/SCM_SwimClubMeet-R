@@ -342,18 +342,6 @@ object MembersDetail: TMembersDetail
           Memo.UTF8W = (
             '[frxDS."cGender"]')
         end
-        object frxDSIsSwimmer: TfrxMemoView
-          AllowVectorExport = True
-          Left = 449.764070000000000000
-          Width = 52.913420000000000000
-          Height = 18.897650000000000000
-          DataField = 'IsActive'
-          DataSet = frxDSReport
-          DataSetName = 'frxDS'
-          Frame.Typ = []
-          Memo.UTF8W = (
-            '[frxDS."IsActive"]')
-        end
         object frxDSMemberID: TfrxMemoView
           AllowVectorExport = True
           Width = 60.472480000000000000
@@ -365,6 +353,19 @@ object MembersDetail: TMembersDetail
           Frame.Typ = []
           Memo.UTF8W = (
             '[frxDS."MemberID"]')
+        end
+        object CheckBox1: TfrxCheckBoxView
+          AllowVectorExport = True
+          Left = 460.500000000000000000
+          Top = 0.759740000000000000
+          Width = 18.897650000000000000
+          Height = 18.897650000000000000
+          CheckColor = clBlack
+          CheckStyle = csCheck
+          DataField = 'IsActive'
+          DataSet = frxDSReport
+          DataSetName = 'frxDS'
+          Frame.Typ = []
         end
       end
     end

@@ -26,66 +26,23 @@ object ManageMember: TManageMember
     BevelOuter = bvNone
     TabOrder = 0
     ExplicitWidth = 1359
-    object lblMemberCount: TLabel
-      Left = 669
-      Top = 12
-      Width = 155
-      Height = 23
-      Caption = 'Members Found : '
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -19
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-    end
-    object lblCount: TLabel
-      Left = 830
-      Top = 12
-      Width = 10
-      Height = 23
-      Caption = '0'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -19
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-    end
-    object chkbHideInActive: TCheckBox
-      Left = 225
-      Top = 12
-      Width = 206
-      Height = 28
-      Caption = 'Hide In-Active Members'
-      TabOrder = 1
-      WordWrap = True
-      OnClick = chkbHideInActiveClick
-    end
-    object chkbHideArchived: TCheckBox
-      Left = 20
-      Top = 12
-      Width = 199
-      Height = 28
-      Caption = 'Hide Archived Members'
-      TabOrder = 0
-      WordWrap = True
-      OnClick = chkbHideArchivedClick
-    end
-    object chkbHideNonSwimmers: TCheckBox
-      Left = 442
-      Top = 12
-      Width = 175
-      Height = 28
-      Caption = 'Hide Non-Swimmers'
-      TabOrder = 2
-      WordWrap = True
-      OnClick = chkbHideNonSwimmersClick
+    object btnInfoFilter: TVirtualImage
+      Left = 869
+      Top = 6
+      Width = 25
+      Height = 26
+      ImageCollection = ImageCollectMember
+      ImageWidth = 0
+      ImageHeight = 0
+      ImageIndex = 4
+      ImageName = 'Info'
+      OnClick = btnInfoFilterClick
+      OnMouseLeave = btnInfoMouseLeave
     end
     object btnFindMember: TButton
-      Left = 890
+      Left = 906
       Top = 9
-      Width = 119
+      Width = 142
       Height = 34
       Caption = 'Find...'
       ImageIndex = 4
@@ -93,26 +50,38 @@ object ManageMember: TManageMember
       ImageMargins.Left = 4
       ImageMargins.Right = -20
       Images = BTNImageList32x32
-      TabOrder = 3
+      TabOrder = 0
       OnClick = btnFindMemberClick
     end
     object btnGotoMemberID: TButton
-      Left = 1027
+      Left = 1054
       Top = 9
-      Width = 133
+      Width = 142
       Height = 34
       Caption = 'Goto MemberID'
-      TabOrder = 4
+      TabOrder = 1
       OnClick = btnGotoMemberIDClick
     end
     object btnGotoMembership: TButton
-      Left = 1172
+      Left = 1202
       Top = 9
       Width = 157
       Height = 34
       Caption = 'Goto Membership#'
-      TabOrder = 5
+      TabOrder = 2
       OnClick = btnGotoMembershipClick
+    end
+    object btnFilter: TButton
+      Left = 727
+      Top = 9
+      Width = 142
+      Height = 34
+      Action = actnFilter
+      ImageIndex = 8
+      ImageMargins.Left = 4
+      ImageMargins.Right = -16
+      Images = BTNImageList32x32
+      TabOrder = 3
     end
   end
   object Panel3: TPanel
@@ -153,7 +122,7 @@ object ManageMember: TManageMember
     TabOrder = 2
     TabWidth = 180
     object TabSheet1: TTabSheet
-      Caption = 'Member'#39's Details'
+      Caption = 'Member'#39's Details 1'
       object Panel7: TPanel
         Left = 0
         Top = 0
@@ -162,8 +131,8 @@ object ManageMember: TManageMember
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitLeft = 40
-        ExplicitTop = -3
+        ExplicitWidth = 1351
+        ExplicitHeight = 645
         object Label3: TLabel
           Left = 33
           Top = 179
@@ -317,8 +286,8 @@ object ManageMember: TManageMember
           Caption = 'Locale Date Format Syntax '
         end
         object btnInfoDateTime: TVirtualImage
-          Left = 111
-          Top = 213
+          Left = 343
+          Top = 210
           Width = 25
           Height = 26
           ImageCollection = ImageCollectMember
@@ -328,6 +297,14 @@ object ManageMember: TManageMember
           ImageName = 'Info'
           OnClick = btnInfoDateTimeClick
           OnMouseLeave = btnInfoMouseLeave
+        end
+        object Label15: TLabel
+          Left = 670
+          Top = 266
+          Width = 102
+          Height = 19
+          Alignment = taRightJustify
+          Caption = 'Metadata Tags'
         end
         object DBlucboGender: TDBLookupComboBox
           Left = 143
@@ -502,10 +479,19 @@ object ManageMember: TManageMember
           DataSource = ManageMemberData.dsMember
           TabOrder = 14
         end
+        object DBMemo1: TDBMemo
+          Left = 778
+          Top = 263
+          Width = 407
+          Height = 124
+          DataField = 'TAGS'
+          DataSource = ManageMemberData.dsMember
+          TabOrder = 15
+        end
       end
     end
     object TabSheet4: TTabSheet
-      Caption = 'More Member'#39's Details '
+      Caption = 'Member'#39's Details 2'
       ImageIndex = 3
       object Label6: TLabel
         Left = 557
@@ -538,7 +524,7 @@ object ManageMember: TManageMember
       end
       object btnInfoContact: TVirtualImage
         Left = 408
-        Top = 184
+        Top = 10
         Width = 25
         Height = 26
         ImageCollection = ImageCollectMember
@@ -551,7 +537,7 @@ object ManageMember: TManageMember
       end
       object Label13: TLabel
         Left = 54
-        Top = 184
+        Top = 10
         Width = 21
         Height = 137
         Alignment = taRightJustify
@@ -566,8 +552,8 @@ object ManageMember: TManageMember
         Layout = tlCenter
       end
       object Label23: TLabel
-        Left = 557
-        Top = 237
+        Left = 54
+        Top = 245
         Width = 21
         Height = 118
         Alignment = taCenter
@@ -579,22 +565,6 @@ object ManageMember: TManageMember
         Font.Orientation = 900
         Font.Style = []
         ParentFont = False
-      end
-      object Label15: TLabel
-        Left = 54
-        Top = 12
-        Width = 21
-        Height = 124
-        Alignment = taRightJustify
-        Caption = 'METADATA TAGS'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -16
-        Font.Name = 'Tahoma'
-        Font.Orientation = 900
-        Font.Style = []
-        ParentFont = False
-        Layout = tlCenter
       end
       object DBGridRole: TDBGrid
         Left = 584
@@ -685,7 +655,7 @@ object ManageMember: TManageMember
       end
       object DBContactNumNavigator: TDBNavigator
         Left = 408
-        Top = 216
+        Top = 42
         Width = 60
         Height = 176
         DataSource = ManageMemberData.dsContactNum
@@ -710,7 +680,7 @@ object ManageMember: TManageMember
       end
       object DBgridContactInfo: TDBGrid
         Left = 81
-        Top = 184
+        Top = 10
         Width = 321
         Height = 210
         DataSource = ManageMemberData.dsContactNum
@@ -739,8 +709,8 @@ object ManageMember: TManageMember
           end>
       end
       object DBgridHistoryPB: TDBGrid
-        Left = 584
-        Top = 240
+        Left = 81
+        Top = 248
         Width = 301
         Height = 381
         DataSource = ManageMemberData.dsMemberPB
@@ -765,18 +735,9 @@ object ManageMember: TManageMember
             Visible = True
           end>
       end
-      object DBMemo1: TDBMemo
-        Left = 81
-        Top = 8
-        Width = 407
-        Height = 124
-        DataField = 'TAGS'
-        DataSource = ManageMemberData.dsMember
-        TabOrder = 5
-      end
     end
     object TabSheet2: TTabSheet
-      Caption = 'Member'#39's List'
+      Caption = 'LIST'
       ImageIndex = 1
       object DBGrid3: TDBGrid
         Left = 0
@@ -814,27 +775,32 @@ object ManageMember: TManageMember
           item
             Expanded = False
             FieldName = 'MembershipNum'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'FirstName'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'LastName'
+            Width = 64
             Visible = True
           end
           item
             ButtonStyle = cbsEllipsis
             Expanded = False
             FieldName = 'DOB'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luGender'
+            Width = 64
             Visible = True
           end
           item
@@ -842,6 +808,7 @@ object ManageMember: TManageMember
             Expanded = False
             FieldName = 'IsArchived'
             Title.Caption = 'Archive'
+            Width = 64
             Visible = True
           end
           item
@@ -855,11 +822,13 @@ object ManageMember: TManageMember
             Expanded = False
             FieldName = 'IsSwimmer'
             Title.Caption = 'Swims'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luHouse'
+            Width = 64
             Visible = True
           end
           item
@@ -1059,8 +1028,8 @@ object ManageMember: TManageMember
         ActionBar = ActnMemberMenuBar
       end>
     Images = VirtlImageListMember
-    Left = 1104
-    Top = 512
+    Left = 1112
+    Top = 584
     StyleName = 'Platform Default'
     object MemFile_AutoEdit: TAction
       Category = 'File'
@@ -1097,6 +1066,12 @@ object ManageMember: TManageMember
       ImageIndex = 3
       ImageName = 'Goto'
       OnExecute = btnGotoMemberIDClick
+    end
+    object actnFilter: TAction
+      Caption = 'Filter...'
+      ImageIndex = 4
+      ImageName = 'filter_alt'
+      OnExecute = actnFilterExecute
     end
   end
   object ImageCollectMember: TImageCollection
@@ -1331,9 +1306,105 @@ object ManageMember: TManageMember
               97810EA0ED36741DE83AE09C81EE11724EA03BFD10E1B95B31ED1AD310000000
               0049454E44AE426082}
           end>
+      end
+      item
+        Name = 'Checked'
+        SourceImages = <
+          item
+            Image.Data = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000017352474200AECE1CE900000188494441546843ED995D51C6301045
+              CFA7001C000E90004EC0010E0007380009384002480005E000E6CE90994E4993
+              E6AF4999CD4B1F9AA4F7ECDD24DBC9819DB7C3CEF56300BD1D34074677E016B8
+              018E3B09FD021E80FBA5EF8752E80E10C0084D00D2F3A785003E3B467E2EF41D
+              384B05F89E0CE8B5D8A31A42C2A28337C8ADA8060368EC8239E0026C8B38906A
+              3A242F80674F9FE15348E25F8073E01A789A410C0D3015EF74EBB0D2A1E5DAB0
+              003EF1BB7160AD78B9309C0329E29B03B8125B25EF9A962ABE298013A38F5C02
+              31881CF14D015E7FB73E7DE42D02912BBE29C015F038C99B258812F14D013479
+              0CA2547C73801084DEB913D619E5DBE7638B7F936DD4E78484A93C2811BF8903
+              4EE01C621AD99CC87729257C1025E23775C0E744A9F82E006E61EB392F8D630B
+              D6F77E93459C236CED18037091B27FE2B53933EB6729642994993A554E62FDA4
+              1C150AA835FC0338F54DF6AF2F3804AC5B11D53827B54299388F22AF13DD7B3B
+              A3B97AEDEF891CCBDD0DA05A28332732073203576DD8EE1DF80140A979314B2A
+              62800000000049454E44AE426082}
+          end>
+      end
+      item
+        Name = 'UnChecked'
+        SourceImages = <
+          item
+            Image.Data = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000017352474200AECE1CE9000000EF494441546843ED99D10DC2300C44
+              5F27800D80CD18810D800D1881D1E804B001C842150848ADA40537E8F2DBBAF5
+              9D5FE2A669A87C3495E78F0444575015987A05B6C0069807257A010EC03EF5FE
+              3E8476800998C2300196CFDBE813700E74FE35D113B0CA15707D0A889AEC6E0E
+              7D89B9C13F60CBCD4102BE5C0555A0335893B810352124840AD1E9C284901012
+              420F073EF6227D0B0D44C40BD72AA455C863C4B92E848490105223BB3BA02D65
+              E15CD032AA65B4101D6D29CD013B5C980D7470ACF01658E6FE5EAFFE80C3049B
+              8835B018CBCACCE798F3C7D4E94C6483CAD491BE3DAAC34A4074835205FEA602
+              37C5724A31DEC9C9540000000049454E44AE426082}
+          end>
+      end
+      item
+        Name = 'filter_alt'
+        SourceImages = <
+          item
+            Image.Data = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000017352474200AECE1CE900000239494441546843ED983F481D411087
+              BF578A6D0282A68A45545452C62A8A2420A4312816166A22A40BE23F2CEC4430
+              10B10C444D2085A068A522886823A40C51214D1AC542B48E65C2C03D598EBDB7
+              777B73C407BBE5DDCE6FE6DBD9DFDEBE57A2CA47A9CAEB2700FCEF0E860E840E
+              E45C81345BE821D092338F6FF829705329D805D007ACFB66578AEB073692B45C
+              005F8021A5427C65A47881B00E17C024F0C137B352DC4760C217A006D8059E1B
+              02ABC01BA5E2E2322BC088F1F008E8016E7D0124AE2D82A83744C680256588F7
+              31CDCBA8F89F794C5C8EED05366342DDC08112449745EB35B0E5D27779C08C9F
+              02168C0757402B70ED4AE278FF003801EA8C79D369BD970540F43F036F8D44FB
+              C08B9C007BC04B436319184DAB9915C066EA45603C6DC2D83C39E1E4A42B0FA7
+              69E379B20224997A18F89A116210F866C4A432AD068068D84CFD14F89112A2DD
+              32379569B50044276EEA5F4033F0D701215D3F039A7C4CAB09603375C5CF7E94
+              7C0D18F035AD3680CDD4B3C05C42176680F93CA6D5064832F52B603B964CAE04
+              3B794D5B0480CDD47F8027C04594B001108FD41A057899B628009BA9BF03CFA2
+              84C7408786698B04B099FA5394F09D96698B06906BF7A1E318ED04E48BAB327C
+              BEC495120780AC6D091D88AD58D842610B655D81B08572AE583885C216BA675B
+              E81170EEA8A911F89DB3EEBB706D0F88B05CE6CCFF52CD5AE512279739B55104
+              8014F718906E984356BDFC03E7DE03A815E8122AAA03AEBC6AEF0380DA527A0A
+              850E782E9C5A58D577E01F4B096A31D3531B890000000049454E44AE426082}
+          end>
+      end
+      item
+        Name = 'filter_alt_off'
+        SourceImages = <
+          item
+            Image.Data = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000017352474200AECE1CE900000288494441546843ED993D68163118C7
+              7FAFE05070501C844205D14510140441B05A11FCC24114050707D1C1A1A38820
+              2E0E3A48711007B15BFD40452787D2C52F1CDD04279716C4411C3B96F287BC10
+              C2BD974B2EB9DC2BDE7AB9CBFF977F9E2779920163FE0CC65C3FFF014A3BF84F
+              3AF0DA8CEAC5D2A3DBA47FD70189BF603E7C03F41EA20E401C2EC44C935149D8
+              E63BF0A7EE7F553160BB5005711C780F6C4C28B4EE579A051AC8CA675410FB20
+              0E01AF80C90E206AA7725D16F241EC071680DD99216E020F421D18B6F741A4D6
+              3E0F5CB57EFA053809ACC602E8BBAE20668147965005AFC47F0B0DE2AAF6B921
+              A681CF4EC79781673E8B4356E25C10DB80AFC04E4BEC3DE0B64FBCDE8700E49A
+              4E6F817396D877C0F926E263005243DC01EE5A627F004AD17F7302A482B804BC
+              70846AA5FFD4547CAC032952EC016011D8628955167A1C22BE2D40AC135BCDD6
+              E0A825F609703D547C0A801888A7C03567B13A1C233E154008C42DE0BEB358ED
+              057E95066802A13A63582C0DF59E009662C5A774A06960DB103780B936E27300
+              280D7E7044B9DB61419C06AEB415DF1580FAC9569E866E257C8356E5C0F09B2C
+              105D026471A26B80E4102500924294024806511220094409001D56EDB1D259AB
+              EC540240BBD087C0BE1410A5007E9B825D674BADD68952001F815DC07340C54D
+              3444490089DE61200EC642940690EE29531BAB980F76223580C42C7B364CDB81
+              15A78D0E8955E01F0985480DA0FEB59D1E758FA0B96FD7C236870EB81413C742
+              207200A87F9DB2C90DFBD1A8FFF4B8A3825F4EE80EA2D174CA05E0D159FB7AB3
+              8138D504A28F00D2BD0978099CF141F41540BA278C13670D44E596A3CF00D2AD
+              7B3839B136EAC6B4EF0082D860002A03671C006A237EEC01D601D3CB87317D5F
+              A3B20000000049454E44AE426082}
+          end>
       end>
-    Left = 1104
-    Top = 568
+    Left = 1112
+    Top = 624
   end
   object VirtlImageListMember: TVirtualImageList
     Images = <
@@ -1356,17 +1427,27 @@ object ManageMember: TManageMember
         CollectionIndex = 3
         CollectionName = 'Goto'
         Name = 'Goto'
+      end
+      item
+        CollectionIndex = 10
+        CollectionName = 'filter_alt'
+        Name = 'filter_alt'
+      end
+      item
+        CollectionIndex = 11
+        CollectionName = 'filter_alt_off'
+        Name = 'filter_alt_off'
       end>
     ImageCollection = ImageCollectMember
     Width = 32
     Height = 32
-    Left = 1184
-    Top = 600
+    Left = 1192
+    Top = 648
   end
   object BalloonHint1: TBalloonHint
     Delay = 100
-    Left = 1108
-    Top = 630
+    Left = 1116
+    Top = 686
   end
   object BTNImageList32x32: TVirtualImageList
     Images = <
@@ -1399,11 +1480,31 @@ object ManageMember: TManageMember
         CollectionIndex = 3
         CollectionName = 'Goto'
         Name = 'Goto'
+      end
+      item
+        CollectionIndex = 8
+        CollectionName = 'Checked'
+        Name = 'Checked'
+      end
+      item
+        CollectionIndex = 9
+        CollectionName = 'UnChecked'
+        Name = 'UnChecked'
+      end
+      item
+        CollectionIndex = 10
+        CollectionName = 'filter_alt'
+        Name = 'filter_alt'
+      end
+      item
+        CollectionIndex = 11
+        CollectionName = 'filter_alt_off'
+        Name = 'filter_alt_off'
       end>
     ImageCollection = ImageCollectMember
     Width = 32
     Height = 32
-    Left = 1040
-    Top = 600
+    Left = 1048
+    Top = 656
   end
 end

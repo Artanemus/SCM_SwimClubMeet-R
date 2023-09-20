@@ -163,9 +163,6 @@ Coordinates=1300,1392,92,36
 [DBgridContactInfo]
 Coordinates=414,788,120,36
 
-[lblCount]
-Coordinates=682,540,62,58
-
 [Label2]
 Coordinates=406,720,53,58
 
@@ -175,17 +172,11 @@ Coordinates=668,720,55,58
 [DBlucboGender]
 Coordinates=298,788,106,36
 
-[chkbHideArchived]
-Coordinates=1151,652,118,58
-
 [Label20]
 Coordinates=292,652,60,58
 
 [DBEdtEmail]
 Coordinates=204,788,84,36
-
-[chkbHideInActive]
-Coordinates=1691,720,114,58
 
 [DBNavigator1]
 Coordinates=1314,720,94,58
@@ -235,9 +226,6 @@ Coordinates=887,540,53,58
 [ManageMemberData.tblMemberRole]
 Coordinates=1150,10,225,168
 
-[chkbHideNonSwimmers]
-Coordinates=1694,652,151,58
-
 [Label12]
 Coordinates=1520,540,60,58
 
@@ -255,9 +243,6 @@ Coordinates=362,652,167,58
 
 [ManageMemberData.qryMember]
 Coordinates=223,20,203,498
-
-[lblMemberCount]
-Coordinates=1401,540,109,58
 
 [Label16]
 Coordinates=1279,652,60,58
@@ -281,7 +266,7 @@ Coordinates=497,914,224,36
 Coordinates=10,788,97,36
 
 []
-Coordinates=273,720,60,58
+Coordinates=682,540,62,58
 Visible=True
 ExplicitSubNodes=Date
 

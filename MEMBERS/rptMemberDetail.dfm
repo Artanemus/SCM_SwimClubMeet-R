@@ -1,5 +1,4 @@
 object MemberDetail: TMemberDetail
-  OldCreateOrder = False
   Height = 533
   Width = 570
   object frxReport1: TfrxReport
@@ -744,7 +743,6 @@ object MemberDetail: TMemberDetail
         ' ) AS FName'
       '         , Member.DOB'
       '         , Member.IsActive'
-      '         , Member.MembershipDue'
       '         , Member.Email'
       '         -- , Member.DoEmailSessionReport'
       '         , Gender.Caption AS GenderStr'

@@ -17,7 +17,8 @@ uses
   System.Actions, Vcl.ActnList, Vcl.PlatformDefaultStyleActnCtrls, Vcl.ActnMan,
   Vcl.ToolWin, Vcl.ActnCtrls, Vcl.ActnMenus, Data.Bind.EngExt,
   Vcl.Bind.DBEngExt, System.Rtti, System.Bindings.Outputs, Vcl.Bind.Editors,
-  Data.Bind.Components, Data.Bind.DBScope, Vcl.VirtualImage, SCMHelpers;
+  Data.Bind.Components, Data.Bind.DBScope, Vcl.VirtualImage, SCMHelpers,
+  Vcl.ButtonGroup;
 
 type
   TManageMember = class(TForm)
@@ -33,9 +34,6 @@ type
     btnGotoMembership: TButton;
     btnMemberDetail: TButton;
     btnMemberHistory: TButton;
-    chkbHideArchived: TCheckBox;
-    chkbHideInActive: TCheckBox;
-    chkbHideNonSwimmers: TCheckBox;
     DBchkIsActive: TDBCheckBox;
     DBchkIsArchived: TDBCheckBox;
     DBchkIsSwimmer: TDBCheckBox;
@@ -77,8 +75,6 @@ type
     Label7: TLabel;
     Label8: TLabel;
     Label9: TLabel;
-    lblCount: TLabel;
-    lblMemberCount: TLabel;
     MemFile_AutoEdit: TAction;
     MemFile_Exit: TAction;
     MemSearch_FindMember: TAction;
@@ -102,10 +98,14 @@ type
     btnDOBPicker: TButton;
     BTNImageList32x32: TVirtualImageList;
     DBedtDOB: TDBEdit;
-    Label15: TLabel;
     Label11: TLabel;
     btnInfoDateTime: TVirtualImage;
+    Label15: TLabel;
+    btnFilter: TButton;
+    actnFilter: TAction;
+    btnInfoFilter: TVirtualImage;
     procedure About2Click(Sender: TObject);
+    procedure actnFilterExecute(Sender: TObject);
     procedure btnClearClick(Sender: TObject);
     procedure btnClearDOBClick(Sender: TObject);
     procedure btnClubMembersDetailedClick(Sender: TObject);
@@ -117,13 +117,11 @@ type
     procedure btnGotoMembershipClick(Sender: TObject);
     procedure btnInfoContactClick(Sender: TObject);
     procedure btnInfoDateTimeClick(Sender: TObject);
+    procedure btnInfoFilterClick(Sender: TObject);
     procedure btnInfoRolesClick(Sender: TObject);
     procedure btnInfoMouseLeave(Sender: TObject);
     procedure btnMemberDetailClick(Sender: TObject);
     procedure btnMemberHistoryClick(Sender: TObject);
-    procedure chkbHideArchivedClick(Sender: TObject);
-    procedure chkbHideInActiveClick(Sender: TObject);
-    procedure chkbHideNonSwimmersClick(Sender: TObject);
     procedure DBGridCellClick(Column: TColumn);
     procedure DBGridColEnter(Sender: TObject);
     procedure DBGridColExit(Sender: TObject);
@@ -155,6 +153,9 @@ type
     fSwimClubID: Integer;
     // Used to convert DATETIME and then post TMessage to Member DataModule.
     fSystemTime: TSystemTime;
+    fHideArchived: boolean;
+    fHideInActive: boolean;
+    fHideNonSwimmer: boolean;
 
     function AssertConnection: Boolean;
     function FindMember(MemberID: Integer): Boolean;
@@ -168,7 +169,6 @@ type
       message SCM_AFTERSCROLL;
     procedure ManageMemberUpdate(var Msg: TMessage); message SCM_UPDATE;
   public
-    procedure ClearAllFilters();
     { Public declarations }
     procedure Prepare(AConnection: TFDConnection; ASwimClubID: Integer = 1;
       AMemberID: Integer = 0);
@@ -189,7 +189,7 @@ uses SCMUtility, dlgBasicLogin, System.IniFiles, System.UITypes, dlgAbout,
   dlgDOBPicker, dlgFindMember, dlgGotoMember, dlgGotoMembership,
   System.IOUtils, Winapi.ShellAPI, dlgDeleteMember, Vcl.Themes, rptMemberDetail,
   rptMemberHistory, rptMembersList, rptMembersDetail, rptMembersSummary,
-  System.DateUtils;
+  System.DateUtils, dlgMemberFilter;
 
 procedure TManageMember.About2Click(Sender: TObject);
 var
@@ -198,6 +198,28 @@ begin
   dlg := TAbout.Create(Self);
   dlg.ShowModal;
   FreeAndNil(dlg);
+end;
+
+procedure TManageMember.actnFilterExecute(Sender: TObject);
+var
+dlg: TMemberFilter;
+mr: TModalResult;
+aRect: TRect;
+begin
+  dlg := TMemberFilter.Create(Self);
+  dlg.Position := poDesigned;
+  aRect := btnFilter.ClientToScreen(btnFilter.ClientRect);
+  dlg.Left := aRect.Left;
+  dlg.Top := aRect.Bottom + 1;
+  mr := dlg.ShowModal;
+  if IsPositiveResult(mr) then
+    begin
+      fHideArchived := dlg.HideArchived;
+      fHideInActive := dlg.HideInActive;
+      fHideNonSwimmer := dlg.HideNonSwimmer;
+      PostMessage(handle, SCM_UPDATE, 0, 0);
+    end;
+  dlg.Free;
 end;
 
 function TManageMember.AssertConnection: Boolean;
@@ -277,24 +299,22 @@ var
   rtn: TmodalResult;
 begin
   dlg := TDOBPicker.Create(Self);
-  if IsPositiveResult(dlg.ShowModal()) then
+  dlg.Position := poDesigned;
+  // Assign date to DB Field.
+  Rect := btnDOBPicker.ClientToScreen(btnDOBPicker.ClientRect);
+  dlg.Left := Rect.Left;
+  dlg.Top := Rect.Bottom + 1;
+  dlg.CalendarView1.Date := ManageMemberData.dsMember.DataSet.FieldByName
+    ('DOB').AsDateTime;
+  rtn := dlg.ShowModal;
+  if IsPositiveResult(rtn) then
   begin
-    // Assign date to DB Field.
-    Rect := TButton(Sender).ClientToScreen(TButton(Sender).ClientRect);
-    dlg.Left := Rect.Left;
-    dlg.Top := Rect.Top;
-    dlg.CalendarView1.Date := ManageMemberData.dsMember.DataSet.FieldByName
-      ('DOB').AsDateTime;
-    rtn := dlg.ShowModal;
-    if IsPositiveResult(rtn) then
+    with ManageMemberData.dsMember.DataSet do
     begin
-      with ManageMemberData.dsMember.DataSet do
+      if (State <> dsEdit) or (State <> dsInsert) then
       begin
-        if (State <> dsEdit) or (State <> dsInsert) then
-        begin
-          Edit;
-          FieldByName('DOB').AsDateTime := dlg.CalendarView1.Date;
-        end;
+        Edit;
+        FieldByName('DOB').AsDateTime := dlg.CalendarView1.Date;
       end;
     end;
   end;
@@ -356,30 +376,36 @@ end;
 
 procedure TManageMember.btnInfoContactClick(Sender: TObject);
 begin
-  BalloonHint1.Title := 'HINTS for Contact Number.';
-  BalloonHint1.Description := 'Contact Type is optional.' + sLinebreak +
-    'To clear the contact type, select the ' + sLinebreak +
-    'cell and type ALT-BACKSPACE.';
+  BalloonHint1.Title := 'Contact Number.';
+  BalloonHint1.Description := 'A contact number must have a contact type.' + sLinebreak +
+    'To clear a selected cell, press ALT-BACKSPACE.';
   BalloonHint1.ShowHint(btnInfoContact);
 end;
 
 procedure TManageMember.btnInfoDateTimeClick(Sender: TObject);
 begin
-  BalloonHint1.Title := 'Regional Date Format.';
+  BalloonHint1.Title := 'Region Date.';
   BalloonHint1.Description := 'SCM uses ''Short Date'' locale format.' + sLinebreak +
-    'To modify how this is displayed (and entered) goto Settings - ' + sLinebreak +
-    '''Time and Language''. Then select ''Region''. Then select - ' + sLinebreak +
-    'change date formats.';
+    'To modify how dates are displayed and the syntax used to enter dates, ' + sLinebreak +
+    'go to the ''Region Settings'' in MS Windows. ';
   BalloonHint1.ShowHint(btnInfoDateTime);
+end;
+
+procedure TManageMember.btnInfoFilterClick(Sender: TObject);
+begin
+  BalloonHint1.Title := 'Filter records.';
+  BalloonHint1.Description := 'The number displayed on the filter button' + sLinebreak +
+    'is the number of records found using the ' + sLinebreak +
+    'current filter settings.';
+  BalloonHint1.ShowHint(btnInfoFilter);
 end;
 
 procedure TManageMember.btnInfoRolesClick(Sender: TObject);
 begin
-  BalloonHint1.Title := 'HINTS for Membership Roles.';
-  BalloonHint1.Description := 'Assignment of a role is required.' + sLinebreak +
-    'To enter a date use the ellipse button.' + sLinebreak +
-    'To clear a date, select the cell and ' + sLinebreak +
-    'type ALT-BACKSPACE.';
+  BalloonHint1.Title := 'Membership Roles.';
+  BalloonHint1.Description := 'To enter a start or end date, select the cell' + sLinebreak +
+    'and then press the ellipse button.' + sLinebreak +
+    'To clear a selected cell, press ALT-BACKSPACE.';
   BalloonHint1.ShowHint(btnInfoRoles);
 end;
 
@@ -414,39 +440,6 @@ begin
   rpt := TMemberHistory.Create(Self);
   rpt.RunReport(FConnection, fSwimClubID, MemberID);
   rpt.Free;
-end;
-
-procedure TManageMember.chkbHideArchivedClick(Sender: TObject);
-begin
-  if Assigned(ManageMemberData) then
-    ManageMemberData.UpdateMember(fSwimClubID, chkbHideArchived.Checked,
-      chkbHideInActive.Checked, chkbHideNonSwimmers.Checked);
-end;
-
-procedure TManageMember.chkbHideInActiveClick(Sender: TObject);
-begin
-  if Assigned(ManageMemberData) then
-    ManageMemberData.UpdateMember(fSwimClubID, chkbHideArchived.Checked,
-      chkbHideInActive.Checked, chkbHideNonSwimmers.Checked);
-end;
-
-procedure TManageMember.chkbHideNonSwimmersClick(Sender: TObject);
-begin
-  if Assigned(ManageMemberData) then
-    ManageMemberData.UpdateMember(fSwimClubID, chkbHideArchived.Checked,
-      chkbHideInActive.Checked, chkbHideNonSwimmers.Checked);
-end;
-
-procedure TManageMember.ClearAllFilters;
-begin
-  if Assigned(ManageMemberData) then
-  begin
-    chkbHideArchived.Checked := false;
-    chkbHideInActive.Checked := false;
-    chkbHideNonSwimmers.Checked := false;
-    ManageMemberData.UpdateMember(fSwimClubID, chkbHideArchived.Checked,
-      chkbHideInActive.Checked, chkbHideNonSwimmers.Checked);
-  end;
 end;
 
 procedure TManageMember.DBGridCellClick(Column: TColumn);
@@ -767,7 +760,10 @@ begin
     rtn := MessageDlg(s, TMsgDlgType.mtConfirmation, mbYesNo, 0);
     if IsPositiveResult(rtn) then
     begin
-      ClearAllFilters;
+      fHideArchived := false;
+      fHideInActive := false;
+      fHideNonSwimmer := false;
+
       b := ManageMemberData.LocateMember(MemberID);
       if b then
         result := true;
@@ -792,17 +788,12 @@ var
   LFormatSettings: TFormatSettings;
 begin
   // ----------------------------------------------------
-  // R E G I S T E R   W I N D O W S   M E S S A G E S  .
-  // var defined in winMsgDef.pas
-  // ----------------------------------------------------
-  // WM_SCMAFTERSCOLL := RegisterWindowMessage('WM_SCMAFTERSCOLL');
-  // WM_SCMREQUERY := RegisterWindowMessage('WM_SCMREQUERY');
-  // Application.OnMessage := HandleMessage;
-
-  // ----------------------------------------------------
   // I N I T I A L I Z E   P A R A M S .
   // ----------------------------------------------------
   fSwimClubID := 1;
+  fHideArchived := false;
+  fHideInActive := false;
+  fHideNonSwimmer := false;
 
   // Special color assignment - used in TDBGrid painting...
   // -------------------------------------------
@@ -892,10 +883,11 @@ end;
 
 procedure TManageMember.ManageMemberUpdate(var Msg: TMessage);
 begin
-  if not AssertConnection then
-    exit;
-  // UPDATE THE NUMBER OF RECORDS.
-  lblCount.Caption := IntToStr(ManageMemberData.RecordCount);
+  if not AssertConnection then exit;
+  ManageMemberData.UpdateMember(fSwimClubID, fHideArchived, fHideInActive,
+    fHideNonSwimmer);
+  actnFilter.Caption := 'Filter...(' +
+    IntToStr(ManageMemberData.RecordCount) + ')';
 end;
 
 procedure TManageMember.MemFile_ExitExecute(Sender: TObject);
@@ -947,17 +939,10 @@ begin
       'The application will terminate!', mtError, [mbOk], 0);
     raise Exception.Create('ManageMemberData Member not active.');
   end;
-
-  // execute SQL. Make all null IsArchived, IsActive, IsSwimmer = 0;
-  // ManageMemberData.FixNullBooleans;
-
-
-
   // ----------------------------------------------------
   // Prepares all core queries  (Master+Child)
   // ----------------------------------------------------
-  ManageMemberData.UpdateMember(fSwimClubID, chkbHideArchived.Checked,
-    chkbHideInActive.Checked, chkbHideNonSwimmers.Checked);
+  PostMessage(handle, SCM_UPDATE, 0, 0);
 
   // Cue-to-member
   if AMemberID > 0 then
@@ -967,20 +952,20 @@ end;
 
 procedure TManageMember.ReadPreferences;
 var
-  ini: TIniFile;
+  iFile: TIniFile;
+  iniFileName: string;
 begin
-  // C:\Users\<#USERNAME#>\AppData\Roaming\Artanemus\ManageMemberData\ + SCMMEMBERPREF
-  ini := TIniFile.Create(GetSCMAppDataDir + INIFILE_SCM_MEMBERPREF);
-  try
-    chkbHideArchived.Checked := ini.ReadBool(INIFILE_SECTION,
-      'HideArchived', true);
-    chkbHideInActive.Checked := ini.ReadBool(INIFILE_SECTION,
-      'HideInActive', false);
-    chkbHideNonSwimmers.Checked := ini.ReadBool(INIFILE_SECTION,
-      'HideNonSwimmer', false);
-  finally
-    ini.Free;
-  end;
+  iniFileName := SCMUtility.GetSCMPreferenceFileName;
+  if not FileExists(iniFileName) then
+    exit;
+  iFile := TIniFile.Create(iniFileName);
+  fHideArchived := iFile.ReadBool(INIFILE_SECTION,
+    'HideArchived', true);
+  fHideInActive := iFile.ReadBool(INIFILE_SECTION,
+    'HideInActive', false);
+  fHideNonSwimmer := iFile.ReadBool(INIFILE_SECTION,
+    'HideNonSwimmer', false);
+  iFile.Free;
 end;
 
 procedure TManageMember.SCMwebsite1Click(Sender: TObject);
@@ -997,18 +982,17 @@ end;
 
 procedure TManageMember.WritePreferences;
 var
-  ini: TIniFile;
+  iFile: TIniFile;
+  iniFileName: string;
 begin
-  // C:\Users\<#USERNAME#>\AppData\Roaming\Artanemus\ManageMember\ + SCMMEMBERPREF
-  ini := TIniFile.Create(GetSCMAppDataDir + INIFILE_SCM_MEMBERPREF);
-  try
-    ini.WriteBool(INIFILE_SECTION, 'HideArchived', chkbHideArchived.Checked);
-    ini.WriteBool(INIFILE_SECTION, 'HideInActive', chkbHideInActive.Checked);
-    ini.WriteBool(INIFILE_SECTION, 'HideNonSwimmer',
-      chkbHideNonSwimmers.Checked);
-  finally
-    ini.Free;
-  end;
+  iniFileName := SCMUtility.GetSCMPreferenceFileName;
+  if not FileExists(iniFileName) then
+    exit;
+  iFile := TIniFile.Create(iniFileName);
+  iFile.WriteBool(INIFILE_SECTION, 'HideArchived', fHideArchived);
+  iFile.WriteBool(INIFILE_SECTION, 'HideInActive', fHideInActive);
+  iFile.WriteBool(INIFILE_SECTION, 'HideNonSwimmer', fHideNonSwimmer);
+  iFile.Free;
 end;
 
 end.

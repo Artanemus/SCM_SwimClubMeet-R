@@ -73,7 +73,8 @@ uses
   dlgTeamNameMenu in 'FRAME\dlgTeamNameMenu.pas' {TeamNameMenu},
   SCMHelpers in '..\SCM_SHARED\SCMHelpers.pas',
   dmSCMHelper in 'dmSCMHelper.pas',
-  rptQTNotQualified in 'REPORTS\rptQTNotQualified.pas' {QTNotQualified: TDataModule};
+  rptQTNotQualified in 'REPORTS\rptQTNotQualified.pas' {QTNotQualified: TDataModule},
+  dlgMemberFilter in 'MEMBERS\dlgMemberFilter.pas' {MemberFilter};
 
 {$R *.res}
 

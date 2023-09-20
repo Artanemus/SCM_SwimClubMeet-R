@@ -585,10 +585,7 @@ begin
       fRecordCount := 0;
   end;
   qryMember.EnableControls;
-  // Post directly to parent form : TForm(Self.GetOwner).Handle;
-  // Uses : Vcl.Forms
-  if Owner is TForm then
-    PostMessage(TForm(Owner).Handle, SCM_UPDATE, 0, 0);
+
 
 end;
 
