@@ -18,7 +18,7 @@ uses
   Vcl.ToolWin, Vcl.ActnCtrls, Vcl.ActnMenus, Data.Bind.EngExt,
   Vcl.Bind.DBEngExt, System.Rtti, System.Bindings.Outputs, Vcl.Bind.Editors,
   Data.Bind.Components, Data.Bind.DBScope, Vcl.VirtualImage, SCMHelpers,
-  Vcl.ButtonGroup;
+  Vcl.ButtonGroup, dlgMemberFilter;
 
 type
   TManageMember = class(TForm)
@@ -153,25 +153,31 @@ type
     fSwimClubID: Integer;
     // Used to convert DATETIME and then post TMessage to Member DataModule.
     fSystemTime: TSystemTime;
-    fHideArchived: boolean;
-    fHideInActive: boolean;
-    fHideNonSwimmer: boolean;
+    fHideArchived: Boolean;
+    fHideInActive: Boolean;
+    fHideNonSwimmer: Boolean;
+
+    fFilterDlg: TMemberFilter;
 
     function AssertConnection: Boolean;
     function FindMember(MemberID: Integer): Boolean;
-    function GetMembersAge(aMemberID: Integer; aDate: TDate): integer;
+    function GetMembersAge(aMemberID: Integer; aDate: TDate): Integer;
     procedure ReadPreferences();
     procedure WritePreferences();
+    procedure UpdateFilterCount();
 
   protected
     // windows messages ....
     procedure ManageMemberAfterScroll(var Msg: TMessage);
       message SCM_AFTERSCROLL;
-    procedure ManageMemberUpdate(var Msg: TMessage); message SCM_UPDATE;
+    procedure FilterDlgUpdated(var Msg: TMessage); message SCM_FILTERUPDATED;
+    procedure FilterDlgDeactivated(var Msg: TMessage);
+      message SCM_FILTERDEACTIVATED;
+
   public
     { Public declarations }
     procedure Prepare(AConnection: TFDConnection; ASwimClubID: Integer = 1;
-      AMemberID: Integer = 0);
+      aMemberID: Integer = 0);
   end;
 
 const
@@ -189,7 +195,7 @@ uses SCMUtility, dlgBasicLogin, System.IniFiles, System.UITypes, dlgAbout,
   dlgDOBPicker, dlgFindMember, dlgGotoMember, dlgGotoMembership,
   System.IOUtils, Winapi.ShellAPI, dlgDeleteMember, Vcl.Themes, rptMemberDetail,
   rptMemberHistory, rptMembersList, rptMembersDetail, rptMembersSummary,
-  System.DateUtils, dlgMemberFilter;
+  System.DateUtils;
 
 procedure TManageMember.About2Click(Sender: TObject);
 var
@@ -202,41 +208,40 @@ end;
 
 procedure TManageMember.actnFilterExecute(Sender: TObject);
 var
-dlg: TMemberFilter;
-mr: TModalResult;
-aRect: TRect;
+  aRect: TRect;
 begin
-  dlg := TMemberFilter.Create(Self);
-  dlg.Position := poDesigned;
+  // double tap on btnFilter
+
+  if assigned(fFilterDlg) then
+  begin
+    FreeAndNil(fFilterDlg);
+    exit;
+  end;
+
+  WritePreferences;
+
+  fFilterDlg := TMemberFilter.Create(Self);
+  fFilterDlg.Position := poDesigned;
   aRect := btnFilter.ClientToScreen(btnFilter.ClientRect);
-  dlg.Left := aRect.Left;
-  dlg.Top := aRect.Bottom + 1;
-  mr := dlg.ShowModal;
-  if IsPositiveResult(mr) then
-    begin
-      fHideArchived := dlg.HideArchived;
-      fHideInActive := dlg.HideInActive;
-      fHideNonSwimmer := dlg.HideNonSwimmer;
-      PostMessage(handle, SCM_UPDATE, 0, 0);
-    end;
-  dlg.Free;
+  fFilterDlg.Left := aRect.Left;
+  fFilterDlg.Top := aRect.Bottom + 1;
+  fFilterDlg.Show;
 end;
 
 function TManageMember.AssertConnection: Boolean;
 begin
   result := false;
   // test datamodule construction
-  if Assigned(ManageMemberData) then
+  if assigned(ManageMemberData) then
   begin
     // IsActive if TFDConnection::scmConnection && FireDAC tables are active
-    if ManageMemberData.ManageMemberDataActive then
-      result := true;
+    if ManageMemberData.ManageMemberDataActive then result := true;
   end;
 end;
 
 procedure TManageMember.btnClearClick(Sender: TObject);
 begin
-  if not Assigned(ManageMemberData) then exit;
+  if not assigned(ManageMemberData) then exit;
   with ManageMemberData.dsMember.DataSet do
   begin
     if not(Active) then exit;
@@ -250,7 +255,7 @@ end;
 
 procedure TManageMember.btnClearDOBClick(Sender: TObject);
 begin
-  if not Assigned(ManageMemberData) then exit;
+  if not assigned(ManageMemberData) then exit;
   with ManageMemberData.dsMember.DataSet do
   begin
     if not(Active) then exit;
@@ -263,8 +268,7 @@ procedure TManageMember.btnClubMembersDetailedClick(Sender: TObject);
 var
   rpt: TMembersDetail;
 begin
-  if not Assigned(ManageMemberData) then
-    exit;
+  if not assigned(ManageMemberData) then exit;
   rpt := TMembersDetail.Create(Self);
   rpt.RunReport(FConnection, fSwimClubID);
   rpt.Free;
@@ -274,8 +278,7 @@ procedure TManageMember.btnClubMembersListClick(Sender: TObject);
 var
   rpt: TMembersList;
 begin
-  if not Assigned(ManageMemberData) then
-    exit;
+  if not assigned(ManageMemberData) then exit;
   rpt := TMembersList.Create(Self);
   rpt.RunReport(FConnection, fSwimClubID);
   rpt.Free;
@@ -285,8 +288,7 @@ procedure TManageMember.btnClubMembersSummaryClick(Sender: TObject);
 var
   rpt: TMembersSummary;
 begin
-  if not Assigned(ManageMemberData) then
-    exit;
+  if not assigned(ManageMemberData) then exit;
   rpt := TMembersSummary.Create(Self);
   rpt.RunReport(FConnection, fSwimClubID);
   rpt.Free;
@@ -296,7 +298,7 @@ procedure TManageMember.btnDOBPickerClick(Sender: TObject);
 var
   dlg: TDOBPicker;
   Rect: TRect;
-  rtn: TmodalResult;
+  rtn: TModalResult;
 begin
   dlg := TDOBPicker.Create(Self);
   dlg.Position := poDesigned;
@@ -304,8 +306,8 @@ begin
   Rect := btnDOBPicker.ClientToScreen(btnDOBPicker.ClientRect);
   dlg.Left := Rect.Left;
   dlg.Top := Rect.Bottom + 1;
-  dlg.CalendarView1.Date := ManageMemberData.dsMember.DataSet.FieldByName
-    ('DOB').AsDateTime;
+  dlg.CalendarView1.Date := ManageMemberData.dsMember.DataSet.FieldByName('DOB')
+    .AsDateTime;
   rtn := dlg.ShowModal;
   if IsPositiveResult(rtn) then
   begin
@@ -340,7 +342,7 @@ var
   dlg: TGotoMember;
   rtn: TModalResult;
 begin
-  if Assigned(ManageMemberData) then
+  if assigned(ManageMemberData) then
   begin
     dlg := TGotoMember.Create(Self);
     dlg.Prepare(FConnection, fSwimClubID);
@@ -359,7 +361,7 @@ var
   dlg: TGotoMembership;
   rtn: TModalResult;
 begin
-  if Assigned(ManageMemberData) then
+  if assigned(ManageMemberData) then
   begin
     dlg := TGotoMembership.Create(Self);
     dlg.Prepare(FConnection, fSwimClubID);
@@ -377,25 +379,27 @@ end;
 procedure TManageMember.btnInfoContactClick(Sender: TObject);
 begin
   BalloonHint1.Title := 'Contact Number.';
-  BalloonHint1.Description := 'A contact number must have a contact type.' + sLinebreak +
-    'To clear a selected cell, press ALT-BACKSPACE.';
+  BalloonHint1.Description := 'A contact number must have a contact type.' +
+    sLinebreak + 'To clear a selected cell, press ALT-BACKSPACE.'+ sLinebreak +
+    'To delete a record, press CTRL-DEL';
   BalloonHint1.ShowHint(btnInfoContact);
 end;
 
 procedure TManageMember.btnInfoDateTimeClick(Sender: TObject);
 begin
   BalloonHint1.Title := 'Region Date.';
-  BalloonHint1.Description := 'SCM uses ''Short Date'' locale format.' + sLinebreak +
-    'To modify how dates are displayed and the syntax used to enter dates, ' + sLinebreak +
-    'go to the ''Region Settings'' in MS Windows. ';
+  BalloonHint1.Description := 'SCM uses ''Short Date'' locale format.' +
+    sLinebreak +
+    'To modify how dates are displayed and the syntax used to enter dates, ' +
+    sLinebreak + 'go to the ''Region Settings'' in MS Windows. ';
   BalloonHint1.ShowHint(btnInfoDateTime);
 end;
 
 procedure TManageMember.btnInfoFilterClick(Sender: TObject);
 begin
   BalloonHint1.Title := 'Filter records.';
-  BalloonHint1.Description := 'The number displayed on the filter button' + sLinebreak +
-    'is the number of records found using the ' + sLinebreak +
+  BalloonHint1.Description := 'The number displayed on the filter button' +
+    sLinebreak + 'is the number of records found using the ' + sLinebreak +
     'current filter settings.';
   BalloonHint1.ShowHint(btnInfoFilter);
 end;
@@ -403,9 +407,10 @@ end;
 procedure TManageMember.btnInfoRolesClick(Sender: TObject);
 begin
   BalloonHint1.Title := 'Membership Roles.';
-  BalloonHint1.Description := 'To enter a start or end date, select the cell' + sLinebreak +
-    'and then press the ellipse button.' + sLinebreak +
-    'To clear a selected cell, press ALT-BACKSPACE.';
+  BalloonHint1.Description := 'To enter a start or end date, select the cell' +
+    sLinebreak + 'and then press the ellipse button.' + sLinebreak +
+    'To clear a selected cell, press ALT-BACKSPACE.'+ sLinebreak +
+    'To delete a record, press CTRL-DEL';
   BalloonHint1.ShowHint(btnInfoRoles);
 end;
 
@@ -419,8 +424,7 @@ var
   rpt: TMemberDetail;
   MemberID: Integer;
 begin
-  if not Assigned(ManageMemberData) then
-    exit;
+  if not assigned(ManageMemberData) then exit;
   MemberID := ManageMemberData.dsMember.DataSet.FieldByName('MemberID')
     .AsInteger;
   rpt := TMemberDetail.Create(Self);
@@ -433,8 +437,7 @@ var
   rpt: TMemberHistory;
   MemberID: Integer;
 begin
-  if not Assigned(ManageMemberData) then
-    exit;
+  if not assigned(ManageMemberData) then exit;
   MemberID := ManageMemberData.dsMember.DataSet.FieldByName('MemberID')
     .AsInteger;
   rpt := TMemberHistory.Create(Self);
@@ -444,13 +447,13 @@ end;
 
 procedure TManageMember.DBGridCellClick(Column: TColumn);
 begin
-  if Assigned(Column.Field) and (Column.Field.DataType = ftBoolean) then
+  if assigned(Column.Field) and (Column.Field.DataType = ftBoolean) then
   begin
     Column.Grid.DataSource.DataSet.CheckBrowseMode;
     Column.Grid.DataSource.DataSet.Edit;
     Column.Field.AsBoolean := not Column.Field.AsBoolean;
   end;
-  if Assigned(Column.Field) and (Column.Field.FieldKind = fkLookup) then
+  if assigned(Column.Field) and (Column.Field.FieldKind = fkLookup) then
   begin
     Column.Grid.DataSource.DataSet.CheckBrowseMode;
     Column.Grid.DataSource.DataSet.Edit;
@@ -463,7 +466,7 @@ begin
   // The grid draws a TEditBox over the cell, killing the checkbox draw UI.
   with Sender as TDBGrid do
   begin
-    if Assigned(SelectedField) and (SelectedField.DataType = ftBoolean) then
+    if assigned(SelectedField) and (SelectedField.DataType = ftBoolean) then
     begin
       Options := Options - [dgEditing];
     end;
@@ -473,8 +476,8 @@ end;
 procedure TManageMember.DBGridColExit(Sender: TObject);
 begin
   with Sender as TDBGrid do
-    if Assigned(SelectedField) and (SelectedField.DataType = ftBoolean) then
-      Options := Options + [dgEditing];
+    if assigned(SelectedField) and (SelectedField.DataType = ftBoolean) then
+        Options := Options + [dgEditing];
 end;
 
 procedure TManageMember.DBGridDrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -489,21 +492,17 @@ begin
     (Column.Field.FieldName = 'IsArchived') or
     (Column.Field.FieldName = 'IsSwimmer') then
   begin
-    if gdFocused in State then
-      clFont := fColorEditBoxFocused
-    else
-      clFont := fColorEditBoxNormal;
+    if gdFocused in State then clFont := fColorEditBoxFocused
+    else clFont := fColorEditBoxNormal;
     clBg := fColorBgColor;
     TDBGrid(Sender).DrawCheckBoxes(Sender, Rect, Column, clFont, clBg);
     // draw 'Focused' frame  (for boolean datatype only)
-    if gdFocused in State then
-      TDBGrid(Sender).Canvas.DrawFocusRect(Rect);
+    if gdFocused in State then TDBGrid(Sender).Canvas.DrawFocusRect(Rect);
   end
   else
   begin
     TDBGrid(Sender).DefaultDrawColumnCell(Rect, DataCol, Column, State);
-    if gdFocused in State then
-      TDBGrid(Sender).Canvas.DrawFocusRect(Rect);
+    if gdFocused in State then TDBGrid(Sender).Canvas.DrawFocusRect(Rect);
   end;
 end;
 
@@ -548,7 +547,7 @@ begin
 
   With Sender as TDBGrid do
   begin
-    if Assigned(SelectedField) then
+    if assigned(SelectedField) then
     begin
 
       if (SelectedField.DataType = ftBoolean) then
@@ -622,23 +621,22 @@ procedure TManageMember.DBGridRoleCellClick(Column: TColumn);
 var
   fld: TField;
 begin
-  if Assigned(Column.Field) and (Column.Field.DataType = ftBoolean) then
+  if assigned(Column.Field) and (Column.Field.DataType = ftBoolean) then
   begin
     fld := DBGridRole.DataSource.DataSet.FindField('MemberID');
-    if fld.IsNull then
-      exit;
+    if fld.IsNull then exit;
     if Column.Grid.DataSource.DataSet.State <> dsEdit then
-      Column.Grid.DataSource.DataSet.Edit;
+        Column.Grid.DataSource.DataSet.Edit;
 
     // Column.Grid.DataSource.DataSet.CheckBrowseMode;
     // Column.Grid.DataSource.DataSet.Edit;
     Column.Field.AsBoolean := not Column.Field.AsBoolean;
   end;
 
-  if Assigned(Column.Field) and (Column.Field.FieldKind = fkLookup) then
+  if assigned(Column.Field) and (Column.Field.FieldKind = fkLookup) then
   begin
     if Column.Grid.DataSource.DataSet.State <> dsEdit then
-      Column.Grid.DataSource.DataSet.Edit;
+        Column.Grid.DataSource.DataSet.Edit;
     // Column.Grid.DataSource.DataSet.CheckBrowseMode;
     // Column.Grid.DataSource.DataSet.Edit;
   end;
@@ -652,8 +650,7 @@ var
 begin
   // handle the ellipse button for TDateTime entry...
   fld := TDBGrid(Sender).SelectedField;
-  if not Assigned(fld) then
-    exit;
+  if not assigned(fld) then exit;
   if (fld.FieldName = 'ElectedOn') OR (fld.FieldName = 'RetiredOn') then
   begin
     dlg := TDOBPicker.Create(Self);
@@ -662,10 +659,9 @@ begin
     begin
       DateTimeToSystemTime(dlg.CalendarView1.Date, fSystemTime);
       if (fld.FieldName = 'ElectedOn') then
-        PostMessage(ManageMemberData.Handle, SCM_ELECTEDONUPDATED,
+          PostMessage(ManageMemberData.Handle, SCM_ELECTEDONUPDATED,
           longint(@fSystemTime), 0)
-      else
-        PostMessage(ManageMemberData.Handle, SCM_RETIREDONUPDATED,
+      else PostMessage(ManageMemberData.Handle, SCM_RETIREDONUPDATED,
           longint(@fSystemTime), 0);
     end;
     dlg.Free;
@@ -683,18 +679,16 @@ begin
     Begin
       DataSource.DataSet.DisableControls;
       fld := TDBGrid(Sender).SelectedField;
-      if Assigned(fld) then
+      if assigned(fld) then
       BEGIN
         // if the query is not in edit mode
         if (DataSource.DataSet.State <> dsEdit) or
-          (DataSource.DataSet.State <> dsInsert) then
-          DataSource.DataSet.Edit;
+          (DataSource.DataSet.State <> dsInsert) then DataSource.DataSet.Edit;
         // D B G r i d R o l e  ...
         if (fld.FieldName = 'ElectedOn') or (fld.FieldName = 'RetiredOn') then
-          fld.Clear;
+            fld.Clear;
         // D B G r i d C o n t a c t I n f o ...
-        if (fld.FieldName = 'luContactNumType') then
-          fld.Clear;
+        if (fld.FieldName = 'luContactNumType') then fld.Clear;
       end;
       DataSource.DataSet.EnableControls;
       // signal finished with key;
@@ -728,7 +722,7 @@ begin
     end
     else
       // raises a silent exception - cancelling the action.
-      Abort;
+        Abort;
     dlg.Free;
   end;
 end;
@@ -751,8 +745,7 @@ var
 begin
   result := false;
   b := ManageMemberData.LocateMember(MemberID);
-  if b then
-    result := true
+  if b then result := true
   else
   begin
     s := 'Filters must to be cleared to display this member.' + sLinebreak +
@@ -765,8 +758,7 @@ begin
       fHideNonSwimmer := false;
 
       b := ManageMemberData.LocateMember(MemberID);
-      if b then
-        result := true;
+      if b then result := true;
     end;
   end;
 end;
@@ -774,11 +766,11 @@ end;
 procedure TManageMember.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
   // Test database state
-  if Assigned(ManageMemberData) and (ManageMemberData.qryMember.Active) then
+  if assigned(ManageMemberData) and (ManageMemberData.qryMember.Active) then
   begin
     if (ManageMemberData.qryMember.State = dsEdit) or
       (ManageMemberData.qryMember.State = dsInsert) then
-      ManageMemberData.qryMember.Post();
+        ManageMemberData.qryMember.Post();
   end;
 end;
 
@@ -794,11 +786,12 @@ begin
   fHideArchived := false;
   fHideInActive := false;
   fHideNonSwimmer := false;
+  fFilterDlg := nil;
 
   // Special color assignment - used in TDBGrid painting...
   // -------------------------------------------
   css := TStyleManager.Style[TStyleManager.ActiveStyle.Name];
-  if Assigned(css) then
+  if assigned(css) then
   begin
     fColorEditBoxFocused := css.GetStyleFontColor(sfEditBoxTextFocused);
     fColorEditBoxNormal := css.GetStyleFontColor(sfEditBoxTextNormal);
@@ -820,6 +813,7 @@ end;
 procedure TManageMember.FormDestroy(Sender: TObject);
 begin
   WritePreferences;
+  if assigned(fFilterDlg) then fFilterDlg.Free;
 end;
 
 procedure TManageMember.FormShow(Sender: TObject);
@@ -827,20 +821,25 @@ begin
   // ----------------------------------------------------
   // R E A D   P R E F E R E N C E S .
   // ----------------------------------------------------
-  // Note: Don't read preferences OnCreate.
-  // Forces requery of qryMember as checkbox states are changed.
   ReadPreferences;
+  if not AssertConnection then exit;
 
-  // ----------------------------------------------------
-  // D I S P L A Y   F O R M   C A P T I O N   I N F O .
-  // ----------------------------------------------------
-  if not AssertConnection then
-    exit;
-  Self.Caption := 'Manage SwimClubMeet Members - ' +
-    ManageMemberData.qrySwimClub.FieldByName('DetailStr').AsString;
+  // run filter
+  ManageMemberData.UpdateMember(fSwimClubID, fHideArchived, fHideInActive,
+    fHideNonSwimmer);
+  UpdateFilterCount;
+
+  // display record count
+  actnFilter.Caption := 'Filter (' +
+    IntToStr(ManageMemberData.RecordCount) + ')';
 end;
 
-function TManageMember.GetMembersAge(aMemberID: Integer; aDate: TDate): integer;
+procedure TManageMember.FilterDlgDeactivated(var Msg: TMessage);
+begin
+  if assigned(fFilterDlg) then FreeAndNil(fFilterDlg);
+end;
+
+function TManageMember.GetMembersAge(aMemberID: Integer; aDate: TDate): Integer;
 var
   SQL: string;
   v: Variant;
@@ -881,13 +880,31 @@ begin
   END;
 end;
 
-procedure TManageMember.ManageMemberUpdate(var Msg: TMessage);
+procedure TManageMember.FilterDlgUpdated(var Msg: TMessage);
+var
+  CopyData: PCopyDataStruct;
+  FilterState: PFilterState;
 begin
-  if not AssertConnection then exit;
-  ManageMemberData.UpdateMember(fSwimClubID, fHideArchived, fHideInActive,
-    fHideNonSwimmer);
-  actnFilter.Caption := 'Filter...(' +
-    IntToStr(ManageMemberData.RecordCount) + ')';
+  if Msg.LParam = 0 then exit;
+  try
+    begin
+      CopyData := PCopyDataStruct(Msg.LParam);
+      FilterState := PFilterState(CopyData^.lpData);
+      // access the fields of the record
+      fHideArchived := FilterState^.HideArchived;
+      fHideInActive := FilterState^.HideInActive;
+      fHideNonSwimmer := FilterState^.HideNonSwimmer;
+    end
+  finally
+    begin
+      ManageMemberData.UpdateMember(fSwimClubID, fHideArchived, fHideInActive,
+        fHideNonSwimmer);
+
+      actnFilter.Caption := 'Filter (' +
+        IntToStr(ManageMemberData.RecordCount) + ')';
+    end;
+  end;
+
 end;
 
 procedure TManageMember.MemFile_ExitExecute(Sender: TObject);
@@ -910,7 +927,7 @@ begin
 end;
 
 procedure TManageMember.Prepare(AConnection: TFDConnection;
-  ASwimClubID, AMemberID: Integer);
+  ASwimClubID, aMemberID: Integer);
 begin
   FConnection := AConnection;
   fSwimClubID := ASwimClubID;
@@ -924,8 +941,8 @@ begin
   finally
     // with ManageMemberData created and the essential tables are open then
     // asserting the connection should be true
-    if not Assigned(ManageMemberData) then
-      raise Exception.Create('Manage Member''s Data Module creation error.');
+    if not assigned(ManageMemberData) then
+        raise Exception.Create('Manage Member''s Data Module creation error.');
   end;
 
   // ----------------------------------------------------
@@ -942,11 +959,10 @@ begin
   // ----------------------------------------------------
   // Prepares all core queries  (Master+Child)
   // ----------------------------------------------------
-  PostMessage(handle, SCM_UPDATE, 0, 0);
+  PostMessage(Handle, SCM_UPDATE, 0, 0);
 
   // Cue-to-member
-  if AMemberID > 0 then
-    FindMember(AMemberID);
+  if aMemberID > 0 then FindMember(aMemberID);
 
 end;
 
@@ -956,15 +972,11 @@ var
   iniFileName: string;
 begin
   iniFileName := SCMUtility.GetSCMPreferenceFileName;
-  if not FileExists(iniFileName) then
-    exit;
+  if not FileExists(iniFileName) then exit;
   iFile := TIniFile.Create(iniFileName);
-  fHideArchived := iFile.ReadBool(INIFILE_SECTION,
-    'HideArchived', true);
-  fHideInActive := iFile.ReadBool(INIFILE_SECTION,
-    'HideInActive', false);
-  fHideNonSwimmer := iFile.ReadBool(INIFILE_SECTION,
-    'HideNonSwimmer', false);
+  fHideArchived := iFile.ReadBool(INIFILE_SECTION, 'HideArchived', true);
+  fHideInActive := iFile.ReadBool(INIFILE_SECTION, 'HideInActive', false);
+  fHideNonSwimmer := iFile.ReadBool(INIFILE_SECTION, 'HideNonSwimmer', false);
   iFile.Free;
 end;
 
@@ -980,14 +992,21 @@ begin
 
 end;
 
+procedure TManageMember.UpdateFilterCount;
+begin
+  if not AssertConnection then exit;
+  // display record count
+  actnFilter.Caption := 'Filter (' +
+    IntToStr(ManageMemberData.RecordCount) + ')';
+end;
+
 procedure TManageMember.WritePreferences;
 var
   iFile: TIniFile;
   iniFileName: string;
 begin
   iniFileName := SCMUtility.GetSCMPreferenceFileName;
-  if not FileExists(iniFileName) then
-    exit;
+  if not FileExists(iniFileName) then exit;
   iFile := TIniFile.Create(iniFileName);
   iFile.WriteBool(INIFILE_SECTION, 'HideArchived', fHideArchived);
   iFile.WriteBool(INIFILE_SECTION, 'HideInActive', fHideInActive);

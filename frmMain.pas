@@ -2682,6 +2682,7 @@ begin
   aEventID := SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger;
   if SCM.Event_EventTypeID(aEventID) = 0 then
     raise Exception.Create('Error: The event has not been assigned a distance.');
+
   SCM.Heat_NewRecord;
   ToggleVisibileTabSheet3;
 end;
@@ -3532,10 +3533,13 @@ end;
 
 procedure TMain.RenumberHeats(var Msg: TMessage);
 var
-aEventID: integer;
+aEventID, aHeatID: integer;
 begin
   if not AssertConnection then exit;
+
   aEventID := SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger;
+  aHeatID := SCM.dsHeat.DataSet.FieldByName('HeatID').AsInteger;
+  SCM.Lane_RenumberLanes(aHeatID, true);
   // As SCM.qryHeat is connected to a TControlList via TBindSourceDB ...
   // If the TBindSourceDB connection remains active then the low level
   // calls like TSCM.DeleteHeat(aHeatID: integer) - scmConnection.ExecSQL(...)

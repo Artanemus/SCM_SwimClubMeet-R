@@ -115,12 +115,14 @@ object ManageMember: TManageMember
     Top = 80
     Width = 1363
     Height = 696
-    ActivePage = TabSheet1
+    ActivePage = TabSheet4
     Align = alClient
     MultiLine = True
     TabHeight = 40
     TabOrder = 2
     TabWidth = 180
+    ExplicitWidth = 1359
+    ExplicitHeight = 695
     object TabSheet1: TTabSheet
       Caption = 'Member'#39's Details 1'
       object Panel7: TPanel
@@ -775,32 +777,27 @@ object ManageMember: TManageMember
           item
             Expanded = False
             FieldName = 'MembershipNum'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'FirstName'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'LastName'
-            Width = 64
             Visible = True
           end
           item
             ButtonStyle = cbsEllipsis
             Expanded = False
             FieldName = 'DOB'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luGender'
-            Width = 64
             Visible = True
           end
           item
@@ -808,7 +805,6 @@ object ManageMember: TManageMember
             Expanded = False
             FieldName = 'IsArchived'
             Title.Caption = 'Archive'
-            Width = 64
             Visible = True
           end
           item
@@ -822,13 +818,11 @@ object ManageMember: TManageMember
             Expanded = False
             FieldName = 'IsSwimmer'
             Title.Caption = 'Swims'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luHouse'
-            Width = 64
             Visible = True
           end
           item
@@ -1068,7 +1062,7 @@ object ManageMember: TManageMember
       OnExecute = btnGotoMemberIDClick
     end
     object actnFilter: TAction
-      Caption = 'Filter...'
+      Caption = 'Filter'
       ImageIndex = 4
       ImageName = 'filter_alt'
       OnExecute = actnFilterExecute

@@ -3,8 +3,8 @@ object MemberFilter: TMemberFilter
   Top = 0
   BorderStyle = bsNone
   Caption = 'Filter Members'
-  ClientHeight = 287
-  ClientWidth = 272
+  ClientHeight = 173
+  ClientWidth = 260
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -13,7 +13,7 @@ object MemberFilter: TMemberFilter
   Font.Style = []
   KeyPreview = True
   OnCreate = FormCreate
-  OnDestroy = FormDestroy
+  OnDeactivate = FormDeactivate
   OnKeyDown = FormKeyDown
   OnShow = FormShow
   TextHeight = 21
@@ -21,7 +21,7 @@ object MemberFilter: TMemberFilter
     Left = 1
     Top = 8
     Width = 255
-    Height = 160
+    Height = 161
     ButtonHeight = 34
     ButtonOptions = [gboFullSize, gboShowCaptions]
     Images = filterImageList32x32
@@ -34,29 +34,11 @@ object MemberFilter: TMemberFilter
       end
       item
         Action = actnHideNonSwimmer
+      end
+      item
+        Action = actnClear
       end>
     TabOrder = 0
-  end
-  object btnClear: TButton
-    Left = 60
-    Top = 174
-    Width = 145
-    Height = 36
-    Action = actnClear
-    ImageMargins.Right = -10
-    Images = filterImageList32x32
-    TabOrder = 1
-  end
-  object btnClose: TButton
-    Left = 60
-    Top = 216
-    Width = 145
-    Height = 36
-    Action = actnClose
-    ImageMargins.Left = 16
-    ImageMargins.Right = -30
-    Images = filterImageList32x32
-    TabOrder = 2
   end
   object filterImageCollection: TImageCollection
     Images = <
@@ -180,7 +162,7 @@ object MemberFilter: TMemberFilter
           end>
       end>
     Left = 176
-    Top = 120
+    Top = 48
   end
   object filterImageList32x32: TVirtualImageList
     Images = <
@@ -212,16 +194,15 @@ object MemberFilter: TMemberFilter
     ImageCollection = filterImageCollection
     Width = 32
     Height = 32
-    Left = 48
-    Top = 120
+    Left = 56
+    Top = 48
   end
   object filterActionManager: TActionManager
     Images = filterImageList32x32
-    Left = 120
-    Top = 128
+    Left = 128
+    Top = 24
     StyleName = 'Platform Default'
     object actnHideArchived: TAction
-      AutoCheck = True
       Caption = 'Hide Archived Members'
       ImageIndex = 1
       ImageName = 'UnChecked'
@@ -229,7 +210,6 @@ object MemberFilter: TMemberFilter
       OnUpdate = actnHideArchivedUpdate
     end
     object actnHideInActive: TAction
-      AutoCheck = True
       Caption = 'Hide In-Active Members'
       ImageIndex = 1
       ImageName = 'UnChecked'
@@ -237,7 +217,6 @@ object MemberFilter: TMemberFilter
       OnUpdate = actnHideInActiveUpdate
     end
     object actnHideNonSwimmer: TAction
-      AutoCheck = True
       Caption = 'Hide Non Swimmers'
       ImageIndex = 1
       ImageName = 'UnChecked'

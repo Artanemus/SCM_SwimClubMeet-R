@@ -1425,7 +1425,7 @@ procedure TSCM.Heat_NewRecord;
 var
   fld: TField;
 begin
-  // can't make heats if there is no events ....
+  if not fSCMActive then exit;
   if dsEvent.DataSet.IsEmpty then exit;
   // 3.10.2020
   with dsHeat.DataSet do
@@ -2263,6 +2263,8 @@ begin
 end;
 
 procedure TSCM.qryHeatAfterInsert(DataSet: TDataSet);
+var
+aHeatID: integer;
 begin
   if Owner is TForm then // Heat_Renumber();
       PostMessage(TForm(Owner).Handle, SCM_RENUMBERHEATS, 0, 0);
@@ -2276,10 +2278,14 @@ begin
 end;
 
 procedure TSCM.qryHeatNewRecord(DataSet: TDataSet);
+var
+aEventID, aEventTypeID: integer;
 begin
   DataSet.FieldByName('HeatStatusID').AsInteger := 1; // Open
   DataSet.FieldByName('HeatNum').AsInteger := DataSet.RecordCount + 1;
-  DataSet.FieldByName('HeatTypeID').AsInteger := 1;
+  aEventID := dsEvent.DataSet.FieldByName('EventID').AsInteger;
+  aEventTypeID := Event_EventTypeID(aEventID);
+  DataSet.FieldByName('HeatTypeID').AsInteger := aEventTypeID;
 end;
 
 procedure TSCM.qryMemberQuickPickAfterScroll(DataSet: TDataSet);
@@ -2495,7 +2501,7 @@ begin
   {If lane count is erroneous run repair routine instead.}
   if CountLanes(aHeatID) <> SwimClub_NumberOfLanes then
   begin
-    RepairLanes(aHeatID);
+    result := RepairLanes(aHeatID);
     exit;
   end;
 

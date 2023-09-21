@@ -11,17 +11,15 @@ uses
   Vcl.PlatformDefaultStyleActnCtrls, Vcl.ActnMan, SCMUtility, SCMDefines;
 
 type
-
+  PFilterState = ^TFilterState;
   TFilterState = record
-    HideArchived:Boolean;
-    HideInactive: boolean;
-    HideNonSwimmer: boolean;
+    HideArchived: Boolean;
+    HideInactive: Boolean;
+    HideNonSwimmer: Boolean;
   end;
 
   TMemberFilter = class(TForm)
     btngrpFilter: TButtonGroup;
-    btnClear: TButton;
-    btnClose: TButton;
     filterImageCollection: TImageCollection;
     filterImageList32x32: TVirtualImageList;
     filterActionManager: TActionManager;
@@ -39,21 +37,21 @@ type
     procedure actnHideInActiveUpdate(Sender: TObject);
     procedure actnHideNonSwimmerExecute(Sender: TObject);
     procedure actnHideNonSwimmerUpdate(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormDeactivate(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
+    procedure SendFilterDataPacket();
   private
-    fHideArchived: boolean;
-    fHideInActive: boolean;
-    fHideNonSwimmer: boolean;
+    fFilterState: TFilterState;
     procedure ReadPreferences();
     procedure WritePreferences();
+    procedure SetIconDisplayState();
   public
     { Public declarations }
-    property HideArchived: boolean read FHideArchived write FHideArchived;
-    property HideInActive: boolean read fHideInActive write fHideInActive;
-    property HideNonSwimmer: boolean read fHideNonSwimmer write fHideNonSwimmer;
+    // property HideArchived: boolean read FHideArchived write FHideArchived;
+    // property HideInActive: boolean read fHideInActive write fHideInActive;
+    // property HideNonSwimmer: boolean read fHideNonSwimmer write fHideNonSwimmer;
   end;
 
 const
@@ -69,30 +67,19 @@ implementation
 Uses IniFiles;
 
 procedure TMemberFilter.actnClearExecute(Sender: TObject);
-var
-  i: TCollectionItem;
 begin
-  fHideArchived := false;
-  fHideInActive := false;
-  fHideNonSwimmer := false;
-  for i in btngrpFilter.items do
-  begin
-    TgrpButtonItem(i).ImageName := 'UnChecked';
-  end;
+  actnHideArchived.Checked := false;
+  actnHideInActive.Checked := false;
+  actnHideNonSwimmer.Checked := false;
+  SetIconDisplayState;
+  SendFilterDataPacket;
 end;
 
 procedure TMemberFilter.actnClearUpdate(Sender: TObject);
 begin
-  if fHideArchived or fHideInActive or fHideNonSwimmer then
-  begin
-    TAction(Sender).ImageName := 'filter_alt_off';
-    TAction(Sender).Enabled := true;
-  end
-  else
-  begin
-    TAction(Sender).ImageName := 'filter_alt';
-    TAction(Sender).Enabled := false;
-  end;
+  if actnHideArchived.Checked or actnHideInActive.Checked or actnHideNonSwimmer.Checked
+  then TAction(Sender).ImageName := 'filter_alt'
+  else TAction(Sender).ImageName := 'filter_alt_off';
 end;
 
 procedure TMemberFilter.actnCloseExecute(Sender: TObject);
@@ -103,103 +90,70 @@ end;
 
 procedure TMemberFilter.actnHideArchivedExecute(Sender: TObject);
 begin
-//  TAction(Sender).Checked := not TAction(Sender).Checked;
-  fHideArchived := TAction(Sender).Checked;
-  UpdateAction(TAction(Sender));
-  PostMessage(TForm(Owner).Handle, SCM_UPDATE, 0, 0);
+  TAction(Sender).Checked := not TAction(Sender).Checked;
+  SetIconDisplayState;
+  SendFilterDataPacket;
 end;
 
 procedure TMemberFilter.actnHideArchivedUpdate(Sender: TObject);
 begin
-  if fHideArchived then  actnHideArchived.ImageName := 'Checked' else
-  actnHideArchived.ImageName := 'UnChecked';
+  if TAction(Sender).Checked then TAction(Sender).ImageName := 'Checked'
+  else TAction(Sender).ImageName := 'UnChecked';
 end;
 
 procedure TMemberFilter.actnHideInActiveExecute(Sender: TObject);
 begin
-//  TAction(Sender).Checked := not TAction(Sender).Checked;
-  fHideInActive := TAction(Sender).Checked;
-  UpdateAction(TAction(Sender));
-  PostMessage(TForm(Owner).Handle, SCM_UPDATE, 0, 0);
+  TAction(Sender).Checked := not TAction(Sender).Checked;
+  SetIconDisplayState;
+  SendFilterDataPacket;
 end;
 
 procedure TMemberFilter.actnHideInActiveUpdate(Sender: TObject);
 begin
-  if fHideInActive then  actnHideInActive.ImageName := 'Checked' else
-  actnHideInActive.ImageName := 'UnChecked';
+  if TAction(Sender).Checked then TAction(Sender).ImageName := 'Checked'
+  else TAction(Sender).ImageName := 'UnChecked';
 end;
 
 procedure TMemberFilter.actnHideNonSwimmerExecute(Sender: TObject);
 begin
-//  TAction(Sender).Checked := not TAction(Sender).Checked;
-  fHideNonswimmer := TAction(Sender).Checked;
-  UpdateAction(TAction(Sender));
-  PostMessage(TForm(Owner).Handle, SCM_UPDATE, 0, 0);
+  TAction(Sender).Checked := not TAction(Sender).Checked;
+  SetIconDisplayState;
+  SendFilterDataPacket;
 end;
 
 procedure TMemberFilter.actnHideNonSwimmerUpdate(Sender: TObject);
 begin
-  if fHideNonSwimmer then  actnHideNonSwimmer.ImageName := 'Checked' else
-  actnHideNonSwimmer.ImageName := 'UnChecked';
-end;
-
-procedure TMemberFilter.FormDestroy(Sender: TObject);
-begin
-  WritePreferences;
+  if TAction(Sender).Checked then TAction(Sender).ImageName := 'Checked'
+  else TAction(Sender).ImageName := 'UnChecked';
 end;
 
 procedure TMemberFilter.FormCreate(Sender: TObject);
 begin
-  fHideArchived := false;
-  fHideInActive := false;
-  fHideNonSwimmer := false;
+  actnHideArchived.Checked := false;
+  actnHideInActive.Checked := false;
+  actnHideNonSwimmer.Checked := false;
+end;
+
+procedure TMemberFilter.FormDeactivate(Sender: TObject);
+begin
+  WritePreferences; // record filter state
+  PostMessage(TForm(Owner).Handle, SCM_FILTERDEACTIVATED, 0, 0);
 end;
 
 procedure TMemberFilter.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-  if Key = VK_ESCAPE then actnClose.Execute;
+  if Key = VK_ESCAPE then
+  begin
+    WritePreferences;
+    ModalResult := mrOk;
+  end;
 end;
 
 procedure TMemberFilter.FormShow(Sender: TObject);
 begin
   ReadPreferences;
-  // action and group buttons icons sync.
-  if fHideArchived then
-  begin
-    actnHideArchived.ImageName := 'Checked';
-    actnHideArchived.Checked := true;
-  end
-  else
-  begin
-    actnHideArchived.ImageName := 'UnChecked';
-    actnHideArchived.Checked := false;
-  end;
-
-  if fHideInActive then
-  begin
-    actnHideInActive.ImageName := 'Checked';
-    actnHideInActive.Checked := true;
-  end
-  else
-  begin
-    actnHideInActive.ImageName := 'UnChecked';
-    actnHideInActive.Checked := false;
-  end;
-
-  if fHideNonSwimmer then
-  begin
-    actnHideNonSwimmer.ImageName := 'Checked';
-    actnHideNonSwimmer.Checked := true;
-  end
-  else
-  begin
-    actnHideNonSwimmer.ImageName := 'UnChecked';
-    actnHideNonSwimmer.Checked := false;
-  end;
-
-  UpdateAction(actnClear);
-
+  SetIconDisplayState;
 end;
 
 { TMemberFilter }
@@ -212,10 +166,53 @@ begin
   iniFileName := SCMUtility.GetSCMPreferenceFileName;
   if not FileExists(iniFileName) then exit;
   iFile := TIniFile.Create(iniFileName);
-  fHideArchived := iFile.ReadBool(INIFILE_SECTION, 'HideArchived', true);
-  fHideInActive := iFile.ReadBool(INIFILE_SECTION, 'HideInActive', false);
-  fHideNonSwimmer := iFile.ReadBool(INIFILE_SECTION, 'HideNonSwimmer', false);
+  actnHideArchived.Checked := iFile.ReadBool(INIFILE_SECTION,
+    'HideArchived', false);
+  actnHideInActive.Checked := iFile.ReadBool(INIFILE_SECTION,
+    'HideInActive', false);
+  actnHideNonSwimmer.Checked := iFile.ReadBool(INIFILE_SECTION,
+    'HideNonSwimmer', false);
   iFile.Free;
+end;
+
+procedure TMemberFilter.SendFilterDataPacket;
+var
+  Buffer: TMemoryStream;
+  CopyData: TCopyDataStruct;
+begin
+  // fill record
+  fFilterState.HideArchived := actnHideArchived.Checked;
+  fFilterState.HideInActive := actnHideInActive.Checked;
+  fFilterState.HideNonSwimmer := actnHideNonSwimmer.Checked;
+  Buffer := TMemoryStream.Create;
+  try
+    // fill memory stream
+    Buffer.WriteBuffer(fFilterState, SizeOf(TFilterState));
+    CopyData.dwData := 0;
+    CopyData.cbData := Buffer.Size;
+    CopyData.lpData := Buffer.Memory;
+    // run filter on form
+    SendMessage(TForm(Owner).Handle, SCM_FILTERUPDATED, 0, LParam(@CopyData));
+  finally
+    Buffer.free;
+  end;
+end;
+
+procedure TMemberFilter.SetIconDisplayState;
+begin
+  // The TAction's state must change else OnActionUpdate isn't called.
+  // Programmatically assigning TAction.Checked with a value does not
+  // produce a change in it's state.
+  // Here we sync the icon states manaually.
+  if actnHideArchived.Checked then actnHideArchived.ImageName := 'Checked'
+  else actnHideArchived.ImageName := 'UnChecked';
+  if actnHideInActive.Checked then actnHideInActive.ImageName := 'Checked'
+  else actnHideInActive.ImageName := 'UnChecked';
+  if actnHideNonSwimmer.Checked then actnHideNonSwimmer.ImageName := 'Checked'
+  else actnHideNonSwimmer.ImageName := 'UnChecked';
+  if actnHideArchived.Checked or actnHideInActive.Checked or actnHideNonSwimmer.Checked
+  then actnClear.ImageName := 'filter_alt'
+  else actnClear.ImageName := 'filter_alt_off';
 end;
 
 procedure TMemberFilter.WritePreferences;
@@ -226,9 +223,10 @@ begin
   iniFileName := SCMUtility.GetSCMPreferenceFileName;
   if not FileExists(iniFileName) then exit;
   iFile := TIniFile.Create(iniFileName);
-  iFile.WriteBool(INIFILE_SECTION, 'HideArchived', fHideArchived);
-  iFile.WriteBool(INIFILE_SECTION, 'HideInActive', fHideInActive);
-  iFile.WriteBool(INIFILE_SECTION, 'HideNonSwimmer', fHideNonSwimmer);
+  iFile.WriteBool(INIFILE_SECTION, 'HideArchived', actnHideArchived.Checked);
+  iFile.WriteBool(INIFILE_SECTION, 'HideInActive', actnHideInActive.Checked);
+  iFile.WriteBool(INIFILE_SECTION, 'HideNonSwimmer',
+    actnHideNonSwimmer.Checked);
   iFile.Free;
 end;
 
