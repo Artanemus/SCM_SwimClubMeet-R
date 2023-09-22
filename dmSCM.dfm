@@ -1273,6 +1273,7 @@ object SCM: TSCM
     ActiveStoredUsage = [auDesignTime]
     Active = True
     AfterInsert = qryHeatAfterInsert
+    AfterPost = qryHeatAfterPost
     AfterDelete = qryHeatAfterDelete
     AfterScroll = qryHeatAfterScroll
     OnNewRecord = qryHeatNewRecord
@@ -1929,7 +1930,6 @@ object SCM: TSCM
   end
   object qryTeam: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     BeforeInsert = qryEvTypeBeforeInsert
     AfterScroll = qryTeamAfterScroll
     IndexFieldNames = 'HeatID'
@@ -2007,7 +2007,7 @@ object SCM: TSCM
       FieldName = 'TeamName'
       Origin = 'TeamName'
       ReadOnly = True
-      Size = 128
+      Size = 60
     end
     object TimeField1: TTimeField
       Alignment = taRightJustify

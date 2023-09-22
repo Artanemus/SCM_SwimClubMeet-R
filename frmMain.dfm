@@ -1362,19 +1362,19 @@ object Main: TMain
                 end
                 inherited Panel1: TPanel
                   Width = 1036
-                  ExplicitWidth = 1032
+                  ExplicitWidth = 1036
                   inherited Grid: TDBGrid
                     Width = 1032
                   end
                 end
                 inherited Panel2: TPanel
                   Width = 1036
-                  Height = 191
-                  ExplicitWidth = 1032
-                  ExplicitHeight = 191
+                  Height = 112
+                  ExplicitWidth = 1036
+                  ExplicitHeight = 152
                   inherited GridEntrant: TDBGrid
                     Width = 1032
-                    Height = 187
+                    Height = 108
                   end
                 end
               end
@@ -1995,7 +1995,7 @@ object Main: TMain
               Height = 632
               Align = alLeft
               BorderStyle = bsNone
-              ItemCount = 1
+              ItemCount = 2
               ItemIndex = 0
               ItemMargins.Left = 0
               ItemMargins.Top = 0

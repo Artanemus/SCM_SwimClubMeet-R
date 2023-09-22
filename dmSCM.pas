@@ -193,6 +193,7 @@ type
     procedure qryEvTypeBeforeInsert(DataSet: TDataSet);
     procedure qryHeatAfterDelete(DataSet: TDataSet);
     procedure qryHeatAfterInsert(DataSet: TDataSet);
+    procedure qryHeatAfterPost(DataSet: TDataSet);
     procedure qryHeatAfterScroll(DataSet: TDataSet);
     procedure qryHeatNewRecord(DataSet: TDataSet);
     procedure qryMemberQuickPickAfterScroll(DataSet: TDataSet);
@@ -212,6 +213,7 @@ type
     fLastDistanceID: integer;
     fLastStrokeID: integer;
     fSCMActive: Boolean;
+    fIsNewRecord: boolean;
     { Private declarations }
     prefCheckUnNomination: integer;
     prefGenerateEventDescription: Boolean;
@@ -668,6 +670,7 @@ begin
   fSCMActive := false;
   fLastDistanceID := 0;
   fLastStrokeID := 0;
+  fIsNewRecord := false;
   prefGenerateEventDescription := false;;
   prefGenerateEventDescStr := '';
   // r e a d   p r e f e r e n c e .
@@ -2263,11 +2266,25 @@ begin
 end;
 
 procedure TSCM.qryHeatAfterInsert(DataSet: TDataSet);
+begin
+  fIsNewRecord := true;
+end;
+
+procedure TSCM.qryHeatAfterPost(DataSet: TDataSet);
 var
 aHeatID: integer;
 begin
-  if Owner is TForm then // Heat_Renumber();
-      PostMessage(TForm(Owner).Handle, SCM_RENUMBERHEATS, 0, 0);
+  if fIsNewRecord then
+    begin
+      fIsNewRecord := false;
+      aHeatID := DataSet.FieldByName('HeatID').AsInteger;
+      PadLanes(aHeatID);
+      qryEntrant.Refresh;
+      qryTeam.Refresh;
+    end;
+
+//  if Owner is TForm then // Heat_Renumber();
+//      PostMessage(TForm(Owner).Handle, SCM_RENUMBERHEATS, 0, 0);
 end;
 
 procedure TSCM.qryHeatAfterScroll(DataSet: TDataSet);

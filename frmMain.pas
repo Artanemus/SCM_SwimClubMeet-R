@@ -2428,10 +2428,14 @@ end;
 
 procedure TMain.Heat_DeleteExecute(Sender: TObject);
 var
-  results: TModalresult;
+  mr: TModalResult;
   aHeatID: integer;
+  aEventType: TEventType;
 begin
   // actn.Update dictates if this routine is accessable.
+  aEventType := SCM.Heat_EventType(SCM.Heat_ID);
+  mr := mrNone;
+
   // The heat is CLOSED.
   if SCM.Heat_IsClosed then
   begin
@@ -2442,27 +2446,40 @@ begin
   // The heat is RACED
   if SCM.Heat_IsRaced then
   begin
-    results := MessageDlg('WARNING: This heat is RACED.' + sLineBreak +
+    mr := MessageDlg('WARNING: This heat is RACED.' + sLineBreak +
       'Racetimes and entrant data will be lost if you delete this heat.' +
       sLineBreak + 'Do you wish to delete the heat?', mtWarning,
       [mbYes, mbNo], 0, mbNo);
-    if (results <> mrYes) then
-      exit;
+    if (mr <> mrYes) then exit;
   end;
+
   // Heat status is RACED or OPEN. Final confirmation message.
   if SCM.Heat_IsRaced then
-    results := MessageDlg('Final confirmation:' + sLineBreak +
-      'Delete the RACED heat, all of it''s racetimes and entrant data?',
-      mtConfirmation, [mbYes, mbNo], 0, mbYes)
+  begin
+    if aEventType = etINDV then
+        mr := MessageDlg('Final confirmation:' + sLineBreak +
+        'Delete the RACED heat, all of it''s racetimes and entrant data?',
+        mtConfirmation, [mbYes, mbNo], 0, mbYes)
+    else if aEventType = etTEAM then
+        mr := MessageDlg('Final confirmation:' + sLineBreak +
+        'Delete the RACED heat, all of it''s racetimes and relay team data?',
+        mtConfirmation, [mbYes, mbNo], 0, mbYes);
+  end
   else
   begin
-    results := MessageDlg
-      ('Delete the selected heat and all it''s assigned entrants?',
-      mtConfirmation, [mbYes, mbNo], 0, mbYes);
+    if aEventType = etINDV then
+        mr := MessageDlg
+        ('Delete the selected heat and all it''s assigned entrants?',
+        mtConfirmation, [mbYes, mbNo], 0, mbYes)
+    else if aEventType = etTEAM then
+        mr := MessageDlg
+        ('Delete the selected heat and all it''s assigned relay teams?',
+        mtConfirmation, [mbYes, mbNo], 0, mbYes);
   end;
+
   // d e l e t e   t h e   c u r r e n t   s e l e c t e d   h e a t .
   // -----------------------------------------------------------------
-  if (results = mrYes) then
+  if (mr = mrYes) then
   begin
     aHeatID := SCM.dsHeat.DataSet.FieldByName('HeatID').AsInteger;
     // As SCM.qryHeat is connected to a TControlList via TBindSourceDB ...
@@ -2471,7 +2488,6 @@ begin
     // fails. The record is locked?
     BindSourceDB3.DataSet.Active := false;
     SCM.Heat_Delete(aHeatID, false);
-//    Refresh_Heat();
     BindSourceDB3.DataSet.Active := true;
     ToggleVisibileTabSheet3;
   end;
@@ -2682,8 +2698,7 @@ begin
   aEventID := SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger;
   if SCM.Event_EventTypeID(aEventID) = 0 then
     raise Exception.Create('Error: The event has not been assigned a distance.');
-
-  SCM.Heat_NewRecord;
+  SCM.Heat_NewRecord; // + IndvTeam TDataSet refresh
   ToggleVisibileTabSheet3;
 end;
 
@@ -2955,10 +2970,10 @@ begin
   case i of
     1:
       INDV.Grid.Enabled := true;
-    2: 
+    2:
     begin
       INDV.Grid.Enabled := true;
-      INDV.Grid.Invalidate;  // Text color changes - needs a repaint. 
+      INDV.Grid.Invalidate;  // Text color changes - needs a repaint.
     end;
     3:
       INDV.Grid.Enabled := false;

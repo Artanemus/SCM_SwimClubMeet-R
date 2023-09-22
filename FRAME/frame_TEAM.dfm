@@ -12,7 +12,7 @@ object frameTEAM: TframeTEAM
   TabOrder = 0
   object Splitter1: TSplitter
     Left = 0
-    Top = 234
+    Top = 313
     Width = 1033
     Height = 14
     Cursor = crVSplit
@@ -23,7 +23,7 @@ object frameTEAM: TframeTEAM
     Left = 0
     Top = 0
     Width = 1033
-    Height = 234
+    Height = 313
     Align = alTop
     BevelOuter = bvNone
     BorderWidth = 2
@@ -36,7 +36,7 @@ object frameTEAM: TframeTEAM
       Left = 2
       Top = 2
       Width = 1029
-      Height = 230
+      Height = 309
       Align = alClient
       DataSource = SCM.dsTeam
       DefaultDrawing = False
@@ -62,6 +62,7 @@ object frameTEAM: TframeTEAM
           ButtonStyle = cbsEllipsis
           Expanded = False
           FieldName = 'TeamName'
+          Width = 240
           Visible = True
         end
         item
@@ -94,9 +95,9 @@ object frameTEAM: TframeTEAM
   end
   object Panel2: TPanel
     Left = 0
-    Top = 248
+    Top = 327
     Width = 1033
-    Height = 241
+    Height = 162
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 2
@@ -105,11 +106,13 @@ object frameTEAM: TframeTEAM
     ParentBackground = False
     TabOrder = 1
     StyleElements = [seFont]
+    ExplicitTop = 248
+    ExplicitHeight = 241
     object GridEntrant: TDBGrid
       Left = 2
       Top = 2
       Width = 1029
-      Height = 237
+      Height = 158
       Align = alClient
       DataSource = SCM.dsTeamEntrant
       TabOrder = 0

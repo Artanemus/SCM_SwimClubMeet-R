@@ -90,16 +90,17 @@ begin
     are dynamically generated from the visible fields of the dataset and the
     order of columns in the grid matches the order of fields in the dataset.
   }
-  Grid.Columns.State := csDefault;
+//  Grid.Columns.State := csDefault;
   Grid.Options := Grid.Options - [dgAlwaysShowEditor];
   Grid.Options := Grid.Options + [dgEditing];
 
-  GridEntrant.Columns.State := csDefault;
+//  GridEntrant.Columns.State := csDefault;
   GridEntrant.Options := GridEntrant.Options - [dgAlwaysShowEditor];
   GridEntrant.Options := GridEntrant.Options + [dgEditing];
 
   Enable_GridEllipse;
   Enable_GridEntrantEllipse;
+
 
 end;
 
@@ -321,11 +322,14 @@ var
   TeamID: Integer;
   rtnValue: TModalResult;
   fld: TField;
+  aRect: TRect;
+  pt: TPoint;
 begin
   if not AssertConnection then
     exit;
-  if SCM.dsTeam.DataSet.FieldByName('TeamNameID').IsNull then
-    exit;
+
+//  if SCM.dsTeam.DataSet.FieldByName('TeamNameID').IsNull then
+//    exit;
 
   SCM.dsTeam.DataSet.DisableControls;
   TeamID := SCM.dsTeam.DataSet.FieldByName('TeamID').AsInteger;
@@ -350,6 +354,11 @@ begin
   begin
     dlgTeamName := TTeamNameMenu.Create(self);
     dlgTeamName.Prepare(SCM.scmConnection, TeamID);
+    dlgTeamName.Position := poDesigned;
+    pt := Mouse.CursorPos;
+    aRect := TDBGrid(Sender).GetCellRect(pt);
+    dlgTeamName.Left := aRect.Left;
+    dlgTeamName.Top := aRect.Top;
     rtnValue := dlgTeamName.ShowModal;
     dlgTeamName.Free;
     // require a refresh to update members details
