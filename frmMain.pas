@@ -288,8 +288,6 @@ type
     vimgHeatCircle: TVirtualImage;
     vimgHeatNum: TVirtualImage;
     vimgHeatStroke: TVirtualImage;
-    vimgNoHeatsMsg: TVirtualImage;
-    vimgNoEventsMsg: TVirtualImage;
     vimgRelayDot: TVirtualImage;
     VirtualImage1: TVirtualImage;
     VirtualImageList1: TVirtualImageList;
@@ -297,8 +295,8 @@ type
     VirtualImageList3: TVirtualImageList;
     VirtualImageListMenu: TVirtualImageList;
     pnlHeatsTabSheet: TPanel;
-    vimgHeatsNotifications: TVirtualImage;
-    lblMsgNoNominees: TLabel;
+    lblMsgTab3: TLabel;
+    lblMsgTab1: TLabel;
     procedure ActionManager1Update(Action: TBasicAction; var Handled: boolean);
     procedure btnClearSearchClick(Sender: TObject);
     procedure clistCheckBoxClick(Sender: TObject);
@@ -1516,6 +1514,7 @@ end;
 procedure TMain.Event_Scroll(var Msg: TMessage);
 var
   EnabledState: boolean;
+  aEventType: TEventType;
 begin
 
   if not AssertConnection then
@@ -1528,15 +1527,22 @@ begin
     if (SCM.dsHeat.DataSet.FieldByName('HeatStatusID').AsInteger <> 3) then
       EnabledState := true;
   end;
-
   ToggleVisibileTabSheet3;
+  // SYNC the enabled state of the INDVTEAM Grids
+  aEventType := SCM.Event_EventType(SCM.Event_ID);
+  if aEventType = etINDV then
+  begin
+    if (INDV.Grid.Enabled <> EnabledState) then
+        INDV.Grid.Enabled := EnabledState;
+  end;
 
-  // SYNC the enabled state of the INDV.Grid to the
-  // session/heat status.
-  if (INDV.Grid.Enabled <> EnabledState) then
-    INDV.Grid.Enabled := EnabledState;
-  if (TEAM.Grid.Enabled <> EnabledState) then
-    TEAM.Grid.Enabled := EnabledState;
+  if aEventType = etTEAM then
+  begin
+    if (TEAM.Grid.Enabled <> EnabledState) then
+        TEAM.Grid.Enabled := EnabledState;
+//    if SCM.dsTeam.DataSet.FieldByName('TeamNameID').IsNull then
+//      TEAM.GridEntrant.Visible := false else TEAM.GridEntrant.Visible := true;
+  end;
 
 end;
 
@@ -1920,6 +1926,7 @@ begin
   ToggleDCode(prefEnableDCode);
   ToggleSwimmerCAT(prefDisplaySwimmerCAT);
   ToggleDivisions(prefDisplayDivisions);
+  ToggleVisibileTabSheet1;
 
 end;
 
@@ -2503,9 +2510,11 @@ begin
     if not SCM.Session_IsLocked then
       // are there any Events?
       if not SCM.dsEvent.DataSet.IsEmpty then
-        // are there any Heats?
-        if not SCM.dsHeat.DataSet.IsEmpty then
-          DoEnable := true;
+        // ILLEGAL EVENT - missing params.
+        if not SCM.dsEvent.DataSet.FieldByName('DistanceID').IsNull and
+          not SCM.dsEvent.DataSet.FieldByName('StrokeID').IsNull then
+          // are there any Heats?
+          if not SCM.dsHeat.DataSet.IsEmpty then DoEnable := true;
   TAction(Sender).Enabled := DoEnable;
 end;
 
@@ -3286,7 +3295,10 @@ begin
 
   // Update page
   case (PageControl1.TabIndex) of
-    // 0: // S e s s i o n .
+    0: // S e s s i o n .
+    begin
+      ToggleVisibileTabSheet1;
+    end;
 
     1: // N o m i n a t e .
       begin
@@ -3301,19 +3313,7 @@ begin
           *)
           lblNomWarning.Visible := false;
           Refresh_Nominate;
-          if (SCM.dsMember.DataSet.IsEmpty) then
-          begin
-//            lblNomWarning.Font.Color := clWebTomato;
-            lblNomWarning.Caption := 'No Members';
-            lblNomWarning.Visible := true;
-          end
-          else if (SCM.dsEvent.DataSet.IsEmpty) then
-          begin
-//            lblNomWarning.Font.Color := clWebTomato;
-            lblNomWarning.Caption := 'No Events in Session';
-            lblNomWarning.Visible := true;
-          end
-          else if (SCM.dsSession.DataSet.IsEmpty) then
+          if (SCM.dsSession.DataSet.IsEmpty) then
           begin
 //            lblNomWarning.Font.Color := clWebTomato;
             lblNomWarning.Caption := 'Session is Empty';
@@ -3323,6 +3323,18 @@ begin
           begin
 //            lblNomWarning.Font.Color := clWebTomato;
             lblNomWarning.Caption := 'Session is Locked';
+            lblNomWarning.Visible := true;
+          end
+          else if (SCM.dsEvent.DataSet.IsEmpty) then
+          begin
+//            lblNomWarning.Font.Color := clWebTomato;
+            lblNomWarning.Caption := 'No Events in Session';
+            lblNomWarning.Visible := true;
+          end
+          else if (SCM.dsMember.DataSet.IsEmpty) then
+          begin
+//            lblNomWarning.Font.Color := clWebTomato;
+            lblNomWarning.Caption := 'No Members';
             lblNomWarning.Visible := true;
           end;
 
@@ -4234,6 +4246,9 @@ begin
         (fld.FieldName = 'TeamName') then TEAM.GridEntrant.EditorMode := true
       else TEAM.GridEntrant.EditorMode := false;
     end;
+
+    if SCM.dsTeam.DataSet.FieldByName('TeamNameID').IsNull then
+      TEAM.GridEntrant.Visible := false else TEAM.GridEntrant.Visible := true;
   end;
 end;
 
@@ -4255,7 +4270,14 @@ begin
         (fld.FieldName = 'TeamName') then TEAM.Grid.EditorMode := true
       else TEAM.Grid.EditorMode := false;
     end;
+
+
   end;
+
+  if (aEventType = etTEAM) then
+    // TOGGLE VISIBILITY OF THE TEAMENTRANT GRID
+    if TEAM.Grid.DataSource.DataSet.FieldByName('TeamNameID').IsNull then
+        TEAM.GridEntrant.Visible := false     else TEAM.GridEntrant.Visible := true;
 end;
 
 procedure TMain.ToggleDCode(DoEnable: boolean);
@@ -4303,46 +4325,55 @@ begin
    Reveals vimgNoHeatsMsg
   --------------------------------------------------------------
   }
+
+  lblMsgTab3.Visible := false;
+  pnlClient.Visible := true;
+  HeatControlList.Visible := true;
+  StatusBar1.Panels[3].Text := '';
+
   if SCM.dsSession.DataSet.IsEmpty then
   begin
-    // hides tab sheet panel and displays notification image.
-    vimgNoHeatsMsg.Visible := false;
-    pnlHeatsTabSheet.Visible := false;
-    vimgHeatsNotifications.ImageName := 'NoSessions 512x512';
-    vimgHeatsNotifications.Visible := true;
+      pnlClient.Visible := false;
+//      HeatControlList.Visible := false;
+      lblMsgTab3.Caption := 'No Sessions';
+      lblMsgTab3.Visible := true;
+      StatusBar1.Panels[3].Text := 'HINT: Create a new session.';
   end
   else if SCM.dsEvent.DataSet.IsEmpty then
   begin
-    // hides tab sheet panel and displays notification image.
-    vimgNoHeatsMsg.Visible := false;
-    pnlHeatsTabSheet.Visible := false;
-    vimgHeatsNotifications.ImageName := 'NoEvents 512x512';
-    vimgHeatsNotifications.Visible := true;
+      pnlClient.Visible := false;
+//      HeatControlList.Visible := false;
+      lblMsgTab3.Caption := 'No Events';
+      lblMsgTab3.Visible := true;
+      StatusBar1.Panels[3].Text := 'HINT: Create a new event.';
+  end
+  else if SCM.dsEvent.DataSet.FieldByName('DistanceID').IsNull or
+    SCM.dsEvent.DataSet.FieldByName('StrokeID').IsNull then
+  begin
+      pnlClient.Visible := false;
+//      HeatControlList.Visible := false;
+      lblMsgTab3.Caption := 'Distance-Stroke?';
+      lblMsgTab3.Visible := true;
+      StatusBar1.Panels[3].Text := 'HINT: Assign a distance and stroke to the event.';
   end
   else if SCM.dsHeat.DataSet.IsEmpty then
   begin
-    // hides INDV/TEAM GRIDS and displays 'No Heats' image.
-    vimgHeatsNotifications.Visible := false;
-    pnlHeatsTabSheet.Visible := true;
-    pnlClient.Visible := false;
-    pnlRight.Visible := false;
-    vimgNoHeatsMsg.ImageName := 'NoHeats 512x512';
-    vimgNoHeatsMsg.Visible := true;
+//      pnlClient.Visible := false;
+//      HeatControlList.Visible := false;
+      lblMsgTab3.Caption := 'No Heats';
+      lblMsgTab3.Visible := true;
+      StatusBar1.Panels[3].Text := 'HINT: Create a new heat';
   end
   else
   begin
-    // Restores tab sheet panel and clears any notifications.
-    vimgHeatsNotifications.Visible := false;
-    vimgNoHeatsMsg.Visible := false;
-    pnlHeatsTabSheet.Visible := true;
-    pnlClient.Visible := true;
     if not SCM.Event_HasNominees(SCM.dsEvent.DataSet.FieldByName('EventID')
       .AsInteger) then
-      lblMsgNoNominees.Visible := true
-    else
-      lblMsgNoNominees.Visible := false;
+    begin
+      lblMsgTab3.Caption := 'No Nominees';
+      lblMsgTab3.Visible := true;
+      StatusBar1.Panels[3].Text := 'HINT: Nominate members to your events.';
+    end;
 
-    pnlRight.Visible := true;
     if SCM.Event_IsTEAM then
     begin  // RELAYS
       TEAM.Visible := true;
@@ -4353,6 +4384,7 @@ begin
       TEAM.Visible := false;
       INDV.Visible := true;
     end;
+
   end;
 end;
 
@@ -4364,25 +4396,24 @@ begin
    Reveals vimgNoEventsMsg
   --------------------------------------------------------------
   }
+  Session_Grid.Visible := true;
+  Event_Grid.Visible := true;
+  lblMsgTab1.Visible := false;
+  StatusBar1.Panels[3].Text := '';
   if SCM.dsSession.DataSet.IsEmpty then
   begin
+//    Session_Grid.Visible := false;
     Event_Grid.Visible := false;
-    EventWidgets.Visible := false;
-    vimgNoEventsMsg.Visible := true;
-    vimgNoEventsMsg.ImageName := 'NoSessions 512x512';
+    lblMsgTab1.Caption := 'No Sessions';
+    lblMsgTab1.Visible := true;
+    StatusBar1.Panels[3].Text := 'HINT: To get started, create a new session';
   end
   else if SCM.dsEvent.DataSet.IsEmpty then
   begin
-    EventWidgets.Visible := true;
-    Event_Grid.Visible := false;
-    vimgNoEventsMsg.Visible := true;
-    vimgNoEventsMsg.ImageName := 'NoEvents 512x512';
-  end
-  else
-  begin
-    EventWidgets.Visible := true;
-    Event_Grid.Visible := true;
-    vimgNoEventsMsg.Visible := false;
+//    Event_Grid.Visible := false;
+    lblMsgTab1.Caption := 'No Events';
+    lblMsgTab1.Visible := true;
+    StatusBar1.Panels[3].Text := 'HINT: Create a new event. Assign a distance and stroke.';
   end;
 end;
 

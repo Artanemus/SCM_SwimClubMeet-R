@@ -74,7 +74,8 @@ uses
   SCMHelpers in '..\SCM_SHARED\SCMHelpers.pas',
   dmSCMHelper in 'dmSCMHelper.pas',
   rptQTNotQualified in 'REPORTS\rptQTNotQualified.pas' {QTNotQualified: TDataModule},
-  dlgMemberFilter in 'MEMBERS\dlgMemberFilter.pas' {MemberFilter};
+  dlgMemberFilter in 'MEMBERS\dlgMemberFilter.pas' {MemberFilter},
+  dlgTeamNamePicker in 'FRAME\dlgTeamNamePicker.pas' {TeamNamePicker};
 
 {$R *.res}
 

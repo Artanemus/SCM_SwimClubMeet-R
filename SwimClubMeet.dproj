@@ -404,6 +404,10 @@
             <Form>MemberFilter</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="FRAME\dlgTeamNamePicker.pas">
+            <Form>TeamNamePicker</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

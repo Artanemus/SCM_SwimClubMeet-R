@@ -314,23 +314,6 @@ object Main: TMain
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 1
-            object vimgNoEventsMsg: TVirtualImage
-              Left = 0
-              Top = 0
-              Width = 617
-              Height = 739
-              Align = alClient
-              ImageCollection = ImageCollection1
-              ImageWidth = 0
-              ImageHeight = 0
-              ImageIndex = 73
-              ImageName = 'NoEvents 512x512'
-              Visible = False
-              ExplicitLeft = 288
-              ExplicitTop = 328
-              ExplicitWidth = 105
-              ExplicitHeight = 105
-            end
             object Event_Grid: TDBGrid
               AlignWithMargins = True
               Left = 10
@@ -482,6 +465,16 @@ object Main: TMain
                   AlignRightWithPanel = False
                   AlignTopWithPanel = True
                   AlignVerticalCenterWithPanel = False
+                end
+                item
+                  Control = lblMsgTab1
+                  AlignBottomWithPanel = False
+                  AlignHorizontalCenterWithPanel = True
+                  AlignLeftWithPanel = False
+                  AlignRightWithPanel = False
+                  AlignTopWithPanel = False
+                  AlignVerticalCenterWithPanel = False
+                  Below = spbtnEventReport
                 end>
               Align = alRight
               BevelOuter = bvNone
@@ -606,6 +599,29 @@ object Main: TMain
                 Flat = True
                 Layout = blGlyphTop
                 Margin = 0
+              end
+              object lblMsgTab1: TLabel
+                AlignWithMargins = True
+                Left = 7
+                Top = 356
+                Width = 45
+                Height = 173
+                Margins.Top = 20
+                Alignment = taCenter
+                Anchors = []
+                Caption = 'No Sessions'
+                Color = clBtnFace
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = 4678655
+                Font.Height = -32
+                Font.Name = 'Segoe UI'
+                Font.Orientation = 900
+                Font.Style = []
+                ParentColor = False
+                ParentFont = False
+                Visible = False
+                WordWrap = True
+                StyleElements = [seClient, seBorder]
               end
             end
           end
@@ -1047,23 +1063,6 @@ object Main: TMain
       object TabSheet3: TTabSheet
         Caption = 'Heats'
         ImageIndex = 2
-        object vimgHeatsNotifications: TVirtualImage
-          Left = 0
-          Top = 0
-          Width = 1406
-          Height = 759
-          Align = alClient
-          ImageCollection = ImageCollection1
-          ImageWidth = 0
-          ImageHeight = 0
-          ImageIndex = 75
-          ImageName = 'NoSessions 512x512'
-          Visible = False
-          ExplicitLeft = 512
-          ExplicitTop = 256
-          ExplicitWidth = 105
-          ExplicitHeight = 105
-        end
         object pnlHeatsTabSheet: TPanel
           Left = 0
           Top = 0
@@ -1088,22 +1087,6 @@ object Main: TMain
             TabOrder = 1
             ExplicitWidth = 1120
             ExplicitHeight = 631
-            object vimgNoHeatsMsg: TVirtualImage
-              Left = 0
-              Top = 0
-              Width = 1036
-              Height = 632
-              Align = alClient
-              ImageCollection = ImageCollection1
-              ImageWidth = 0
-              ImageHeight = 0
-              ImageIndex = 74
-              ImageName = 'NoHeats 512x512'
-              ExplicitLeft = 512
-              ExplicitTop = 256
-              ExplicitWidth = 105
-              ExplicitHeight = 105
-            end
             object pnlRight: TPanel
               Left = 1036
               Top = 0
@@ -1180,7 +1163,7 @@ object Main: TMain
                     Below = spbtnEntrantScratchLane
                   end
                   item
-                    Control = lblMsgNoNominees
+                    Control = lblMsgTab3
                     AlignBottomWithPanel = False
                     AlignHorizontalCenterWithPanel = True
                     AlignLeftWithPanel = False
@@ -1192,7 +1175,8 @@ object Main: TMain
                 Align = alClient
                 BevelOuter = bvNone
                 TabOrder = 0
-                ExplicitHeight = 631
+                ExplicitLeft = 4
+                ExplicitTop = -2
                 DesignSize = (
                   88
                   632)
@@ -1281,7 +1265,7 @@ object Main: TMain
                   Visible = False
                   OnClick = IndvTeam_RenumberExecute
                 end
-                object lblMsgNoNominees: TLabel
+                object lblMsgTab3: TLabel
                   AlignWithMargins = True
                   Left = 21
                   Top = 308
@@ -1362,7 +1346,7 @@ object Main: TMain
                 end
                 inherited Panel1: TPanel
                   Width = 1036
-                  ExplicitWidth = 1036
+                  ExplicitWidth = 1032
                   inherited Grid: TDBGrid
                     Width = 1032
                   end
@@ -1370,8 +1354,8 @@ object Main: TMain
                 inherited Panel2: TPanel
                   Width = 1036
                   Height = 112
-                  ExplicitWidth = 1036
-                  ExplicitHeight = 152
+                  ExplicitWidth = 1032
+                  ExplicitHeight = 112
                   inherited GridEntrant: TDBGrid
                     Width = 1032
                     Height = 108
@@ -1995,7 +1979,7 @@ object Main: TMain
               Height = 632
               Align = alLeft
               BorderStyle = bsNone
-              ItemCount = 2
+              ItemCount = 1
               ItemIndex = 0
               ItemMargins.Left = 0
               ItemMargins.Top = 0
@@ -2070,6 +2054,10 @@ object Main: TMain
       item
         Text = 'Entrants:'
         Width = 160
+      end
+      item
+        Text = 'HINT'
+        Width = 400
       end>
     ParentFont = True
     UseSystemFont = False
@@ -2356,7 +2344,6 @@ object Main: TMain
     Top = 0
     Width = 1414
     Height = 31
-    UseSystemFont = False
     ActionManager = ActionManager1
     Caption = 'ActionMainMenuBar1'
     Color = clMenuBar
@@ -2365,7 +2352,7 @@ object Main: TMain
     ColorMap.BtnSelectedFont = clBlack
     ColorMap.UnusedColor = clWhite
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clBlack
+    Font.Color = clWindowText
     Font.Height = -16
     Font.Name = 'Segoe UI'
     Font.Style = []
@@ -3019,7 +3006,7 @@ object Main: TMain
     object IndvTeam_EmptyLane: TAction
       Category = 'IndvTeam'
       Caption = 'Empty Lane'
-      Hint = 'Empty the lane. The member remains nominated.'
+      Hint = 'Empty the lane. Members remain nominated.'
       ImageIndex = 19
       ImageName = 'Delete'
       ShortCut = 16472

@@ -101,13 +101,10 @@ object frameTEAM: TframeTEAM
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 2
-    Caption = 'Panel2'
     Color = clGray
     ParentBackground = False
     TabOrder = 1
     StyleElements = [seFont]
-    ExplicitTop = 248
-    ExplicitHeight = 241
     object GridEntrant: TDBGrid
       Left = 2
       Top = 2
