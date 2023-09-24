@@ -30,7 +30,6 @@ type
     fTeamBgColor: TColor;
     fTeamFontColor: TColor;
     fTeamActiveGrid: Integer;
-    FActiveGrid: Integer;
     fFrameBgColor: TColor;
     // ASSERT CONNECTION TO MSSQL DATABASE
     function AssertConnection(): boolean;
@@ -93,11 +92,11 @@ begin
     are dynamically generated from the visible fields of the dataset and the
     order of columns in the grid matches the order of fields in the dataset.
   }
-  // Grid.Columns.State := csDefault;
+   Grid.Columns.State := csDefault;
   Grid.Options := Grid.Options - [dgAlwaysShowEditor];
   Grid.Options := Grid.Options + [dgEditing];
 
-  // GridEntrant.Columns.State := csDefault;
+   GridEntrant.Columns.State := csDefault;
   GridEntrant.Options := GridEntrant.Options - [dgAlwaysShowEditor];
   GridEntrant.Options := GridEntrant.Options + [dgEditing];
 
@@ -122,13 +121,17 @@ var
   aTeamID, aTeamEntrantID: Integer;
 begin
   result := 0;
-  if FActiveGrid = 1 then
+  if fTeamActiveGrid = 1  then
   begin
     aTeamID := Grid.DataSource.DataSet.FieldByName('TeamID').AsInteger;
-    result := SCM.IndvTeam_ClearLane(aTeamID, etINDV);
-    if Grid.CanFocus then Grid.SetFocus;
+    result := SCM.IndvTeam_ClearLane(aTeamID, etTeam, true);
+    if result > 0 then
+    begin
+      Grid.DataSource.DataSet.Refresh;
+      SCM.IndvTeam_LocateLane(aTeamID, etTeam);
+    end;
   end
-  else if FActiveGrid = 2 then
+  else if fTeamActiveGrid = 2 then
   begin
     aTeamEntrantID := GridEntrant.DataSource.DataSet.FieldByName
       ('TeamEntrantID').AsInteger;
@@ -534,13 +537,13 @@ var
   aHeatID: Integer;
 begin
   result := 0;
-  if FActiveGrid = 1 then
+  if fTeamActiveGrid = 1 then
   begin
     aHeatID := Grid.DataSource.DataSet.FieldByName('HeatID').AsInteger;
     result := SCM.Lane_RenumberLanes(aHeatID);
     if Grid.CanFocus then Grid.SetFocus;
   end
-  else if FActiveGrid = 2 then
+  else if fTeamActiveGrid = 2 then
   begin
     // aTeamEntrantID := GridEntrant.DataSource.DataSet.FieldByName
     // ('TeamEntrantID').AsInteger;
@@ -552,17 +555,17 @@ var
   aTeamID, aTeamEntrantID: Integer;
 begin
   result := 0;
-  if FActiveGrid = 1 then
+  if fTeamActiveGrid = 1 then
   begin
     aTeamID := Grid.DataSource.DataSet.FieldByName('TeamID').AsInteger;
     result := SCM.IndvTeam_StrikeLane(aTeamID, etINDV);
     if Grid.CanFocus then Grid.SetFocus;
   end
-  else if FActiveGrid = 2 then
+  else if fTeamActiveGrid = 2 then
   begin
     aTeamEntrantID := GridEntrant.DataSource.DataSet.FieldByName
       ('TeamEntrantID').AsInteger;
-    result := SCM.TeamEntrant_Clear(aTeamEntrantID);
+    result := SCM.TeamEntrant_Strike(aTeamEntrantID);
   end;
 end;
 

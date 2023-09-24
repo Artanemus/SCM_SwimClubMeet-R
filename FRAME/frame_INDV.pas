@@ -38,7 +38,7 @@ type
     procedure GridMoveDown(Sender: TObject);
     procedure GridMoveUp(Sender: TObject);
     procedure ToggleDCode(DoEnable: boolean);
-    function ClearLane(): boolean;
+    function ClearLane: integer;
     function StrikeLane(): integer;
     function RenumberLanes(): integer;
   end;
@@ -107,14 +107,18 @@ begin
   end;
 end;
 
-function TframeINDV.ClearLane: boolean;
+function TframeINDV.ClearLane: integer;
 var
-aEntrantID, rows: integer;
+aEntrantID: integer;
 begin
-  result := false;
+  result := 0;
   aEntrantID := Grid.DataSource.DataSet.FieldByName('EntrantID').AsInteger;
-  rows := SCM.IndvTeam_ClearLane(aEntrantID, etINDV);
-  if rows > 0 then result := true;
+  result := SCM.IndvTeam_ClearLane(aEntrantID, etINDV);
+  if result > 0 then
+  begin
+      Grid.DataSource.DataSet.Refresh;
+      SCM.IndvTeam_LocateLane(aEntrantID, etTeam);
+  end;
   if Grid.CanFocus then Grid.SetFocus;
 end;
 
@@ -288,8 +292,9 @@ var
 begin
   if not AssertConnection then
     exit;
-  if SCM.dsEntrant.DataSet.FieldByName('MemberID').IsNull then
-    exit;
+
+//  if SCM.dsEntrant.DataSet.FieldByName('MemberID').IsNull then
+//    exit;
 
   SCM.dsEntrant.DataSet.DisableControls;
   EntrantID := SCM.dsEntrant.DataSet.FieldByName('EntrantID').AsInteger;

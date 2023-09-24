@@ -11,15 +11,17 @@ unit frmMain;
 {
 WRAP SECTION TO ENABLE AND DISABLE MONITORING.
 }
+
+//{$IFDEF DEBUG}
+//  { TODO -oBSA -cGeneral : FireDAC Tracing - ENABLE DEBBUG }
+//  SCM.scmConnection.ConnectionIntf.Tracing := true;
+//{$ENDIF}
+
 //{$IFDEF DEBUG}
 //  { TODO -oBSA -cGeneral : FireDAC Tracing - DISABLE DEBBUG }
 //  SCM.scmConnection.ConnectionIntf.Tracing := false;
 //{$ENDIF}
 
-//{$IFDEF DEBUG}
-//        { TODO -oBSA -cGeneral : FireDAC- DISABLE DEBBUG }
-//        SCM.scmConnection.ConnectionIntf.Tracing := true;
-//{$ENDIF}
 
 
 
@@ -297,6 +299,9 @@ type
     pnlHeatsTabSheet: TPanel;
     lblMsgTab3: TLabel;
     lblMsgTab1: TLabel;
+    FDMoniRemoteClientLink1: TFDMoniRemoteClientLink;
+    DBTxtEventTypeID: TDBText;
+    Label3: TLabel;
     procedure ActionManager1Update(Action: TBasicAction; var Handled: boolean);
     procedure btnClearSearchClick(Sender: TObject);
     procedure clistCheckBoxClick(Sender: TObject);
@@ -664,23 +669,36 @@ end;
 
 procedure TMain.IndvTeam_EmptyLaneExecute(Sender: TObject);
 var
-  rtnValue: integer;
+  rtnValue, rows: integer;
+  aEventType: TEventType;
 begin
-  // ...Update traps illegal calls.
   rtnValue := MessageDlg('Empty the lane?', mtConfirmation, [mbNo, mbYes],
     0, mbYes);
+
   if (rtnValue = mrYes) then
   begin
-    if SCM.Event_IsINDV then
-      INDV.ClearLane
-    else if SCM.Event_IsTEAM then
-      TEAM.ClearLane;
+    aEventType := SCM.CurrEventType;
+    if aEventType = etINDV then
+      rows := INDV.ClearLane
+    else if aEventType = etTEAM then
+      rows := TEAM.ClearLane
+    else
+    exit;
+
+    if rows > 0 then
+    begin
+      // S T A T U S B A R . Update entrant totals and any other UI elements
+      fDoStatusBarUpdate := true; // permits TACTION StatusBarUpdate
+      SCM_StatusBar.Execute;
+    end;
+
   end;
 end;
 
 procedure TMain.IndvTeam_EmptyLaneUpdate(Sender: TObject);
 var
   DoEnable: boolean;
+  aEventType: TEventType;
 begin
   DoEnable := false;
   if AssertConnection then
@@ -691,13 +709,19 @@ begin
         // is the current heat closed?
         if not SCM.Heat_IsClosed then
         begin
-          if SCM.Event_IsINDV then
+          aEventType := SCM.CurrEventType;
+          if aEventType = etINDV then
           begin
             if not SCM.dsEntrant.DataSet.IsEmpty then DoEnable := true;
           end
-          else if SCM.Event_IsTEAM then
+          else if aEventType = etTEAM then
           begin
-            if not SCM.dsTeam.DataSet.IsEmpty then DoEnable := true;
+            if not SCM.dsTeam.DataSet.IsEmpty then
+            begin
+              // Need a relay in a lane to be able to clear it....
+              if not SCM.dsTeam.DataSet.FieldByName('TeamNameID').IsNull then
+                DoEnable := true;
+            end;
           end;
         end;
   TAction(Sender).Enabled := DoEnable;
@@ -739,16 +763,20 @@ begin
 end;
 
 procedure TMain.Entrant_MoveDownExecute(Sender: TObject);
+var
+aEventType: TEventType;
 begin
-  if SCM.Event_IsINDV then
+  aEventType := SCM.CurrEventType;
+  if aEventType = etINDV then
     INDV.GridMoveDown(Sender)
-  else
+  else if aEventType = etTEAM then
     TEAM.GridMoveDown(Sender);
 end;
 
 procedure TMain.Entrant_MoveDownUpdate(Sender: TObject);
 var
   DoEnable: boolean;
+  aEventType: TEventType;
 begin
   DoEnable := false;
   if AssertConnection then
@@ -759,13 +787,14 @@ begin
         // is the current heat closed?
         if not SCM.Heat_IsClosed then
         begin
-          if SCM.Event_IsINDV then
+          aEventType := SCM.CurrEventType;
+          if aEventType = etINDV then
           begin
             // is there any entrants?
             if not SCM.dsEntrant.DataSet.IsEmpty then
               DoEnable := true;
           end
-          else
+          else if aEventType = etTEAM then
           begin
             // is there any Relays?
             if not SCM.dsTeam.DataSet.IsEmpty then
@@ -776,16 +805,18 @@ begin
 end;
 
 procedure TMain.Entrant_MoveUpExecute(Sender: TObject);
+var
+aEventType: TEventType;
 begin
-  if SCM.Event_IsINDV then
-    INDV.GridMoveUp(Sender)
-  else
-    TEAM.GridMoveUp(Sender);
+  aEventType := SCM.CurrEventType;
+  if aEventType = etINDV then INDV.GridMoveUp(Sender)
+  else if aEventType = etTEAM then TEAM.GridMoveUp(Sender);
 end;
 
 procedure TMain.Entrant_MoveUpUpdate(Sender: TObject);
 var
   DoEnable: boolean;
+  aEventType: TEventType;
 begin
   DoEnable := false;
   if AssertConnection then
@@ -796,17 +827,16 @@ begin
         // is the current heat closed?
         if not SCM.Heat_IsClosed then
         begin
-          if SCM.Event_IsINDV then
+          aEventType := SCM.CurrEventType;
+          if aEventType = etINDV then
           begin
             // is there any entrants?
-            if not SCM.dsEntrant.DataSet.IsEmpty then
-              DoEnable := true;
+            if not SCM.dsEntrant.DataSet.IsEmpty then DoEnable := true;
           end
-          else
+          else if aEventType = etTEAM then
           begin
             // is there any Relays?
-            if not SCM.dsTeam.DataSet.IsEmpty then
-              DoEnable := true;
+            if not SCM.dsTeam.DataSet.IsEmpty then DoEnable := true;
           end;
         end;
   TAction(Sender).Enabled := DoEnable;
@@ -820,7 +850,7 @@ begin
   // messaged by TSCM.qryMemberQuickPickAfterScroll
   // messaged by TSCM.qryHeatAfterScroll
   if not AssertConnection then exit;
-  aEventType := SCM.Event_EventType(SCM.Event_ID);
+  aEventType := SCM.CurrEventType;
   if (aEventType = etINDV) and TEAM.Grid.Focused then
   begin
     // After moving row re-engage editing for selected fields.
@@ -864,22 +894,23 @@ end;
 procedure TMain.IndvTeam_StrikeExecute(Sender: TObject);
 var
   rtnValue: integer;
+  aEventType: TEventType;
 begin
   // ...Update traps illegal calls.
   rtnValue := MessageDlg('Remove nomination and empty the lane.?',
     mtConfirmation, [mbNo, mbYes], 0, mbYes);
   if (rtnValue = mrYes) then
   begin
-    if SCM.Event_IsINDV then
-      INDV.StrikeLane
-    else if SCM.Event_IsTEAM then
-      TEAM.StrikeLane;
+    aEventType := SCM.CurrEventType;
+    if aEventType = etINDV then INDV.StrikeLane
+    else if aEventType = etTEAM then TEAM.StrikeLane;
   end;
 end;
 
 procedure TMain.IndvTeam_StrikeUpdate(Sender: TObject);
 var
   DoEnable: boolean;
+  aEventType: TEventType;
 begin
   DoEnable := false;
   if AssertConnection then
@@ -889,24 +920,40 @@ begin
       if not SCM.dsHeat.DataSet.IsEmpty then
         // is the current heat closed?
         if not SCM.Heat_IsClosed then
-          // is there any entrants?
-          if not SCM.dsEntrant.DataSet.IsEmpty then
-            DoEnable := true;
+        begin
+          aEventType := SCM.CurrEventType;
+          if aEventType = etINDV then
+          begin
+            // is there any entrants?
+            if not SCM.dsEntrant.DataSet.IsEmpty then DoEnable := true;
+          end
+          else if aEventType = etTEAM then
+          begin
+            // Do we have any relay teams?
+            if not SCM.dsTeam.DataSet.IsEmpty then
+            begin
+              // Need a relay in a lane to be able to strike it....
+              if not SCM.dsTeam.DataSet.FieldByName('TeamNameID').IsNull then
+                  DoEnable := true;
+            end;
+          end;
+        end;
   TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Entrant_SwapLanesExecute(Sender: TObject);
 var
   dlg: TSwapLanes;
+  aEventType: TEventType;
 begin
-  if SCM.Event_IsINDV then
+  aEventType := SCM.CurrEventType;
+  if aEventType = etINDV then
   begin
-  dlg := TSwapLanes.Create(self);
-  if IsPositiveResult(dlg.ShowModal) then
-    Refresh_IndvTeam;
-  dlg.Free;
+    dlg := TSwapLanes.Create(self);
+    if IsPositiveResult(dlg.ShowModal) then Refresh_IndvTeam;
+    dlg.Free;
   end
-  else
+  else if aEventType = etTEAM then
   begin
     { TODO -oBSA -cGeneral : Dialogue - Swap relay teams in lanes }
     { dlg := TSwapLanesTEAM.Create(self);
@@ -915,8 +962,8 @@ begin
       dlg.Free; }
   end;
 
-  if INDV.Grid.CanFocus then
-    INDV.Grid.SetFocus else TEAM.Grid.SetFocus;
+  if INDV.Grid.CanFocus then INDV.Grid.SetFocus
+  else TEAM.Grid.SetFocus;
 end;
 
 procedure TMain.Entrant_SwapLanesUpdate(Sender: TObject);
@@ -1527,9 +1574,11 @@ begin
     if (SCM.dsHeat.DataSet.FieldByName('HeatStatusID').AsInteger <> 3) then
       EnabledState := true;
   end;
+
   ToggleVisibileTabSheet3;
+
   // SYNC the enabled state of the INDVTEAM Grids
-  aEventType := SCM.Event_EventType(SCM.Event_ID);
+  aEventType := SCM.CurrEventType;
   if aEventType = etINDV then
   begin
     if (INDV.Grid.Enabled <> EnabledState) then
@@ -1540,8 +1589,6 @@ begin
   begin
     if (TEAM.Grid.Enabled <> EnabledState) then
         TEAM.Grid.Enabled := EnabledState;
-//    if SCM.dsTeam.DataSet.FieldByName('TeamNameID').IsNull then
-//      TEAM.GridEntrant.Visible := false else TEAM.GridEntrant.Visible := true;
   end;
 
 end;
@@ -1850,6 +1897,9 @@ begin
   TEAM.Grid.DataSource := SCM.dsTeam;
   TEAM.GridEntrant.DataSource := SCM.dsTeamEntrant;
 
+  TEAM.Enable_GridEllipse;
+  TEAM.Enable_GridEntrantEllipse;
+
   // L I N K   T D B T e x t
   dbtxtSwimClubCaption.DataSource := SCM.dsSwimClub;
   dbtxtSwimClubNickName.DataSource := SCM.dsSwimClub;
@@ -1928,10 +1978,21 @@ begin
   ToggleDivisions(prefDisplayDivisions);
   ToggleVisibileTabSheet1;
 
+{$IFDEF DEBUG}
+  { TODO -oBSA -cGeneral : FireDAC Tracing - ENABLE DEBBUG }
+  SCM.scmConnection.ConnectionIntf.Tracing := true;
+{$ENDIF}
+
 end;
 
 procedure TMain.FormDestroy(Sender: TObject);
 begin
+
+{$IFDEF DEBUG}
+  { TODO -oBSA -cGeneral : FireDAC Tracing - DISABLE DEBBUG }
+  SCM.scmConnection.ConnectionIntf.Tracing := false;
+{$ENDIF}
+
   if Assigned(bootprogress) then
   begin
     bootprogress.Close;
@@ -2261,7 +2322,12 @@ begin
     if not SCM.Session_IsLocked then
       // are there any Events?
       if not SCM.dsEvent.DataSet.IsEmpty then
-        DoEnable := true;
+      begin
+        // A siatance and stroke is needed before a new heat can be built
+        if not SCM.dsEvent.DataSet.FieldByName('DistanceID').IsNull and
+          not SCM.dsEvent.DataSet.FieldByName('StrokeID').IsNull then
+            DoEnable := true;
+      end;
   TAction(Sender).Enabled := DoEnable;
 end;
 
@@ -2440,7 +2506,7 @@ var
   aEventType: TEventType;
 begin
   // actn.Update dictates if this routine is accessable.
-  aEventType := SCM.Heat_EventType(SCM.Heat_ID);
+  aEventType := SCM.CurrEventType;
   mr := mrNone;
 
   // The heat is CLOSED.
@@ -2700,13 +2766,12 @@ begin
 end;
 
 procedure TMain.Heat_NewRecordExecute(Sender: TObject);
-var
-aEventID: integer;
 begin
   // The event must have DistanceID Assigned!!!
-  aEventID := SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger;
-  if SCM.Event_EventTypeID(aEventID) = 0 then
-    raise Exception.Create('Error: The event has not been assigned a distance.');
+  if SCM.dsEvent.DataSet.FieldByName('DistanceID').IsNull or
+    SCM.dsEvent.DataSet.FieldByName('StrokeID').IsNull then
+      raise Exception.Create
+      ('Error: The event has not been assigned a distance.');
   SCM.Heat_NewRecord; // + IndvTeam TDataSet refresh
   ToggleVisibileTabSheet3;
 end;
@@ -2721,7 +2786,12 @@ begin
     if not SCM.Session_IsLocked then
       // are there any Events?
       if not SCM.dsEvent.DataSet.IsEmpty then
-        DoEnable := true;
+      begin
+        // A siatance and stroke is needed before a new heat can be built
+        if not SCM.dsEvent.DataSet.FieldByName('DistanceID').IsNull and
+          not SCM.dsEvent.DataSet.FieldByName('StrokeID').IsNull then
+            DoEnable := true;
+      end;
   TAction(Sender).Enabled := DoEnable;
 end;
 
@@ -3292,13 +3362,12 @@ end;
 procedure TMain.PageControl1Change(Sender: TObject);
 begin
 
-
   // Update page
   case (PageControl1.TabIndex) of
     0: // S e s s i o n .
-    begin
-      ToggleVisibileTabSheet1;
-    end;
+      begin
+        ToggleVisibileTabSheet1;
+      end;
 
     1: // N o m i n a t e .
       begin
@@ -3315,43 +3384,47 @@ begin
           Refresh_Nominate;
           if (SCM.dsSession.DataSet.IsEmpty) then
           begin
-//            lblNomWarning.Font.Color := clWebTomato;
+            // lblNomWarning.Font.Color := clWebTomato;
             lblNomWarning.Caption := 'Session is Empty';
             lblNomWarning.Visible := true;
           end
           else if SCM.Session_IsLocked then
           begin
-//            lblNomWarning.Font.Color := clWebTomato;
+            // lblNomWarning.Font.Color := clWebTomato;
             lblNomWarning.Caption := 'Session is Locked';
             lblNomWarning.Visible := true;
           end
           else if (SCM.dsEvent.DataSet.IsEmpty) then
           begin
-//            lblNomWarning.Font.Color := clWebTomato;
+            // lblNomWarning.Font.Color := clWebTomato;
             lblNomWarning.Caption := 'No Events in Session';
+            lblNomWarning.Visible := true;
+          end
+          else if SCM.dsEvent.DataSet.FieldByName('DistanceID').IsNull or
+            SCM.dsEvent.DataSet.FieldByName('StrokeID').IsNull then
+          // A Distance and stroke is needed before a new heat can be built
+          begin
+            lblNomWarning.Caption := 'Distance .. Stroke?';
             lblNomWarning.Visible := true;
           end
           else if (SCM.dsMember.DataSet.IsEmpty) then
           begin
-//            lblNomWarning.Font.Color := clWebTomato;
+            // lblNomWarning.Font.Color := clWebTomato;
             lblNomWarning.Caption := 'No Members';
             lblNomWarning.Visible := true;
           end;
-
         end;
         // places focus onto the nominees list
-        if Nominate_Grid.CanFocus then
-          Nominate_Grid.SetFocus;
+        if Nominate_Grid.CanFocus then Nominate_Grid.SetFocus;
       end;
-    2:
-      // H e a t s .
+
+    2: // H e a t s .
       begin
         ToggleVisibileTabSheet3;
-        if HeatControlList.CanFocus then
-          HeatControlList.SetFocus;
-
+        if HeatControlList.CanFocus then HeatControlList.SetFocus;
       end;
   end;
+
 end;
 
 procedure TMain.PageControl1Changing(Sender: TObject; var AllowChange: boolean);
@@ -3420,7 +3493,7 @@ begin
     if DoRenumber then
     begin
       aHeatID := SCM.Heat_ID;  // curr heat
-      aEventType := SCM.Heat_EventType(aHeatID);
+      aEventType := SCM.CurrEventType;
       aIndvTeamID := SCM.IndvTeam_ID; // curr Lane in Entrant/Team
       // DoLocate - don't locate last selected.
       // DoExclude - disabled. Will renumber/repair even when session is locked.
@@ -4130,7 +4203,7 @@ begin
   // S T A T U S B A R .
   // Session scroll will change statusbar totals for the session
   fDoStatusBarUpdate := true; // permits ACTION (flag sets false after update)
-  SCM_StatusBar.Update;
+//  SCM_StatusBar.Update;
   SCM_StatusBar.Execute;
 end;
 
@@ -4235,7 +4308,7 @@ begin
   // messaged by TSCM.qryMemberQuickPickAfterScroll
   // messaged by TSCM.qryTeamEntrantAfterScroll
   if not AssertConnection then exit;
-  aEventType := SCM.Event_EventType(SCM.Event_ID);
+  aEventType := SCM.CurrEventType;
   if (aEventType = etTEAM) and TEAM.GridEntrant.Focused then
   begin
     // After moving row re-engage editing for selected fields.
@@ -4259,7 +4332,7 @@ var
 begin
   // messaged by TSCM.qryTeamAfterScroll
   if not AssertConnection then exit;
-  aEventType := SCM.Event_EventType(SCM.Event_ID);
+  aEventType := SCM.CurrEventType;
   if (aEventType = etTEAM) and TEAM.Grid.Focused then
   begin
     // After moving row re-engage editing for selected fields.
@@ -4270,8 +4343,6 @@ begin
         (fld.FieldName = 'TeamName') then TEAM.Grid.EditorMode := true
       else TEAM.Grid.EditorMode := false;
     end;
-
-
   end;
 
   if (aEventType = etTEAM) then
@@ -4318,6 +4389,8 @@ begin
 end;
 
 procedure TMain.ToggleVisibileTabSheet3;
+var
+aEventType: TEventType;
 begin
   {
   --------------------------------------------------------------
@@ -4373,19 +4446,33 @@ begin
       lblMsgTab3.Visible := true;
       StatusBar1.Panels[3].Text := 'HINT: Nominate members to your events.';
     end;
+  end;
 
-    if SCM.Event_IsTEAM then
-    begin  // RELAYS
+  if SCM.dsEvent.DataSet.IsEmpty then
+  begin // UNKNOWN
+    TEAM.Visible := false;
+    INDV.Visible := false;
+  end
+  else
+  begin
+    aEventType := SCM.CurrEventType;
+    if aEventType = etINDV then
+    begin // INDIVIDUAL EVENT
+      TEAM.Visible := false;
+      INDV.Visible := true;
+    end
+    else if aEventType = etTEAM then
+    begin // RELAY TEAMS
       TEAM.Visible := true;
       INDV.Visible := false;
     end
     else
-    begin // INDIVIDUAL EVENT
+    begin // UNKNOWN
       TEAM.Visible := false;
-      INDV.Visible := true;
+      INDV.Visible := false;
     end;
-
   end;
+
 end;
 
 procedure TMain.ToggleVisibileTabSheet1;

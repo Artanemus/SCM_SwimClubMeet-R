@@ -123,7 +123,7 @@ object frameTEAM: TframeTEAM
       Columns = <
         item
           Expanded = False
-          FieldName = 'SwimOrder'
+          FieldName = 'Lane'
           Visible = True
         end
         item

@@ -6,7 +6,8 @@ uses
   dmSCM,
   System.SysUtils, System.Classes, System.DateUtils, System.Math,
   System.IniFiles, System.Variants, System.UITypes, Vcl.StdCtrls, Vcl.Dialogs,
-  Vcl.Forms, FireDAC.Comp.Client, Winapi.Windows, SCMUtility, SCMDefines,
+  Vcl.Forms, FireDAC.Comp.Client, FireDAC.Stan.Param,
+  Winapi.Windows, SCMUtility, SCMDefines,
   Data.DB;
 
 type
@@ -335,11 +336,13 @@ end;
 function TSCMHelper.IndvTeam_StrikeLane(aIndvTeamID: integer; aEventType: TEventType;
   DoExclude: Boolean = true): integer;
 var
-  aHeatID, aHeatStatusID, aEventID: integer;
+  aHeatID, aHeatStatusID, aEventID, aMemberID, rows: integer;
   SQL: string;
   v: variant;
+  qry: TFDQuery;
 begin
   result := 0;
+  rows := 0;
   if not SCMActive then exit;
   if aIndvTeamID = 0 then exit;
   aHeatID := IndvTeam_HeatID(aIndvTeamID, aEventType);
@@ -348,25 +351,47 @@ begin
   aHeatStatusID := Heat_HeatStatusID(aHeatID);
   if (aHeatStatusID = 1) or (DoExclude = false) then
   begin
+    aEventID := Heat_EventID(aHeatID);
     if aEventType = etINDV then
     begin
       SQL := 'SELECT MemberID FROM SwimClubMeet.dbo.Entrant ' +
-        'WHERE Entrant.HeatID = :ID1 AND Entrant.EntrantID = :ID2'
+        'WHERE Entrant.HeatID = :ID1 AND Entrant.EntrantID = :ID2';
+      v := scmConnection.ExecSQLScalar(SQL, [aHeatID, aIndvTeamID]);
+      if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
+      begin
+        // single member to remove from nominations and lane...
+        result := NOM_StrikeLane(v, aEventID, false);
+      end;
     end
     else if aEventType = etTEAM then
     begin
       SQL := 'SELECT MemberID FROM SwimClubMeet.dbo.Team ' +
         'INNER JOIN TeamEntrant ON Team.TeamID = TeamEntrant.TeamID ' +
-        'WHERE Team.HeatID = :ID1 AND TeamEntrant.TeamEntrantID = :ID2'
+        'WHERE Team.HeatID = :ID1 AND Team.TeamID = :ID2';
+      // iterate over the list of members.
+      qry := TFDQuery.Create(self);
+      qry.Connection := scmConnection;
+      qry.SQL.Text := SQL;
+      qry.IndexFieldNames := 'MemberID';
+      qry.ParamByName('ID1').AsInteger := aHeatID;
+      qry.ParamByName('ID2').AsInteger := aIndvTeamID;
+      qry.Prepare;
+      qry.Open;
+      if qry.Active then
+      begin
+        while not qry.Eof do
+        begin
+          aMemberID := qry.FieldByName('aMemberID').AsInteger;
+          // single member to remove from nominations and lane...
+          rows := rows + NOM_StrikeLane(aMemberID, aEventID, false);
+          qry.Next;
+        end;
+        if rows > 0 then result := rows;
+      end;
+      qry.Close;
+      qry.Free;
     end
     else exit;
-    v := scmConnection.ExecSQLScalar(SQL, [aHeatID, aIndvTeamID]);
-    if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
-    begin
-      aEventID := Heat_EventID(aHeatID);
-      result := NOM_StrikeLane(v, aEventID, false);
-    end;
-
   end;
 end;
 
@@ -477,7 +502,7 @@ begin
   result := 0;
   if not SCMActive then exit;
   if Event_SessionIsLocked(aEventID) then exit;
-  aEventType := Event_EventType(aEventID);
+  aEventType := GetEventType(aEventID);
   aIndvTeamID := NOM_IndvTeamID(aMemberID, aEventID);
   // Member wasn't given a lane. Nothing to clear.
   if aIndvTeamID = 0 then exit;
@@ -550,7 +575,7 @@ var
 begin
   result := 0;
   if not SCMActive then exit;
-  aEventType := Event_EventType(aEventID);
+  aEventType := GetEventType(aEventID);
   if (aEventType = etINDV) then
   begin
     SQL := 'SELECT [Event].[EventID] ' + 'FROM [SwimClubMeet].[dbo].[Nominee] '
@@ -586,7 +611,7 @@ var
 begin
   result := 0;
   if not SCMActive then exit;
-  aEventType := Event_EventType(aEventID);
+  aEventType := GetEventType(aEventID);
   if (aEventType = etINDV) then
   begin
     SQL := 'SELECT TOP 1 Entrant.EntrantID FROM [SwimClubMeet].[dbo].[Event] ' +
@@ -636,9 +661,16 @@ function TSCMHelper.NOM_IsNomineeInEvent(aNomineeID: integer): integer;
 var
   SQL: string;
   v: variant;
+  aEventType: TEventType;
 begin
   result := 0; // return EntrantID. Zero indicate 'not in event'.
-  if Event_IsINDV then
+  SQL := 'SELECT EventID FROM [SwimClubMeet].[dbo].[Nominee] '+
+        ' WHERE Nominee.NomineeID = :ID';
+  v := scmConnection.ExecSQLScalar(SQL, [aNomineeID]);
+  if VarIsNull(v) or VarIsEmpty(v) or (v = 0) then exit;
+
+  aEventType := GetEventType(v);
+  if aEventType = etINDV then
   begin
     SQL := 'SELECT EntrantID FROM [SwimClubMeet].[dbo].[Nominee] ' +
       'INNER JOIN [Event] ON [Event].EventID = Nominee.EventID ' +
@@ -647,7 +679,7 @@ begin
       'WHERE Nominee.NomineeID = :NomineeID ' +
       'AND Nominee.MemberID = Entrant.MemberID;';
   end
-  else
+  else if aEventType = etTEAM then
   begin
     SQL := 'SELECT EntrantID FROM [SwimClubMeet].[dbo].[Nominee] ' +
       'INNER JOIN [Event] ON [Event].EventID = Nominee.EventID ' +
@@ -656,9 +688,11 @@ begin
       'INNER JOIN TeamEntrant ON Team.TeamID = TeamEntrant.TeamID ' +
       'WHERE Nominee.NomineeID = :NomineeID ' +
       'AND Nominee.MemberID = Entrant.MemberID;';
-  end;
+  end
+  else exit;
+
   v := scmConnection.ExecSQLScalar(SQL, [aNomineeID]);
-  if not VarIsNull(v) or not VarIsEmpty(v) or (v <> 0) then result := v;
+  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
 end;
 
 function TSCMHelper.NOM_NominateMember(aMemberID, aEventID: integer;

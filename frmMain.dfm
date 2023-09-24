@@ -1175,8 +1175,7 @@ object Main: TMain
                 Align = alClient
                 BevelOuter = bvNone
                 TabOrder = 0
-                ExplicitLeft = 4
-                ExplicitTop = -2
+                ExplicitHeight = 631
                 DesignSize = (
                   88
                   632)
@@ -1446,10 +1445,8 @@ object Main: TMain
               Margins.Right = 66
               Margins.Bottom = 0
               Anchors = []
-              ItemCount = 4
               ItemWidth = 200
               ItemHeight = 68
-              ItemIndex = 0
               ItemMargins.Left = 10
               ItemMargins.Top = 0
               ItemMargins.Right = 10
@@ -1521,7 +1518,6 @@ object Main: TMain
                 Alignment = taCenter
                 Anchors = []
                 AutoSize = False
-                Caption = '1'
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -32
@@ -1553,7 +1549,6 @@ object Main: TMain
                 Alignment = taCenter
                 Anchors = []
                 AutoSize = False
-                Caption = '100'
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -27
@@ -1979,8 +1974,6 @@ object Main: TMain
               Height = 632
               Align = alLeft
               BorderStyle = bsNone
-              ItemCount = 1
-              ItemIndex = 0
               ItemMargins.Left = 0
               ItemMargins.Top = 0
               ItemMargins.Right = 0
@@ -2022,7 +2015,6 @@ object Main: TMain
                 Height = 32
                 Alignment = taCenter
                 AutoSize = False
-                Caption = '1'
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -24
@@ -2199,18 +2191,18 @@ object Main: TMain
       end
     end
     object pnlDebugInfo: TPanel
-      Left = 450
-      Top = 20
-      Width = 513
-      Height = 41
+      Left = 413
+      Top = 19
+      Width = 587
+      Height = 43
       Anchors = []
       BevelOuter = bvNone
       TabOrder = 2
       object dbtxtDebugEntrant: TDBText
-        Left = 355
+        Left = 415
         Top = 21
         Width = 50
-        Height = 17
+        Height = 20
         Alignment = taCenter
         DataField = 'EntrantID'
       end
@@ -2218,7 +2210,7 @@ object Main: TMain
         Left = 16
         Top = 21
         Width = 50
-        Height = 17
+        Height = 20
         Alignment = taCenter
         DataField = 'SwimClubID'
         DataSource = SCM.dsSwimClub
@@ -2227,7 +2219,7 @@ object Main: TMain
         Left = 83
         Top = 21
         Width = 50
-        Height = 17
+        Height = 20
         Alignment = taCenter
         DataField = 'SessionID'
         DataSource = SCM.dsSession
@@ -2236,15 +2228,15 @@ object Main: TMain
         Left = 150
         Top = 21
         Width = 50
-        Height = 17
+        Height = 20
         Alignment = taCenter
         DataField = 'EventID'
       end
       object dbtxtDebugHeat: TDBText
-        Left = 288
+        Left = 348
         Top = 21
         Width = 50
-        Height = 17
+        Height = 20
         Alignment = taCenter
         DataField = 'HeatID'
       end
@@ -2270,48 +2262,64 @@ object Main: TMain
         Caption = 'Event'
       end
       object Label14: TLabel
-        Left = 285
+        Left = 345
         Top = 2
         Width = 32
         Height = 21
         Caption = 'Heat'
       end
       object Label24: TLabel
-        Left = 353
+        Left = 413
         Top = 2
         Width = 50
         Height = 21
         Caption = 'Entrant'
       end
       object Label25: TLabel
-        Left = 422
+        Left = 482
         Top = 2
         Width = 59
         Height = 21
         Caption = 'Member'
       end
       object dbtxtDebugMember: TDBText
-        Left = 423
+        Left = 483
         Top = 21
         Width = 50
-        Height = 17
+        Height = 20
         Alignment = taCenter
         DataField = 'MemberID'
       end
       object Label2: TLabel
-        Left = 214
+        Left = 274
         Top = 2
         Width = 64
         Height = 21
         Caption = 'Nominee'
       end
       object dbtxtDebugNominee: TDBText
-        Left = 217
+        Left = 277
         Top = 21
         Width = 50
-        Height = 17
+        Height = 20
         Alignment = taCenter
         DataField = 'NomineeID'
+      end
+      object DBTxtEventTypeID: TDBText
+        Left = 216
+        Top = 21
+        Width = 34
+        Height = 20
+        Alignment = taCenter
+        DataField = 'EventTypeID'
+        DataSource = SCM.dsEvent
+      end
+      object Label3: TLabel
+        Left = 210
+        Top = 2
+        Width = 47
+        Height = 21
+        Caption = 'TypeID'
       end
     end
     object sbtnRefresh: TSpeedButton
@@ -2344,6 +2352,7 @@ object Main: TMain
     Top = 0
     Width = 1414
     Height = 31
+    UseSystemFont = False
     ActionManager = ActionManager1
     Caption = 'ActionMainMenuBar1'
     Color = clMenuBar
@@ -2352,7 +2361,7 @@ object Main: TMain
     ColorMap.BtnSelectedFont = clBlack
     ColorMap.UnusedColor = clWhite
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
+    Font.Color = clBlack
     Font.Height = -16
     Font.Name = 'Segoe UI'
     Font.Style = []
@@ -14274,5 +14283,9 @@ object Main: TMain
     Height = 32
     Left = 424
     Top = 352
+  end
+  object FDMoniRemoteClientLink1: TFDMoniRemoteClientLink
+    Left = 1008
+    Top = 95
   end
 end

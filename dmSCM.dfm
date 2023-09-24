@@ -689,6 +689,7 @@ object SCM: TSCM
       FieldName = 'DistanceID'
       Origin = 'DistanceID'
       Visible = False
+      OnChange = qryEventDistanceIDChange
       OnValidate = qryEventDistanceIDValidate
     end
     object qryEventEventTypeID: TIntegerField
@@ -1930,6 +1931,7 @@ object SCM: TSCM
   end
   object qryTeam: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     BeforeInsert = qryEvTypeBeforeInsert
     AfterScroll = qryTeamAfterScroll
     IndexFieldNames = 'HeatID'
@@ -2004,6 +2006,7 @@ object SCM: TSCM
       DisplayFormat = '00'
     end
     object qryTeamTeamName: TWideStringField
+      DisplayWidth = 34
       FieldName = 'TeamName'
       Origin = 'TeamName'
       ReadOnly = True
@@ -2062,7 +2065,6 @@ object SCM: TSCM
   end
   object qryTeamEntrant: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     BeforeInsert = qryEvTypeBeforeInsert
     AfterScroll = qryTeamEntrantAfterScroll
     IndexFieldNames = 'TeamID'
@@ -2084,7 +2086,7 @@ object SCM: TSCM
       ''
       'SELECT TeamEntrant.TeamEntrantID'
       '     , TeamEntrant.TeamID'
-      '     , TeamEntrant.SwimOrder'
+      '     , TeamEntrant.Lane'
       '     , TeamEntrant.RaceTime'
       '     , TeamEntrant.TimeToBeat'
       '     , TeamEntrant.MemberID'
@@ -2117,7 +2119,7 @@ object SCM: TSCM
       '        ON HeatIndividual.EventID = Event.EventID'
       '    INNER JOIN Session'
       '        ON Event.SessionID = Session.SessionID'
-      'ORDER BY TeamEntrant.SwimOrder'
+      'ORDER BY TeamEntrant.Lane'
       ''
       ''
       '')
@@ -2143,8 +2145,8 @@ object SCM: TSCM
     object qryTeamEntrantSwimOrder: TIntegerField
       Alignment = taCenter
       DisplayLabel = 'Swim Order'
-      FieldName = 'SwimOrder'
-      Origin = 'SwimOrder'
+      FieldName = 'Lane'
+      Origin = 'Lane'
     end
     object WideStringField1: TWideStringField
       DisplayLabel = 'Entrant'#39's Name'
@@ -2171,7 +2173,6 @@ object SCM: TSCM
       FieldName = 'TimeToBeat'
       Origin = 'TimeToBeat'
       ReadOnly = True
-      Visible = False
       OnGetText = qryEntrantTIMEGetText
       DisplayFormat = 'nn:ss.zzz'
       EditMask = '!00:00.000;1;0'
@@ -2182,7 +2183,6 @@ object SCM: TSCM
       FieldName = 'PersonalBest'
       Origin = 'PersonalBest'
       ReadOnly = True
-      Visible = False
       OnGetText = qryEntrantTIMEGetText
       DisplayFormat = 'nn:ss.zzz'
       EditMask = '!00:00.000;1;0'
@@ -2354,7 +2354,6 @@ object SCM: TSCM
   end
   object qryTeamSplit: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'TeamID'
     MasterSource = dsTeam
     MasterFields = 'TeamID'
