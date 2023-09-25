@@ -1445,8 +1445,10 @@ object Main: TMain
               Margins.Right = 66
               Margins.Bottom = 0
               Anchors = []
+              ItemCount = 2
               ItemWidth = 200
               ItemHeight = 68
+              ItemIndex = 0
               ItemMargins.Left = 10
               ItemMargins.Top = 0
               ItemMargins.Right = 10
@@ -1518,6 +1520,7 @@ object Main: TMain
                 Alignment = taCenter
                 Anchors = []
                 AutoSize = False
+                Caption = '1'
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -32

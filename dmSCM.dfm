@@ -2201,6 +2201,7 @@ object SCM: TSCM
       LookupKeyFields = 'StrokeID'
       LookupResultField = 'Caption'
       KeyFields = 'StrokeID'
+      Visible = False
       Lookup = True
     end
   end

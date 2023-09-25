@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.Grids,
-  Vcl.DBGrids, Vcl.Themes, Vcl.ActnList, dmSCM, SCMHelpers;
+  Vcl.DBGrids, Vcl.Themes, Vcl.ActnList, dmSCM, SCMHelpers, SCMDefines;
 
 type
   TframeINDV = class(TFrame)
@@ -293,8 +293,6 @@ begin
   if not AssertConnection then
     exit;
 
-//  if SCM.dsEntrant.DataSet.FieldByName('MemberID').IsNull then
-//    exit;
 
   SCM.dsEntrant.DataSet.DisableControls;
   EntrantID := SCM.dsEntrant.DataSet.FieldByName('EntrantID').AsInteger;
@@ -322,7 +320,7 @@ begin
     begin
       // if (GetKeyState(VK_CONTROL) < 0) then begin
       dlgCntrl := TEntrantPickerCTRL.Create(self);
-      passed := dlgCntrl.Prepare(SCM.scmConnection, EntrantID);
+      passed := dlgCntrl.Prepare(SCM.scmConnection, EntrantID, etINDV);
       if passed then
         rtnValue := dlgCntrl.ShowModal;
       dlgCntrl.Free;
@@ -331,7 +329,7 @@ begin
     else
     begin
       dlg := TEntrantPicker.Create(self);
-      passed := dlg.Prepare(SCM.scmConnection, EntrantID);
+      passed := dlg.Prepare(SCM.scmConnection, EntrantID, etINDV);
       if passed then
         rtnValue := dlg.ShowModal;
       dlg.Free;

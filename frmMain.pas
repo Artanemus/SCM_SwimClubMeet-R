@@ -14,11 +14,13 @@ WRAP SECTION TO ENABLE AND DISABLE MONITORING.
 
 //{$IFDEF DEBUG}
 //  { TODO -oBSA -cGeneral : FireDAC Tracing - ENABLE DEBBUG }
+// if Assigned(SCM.scmConnection) then
 //  SCM.scmConnection.ConnectionIntf.Tracing := true;
 //{$ENDIF}
 
 //{$IFDEF DEBUG}
 //  { TODO -oBSA -cGeneral : FireDAC Tracing - DISABLE DEBBUG }
+// if Assigned(SCM.scmConnection) then
 //  SCM.scmConnection.ConnectionIntf.Tracing := false;
 //{$ENDIF}
 
@@ -450,6 +452,7 @@ type
     fscmStyleName: String;
     fSessionClosedBgColor: TColor;
     fSessionClosedFontColor: TColor;
+    fFrameBgColor: TColor;
     prefDisplayDivisions: boolean;
     prefDisplaySwimmerCAT: boolean;
     prefEnableDCode: boolean;
@@ -1567,6 +1570,7 @@ begin
   if not AssertConnection then
     exit;
   EnabledState := false;
+
   // is the session is Open?
   if (SCM.dsSession.DataSet.FieldByName('SessionStatusID').AsInteger = 1) then
   begin
@@ -1589,6 +1593,14 @@ begin
   begin
     if (TEAM.Grid.Enabled <> EnabledState) then
         TEAM.Grid.Enabled := EnabledState;
+    // If TEAM.Grid isn't focused - TEAM.Panel2 may display as clWebTomatoe
+    if TEAM.Grid.DataSource.DataSet.FieldByName('TeamNameID').IsNull then
+    begin
+      TEAM.Panel2.Color := fFrameBgColor;
+      TEAM.GridEntrant.Visible := false;
+      if TEAM.Grid.Visible and TEAM.Grid.Enabled then TEAM.Grid.SetFocus;
+    end
+    else TEAM.GridEntrant.Visible := true;
   end;
 
 end;
@@ -1687,6 +1699,7 @@ begin
   fSCMisInitializing := true;
   fSessionClosedFontColor := clWebTomato; // Use to custom draw closed session
   fSessionClosedBgColor := clAppWorkSpace; // Use to custom draw closed session
+  fFrameBgColor := clAppWorkSpace;
   fMyInternetConnected := true;
 
   prefEnableTeamEvents := false;
@@ -1980,7 +1993,8 @@ begin
 
 {$IFDEF DEBUG}
   { TODO -oBSA -cGeneral : FireDAC Tracing - ENABLE DEBBUG }
-  SCM.scmConnection.ConnectionIntf.Tracing := true;
+//  if Assigned(SCM) then
+//  SCM.scmConnection.ConnectionIntf.Tracing := true;
 {$ENDIF}
 
 end;
@@ -1990,7 +2004,8 @@ begin
 
 {$IFDEF DEBUG}
   { TODO -oBSA -cGeneral : FireDAC Tracing - DISABLE DEBBUG }
-  SCM.scmConnection.ConnectionIntf.Tracing := false;
+//  if Assigned(SCM) then
+//  SCM.scmConnection.ConnectionIntf.Tracing := false;
 {$ENDIF}
 
   if Assigned(bootprogress) then
@@ -2110,11 +2125,13 @@ begin
   begin
     fSessionClosedFontColor := css.GetStyleFontColor(sfEditBoxTextDisabled);
     fSessionClosedBgColor := css.GetStyleColor(scGrid);
+    fFrameBgColor := css.GetStyleColor(scWindow);
   end
   else
   begin
     fSessionClosedFontColor := clWebTomato;
     fSessionClosedBgColor := clAppWorkSpace;
+    fFrameBgColor := clAppWorkSpace;
   end;
 
 
@@ -4328,27 +4345,33 @@ end;
 procedure TMain.Team_Scroll(var Msg: TMessage);
 var
   fld: TField;
-  aEventType: TEventType;
 begin
-  // messaged by TSCM.qryTeamAfterScroll
+  // Messaged by TSCM.qryTeamAfterScroll  - SCM.CurrEventType = etTEAM
   if not AssertConnection then exit;
-  aEventType := SCM.CurrEventType;
-  if (aEventType = etTEAM) and TEAM.Grid.Focused then
+  if (PageControl1.ActivePageIndex = 2) and TEAM.Visible then
   begin
-    // After moving row re-engage editing for selected fields.
-    fld := TEAM.Grid.SelectedField;
-    if Assigned(fld) then
+    if TEAM.Grid.Focused then
     begin
-      if (fld.FieldName = 'RaceTime') or (fld.FieldName = 'DCode') or
-        (fld.FieldName = 'TeamName') then TEAM.Grid.EditorMode := true
-      else TEAM.Grid.EditorMode := false;
+      // After moving row re-engage editing for selected fields.
+      fld := TEAM.Grid.SelectedField;
+      if Assigned(fld) then
+      begin
+        if (fld.FieldName = 'RaceTime') or (fld.FieldName = 'DCode') or
+          (fld.FieldName = 'TeamName') then TEAM.Grid.EditorMode := true
+        else TEAM.Grid.EditorMode := false;
+      end;
     end;
-  end;
 
-  if (aEventType = etTEAM) then
-    // TOGGLE VISIBILITY OF THE TEAMENTRANT GRID
+    // If TEAM.Grid isn't focused - TEAM.Panel2 may display as clWebTomatoe
     if TEAM.Grid.DataSource.DataSet.FieldByName('TeamNameID').IsNull then
-        TEAM.GridEntrant.Visible := false     else TEAM.GridEntrant.Visible := true;
+    begin
+      TEAM.Panel2.Color := fFrameBgColor;
+      TEAM.GridEntrant.Visible := false;
+      if TEAM.Grid.Visible and TEAM.Grid.Enabled then TEAM.Grid.SetFocus;
+    end
+    else TEAM.GridEntrant.Visible := true;
+
+  end;
 end;
 
 procedure TMain.ToggleDCode(DoEnable: boolean);
@@ -4407,7 +4430,6 @@ begin
   if SCM.dsSession.DataSet.IsEmpty then
   begin
       pnlClient.Visible := false;
-//      HeatControlList.Visible := false;
       lblMsgTab3.Caption := 'No Sessions';
       lblMsgTab3.Visible := true;
       StatusBar1.Panels[3].Text := 'HINT: Create a new session.';
@@ -4415,7 +4437,6 @@ begin
   else if SCM.dsEvent.DataSet.IsEmpty then
   begin
       pnlClient.Visible := false;
-//      HeatControlList.Visible := false;
       lblMsgTab3.Caption := 'No Events';
       lblMsgTab3.Visible := true;
       StatusBar1.Panels[3].Text := 'HINT: Create a new event.';
@@ -4424,15 +4445,12 @@ begin
     SCM.dsEvent.DataSet.FieldByName('StrokeID').IsNull then
   begin
       pnlClient.Visible := false;
-//      HeatControlList.Visible := false;
       lblMsgTab3.Caption := 'Distance-Stroke?';
       lblMsgTab3.Visible := true;
       StatusBar1.Panels[3].Text := 'HINT: Assign a distance and stroke to the event.';
   end
   else if SCM.dsHeat.DataSet.IsEmpty then
   begin
-//      pnlClient.Visible := false;
-//      HeatControlList.Visible := false;
       lblMsgTab3.Caption := 'No Heats';
       lblMsgTab3.Visible := true;
       StatusBar1.Panels[3].Text := 'HINT: Create a new heat';
@@ -4452,6 +4470,8 @@ begin
   begin // UNKNOWN
     TEAM.Visible := false;
     INDV.Visible := false;
+    TEAM.Panel1.Color := fFrameBgColor;
+    TEAM.Panel2.Color := fFrameBgColor;
   end
   else
   begin
@@ -4470,6 +4490,8 @@ begin
     begin // UNKNOWN
       TEAM.Visible := false;
       INDV.Visible := false;
+      TEAM.Panel1.Color := fFrameBgColor;
+      TEAM.Panel2.Color := fFrameBgColor;
     end;
   end;
 

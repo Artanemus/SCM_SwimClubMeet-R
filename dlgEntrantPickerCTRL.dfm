@@ -12,14 +12,12 @@ object EntrantPickerCTRL: TEntrantPickerCTRL
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   DesignSize = (
     856
     860)
-  PixelsPerInch = 96
   TextHeight = 19
   object Label1: TLabel
     Left = 16
@@ -202,84 +200,117 @@ object EntrantPickerCTRL: TEntrantPickerCTRL
     SQL.Strings = (
       'USE SwimClubMeet'
       ''
-      'DECLARE @EventID INT'
-      'DECLARE @Algorithm INT'
-      'DECLARE @DistanceID INT'
-      'DECLARE @StrokeID INT'
-      'DECLARE @SessionStart DATETIME'
-      'DECLARE @ToggleName BIT'
-      'DECLARE @Order INT'
-      'DECLARE @CalcDefault INT'
-      'DECLARE @BottomPercent float'
+      'DECLARE @EventID INT;'
+      'DECLARE @Algorithm INT;'
+      'DECLARE @DistanceID INT;'
+      'DECLARE @StrokeID INT;'
+      'DECLARE @SessionStart DATETIME;'
+      'DECLARE @ToggleName BIT;'
+      'DECLARE @Order INT;'
+      'DECLARE @CalcDefault INT;'
+      'DECLARE @BottomPercent FLOAT;'
+      'DECLARE @EventType INT;'
       ''
       'SET @EventID = :EVENTID;'
       'SET @Algorithm = :ALGORITHM;'
       'SET @ToggleName = :TOGGLENAME;'
-      'SET @CalcDefault  = :CALCDEFAULT'
+      'SET @CalcDefault = :CALCDEFAULT'
       'SET @BottomPercent = :BOTTOMPERCENT'
+      'SET @EventType = :EVENTTYPE'
       ''
-      'SELECT @DistanceID = Event.DistanceID'
-      'FROM Event'
-      'WHERE Event.EventID = @EventID;'
+      'SET @DistanceID ='
+      '('
+      '    SELECT DistanceID FROM Event WHERE Event.EventID = @EventID'
+      ');'
+      'SET @StrokeID ='
+      '('
+      '    SELECT StrokeID FROM Event WHERE Event.EventID = @EventID'
+      ');'
+      'SET @SessionStart ='
+      '('
+      '    SELECT Session.SessionStart'
+      '    FROM Event'
+      '        INNER JOIN Session'
+      '            ON Event.SessionID = Session.SessionID'
+      '    WHERE Event.EventID = @EventID'
+      ');'
       ''
-      'SELECT @StrokeID = Event.StrokeID'
-      'FROM Event'
-      'WHERE Event.EventID = @EventID;'
+      '-- Drop a temporary table called '#39'#tmpID'#39
+      'IF OBJECT_ID('#39'tempDB..#tmpID'#39', '#39'U'#39') IS NOT NULL'
+      '    DROP TABLE #tmpID;'
       ''
-      'SELECT @SessionStart = Session.SessionStart'
-      'FROM Event'
-      'INNER JOIN Session ON Event.SessionID = Session.SessionID'
-      'WHERE Event.EventID = @EventID;'
+      'CREATE TABLE #tmpID'
+      '('
+      '    MemberID INT'
+      '  --,TeamEntrant.TeamEntrantID AS ID'
+      '  , GenderID INT'
+      ')'
       ''
-      '-- CTE '
-      '-- MemberID'#39's for current selected entrants'
-      'WITH tmpEntrants'
-      'AS ('
-      #9'SELECT Entrant.MemberID'
-      ',Member.GenderID'
-      #9'FROM Entrant'
-      
-        #9'INNER JOIN HeatIndividual ON Entrant.HeatID = HeatIndividual.He' +
-        'atID'
-      #9'INNER JOIN Event ON HeatIndividual.EventID = Event.EventID'
-      #9'INNER JOIN Session ON Event.SessionID = Session.SessionID'
-      #9'INNER JOIN Member ON Entrant.MemberID = Member.MemberID'
-      #9'WHERE (HeatIndividual.EventID = @EventID)'
-      #9#9'AND (Entrant.MemberID IS NOT NULL)'
-      #9')'
+      'IF @EventType = 1'
+      'BEGIN'
+      '    INSERT INTO #tmpID'
+      '    SELECT Entrant.MemberID'
+      '         , Member.GenderID'
+      '    FROM Entrant'
+      '        INNER JOIN HeatIndividual'
+      '            ON Entrant.HeatID = HeatIndividual.HeatID'
+      '        INNER JOIN Event'
+      '            ON HeatIndividual.EventID = Event.EventID'
+      '        INNER JOIN Session'
+      '            ON Event.SessionID = Session.SessionID'
+      '        INNER JOIN Member'
+      '            ON Entrant.MemberID = Member.MemberID'
+      '    WHERE (HeatIndividual.EventID = @EventID)'
+      '          AND (Entrant.MemberID IS NOT NULL);'
+      'END'
+      'ELSE'
+      'BEGIN'
+      '    INSERT INTO #tmpID'
+      '    SELECT TeamEntrant.MemberID'
+      '         , Member.GenderID'
+      '    FROM TeamEntrant'
+      '        INNER JOIN TEAM'
+      '            ON TeamEntrant.TeamID = Team.TeamID'
+      '        INNER JOIN HeatIndividual'
+      '            ON Team.HeatID = HeatIndividual.HeatID'
+      '        INNER JOIN Event'
+      '            ON HeatIndividual.EventID = Event.EventID'
+      '        INNER JOIN Session'
+      '            ON Event.SessionID = Session.SessionID'
+      '        INNER JOIN Member'
+      '            ON TeamEntrant.MemberID = Member.MemberID'
+      '    WHERE (HeatIndividual.EventID = @EventID)'
+      '          AND (TeamEntrant.MemberID IS NOT NULL);'
+      'END'
+      ''
       
         '-- ALL OTHER Members who have not been placed in the current sel' +
         'ected event'
       'SELECT Member.MemberID'
-      ',Member.GenderID'
-      #9',dbo.SwimmerAge(@SessionStart, Member.DOB) AS AGE'
-      #9',dbo.SwimmerGenderToString(Member.MemberID) AS Gender'
+      '     , Member.GenderID'
+      '     , dbo.SwimmerAge(@SessionStart, Member.DOB) AS AGE'
+      '     , dbo.SwimmerGenderToString(Member.MemberID) AS Gender'
       
-        #9',dbo.TimeToBeat(@Algorithm, @CalcDefault, @BottomPercent, Membe' +
-        'r.MemberID, @DistanceID, @StrokeID, @SessionStart) AS TTB'
+        '     , dbo.TimeToBeat(@Algorithm, @CalcDefault, @BottomPercent, ' +
+        'Member.MemberID, @DistanceID, @StrokeID, @SessionStart) AS TTB'
       
-        #9',dbo.PersonalBest(Member.MemberID, @DistanceID, @StrokeID, @Ses' +
-        'sionStart) AS PB'
-      #9',CASE '
-      #9#9'WHEN @ToggleName = 0'
-      #9#9#9'THEN SUBSTRING(CONCAT ('
-      #9#9#9#9#9#9'UPPER([LastName])'
-      #9#9#9#9#9#9','#39', '#39
-      #9#9#9#9#9#9',[FirstName]'
-      #9#9#9#9#9#9'), 0, 30)'
-      #9#9'WHEN @ToggleName = 1'
-      #9#9#9'THEN SUBSTRING(CONCAT ('
-      #9#9#9#9#9#9'[FirstName]'
-      #9#9#9#9#9#9','#39', '#39
-      #9#9#9#9#9#9',UPPER([LastName])'
-      #9#9#9#9#9#9'), 0, 48)'
-      #9#9'END AS FName'
+        '     , dbo.PersonalBest(Member.MemberID, @DistanceID, @StrokeID,' +
+        ' @SessionStart) AS PB'
+      '     , CASE'
+      '           WHEN @ToggleName = 0 THEN'
+      
+        '               SUBSTRING(CONCAT(UPPER([LastName]), '#39', '#39', [FirstN' +
+        'ame]), 0, 30)'
+      '           WHEN @ToggleName = 1 THEN'
+      
+        '               SUBSTRING(CONCAT([FirstName], '#39', '#39', UPPER([LastNa' +
+        'me])), 0, 48)'
+      '       END AS FName'
       'FROM Member'
-      
-        'LEFT OUTER JOIN tmpEntrants ON tmpEntrants.MemberID = Member.Mem' +
-        'berID'
-      'WHERE tmpEntrants.MemberID IS NULL'
-      #9'AND Member.IsActive = 1')
+      '    LEFT OUTER JOIN #tmpID'
+      '        ON #tmpID.MemberID = Member.MemberID'
+      'WHERE #tmpID.MemberID IS NULL'
+      '      AND Member.IsActive = 1')
     Left = 152
     Top = 192
     ParamData = <
@@ -312,6 +343,12 @@ object EntrantPickerCTRL: TEntrantPickerCTRL
         DataType = ftFloat
         ParamType = ptInput
         Value = 50.000000000000000000
+      end
+      item
+        Name = 'EVENTTYPE'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = 1
       end>
     object qryQuickPickCtrlFName: TWideStringField
       DisplayLabel = 'Member'#39's Name'
@@ -372,23 +409,41 @@ object EntrantPickerCTRL: TEntrantPickerCTRL
       'USE [SwimClubMeet];'
       ''
       'DECLARE @MemberID AS Integer;'
-      'DECLARE @EntrantID AS Integer;'
+      'DECLARE @ID AS Integer;'
       'DECLARE @TTB AS DateTime;'
       'DECLARE @PB AS DateTime;'
+      'DECLARE @EventType AS INT;'
       ''
       'SET @MemberID = :MEMBERID;'
-      'SET @EntrantID = :ENTRANTID;'
+      'SET @ID = :ENTRANTID;'
       'SET @TTB = :TTB;'
       'SET @PB = :PB;'
+      'SET @EventType = :EVENTYPE;'
       ''
-      'UPDATE [dbo].[Entrant]'
+      'IF @EventType = 1'
+      'BEGIN'
+      'UPDATE [SwimClubMeet].[dbo].[Entrant]'
       '   SET [MemberID] = @MemberID'
       '      ,[RaceTime] = NULL'
       '      ,[TimeToBeat] = @TTB'
       '      ,[PersonalBest] = @PB'
       '      ,[IsDisqualified] = 0'
       '      ,[IsScratched] = 0'
-      ' WHERE EntrantID = @EntrantID;')
+      '      ,[DisqualifyCodeID] = NULL'
+      ' WHERE EntrantID = @ID;'
+      ' END'
+      ' ELSE'
+      ' BEGIN'
+      ' UPDATE [SwimClubMeet].[dbo].[TeamEntrant]'
+      '   SET [MemberID] = @MemberID'
+      '      ,[RaceTime] = NULL'
+      '      ,[TimeToBeat] = @TTB'
+      '      ,[PersonalBest] = @PB'
+      '      --,[DisqualifyCodeID] = NULL'
+      '      --,[IsDisqualified] = 0'
+      '      --,[IsScratched] = 0'
+      ' WHERE TeamEntrantID = @ID;'
+      ' END')
     ParamData = <
       item
         Name = 'MEMBERID'
@@ -413,6 +468,10 @@ object EntrantPickerCTRL: TEntrantPickerCTRL
         DataType = ftTime
         ParamType = ptInput
         Value = Null
+      end
+      item
+        Name = 'EVENTYPE'
+        ParamType = ptInput
       end>
     Left = 152
     Top = 128

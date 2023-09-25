@@ -11,7 +11,7 @@ uses
   System.Actions, Vcl.ActnList, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
   Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls, Vcl.VirtualImage,
   Vcl.BaseImageCollection, Vcl.ImageCollection, System.ImageList, Vcl.ImgList,
-  Vcl.VirtualImageList;
+  Vcl.VirtualImageList, SCMDefines;
 
 type
   TEntrantPicker = class(TForm)
@@ -32,7 +32,6 @@ type
     FDCommandUpdateEntrant: TFDCommand;
     qryQuickPickEventID: TIntegerField;
     qryQuickPickGenderID: TIntegerField;
-    qryQuickPickEntrantID: TFDAutoIncField;
     ImageCollection1: TImageCollection;
     VirtualImage2: TVirtualImage;
     procedure btnCancelClick(Sender: TObject);
@@ -46,8 +45,9 @@ type
   private
     { Private declarations }
     fToggleNameState: boolean;
-    fEntrantID: Integer;
+    fID: Integer; // Either EntrantID or TeamEntrantID
     FConnection: TFDConnection;
+    fEventType: TEventType;
     prefUseDefRaceTime: boolean;
     prefRaceTimeTopPercent: double;
     prefHeatAlgorithm: Integer;
@@ -60,7 +60,8 @@ type
 
   public
     { Public declarations }
-    function Prepare(AConnection: TFDConnection; AEntrantID: Integer): boolean;
+    function Prepare(AConnection: TFDConnection; EntrantIDTeamEntrantID: Integer;
+      aEventType: TEventType): boolean;
   end;
 
 var
@@ -147,7 +148,8 @@ begin
   prefUseDefRaceTime := true;
   prefRaceTimeTopPercent := 50.0;
   prefHeatAlgorithm := 1; // Base is zero
-  fEntrantID := 0;
+  fID := 0;
+  fEventType := etUnknown;
 
   // ---------------------------------------------------------
   // A S S I G N   P R E F E R E N C E S ...
@@ -226,38 +228,45 @@ begin
   end;
 end;
 
-function TEntrantPicker.Prepare(AConnection: TFDConnection;
-  AEntrantID: Integer): boolean;
+function TEntrantPicker.Prepare(AConnection: TFDConnection; EntrantIDTeamEntrantID: Integer;
+      aEventType: TEventType): boolean;
 var
-  SQL, rtnstr: string;
-  EVENTID: Integer;
+  SQL: string;
+  v: variant;
+  aEventID: Integer;
 begin
   result := false;
-  if not AssertConnection(AConnection) then
-    exit;
+  if not AssertConnection(AConnection) then exit;
 
   FConnection := AConnection;
-  fEntrantID := AEntrantID;
+  fID := EntrantIDTeamEntrantID;
+  fEventType := aEventType;
 
-  // find the event ID for the entrant record.
+  if aEventType = etINDV then
   SQL := 'SELECT [HeatIndividual].[EventID] FROM [SwimClubMeet].[dbo].[Entrant] '
     + 'INNER JOIN HeatIndividual ON [Entrant].[HeatID] = [HeatIndividual].[HeatID] '
-    + 'WHERE [Entrant].[EntrantID] = :ENTRANTID';
+    + 'WHERE [Entrant].[EntrantID] = :ID';
 
-  rtnstr := AConnection.ExecSQLScalar(SQL, [AEntrantID]);
-  EVENTID := StrToIntDef(rtnstr, 0);
-  if (EVENTID = 0) then
-    exit;
+  if aEventType = etTEAM then
+  SQL := 'SELECT [HeatIndividual].[EventID] FROM [SwimClubMeet].[dbo].[TeamEntrant] '
+    + 'INNER JOIN Team ON [TeamEntrant].[TeamID] = [Team].[teamID] '
+    + 'INNER JOIN HeatIndividual ON [Team].[HeatID] = [HeatIndividual].[HeatID] '
+    + 'WHERE [TeamEntrant].[TeamEntrantID] = :ID';
+
+  v := AConnection.ExecSQLScalar(SQL, [fID]);
+  if VarIsNull(v) or VarIsEmpty(v) or (v=0) then exit;
+  aEventID := v;
 
   // ASSIGN CRITICAL PARAMS
   qryQuickPick.Connection := AConnection;
-  qryQuickPick.ParamByName('EVENTID').AsInteger := EVENTID;
+  qryQuickPick.ParamByName('EVENTID').AsInteger := aEventID;
   qryQuickPick.ParamByName('TOGGLENAME').AsBoolean := fToggleNameState;
   qryQuickPick.ParamByName('ALGORITHM').AsInteger := prefHeatAlgorithm;
   qryQuickPick.ParamByName('CALCDEFAULT').AsInteger :=
     Integer(prefUseDefRaceTime); // Safe - always 0 or 1.
   qryQuickPick.ParamByName('BOTTOMPERCENT').AsFloat :=
     double(prefRaceTimeTopPercent);
+  qryQuickPick.ParamByName('EVENTTYPE').AsInteger := ord(aEventType);
   qryQuickPick.Prepare();
   qryQuickPick.Open();
   if (qryQuickPick.Active) then
@@ -271,18 +280,20 @@ begin
   result := false;
   if not AssertConnection(FConnection) then
     exit;
-  if (fEntrantID = 0) then
+  if (fID = 0) then
     exit;
   with dsQuickPick.DataSet do
   begin
     FDCommandUpdateEntrant.Connection := FConnection;
     FDCommandUpdateEntrant.ParamByName('MEMBERID').AsInteger :=
       FieldByName('MemberID').AsInteger;
-    FDCommandUpdateEntrant.ParamByName('ENTRANTID').AsInteger := fEntrantID;
+//    FDCommandUpdateEntrant.ParamByName('ENTRANTID').AsInteger := fID;
     FDCommandUpdateEntrant.ParamByName('TTB').AsTime := FieldByName('TTB')
       .AsDateTime;
     FDCommandUpdateEntrant.ParamByName('PB').AsTime := FieldByName('PB')
       .AsDateTime;
+    FDCommandUpdateEntrant.ParamByName('EVENTTYPE').AsInteger := ord(fEventType);
+
     FDCommandUpdateEntrant.Prepare;
     FDCommandUpdateEntrant.Execute;
     result := true;

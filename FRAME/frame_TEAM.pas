@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Data.DB,
-  Vcl.Grids, Vcl.DBGrids, Vcl.Themes, dmSCM, SCMHelpers;
+  Vcl.Grids, Vcl.DBGrids, Vcl.Themes, dmSCM, SCMHelpers, SCMDefines;
 
 type
   TframeTEAM = class(TFrame)
@@ -79,6 +79,7 @@ begin
     fTeamEditBoxFocused := clWebTomato;
     fTeamEditBoxNormal := clWindowText;
     fTeamBgColor := clAppWorkSpace;
+    fFrameBgColor := clAppWorkSpace;
     fTeamFontColor := clWindowText;
   end;
 
@@ -400,20 +401,22 @@ var
   passed: boolean;
   dlg: TEntrantPicker;
   dlgCntrl: TEntrantPickerCTRL;
-  dlgDCode: TDCodePicker;
-  EntrantID: Integer;
+//  dlgDCode: TDCodePicker;
+  TeamEntrantID: Integer;
   rtnValue: TModalResult;
   fld: TField;
 begin
   if not AssertConnection then exit;
-  rtnValue := mrCancel;
+  if (SCM.CurrEventType <> etTEAM) then exit;
 
-  SCM.dsEntrant.DataSet.DisableControls;
-  EntrantID := SCM.dsEntrant.DataSet.FieldByName('EntrantID').AsInteger;
+  rtnValue := mrCancel;
+  SCM.dsTeamEntrant.DataSet.DisableControls;
+  TeamEntrantID := SCM.dsTeamEntrant.DataSet.FieldByName('TeamEntrantID').AsInteger;
 
   // handle the ellipse button for the disqualification code
   { TODO -oBSA -cGeneral : DCode Team Specific }
   fld := TDBGrid(Sender).SelectedField;
+  {
   if fld.FieldName = 'DCode' then
   begin
     if not SCM.dsEntrant.DataSet.FieldByName('MemberID').IsNull then
@@ -429,22 +432,22 @@ begin
       end;
     end;
   end
+  }
   // handle the ellipse entrant
-  else if fld.FieldName = 'FullName' then
+  if fld.FieldName = 'FullName' then
   begin
     if ((GetKeyState(VK_CONTROL) and 128) = 128) then
     begin
       // if (GetKeyState(VK_CONTROL) < 0) then begin
       dlgCntrl := TEntrantPickerCTRL.Create(self);
-      passed := dlgCntrl.Prepare(SCM.scmConnection, EntrantID);
+      passed := dlgCntrl.Prepare(SCM.scmConnection, TeamEntrantID, etTEAM);
       if passed then rtnValue := dlgCntrl.ShowModal;
       dlgCntrl.Free;
-
     end
     else
     begin
       dlg := TEntrantPicker.Create(self);
-      passed := dlg.Prepare(SCM.scmConnection, EntrantID);
+      passed := dlg.Prepare(SCM.scmConnection, TeamEntrantID, etTEAM);
       if passed then rtnValue := dlg.ShowModal;
       dlg.Free;
     end;
@@ -452,12 +455,13 @@ begin
     if passed and IsPositiveResult(rtnValue) then
     begin
       SCM.dsEntrant.DataSet.Refresh;
-      SCM.TeamEntrant_Locate(EntrantID);
+      SCM.TeamEntrant_Locate(TeamEntrantID);
     end;
 
   end;
 
-  SCM.dsEntrant.DataSet.EnableControls;
+
+  SCM.dsTeamEntrant.DataSet.EnableControls;
 
   // S T A T U S B A R .
   // Changes to entrants effect totals in statusbar

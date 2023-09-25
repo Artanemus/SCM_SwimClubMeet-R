@@ -127,6 +127,7 @@ object frameTEAM: TframeTEAM
           Visible = True
         end
         item
+          ButtonStyle = cbsEllipsis
           Expanded = False
           FieldName = 'FullName'
           Visible = True
@@ -149,7 +150,7 @@ object frameTEAM: TframeTEAM
         item
           Expanded = False
           FieldName = 'luStroke'
-          Visible = True
+          Visible = False
         end>
     end
   end

@@ -10,7 +10,8 @@ uses
   Data.DB,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
-  FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client;
+  FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
+  SCMDefines;
 
 type
   TEntrantPickerCTRL = class(TForm)
@@ -41,22 +42,24 @@ type
   private
     { Private declarations }
     fToggleNameState: boolean;
-    fEntrantID: integer;
-    fEventID: integer;
+    fID: Integer; // Either EntrantID or TeamEntrantID
+    fEventID: Integer;
+    fEventType: TEventType;
     FConnection: TFDConnection;
     prefUseDefRaceTime: boolean;
     prefRaceTimeTopPercent: double;
-    prefHeatAlgorithm: integer;
+    prefHeatAlgorithm: Integer;
     ToggleState: Array [0 .. 4] of boolean;
 
     function AssertConnection(AConnection: TFDConnection): boolean;
     function UpdateEntrantData(): boolean;
     function LocateMemberID(AMemberID: Integer; ADataSet: TDataSet): boolean;
-    procedure UpdateGridTitleBar(ColumnID: integer);
+    procedure UpdateGridTitleBar(ColumnID: Integer);
 
   public
     { Public declarations }
-    function Prepare(AConnection: TFDConnection; AEntrantID: integer): boolean;
+    function Prepare(AConnection: TFDConnection; AEntrantID: Integer;
+      aEventType: TEventType): boolean;
   end;
 
 var
@@ -67,6 +70,7 @@ implementation
 {$R *.dfm}
 
 uses SCMUtility, System.IniFiles, dmSCMNom;
+
 { TEntrantPickerCTRL }
 
 function TEntrantPickerCTRL.AssertConnection(AConnection
@@ -74,8 +78,7 @@ function TEntrantPickerCTRL.AssertConnection(AConnection
 begin
   result := false;
   if Assigned(AConnection) then
-    if AConnection.Connected then
-      result := true;
+    if AConnection.Connected then result := true;
 end;
 
 procedure TEntrantPickerCTRL.btnCancelClick(Sender: TObject);
@@ -85,18 +88,16 @@ end;
 
 procedure TEntrantPickerCTRL.btnPostClick(Sender: TObject);
 begin
-  if not qryQuickPickCtrl.Active then
-    exit;
-  if UpdateEntrantData then
-    ModalResult := mrOk;
+  if not qryQuickPickCtrl.Active then exit;
+  if UpdateEntrantData then ModalResult := mrOk;
 end;
 
 procedure TEntrantPickerCTRL.btnToggleNameClick(Sender: TObject);
 var
-  MemberID: integer;
+  MemberID: Integer;
 begin
   fToggleNameState := not fToggleNameState;
-  with dsQuickPickCTRL.DataSet as TFDQuery do
+  with dsQuickPickCtrl.DataSet as TFDQuery do
   begin
     MemberID := FieldByName('MemberID').AsInteger;
     DisableControls;
@@ -104,8 +105,7 @@ begin
     ParamByName('TOGGLENAME').AsBoolean := fToggleNameState;
     Prepare;
     Open;
-    if (Active) then
-      LocateMemberID(MemberID, dsQuickPickCTRL.DataSet);
+    if (Active) then LocateMemberID(MemberID, dsQuickPickCtrl.DataSet);
     EnableControls();
   end;
 end;
@@ -122,13 +122,10 @@ begin
     Pt := TDBGrid(Sender).ScreenToClient(Mouse.CursorPos);
     Coord := TDBGrid(Sender).MouseCoord(Pt.X, Pt.Y);
     // row zero is title bar.
-    if (Coord.Y <> 0) then
-      btnPostClick(Sender);
+    if (Coord.Y <> 0) then btnPostClick(Sender);
   end
-  else
-    btnPostClick(Sender);
+  else btnPostClick(Sender);
 end;
-
 
 procedure TEntrantPickerCTRL.DBGrid1TitleClick(Column: TColumn);
 begin
@@ -141,14 +138,14 @@ procedure TEntrantPickerCTRL.FormCreate(Sender: TObject);
 var
   iniFileName: String;
   ifile: TIniFile;
-  i: integer;
+  i: Integer;
 begin
 
   prefUseDefRaceTime := true;
   prefRaceTimeTopPercent := 50.0;
-  prefHeatAlgorithm := 1;  // Base is zero
-  fEntrantID := 0;
-
+  prefHeatAlgorithm := 1; // Base is zero
+  fID := 0;
+  fEventType := etUnknown;
   // ---------------------------------------------------------
   // A S S I G N   P R E F E R E N C E S ...
   // ---------------------------------------------------------
@@ -159,10 +156,8 @@ begin
     // if TTB is 0 - use the def qualify time + percent....
     // reading integer resolves tri-states used by check boxes.
     i := ifile.ReadInteger('Preferences', 'UseDefRaceTime', 1);
-    if i = 1 then
-      prefUseDefRaceTime := true
-    else
-      prefUseDefRaceTime := false;
+    if i = 1 then prefUseDefRaceTime := true
+    else prefUseDefRaceTime := false;
 
     prefRaceTimeTopPercent := ifile.ReadFloat('Preferences',
       'RaceTimeTopPercent', 50);
@@ -172,18 +167,17 @@ begin
     ifile.Free;
   end;
 
-   UpdateGridTitleBar(0);
+  UpdateGridTitleBar(0);
 
 end;
 
 procedure TEntrantPickerCTRL.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-  if (Key = VK_ESCAPE) then
-  ModalResult := mrCancel;
+  if (Key = VK_ESCAPE) then ModalResult := mrCancel;
 end;
 
-function TEntrantPickerCTRL.LocateMemberID(AMemberID: integer;
+function TEntrantPickerCTRL.LocateMemberID(AMemberID: Integer;
   ADataSet: TDataSet): boolean;
 var
   SearchOptions: TLocateOptions;
@@ -192,8 +186,7 @@ begin
   try
     result := ADataSet.Locate('MemberID', AMemberID, SearchOptions);
   except
-    on E: Exception do
-      result := false;
+    on E: Exception do result := false;
   end;
 end;
 
@@ -201,7 +194,7 @@ procedure TEntrantPickerCTRL.Nominate_EditChange(Sender: TObject);
 var
   fs: string;
 begin
-  with dsQuickPickCTRL.DataSet do
+  with dsQuickPickCtrl.DataSet do
   begin
     if Active then
     begin
@@ -213,13 +206,11 @@ begin
         fs := fs + '[FName] LIKE ' + QuotedStr('%' + Nominate_Edit.Text + '%');
       end;
       // assign filter
-      if fs.IsEmpty then
-        Filtered := false
+      if fs.IsEmpty then Filtered := false
       else
       begin
         Filter := fs;
-        if not Filtered then
-          Filtered := true;
+        if not Filtered then Filtered := true;
       end;
       EnableControls;
     end;
@@ -227,26 +218,31 @@ begin
 end;
 
 function TEntrantPickerCTRL.Prepare(AConnection: TFDConnection;
-  AEntrantID: integer): boolean;
+  AEntrantID: Integer; aEventType: TEventType): boolean;
 var
   SQL, rtnstr: string;
 begin
   result := false;
-  if not AssertConnection(AConnection) then
-    exit;
+  if not AssertConnection(AConnection) then exit;
 
   FConnection := AConnection;
-  fEntrantID := AEntrantID;
+  fID := AEntrantID;
+  fEventType := aEventType;
 
-  // find the event ID for the entrant record.
-  SQL := 'SELECT [HeatIndividual].[EventID] FROM [SwimClubMeet].[dbo].[Entrant] '
-    + 'INNER JOIN HeatIndividual ON [Entrant].[HeatID] = [HeatIndividual].[HeatID] '
-    + 'WHERE [Entrant].[EntrantID] = :ENTRANTID';
+  if aEventType = etINDV then
+      SQL := 'SELECT [HeatIndividual].[EventID] FROM [SwimClubMeet].[dbo].[Entrant] '
+      + 'INNER JOIN HeatIndividual ON [Entrant].[HeatID] = [HeatIndividual].[HeatID] '
+      + 'WHERE [Entrant].[EntrantID] = :ID';
+
+  if aEventType = etTEAM then
+      SQL := 'SELECT [HeatIndividual].[EventID] FROM [SwimClubMeet].[dbo].[TeamEntrant] '
+      + 'INNER JOIN Team ON [TeamEntrant].[TeamID] = [Team].[teamID] ' +
+      'INNER JOIN HeatIndividual ON [Team].[HeatID] = [HeatIndividual].[HeatID] '
+      + 'WHERE [TeamEntrant].[TeamEntrantID] = :ID';
 
   rtnstr := AConnection.ExecSQLScalar(SQL, [AEntrantID]);
   fEventID := StrToIntDef(rtnstr, 0);
-  if (fEventID = 0) then
-    exit;
+  if (fEventID = 0) then exit;
 
   // ASSIGN CRITICAL PARAMS
   qryQuickPickCtrl.Connection := AConnection;
@@ -254,9 +250,10 @@ begin
   qryQuickPickCtrl.ParamByName('TOGGLENAME').AsBoolean := fToggleNameState;
   qryQuickPickCtrl.ParamByName('ALGORITHM').AsInteger := prefHeatAlgorithm;
   qryQuickPickCtrl.ParamByName('CALCDEFAULT').AsInteger :=
-    integer(prefUseDefRaceTime); // Safe - always 0 or 1.
+    Integer(prefUseDefRaceTime); // Safe - always 0 or 1.
   qryQuickPickCtrl.ParamByName('BOTTOMPERCENT').AsFloat :=
     double(prefRaceTimeTopPercent);
+  qryQuickPickCtrl.ParamByName('EVENTTYPE').AsInteger := ord(aEventType);
   qryQuickPickCtrl.Prepare();
   qryQuickPickCtrl.Open();
   if (qryQuickPickCtrl.Active) then
@@ -270,12 +267,9 @@ var
   nom: TSCMNom;
 begin
   result := false;
-  if not AssertConnection(FConnection) then
-    exit;
-  if (fEntrantID = 0) then
-    exit;
-  if (fEventID = 0) then
-    exit;
+  if not AssertConnection(FConnection) then exit;
+  if (fID = 0) then exit;
+  if (fEventID = 0) then exit;
   with dsQuickPickCtrl.DataSet do
   begin
     // U P D A T E   N O M I N A T I O N S .
@@ -287,20 +281,23 @@ begin
     FDCommandUpdateEntrant.Connection := FConnection;
     FDCommandUpdateEntrant.ParamByName('MEMBERID').AsInteger :=
       FieldByName('MemberID').AsInteger;
-    FDCommandUpdateEntrant.ParamByName('ENTRANTID').AsInteger := fEntrantID;
+    FDCommandUpdateEntrant.ParamByName('ENTRANTID').AsInteger := fID;
     FDCommandUpdateEntrant.ParamByName('TTB').AsTime := FieldByName('TTB')
       .AsDateTime;
     FDCommandUpdateEntrant.ParamByName('PB').AsTime := FieldByName('PB')
       .AsDateTime;
+    FDCommandUpdateEntrant.ParamByName('EVENTTYPE').AsInteger :=
+      ord(fEventType);
+
     FDCommandUpdateEntrant.Prepare;
     FDCommandUpdateEntrant.Execute;
   end;
 end;
 
-procedure TEntrantPickerCTRL.UpdateGridTitleBar(ColumnID: integer);
+procedure TEntrantPickerCTRL.UpdateGridTitleBar(ColumnID: Integer);
 var
-idx: integer;
-s: string;
+  idx: Integer;
+  s: string;
 begin
   DBGrid1.Columns[0].Title.Caption := 'Nominees';
   DBGrid1.Columns[1].Title.Caption := 'TimeToBeat';
@@ -313,10 +310,8 @@ begin
   //
   idx := ColumnID + Integer(ToggleState[ColumnID]);
   qryQuickPickCtrl.Indexes[idx].Selected := true;
-  if ToggleState[ColumnID] then
-    s := (#$02C4 + ' ')
-  else
-    s := (#$02C5 + ' ');
+  if ToggleState[ColumnID] then s := (#$02C4 + ' ')
+  else s := (#$02C5 + ' ');
 
   DBGrid1.Columns[ColumnID].Title.Caption := s + DBGrid1.Columns[ColumnID]
     .Title.Caption;

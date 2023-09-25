@@ -9,10 +9,10 @@ uses
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.MSSQL,
   FireDAC.Phys.MSSQLDef, FireDAC.VCLUI.Wait, FireDAC.Stan.Param, FireDAC.DatS,
   FireDAC.DApt.Intf, FireDAC.DApt, Data.DB, FireDAC.Comp.Client,
-  FireDAC.Comp.DataSet, Windows, Winapi.Messages;
+  FireDAC.Comp.DataSet, Windows, Winapi.Messages,
+  SCMDefines;
 
-type
-  TEventType = (etUnknown = 0, etINDV = 1, etTEAM = 2);
+
 
 type
   TSCM = class(TDataModule)
@@ -378,7 +378,7 @@ implementation
 uses
   System.IOUtils, IniFiles, SCMUtility, System.DateUtils, Dialogs,
   System.Variants, System.StrUtils, System.Types, System.Math,
-  SCMDefines, vcl.Forms, vcl.StdCtrls, System.UITypes;
+  vcl.Forms, vcl.StdCtrls, System.UITypes;
 
 
 
