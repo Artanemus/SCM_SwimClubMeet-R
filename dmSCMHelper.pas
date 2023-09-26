@@ -27,23 +27,23 @@ type
     {
       I n d v T e a m .  (Determines either dbo.Entrant OR dbo.TEAM tables.)
     }
-    function IndvTeam_ClearLane(aIndvTeamID: integer; aEventType: TEventType;
+    function IndvTeam_ClearLane(aIndvTeamID: integer; aEventType: scmEventType;
       DoExclude: Boolean = true): integer;
     function IndvTeam_ID(): integer; //current EntrantID or TeamID
     function IndvTeam_HeatID(aIndvTeamID: integer;
-      aEventType: TEventType): integer;
-    function IndvTeam_HeatStatusID(aIndvTeamID: integer; aEventType: TEventType;
+      aEventType: scmEventType): integer;
+    function IndvTeam_HeatStatusID(aIndvTeamID: integer; aEventType: scmEventType;
       DoExclude: Boolean = true): integer;
-    function IndvTeam_StrikeLane(aIndvTeamID: integer; aEventType: TEventType;
+    function IndvTeam_StrikeLane(aIndvTeamID: integer; aEventType: scmEventType;
       DoExclude: Boolean = true): integer;
-    function IndvTeam_DeleteLane(aIndvTeamID: integer; aEventType: TEventType;
+    function IndvTeam_DeleteLane(aIndvTeamID: integer; aEventType: scmEventType;
       DoExclude: Boolean = true): integer;
-    function IndvTeam_DeleteSplit(aSplitID: integer; aEventType: TEventType;
+    function IndvTeam_DeleteSplit(aSplitID: integer; aEventType: scmEventType;
       DoExclude: Boolean = true): integer;
     function IndvTeam_DeleteAllSplits(aIndvTeamID: integer;
-      aEventType: TEventType; DoExclude: Boolean = true): integer;
+      aEventType: scmEventType; DoExclude: Boolean = true): integer;
     function IndvTeam_LocateLane(aIndvTeamID: integer;
-      aEventType: TEventType): Boolean;
+      aEventType: scmEventType): Boolean;
     { L A N E S .  05.09.2023     }
     function Lane_ClearGutters(aHeatID: integer;
       DoExclude: Boolean = true): integer;
@@ -187,7 +187,7 @@ begin
   qry.Free;
 end;
 
-function TSCMHelper.IndvTeam_ClearLane(aIndvTeamID: integer; aEventType: TEventType;
+function TSCMHelper.IndvTeam_ClearLane(aIndvTeamID: integer; aEventType: scmEventType;
   DoExclude: Boolean = true): integer;
 var
   aHeatID, aHeatStatusID: integer;
@@ -206,7 +206,7 @@ begin
 end;
 
 function TSCMHelper.IndvTeam_DeleteAllSplits(aIndvTeamID: integer;
-  aEventType: TEventType; DoExclude: Boolean): integer;
+  aEventType: scmEventType; DoExclude: Boolean): integer;
 var
   aHeatID,aHeatStatusID: integer;
 begin
@@ -223,7 +223,7 @@ begin
 end;
 
 function TSCMHelper.IndvTeam_DeleteLane(aIndvTeamID: integer;
-  aEventType: TEventType; DoExclude: Boolean): integer;
+  aEventType: scmEventType; DoExclude: Boolean): integer;
 var
   aHeatID, aHeatStatusID: integer;
 begin
@@ -241,7 +241,7 @@ begin
 end;
 
 function TSCMHelper.IndvTeam_DeleteSplit(aSplitID: integer;
-  aEventType: TEventType; DoExclude: Boolean = true): integer;
+  aEventType: scmEventType; DoExclude: Boolean = true): integer;
 var
   aHeatStatusID: integer;
 begin
@@ -261,7 +261,7 @@ begin
 end;
 
 function TSCMHelper.IndvTeam_HeatID(aIndvTeamID: integer;
-      aEventType: TEventType): integer;
+      aEventType: scmEventType): integer;
 var
   SQL: string;
   v: variant;
@@ -281,7 +281,7 @@ begin
 end;
 
 function TSCMHelper.IndvTeam_HeatStatusID(aIndvTeamID: integer;
-      aEventType: TEventType;DoExclude: Boolean = true): integer;
+      aEventType: scmEventType;DoExclude: Boolean = true): integer;
 var
   SQL: string;
   v: variant;
@@ -310,7 +310,7 @@ end;
 function TSCMHelper.IndvTeam_ID: integer;
 var
   aHeatID: integer;
-  aEventType: TEventType;
+  aEventType: scmEventType;
 begin
   result := 0;
   if not SCMActive then exit;
@@ -328,12 +328,12 @@ begin
 end;
 
 function TSCMHelper.IndvTeam_LocateLane(aIndvTeamID: integer;
-  aEventType: TEventType): Boolean;
+  aEventType: scmEventType): Boolean;
 begin
   result := LocateLane(aIndvTeamID,aEventType);
 end;
 
-function TSCMHelper.IndvTeam_StrikeLane(aIndvTeamID: integer; aEventType: TEventType;
+function TSCMHelper.IndvTeam_StrikeLane(aIndvTeamID: integer; aEventType: scmEventType;
   DoExclude: Boolean = true): integer;
 var
   aHeatID, aHeatStatusID, aEventID, aMemberID, rows: integer;
@@ -497,7 +497,7 @@ function TSCMHelper.NOM_ClearLane(aMemberID, aEventID: integer;
   DoExclude: Boolean): integer;
 var
   aHeatStatusID, aIndvTeamID: integer;
-  aEventType: TEventType;
+  aEventType: scmEventType;
 begin
   result := 0;
   if not SCMActive then exit;
@@ -571,7 +571,7 @@ function TSCMHelper.NOM_HeatStatusID(aMemberID, aEventID: integer): integer;
 var
   SQL: string;
   v: variant;
-  aEventType: TEventType;
+  aEventType: scmEventType;
 begin
   result := 0;
   if not SCMActive then exit;
@@ -607,7 +607,7 @@ function TSCMHelper.NOM_IndvTeamID(aMemberID, aEventID: integer): integer;
 var
   SQL: string;
   v: variant;
-  aEventType: TEventType;
+  aEventType: scmEventType;
 begin
   result := 0;
   if not SCMActive then exit;
@@ -661,7 +661,7 @@ function TSCMHelper.NOM_IsNomineeInEvent(aNomineeID: integer): integer;
 var
   SQL: string;
   v: variant;
-  aEventType: TEventType;
+  aEventType: scmEventType;
 begin
   result := 0; // return EntrantID. Zero indicate 'not in event'.
   SQL := 'SELECT EventID FROM [SwimClubMeet].[dbo].[Nominee] '+

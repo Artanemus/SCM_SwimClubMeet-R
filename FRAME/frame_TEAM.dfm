@@ -122,11 +122,6 @@ object frameTEAM: TframeTEAM
       OnEnter = GridEntrantEnter
       Columns = <
         item
-          Expanded = False
-          FieldName = 'Lane'
-          Visible = True
-        end
-        item
           ButtonStyle = cbsEllipsis
           Expanded = False
           FieldName = 'FullName'

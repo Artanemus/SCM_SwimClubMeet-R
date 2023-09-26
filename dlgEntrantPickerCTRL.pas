@@ -11,11 +11,11 @@ uses
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
-  SCMDefines;
+  SCMDefines, Vcl.BaseImageCollection, Vcl.ImageCollection, Vcl.VirtualImage,
+  Vcl.ExtCtrls, vcl.Themes;
 
 type
   TEntrantPickerCTRL = class(TForm)
-    Label1: TLabel;
     DBGrid1: TDBGrid;
     Nominate_Edit: TEdit;
     btnPost: TButton;
@@ -31,6 +31,9 @@ type
     qryQuickPickCtrlGender: TWideStringField;
     FDCommandUpdateEntrant: TFDCommand;
     qryQuickPickCtrlGenderID: TIntegerField;
+    ImageCollection1: TImageCollection;
+    VirtualImage1: TVirtualImage;
+    Panel1: TPanel;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure btnPostClick(Sender: TObject);
@@ -44,7 +47,8 @@ type
     fToggleNameState: boolean;
     fID: Integer; // Either EntrantID or TeamEntrantID
     fEventID: Integer;
-    fEventType: TEventType;
+    fEventType: scmEventType;
+    fPanelBgColor: TColor;
     FConnection: TFDConnection;
     prefUseDefRaceTime: boolean;
     prefRaceTimeTopPercent: double;
@@ -59,7 +63,7 @@ type
   public
     { Public declarations }
     function Prepare(AConnection: TFDConnection; AEntrantID: Integer;
-      aEventType: TEventType): boolean;
+      aEventType: scmEventType): boolean;
   end;
 
 var
@@ -139,6 +143,7 @@ var
   iniFileName: String;
   ifile: TIniFile;
   i: Integer;
+  css: TCustomStyleServices;
 begin
 
   prefUseDefRaceTime := true;
@@ -166,6 +171,19 @@ begin
     prefHeatAlgorithm := ifile.ReadInteger('Preferences', 'HeatAlgorithm', 1);
     ifile.Free;
   end;
+
+  // Color assignment to custom paint closed sessions in grid.
+  // -------------------------------------------
+  css := TStyleManager.Style[TStyleManager.ActiveStyle.Name];
+  if Assigned(css) then
+  begin
+    fPanelBgColor := css.GetSystemColor(clActiveCaption);
+  end
+  else
+  begin
+    fPanelBgColor := clActiveCaption;
+  end;
+  Panel1.Color := fPanelBgColor;
 
   UpdateGridTitleBar(0);
 
@@ -218,7 +236,7 @@ begin
 end;
 
 function TEntrantPickerCTRL.Prepare(AConnection: TFDConnection;
-  AEntrantID: Integer; aEventType: TEventType): boolean;
+  AEntrantID: Integer; aEventType: scmEventType): boolean;
 var
   SQL, rtnstr: string;
 begin
@@ -308,7 +326,7 @@ begin
   // This cryptic method works provided all indexes are listed in the
   // correct order and all are active...
   //
-  idx := ColumnID + Integer(ToggleState[ColumnID]);
+  idx := (ColumnID * 2) + Integer(ToggleState[ColumnID]);
   qryQuickPickCtrl.Indexes[idx].Selected := true;
   if ToggleState[ColumnID] then s := (#$02C4 + ' ')
   else s := (#$02C5 + ' ');

@@ -111,7 +111,6 @@ function TframeINDV.ClearLane: integer;
 var
 aEntrantID: integer;
 begin
-  result := 0;
   aEntrantID := Grid.DataSource.DataSet.FieldByName('EntrantID').AsInteger;
   result := SCM.IndvTeam_ClearLane(aEntrantID, etINDV);
   if result > 0 then
@@ -350,7 +349,6 @@ begin
   fDoStatusBarUpdate := true; // flag set false after SCM_StatusBarExecute.
 
   { TODO -oBSA -cGeneral : POST MESSAGE TO UPDATE STATUS BAR ON PARENT FORM }
-
   {
     SCM_StatusBar.Update; // Asserts enabled state.
     SCM_StatusBar.Execute; // Fire actions

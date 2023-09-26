@@ -2075,7 +2075,6 @@ object SCM: TSCM
     FormatOptions.AssignedValues = [fvFmtDisplayDateTime, fvFmtDisplayTime]
     FormatOptions.FmtDisplayTime = 'nn:ss.zzz'
     UpdateOptions.AssignedValues = [uvEInsert, uvCheckRequired]
-    UpdateOptions.EnableInsert = False
     UpdateOptions.CheckRequired = False
     UpdateOptions.UpdateTableName = 'SwimClubMeet.dbo.TeamEntrant'
     UpdateOptions.KeyFields = 'TeamEntrantID'
@@ -2108,6 +2107,10 @@ object SCM: TSCM
       '                     )'
       '       END AS FullName'
       '     , TeamEntrant.StrokeID'
+      '     , TeamEntrant.IsDisqualified'
+      '     , TeamEntrant.IsScratched'
+      '     , TeamEntrant.DisqualifyCodeID'
+      '     '
       'FROM TeamEntrant'
       '    LEFT OUTER JOIN Member'
       '        ON TeamEntrant.MemberID = Member.MemberID'
@@ -2147,6 +2150,7 @@ object SCM: TSCM
       DisplayLabel = 'Swim Order'
       FieldName = 'Lane'
       Origin = 'Lane'
+      Visible = False
     end
     object WideStringField1: TWideStringField
       DisplayLabel = 'Entrant'#39's Name'
@@ -2203,6 +2207,25 @@ object SCM: TSCM
       KeyFields = 'StrokeID'
       Visible = False
       Lookup = True
+    end
+    object qryTeamEntrantIsDisqualified: TBooleanField
+      DisplayLabel = 'D'
+      DisplayWidth = 3
+      FieldName = 'IsDisqualified'
+      Origin = 'IsDisqualified'
+      Visible = False
+    end
+    object qryTeamEntrantIsScratched: TBooleanField
+      DisplayLabel = 'S'
+      DisplayWidth = 3
+      FieldName = 'IsScratched'
+      Origin = 'IsScratched'
+      Visible = False
+    end
+    object qryTeamEntrantDisqualifyCodeID: TIntegerField
+      FieldName = 'DisqualifyCodeID'
+      Origin = 'DisqualifyCodeID'
+      Visible = False
     end
   end
   object dsTeamEntrant: TDataSource

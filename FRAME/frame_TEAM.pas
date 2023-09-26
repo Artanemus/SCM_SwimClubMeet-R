@@ -93,11 +93,11 @@ begin
     are dynamically generated from the visible fields of the dataset and the
     order of columns in the grid matches the order of fields in the dataset.
   }
-   Grid.Columns.State := csDefault;
+  Grid.Columns.State := csDefault;
   Grid.Options := Grid.Options - [dgAlwaysShowEditor];
   Grid.Options := Grid.Options + [dgEditing];
 
-   GridEntrant.Columns.State := csDefault;
+  GridEntrant.Columns.State := csDefault;
   GridEntrant.Options := GridEntrant.Options - [dgAlwaysShowEditor];
   GridEntrant.Options := GridEntrant.Options + [dgEditing];
 
@@ -122,7 +122,7 @@ var
   aTeamID, aTeamEntrantID: Integer;
 begin
   result := 0;
-  if fTeamActiveGrid = 1  then
+  if fTeamActiveGrid = 1 then
   begin
     aTeamID := Grid.DataSource.DataSet.FieldByName('TeamID').AsInteger;
     result := SCM.IndvTeam_ClearLane(aTeamID, etTeam, true);
@@ -343,35 +343,30 @@ begin
     if IsPositiveResult(rtnValue) then
     begin
       SCM.dsTeam.DataSet.Refresh;
-      SCM.IndvTeam_LocateLane(TeamID, etTEAM);
+      SCM.IndvTeam_LocateLane(TeamID, etTeam);
     end;
   end
   // handle the ellipse entrant
   else if fld.FieldName = 'TeamName' then
-    // ASSIGN A RELAY TEAM TO THIS EMPTY LANE....
-    if (SCM.dsTeam.DataSet.FieldByName('TeamNameID').IsNull) then
+  begin
+    // display the relay team 'name picker'.
+    dlgPickTeam := TTeamNamePicker.Create(self);
+    dlgPickTeam.Prepare(SCM.scmConnection, TeamID);
+    dlgPickTeam.Position := poDesigned;
+    pt := Mouse.CursorPos;
+    aRect := TDBGrid(Sender).GetCellRect(pt);
+    dlgPickTeam.Left := aRect.Left;
+    dlgPickTeam.Top := aRect.Top;
+    rtnValue := dlgPickTeam.ShowModal;
+    dlgPickTeam.Free;
+    // require a refresh to update members details
+    if IsPositiveResult(rtnValue) then
     begin
-      begin
-        // display the relay team 'name picker'.
-        dlgPickTeam := TTeamNamePicker.Create(self);
-        dlgPickTeam.Prepare(SCM.scmConnection, TeamID);
-        dlgPickTeam.Position := poDesigned;
-        pt := Mouse.CursorPos;
-        aRect := TDBGrid(Sender).GetCellRect(pt);
-        dlgPickTeam.Left := aRect.Left;
-        dlgPickTeam.Top := aRect.Top;
-        rtnValue := dlgPickTeam.ShowModal;
-        dlgPickTeam.Free;
-        // require a refresh to update members details
-        if IsPositiveResult(rtnValue) then
-        begin
-          SCM.dsTeam.DataSet.Refresh;
-          SCM.IndvTeam_LocateLane(TeamID, etTEAM);
-          // reveal TeamEntrant GRID
-        end;
-      end;
-    end
-    else beep;
+      SCM.dsTeam.DataSet.Refresh;
+      SCM.IndvTeam_LocateLane(TeamID, etTeam);
+      // reveal TeamEntrant GRID
+    end;
+  end;
 
   SCM.dsTeam.DataSet.EnableControls;
   // S T A T U S B A R .
@@ -401,74 +396,95 @@ var
   passed: boolean;
   dlg: TEntrantPicker;
   dlgCntrl: TEntrantPickerCTRL;
-//  dlgDCode: TDCodePicker;
-  TeamEntrantID: Integer;
+  // dlgDCode: TDCodePicker;
+  TeamEntrantID, aTeamID: Integer;
   rtnValue: TModalResult;
   fld: TField;
+  v: variant;
+  CTRLPress: smallint;
+
 begin
   if not AssertConnection then exit;
-  if (SCM.CurrEventType <> etTEAM) then exit;
-
   rtnValue := mrCancel;
   SCM.dsTeamEntrant.DataSet.DisableControls;
-  TeamEntrantID := SCM.dsTeamEntrant.DataSet.FieldByName('TeamEntrantID').AsInteger;
 
-  // handle the ellipse button for the disqualification code
-  { TODO -oBSA -cGeneral : DCode Team Specific }
-  fld := TDBGrid(Sender).SelectedField;
-  {
-  if fld.FieldName = 'DCode' then
-  begin
+  CTRLPress := (GetKeyState(VK_CONTROL) and 128); // grab keyboard state
+  fld := TDBGrid(Sender).SelectedField; // only using field : 'fullname'
+  if SCM.dsTeam.DataSet.Active and not SCM.dsTeam.DataSet.FieldByName('TeamID').IsNull
+  then aTeamID := SCM.dsTeam.DataSet.FieldByName('TeamID').AsInteger
+  else aTeamID := 0;
+
+  { // CODE STUB - TO BE IMPLIMENTED IN LATER VERSIONS ...
+    if fld.FieldName = 'DCode' then
+    begin
     if not SCM.dsEntrant.DataSet.FieldByName('MemberID').IsNull then
     begin
-      dlgDCode := TDCodePicker.CreateWithConnection(self, SCM.scmConnection);
-      dlgDCode.EntrantID := EntrantID;
-      rtnValue := dlgDCode.ShowModal;
-      dlgDCode.Free;
-      if IsPositiveResult(rtnValue) then
-      begin
-        SCM.dsEntrant.DataSet.Refresh;
-        SCM.TeamEntrant_Locate(EntrantID);
-      end;
+    dlgDCode := TDCodePicker.CreateWithConnection(self, SCM.scmConnection);
+    dlgDCode.TeamID := TeamID;
+    rtnValue := dlgDCode.ShowModal;
+    dlgDCode.Free;
+    if IsPositiveResult(rtnValue) then
+    begin
+    SCM.dsEntrant.DataSet.Refresh;
+    SCM.TeamEntrant_Locate(EntrantID);
     end;
-  end
+    end;
+    end
   }
   // handle the ellipse entrant
-  if fld.FieldName = 'FullName' then
+  if (fld.FieldName = 'FullName') and (aTeamID <> 0) then
   begin
-    if ((GetKeyState(VK_CONTROL) and 128) = 128) then
+    // TEST - CREATE - RELAY TEAM MEMBER
+    with SCM.dsTeamEntrant.DataSet do
     begin
-      // if (GetKeyState(VK_CONTROL) < 0) then begin
-      dlgCntrl := TEntrantPickerCTRL.Create(self);
-      passed := dlgCntrl.Prepare(SCM.scmConnection, TeamEntrantID, etTEAM);
-      if passed then rtnValue := dlgCntrl.ShowModal;
-      dlgCntrl.Free;
-    end
-    else
-    begin
-      dlg := TEntrantPicker.Create(self);
-      passed := dlg.Prepare(SCM.scmConnection, TeamEntrantID, etTEAM);
-      if passed then rtnValue := dlg.ShowModal;
-      dlg.Free;
+      if IsEmpty or FieldByName('TeamEntrantID').IsNull then
+      begin
+        Insert;
+        Post;
+        FieldByName('HeatID').AsInteger := aTeamID;
+        if IsEmpty then FieldByName('Lane').AsInteger := 1
+        else
+        begin
+          FieldByName('Lane').AsInteger := SCM.TeamEntrant_LastLaneNum
+            (aTeamID) + 1;
+        end;
+        FieldByName('IsDisqualified').AsBoolean := false;
+        FieldByName('IsScratched').AsBoolean := false;
+      end;
     end;
-    // require a refresh to update members details
-    if passed and IsPositiveResult(rtnValue) then
+    // CHECK IDENTITY before handling ellipse.
+    v := SCM.dsTeamEntrant.DataSet.FieldByName('TeamEntrantID').AsVariant;
+    if not VarIsNull(v) and not VarIsempty(v) and (v <> 0) then
     begin
-      SCM.dsEntrant.DataSet.Refresh;
-      SCM.TeamEntrant_Locate(TeamEntrantID);
+      TeamEntrantID := v; // valid
+      if (CTRLPress = 128) then
+      begin
+        dlgCntrl := TEntrantPickerCTRL.Create(self);
+        passed := dlgCntrl.Prepare(SCM.scmConnection, TeamEntrantID, etTeam);
+        if passed then rtnValue := dlgCntrl.ShowModal;
+        dlgCntrl.Free;
+      end
+      else
+      begin
+        dlg := TEntrantPicker.Create(self);
+        passed := dlg.Prepare(SCM.scmConnection, TeamEntrantID, etTeam);
+        if passed then rtnValue := dlg.ShowModal;
+        dlg.Free;
+      end;
+      // require a refresh to update members details
+      if passed and IsPositiveResult(rtnValue) then
+      begin
+        SCM.dsTeamEntrant.DataSet.Refresh;
+        SCM.TeamEntrant_Locate(TeamEntrantID);
+      end;
     end;
-
   end;
-
 
   SCM.dsTeamEntrant.DataSet.EnableControls;
 
   // S T A T U S B A R .
-  // Changes to entrants effect totals in statusbar
   fDoStatusBarUpdate := true; // flag set false after SCM_StatusBarExecute.
-
   { TODO -oBSA -cGeneral : POST MESSAGE TO UPDATE STATUS BAR ON PARENT FORM }
-
   {
     SCM_StatusBar.Update; // Asserts enabled state.
     SCM_StatusBar.Execute; // Fire actions

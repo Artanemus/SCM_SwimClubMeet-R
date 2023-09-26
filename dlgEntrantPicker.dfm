@@ -2,9 +2,9 @@ object EntrantPicker: TEntrantPicker
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'Quick-Pick Nominee ...'
+  Caption = 'Quick-Pick from Nominees ...'
   ClientHeight = 702
-  ClientWidth = 829
+  ClientWidth = 822
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,7 +19,7 @@ object EntrantPicker: TEntrantPicker
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 829
+    Width = 822
     Height = 702
     Align = alClient
     BevelOuter = bvNone
@@ -27,11 +27,11 @@ object EntrantPicker: TEntrantPicker
     ExplicitWidth = 825
     ExplicitHeight = 701
     DesignSize = (
-      829
+      822
       702)
     object VirtualImage2: TVirtualImage
       Left = 8
-      Top = 12
+      Top = 6
       Width = 34
       Height = 39
       ImageCollection = ImageCollection1
@@ -42,9 +42,9 @@ object EntrantPicker: TEntrantPicker
     end
     object DBGrid1: TDBGrid
       Left = 8
-      Top = 64
+      Top = 51
       Width = 697
-      Height = 623
+      Height = 651
       Anchors = [akLeft, akTop, akBottom]
       DataSource = dsQuickPick
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
@@ -103,7 +103,7 @@ object EntrantPicker: TEntrantPicker
     end
     object btnPost: TButton
       Left = 711
-      Top = 64
+      Top = 51
       Width = 106
       Height = 35
       Caption = 'Post'
@@ -113,7 +113,7 @@ object EntrantPicker: TEntrantPicker
     end
     object btnCancel: TButton
       Left = 711
-      Top = 105
+      Top = 92
       Width = 106
       Height = 35
       Cancel = True
@@ -124,7 +124,7 @@ object EntrantPicker: TEntrantPicker
     end
     object btnToggleName: TButton
       Left = 711
-      Top = 146
+      Top = 133
       Width = 106
       Height = 35
       Caption = 'Toggle Name'
@@ -133,7 +133,7 @@ object EntrantPicker: TEntrantPicker
     end
     object Nominate_Edit: TEdit
       Left = 48
-      Top = 18
+      Top = 11
       Width = 249
       Height = 27
       TabOrder = 0
@@ -219,10 +219,9 @@ object EntrantPicker: TEntrantPicker
       'USE SwimClubMeet;'
       ''
       'DECLARE @EventID AS INT;'
-      'DECLARE @SessionID AS INT;'
+      'DECLARE @Algorithm INT;'
       'DECLARE @DistanceID AS INT;'
       'DECLARE @StrokeID AS INT;'
-      'DECLARE @Algorithm INT;'
       'DECLARE @SessionStart DATETIME;'
       'DECLARE @ToggleName BIT;'
       'DECLARE @Order INT;'
@@ -231,44 +230,39 @@ object EntrantPicker: TEntrantPicker
       'DECLARE @EventType AS INT;'
       ''
       'SET @EventID = :EVENTID;'
-      'SET @SessionID = ('
-      #9#9'SELECT SessionID'
-      #9#9'FROM Event'
-      #9#9'WHERE Event.EventID = @EventID'
-      #9#9');'
-      'SET @DistanceID = ('
-      #9#9'SELECT DistanceID'
-      #9#9'FROM Event'
-      #9#9'WHERE Event.EventID = @EventID'
-      #9#9');'
-      'SET @StrokeID = ('
-      #9#9'SELECT StrokeID'
-      #9#9'FROM Event'
-      #9#9'WHERE Event.EventID = @EventID'
-      #9#9');'
       'SET @Algorithm = :ALGORITHM;'
       'SET @ToggleName = :TOGGLENAME;'
       'SET @CalcDefault = :CALCDEFAULT'
-      'SET @BottomPercent = :BOTTOMPERCENT;'
-      'SET @EventType = :EVENTTYPE;'
-      'SET @SessionStart = ('
-      '       SELECT Session.SessionStart'
-      '       FROM Event '
-      '       INNER JOIN Session ON Event.SessionID = Session.SessionID'
-      '       WHERE Event.EventID = @EventID);'
+      'SET @BottomPercent = :BOTTOMPERCENT'
+      'SET @EventType = :EVENTTYPE'
+      ''
+      'SET @DistanceID ='
+      '('
+      '    SELECT DistanceID FROM Event WHERE Event.EventID = @EventID'
+      ');'
+      'SET @StrokeID ='
+      '('
+      '    SELECT StrokeID FROM Event WHERE Event.EventID = @EventID'
+      ');'
+      'SET @SessionStart ='
+      '('
+      '    SELECT Session.SessionStart'
+      '    FROM Event'
+      '        INNER JOIN Session'
+      '            ON Event.SessionID = Session.SessionID'
+      '    WHERE Event.EventID = @EventID'
+      ');'
       ''
       ''
       '-- Drop a temporary table called '#39'#tmpID'#39
-      '-- Drop the table if it already exists'
-      ''
       'IF OBJECT_ID('#39'tempDB..#tmpID'#39', '#39'U'#39') IS NOT NULL'
-      'DROP TABLE #tmpID;'
+      '    DROP TABLE #tmpID;'
       ''
       'CREATE TABLE #tmpID'
       '('
       '    MemberID INT'
-      '    --,TeamEntrant.TeamEntrantID AS ID'
-      '    ,EventID INT   '
+      '  --,TeamEntrant.TeamEntrantID AS ID'
+      '  , EventID INT'
       ')'
       ''
       '-- Members given a swimming lane in the given event '
@@ -276,57 +270,58 @@ object EntrantPicker: TEntrantPicker
       'BEGIN'
       '    INSERT INTO #tmpID'
       '    SELECT Entrant.MemberID'
-      #9#9'--,Entrant.EntrantID  AS ID'
-      #9#9',HeatIndividual.EventID'
+      '         --,Entrant.EntrantID  AS ID'
+      '         , HeatIndividual.EventID'
       '    FROM [SwimClubMeet].[dbo].[HeatIndividual]'
-      #9'INNER JOIN Entrant ON Entrant.HeatID = HeatIndividual.HeatID'
-      #9'WHERE HeatIndividual.EventID = @EventID;'
-      'END '
+      '        INNER JOIN Entrant'
+      '            ON Entrant.HeatID = HeatIndividual.HeatID'
+      '    WHERE HeatIndividual.EventID = @EventID;'
+      'END'
       'ELSE'
-      'BEGIN '
+      'BEGIN'
       ''
       '    INSERT INTO #tmpID'
-      #9'SELECT TeamEntrant.MemberID'
-      #9#9'--,TeamEntrant.TeamEntrantID AS ID'
-      #9#9',HeatIndividual.EventID'
-      #9'FROM [SwimClubMeet].[dbo].[HeatIndividual]'
-      #9'INNER JOIN Team ON HeatIndividual.HeatID = Team.HeatID '
-      #9'INNER JOIN TeamEntrant ON Team.TeamID = TeamEntrant.TeamID'
-      #9'WHERE HeatIndividual.EventID = @EventID;'
+      '    SELECT TeamEntrant.MemberID'
+      '         --,TeamEntrant.TeamEntrantID AS ID'
+      '         , HeatIndividual.EventID'
+      '    FROM [SwimClubMeet].[dbo].[HeatIndividual]'
+      '        INNER JOIN Team'
+      '            ON HeatIndividual.HeatID = Team.HeatID'
+      '        INNER JOIN TeamEntrant'
+      '            ON Team.TeamID = TeamEntrant.TeamID'
+      '    WHERE HeatIndividual.EventID = @EventID;'
       'END'
-      ' '
-      ' '
+      ''
+      ''
       'SELECT Nominee.EventID'
-      #9',Nominee.MemberID'
-      '        ,Member.GenderID'
-      #9'--,tmpID.ID'
-      #9',dbo.SwimmerAge(@SessionStart, Member.DOB) AS AGE'
-      #9',dbo.SwimmerGenderToString(Member.MemberID) AS Gender'
+      '     , Nominee.MemberID'
+      '     , Member.GenderID'
+      '     --,tmpID.ID'
+      '     , dbo.SwimmerAge(@SessionStart, Member.DOB) AS AGE'
+      '     , dbo.SwimmerGenderToString(Member.MemberID) AS Gender'
       
-        #9',dbo.TimeToBeat(@Algorithm, @CalcDefault, @BottomPercent, Membe' +
-        'r.MemberID, @DistanceID, @StrokeID, @SessionStart) AS TTB'
+        '     , dbo.TimeToBeat(@Algorithm, @CalcDefault, @BottomPercent, ' +
+        'Member.MemberID, @DistanceID, @StrokeID, @SessionStart) AS TTB'
       
-        #9',dbo.PersonalBest(Member.MemberID, @DistanceID, @StrokeID, @Ses' +
-        'sionStart) AS PB'
-      #9',CASE '
-      #9#9'WHEN @ToggleName = 0'
-      #9#9#9'THEN SUBSTRING(CONCAT ('
-      #9#9#9#9#9#9'UPPER([LastName])'
-      #9#9#9#9#9#9','#39', '#39
-      #9#9#9#9#9#9',[FirstName]'
-      #9#9#9#9#9#9'), 0, 30)'
-      #9#9'WHEN @ToggleName = 1'
-      #9#9#9'THEN SUBSTRING(CONCAT ('
-      #9#9#9#9#9#9'[FirstName]'
-      #9#9#9#9#9#9','#39', '#39
-      #9#9#9#9#9#9',UPPER([LastName])'
-      #9#9#9#9#9#9'), 0, 48)'
-      #9#9'END AS FName'
+        '     , dbo.PersonalBest(Member.MemberID, @DistanceID, @StrokeID,' +
+        ' @SessionStart) AS PB'
+      '     , CASE'
+      '           WHEN @ToggleName = 0 THEN'
+      
+        '               SUBSTRING(CONCAT(UPPER([LastName]), '#39', '#39', [FirstN' +
+        'ame]), 0, 30)'
+      '           WHEN @ToggleName = 1 THEN'
+      
+        '               SUBSTRING(CONCAT([FirstName], '#39', '#39', UPPER([LastNa' +
+        'me])), 0, 48)'
+      '       END AS FName'
       'FROM Nominee'
-      'LEFT OUTER JOIN #tmpID ON #tmpID.MemberID = Nominee.MemberID'
-      'LEFT OUTER JOIN Member ON Nominee.MemberID = Member.MemberID'
+      '    LEFT OUTER JOIN #tmpID'
+      '        ON #tmpID.MemberID = Nominee.MemberID'
+      '    LEFT OUTER JOIN Member'
+      '        ON Nominee.MemberID = Member.MemberID'
       'WHERE Nominee.EventID = @EventID'
-      #9'AND #tmpID.MemberID IS NULL;'
+      '      AND #tmpID.MemberID IS NULL;'
       '')
     Left = 152
     Top = 216
@@ -539,7 +534,7 @@ object EntrantPicker: TEntrantPicker
               454E44AE426082}
           end>
       end>
-    Left = 360
-    Top = 312
+    Left = 472
+    Top = 176
   end
 end

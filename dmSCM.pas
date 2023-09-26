@@ -172,6 +172,9 @@ type
     qryTeamSplitTeamID: TIntegerField;
     qryTeamSplitSplitTime: TTimeField;
     qryTeamTeamName: TWideStringField;
+    qryTeamEntrantIsDisqualified: TBooleanField;
+    qryTeamEntrantIsScratched: TBooleanField;
+    qryTeamEntrantDisqualifyCodeID: TIntegerField;
     procedure DataModuleCreate(Sender: TObject);
     procedure qryEntrantAfterScroll(DataSet: TDataSet);
     procedure qryEntrantTIMEGetText(Sender: TField; var Text: string;
@@ -215,40 +218,40 @@ type
     fLastStrokeID: integer;
     fSCMActive: Boolean;
     fIsNewRecord: boolean;
-    fCurrEventType: TEventType;
+    fCurrEventType: scmEventType;
     { Private declarations }
     prefCheckUnNomination: integer;
     prefGenerateEventDescription: Boolean;
     prefGenerateEventDescStr: string;
   protected
     // Swimmers have MemberID's. Empty lanes excluded from TOT.
-    function ClearLane(aIndvTeamID: integer; aEventType: TEventType): integer;
+    function ClearLane(aIndvTeamID: integer; aEventType: scmEventType): integer;
     function ClearLanes(aHeatID: integer): integer;
     function CountHeatSwimmers(aHeatID: integer): integer;
     function CountLanes(aHeatID: integer): integer;
     function CountTeamSwimmers(aTeamID: integer): integer;
     function DeleteAllHeats(aEventID: integer): integer;
     function DeleteAllLanes(aHeatID: integer): integer;
-    function DeleteAllSplits(aIndvTeamID: integer; aEventType: TEventType): integer;
+    function DeleteAllSplits(aIndvTeamID: integer; aEventType: scmEventType): integer;
     function DeleteAllTeamEntrants(aTeamID: integer): integer;
     function DeleteEvent(aEventID: integer): integer;
     function DeleteHeat(aHeatID: integer): integer;
-    function DeleteLane(aIndvTeamID: integer; aEventType: TEventType): integer;
+    function DeleteLane(aIndvTeamID: integer; aEventType: scmEventType): integer;
     function DeleteSession(aSessionID: integer): integer;
-    function DeleteSplit(aSplitID: integer; aEventType: TEventType): integer;
+    function DeleteSplit(aSplitID: integer; aEventType: scmEventType): integer;
     function FirstLaneNum(aHeatID: integer): integer;
-    function GetEventType(aEventID: integer): TEventType; // RTN TEventType
-    function HeatStatusID(aIndvTeamID: integer; aEventType: TEventType): integer;
+    function GetEventType(aEventID: integer): scmEventType; // RTN TEventType
+    function HeatStatusID(aIndvTeamID: integer; aEventType: scmEventType): integer;
     function InsertEmptyLane(aHeatID: integer): integer;
     function InsertEmptyLanes(aHeatID: integer): integer;
     function LastLaneNum(aHeatID: integer): integer;
-    function LocateLane(aIndvTeamID: integer; aEventType: TEventType): boolean;
+    function LocateLane(aIndvTeamID: integer; aEventType: scmEventType): boolean;
     function PadLanes(aHeatID: integer): integer;
     function RenumberEvents(aSessionID: integer; DoLocate: Boolean = true): integer;
     function RenumberHeats(aEventID: integer; DoLocate: Boolean = true): integer;
     function RenumberLanes(aHeatID: integer): integer;
     function RepairLanes(aHeatID: integer): integer;
-    function SessionIsLocked(aIndvTeamID: integer; aEventType: TEventType): Boolean;
+    function SessionIsLocked(aIndvTeamID: integer; aEventType: scmEventType): Boolean;
     procedure WndProc(var wndMsg: TMessage); virtual;
   public
     { Public declarations }
@@ -276,7 +279,7 @@ type
     function Event_SetEventStatusID(aEventID, aEventStatusID: integer): Boolean;
     {        H E A T S .       }
     function Heat_EventID(aHeatID: integer): integer;
-    function Heat_EventType(aHeatID: integer): TEventType;
+    function Heat_EventType(aHeatID: integer): scmEventType;
     function Heat_EventTypeID(aHeatID: integer): integer;
     function Heat_HeatStatusID(aHeatID: integer): integer;
     function Heat_ID(): integer; // current heat
@@ -288,7 +291,6 @@ type
     function Heat_PrevID(aHeatID: integer): integer; // uses HeatNum
     function Heat_SessionIsLocked(aHeatID: integer): Boolean;
     procedure Heat_ToggleStatus(); // current heat
-    procedure Heat_UpdateStatusBar();
     function IsFirstRecord(ADataSet: TDataSet): Boolean;
     function IsLastRecord(ADataSet: TDataSet): Boolean;
     // MEMBER
@@ -346,6 +348,7 @@ type
     // TEAM ENTRANT
     function TeamEntrant_HeatStatusID(aTeamEntrantID: integer): integer;
     function TeamEntrant_Locate(aTeamEntrantID: integer): Boolean;
+    function TeamEntrant_LastLaneNum(aTeamID: integer): integer;
     function TeamEntrant_MoveDownLane(ADataSet: TDataSet): Boolean;
     function TeamEntrant_MoveUpLane(ADataSet: TDataSet): Boolean;
     function TeamEntrant_SessionIsLocked(aTeamEntrantID: integer): Boolean;
@@ -358,7 +361,7 @@ type
     property CheckNomination: integer read prefCheckUnNomination
       write prefCheckUnNomination;
     property SCMActive: Boolean read fSCMActive write fSCMActive;
-    property CurrEventType: TEventType read fCurrEventType;
+    property CurrEventType: scmEventType read fCurrEventType;
 
   end;
 
@@ -479,7 +482,7 @@ begin
   end;
 end;
 
-function TSCM.ClearLane(aIndvTeamID: integer; aEventType: TEventType): integer;
+function TSCM.ClearLane(aIndvTeamID: integer; aEventType: scmEventType): integer;
 var
   tbl: TFDTable;
   SearchOptions: TLocateOptions;
@@ -558,7 +561,7 @@ end;
 function TSCM.ClearLanes(aHeatID: integer): integer;
 var
   qry: TFDQuery;
-  aEventType: TEventType;
+  aEventType: scmEventType;
   aIndvTeamID: Integer;
 begin
   result := 0;
@@ -601,7 +604,7 @@ function TSCM.CountHeatSwimmers(aHeatID: integer): integer;
 var
   SQL: string;
   v: variant;
-  aEventType: TEventType;
+  aEventType: scmEventType;
 begin
   result := 0;
   if not fSCMActive then exit;
@@ -627,7 +630,7 @@ function TSCM.CountLanes(aHeatID: integer): integer;
 var
   SQL: string;
   v: variant;
-  aEventType: TEventType;
+  aEventType: scmEventType;
 begin
   result := 0;
   if not fSCMActive then exit;
@@ -749,7 +752,7 @@ function TSCM.DeleteAllLanes(aHeatID: integer): integer;
 var
   qry: TFDQuery;
   rows, aIndvTeamID: integer;
-  aEventType: TEventType;
+  aEventType: scmEventType;
 begin
   result := 0;
   rows := 0;
@@ -788,7 +791,7 @@ begin
 end;
 
 function TSCM.DeleteAllSplits(aIndvTeamID: integer;
-  aEventType: TEventType): integer;
+  aEventType: scmEventType): integer;
 var
   SQL: string;
 begin
@@ -857,7 +860,7 @@ begin
   dsHeat.DataSet.EnableControls();
 end;
 
-function TSCM.DeleteLane(aIndvTeamID: integer; aEventType: TEventType): integer;
+function TSCM.DeleteLane(aIndvTeamID: integer; aEventType: scmEventType): integer;
 var
   SQL: string;
 begin
@@ -922,7 +925,7 @@ begin
   dsSession.DataSet.EnableControls;
 end;
 
-function TSCM.DeleteSplit(aSplitID: integer; aEventType: TEventType): integer;
+function TSCM.DeleteSplit(aSplitID: integer; aEventType: scmEventType): integer;
 var
   SQL: string;
   v: variant;
@@ -996,7 +999,7 @@ end;
 
 
 
-function TSCM.GetEventType(aEventID: integer): TEventType;
+function TSCM.GetEventType(aEventID: integer): scmEventType;
 var
   v: variant;
   SQL: string;
@@ -1285,7 +1288,7 @@ function TSCM.FirstLaneNum(aHeatID: integer): integer;
 var
   SQL: string;
   v: variant;
-  aEventType: TEventType;
+  aEventType: scmEventType;
 begin
   result := 0;
   if not fSCMActive then exit;
@@ -1303,7 +1306,7 @@ begin
 end;
 
 function TSCM.HeatStatusID(aIndvTeamID: integer;
-  aEventType: TEventType): integer;
+  aEventType: scmEventType): integer;
 var
   SQL: string;
   v: variant;
@@ -1343,7 +1346,7 @@ begin
 
 end;
 
-function TSCM.Heat_EventType(aHeatID: integer): TEventType;
+function TSCM.Heat_EventType(aHeatID: integer): scmEventType;
 begin
   case Heat_EventTypeID(aHeatID) of
     1: result := etINDV;
@@ -1570,16 +1573,11 @@ begin
   end;
 end;
 
-procedure TSCM.Heat_UpdateStatusBar;
-begin
-
-end;
-
 function TSCM.InsertEmptyLane(aHeatID: integer): integer;
 var
   aLaneNum: integer;
   tbl: TFDTable;
-  aEventType: TEventType;
+  aEventType: scmEventType;
 begin
     result := 0;
     if not fSCMActive then exit;
@@ -1699,7 +1697,7 @@ function TSCM.LastLaneNum(aHeatID: integer): integer;
 var
   SQL: string;
   v: variant;
-  aEventType: TEventType;
+  aEventType: scmEventType;
 begin
   result := 0;
   if not fSCMActive then exit;
@@ -1716,7 +1714,7 @@ begin
   if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
 end;
 
-function TSCM.LocateLane(aIndvTeamID: integer; aEventType: TEventType): Boolean;
+function TSCM.LocateLane(aIndvTeamID: integer; aEventType: scmEventType): Boolean;
 var
   SearchOptions: TLocateOptions;
 begin
@@ -2546,7 +2544,7 @@ function TSCM.RenumberLanes(aHeatID: integer): integer;
 var
   SQL: string;
   qry: TFDQuery;
-  aEventType: TEventType;
+  aEventType: scmEventType;
   i, lane, NumOfPoolLanes: integer;
 begin
   result := 0;
@@ -2626,7 +2624,7 @@ function TSCM.RepairLanes(aHeatID: integer): integer;
 var
   SQL: string;
   qry: TFDQuery;
-  aEventType: TEventType;
+  aEventType: scmEventType;
   i, lane, NumOfPoolLanes, aIndvTeamID: integer;
 begin
   result := 0;
@@ -2743,7 +2741,7 @@ begin
 end;
 
 function TSCM.SessionIsLocked(aIndvTeamID: integer;
-  aEventType: TEventType): Boolean;
+  aEventType: scmEventType): Boolean;
 var
   SQL: string;
   v: variant;
@@ -3184,6 +3182,21 @@ begin
     v := scmConnection.ExecSQLScalar(SQL, [aTeamEntrantID]);
     if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
   end;
+end;
+
+function TSCM.TeamEntrant_LastLaneNum(aTeamID: integer): integer;
+var
+  SQL: string;
+  v: variant;
+begin
+  result := 0;
+  if not fSCMActive then exit;
+  if aTeamID = 0 then exit;
+  SQL := 'SELECT MAX(Lane) FROM SwimClubMeet.dbo.TeamEntrant ' +
+  'INNER JOIN Team ON TeamEntrant.TeamID = Team.TeamID '+
+  'WHERE Team.TeamID = :ID';
+  v := scmConnection.ExecSQLScalar(SQL, [aTeamID]);
+  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
 end;
 
 function TSCM.TeamEntrant_Locate(aTeamEntrantID: integer): Boolean;

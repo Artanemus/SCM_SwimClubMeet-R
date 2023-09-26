@@ -673,7 +673,7 @@ end;
 procedure TMain.IndvTeam_EmptyLaneExecute(Sender: TObject);
 var
   rtnValue, rows: integer;
-  aEventType: TEventType;
+  aEventType: scmEventType;
 begin
   rtnValue := MessageDlg('Empty the lane?', mtConfirmation, [mbNo, mbYes],
     0, mbYes);
@@ -701,7 +701,7 @@ end;
 procedure TMain.IndvTeam_EmptyLaneUpdate(Sender: TObject);
 var
   DoEnable: boolean;
-  aEventType: TEventType;
+  aEventType: scmEventType;
 begin
   DoEnable := false;
   if AssertConnection then
@@ -767,7 +767,7 @@ end;
 
 procedure TMain.Entrant_MoveDownExecute(Sender: TObject);
 var
-aEventType: TEventType;
+aEventType: scmEventType;
 begin
   aEventType := SCM.CurrEventType;
   if aEventType = etINDV then
@@ -779,7 +779,7 @@ end;
 procedure TMain.Entrant_MoveDownUpdate(Sender: TObject);
 var
   DoEnable: boolean;
-  aEventType: TEventType;
+  aEventType: scmEventType;
 begin
   DoEnable := false;
   if AssertConnection then
@@ -809,7 +809,7 @@ end;
 
 procedure TMain.Entrant_MoveUpExecute(Sender: TObject);
 var
-aEventType: TEventType;
+aEventType: scmEventType;
 begin
   aEventType := SCM.CurrEventType;
   if aEventType = etINDV then INDV.GridMoveUp(Sender)
@@ -819,7 +819,7 @@ end;
 procedure TMain.Entrant_MoveUpUpdate(Sender: TObject);
 var
   DoEnable: boolean;
-  aEventType: TEventType;
+  aEventType: scmEventType;
 begin
   DoEnable := false;
   if AssertConnection then
@@ -848,7 +848,7 @@ end;
 procedure TMain.INDV_Scroll(var Msg: TMessage);
 var
   fld: TField;
-  aEventType: TEventType;
+  aEventType: scmEventType;
 begin
   // messaged by TSCM.qryMemberQuickPickAfterScroll
   // messaged by TSCM.qryHeatAfterScroll
@@ -897,7 +897,7 @@ end;
 procedure TMain.IndvTeam_StrikeExecute(Sender: TObject);
 var
   rtnValue: integer;
-  aEventType: TEventType;
+  aEventType: scmEventType;
 begin
   // ...Update traps illegal calls.
   rtnValue := MessageDlg('Remove nomination and empty the lane.?',
@@ -913,7 +913,7 @@ end;
 procedure TMain.IndvTeam_StrikeUpdate(Sender: TObject);
 var
   DoEnable: boolean;
-  aEventType: TEventType;
+  aEventType: scmEventType;
 begin
   DoEnable := false;
   if AssertConnection then
@@ -947,7 +947,7 @@ end;
 procedure TMain.Entrant_SwapLanesExecute(Sender: TObject);
 var
   dlg: TSwapLanes;
-  aEventType: TEventType;
+  aEventType: scmEventType;
 begin
   aEventType := SCM.CurrEventType;
   if aEventType = etINDV then
@@ -1564,7 +1564,7 @@ end;
 procedure TMain.Event_Scroll(var Msg: TMessage);
 var
   EnabledState: boolean;
-  aEventType: TEventType;
+  aEventType: scmEventType;
 begin
 
   if not AssertConnection then
@@ -2520,7 +2520,7 @@ procedure TMain.Heat_DeleteExecute(Sender: TObject);
 var
   mr: TModalResult;
   aHeatID: integer;
-  aEventType: TEventType;
+  aEventType: scmEventType;
 begin
   // actn.Update dictates if this routine is accessable.
   aEventType := SCM.CurrEventType;
@@ -3488,7 +3488,7 @@ procedure TMain.Refresh_IndvTeam(DoBookmark: boolean = true; DoRenumber: boolean
 var
   bm: TBookmark;
   aHeatID, aIndvTeamID: integer;
-  aEventType: TEventType;
+  aEventType: scmEventType;
 begin
   if not AssertConnection then
     exit;
@@ -4320,7 +4320,7 @@ end;
 procedure TMain.TeamEntrant_Scroll(var Msg: TMessage);
 var
   fld: TField;
-  aEventType: TEventType;
+  aEventType: scmEventType;
 begin
   // messaged by TSCM.qryMemberQuickPickAfterScroll
   // messaged by TSCM.qryTeamEntrantAfterScroll
@@ -4413,7 +4413,7 @@ end;
 
 procedure TMain.ToggleVisibileTabSheet3;
 var
-aEventType: TEventType;
+aEventType: scmEventType;
 begin
   {
   --------------------------------------------------------------
