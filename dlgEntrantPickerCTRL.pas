@@ -272,6 +272,7 @@ begin
   qryQuickPickCtrl.ParamByName('BOTTOMPERCENT').AsFloat :=
     double(prefRaceTimeTopPercent);
   qryQuickPickCtrl.ParamByName('EVENTTYPE').AsInteger := ord(aEventType);
+
   qryQuickPickCtrl.Prepare();
   qryQuickPickCtrl.Open();
   if (qryQuickPickCtrl.Active) then
@@ -306,6 +307,7 @@ begin
       .AsDateTime;
     FDCommandUpdateEntrant.ParamByName('EVENTTYPE').AsInteger :=
       ord(fEventType);
+    FDCommandUpdateEntrant.ParamByName('ID').AsInteger :=  fID;
 
     FDCommandUpdateEntrant.Prepare;
     FDCommandUpdateEntrant.Execute;

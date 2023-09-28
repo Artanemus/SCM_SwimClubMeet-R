@@ -28,10 +28,8 @@ object EntrantPickerCTRL: TEntrantPickerCTRL
     ParentBackground = False
     TabOrder = 0
     StyleElements = [seFont, seBorder]
-    ExplicitLeft = 640
-    ExplicitTop = 200
-    ExplicitWidth = 185
-    ExplicitHeight = 41
+    ExplicitWidth = 818
+    ExplicitHeight = 701
     DesignSize = (
       822
       702)
@@ -459,9 +457,9 @@ object EntrantPickerCTRL: TEntrantPickerCTRL
       '      ,[RaceTime] = NULL'
       '      ,[TimeToBeat] = @TTB'
       '      ,[PersonalBest] = @PB'
-      '      --,[DisqualifyCodeID] = NULL'
-      '      --,[IsDisqualified] = 0'
-      '      --,[IsScratched] = 0'
+      '      ,[DisqualifyCodeID] = NULL'
+      '      ,[IsDisqualified] = 0'
+      '      ,[IsScratched] = 0'
       ' WHERE TeamEntrantID = @ID;'
       ' END')
     ParamData = <

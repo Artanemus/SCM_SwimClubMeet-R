@@ -33,6 +33,9 @@ type
     fFrameBgColor: TColor;
     // ASSERT CONNECTION TO MSSQL DATABASE
     function AssertConnection(): boolean;
+    function TeamEntrantPadLanes(aHeatID: integer;
+  DoExclude: Boolean = true): integer;
+    function TeamEntrantInsertLane(): integer;
 
   public
     fDoStatusBarUpdate: boolean; // FLAG ACTION - SCM_StatusBar.Enabled
@@ -364,9 +367,11 @@ begin
     begin
       SCM.dsTeam.DataSet.Refresh;
       SCM.IndvTeam_LocateLane(TeamID, etTeam);
-      // reveal TeamEntrant GRID
+      // AUTO CREATE 4xTeamEntrants
+
     end;
   end;
+
 
   SCM.dsTeam.DataSet.EnableControls;
   // S T A T U S B A R .
@@ -397,22 +402,24 @@ var
   dlg: TEntrantPicker;
   dlgCntrl: TEntrantPickerCTRL;
   // dlgDCode: TDCodePicker;
-  TeamEntrantID, aTeamID: Integer;
+  aTeamEntrantID, aTeamID, Lane, rows: Integer;
   rtnValue: TModalResult;
   fld: TField;
   v: variant;
   CTRLPress: smallint;
-
+  SQL: string;
 begin
   if not AssertConnection then exit;
   rtnValue := mrCancel;
-  SCM.dsTeamEntrant.DataSet.DisableControls;
+  aTeamEntrantID := 0; // redundant assignment - not needed in PASCAL
 
-  CTRLPress := (GetKeyState(VK_CONTROL) and 128); // grab keyboard state
+  CTRLPress := (GetKeyState(VK_CONTROL) and 128); // grab the keyboard state
   fld := TDBGrid(Sender).SelectedField; // only using field : 'fullname'
   if SCM.dsTeam.DataSet.Active and not SCM.dsTeam.DataSet.FieldByName('TeamID').IsNull
   then aTeamID := SCM.dsTeam.DataSet.FieldByName('TeamID').AsInteger
   else aTeamID := 0;
+
+  SCM.dsTeamEntrant.DataSet.DisableControls;
 
   { // CODE STUB - TO BE IMPLIMENTED IN LATER VERSIONS ...
     if fld.FieldName = 'DCode' then
@@ -431,6 +438,7 @@ begin
     end;
     end
   }
+
   // handle the ellipse entrant
   if (fld.FieldName = 'FullName') and (aTeamID <> 0) then
   begin
@@ -439,35 +447,40 @@ begin
     begin
       if IsEmpty or FieldByName('TeamEntrantID').IsNull then
       begin
-        Insert;
-        Post;
-        FieldByName('HeatID').AsInteger := aTeamID;
-        if IsEmpty then FieldByName('Lane').AsInteger := 1
-        else
+        if IsEmpty then Lane := 1
+        else Lane := SCM.TeamEntrant_LastLaneNum(aTeamID) + 1;
+        SQL := 'INSERT INTO [SwimClubMeet].[dbo].[TeamEntrant] ' +
+              '( [Lane],[IsDisqualified],[IsScratched],[TeamID]) ' +
+              'VALUES ( :ID1,0,0,:ID2)';
+        rows := SCM.scmConnection.ExecSQL(SQL, [Lane, aTeamID]);
+        if rows > 0 then
         begin
-          FieldByName('Lane').AsInteger := SCM.TeamEntrant_LastLaneNum
-            (aTeamID) + 1;
+          // return IDENTITY;
+          SQL := 'SELECT IDENT_CURRENT(''dbo.TeamEntrant'') AS aID';
+          v := SCM.scmConnection.ExecSQLScalar(SQL);
+          if not VarIsNull(v) and not VarIsEmpty(v) then
+          begin
+            aTeamEntrantID := v;
+            SCM.TeamEntrant_Locate(aTeamEntrantID);
+          end;
         end;
-        FieldByName('IsDisqualified').AsBoolean := false;
-        FieldByName('IsScratched').AsBoolean := false;
-      end;
+      end
+      else
+        aTeamEntrantID := FieldByName('TeamEntrantID').AsInteger;
     end;
-    // CHECK IDENTITY before handling ellipse.
-    v := SCM.dsTeamEntrant.DataSet.FieldByName('TeamEntrantID').AsVariant;
-    if not VarIsNull(v) and not VarIsempty(v) and (v <> 0) then
+    if aTeamEntrantID <> 0  then
     begin
-      TeamEntrantID := v; // valid
       if (CTRLPress = 128) then
       begin
         dlgCntrl := TEntrantPickerCTRL.Create(self);
-        passed := dlgCntrl.Prepare(SCM.scmConnection, TeamEntrantID, etTeam);
+        passed := dlgCntrl.Prepare(SCM.scmConnection, aTeamEntrantID, etTeam);
         if passed then rtnValue := dlgCntrl.ShowModal;
         dlgCntrl.Free;
       end
       else
       begin
         dlg := TEntrantPicker.Create(self);
-        passed := dlg.Prepare(SCM.scmConnection, TeamEntrantID, etTeam);
+        passed := dlg.Prepare(SCM.scmConnection, aTeamEntrantID, etTeam);
         if passed then rtnValue := dlg.ShowModal;
         dlg.Free;
       end;
@@ -475,7 +488,7 @@ begin
       if passed and IsPositiveResult(rtnValue) then
       begin
         SCM.dsTeamEntrant.DataSet.Refresh;
-        SCM.TeamEntrant_Locate(TeamEntrantID);
+        SCM.TeamEntrant_Locate(aTeamEntrantID);
       end;
     end;
   end;
@@ -586,6 +599,51 @@ begin
     aTeamEntrantID := GridEntrant.DataSource.DataSet.FieldByName
       ('TeamEntrantID').AsInteger;
     result := SCM.TeamEntrant_Strike(aTeamEntrantID);
+  end;
+end;
+
+function TframeTEAM.TeamEntrantInsertLane(): integer;
+var
+lane, rows, aTeamID: integer;
+SQL: string;
+begin
+  with GridEntrant.DataSource.DataSet do
+  begin
+    if IsEmpty then Lane := 1
+    else
+    begin
+      aTeamID := Grid.DataSource.DataSet.FieldByName('TeamID').AsInteger;
+      Lane := SCM.TeamEntrant_LastLaneNum(aTeamID) + 1;
+    end;
+    SQL := 'INSERT INTO [SwimClubMeet].[dbo].[TeamEntrant] ' +
+          '( [Lane],[IsDisqualified],[IsScratched],[TeamID]) ' +
+          'VALUES ( :ID1,0,0,:ID2)';
+    rows := SCM.scmConnection.ExecSQL(SQL, [Lane, aTeamID]);
+  end;
+end;
+
+function TframeTEAM.TeamEntrantPadLanes(aHeatID: Integer;
+  DoExclude: boolean = true): Integer;
+var
+  i, relaySwimmers, aHeatStatusID, rows: Integer;
+begin
+  result := 0;
+  if not SCM.SCMActive then exit;
+  if aHeatID = 0 then exit;
+  if SCM.Heat_SessionIsLocked(aHeatID) then exit;
+  aHeatStatusID := SCM.Heat_HeatStatusID(aHeatID);
+  if (aHeatStatusID = 1) or (DoExclude = false) then
+  begin
+    relaySwimmers := GridEntrant.DataSource.DataSet.RecordCount;
+    if relaySwimmers < 4 then
+    begin
+      for i := relaySwimmers to 4 do
+      begin
+        rows := TeamEntrantInsertLane(); // returns rows modified
+        result := result + rows;
+      end;
+      GridEntrant.DataSource.DataSet.Refresh;
+    end;
   end;
 end;
 

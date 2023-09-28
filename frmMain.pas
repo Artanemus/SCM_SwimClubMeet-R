@@ -302,8 +302,12 @@ type
     lblMsgTab3: TLabel;
     lblMsgTab1: TLabel;
     FDMoniRemoteClientLink1: TFDMoniRemoteClientLink;
-    DBTxtEventTypeID: TDBText;
+    dbtxtDebugEventType: TDBText;
     Label3: TLabel;
+    Label4: TLabel;
+    dbtxtDebugTeam: TDBText;
+    Label5: TLabel;
+    dbtxtDebugTeamEntrant: TDBText;
     procedure ActionManager1Update(Action: TBasicAction; var Handled: boolean);
     procedure btnClearSearchClick(Sender: TObject);
     procedure clistCheckBoxClick(Sender: TObject);
@@ -1593,12 +1597,14 @@ begin
   begin
     if (TEAM.Grid.Enabled <> EnabledState) then
         TEAM.Grid.Enabled := EnabledState;
+
     // If TEAM.Grid isn't focused - TEAM.Panel2 may display as clWebTomatoe
     if TEAM.Grid.DataSource.DataSet.FieldByName('TeamNameID').IsNull then
     begin
       TEAM.Panel2.Color := fFrameBgColor;
       TEAM.GridEntrant.Visible := false;
-      if TEAM.Grid.Visible and TEAM.Grid.Enabled then TEAM.Grid.SetFocus;
+      if (PageControl1.ActivePageIndex = 2) and TEAM.Grid.Visible and TEAM.Grid.Enabled
+      then TEAM.Grid.SetFocus;
     end
     else TEAM.GridEntrant.Visible := true;
   end;
@@ -1923,6 +1929,9 @@ begin
   dbtxtDebugHeat.DataSource := SCM.dsHeat;
   dbtxtDebugMember.DataSource := SCM.dsEntrant;
   dbtxtDebugNominee.DataSource := SCM.dsNominee;
+  dbtxtDebugEventType.DataSource :=SCM.dsEvent;
+  dbtxtDebugTeam.DataSource := SCM.dsTeam;
+  dbtxtDebugTeamEntrant.DataSource := SCM.dsTeamEntrant;
   dbtxtEventCaption.DataSource := SCM.dsEvent;
   dbtxtNominateFullName.DataSource := SCM.dsNominateMembers;
   // LINK EVENT NAVIGATOR

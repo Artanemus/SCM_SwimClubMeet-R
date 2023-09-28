@@ -24,7 +24,7 @@ object EntrantPicker: TEntrantPicker
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 825
+    ExplicitWidth = 818
     ExplicitHeight = 701
     DesignSize = (
       822
@@ -235,11 +235,8 @@ object EntrantPicker: TEntrantPicker
       'SET @CalcDefault = :CALCDEFAULT'
       'SET @BottomPercent = :BOTTOMPERCENT'
       'SET @EventType = :EVENTTYPE'
+      'SET @DistanceID = :DISTANCEID'
       ''
-      'SET @DistanceID ='
-      '('
-      '    SELECT DistanceID FROM Event WHERE Event.EventID = @EventID'
-      ');'
       'SET @StrokeID ='
       '('
       '    SELECT StrokeID FROM Event WHERE Event.EventID = @EventID'
@@ -261,8 +258,6 @@ object EntrantPicker: TEntrantPicker
       'CREATE TABLE #tmpID'
       '('
       '    MemberID INT'
-      '  --,TeamEntrant.TeamEntrantID AS ID'
-      '  , EventID INT'
       ')'
       ''
       '-- Members given a swimming lane in the given event '
@@ -270,8 +265,6 @@ object EntrantPicker: TEntrantPicker
       'BEGIN'
       '    INSERT INTO #tmpID'
       '    SELECT Entrant.MemberID'
-      '         --,Entrant.EntrantID  AS ID'
-      '         , HeatIndividual.EventID'
       '    FROM [SwimClubMeet].[dbo].[HeatIndividual]'
       '        INNER JOIN Entrant'
       '            ON Entrant.HeatID = HeatIndividual.HeatID'
@@ -279,11 +272,8 @@ object EntrantPicker: TEntrantPicker
       'END'
       'ELSE'
       'BEGIN'
-      ''
       '    INSERT INTO #tmpID'
       '    SELECT TeamEntrant.MemberID'
-      '         --,TeamEntrant.TeamEntrantID AS ID'
-      '         , HeatIndividual.EventID'
       '    FROM [SwimClubMeet].[dbo].[HeatIndividual]'
       '        INNER JOIN Team'
       '            ON HeatIndividual.HeatID = Team.HeatID'
@@ -296,7 +286,6 @@ object EntrantPicker: TEntrantPicker
       'SELECT Nominee.EventID'
       '     , Nominee.MemberID'
       '     , Member.GenderID'
-      '     --,tmpID.ID'
       '     , dbo.SwimmerAge(@SessionStart, Member.DOB) AS AGE'
       '     , dbo.SwimmerGenderToString(Member.MemberID) AS Gender'
       
@@ -330,7 +319,7 @@ object EntrantPicker: TEntrantPicker
         Name = 'EVENTID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = 356
+        Value = 65
       end
       item
         Name = 'ALGORITHM'
@@ -358,6 +347,12 @@ object EntrantPicker: TEntrantPicker
       end
       item
         Name = 'EVENTTYPE'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = 1
+      end
+      item
+        Name = 'DISTANCEID'
         DataType = ftInteger
         ParamType = ptInput
         Value = 1
@@ -454,16 +449,16 @@ object EntrantPicker: TEntrantPicker
       '      ,[DisqualifyCodeID] = NULL'
       '   WHERE EntrantID = @ID;'
       'END '
-      'ELSE'
+      'ELSE IF (@EventType = 2)'
       'BEGIN'
       '   UPDATE [dbo].[TeamEntrant]'
       '   SET [MemberID] = @MemberID'
       '      ,[RaceTime] = NULL'
       '      ,[TimeToBeat] = @TTB'
       '      ,[PersonalBest] = @PB'
-      '--      ,[IsDisqualified] = 0'
-      '--      ,[IsScratched] = 0'
-      '--      ,[DisqualifyCodeID] = NULL'
+      '      ,[IsDisqualified] = 0'
+      '      ,[IsScratched] = 0'
+      '      ,[DisqualifyCodeID] = NULL'
       '   WHERE TeamEntrantID = @ID;'
       'END'
       ''

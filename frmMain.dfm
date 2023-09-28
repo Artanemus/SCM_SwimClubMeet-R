@@ -2194,9 +2194,9 @@ object Main: TMain
       end
     end
     object pnlDebugInfo: TPanel
-      Left = 413
+      Left = 349
       Top = 19
-      Width = 587
+      Width = 716
       Height = 43
       Anchors = []
       BevelOuter = bvNone
@@ -2279,14 +2279,14 @@ object Main: TMain
         Caption = 'Entrant'
       end
       object Label25: TLabel
-        Left = 482
+        Left = 599
         Top = 2
         Width = 59
         Height = 21
         Caption = 'Member'
       end
       object dbtxtDebugMember: TDBText
-        Left = 483
+        Left = 600
         Top = 21
         Width = 50
         Height = 20
@@ -2308,7 +2308,7 @@ object Main: TMain
         Alignment = taCenter
         DataField = 'NomineeID'
       end
-      object DBTxtEventTypeID: TDBText
+      object dbtxtDebugEventType: TDBText
         Left = 216
         Top = 21
         Width = 34
@@ -2320,9 +2320,39 @@ object Main: TMain
       object Label3: TLabel
         Left = 210
         Top = 2
-        Width = 47
+        Width = 48
         Height = 21
-        Caption = 'TypeID'
+        Caption = 'EvType'
+      end
+      object Label4: TLabel
+        Left = 477
+        Top = 2
+        Width = 36
+        Height = 21
+        Caption = 'Team'
+      end
+      object dbtxtDebugTeam: TDBText
+        Left = 479
+        Top = 21
+        Width = 50
+        Height = 20
+        Alignment = taCenter
+        DataField = 'TeamID'
+      end
+      object Label5: TLabel
+        Left = 535
+        Top = 2
+        Width = 58
+        Height = 21
+        Caption = 'TEntrant'
+      end
+      object dbtxtDebugTeamEntrant: TDBText
+        Left = 537
+        Top = 21
+        Width = 50
+        Height = 20
+        Alignment = taCenter
+        DataField = 'TeamEntrantID'
       end
     end
     object sbtnRefresh: TSpeedButton
