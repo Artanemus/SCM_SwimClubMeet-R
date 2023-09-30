@@ -345,6 +345,10 @@ type
     function SwimClub_StartOfSwimSeason(): TDateTime; overload;
     function SwimClub_StartOfSwimSeason(SwimClubID: integer)
       : TDateTime; overload;
+
+    // TEAM
+    function Team_Locate(aTeamID: integer): Boolean;
+
     // TEAM ENTRANT
     function TeamEntrant_HeatStatusID(aTeamEntrantID: integer): integer;
     function TeamEntrant_Locate(aTeamEntrantID: integer): Boolean;
@@ -1279,7 +1283,7 @@ begin
   if (aEventStatusID <> 1) or (aEventStatusID <> 2) then exit;
   SQL := 'UPDATE SwimClubMeet.dbo.Event SET [Event].[EventStatusID] = :ID1 ' +
     'WHERE [Event].[EventID] = :ID2';
-  v := scmConnection.ExecSQLScalar(SQL, [aEventStatusID, aEventID]);
+  v := scmConnection.ExecSQL(SQL, [aEventStatusID, aEventID]);
   if not VarIsNull(v) and not VarIsEmpty(v) then
     if (v > 0) then result := true;
 end;
@@ -3193,8 +3197,7 @@ begin
   if not fSCMActive then exit;
   if aTeamID = 0 then exit;
   SQL := 'SELECT MAX(Lane) FROM SwimClubMeet.dbo.TeamEntrant ' +
-  'INNER JOIN Team ON TeamEntrant.TeamID = Team.TeamID '+
-  'WHERE Team.TeamID = :ID';
+  'WHERE TeamEntrant.TeamID = :ID';
   v := scmConnection.ExecSQLScalar(SQL, [aTeamID]);
   if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
 end;
@@ -3272,6 +3275,18 @@ begin
     'WHERE [TeamSplit].[TeamSplitID] = :ID';
   v := scmConnection.ExecSQLScalar(SQL, [aTeamSplitID]);
   if not VarIsNull(v) and not VarIsEmpty(v) and (v = 2) then result := true;
+end;
+
+function TSCM.Team_Locate(aTeamID: integer): Boolean;
+var
+  SearchOptions: TLocateOptions;
+begin
+  result := false;
+  if not fSCMActive then exit;
+  if (aTeamID = 0) then exit;
+  SearchOptions := [];
+  if dsTeam.DataSet.Active then
+      result := dsTeam.DataSet.Locate('TeamID', aTeamID, SearchOptions);
 end;
 
 procedure TSCM.ToggleDCode(ADataSet: TDataSet; DoEnable: Boolean);

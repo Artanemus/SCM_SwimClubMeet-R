@@ -1,10 +1,11 @@
 object TeamNamePicker: TTeamNamePicker
   Left = 0
   Top = 0
+  BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Relay Team Picker'
-  ClientHeight = 292
-  ClientWidth = 222
+  ClientHeight = 280
+  ClientWidth = 167
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,9 +20,10 @@ object TeamNamePicker: TTeamNamePicker
   object Grid: TDBGrid
     Left = 0
     Top = 0
-    Width = 222
-    Height = 255
+    Width = 167
+    Height = 243
     Align = alClient
+    BorderStyle = bsNone
     DataSource = dsTeamNames
     Options = [dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
     TabOrder = 0
@@ -34,36 +36,28 @@ object TeamNamePicker: TTeamNamePicker
   end
   object RelativePanel1: TRelativePanel
     Left = 0
-    Top = 255
-    Width = 222
+    Top = 243
+    Width = 167
     Height = 37
     ControlCollection = <
       item
         Control = btnOk
         AlignBottomWithPanel = False
-        AlignHorizontalCenterWithPanel = False
-        AlignLeftWithPanel = True
-        AlignRightWithPanel = True
+        AlignHorizontalCenterWithPanel = True
+        AlignLeftWithPanel = False
+        AlignRightWithPanel = False
         AlignTopWithPanel = False
-        AlignVerticalCenterWithPanel = True
+        AlignVerticalCenterWithPanel = False
       end>
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 301
-    DesignSize = (
-      222
-      37)
+    ExplicitWidth = 214
     object btnOk: TButton
-      AlignWithMargins = True
-      Left = 4
-      Top = 3
-      Width = 214
+      Left = 32
+      Top = 5
+      Width = 103
       Height = 30
-      Margins.Left = 4
-      Margins.Top = 0
-      Margins.Right = 4
-      Anchors = []
       Caption = 'OK'
       TabOrder = 0
       OnClick = btnOkClick
@@ -132,8 +126,9 @@ object TeamNamePicker: TTeamNamePicker
       Visible = False
     end
     object qryTeamNamesstrTeamName: TWideStringField
+      Alignment = taCenter
       DisplayLabel = 'Relay Team Name'
-      DisplayWidth = 20
+      DisplayWidth = 14
       FieldName = 'strTeamName'
       Origin = 'strTeamName'
       Size = 64

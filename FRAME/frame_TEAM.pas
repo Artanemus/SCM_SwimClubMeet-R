@@ -6,7 +6,9 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Data.DB,
-  Vcl.Grids, Vcl.DBGrids, Vcl.Themes, dmSCM, SCMHelpers, SCMDefines;
+  Vcl.Grids, Vcl.DBGrids, Vcl.Themes, dmSCM, SCMHelpers, SCMDefines,
+  Vcl.BaseImageCollection, Vcl.ImageCollection, Vcl.StdCtrls, System.ImageList,
+  Vcl.ImgList, Vcl.VirtualImageList, Vcl.WinXCtrls, Vcl.Buttons;
 
 type
   TframeTEAM = class(TFrame)
@@ -15,6 +17,16 @@ type
     Panel2: TPanel;
     Grid: TDBGrid;
     GridEntrant: TDBGrid;
+    rpnlTeamEntrantTools: TRelativePanel;
+    imgcollTEAM: TImageCollection;
+    vimglistTEAM: TVirtualImageList;
+    spbtnTeamEntrantUp: TSpeedButton;
+    spbtnTeamEntrantDown: TSpeedButton;
+    spbtnTeamEntrantClear: TSpeedButton;
+    spbtnTeamEntrantStrike: TSpeedButton;
+    spbtnTeamEntrantAdd: TSpeedButton;
+    spbtnTeamEntrantRemove: TSpeedButton;
+    Panel3: TPanel;
     procedure GridCellClick(Column: TColumn);
     procedure GridColEnter(Sender: TObject);
     procedure GridColExit(Sender: TObject);
@@ -33,9 +45,10 @@ type
     fFrameBgColor: TColor;
     // ASSERT CONNECTION TO MSSQL DATABASE
     function AssertConnection(): boolean;
-    function TeamEntrantPadLanes(aHeatID: integer;
-  DoExclude: Boolean = true): integer;
-    function TeamEntrantInsertLane(): integer;
+    function TeamEntrantPadLanes(aTeamID: Integer): Integer;
+    function TeamEntrantInsertLane(aTeamID: integer): integer;
+    function EstimateRelayTTB(aTeamID: integer): integer;
+    function UpdateTeamTTB(aTeamID, milliseconds: integer): integer;
 
   public
     fDoStatusBarUpdate: boolean; // FLAG ACTION - SCM_StatusBar.Enabled
@@ -49,6 +62,8 @@ type
     function ClearLane(): Integer;
     function StrikeLane(): Integer;
     function RenumberLanes(): Integer;
+    procedure EventScroll();
+    procedure TeamScroll();
 
   end;
 
@@ -58,7 +73,7 @@ implementation
 
 { TframeTEAM }
 uses dlgEntrantPickerCTRL, dlgEntrantPicker, dlgDCodePicker, System.UITypes,
-  dlgTeamNameMenu, dmSCMHelper, dlgTeamNamePicker;
+  dlgTeamNameMenu, dmSCMHelper, dlgTeamNamePicker, DateUtils;
 
 procedure TframeTEAM.AfterConstruction;
 var
@@ -87,9 +102,9 @@ begin
   end;
 
   Panel1.Color := clWebTomato;
-  Panel2.Color := fFrameBgColor;
+  Panel3.Color := fFrameBgColor;
   Panel1.BorderWidth := 1;
-  Panel2.BorderWidth := 1;
+  Panel3.BorderWidth := 1;
 
   {
     When the Columns.State property of the grid is csDefault, grid columns
@@ -178,6 +193,41 @@ begin
       break;
     end;
   end;
+end;
+
+function TframeTEAM.EstimateRelayTTB(aTeamID: integer): integer;
+var
+SQL: string;
+v: variant;
+begin
+  // add the TTB of the TeamEntrants
+  result := 0;
+  SQL := 'SELECT SUM(dbo.SwimTimeToMilliseconds(TimeToBeat)) ' +
+  'FROM SwimClubMeet.dbo.TeamEntrant WHERE TeamEntrant.TeamID = :ID';
+  v := SCM.scmConnection.ExecSQLScalar(SQL, [aTeamID]);
+  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
+  begin
+//    v/(SecsPerDay*1000.0); // A is the number of milliseconds
+    result := v;
+  end;
+
+end;
+
+procedure TframeTEAM.EventScroll;
+begin
+    // If TEAM.Grid isn't focused - TEAM.Panel3 may display as clWebTomatoe
+    if Grid.DataSource.DataSet.FieldByName('TeamNameID').IsNull then
+    begin
+      Panel3.Color := fFrameBgColor;
+      GridEntrant.Visible := false;
+      rpnlTeamEntrantTools.Visible := false;
+    end
+    else
+    begin
+      GridEntrant.Visible := true;
+      rpnlTeamEntrantTools.Visible := true;
+    end;
+    if  Grid.CanFocus then Grid.SetFocus;
 end;
 
 procedure TframeTEAM.GridCellClick(Column: TColumn);
@@ -320,19 +370,18 @@ procedure TframeTEAM.GridEditButtonClick(Sender: TObject);
 var
   dlgDCode: TDCodePicker;
   dlgPickTeam: TTeamNamePicker;
-  TeamID: Integer;
+  aTeamID, rows, milliseconds: Integer;
   rtnValue: TModalResult;
   fld: TField;
   aRect: TRect;
   pt: TPoint;
+  TimeToBeatTOT: TDateTime;
+  SQL: string;
 begin
   if not AssertConnection then exit;
 
-  // if SCM.dsTeam.DataSet.FieldByName('TeamNameID').IsNull then
-  // exit;
-
-  SCM.dsTeam.DataSet.DisableControls;
-  TeamID := SCM.dsTeam.DataSet.FieldByName('TeamID').AsInteger;
+  Grid.DataSource.DataSet.DisableControls;
+  aTeamID := Grid.DataSource.DataSet.FieldByName('TeamID').AsInteger;
 
   // handle the ellipse button for the disqualification code
   { TODO -oBSA -cGeneral : DCode Team Specific }
@@ -340,13 +389,13 @@ begin
   if fld.FieldName = 'DCode' then
   begin
     dlgDCode := TDCodePicker.CreateWithConnection(self, SCM.scmConnection);
-    dlgDCode.TeamID := TeamID;
+    dlgDCode.TeamID := aTeamID;
     rtnValue := dlgDCode.ShowModal;
     dlgDCode.Free;
     if IsPositiveResult(rtnValue) then
     begin
-      SCM.dsTeam.DataSet.Refresh;
-      SCM.IndvTeam_LocateLane(TeamID, etTeam);
+      Grid.DataSource.DataSet.Refresh;
+      SCM.IndvTeam_LocateLane(aTeamID, etTeam);
     end;
   end
   // handle the ellipse entrant
@@ -354,7 +403,7 @@ begin
   begin
     // display the relay team 'name picker'.
     dlgPickTeam := TTeamNamePicker.Create(self);
-    dlgPickTeam.Prepare(SCM.scmConnection, TeamID);
+    dlgPickTeam.Prepare(SCM.scmConnection, aTeamID);
     dlgPickTeam.Position := poDesigned;
     pt := Mouse.CursorPos;
     aRect := TDBGrid(Sender).GetCellRect(pt);
@@ -365,10 +414,36 @@ begin
     // require a refresh to update members details
     if IsPositiveResult(rtnValue) then
     begin
-      SCM.dsTeam.DataSet.Refresh;
-      SCM.IndvTeam_LocateLane(TeamID, etTeam);
-      // AUTO CREATE 4xTeamEntrants
+      if GridEntrant.DataSource.DataSet.IsEmpty or
+        (GridEntrant.DataSource.DataSet.RecordCount < 4) then
+      begin
+        // we need team entrant slots - minimium 4xslots...
+        // AUTO CREATE 4xTeamEntrants
+        rows := TeamEntrantPadLanes(aTeamID);
+        if (rows > 0) then
+          GridEntrant.DataSource.DataSet.Refresh;
+      end;
+      // Estimate the TimeToBeat for the relay.
+      milliseconds := EstimateRelayTTB(aTeamID);
+      if milliseconds = 0 then
+      begin
+        // clear the timetobeat field
+        SQL := 'UPDATE SwimClubMeet.dbo.Team SET [Team].[TimeToBeat] = NULL ' +
+          'WHERE [Team].[TeamID] = :ID';
+        SCM.scmConnection.ExecSQL(SQL, [aTeamID]);
+      end
+      else
+      begin
+        TimeToBeatTOT := milliseconds / (24 * 60 * 60 * 1000);
+        SQL := 'UPDATE SwimClubMeet.dbo.Team SET [Team].[TimeToBeat] = ' +
+          ':ID1 WHERE [Team].[TeamID] = :ID2';
+        SCM.scmConnection.ExecSQL(SQL, [TimeToBeatTOT, aTeamID],
+          [ftDateTime, ftInteger]);
+        // UpdateTeamTTB(aTeamID, milliseconds);
+      end;
 
+      Grid.DataSource.DataSet.Refresh;
+      SCM.IndvTeam_LocateLane(aTeamID, etTeam);
     end;
   end;
 
@@ -381,13 +456,20 @@ end;
 procedure TframeTEAM.GridEnter(Sender: TObject);
 begin
   fTeamActiveGrid := 1;
-  Panel2.Color := fFrameBgColor;
+  Panel3.Color := fFrameBgColor;
   Panel1.Color := clWebTomato;
 
   // TOGGLE VISIBILITY OF THE TEAMENTRANT GRID
   if Grid.DataSource.DataSet.FieldByName('TeamNameID').IsNull then
-      GridEntrant.Visible := false
-  else GridEntrant.Visible := true;
+  begin
+      rpnlTeamEntrantTools.Visible := false;
+      GridEntrant.Visible := false;
+  end
+  else
+  begin
+    GridEntrant.Visible := true;
+    rpnlTeamEntrantTools.Visible := true;
+  end;
 
   // Ensure that correct editing options are applied on
   // first use. SelectedIndex defaults to the first column,
@@ -509,7 +591,7 @@ procedure TframeTEAM.GridEntrantEnter(Sender: TObject);
 begin
   fTeamActiveGrid := 2;
   Panel1.Color := fFrameBgColor;
-  Panel2.Color := clWebTomato;
+  Panel3.Color := clWebTomato;
 end;
 
 procedure TframeTEAM.GridMoveDown(Sender: TObject);
@@ -602,54 +684,93 @@ begin
   end;
 end;
 
-function TframeTEAM.TeamEntrantInsertLane(): integer;
+function TframeTEAM.TeamEntrantInsertLane(aTeamID: integer): integer;
 var
-lane, rows, aTeamID: integer;
+lane: integer;
 SQL: string;
-begin
-  with GridEntrant.DataSource.DataSet do
-  begin
-    if IsEmpty then Lane := 1
-    else
-    begin
-      aTeamID := Grid.DataSource.DataSet.FieldByName('TeamID').AsInteger;
-      Lane := SCM.TeamEntrant_LastLaneNum(aTeamID) + 1;
-    end;
-    SQL := 'INSERT INTO [SwimClubMeet].[dbo].[TeamEntrant] ' +
-          '( [Lane],[IsDisqualified],[IsScratched],[TeamID]) ' +
-          'VALUES ( :ID1,0,0,:ID2)';
-    rows := SCM.scmConnection.ExecSQL(SQL, [Lane, aTeamID]);
-  end;
-end;
-
-function TframeTEAM.TeamEntrantPadLanes(aHeatID: Integer;
-  DoExclude: boolean = true): Integer;
-var
-  i, relaySwimmers, aHeatStatusID, rows: Integer;
 begin
   result := 0;
   if not SCM.SCMActive then exit;
-  if aHeatID = 0 then exit;
-  if SCM.Heat_SessionIsLocked(aHeatID) then exit;
-  aHeatStatusID := SCM.Heat_HeatStatusID(aHeatID);
-  if (aHeatStatusID = 1) or (DoExclude = false) then
-  begin
-    relaySwimmers := GridEntrant.DataSource.DataSet.RecordCount;
-    if relaySwimmers < 4 then
+  if aTeamID = 0 then exit;
+  Lane := SCM.TeamEntrant_LastLaneNum(aTeamID) + 1;
+  SQL := 'INSERT INTO [SwimClubMeet].[dbo].[TeamEntrant] ' +
+          '( [Lane],[IsDisqualified],[IsScratched],[TeamID]) ' +
+          'VALUES ( :ID1,0,0,:ID2)';
+  result := SCM.scmConnection.ExecSQL(SQL, [Lane, aTeamID]);
+end;
+
+function TframeTEAM.TeamEntrantPadLanes(aTeamID: Integer): Integer;
+var
+  i, missingSlots, rows: Integer;
+begin
+  result := 0;
+  if not SCM.SCMActive then exit;
+  if aTeamID = 0 then exit;
+    // STANDARD: 4 entrant slots per relay team
+    missingSlots := 4 - GridEntrant.DataSource.DataSet.RecordCount;
+    if missingSlots > 0 then
     begin
-      for i := relaySwimmers to 4 do
+      for i := 1 to missingSlots do
       begin
-        rows := TeamEntrantInsertLane(); // returns rows modified
-        result := result + rows;
+        rows := TeamEntrantInsertLane(aTeamID); // rows modified
+        result := result + rows; // rows inserted.
       end;
-      GridEntrant.DataSource.DataSet.Refresh;
     end;
-  end;
+end;
+
+procedure TframeTEAM.TeamScroll;
+var
+  fld: TField;
+begin
+    if Grid.Focused then
+    begin
+      // After moving row re-engage editing for selected fields.
+      fld := Grid.SelectedField;
+      if Assigned(fld) then
+      begin
+        if (fld.FieldName = 'RaceTime') or (fld.FieldName = 'DCode') or
+          (fld.FieldName = 'TeamName') then Grid.EditorMode := true
+        else Grid.EditorMode := false;
+      end;
+    end;
+
+    // If TEAM.Grid isn't focused - TEAM.Panel3 may display as clWebTomatoe
+    if Grid.DataSource.DataSet.FieldByName('TeamNameID').IsNull then
+    begin
+      Panel3.Color := fFrameBgColor;
+      GridEntrant.Visible := false;
+      rpnlTeamEntrantTools.Visible := false;
+      if Grid.CanFocus then Grid.SetFocus;
+    end
+    else
+    begin
+      GridEntrant.Visible := true;
+      rpnlTeamEntrantTools.Visible := true;
+    end;
 end;
 
 procedure TframeTEAM.ToggleDCode(DoEnable: boolean);
 begin
   SCM.ToggleDCode(Grid.DataSource.DataSet, DoEnable);
+end;
+
+function TframeTEAM.UpdateTeamTTB(aTeamID, milliseconds: integer): integer;
+var
+dt: TDateTime;
+fld: TField;
+begin
+  SCM.Team_Locate(aTeamID);
+  dt := milliseconds / (24*60*60*1000);
+  with SCM.dsTeam.DataSet do
+  begin
+    fld := fields.FindField('TimeToBeat');
+    if Assigned(fld) and (fld.readonly = true) then  fld.readonly := false;
+    Edit;
+    FieldByName('TimeToBeat').AsDateTime := dt;
+    Post;
+    if Assigned(fld) then fld.readonly := false;
+    result := 1;
+  end;
 end;
 
 end.

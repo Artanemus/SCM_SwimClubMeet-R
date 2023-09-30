@@ -1345,19 +1345,81 @@ object Main: TMain
                 end
                 inherited Panel1: TPanel
                   Width = 1036
-                  ExplicitWidth = 1032
+                  ExplicitWidth = 1036
                   inherited Grid: TDBGrid
-                    Width = 1032
+                    Width = 1034
                   end
                 end
                 inherited Panel2: TPanel
                   Width = 1036
-                  Height = 112
-                  ExplicitWidth = 1032
+                  Height = 280
+                  ExplicitWidth = 1036
                   ExplicitHeight = 112
-                  inherited GridEntrant: TDBGrid
-                    Width = 1032
-                    Height = 108
+                  inherited rpnlTeamEntrantTools: TRelativePanel
+                    Height = 280
+                    ControlCollection = <
+                      item
+                        Control = TEAM.spbtnTeamEntrantUp
+                        AlignBottomWithPanel = False
+                        AlignHorizontalCenterWithPanel = True
+                        AlignLeftWithPanel = False
+                        AlignRightWithPanel = False
+                        AlignTopWithPanel = True
+                        AlignVerticalCenterWithPanel = False
+                      end
+                      item
+                        Control = TEAM.spbtnTeamEntrantDown
+                        AlignBottomWithPanel = False
+                        AlignHorizontalCenterWithPanel = True
+                        AlignLeftWithPanel = False
+                        AlignRightWithPanel = False
+                        AlignTopWithPanel = False
+                        AlignVerticalCenterWithPanel = False
+                        Below = TEAM.spbtnTeamEntrantUp
+                      end
+                      item
+                        Control = TEAM.spbtnTeamEntrantClear
+                        AlignBottomWithPanel = False
+                        AlignHorizontalCenterWithPanel = True
+                        AlignLeftWithPanel = False
+                        AlignRightWithPanel = False
+                        AlignTopWithPanel = False
+                        AlignVerticalCenterWithPanel = False
+                        Below = TEAM.spbtnTeamEntrantDown
+                      end
+                      item
+                        Control = TEAM.spbtnTeamEntrantStrike
+                        AlignBottomWithPanel = False
+                        AlignHorizontalCenterWithPanel = True
+                        AlignLeftWithPanel = False
+                        AlignRightWithPanel = False
+                        AlignTopWithPanel = False
+                        AlignVerticalCenterWithPanel = False
+                        Below = TEAM.spbtnTeamEntrantClear
+                      end
+                      item
+                        Control = TEAM.spbtnTeamEntrantAdd
+                        AlignBottomWithPanel = False
+                        AlignHorizontalCenterWithPanel = True
+                        AlignLeftWithPanel = False
+                        AlignRightWithPanel = False
+                        AlignTopWithPanel = False
+                        AlignVerticalCenterWithPanel = False
+                        Below = TEAM.spbtnTeamEntrantStrike
+                      end
+                      item
+                        Control = TEAM.spbtnTeamEntrantRemove
+                        AlignBottomWithPanel = False
+                        AlignHorizontalCenterWithPanel = True
+                        AlignLeftWithPanel = False
+                        AlignRightWithPanel = False
+                        AlignTopWithPanel = False
+                        AlignVerticalCenterWithPanel = False
+                        Below = TEAM.spbtnTeamEntrantAdd
+                      end>
+                  end
+                  inherited Panel3: TPanel
+                    Height = 280
                   end
                 end
               end
@@ -3911,17 +3973,18 @@ object Main: TMain
           item
             Image.Data = {
               89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
-              87000000017352474200AECE1CE90000012A494441546843ED96D10902311044
-              E72AD052EC40ED442BD34ED40E2C453B9085048EE0B197DD0C22CC815FB9ACF3
-              E679F126FCF935FD797E08E0D706654006920DE827942C30BD5D06D2152607C8
-              40B2C0F476194857981C20034E81DBB2FE4A16BDB89D69C0C2DFCA371F015020
-              580035FCAE003C01502018006DF8AA9F02311A60293C0D6224C0B7F0E792FC32
-              7B0A879A1805B014FE5A829F005020460078E16BF914882CC0DAF034880C406F
-              780A4414201A7E384404201B7E284404E00E603F3B16EDA8ACA74DEF2B4FFB60
-              3F001C7A864400ECF5C020360032E15B13EF12DEFE27565F11001B6E10F68936
-              DF06341316BC2BBC0D8902AC6E887DA300D80D7BF365C06B88BD2E03EC86BDF9
-              32E035C45E970176C3DE7C19F01A62AFCB00BB616FBE0C780DB1D73FEEF03A31
-              C9C0DEC00000000049454E44AE426082}
+              87000000017352474200AECE1CE900000159494441546843ED96A14EC4501045
+              CFFE230B09981518040283C02C090281412030080C0234683C5FC127EC0F10D2
+              A44DC866FB76A63337A4C954CFBB73CFBDAF4D17CCFC59CCDC3F05F0DF0D5603
+              D5403081BA42C100C3C7AB81708441816A201860F87835108E3028A06E60D9FB
+              7B0BFA1C3DAE04E8CCBFF69B0F0109840AE0AFF9213D09840260977919443640
+              CBBC042213C0623E1D220BC0633E152203A065FE06F801D623DFC1F08B1D0568
+              99BF05AE7AE3D72A880840CBFC1D70B995BA04622A40CBFC3D70317265D221A6
+              00B4CC3F00E77B7E1B5221BC002DF38FC099F19F270DC203D032FF049C1ACD0F
+              6329101E806EF12E886760E5343F06B1018E810FAB9E17601BE20538B12EDBF3
+              627FF7417C7AF4A6000C1007C091675963B6BB4EEFC097576F2A80778F6CBE00
+              64D11A85AB016350B2B16A4016AD51B81A3006251BAB0664D11A85AB016350B2
+              B16A4016AD5178F60DFC02594B3631AFDA775A0000000049454E44AE426082}
           end>
       end
       item
@@ -3930,18 +3993,20 @@ object Main: TMain
           item
             Image.Data = {
               89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
-              87000000017352474200AECE1CE90000013D494441546843ED967D0DC24014C3
-              3B05200109A0802005074842020E400212908004F2925DB28CAF5DDB0B5978F7
-              D708BCAEBF76DCADC3CC573773FF48805F37980D64036202F9088901CAE3D980
-              1CA128900D8801CAE3D9801CA128F0B70D2C01AC005CC500CB7868DD182DA681
-              307FEE0176068875AF7702B0AF8560002E00B6FD8DEE001488623E428975AC85
-              6000E2A601B11021C6E6432E1A0888C98B01087115C2623E8CB0000A84CDBC0A
-              C04058CD3B006A20ECE65D0053209A987702BC83D80028E746D92AA9DDE6DDB6
-              A4FC895F698E77A738A9E3946D62DEDD40011A430C41ABF7F96F0782BB814F10
-              76F3AD1A1843C4E743ED09FB2DF9F27DAB06861071ED7A6B7DE26A0D303548FA
-              77094047671ACC064C41D232D9001D9D69301B300549CB64037474A6C16CC014
-              242D930DD0D19906B3015390B4CC0330B83731714756500000000049454E44AE
-              426082}
+              87000000017352474200AECE1CE90000018E494441546843ED97AD4EC44010C7
+              7FF73AF03A403008040681C020107C08040681C02010282C8237E0053078341E
+              45C8243749D3DC76673B3B214DA6A6496FF6FFB9DDBB5BB1F06BB570FDA481FF
+              6E301BC8069C09E4167206E85E9E0DB82374026403CE00DDCBB30177844E80B9
+              0D6C013BC0B5935F97EF02AFC04F2BDE1C0322FE05D806CE819B56D2D1BC8817
+              BC37E000F86EC16B353014AF3C67C06D0BE96056C5EBA377601FF8B2E2B518D8
+              245E794E813B2BE97A6E2C5E977F007BC0A705AFC580E05D021705E013E0DE42
+              0A94C42BC7951167D63FB22913C7C043857C4ABC08177CF3D5DA80024F993802
+              1E0B0ABA8A178EB9066ADBE910782A9C369BBC3527AF201E03351372243E575E
+              58F978B6786F0396ED2447E2EFFA9CEF9A7CAF062C264A2FA42BF9DE066ADB69
+              6CA28BF85E5B68286EEA74D2B96EE2230CD49AE82A3ECA40C94477F19106C626
+              42C4471B5013C3BBF9278275D0FB4566E5099B4B0361D11A81B30163506163D9
+              4058B446E06CC01854D858361016AD11381B30061536960D84456B045E7C037F
+              8C743731F58E463E0000000049454E44AE426082}
           end>
       end
       item
