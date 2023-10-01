@@ -300,17 +300,17 @@ begin
     FDCommandUpdateEntrant.Connection := FConnection;
     FDCommandUpdateEntrant.ParamByName('MEMBERID').AsInteger :=
       FieldByName('MemberID').AsInteger;
-    FDCommandUpdateEntrant.ParamByName('ENTRANTID').AsInteger := fID;
+    FDCommandUpdateEntrant.ParamByName('ID').AsInteger := fID;
     FDCommandUpdateEntrant.ParamByName('TTB').AsTime := FieldByName('TTB')
       .AsDateTime;
     FDCommandUpdateEntrant.ParamByName('PB').AsTime := FieldByName('PB')
       .AsDateTime;
     FDCommandUpdateEntrant.ParamByName('EVENTTYPE').AsInteger :=
       ord(fEventType);
-    FDCommandUpdateEntrant.ParamByName('ID').AsInteger :=  fID;
 
     FDCommandUpdateEntrant.Prepare;
     FDCommandUpdateEntrant.Execute;
+    result := true;
   end;
 end;
 

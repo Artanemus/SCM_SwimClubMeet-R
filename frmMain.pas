@@ -308,7 +308,10 @@ type
     dbtxtDebugTeam: TDBText;
     Label5: TLabel;
     dbtxtDebugTeamEntrant: TDBText;
+    actnClearSlot: TAction;
     procedure ActionManager1Update(Action: TBasicAction; var Handled: boolean);
+    procedure actnClearSlotExecute(Sender: TObject);
+    procedure actnClearSlotUpdate(Sender: TObject);
     procedure btnClearSearchClick(Sender: TObject);
     procedure clistCheckBoxClick(Sender: TObject);
     procedure IndvTeam_EmptyLaneExecute(Sender: TObject);
@@ -548,6 +551,57 @@ begin
   end;
 end;
 
+procedure TMain.actnClearSlotExecute(Sender: TObject);
+var
+  rtnValue, rows: integer;
+  aEventType: scmEventType;
+begin
+  aEventType := SCM.CurrEventType;
+  if aEventType = etUnknown then exit;
+  rtnValue := MessageDlg('Clear the team entrant?', mtConfirmation, [mbNo, mbYes], 0, mbYes);
+  if (rtnValue = mrYes) then
+  begin
+    rows := TEAM.ClearSlot;
+    if rows > 0 then
+    begin
+      // S T A T U S B A R . Update entrant totals and any other UI elements
+      fDoStatusBarUpdate := true; // permits TACTION StatusBarUpdate
+      SCM_StatusBar.Execute;
+    end;
+  end;
+end;
+
+procedure TMain.actnClearSlotUpdate(Sender: TObject);
+var
+  DoEnable: boolean;
+  aEventType: scmEventType;
+begin
+  DoEnable := false;
+  if AssertConnection then
+    // Checks if session is Empty. Then checks if locked..
+    if not SCM.Session_IsLocked then
+      // are there any heats?
+      if not SCM.dsHeat.DataSet.IsEmpty then
+        // is the current heat closed?
+        if not SCM.Heat_IsClosed then
+        begin
+          aEventType := SCM.CurrEventType;
+          if aEventType = etTEAM then
+          begin
+            if not SCM.dsTeam.DataSet.IsEmpty then
+            begin
+              if not SCM.dsTeamEntrant.DataSet.IsEmpty then
+              begin
+              // Need a relay in a lane to be able to clear it....
+              if not SCM.dsTeamEntrant.DataSet.FieldByName('MemberID').IsNull then
+                DoEnable := true;
+              end;
+            end;
+          end;
+        end;
+  TAction(Sender).Enabled := DoEnable;
+end;
+
 function TMain.AssertConnection: boolean;
 begin
   result := false;
@@ -678,27 +732,25 @@ procedure TMain.IndvTeam_EmptyLaneExecute(Sender: TObject);
 var
   rtnValue, rows: integer;
   aEventType: scmEventType;
+  Msg: string;
 begin
-  rtnValue := MessageDlg('Empty the lane?', mtConfirmation, [mbNo, mbYes],
-    0, mbYes);
+  aEventType := SCM.CurrEventType;
+  if aEventType = etUnknown then exit;
+  if aEventType = etINDV then Msg := 'Empty the lane.?'
+  else Msg := 'Clear the relay team and entrants.?';
+
+  rtnValue := MessageDlg(Msg, mtConfirmation, [mbNo, mbYes], 0, mbYes);
 
   if (rtnValue = mrYes) then
   begin
-    aEventType := SCM.CurrEventType;
-    if aEventType = etINDV then
-      rows := INDV.ClearLane
-    else if aEventType = etTEAM then
-      rows := TEAM.ClearLane
-    else
-    exit;
-
+    if aEventType = etINDV then rows := INDV.ClearLane
+    else rows := TEAM.ClearLane;
     if rows > 0 then
     begin
       // S T A T U S B A R . Update entrant totals and any other UI elements
       fDoStatusBarUpdate := true; // permits TACTION StatusBarUpdate
       SCM_StatusBar.Execute;
     end;
-
   end;
 end;
 
@@ -902,16 +954,15 @@ procedure TMain.IndvTeam_StrikeExecute(Sender: TObject);
 var
   rtnValue: integer;
   aEventType: scmEventType;
+  Msg: string;
 begin
-  // ...Update traps illegal calls.
-  rtnValue := MessageDlg('Remove nomination and empty the lane.?',
-    mtConfirmation, [mbNo, mbYes], 0, mbYes);
+  aEventType := SCM.CurrEventType;
+  if aEventType = etUnknown then exit;
+  if aEventType = etINDV then Msg := 'Remove nomination and empty the lane.?'
+  else Msg := 'Remove nominations and clear the relay team and entrants.?';
+  rtnValue := MessageDlg(Msg, mtConfirmation, [mbNo, mbYes], 0, mbYes);
   if (rtnValue = mrYes) then
-  begin
-    aEventType := SCM.CurrEventType;
-    if aEventType = etINDV then INDV.StrikeLane
-    else if aEventType = etTEAM then TEAM.StrikeLane;
-  end;
+    if aEventType = etINDV then INDV.StrikeLane else TEAM.StrikeLane;
 end;
 
 procedure TMain.IndvTeam_StrikeUpdate(Sender: TObject);
@@ -1226,8 +1277,8 @@ begin
 
   if (rtnValue = mrYes) then
   begin
-    SCM.Event_Delete(SCM.Event_ID, false); // delete the current selected event.
-    Refresh_Event;
+    SCM.Event_Delete(SCM.Event_ID); // delete the current selected event.
+    Refresh_Event(false); //don't bookmark
     ToggleVisibileTabSheet1;
   end;
 end;
@@ -3534,13 +3585,19 @@ begin
   with SCM.dsEvent.DataSet do
   begin
     DisableControls;
-    if Active and not IsEmpty then bm := GetBookmark;
+    if Active and not IsEmpty then
+    begin
+      if DoBookMark then bm := GetBookmark;
+    end;
     Close;
     Open;
     if Active then
     begin
       try
-        if Assigned(bm) then GotoBookmark(bm);
+        if Assigned(bm) then
+        begin
+          if DoBookMark then GotoBookmark(bm);
+        end;
       except
         on E: Exception do
       end;

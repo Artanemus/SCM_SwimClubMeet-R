@@ -116,7 +116,7 @@ begin
   if result > 0 then
   begin
       Grid.DataSource.DataSet.Refresh;
-      SCM.IndvTeam_LocateLane(aEntrantID, etTeam);
+      SCM.IndvTeam_LocateLane(aEntrantID, etINDV);
   end;
   if Grid.CanFocus then Grid.SetFocus;
 end;
@@ -565,9 +565,15 @@ function TframeINDV.StrikeLane: integer;
 var
 aEntrantID: integer;
 begin
+  Grid.EditorMode := false;
   aEntrantID := Grid.DataSource.DataSet.FieldByName('EntrantID').AsInteger;
   result := SCM.IndvTeam_StrikeLane(aEntrantID, etINDV);
-  if Grid.CanFocus then Grid.SetFocus;
+  if result > 0 then
+  begin
+    Grid.DataSource.DataSet.Refresh;
+    SCM.IndvTeam_LocateLane(aEntrantID, etTeam);
+    if Grid.CanFocus then Grid.SetFocus;
+  end;
 end;
 
 procedure TframeINDV.ToggleDCode(DoEnable: boolean);

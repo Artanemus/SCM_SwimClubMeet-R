@@ -3,8 +3,8 @@ object EntrantPickerCTRL: TEntrantPickerCTRL
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Quick-Pick from Active Members ,,,'
-  ClientHeight = 702
-  ClientWidth = 822
+  ClientHeight = 701
+  ClientWidth = 818
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,8 +19,8 @@ object EntrantPickerCTRL: TEntrantPickerCTRL
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 822
-    Height = 702
+    Width = 818
+    Height = 701
     Align = alClient
     BevelOuter = bvNone
     Caption = 'Panel1'
@@ -28,11 +28,9 @@ object EntrantPickerCTRL: TEntrantPickerCTRL
     ParentBackground = False
     TabOrder = 0
     StyleElements = [seFont, seBorder]
-    ExplicitWidth = 818
-    ExplicitHeight = 701
     DesignSize = (
-      822
-      702)
+      818
+      701)
     object VirtualImage1: TVirtualImage
       Left = 8
       Top = 8
@@ -77,7 +75,7 @@ object EntrantPickerCTRL: TEntrantPickerCTRL
       Left = 8
       Top = 53
       Width = 697
-      Height = 641
+      Height = 640
       Anchors = [akLeft, akTop, akBottom]
       DataSource = dsQuickPickCtrl
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
@@ -433,10 +431,10 @@ object EntrantPickerCTRL: TEntrantPickerCTRL
       'DECLARE @EventType AS INT;'
       ''
       'SET @MemberID = :MEMBERID;'
-      'SET @ID = :ENTRANTID;'
+      'SET @ID = :ID;'
       'SET @TTB = :TTB;'
       'SET @PB = :PB;'
-      'SET @EventType = :EVENTYPE;'
+      'SET @EventType = :EVENTTYPE;'
       ''
       'IF @EventType = 1'
       'BEGIN'
@@ -470,7 +468,7 @@ object EntrantPickerCTRL: TEntrantPickerCTRL
         Value = Null
       end
       item
-        Name = 'ENTRANTID'
+        Name = 'ID'
         DataType = ftInteger
         ParamType = ptInput
         Value = Null
@@ -488,8 +486,10 @@ object EntrantPickerCTRL: TEntrantPickerCTRL
         Value = Null
       end
       item
-        Name = 'EVENTYPE'
+        Name = 'EVENTTYPE'
+        DataType = ftInteger
         ParamType = ptInput
+        Value = 1
       end>
     Left = 152
     Top = 128

@@ -64,6 +64,7 @@ type
     function RenumberLanes(): Integer;
     procedure EventScroll();
     procedure TeamScroll();
+    function ClearSlot(): integer;
 
   end;
 
@@ -143,6 +144,7 @@ begin
   if fTeamActiveGrid = 1 then
   begin
     aTeamID := Grid.DataSource.DataSet.FieldByName('TeamID').AsInteger;
+    Grid.EditorMode := false;
     result := SCM.IndvTeam_ClearLane(aTeamID, etTeam, true);
     if result > 0 then
     begin
@@ -156,6 +158,16 @@ begin
       ('TeamEntrantID').AsInteger;
     result := SCM.TeamEntrant_Clear(aTeamEntrantID);
   end;
+end;
+
+function TframeTEAM.ClearSlot: integer;
+var
+aTeamEntrantID: integer;
+begin
+  result := 0;
+  aTeamEntrantID := SCM.dsTeamEntrant.DataSet.FieldByName('TeamEntrantID').AsInteger;
+  if aTeamEntrantID>0 then
+    result := SCM.TeamEntrant_Clear(aTeamEntrantID);
 end;
 
 procedure TframeTEAM.Enable_GridEllipse;
@@ -672,9 +684,16 @@ begin
   result := 0;
   if fTeamActiveGrid = 1 then
   begin
+    Grid.EditorMode := false;
+    // remove nominees
     aTeamID := Grid.DataSource.DataSet.FieldByName('TeamID').AsInteger;
-    result := SCM.IndvTeam_StrikeLane(aTeamID, etINDV);
-    if Grid.CanFocus then Grid.SetFocus;
+    result := SCM.IndvTeam_StrikeLane(aTeamID, etTEAM);
+    if result > 0 then
+    begin
+      Grid.DataSource.DataSet.Refresh;
+      SCM.IndvTeam_LocateLane(aTeamID, etTeam);
+      if Grid.CanFocus then Grid.SetFocus;
+    end;
   end
   else if fTeamActiveGrid = 2 then
   begin

@@ -25,8 +25,6 @@ object Main: TMain
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 1410
-    ExplicitHeight = 797
     object PageControl1: TPageControl
       Left = 0
       Top = 0
@@ -38,8 +36,6 @@ object Main: TMain
       TabOrder = 0
       OnChange = PageControl1Change
       OnChanging = PageControl1Changing
-      ExplicitWidth = 1410
-      ExplicitHeight = 797
       object TabSheet1: TTabSheet
         Caption = 'Session'
         object pnlSessionLeft: TPanel
@@ -1071,8 +1067,6 @@ object Main: TMain
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitWidth = 1402
-          ExplicitHeight = 758
           object HeatRightPanel: TPanel
             Left = 282
             Top = 127
@@ -1085,8 +1079,6 @@ object Main: TMain
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 1
-            ExplicitWidth = 1120
-            ExplicitHeight = 631
             object pnlRight: TPanel
               Left = 1036
               Top = 0
@@ -1297,8 +1289,6 @@ object Main: TMain
               Align = alClient
               BevelOuter = bvNone
               TabOrder = 1
-              ExplicitWidth = 1032
-              ExplicitHeight = 631
               inline INDV: TframeINDV
                 Left = 0
                 Top = 455
@@ -1336,7 +1326,7 @@ object Main: TMain
                 Font.Style = []
                 ParentFont = False
                 TabOrder = 1
-                ExplicitWidth = 1032
+                ExplicitWidth = 1036
                 ExplicitHeight = 439
                 inherited Splitter1: TSplitter
                   Width = 1036
@@ -1345,18 +1335,18 @@ object Main: TMain
                 end
                 inherited Panel1: TPanel
                   Width = 1036
-                  ExplicitWidth = 1036
+                  ExplicitWidth = 1032
                   inherited Grid: TDBGrid
                     Width = 1034
                   end
                 end
                 inherited Panel2: TPanel
                   Width = 1036
-                  Height = 280
-                  ExplicitWidth = 1036
-                  ExplicitHeight = 112
+                  Height = 120
+                  ExplicitWidth = 1032
+                  ExplicitHeight = 120
                   inherited rpnlTeamEntrantTools: TRelativePanel
-                    Height = 280
+                    Height = 120
                     ControlCollection = <
                       item
                         Control = TEAM.spbtnTeamEntrantUp
@@ -1417,9 +1407,17 @@ object Main: TMain
                         AlignVerticalCenterWithPanel = False
                         Below = TEAM.spbtnTeamEntrantAdd
                       end>
+                    ExplicitHeight = 120
+                    inherited spbtnTeamEntrantClear: TSpeedButton
+                      Action = actnClearSlot
+                    end
                   end
                   inherited Panel3: TPanel
-                    Height = 280
+                    Height = 120
+                    ExplicitHeight = 120
+                    inherited GridEntrant: TDBGrid
+                      Height = 118
+                    end
                   end
                 end
               end
@@ -3448,6 +3446,14 @@ object Main: TMain
       Category = 'SCM'
       OnExecute = SCM_StatusBarExecute
       OnUpdate = SCM_StatusBarUpdate
+    end
+    object actnClearSlot: TAction
+      Caption = 'Clear Slot'
+      Hint = 'Clear team entrant from slot.'
+      ImageIndex = 19
+      ImageName = 'Delete'
+      OnExecute = actnClearSlotExecute
+      OnUpdate = actnClearSlotUpdate
     end
   end
   object pumHeat: TPopupMenu

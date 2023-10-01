@@ -227,6 +227,8 @@ type
     // Swimmers have MemberID's. Empty lanes excluded from TOT.
     function ClearLane(aIndvTeamID: integer; aEventType: scmEventType): integer;
     function ClearLanes(aHeatID: integer): integer;
+    function ClearSlot(aTeamEntrantID: integer): integer;
+    function StrikeSlot(aTeamEntrantID: integer): integer;
     function CountHeatSwimmers(aHeatID: integer): integer;
     function CountLanes(aHeatID: integer): integer;
     function CountTeamSwimmers(aTeamID: integer): integer;
@@ -253,6 +255,8 @@ type
     function RepairLanes(aHeatID: integer): integer;
     function SessionIsLocked(aIndvTeamID: integer; aEventType: scmEventType): Boolean;
     procedure WndProc(var wndMsg: TMessage); virtual;
+    function DeleteNomination(aMemberID, aEventID: integer): integer;
+
   public
     { Public declarations }
     procedure ActivateTable();
@@ -511,6 +515,8 @@ begin
       success := tbl.Locate('EntrantID', aIndvTeamID, SearchOptions);
       if (success) then
       begin
+        { TODO -oBSA -cGeneral : TEST - CLEAR SPLIT TIMES }
+        DeleteAllSplits(aIndvTeamID, aEventType);
         tbl.Edit;
         tbl.FieldByName('MemberID').Clear;
         tbl.FieldByName('DisqualifyCodeID').Clear;
@@ -520,8 +526,6 @@ begin
         tbl.FieldByName('IsDisqualified').AsBoolean := false;
         tbl.FieldByName('IsScratched').AsBoolean := false;
         tbl.Post;
-        { TODO -oBSA -cGeneral : TEST - CLEAR SPLIT TIMES }
-        DeleteAllSplits(aIndvTeamID, aEventType);
         result := 1;
       end;
     end;
@@ -543,6 +547,8 @@ begin
       success := tbl.Locate('TeamID', aIndvTeamID, SearchOptions);
       if (success) then // found record
       begin
+        DeleteAllTeamEntrants(aIndvTeamID); // remove Team Entrants.
+        DeleteAllSplits(aIndvTeamID, aEventType); // remove Split times.
         tbl.Edit;
         tbl.FieldByName('TeamNameID').Clear;
         tbl.FieldByName('DisqualifyCodeID').Clear;
@@ -551,8 +557,6 @@ begin
         tbl.FieldByName('IsDisqualified').AsBoolean := false;
         tbl.FieldByName('IsScratched').AsBoolean := false;
         tbl.Post;
-        DeleteAllTeamEntrants(aIndvTeamID); // remove Team Entrants.
-        DeleteAllSplits(aIndvTeamID, aEventType); // remove Split times.
         result := 1;
       end;
     end;
@@ -602,6 +606,55 @@ begin
   end;
   qry.Close;
   qry.Free;
+end;
+
+function TSCM.ClearSlot(aTeamEntrantID: integer): integer;
+var
+SQL: string;
+v: variant;
+begin
+  result := 0;
+  if not fSCMActive then exit;
+  if aTeamEntrantID = 0 then exit;
+  SQL := 'UPDATE SwimClubMeet.dbo.TeamEntrant ' +
+  'SET MemberID = NULL, RaceTime = NULL, PersonalBest = NULL,  ' +
+  'IsDisqualified = 0, IsScratched = 0, DiqualifyCodeID = NULL ' +
+  'WHERE TeamEntrantID = :ID';
+  v := scmConnection.ExecSQL(SQL, [aTeamEntrantID]);
+  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
+end;
+
+function TSCM.StrikeSlot(aTeamEntrantID: integer): integer;
+var
+  SQL: string;
+  v: variant;
+  aEventID, aMemberID: integer;
+begin
+  result := 0;
+  if not fSCMActive then exit;
+  if aTeamEntrantID = 0 then exit;
+  // FIND the MemberID
+  SQL := 'SELECT MemberID FROM SwimClubMeet.dbo.TeamEntrant ' +
+  'WHERE TeamEntrantID = :ID';
+  v := scmConnection.ExecSQLscalar(SQL, [aTeamEntrantID]);
+  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
+  begin
+    aMemberID := v;
+    // FIND the EventID
+    SQL := 'SELECT [HeatIndividual].EventID FROM SwimClubMeet.dbo.TeamEntrant ' +
+    'INNER JOIN Team ON TeamEntrantID.TeamID = Team.TeamID ' +
+    'INNER JOIN HeatIndividual ON Team.HeatID = HeatIndividual.HeatID ' +
+    'WHERE TeamEntrantID = :ID';
+    v := scmConnection.ExecSQLscalar(SQL, [aTeamEntrantID]);
+    if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
+    begin
+      aEventID := v;
+      // CLEAR TEAMENTRANT
+      ClearSlot(aTeamEntrantID);
+      // REMOVE NOMINATION
+      result := DeleteNomination(aMemberID, aEventID);
+    end;
+  end;
 end;
 
 function TSCM.CountHeatSwimmers(aHeatID: integer): integer;
@@ -893,6 +946,22 @@ begin
     result := scmConnection.ExecSQL(SQL, [aIndvTeamID]);
     dsTeam.DataSet.EnableControls;
   end;
+end;
+
+function TSCM.DeleteNomination(aMemberID, aEventID: integer): integer;
+var
+  SQL: string;
+  rows: integer;
+begin
+  result := 0;
+  if not SCMActive then exit;
+  // FINALLY DELETE Nomination..
+  dsNominee.DataSet.DisableControls;
+  SQL := 'DELETE FROM SwimClubMeet.[dbo].[Nominee] ' +
+    'WHERE MemberID = :MemberID AND EventID = :EventID;';
+  rows := scmConnection.ExecSQL(SQL, [aMemberID, aEventID]);
+  dsNominee.DataSet.EnableControls;
+  if (rows > 0) then result := rows;
 end;
 
 function TSCM.DeleteSession(aSessionID: integer): integer;
@@ -1344,7 +1413,7 @@ begin
   if not fSCMActive then exit;
   if aHeatID = 0 then exit;
   SQL := 'SELECT EventID FROM SwimClubMeet.dbo.HeatIndividual ' +
-    'WHERE HeatID := :ID';
+    'WHERE HeatID = :ID';
   v := scmConnection.ExecSQLScalar(SQL, [aHeatID]);
   if not VarIsNull(v) or not VarIsEmpty(v) then result := v;
 
