@@ -28,6 +28,8 @@ object EntrantPickerCTRL: TEntrantPickerCTRL
     ParentBackground = False
     TabOrder = 0
     StyleElements = [seFont, seBorder]
+    ExplicitWidth = 814
+    ExplicitHeight = 700
     DesignSize = (
       818
       701)
@@ -230,14 +232,18 @@ object EntrantPickerCTRL: TEntrantPickerCTRL
       'SET @EventID = :EVENTID;'
       'SET @Algorithm = :ALGORITHM;'
       'SET @ToggleName = :TOGGLENAME;'
-      'SET @CalcDefault = :CALCDEFAULT'
-      'SET @BottomPercent = :BOTTOMPERCENT'
-      'SET @EventType = :EVENTTYPE'
+      'SET @CalcDefault = :CALCDEFAULT;'
+      'SET @BottomPercent = :BOTTOMPERCENT;'
+      'SET @EventType = :EVENTTYPE;'
+      'SET @DistanceID = :DISTANCEID;'
       ''
+      '/*'
       'SET @DistanceID ='
       '('
       '    SELECT DistanceID FROM Event WHERE Event.EventID = @EventID'
       ');'
+      '*/'
+      ''
       'SET @StrokeID ='
       '('
       '    SELECT StrokeID FROM Event WHERE Event.EventID = @EventID'
@@ -326,7 +332,9 @@ object EntrantPickerCTRL: TEntrantPickerCTRL
       '    LEFT OUTER JOIN #tmpID'
       '        ON #tmpID.MemberID = Member.MemberID'
       'WHERE #tmpID.MemberID IS NULL'
-      '      AND Member.IsActive = 1')
+      
+        '      AND Member.IsActive = 1 AND Member.IsSwimmer = 1 AND NOT M' +
+        'ember.IsArchived = 1')
     Left = 136
     Top = 272
     ParamData = <
@@ -365,6 +373,12 @@ object EntrantPickerCTRL: TEntrantPickerCTRL
         DataType = ftInteger
         ParamType = ptInput
         Value = 1
+      end
+      item
+        Name = 'DISTANCEID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = Null
       end>
     object qryQuickPickCtrlFName: TWideStringField
       DisplayLabel = 'Member'#39's Name'

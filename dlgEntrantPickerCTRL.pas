@@ -59,6 +59,9 @@ type
     function UpdateEntrantData(): boolean;
     function LocateMemberID(AMemberID: Integer; ADataSet: TDataSet): boolean;
     procedure UpdateGridTitleBar(ColumnID: Integer);
+    function NormalizeDistanceID(aDistanceID: integer): integer;
+    function GetEventDistanceID(aEventID: integer): integer;
+
 
   public
     { Public declarations }
@@ -195,6 +198,20 @@ begin
   if (Key = VK_ESCAPE) then ModalResult := mrCancel;
 end;
 
+function TEntrantPickerCTRL.GetEventDistanceID(aEventID: integer): integer;
+var
+SQL: string;
+v: variant;
+begin
+  result := 0;
+  if not AssertConnection(FConnection) then exit;
+  SQL := 'SELECT [DistanceID] FROM [SwimClubMeet].[dbo].[Event] '
+  + 'WHERE [Event].[EventID] = :ID';
+  v := FConnection.ExecSQLScalar(SQL, [aEventID]);
+  if VarIsNull(v) or VarIsEmpty(v) or (v = 0) then exit;
+  result := v;
+end;
+
 function TEntrantPickerCTRL.LocateMemberID(AMemberID: Integer;
   ADataSet: TDataSet): boolean;
 var
@@ -235,10 +252,55 @@ begin
   end;
 end;
 
+function TEntrantPickerCTRL.NormalizeDistanceID(aDistanceID: integer): integer;
+var
+  tbl: TFDTable;
+  SearchOptions: TLocateOptions;
+  foundit: Boolean;
+  meters, aEventTypeID: integer;
+begin
+  result := 0; // Flags - failed to normalize.
+  if not Assigned(fConnection) then exit;
+  tbl := TFDTable.Create(self);
+  tbl.TableName := 'SwimClubMeet..Distance';
+  tbl.Connection := FConnection;
+  tbl.IndexFieldNames := 'DistanceID';
+  tbl.UpdateOptions.ReadOnly := true;
+  tbl.Open;
+  if tbl.Active then
+  Begin
+    // locate the
+    foundit := tbl.Locate('DistanceID', aDistanceID, SearchOptions);
+    if foundit then
+    begin
+      meters := tbl.FieldByName('Meters').AsInteger;
+      aEventTypeID := tbl.FieldByName('EventTypeID').AsInteger;
+      if aEventTypeID = 1 then // INDV EVENT
+          result := aDistanceID
+      else if aEventTypeID = 2 then // TEAM EVENT
+      Begin
+        // Total meters divided by number of swimmers.
+        // It's ASSUMED that relays have 4 swimmer (Olympic Standard).
+        meters := (meters div 4);
+        // XReference : The distance swum by each swimmer in the relay.
+        // Result is the ID of a INDV event.
+        foundit := tbl.Locate('Meters; EventTypeID', VarArrayOf([meters, 1]),
+          SearchOptions);
+        // This normalized distance is required/used by scalar
+        // functions dbo.TTB and dbo.PB
+        if foundit then result := tbl.FieldByName('DistanceID').AsInteger;
+      End;
+    end;
+  End;
+  tbl.Close;
+  tbl.Free;
+end;
+
 function TEntrantPickerCTRL.Prepare(AConnection: TFDConnection;
   AEntrantID: Integer; aEventType: scmEventType): boolean;
 var
   SQL, rtnstr: string;
+  aNormalizedDistanceID, aDistanceID: Integer;
 begin
   result := false;
   if not AssertConnection(AConnection) then exit;
@@ -262,6 +324,12 @@ begin
   fEventID := StrToIntDef(rtnstr, 0);
   if (fEventID = 0) then exit;
 
+  // 20231008 With TEAM Events eg.4x25M Relay
+  // the 100M siatnce must be normalized to
+  aDistanceID := GetEventDistanceID(fEventID);
+  // this is used by scalar functions dbo.TTB and dbo.PB.
+  aNormalizedDistanceID := NormalizeDistanceID(aDistanceID);
+
   // ASSIGN CRITICAL PARAMS
   qryQuickPickCtrl.Connection := AConnection;
   qryQuickPickCtrl.ParamByName('EVENTID').AsInteger := fEventID;
@@ -272,6 +340,7 @@ begin
   qryQuickPickCtrl.ParamByName('BOTTOMPERCENT').AsFloat :=
     double(prefRaceTimeTopPercent);
   qryQuickPickCtrl.ParamByName('EVENTTYPE').AsInteger := ord(aEventType);
+  qryQuickPickCtrl.ParamByName('DISTANCEID').AsInteger := aNormalizedDistanceID;
 
   qryQuickPickCtrl.Prepare();
   qryQuickPickCtrl.Open();

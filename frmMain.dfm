@@ -1177,7 +1177,7 @@ object Main: TMain
                   Width = 48
                   Height = 48
                   Hint = 'Move DOWN the lane.'
-                  Action = Entrant_MoveDown
+                  Action = Grid_MoveDown
                   Anchors = []
                   Images = VirtualImageList1
                   Flat = True
@@ -1190,7 +1190,7 @@ object Main: TMain
                   Top = 144
                   Width = 48
                   Height = 48
-                  Action = IndvTeam_EmptyLane
+                  Action = Grid_EmptyLane
                   Anchors = []
                   Images = VirtualImageList1
                   Flat = True
@@ -1203,7 +1203,7 @@ object Main: TMain
                   Top = 192
                   Width = 48
                   Height = 48
-                  Action = IndvTeam_Strike
+                  Action = Grid_Strike
                   Anchors = []
                   Images = VirtualImageList1
                   Flat = True
@@ -1216,7 +1216,7 @@ object Main: TMain
                   Top = 96
                   Width = 48
                   Height = 48
-                  Action = Entrant_SwapLanes
+                  Action = Grid_SwapLanes
                   Anchors = []
                   Images = VirtualImageList1
                   Flat = True
@@ -1230,7 +1230,7 @@ object Main: TMain
                   Width = 48
                   Height = 48
                   Hint = 'Move UP the lane.'
-                  Action = Entrant_MoveUp
+                  Action = Grid_MoveUp
                   Anchors = []
                   Images = VirtualImageList1
                   Flat = True
@@ -1254,7 +1254,7 @@ object Main: TMain
                   Margin = 0
                   NumGlyphs = 2
                   Visible = False
-                  OnClick = IndvTeam_RenumberExecute
+                  OnClick = Grid_RenumberExecute
                 end
                 object lblMsgTab3: TLabel
                   AlignWithMargins = True
@@ -1342,14 +1342,14 @@ object Main: TMain
                 end
                 inherited Panel2: TPanel
                   Width = 1036
-                  Height = 120
+                  Height = 128
                   ExplicitWidth = 1032
-                  ExplicitHeight = 120
+                  ExplicitHeight = 128
                   inherited rpnlTeamEntrantTools: TRelativePanel
-                    Height = 120
+                    Height = 128
                     ControlCollection = <
                       item
-                        Control = TEAM.spbtnTeamEntrantUp
+                        Control = TEAM.spbtnMoveUpSlot
                         AlignBottomWithPanel = False
                         AlignHorizontalCenterWithPanel = True
                         AlignLeftWithPanel = False
@@ -1358,14 +1358,14 @@ object Main: TMain
                         AlignVerticalCenterWithPanel = False
                       end
                       item
-                        Control = TEAM.spbtnTeamEntrantDown
+                        Control = TEAM.spbtnMoveDownSlot
                         AlignBottomWithPanel = False
                         AlignHorizontalCenterWithPanel = True
                         AlignLeftWithPanel = False
                         AlignRightWithPanel = False
                         AlignTopWithPanel = False
                         AlignVerticalCenterWithPanel = False
-                        Below = TEAM.spbtnTeamEntrantUp
+                        Below = TEAM.spbtnMoveUpSlot
                       end
                       item
                         Control = TEAM.spbtnTeamEntrantClear
@@ -1375,7 +1375,7 @@ object Main: TMain
                         AlignRightWithPanel = False
                         AlignTopWithPanel = False
                         AlignVerticalCenterWithPanel = False
-                        Below = TEAM.spbtnTeamEntrantDown
+                        Below = TEAM.spbtnMoveDownSlot
                       end
                       item
                         Control = TEAM.spbtnTeamEntrantStrike
@@ -1388,7 +1388,7 @@ object Main: TMain
                         Below = TEAM.spbtnTeamEntrantClear
                       end
                       item
-                        Control = TEAM.spbtnTeamEntrantAdd
+                        Control = TEAM.spbtnAddSlot
                         AlignBottomWithPanel = False
                         AlignHorizontalCenterWithPanel = True
                         AlignLeftWithPanel = False
@@ -1398,25 +1398,43 @@ object Main: TMain
                         Below = TEAM.spbtnTeamEntrantStrike
                       end
                       item
-                        Control = TEAM.spbtnTeamEntrantRemove
+                        Control = TEAM.spbtnRemoveSlot
                         AlignBottomWithPanel = False
                         AlignHorizontalCenterWithPanel = True
                         AlignLeftWithPanel = False
                         AlignRightWithPanel = False
                         AlignTopWithPanel = False
                         AlignVerticalCenterWithPanel = False
-                        Below = TEAM.spbtnTeamEntrantAdd
+                        Below = TEAM.spbtnAddSlot
                       end>
-                    ExplicitHeight = 120
+                    ExplicitHeight = 128
+                    DesignSize = (
+                      88
+                      128)
+                    inherited spbtnMoveUpSlot: TSpeedButton
+                      Action = actnMoveUpSlot
+                    end
+                    inherited spbtnMoveDownSlot: TSpeedButton
+                      Action = actnMoveDownSlot
+                    end
                     inherited spbtnTeamEntrantClear: TSpeedButton
                       Action = actnClearSlot
                     end
+                    inherited spbtnTeamEntrantStrike: TSpeedButton
+                      Action = actnStrikeSlot
+                    end
+                    inherited spbtnAddSlot: TSpeedButton
+                      Action = actnAddSlot
+                    end
+                    inherited spbtnRemoveSlot: TSpeedButton
+                      Action = actnRemoveSlot
+                    end
                   end
                   inherited Panel3: TPanel
-                    Height = 120
-                    ExplicitHeight = 120
+                    Height = 128
+                    ExplicitHeight = 128
                     inherited GridEntrant: TDBGrid
-                      Height = 118
+                      Height = 126
                     end
                   end
                 end
@@ -1505,7 +1523,7 @@ object Main: TMain
               Margins.Right = 66
               Margins.Bottom = 0
               Anchors = []
-              ItemCount = 2
+              ItemCount = 5
               ItemWidth = 200
               ItemHeight = 68
               ItemIndex = 0
@@ -1612,6 +1630,7 @@ object Main: TMain
                 Alignment = taCenter
                 Anchors = []
                 AutoSize = False
+                Caption = '100'
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -27
@@ -2037,6 +2056,8 @@ object Main: TMain
               Height = 632
               Align = alLeft
               BorderStyle = bsNone
+              ItemCount = 2
+              ItemIndex = 0
               ItemMargins.Left = 0
               ItemMargins.Top = 0
               ItemMargins.Right = 0
@@ -2078,6 +2099,7 @@ object Main: TMain
                 Height = 32
                 Alignment = taCenter
                 AutoSize = False
+                Caption = '1'
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -24
@@ -2658,7 +2680,7 @@ object Main: TMain
                 Caption = '-'
               end
               item
-                Action = Nominate_MemeberDetails
+                Action = Nominate_MemberDetails
                 Caption = '&Member'#39's Details...'
                 ImageIndex = 1
                 ImageName = 'Members'
@@ -2774,47 +2796,47 @@ object Main: TMain
           item
             Items = <
               item
-                Action = Entrant_MoveUp
+                Action = Grid_MoveUp
                 Caption = '&Move Up'
                 ImageIndex = 12
                 ImageName = 'Up'
                 ShortCut = 16422
               end
               item
-                Action = Entrant_MoveDown
+                Action = Grid_MoveDown
                 Caption = 'M&ove Down'
                 ImageIndex = 13
                 ImageName = 'Down'
                 ShortCut = 16424
               end
               item
-                Action = Entrant_SwapLanes
+                Action = Grid_SwapLanes
                 Caption = '&Swap Lanes...'
                 ImageIndex = 10
                 ImageName = 'Shuffle'
               end
               item
-                Action = IndvTeam_EmptyLane
+                Action = Grid_EmptyLane
                 Caption = '&Empty Lane'
                 ImageIndex = 19
                 ImageName = 'Delete'
                 ShortCut = 16472
               end
               item
-                Action = IndvTeam_Strike
+                Action = Grid_Strike
                 Caption = 'S&trike Entrant'
                 ImageIndex = 18
                 ImageName = 'DeleteForever'
                 ShortCut = 16430
               end
               item
-                Action = IndvTeam_Renumber
+                Action = Grid_Renumber
                 Caption = '&Renumber Lanes'
                 ImageIndex = 37
                 ImageName = 'Sort'
               end
               item
-                Action = Entrant_GotoMemberDetails
+                Action = Nominate_GotoMemberDetails
                 Caption = 'Mem&ber'#39's Details...'
                 ImageIndex = 1
                 ImageName = 'Members'
@@ -3076,72 +3098,72 @@ object Main: TMain
       OnExecute = Event_ReportExecute
       OnUpdate = Event_ReportUpdate
     end
-    object Entrant_MoveUp: TAction
-      Category = 'IndvTeam'
+    object Grid_MoveUp: TAction
+      Category = 'Grid'
       Caption = 'Move Up'
       Hint = 'Move the entrant up a lane.'
       ImageIndex = 12
       ImageName = 'Up'
       ShortCut = 16422
-      OnExecute = Entrant_MoveUpExecute
-      OnUpdate = Entrant_MoveUpUpdate
+      OnExecute = Grid_MoveUpExecute
+      OnUpdate = Grid_MoveUpUpdate
     end
-    object Entrant_MoveDown: TAction
-      Category = 'IndvTeam'
+    object Grid_MoveDown: TAction
+      Category = 'Grid'
       Caption = 'Move Down'
       Hint = 'Move the entrant down a lane.'
       ImageIndex = 13
       ImageName = 'Down'
       ShortCut = 16424
-      OnExecute = Entrant_MoveDownExecute
-      OnUpdate = Entrant_MoveDownUpdate
+      OnExecute = Grid_MoveDownExecute
+      OnUpdate = Grid_MoveDownUpdate
     end
-    object Entrant_SwapLanes: TAction
-      Category = 'IndvTeam'
+    object Grid_SwapLanes: TAction
+      Category = 'Grid'
       Caption = 'Swap Lanes...'
       Hint = 'Opens the swap lanes dialogue.'
       ImageIndex = 10
       ImageName = 'Shuffle'
-      OnExecute = Entrant_SwapLanesExecute
-      OnUpdate = Entrant_SwapLanesUpdate
+      OnExecute = Grid_SwapLanesExecute
+      OnUpdate = Grid_SwapLanesUpdate
     end
-    object IndvTeam_EmptyLane: TAction
-      Category = 'IndvTeam'
+    object Grid_EmptyLane: TAction
+      Category = 'Grid'
       Caption = 'Empty Lane'
       Hint = 'Empty the lane. Members remain nominated.'
       ImageIndex = 19
       ImageName = 'Delete'
       ShortCut = 16472
-      OnExecute = IndvTeam_EmptyLaneExecute
-      OnUpdate = IndvTeam_EmptyLaneUpdate
+      OnExecute = Grid_EmptyLaneExecute
+      OnUpdate = Grid_EmptyLaneUpdate
     end
-    object IndvTeam_Strike: TAction
-      Category = 'IndvTeam'
+    object Grid_Strike: TAction
+      Category = 'Grid'
       Caption = 'Strike Entrant'
       Hint = 'Remove nomination and empty the lane.'
       ImageIndex = 18
       ImageName = 'DeleteForever'
       ShortCut = 16430
-      OnExecute = IndvTeam_StrikeExecute
-      OnUpdate = IndvTeam_StrikeUpdate
+      OnExecute = Grid_StrikeExecute
+      OnUpdate = Grid_StrikeUpdate
     end
-    object Entrant_GotoMemberDetails: TAction
-      Category = 'IndvTeam'
+    object Nominate_GotoMemberDetails: TAction
+      Category = 'Nominate'
       Caption = 'Member'#39's Details...'
       Hint = 'Show the selected member'#39's details.'
       ImageIndex = 1
       ImageName = 'Members'
-      OnExecute = Entrant_GotoMemberDetailsExecute
-      OnUpdate = Entrant_GotoMemberDetailsUpdate
+      OnExecute = Nominate_GotoMemberDetailsExecute
+      OnUpdate = Nominate_GotoMemberDetailsUpdate
     end
-    object IndvTeam_Renumber: TAction
-      Category = 'IndvTeam'
+    object Grid_Renumber: TAction
+      Category = 'Grid'
       Caption = 'Renumber Lanes'
       Hint = 'Sort lane placements. '
       ImageIndex = 37
       ImageName = 'Sort'
-      OnExecute = IndvTeam_RenumberExecute
-      OnUpdate = IndvTeam_RenumberUpdate
+      OnExecute = Grid_RenumberExecute
+      OnUpdate = Grid_RenumberUpdate
     end
     object Heat_MoveUp: TAction
       Category = 'Heats'
@@ -3259,14 +3281,14 @@ object Main: TMain
       OnExecute = Tools_HouseExecute
       OnUpdate = Tools_HouseUpdate
     end
-    object Nominate_MemeberDetails: TAction
+    object Nominate_MemberDetails: TAction
       Category = 'Nominate'
       Caption = 'Member'#39's Details...'
       Hint = 'Show the selected member'#39's details.'
       ImageIndex = 1
       ImageName = 'Members'
-      OnExecute = Nominate_MemeberDetailsExecute
-      OnUpdate = Nominate_MemeberDetailsUpdate
+      OnExecute = Nominate_MemberDetailsExecute
+      OnUpdate = Nominate_MemberDetailsUpdate
     end
     object Nominate_ClearEventNominations: TAction
       Category = 'Nominate'
@@ -3448,12 +3470,53 @@ object Main: TMain
       OnUpdate = SCM_StatusBarUpdate
     end
     object actnClearSlot: TAction
-      Caption = 'Clear Slot'
+      Category = 'Slot'
+      Caption = 'Empty Slot'
       Hint = 'Clear team entrant from slot.'
       ImageIndex = 19
       ImageName = 'Delete'
       OnExecute = actnClearSlotExecute
-      OnUpdate = actnClearSlotUpdate
+      OnUpdate = actnClearStrikeSlotUpdate
+    end
+    object actnStrikeSlot: TAction
+      Category = 'Slot'
+      Caption = 'Strike Slot'
+      ImageIndex = 18
+      ImageName = 'DeleteForever'
+      OnExecute = actnStrikeSlotExecute
+      OnUpdate = actnClearStrikeSlotUpdate
+    end
+    object actnAddSlot: TAction
+      Category = 'Slot'
+      Caption = 'Add Slot'
+      ImageIndex = 48
+      ImageName = 'add'
+      OnExecute = actnAddSlotExecute
+      OnUpdate = actnGridEntrantUpdate
+    end
+    object actnRemoveSlot: TAction
+      Category = 'Slot'
+      Caption = 'Remove Slot'
+      ImageIndex = 49
+      ImageName = 'remove'
+      OnExecute = actnRemoveSlotExecute
+      OnUpdate = actnGridEntrantUpdate
+    end
+    object actnMoveUpSlot: TAction
+      Category = 'Slot'
+      Caption = 'Move Up'
+      ImageIndex = 12
+      ImageName = 'Up'
+      OnExecute = actnMoveUpSlotExecute
+      OnUpdate = actnGridEntrantUpdate
+    end
+    object actnMoveDownSlot: TAction
+      Category = 'Slot'
+      Caption = 'Move Down'
+      ImageIndex = 13
+      ImageName = 'Down'
+      OnExecute = actnMoveDownSlotExecute
+      OnUpdate = actnGridEntrantUpdate
     end
   end
   object pumHeat: TPopupMenu
@@ -3525,31 +3588,31 @@ object Main: TMain
     Left = 864
     Top = 280
     object MoveUp3: TMenuItem
-      Action = Entrant_MoveUp
+      Action = Grid_MoveUp
     end
     object MoveDown3: TMenuItem
-      Action = Entrant_MoveDown
+      Action = Grid_MoveDown
     end
     object SwapLanes1: TMenuItem
-      Action = Entrant_SwapLanes
+      Action = Grid_SwapLanes
     end
     object EmptyLane1: TMenuItem
-      Action = IndvTeam_EmptyLane
+      Action = Grid_EmptyLane
     end
     object StrikeEntrant1: TMenuItem
-      Action = IndvTeam_Strike
+      Action = Grid_Strike
     end
     object Renumber2: TMenuItem
       Caption = 'Sort on TTB'
       Hint = 'Sort entrants and repair lanes.'
       Visible = False
-      OnClick = IndvTeam_RenumberExecute
+      OnClick = Grid_RenumberExecute
     end
     object N1: TMenuItem
       Caption = '-'
     end
     object GotoMember: TMenuItem
-      Action = Entrant_GotoMemberDetails
+      Action = Nominate_GotoMemberDetails
     end
   end
   object pumEvent: TPopupMenu
@@ -13780,6 +13843,37 @@ object Main: TMain
               00000000604000000000C0800000000080010100000000030200000000060400
               0000000C080000000018085AD24F73D67A25CC0000000049454E44AE426082}
           end>
+      end
+      item
+        Name = 'add'
+        SourceImages = <
+          item
+            Image.Data = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000017352474200AECE1CE9000000CA494441546843ED975D0E80200C83
+              C7CDF4E47A34E38B31CACF281083F97CC415B7B6C3116CF2274C9EBF51C0D70A
+              A2000A3432808512042E89F5BD91F0177C94026701DBE36BAB9951C0530214C8
+              F40016F2343C16C2421E9F6462B01016C24265065283590919FB919530B1F7D9
+              F9C9D3C4B1C14C4944C11407400A5068ADC0A0C049D6F44D5CA1F815CA8DCCCB
+              9AE714F2EE758F43012F6B28C034EAF54A220E0B61212CD4C8C09F2D547DBB52
+              B81C750A29B948180A9068EB0842818E644A5BA180445B47D0F40A1C54243E31
+              177CF0BB0000000049454E44AE426082}
+          end>
+      end
+      item
+        Name = 'remove'
+        SourceImages = <
+          item
+            Image.Data = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000017352474200AECE1CE9000000B6494441546843ED94510D80301403
+              8B0DD4A000B3084014060806C8D2369025C77FBBBDBB37164DFE2D93DF5F0CF0
+              B7410C602024C00A8500E3380662846101064280711C0331C2B0000321C0388E
+              81186158808110601C1F31B0495AE393BC824BD2F1161D1DE0F4CE8F533B0348
+              7A560803E632D55668EA476CC2FB2636F217FAE626E6290C6082ABC530504369
+              1661C004578B61A086D22CC28009AE16C3400DA5598401135C2D86811A4AB308
+              0326B85A6C7A0337F5550C31D26BC6F10000000049454E44AE426082}
+          end>
       end>
     Left = 424
     Top = 296
@@ -14381,6 +14475,16 @@ object Main: TMain
         CollectionIndex = 71
         CollectionName = 'TimeAuto'
         Name = 'TimeAuto'
+      end
+      item
+        CollectionIndex = 77
+        CollectionName = 'add'
+        Name = 'add'
+      end
+      item
+        CollectionIndex = 78
+        CollectionName = 'remove'
+        Name = 'remove'
       end>
     ImageCollection = ImageCollection1
     Width = 32

@@ -79,13 +79,13 @@ type
     EditSession1: TMenuItem;
     EmptyLane1: TMenuItem;
     EntrantWidgets: TRelativePanel;
-    IndvTeam_EmptyLane: TAction;
-    Entrant_GotoMemberDetails: TAction;
-    Entrant_MoveDown: TAction;
-    Entrant_MoveUp: TAction;
-    IndvTeam_Renumber: TAction;
-    IndvTeam_Strike: TAction;
-    Entrant_SwapLanes: TAction;
+    Grid_EmptyLane: TAction;
+    Nominate_GotoMemberDetails: TAction;
+    Grid_MoveDown: TAction;
+    Grid_MoveUp: TAction;
+    Grid_Renumber: TAction;
+    Grid_Strike: TAction;
+    Grid_SwapLanes: TAction;
     EventRpt1: TMenuItem;
     EventWidgets: TRelativePanel;
     Event_AutoSchedule: TAction;
@@ -184,7 +184,7 @@ type
     Nominate_ControlList: TControlList;
     Nominate_Edit: TEdit;
     Nominate_Grid: TDBGrid;
-    Nominate_MemeberDetails: TAction;
+    Nominate_MemberDetails: TAction;
     Nominate_Report: TAction;
     Nominate_SortMembers: TAction;
     oggleSessionStatus1: TMenuItem;
@@ -309,25 +309,36 @@ type
     Label5: TLabel;
     dbtxtDebugTeamEntrant: TDBText;
     actnClearSlot: TAction;
+    actnStrikeSlot: TAction;
+    actnAddSlot: TAction;
+    actnRemoveSlot: TAction;
+    actnMoveUpSlot: TAction;
+    actnMoveDownSlot: TAction;
     procedure ActionManager1Update(Action: TBasicAction; var Handled: boolean);
+    procedure actnAddSlotExecute(Sender: TObject);
     procedure actnClearSlotExecute(Sender: TObject);
-    procedure actnClearSlotUpdate(Sender: TObject);
+    procedure actnClearStrikeSlotUpdate(Sender: TObject);
+    procedure actnGridEntrantUpdate(Sender: TObject);
+    procedure actnMoveDownSlotExecute(Sender: TObject);
+    procedure actnMoveUpSlotExecute(Sender: TObject);
+    procedure actnRemoveSlotExecute(Sender: TObject);
+    procedure actnStrikeSlotExecute(Sender: TObject);
     procedure btnClearSearchClick(Sender: TObject);
     procedure clistCheckBoxClick(Sender: TObject);
-    procedure IndvTeam_EmptyLaneExecute(Sender: TObject);
-    procedure IndvTeam_EmptyLaneUpdate(Sender: TObject);
-    procedure Entrant_GotoMemberDetailsExecute(Sender: TObject);
-    procedure Entrant_GotoMemberDetailsUpdate(Sender: TObject);
-    procedure Entrant_MoveDownExecute(Sender: TObject);
-    procedure Entrant_MoveDownUpdate(Sender: TObject);
-    procedure Entrant_MoveUpExecute(Sender: TObject);
-    procedure Entrant_MoveUpUpdate(Sender: TObject);
-    procedure IndvTeam_RenumberExecute(Sender: TObject);
-    procedure IndvTeam_RenumberUpdate(Sender: TObject);
-    procedure IndvTeam_StrikeExecute(Sender: TObject);
-    procedure IndvTeam_StrikeUpdate(Sender: TObject);
-    procedure Entrant_SwapLanesExecute(Sender: TObject);
-    procedure Entrant_SwapLanesUpdate(Sender: TObject);
+    procedure Grid_EmptyLaneExecute(Sender: TObject);
+    procedure Grid_EmptyLaneUpdate(Sender: TObject);
+    procedure Nominate_GotoMemberDetailsExecute(Sender: TObject);
+    procedure Nominate_GotoMemberDetailsUpdate(Sender: TObject);
+    procedure Grid_MoveDownExecute(Sender: TObject);
+    procedure Grid_MoveDownUpdate(Sender: TObject);
+    procedure Grid_MoveUpExecute(Sender: TObject);
+    procedure Grid_MoveUpUpdate(Sender: TObject);
+    procedure Grid_RenumberExecute(Sender: TObject);
+    procedure Grid_RenumberUpdate(Sender: TObject);
+    procedure Grid_StrikeExecute(Sender: TObject);
+    procedure Grid_StrikeUpdate(Sender: TObject);
+    procedure Grid_SwapLanesExecute(Sender: TObject);
+    procedure Grid_SwapLanesUpdate(Sender: TObject);
     procedure Event_AutoScheduleExecute(Sender: TObject);
     procedure Event_AutoScheduleUpdate(Sender: TObject);
     procedure Event_BuildFinalsExecute(Sender: TObject);
@@ -399,8 +410,8 @@ type
     procedure Nominate_GridDblClick(Sender: TObject);
     procedure Nominate_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: integer; Column: TColumn; State: TGridDrawState);
-    procedure Nominate_MemeberDetailsExecute(Sender: TObject);
-    procedure Nominate_MemeberDetailsUpdate(Sender: TObject);
+    procedure Nominate_MemberDetailsExecute(Sender: TObject);
+    procedure Nominate_MemberDetailsUpdate(Sender: TObject);
     procedure Nominate_ReportExecute(Sender: TObject);
     procedure Nominate_ReportUpdate(Sender: TObject);
     procedure Nominate_SortMembersExecute(Sender: TObject);
@@ -551,6 +562,12 @@ begin
   end;
 end;
 
+procedure TMain.actnAddSlotExecute(Sender: TObject);
+begin
+  if AssertConnection then
+    TEAM.spbtnAddSlotClick(Sender);
+end;
+
 procedure TMain.actnClearSlotExecute(Sender: TObject);
 var
   rtnValue, rows: integer;
@@ -571,7 +588,7 @@ begin
   end;
 end;
 
-procedure TMain.actnClearSlotUpdate(Sender: TObject);
+procedure TMain.actnClearStrikeSlotUpdate(Sender: TObject);
 var
   DoEnable: boolean;
   aEventType: scmEventType;
@@ -591,15 +608,64 @@ begin
             if not SCM.dsTeam.DataSet.IsEmpty then
             begin
               if not SCM.dsTeamEntrant.DataSet.IsEmpty then
-              begin
-              // Need a relay in a lane to be able to clear it....
-              if not SCM.dsTeamEntrant.DataSet.FieldByName('MemberID').IsNull then
-                DoEnable := true;
-              end;
+                if TEAM.TeamActiveGrid = 2 then
+                  // Need a relay in a lane to be able to clear it....
+                  if not SCM.dsTeamEntrant.DataSet.FieldByName('MemberID').IsNull
+                  then DoEnable := true;
             end;
           end;
         end;
   TAction(Sender).Enabled := DoEnable;
+end;
+
+procedure TMain.actnGridEntrantUpdate(Sender: TObject);
+var
+  DoEnable: boolean;
+  aEventType: scmEventType;
+begin
+  DoEnable := false;
+  if AssertConnection then
+    // Checks if session is Empty. Then checks if locked..
+    if not SCM.Session_IsLocked then
+      // are there any heats?
+      if not SCM.dsHeat.DataSet.IsEmpty then
+        // is the current heat closed?
+        if not SCM.Heat_IsClosed then
+        begin
+          aEventType := SCM.CurrEventType;
+          if aEventType = etTEAM then
+          begin
+            if not SCM.dsTeam.DataSet.IsEmpty then
+            begin
+              if TEAM.TeamActiveGrid = 2 then
+                if not SCM.dsTeamEntrant.DataSet.IsEmpty then
+                  DoEnable := true;
+            end;
+          end;
+        end;
+  TAction(Sender).Enabled := DoEnable;
+end;
+
+procedure TMain.actnMoveDownSlotExecute(Sender: TObject);
+begin
+  TEAM.SlotMovedOWN(Sender);
+end;
+
+procedure TMain.actnMoveUpSlotExecute(Sender: TObject);
+begin
+  TEAM.SlotMoveUp(Sender);
+end;
+
+procedure TMain.actnRemoveSlotExecute(Sender: TObject);
+begin
+  if AssertConnection then
+    TEAM.spbtnRemoveSlotClick(Sender);
+end;
+
+procedure TMain.actnStrikeSlotExecute(Sender: TObject);
+begin
+  if AssertConnection then
+    TEAM.spbtnTeamEntrantStrikeClick(Sender);
 end;
 
 function TMain.AssertConnection: boolean;
@@ -728,7 +794,7 @@ end;
 // end;
 // end;
 
-procedure TMain.IndvTeam_EmptyLaneExecute(Sender: TObject);
+procedure TMain.Grid_EmptyLaneExecute(Sender: TObject);
 var
   rtnValue, rows: integer;
   aEventType: scmEventType;
@@ -737,7 +803,7 @@ begin
   aEventType := SCM.CurrEventType;
   if aEventType = etUnknown then exit;
   if aEventType = etINDV then Msg := 'Empty the lane.?'
-  else Msg := 'Clear the relay team and entrants.?';
+  else Msg := 'Clear the team and it''s swimmers.';
 
   rtnValue := MessageDlg(Msg, mtConfirmation, [mbNo, mbYes], 0, mbYes);
 
@@ -754,7 +820,7 @@ begin
   end;
 end;
 
-procedure TMain.IndvTeam_EmptyLaneUpdate(Sender: TObject);
+procedure TMain.Grid_EmptyLaneUpdate(Sender: TObject);
 var
   DoEnable: boolean;
   aEventType: scmEventType;
@@ -786,7 +852,7 @@ begin
   TAction(Sender).Enabled := DoEnable;
 end;
 
-procedure TMain.Entrant_GotoMemberDetailsExecute(Sender: TObject);
+procedure TMain.Nominate_GotoMemberDetailsExecute(Sender: TObject);
 var
   dlg: TManageMember;
   MemberID: integer;
@@ -803,7 +869,7 @@ begin
   end;
 end;
 
-procedure TMain.Entrant_GotoMemberDetailsUpdate(Sender: TObject);
+procedure TMain.Nominate_GotoMemberDetailsUpdate(Sender: TObject);
 var
   DoEnable: boolean;
 begin
@@ -821,7 +887,7 @@ begin
   Refresh_IndvTeam;
 end;
 
-procedure TMain.Entrant_MoveDownExecute(Sender: TObject);
+procedure TMain.Grid_MoveDownExecute(Sender: TObject);
 var
 aEventType: scmEventType;
 begin
@@ -832,7 +898,7 @@ begin
     TEAM.GridMoveDown(Sender);
 end;
 
-procedure TMain.Entrant_MoveDownUpdate(Sender: TObject);
+procedure TMain.Grid_MoveDownUpdate(Sender: TObject);
 var
   DoEnable: boolean;
   aEventType: scmEventType;
@@ -863,7 +929,7 @@ begin
   TAction(Sender).Enabled := DoEnable;
 end;
 
-procedure TMain.Entrant_MoveUpExecute(Sender: TObject);
+procedure TMain.Grid_MoveUpExecute(Sender: TObject);
 var
 aEventType: scmEventType;
 begin
@@ -872,7 +938,7 @@ begin
   else if aEventType = etTEAM then TEAM.GridMoveUp(Sender);
 end;
 
-procedure TMain.Entrant_MoveUpUpdate(Sender: TObject);
+procedure TMain.Grid_MoveUpUpdate(Sender: TObject);
 var
   DoEnable: boolean;
   aEventType: scmEventType;
@@ -923,7 +989,7 @@ begin
   end;
 end;
 
-procedure TMain.IndvTeam_RenumberExecute(Sender: TObject);
+procedure TMain.Grid_RenumberExecute(Sender: TObject);
 var
   aHeatID,rows: integer;
 begin
@@ -932,7 +998,7 @@ begin
   if rows > 0 then Refresh; {TODO -oBSA -cGeneral : TEST}
 end;
 
-procedure TMain.IndvTeam_RenumberUpdate(Sender: TObject);
+procedure TMain.Grid_RenumberUpdate(Sender: TObject);
 var
   DoEnable: boolean;
 begin
@@ -950,7 +1016,7 @@ begin
   TAction(Sender).Enabled := DoEnable;
 end;
 
-procedure TMain.IndvTeam_StrikeExecute(Sender: TObject);
+procedure TMain.Grid_StrikeExecute(Sender: TObject);
 var
   rtnValue: integer;
   aEventType: scmEventType;
@@ -959,13 +1025,18 @@ begin
   aEventType := SCM.CurrEventType;
   if aEventType = etUnknown then exit;
   if aEventType = etINDV then Msg := 'Remove nomination and empty the lane.?'
-  else Msg := 'Remove nominations and clear the relay team and entrants.?';
+  else Msg := 'Remove nominations and clear the team and it''s swimmers.?';
   rtnValue := MessageDlg(Msg, mtConfirmation, [mbNo, mbYes], 0, mbYes);
   if (rtnValue = mrYes) then
-    if aEventType = etINDV then INDV.StrikeLane else TEAM.StrikeLane;
+  begin
+    if aEventType = etINDV then
+      INDV.StrikeLane
+    else if aEventType = etTEAM then
+      TEAM.StrikeLane;
+  end;
 end;
 
-procedure TMain.IndvTeam_StrikeUpdate(Sender: TObject);
+procedure TMain.Grid_StrikeUpdate(Sender: TObject);
 var
   DoEnable: boolean;
   aEventType: scmEventType;
@@ -999,7 +1070,7 @@ begin
   TAction(Sender).Enabled := DoEnable;
 end;
 
-procedure TMain.Entrant_SwapLanesExecute(Sender: TObject);
+procedure TMain.Grid_SwapLanesExecute(Sender: TObject);
 var
   dlg: TSwapLanes;
   aEventType: scmEventType;
@@ -1024,7 +1095,7 @@ begin
   else TEAM.Grid.SetFocus;
 end;
 
-procedure TMain.Entrant_SwapLanesUpdate(Sender: TObject);
+procedure TMain.Grid_SwapLanesUpdate(Sender: TObject);
 var
   DoEnable: boolean;
 begin
@@ -2176,7 +2247,7 @@ begin
   begin
     fSessionClosedFontColor := css.GetStyleFontColor(sfEditBoxTextDisabled);
     fSessionClosedBgColor := css.GetStyleColor(scGrid);
-    fFrameBgColor := css.GetStyleColor(scWindow);
+    fFrameBgColor := css.GetSystemColor(clBtnFace);
   end
   else
   begin
@@ -2391,10 +2462,13 @@ begin
       // are there any Events?
       if not SCM.dsEvent.DataSet.IsEmpty then
       begin
-        // A siatance and stroke is needed before a new heat can be built
+        // A distance and stroke is needed before a new heat can be built
         if not SCM.dsEvent.DataSet.FieldByName('DistanceID').IsNull and
           not SCM.dsEvent.DataSet.FieldByName('StrokeID').IsNull then
-            DoEnable := true;
+            // no auto-build for TEAM EVENTS - yet...
+            {TODO -oBSA -cGeneral : AutoBuildUpdate TEAM events.}
+            if SCM.CurrEventType = etINDV then
+              DoEnable := true;
       end;
   TAction(Sender).Enabled := DoEnable;
 end;
@@ -2406,6 +2480,7 @@ var
   dlg: TAutoBuildPref;
   dmv2: TAutoBuildV2;
   rtnValue: TModalResult;
+  aEventType: scmEventType;
 begin
   success := false;
   passed := false;
@@ -2445,6 +2520,14 @@ begin
     begin
       // Is the EVENT CLOSED?
       if (FieldByName('EventStatusID').AsInteger = 2) then
+      begin
+        Next;
+        continue;
+      end;
+      // Is this a TEAM EVENT?
+      // 20231008 currently Auto-Build is not available for TEAMS
+      aEventType := SCM.GetEventType(FieldByName('EventID').AsInteger);
+      if (aEventType = etTEAM) then
       begin
         Next;
         continue;
@@ -3278,7 +3361,7 @@ end;
 
 procedure TMain.Nominate_GridDblClick(Sender: TObject);
 begin
-  Nominate_MemeberDetailsExecute(self);
+  Nominate_MemberDetailsExecute(self);
 end;
 
 procedure TMain.Nominate_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -3312,7 +3395,7 @@ begin
   end;
 end;
 
-procedure TMain.Nominate_MemeberDetailsExecute(Sender: TObject);
+procedure TMain.Nominate_MemberDetailsExecute(Sender: TObject);
 var
   dlg: TManageMember;
   MemberID: integer;
@@ -3329,7 +3412,7 @@ begin
   end;
 end;
 
-procedure TMain.Nominate_MemeberDetailsUpdate(Sender: TObject);
+procedure TMain.Nominate_MemberDetailsUpdate(Sender: TObject);
 var
   DoEnable: boolean;
 begin
@@ -3529,6 +3612,7 @@ begin
       2:
         begin
           SCM.qryEntrant.CheckBrowseMode;
+          SCM.qryTeam.CheckBrowseMode;
           SCM.qryHeat.CheckBrowseMode;
         end;
     end;
@@ -4465,14 +4549,14 @@ begin
       pnlClient.Visible := false;
       lblMsgTab3.Caption := 'No Sessions';
       lblMsgTab3.Visible := true;
-      StatusBar1.Panels[3].Text := 'HINT: Create a new session.';
+      StatusBar1.Panels[3].Text := 'Create a new session.';
   end
   else if SCM.dsEvent.DataSet.IsEmpty then
   begin
       pnlClient.Visible := false;
       lblMsgTab3.Caption := 'No Events';
       lblMsgTab3.Visible := true;
-      StatusBar1.Panels[3].Text := 'HINT: Create a new event.';
+      StatusBar1.Panels[3].Text := 'Use the NEW EVENT button to create an event.';
   end
   else if SCM.dsEvent.DataSet.FieldByName('DistanceID').IsNull or
     SCM.dsEvent.DataSet.FieldByName('StrokeID').IsNull then
@@ -4480,13 +4564,13 @@ begin
       pnlClient.Visible := false;
       lblMsgTab3.Caption := 'Distance-Stroke?';
       lblMsgTab3.Visible := true;
-      StatusBar1.Panels[3].Text := 'HINT: Assign a distance and stroke to the event.';
+      StatusBar1.Panels[3].Text := 'Assign a distance and stroke to the event.';
   end
   else if SCM.dsHeat.DataSet.IsEmpty then
   begin
       lblMsgTab3.Caption := 'No Heats';
       lblMsgTab3.Visible := true;
-      StatusBar1.Panels[3].Text := 'HINT: Create a new heat';
+      StatusBar1.Panels[3].Text := 'Use the NEW HEAT button to create a heat';
   end
   else
   begin
@@ -4495,12 +4579,12 @@ begin
     begin
       lblMsgTab3.Caption := 'No Nominees';
       lblMsgTab3.Visible := true;
-      StatusBar1.Panels[3].Text := 'HINT: Nominate members to your events.';
+      StatusBar1.Panels[3].Text := 'Nominate members to your events.';
     end;
   end;
 
-  if SCM.dsEvent.DataSet.IsEmpty then
-  begin // UNKNOWN
+  if SCM.dsEvent.DataSet.IsEmpty or SCM.dsHeat.DataSet.IsEmpty then
+  begin //No Events or no heats
     TEAM.Visible := false;
     INDV.Visible := false;
     TEAM.Panel1.Color := fFrameBgColor;

@@ -7,9 +7,6 @@ Coordinates=10,786,78,58
 [Renumber1]
 Coordinates=1304,496,81,36
 
-[Entrant_SwapLanes]
-Coordinates=1304,551,130,36
-
 [Tools_House]
 Coordinates=1304,606,90,36
 
@@ -135,9 +132,6 @@ Coordinates=1534,276,69,36
 
 [SCM.dsEvent]
 Coordinates=40,418,93,36
-
-[Entrant_MoveDown]
-Coordinates=1534,331,127,36
 
 [ShapeSessBar1]
 Coordinates=1559,1017,107,36
@@ -328,9 +322,6 @@ Coordinates=233,1076,112,36
 
 [EntrantWidgets]
 Coordinates=1642,786,103,58
-
-[Entrant_MoveUp]
-Coordinates=1781,1211,111,36
 
 [pumEvent]
 Coordinates=1781,1321,72,36
@@ -682,9 +673,6 @@ Coordinates=1828,1135,106,36
 [SCM.tblEventStatus]
 Coordinates=666,429,130,102
 
-[Entrant_GotoMemberDetails]
-Coordinates=2272,1156,177,36
-
 [SCM.dsIsQualified]
 Coordinates=450,837,121,36
 
@@ -907,9 +895,6 @@ Coordinates=960,56,111,36
 [Help_Website]
 Coordinates=139,78,94,36
 
-[Nominate_MemeberDetails]
-Coordinates=523,1,170,36
-
 [ActionMainMenuBar1]
 Coordinates=1102,351,137,36
 
@@ -928,15 +913,30 @@ Coordinates=1781,1,152,36
 [pnlEventGrid]
 Coordinates=1017,863,55,58
 
-[IndvTeam_EmptyLane]
-Coordinates=967,1404,128,36
-
-[IndvTeam_Strike]
-Coordinates=2272,221,96,36
-
-[IndvTeam_Renumber]
-Coordinates=2036,441,123,36
-
 [SCM.]
 Coordinates=10,632,193,58
+
+[Grid_MoveUp]
+Coordinates=1781,1211,111,36
+
+[Grid_MoveDown]
+Coordinates=1534,331,127,36
+
+[Grid_SwapLanes]
+Coordinates=1304,551,130,36
+
+[Grid_EmptyLane]
+Coordinates=967,1404,128,36
+
+[Grid_Strike]
+Coordinates=2272,221,96,36
+
+[Grid_Renumber]
+Coordinates=2036,441,123,36
+
+[Nominate_GotoMemberDetails]
+Coordinates=2272,1156,177,36
+
+[Nominate_MemberDetails]
+Coordinates=523,1,170,36
 

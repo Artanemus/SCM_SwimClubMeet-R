@@ -362,18 +362,19 @@ begin
       v := scmConnection.ExecSQLScalar(SQL, [aHeatID, aIndvTeamID]);
       if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
       begin
-        {  CLEAR LANE and entrant    }
-        IndvTeam_ClearLane(aIndvTeamID, etIndv, false);
+        {  CLEAR LANE (+entrant)   EntrantID ALIAS aIndvTeamID  }
+        ClearLane(aIndvTeamID, etIndv);
         {  CLEAR Nominee  }
         result := Self.DeleteNomination(v, aEventID);
       end;
     end
     else if aEventType = etTEAM then
     begin
+      {  collate entrant's records for the given team  }
       SQL := 'SELECT MemberID, TeamEntrantID FROM SwimClubMeet.dbo.Team ' +
         'INNER JOIN TeamEntrant ON Team.TeamID = TeamEntrant.TeamID ' +
         'WHERE Team.HeatID = :ID1 AND Team.TeamID = :ID2';
-      // iterate over the list of members.
+      // iterate on team-entrant.
       qry := TFDQuery.Create(self);
       qry.Connection := scmConnection;
       qry.SQL.Text := SQL;
@@ -386,24 +387,23 @@ begin
       begin
         while not qry.Eof do
         begin
-          {  REMOVE TEAM ENTRANT }
+          {  DELETE TEAM ENTRANT }
            aTeamEntrantID := qry.FieldByName('TeamEntrantID').AsInteger;
            Self.ClearSlot(aTeamEntrantID);
-
-          {  DELETE NOMINATION }
-          aMemberID := qry.FieldByName('MemberID').AsInteger;
-          rows := rows + Self.DeleteNomination(aMemberID, aEventID);
+          {  DELETE the members NOMINATION (if a member's ID exists) }
+          if not qry.FieldByName('MemberID').IsNull then
+          begin
+            aMemberID := qry.FieldByName('MemberID').AsInteger;
+            rows := rows + Self.DeleteNomination(aMemberID, aEventID);
+          end;
           qry.Next;
         end;
-        {  CLEAR TEAM  }
-        IndvTeam_ClearLane(aIndvTeamID, etTeam, false);
+        {  CLEAR LANE (+Team) TeamID ALIAS aIndvTeamID }
+        Self.ClearLane(aIndvTeamID, aEventType);
         if rows > 0 then result := rows;
       end;
       qry.Close;
       qry.Free;
-      { NOTE : NOM clears nomination and removes entrants
-        Self.ClearLane(aIndvTeamID, aEventType);
-      }
     end
     else exit;
   end;
@@ -894,7 +894,7 @@ begin
   aHeatStatusID := TeamEntrant_HeatStatusID(aTeamEntrantID);
   if (aHeatStatusID = 1) or (DoExclude = false) then
   begin
-//    result := StrikeTeamEntrant(aHeatID);
+    result := StrikeSlot(aTeamEntrantID);
   end;
 end;
 

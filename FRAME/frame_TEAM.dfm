@@ -12,7 +12,7 @@ object frameTEAM: TframeTEAM
   TabOrder = 0
   object Splitter1: TSplitter
     Left = 0
-    Top = 305
+    Top = 297
     Width = 1033
     Height = 14
     Cursor = crVSplit
@@ -23,7 +23,7 @@ object frameTEAM: TframeTEAM
     Left = 0
     Top = 0
     Width = 1033
-    Height = 305
+    Height = 297
     Align = alTop
     BevelOuter = bvNone
     Caption = 'Panel1'
@@ -36,7 +36,7 @@ object frameTEAM: TframeTEAM
       Left = 1
       Top = 1
       Width = 1031
-      Height = 303
+      Height = 295
       Margins.Left = 1
       Margins.Top = 1
       Margins.Right = 1
@@ -100,22 +100,24 @@ object frameTEAM: TframeTEAM
   end
   object Panel2: TPanel
     Left = 0
-    Top = 319
+    Top = 311
     Width = 1033
-    Height = 170
+    Height = 178
     Align = alClient
     BevelOuter = bvNone
     ParentColor = True
     ShowCaption = False
     TabOrder = 1
+    ExplicitTop = 359
+    ExplicitHeight = 130
     object rpnlTeamEntrantTools: TRelativePanel
       Left = 653
       Top = 0
       Width = 88
-      Height = 170
+      Height = 178
       ControlCollection = <
         item
-          Control = spbtnTeamEntrantUp
+          Control = spbtnMoveUpSlot
           AlignBottomWithPanel = False
           AlignHorizontalCenterWithPanel = True
           AlignLeftWithPanel = False
@@ -124,14 +126,14 @@ object frameTEAM: TframeTEAM
           AlignVerticalCenterWithPanel = False
         end
         item
-          Control = spbtnTeamEntrantDown
+          Control = spbtnMoveDownSlot
           AlignBottomWithPanel = False
           AlignHorizontalCenterWithPanel = True
           AlignLeftWithPanel = False
           AlignRightWithPanel = False
           AlignTopWithPanel = False
           AlignVerticalCenterWithPanel = False
-          Below = spbtnTeamEntrantUp
+          Below = spbtnMoveUpSlot
         end
         item
           Control = spbtnTeamEntrantClear
@@ -141,7 +143,7 @@ object frameTEAM: TframeTEAM
           AlignRightWithPanel = False
           AlignTopWithPanel = False
           AlignVerticalCenterWithPanel = False
-          Below = spbtnTeamEntrantDown
+          Below = spbtnMoveDownSlot
         end
         item
           Control = spbtnTeamEntrantStrike
@@ -154,7 +156,7 @@ object frameTEAM: TframeTEAM
           Below = spbtnTeamEntrantClear
         end
         item
-          Control = spbtnTeamEntrantAdd
+          Control = spbtnAddSlot
           AlignBottomWithPanel = False
           AlignHorizontalCenterWithPanel = True
           AlignLeftWithPanel = False
@@ -164,99 +166,144 @@ object frameTEAM: TframeTEAM
           Below = spbtnTeamEntrantStrike
         end
         item
-          Control = spbtnTeamEntrantRemove
+          Control = spbtnRemoveSlot
           AlignBottomWithPanel = False
           AlignHorizontalCenterWithPanel = True
           AlignLeftWithPanel = False
           AlignRightWithPanel = False
           AlignTopWithPanel = False
           AlignVerticalCenterWithPanel = False
-          Below = spbtnTeamEntrantAdd
+          Below = spbtnAddSlot
         end>
       Align = alLeft
       BevelOuter = bvNone
       ParentColor = True
       TabOrder = 0
+      ExplicitHeight = 130
       DesignSize = (
         88
-        170)
-      object spbtnTeamEntrantUp: TSpeedButton
+        178)
+      object spbtnMoveUpSlot: TSpeedButton
         Left = 20
         Top = 0
         Width = 48
         Height = 48
+        Hint = 'Move the swimmer up the race order.'
         Anchors = []
         ImageIndex = 0
         ImageName = 'Up'
         Images = vimglistTEAM
+        Layout = blGlyphTop
+        Margin = 0
+        NumGlyphs = 2
+        ParentShowHint = False
+        ShowHint = True
       end
-      object spbtnTeamEntrantDown: TSpeedButton
+      object spbtnMoveDownSlot: TSpeedButton
         Left = 20
         Top = 48
         Width = 48
         Height = 48
+        Hint = 'Move the swimmer down the race order.'
         Anchors = []
         ImageIndex = 1
         ImageName = 'Down'
         Images = vimglistTEAM
+        Layout = blGlyphTop
+        Margin = 0
+        NumGlyphs = 2
+        ParentShowHint = False
+        ShowHint = True
       end
       object spbtnTeamEntrantClear: TSpeedButton
         Left = 20
         Top = 96
         Width = 48
         Height = 48
+        Hint = 'Clear the swimmer from the team. The member remains nominated.'
         Anchors = []
         ImageIndex = 2
         ImageName = 'Delete'
         Images = vimglistTEAM
+        Layout = blGlyphTop
+        Margin = 0
+        NumGlyphs = 2
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = spbtnTeamEntrantClearClick
       end
       object spbtnTeamEntrantStrike: TSpeedButton
         Left = 20
         Top = 144
         Width = 48
         Height = 48
+        Hint = 
+          'Strike the swimmer from the team and remove nomination to the ev' +
+          'ent.'
         Anchors = []
         ImageIndex = 3
         ImageName = 'DeleteForever'
         Images = vimglistTEAM
+        Layout = blGlyphTop
+        Margin = 0
+        NumGlyphs = 2
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = spbtnTeamEntrantStrikeClick
       end
-      object spbtnTeamEntrantAdd: TSpeedButton
+      object spbtnAddSlot: TSpeedButton
         Left = 20
         Top = 192
         Width = 48
         Height = 48
+        Hint = 'Add a new swimmer slot for this team.'
         Anchors = []
         ImageIndex = 4
         ImageName = 'add'
         Images = vimglistTEAM
+        Layout = blGlyphTop
+        Margin = 0
+        NumGlyphs = 2
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = spbtnAddSlotClick
       end
-      object spbtnTeamEntrantRemove: TSpeedButton
+      object spbtnRemoveSlot: TSpeedButton
         Left = 20
         Top = 240
         Width = 48
         Height = 48
+        Hint = 'Remove the slot (must be empty of swimmer).'
         Anchors = []
         ImageIndex = 5
         ImageName = 'remove'
         Images = vimglistTEAM
+        Layout = blGlyphTop
+        Margin = 0
+        NumGlyphs = 2
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = spbtnRemoveSlotClick
       end
     end
     object Panel3: TPanel
       Left = 0
       Top = 0
       Width = 653
-      Height = 170
+      Height = 178
       Align = alLeft
       BevelOuter = bvNone
+      ParentBackground = False
       ParentColor = True
       TabOrder = 1
       StyleElements = [seFont, seBorder]
+      ExplicitHeight = 130
       object GridEntrant: TDBGrid
         AlignWithMargins = True
         Left = 1
         Top = 1
         Width = 651
-        Height = 168
+        Height = 176
         Margins.Left = 1
         Margins.Top = 1
         Margins.Right = 1

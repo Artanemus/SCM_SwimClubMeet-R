@@ -310,7 +310,7 @@ object EntrantPicker: TEntrantPicker
       '    LEFT OUTER JOIN Member'
       '        ON Nominee.MemberID = Member.MemberID'
       'WHERE Nominee.EventID = @EventID'
-      '      AND #tmpID.MemberID IS NULL;'
+      '      AND #tmpID.MemberID IS NULL ;'
       '')
     Left = 152
     Top = 216

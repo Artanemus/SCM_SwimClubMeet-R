@@ -2066,7 +2066,6 @@ object SCM: TSCM
   object qryTeamEntrant: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     Active = True
-    BeforeInsert = qryEvTypeBeforeInsert
     AfterScroll = qryTeamEntrantAfterScroll
     IndexFieldNames = 'TeamID'
     MasterSource = dsTeam
