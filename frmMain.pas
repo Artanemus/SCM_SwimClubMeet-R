@@ -3689,11 +3689,10 @@ begin
 
     if DoRenumber then
     begin
-      aEventID := SCM.Event_ID;
-      // DoLocate - don't locate last selected.
+      aEventID := SCM.Event_ID; // - don't locate to last selected.
       // DoExclude - disabled. Will renumber/repair even when session is locked.
       SCM.Session_RenumberEvents(SCM.Session_ID, false, false);
-      Event_Grid.DataSource.DataSet.Refresh;
+      Refresh;
       SCM.Event_Locate(aEventID);
     end;
 

@@ -3,8 +3,8 @@ object EntrantPicker: TEntrantPicker
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Quick-Pick from Nominees ...'
-  ClientHeight = 702
-  ClientWidth = 822
+  ClientHeight = 701
+  ClientWidth = 818
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,16 +19,14 @@ object EntrantPicker: TEntrantPicker
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 822
-    Height = 702
+    Width = 818
+    Height = 701
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 818
-    ExplicitHeight = 701
     DesignSize = (
-      822
-      702)
+      818
+      701)
     object VirtualImage2: TVirtualImage
       Left = 8
       Top = 6
@@ -44,7 +42,7 @@ object EntrantPicker: TEntrantPicker
       Left = 8
       Top = 51
       Width = 697
-      Height = 651
+      Height = 650
       Anchors = [akLeft, akTop, akBottom]
       DataSource = dsQuickPick
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]

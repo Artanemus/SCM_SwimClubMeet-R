@@ -483,7 +483,7 @@ var
   dlg: TEntrantPicker;
   dlgCntrl: TEntrantPickerCTRL;
   // dlgDCode: TDCodePicker;
-  aTeamEntrantID, aTeamID, Lane, rows, TOT: Integer;
+  aTeamEntrantID, aTeamID, aEventID, Lane, rows, TOT: Integer;
   rtnValue: TModalResult;
   fld: TField;
   v: variant;
@@ -568,14 +568,30 @@ begin
       // require a refresh to update members details
       if passed and IsPositiveResult(rtnValue) then
       begin
+        // prepare values
         aTeamID := Grid.DataSource.DataSet.FieldByName('TeamID').AsInteger;
+        aEventID := SCM.Event_ID;
+
+        // This calculates the TTB racetime for the relay team
+        Grid.DataSource.DataSet.EnableControls;
         TOT := TeamEntrantSumTTB(aTeamID);
         UpdateTeamTTB(aTeamID, tot);
-        GridEntrant.DataSource.DataSet.Refresh;
+
+        // This dbo.Event requery recalculates the EntrantCount
+        {TODO -oBSA -cGeneral : Mod SCM.qryEvent to accept new scalar function.}
+        SCM.dsEvent.DataSet.DisableControls;
+        SCM.dsEvent.DataSet.Refresh;
+        SCM.Event_Locate(aEventID);
+        SCM.dsEvent.DataSet.EnableControls;
+
         Grid.DataSource.DataSet.Refresh;
-    //    SCM.IndvTeam_LocateLane(aTeamID, etTEAM);
-//        SCM.dsTeamEntrant.DataSet.Refresh;
+        SCM.IndvTeam_LocateLane(aTeamID, etTEAM);
+        Grid.DataSource.DataSet.DisableControls;
+
+
+        GridEntrant.DataSource.DataSet.Refresh; // require UI refresh?
         SCM.TeamEntrant_Locate(aTeamEntrantID);
+
       end;
     end;
   end;

@@ -96,7 +96,8 @@ end;
 procedure TEntrantPickerCTRL.btnPostClick(Sender: TObject);
 begin
   if not qryQuickPickCtrl.Active then exit;
-  if UpdateEntrantData then ModalResult := mrOk;
+  if UpdateEntrantData then
+  ModalResult := mrOk else ModalResult := mrCancel;
 end;
 
 procedure TEntrantPickerCTRL.btnToggleNameClick(Sender: TObject);
@@ -356,6 +357,7 @@ var
 begin
   result := false;
   if not AssertConnection(FConnection) then exit;
+  if dsQuickPickCtrl.DataSet.IsEmpty then exit;
   if (fID = 0) then exit;
   if (fEventID = 0) then exit;
   with dsQuickPickCtrl.DataSet do

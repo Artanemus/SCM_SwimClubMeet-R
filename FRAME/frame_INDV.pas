@@ -285,7 +285,7 @@ var
   dlg: TEntrantPicker;
   dlgCntrl: TEntrantPickerCTRL;
   dlgDCode: TDCodePicker;
-  EntrantID: Integer;
+  aEntrantID, aEventID: Integer;
   fld: TField;
   rtnValue: TModalResult;
 begin
@@ -294,20 +294,20 @@ begin
 
 
   SCM.dsEntrant.DataSet.DisableControls;
-  EntrantID := SCM.dsEntrant.DataSet.FieldByName('EntrantID').AsInteger;
+  aEntrantID := SCM.dsEntrant.DataSet.FieldByName('EntrantID').AsInteger;
 
   // handle the ellipse button for the disqualification code
   fld := TDBGrid(Sender).SelectedField;
   if fld.FieldName = 'DCode' then
   begin
     dlgDCode := TDCodePicker.CreateWithConnection(self, SCM.scmConnection);
-    dlgDCode.EntrantID := EntrantID;
+    dlgDCode.EntrantID := aEntrantID;
     rtnValue := dlgDCode.ShowModal;
     dlgDCode.Free;
     if IsPositiveResult(rtnValue) then
     begin
       SCM.dsEntrant.DataSet.Refresh;
-      SCM.IndvTeam_Locatelane(EntrantID, etINDV);
+      SCM.IndvTeam_Locatelane(aEntrantID, etINDV);
     end;
   end
   // handle the ellipse entrant
@@ -319,7 +319,7 @@ begin
     begin
       // if (GetKeyState(VK_CONTROL) < 0) then begin
       dlgCntrl := TEntrantPickerCTRL.Create(self);
-      passed := dlgCntrl.Prepare(SCM.scmConnection, EntrantID, etINDV);
+      passed := dlgCntrl.Prepare(SCM.scmConnection, aEntrantID, etINDV);
       if passed then
         rtnValue := dlgCntrl.ShowModal;
       dlgCntrl.Free;
@@ -328,16 +328,23 @@ begin
     else
     begin
       dlg := TEntrantPicker.Create(self);
-      passed := dlg.Prepare(SCM.scmConnection, EntrantID, etINDV);
+      passed := dlg.Prepare(SCM.scmConnection, aEntrantID, etINDV);
       if passed then
         rtnValue := dlg.ShowModal;
       dlg.Free;
     end;
-    // require a refresh to update members details
+
     if passed and IsPositiveResult(rtnValue) then
     begin
-      SCM.dsEntrant.DataSet.Refresh;
-      SCM.IndvTeam_LocateLane(EntrantID, etINDV);
+      // This dbo.Event requery recalculates the EntrantCount
+      SCM.dsEvent.DataSet.DisableControls;
+      aEventID := SCM.Event_ID;
+      SCM.dsEvent.DataSet.Refresh;
+      SCM.Event_Locate(aEventID);
+      SCM.dsEvent.DataSet.EnableControls;
+
+      SCM.dsEntrant.DataSet.Refresh; // require UI refresh?
+      SCM.IndvTeam_LocateLane(aEntrantID, etINDV); // restore record position
     end;
 
   end;

@@ -108,8 +108,6 @@ object frameTEAM: TframeTEAM
     ParentColor = True
     ShowCaption = False
     TabOrder = 1
-    ExplicitTop = 359
-    ExplicitHeight = 130
     object rpnlTeamEntrantTools: TRelativePanel
       Left = 653
       Top = 0
@@ -179,7 +177,6 @@ object frameTEAM: TframeTEAM
       BevelOuter = bvNone
       ParentColor = True
       TabOrder = 0
-      ExplicitHeight = 130
       DesignSize = (
         88
         178)

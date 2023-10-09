@@ -90,7 +90,9 @@ end;
 procedure TEntrantPicker.btnPostClick(Sender: TObject);
 begin
   if not qryQuickPick.Active then exit;
-  if UpdateEntrantData then ModalResult := mrOk;
+  if UpdateEntrantData then
+    ModalResult := mrOk else
+    ModalResult := mrCancel;
 end;
 
 procedure TEntrantPicker.btnToggleNameClick(Sender: TObject);
@@ -290,9 +292,11 @@ function TEntrantPicker.UpdateEntrantData(): boolean;
 begin
   result := false;
   if not AssertConnection(FConnection) then exit;
+  if dsQuickPick.DataSet.IsEmpty then exit;
   if (fID = 0) then exit;
   with dsQuickPick.DataSet do
   begin
+
     FDCommandUpdateEntrant.Connection := FConnection;
     FDCommandUpdateEntrant.ParamByName('MemberID').AsInteger :=
       FieldByName('MemberID').AsInteger;
