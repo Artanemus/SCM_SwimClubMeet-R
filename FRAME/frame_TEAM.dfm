@@ -294,7 +294,6 @@ object frameTEAM: TframeTEAM
       ParentColor = True
       TabOrder = 1
       StyleElements = [seFont, seBorder]
-      ExplicitHeight = 130
       object GridEntrant: TDBGrid
         AlignWithMargins = True
         Left = 1

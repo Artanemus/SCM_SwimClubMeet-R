@@ -519,6 +519,10 @@ type
     procedure Team_Scroll(var Msg: TMessage); message SCM_TEAMSCROLL;
     procedure RenumberHeats(var Msg: TMessage); message SCM_RENUMBERHEATS;
     procedure TeamEntrant_Scroll(var Msg: TMessage); message SCM_TEAMENTRANTSCROLL;
+
+    procedure UpdateEntrantCount(var Msg: TMessage); message SCM_UPDATEENTRANTCOUNT;
+    procedure UpdateStatusBar(var Msg: TMessage); message SCM_UPDATESTATUSBAR;
+
   public
     { Public declarations }
     fDoStatusBarUpdate: boolean; // FLAG ACTION - SCM_StatusBar.Enabled
@@ -813,6 +817,8 @@ begin
     else rows := TEAM.ClearLane;
     if rows > 0 then
     begin
+
+
       // S T A T U S B A R . Update entrant totals and any other UI elements
       fDoStatusBarUpdate := true; // permits TACTION StatusBarUpdate
       SCM_StatusBar.Execute;
@@ -1024,6 +1030,7 @@ var
 begin
   aEventType := SCM.CurrEventType;
   if aEventType = etUnknown then exit;
+
   if aEventType = etINDV then Msg := 'Remove nomination and empty the lane.?'
   else Msg := 'Remove nominations and clear the team and it''s swimmers.?';
   rtnValue := MessageDlg(Msg, mtConfirmation, [mbNo, mbYes], 0, mbYes);
@@ -2714,6 +2721,7 @@ begin
     SCM.Heat_Delete(aHeatID, false);
     BindSourceDB3.DataSet.Active := true;
     ToggleVisibileTabSheet3;
+    PostMessage(handle,SCM_UPDATEENTRANTCOUNT, 0, 0);
   end;
 end;
 
@@ -3660,42 +3668,29 @@ end;
 
 procedure TMain.Refresh_Event(DoBookmark: boolean = true; DoRenumber: boolean = false);
 var
-  bm: TBookmark;
-  aEventID: integer;
+  v: variant;
 begin
   if not AssertConnection then
     exit;
-  bm := nil;
   with SCM.dsEvent.DataSet do
   begin
     DisableControls;
     if Active and not IsEmpty then
     begin
-      if DoBookMark then bm := GetBookmark;
+      v := FieldByName('EventID').AsVariant;
     end;
     Close;
     Open;
     if Active then
     begin
-      try
-        if Assigned(bm) then
-        begin
-          if DoBookMark then GotoBookmark(bm);
-        end;
-      except
-        on E: Exception do
+      if DoRenumber then
+      begin
+        SCM.Session_RenumberEvents(SCM.Session_ID, false, false);
+        Refresh;
       end;
+      if not VarIsNull(v) and not VarIsEmpty(v) and (v>0) then
+        SCM.Event_Locate(v);
     end;
-
-    if DoRenumber then
-    begin
-      aEventID := SCM.Event_ID; // - don't locate to last selected.
-      // DoExclude - disabled. Will renumber/repair even when session is locked.
-      SCM.Session_RenumberEvents(SCM.Session_ID, false, false);
-      Refresh;
-      SCM.Event_Locate(aEventID);
-    end;
-
     EnableControls;
   end;
 end;
@@ -4873,6 +4868,23 @@ begin
   TAction(Sender).Enabled := DoEnable;
 end;
 
+procedure TMain.UpdateEntrantCount(var Msg: TMessage);
+var
+aEventID: integer;
+begin
+  if not AssertConnection then exit;
+  aEventID := SCM.Event_ID;
+  if aEventID = 0 then exit;
+  // If entrant or team or team-entrant post
+  // from frame_TEAM or frame_INDV then a
+  // refresh of qryEvent and re-locate is all
+  // that's required to keep record sync.
+  SCM.dsEvent.DataSet.DisableControls;
+  SCM.dsEvent.DataSet.Refresh;
+  SCM.Event_Locate(aEventID);
+  SCM.dsEvent.DataSet.EnableControls;
+end;
+
 procedure TMain.UpdateINDVTEAM(var Msg: TMessage);
 begin
   Refresh_Event;
@@ -4880,5 +4892,13 @@ begin
 end;
 
 
+
+procedure TMain.UpdateStatusBar(var Msg: TMessage);
+begin
+  // S T A T U S B A R .
+  fDoStatusBarUpdate := true; // flag set false after SCM_StatusBarExecute.
+  SCM_StatusBar.Update; // Asserts enabled state.
+  SCM_StatusBar.Execute; // Fire actions
+end;
 
 end.

@@ -30,7 +30,7 @@ object Main: TMain
       Top = 0
       Width = 1414
       Height = 798
-      ActivePage = TabSheet1
+      ActivePage = TabSheet3
       Align = alClient
       Style = tsFlatButtons
       TabOrder = 0
@@ -1523,10 +1523,8 @@ object Main: TMain
               Margins.Right = 66
               Margins.Bottom = 0
               Anchors = []
-              ItemCount = 5
               ItemWidth = 200
               ItemHeight = 68
-              ItemIndex = 0
               ItemMargins.Left = 10
               ItemMargins.Top = 0
               ItemMargins.Right = 10
@@ -1598,7 +1596,6 @@ object Main: TMain
                 Alignment = taCenter
                 Anchors = []
                 AutoSize = False
-                Caption = '1'
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -32
@@ -1630,7 +1627,6 @@ object Main: TMain
                 Alignment = taCenter
                 Anchors = []
                 AutoSize = False
-                Caption = '100'
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -27
@@ -2056,7 +2052,7 @@ object Main: TMain
               Height = 632
               Align = alLeft
               BorderStyle = bsNone
-              ItemCount = 2
+              ItemCount = 79
               ItemIndex = 0
               ItemMargins.Left = 0
               ItemMargins.Top = 0

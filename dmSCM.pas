@@ -792,13 +792,14 @@ begin
     'SELECT [Entrant].[EntrantID] AS aID FROM [SwimClubMeet].[dbo].[Entrant] ' +
     'WHERE [Entrant].HeatID = ' + IntToStr(aHeatID);
   end
-  else
+  else if aEventType = etTEAM then
   begin
   qry.SQL.Text :=
-    'SELECT TeamID AS aID FROM [SwimClubMeet].[dbo].[Team] ' +
-    'WHERE HeatID = ' + IntToStr(aHeatID);
+    'SELECT [Team].[TeamID] AS aID FROM [SwimClubMeet].[dbo].[Team] ' +
+    'WHERE [Team].HeatID = ' + IntToStr(aHeatID);
   end;
   qry.IndexFieldNames := 'aID';
+  qry.Prepare;
   qry.Open;
   if qry.Active then
   begin
@@ -893,22 +894,22 @@ begin
   if aEventType = etUnknown then exit;
   if aEventType = etINDV then
   begin
-    dsEntrant.DataSet.DisableControls;
     // DELETE SPLIT TIMES
     DeleteAllSplits(aIndvTeamID, aEventType);
-    // FINALLY DELETE ENTRANT RECORDS
+    // FINALLY DELETE ENTRANT/TEAM-TEAMENTRANTS RECORDS
+    dsEntrant.DataSet.DisableControls;
     SQL := 'DELETE FROM [SwimClubMeet].[dbo].[Entrant] WHERE [EntrantID] = :ID';
     result := scmConnection.ExecSQL(SQL, [aIndvTeamID]);
     dsEntrant.DataSet.EnableControls;
   end
-  else
+  else if aEventType = etTEAM then
   begin
-    dsTeam.DataSet.DisableControls;
     // DELETE TEAM-ENTRANTS FROM RELAY
     DeleteAllTeamEntrants(aIndvTeamID);  // param: TeamID
     // DELETE Split records for relay team.
     DeleteAllSplits(aIndvTeamID, aEventType);
     // DELETE TEAM RECORD
+    dsTeam.DataSet.DisableControls;
     SQL := 'DELETE FROM [SwimClubMeet].[dbo].[Team] WHERE [TeamID] = :ID';
     result := scmConnection.ExecSQL(SQL, [aIndvTeamID]);
     dsTeam.DataSet.EnableControls;

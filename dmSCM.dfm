@@ -521,7 +521,6 @@ object SCM: TSCM
   end
   object qryEvent: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     AfterInsert = qryEventAfterInsert
     BeforeEdit = qryEventBeforeEdit
     BeforePost = qryEventBeforePost
@@ -539,128 +538,70 @@ object SCM: TSCM
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Event'
     UpdateOptions.KeyFields = 'EventID'
     SQL.Strings = (
-      'Use SwimClubMeet;'
+      'USE SwimClubMeet;'
       ''
-      'SELECT '
-      '       [Event].[EventID]'
-      '      ,[Event].[EventNum]'
-      '      ,[Event].[Caption]'
-      '      ,[Event].[ClosedDT]'
-      '      ,[Event].[ScheduleDT]'
-      '      ,[Event].[SessionID]'
-      '      ,[Event].[StrokeID]'
-      '      ,[Event].[DistanceID]'
-      '      ,[Event].[EventStatusID],'
-      '       qryNom.NomCount AS NomineeCount,'
-      '       qryEntrants.EntrantCount AS EntrantCount,'
+      'IF OBJECT_ID('#39'tempdb..#TempTable'#39') IS NOT NULL'
+      '    DROP TABLE #TempTable;'
+      ''
+      'SELECT EventID'
+      '     , SUM(Count) AS TotalCount'
+      'INTO #TempTable'
+      'FROM'
+      '('
+      '    SELECT HeatIndividual.EventID'
+      '         , COUNT(Entrant.EntrantID) AS Count'
+      '    FROM Entrant'
+      '        INNER JOIN HeatIndividual'
+      '            ON Entrant.HeatID = HeatIndividual.HeatID'
+      '    WHERE MemberID IS NOT NULL            '
+      '    GROUP BY HeatIndividual.EventID'
+      '    UNION ALL'
+      '    SELECT HeatIndividual.EventID'
+      '         , COUNT(TeamEntrant.TeamEntrantID) AS Count'
+      '    FROM TeamEntrant'
+      '        INNER JOIN Team'
+      '            ON TeamEntrant.TeamID = Team.TeamID'
+      '        INNER JOIN HeatIndividual'
+      '            ON Team.HeatID = HeatIndividual.HeatID'
+      '    WHERE MemberID IS NOT NULL'
+      '    GROUP BY HeatIndividual.EventID'
+      ') AS Counts'
+      'GROUP BY EventID;'
+      ''
+      ''
+      'SELECT [Event].[EventID]'
+      '     , [Event].[EventNum]'
+      '     , [Event].[Caption]'
+      '     , [Event].[ClosedDT]'
+      '     , [Event].[ScheduleDT]'
+      '     , [Event].[SessionID]'
+      '     , [Event].[StrokeID]'
+      '     , [Event].[DistanceID]'
+      '     , [Event].[EventStatusID]'
+      '     , qryNom.NomCount AS NomineeCount'
+      '     , #TempTable.TotalCount AS EntrantCount'
       
-        '       Concat('#39'#'#39', Event.EventNum, '#39' - '#39', Distance.Caption, '#39' '#39',' +
-        ' Stroke.Caption) AS EventStr,'
-      '       Distance.Meters,'
-      '       Distance.ABREV,'
-      '       Distance.EventTypeID'
+        '     , CONCAT('#39'#'#39', Event.EventNum, '#39' - '#39', Distance.Caption, '#39' '#39',' +
+        ' Stroke.Caption) AS EventStr'
+      '     , Distance.Meters'
+      '     , Distance.ABREV'
+      '     , Distance.EventTypeID'
       'FROM Event'
-      '     LEFT OUTER JOIN Stroke ON Stroke.StrokeID = Event.StrokeID'
-      
-        '     LEFT OUTER JOIN Distance ON Distance.DistanceID = Event.Dis' +
-        'tanceID'
-      #9
-      
-        '     LEFT JOIN (SELECT Count(Nominee.EventID) AS NomCount, Event' +
-        'ID'
-      '                FROM Nominee'
-      
-        '                GROUP BY  Nominee.EventID) qryNom ON qryNom.Even' +
-        'tID = Event.EventID '
-      '     LEFT JOIN (SELECT Count(Entrant.EntrantID) AS EntrantCount,'
-      '                       HeatIndividual.EventID'
-      '                FROM Entrant'
-      
-        '                     INNER JOIN HeatIndividual ON Entrant.HeatID' +
-        ' = HeatIndividual.HeatID'
-      '                WHERE        (Entrant.MemberID IS NOT NULL)'
-      
-        '                GROUP BY HeatIndividual.EventID) qryEntrants ON ' +
-        'qryEntrants.EventID = Event.EventID'
-      ''
-      ''
-      'ORDER BY Event.EventNum;'
-      ''
-      '/*'
-      'DECLARE @Major AS INT;'
-      
-        'SET @Major = (SELECT Major FROM SwimClubMeet.dbo.SCMSystem WHERE' +
-        ' SCMSystemID = 1);'
-      'DECLARE @Minor AS INT;'
-      
-        'SET @Minor = (SELECT Major FROM SwimClubMeet.dbo.SCMSystem WHERE' +
-        ' SCMSystemID = 1);'
-      ''
-      '-- Drop a temporary table called '#39'#TableName'#39
-      '-- Drop the table if it already exists'
-      'IF OBJECT_ID('#39'tempDB..#TempSCMEvent'#39', '#39'U'#39') IS NOT NULL'
-      'DROP TABLE #TempSCMEvent'
-      ';'
-      ''
-      '-- Get the data into a temp table '
-      '    SELECT * INTO #TempSCMEvent'
-      '    FROM '
-      '    Event'
-      ''
-      ''
-      '-- VERSION 1,1,5,0 AND 1,1,5,1 COMPATABILITY'
-      ''
-      ''
-      'IF (@Major = 5) AND ((@Minor = 0) OR (@Minor = 1))'
-      'BEGIN'
-      #9'-- Drop the columns that are not needed '
-      #9'IF COL_LENGTH('#39'Event'#39','#39'ScheduleDT'#39') IS NOT NULL'
-      #9'BEGIN'
-      #9'-- Column does exist '
-      #9#9'ALTER TABLE #TempSCMEvent'
-      #9#9'DROP COLUMN ScheduleDT'
-      #9'END'
-      'END'
-      ''
-      ''
-      '--SELECT * from #TempSCMEvent;'
-      ''
-      'SELECT #TempSCMEvent.*,'
-      '       qryNom.NomCount AS NomineeCount,'
-      '       qryEntrants.EntrantCount AS EntrantCount,'
-      
-        '       Concat('#39'#'#39', #TempSCMEvent.EventNum, '#39' - '#39', Distance.Capti' +
-        'on, '#39' '#39', Stroke.Caption) AS EventStr,'
-      '       Distance.Meters'
-      'FROM #TempSCMEvent'
-      
-        '     LEFT OUTER JOIN Stroke ON Stroke.StrokeID = #TempSCMEvent.S' +
-        'trokeID'
-      
-        '     LEFT OUTER JOIN Distance ON Distance.DistanceID = #TempSCME' +
-        'vent.DistanceID'
-      #9
-      
-        '     LEFT JOIN (SELECT Count(Nominee.EventID) AS NomCount, Event' +
-        'ID'
-      '                FROM Nominee'
-      
-        '                GROUP BY  Nominee.EventID) qryNom ON qryNom.Even' +
-        'tID = #TempSCMEvent.EventID '
-      '     LEFT JOIN (SELECT Count(Entrant.EntrantID) AS EntrantCount,'
-      '                       HeatIndividual.EventID'
-      '                FROM Entrant'
-      
-        '                     INNER JOIN HeatIndividual ON Entrant.HeatID' +
-        ' = HeatIndividual.HeatID'
-      '                WHERE        (Entrant.MemberID IS NOT NULL)'
-      
-        '                GROUP BY HeatIndividual.EventID) qryEntrants ON ' +
-        'qryEntrants.EventID = #TempSCMEvent.EventID'
-      ''
-      ''
-      'ORDER BY #TempSCMEvent.EventNum;'
-      '*/')
+      '    LEFT OUTER JOIN Stroke'
+      '        ON Stroke.StrokeID = Event.StrokeID'
+      '    LEFT OUTER JOIN Distance'
+      '        ON Distance.DistanceID = Event.DistanceID'
+      '    LEFT JOIN'
+      '    ('
+      '        SELECT COUNT(Nominee.EventID) AS NomCount'
+      '             , EventID'
+      '        FROM Nominee'
+      '        GROUP BY Nominee.EventID'
+      '    ) qryNom'
+      '        ON qryNom.EventID = Event.EventID'
+      '    LEFT JOIN #TempTable'
+      '        ON #TempTable.EventID = Event.EventID'
+      'ORDER BY Event.EventNum;')
     Left = 48
     Top = 256
     object qryEventEventID: TFDAutoIncField
