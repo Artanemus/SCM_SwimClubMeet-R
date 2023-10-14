@@ -143,7 +143,7 @@ end;
 
 function TframeTEAM.ClearLane(): Integer;
 var
-  aEventID, aTeamID: Integer;
+  aTeamID: Integer;
 begin
   result := 0;
   if fTeamActiveGrid = 1 then
@@ -153,24 +153,8 @@ begin
     result := SCM.IndvTeam_ClearLane(aTeamID, etTeam, true);
     if result > 0 then
     begin
-
-      aEventID := SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger;
-      // This dbo.Event requery recalculates the EntrantCount
-      { TODO -oBSA -cGeneral : Mod SCM.qryEvent to accept new scalar function. }
-      SCM.dsEvent.DataSet.DisableControls;
-      SCM.dsEvent.DataSet.Refresh;
-      SCM.Event_Locate(aEventID);
-      SCM.dsEvent.DataSet.EnableControls;
-
-      Grid.DataSource.DataSet.DisableControls;
       Grid.DataSource.DataSet.Refresh;
-      SCM.IndvTeam_LocateLane(aTeamID, etTeam);
-      Grid.DataSource.DataSet.EnableControls;
-
-      GridEntrant.DataSource.DataSet.Refresh;
-
-      Grid.DataSource.DataSet.Refresh;
-      SCM.IndvTeam_LocateLane(aTeamID, etTeam);
+//      SCM.IndvTeam_LocateLane(aTeamID, etTeam);
     end;
   end
 end;
@@ -593,7 +577,7 @@ begin
         UpdateTeamTTB(aTeamID, TOT);
         // Requery SCM.qryEvent to update entrant count.
         PostMessage(TForm(Owner).Handle, SCM_UPDATEENTRANTCOUNT, 0, 0);
-        // Requery SCM.qrysession to display the total entrants
+        // Set flag for statusbar update.
         // PostMessage(TForm(Owner).Handle, SCM_UPDATESTATUSBAR, 0, 0);
       end
     end;
@@ -755,8 +739,10 @@ begin
     TOT := TeamEntrantSumTTB(aTeamID);
     UpdateTeamTTB(aTeamID, TOT);
     GridEntrant.DataSource.DataSet.Refresh;
-    // Grid.DataSource.DataSet.Refresh;
-    // SCM.IndvTeam_LocateLane(aTeamID, etTEAM);
+    // Requery SCM.qryEvent to update entrant count.
+    PostMessage(TForm(Owner).Handle, SCM_UPDATEENTRANTCOUNT, 0, 0);
+    // Set flag for statusbar update
+    // PostMessage(TForm(Owner).Handle, SCM_UPDATESTATUSBAR, 0, 0);
   end;
 end;
 
@@ -782,6 +768,10 @@ begin
       TOT := TeamEntrantSumTTB(aTeamID);
       UpdateTeamTTB(aTeamID, TOT);
       GridEntrant.DataSource.DataSet.Refresh;
+      // Requery SCM.qryEvent to update entrant count.
+      PostMessage(TForm(Owner).Handle, SCM_UPDATEENTRANTCOUNT, 0, 0);
+      // Set flag for statusbar update
+      // PostMessage(TForm(Owner).Handle, SCM_UPDATESTATUSBAR, 0, 0);
     end;
   end;
 end;

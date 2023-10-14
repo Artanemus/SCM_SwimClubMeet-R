@@ -1,5 +1,4 @@
 object MarshallReportA: TMarshallReportA
-  OldCreateOrder = False
   Height = 499
   Width = 424
   object frxReport1: TfrxReport
@@ -22,6 +21,10 @@ object MarshallReportA: TMarshallReportA
     Left = 160
     Top = 16
     Datasets = <
+      item
+        DataSet = frxClubInfo
+        DataSetName = 'frxClubInfo'
+      end
       item
         DataSet = frxSessionReport
         DataSetName = 'frxDS'
@@ -54,7 +57,9 @@ object MarshallReportA: TMarshallReportA
           Width = 400.630180000000000000
           Height = 30.236240000000000000
           AutoWidth = True
-          DataSetName = 'FDQuery1'
+          DataField = 'SwimClubName'
+          DataSet = frxClubInfo
+          DataSetName = 'frxClubInfo'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
           Font.Height = -19
@@ -62,7 +67,7 @@ object MarshallReportA: TMarshallReportA
           Font.Style = [fsBold]
           Frame.Typ = []
           Memo.UTF8W = (
-            '[frxDS."cSwimClub"]')
+            '[frxClubInfo."SwimClubName"]')
           ParentFont = False
         end
         object FDQuery1NickName: TfrxMemoView
@@ -70,10 +75,12 @@ object MarshallReportA: TMarshallReportA
           Top = 22.677180000000000000
           Width = 400.630180000000000000
           Height = 18.897650000000000000
-          DataSetName = 'FDQuery1'
+          DataField = 'NickName'
+          DataSet = frxClubInfo
+          DataSetName = 'frxClubInfo'
           Frame.Typ = []
           Memo.UTF8W = (
-            '[frxDS."NickName"]')
+            '[frxClubInfo."NickName"]')
         end
         object FDQuery1SessionStart: TfrxMemoView
           AllowVectorExport = True
@@ -82,8 +89,9 @@ object MarshallReportA: TMarshallReportA
           Width = 204.094620000000000000
           Height = 18.897650000000000000
           AutoWidth = True
-          DataSetName = 'FDQuery1'
-          DisplayFormat.FormatStr = 'hh:mm am/pm, mmmm dd, yyyy'
+          DataSet = frxClubInfo
+          DataSetName = 'frxClubInfo'
+          DisplayFormat.FormatStr = 'mmmm dd, yyyy, hh:mm am/pm'
           DisplayFormat.Kind = fkDateTime
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
@@ -93,9 +101,7 @@ object MarshallReportA: TMarshallReportA
           Frame.Typ = []
           HAlign = haRight
           Memo.UTF8W = (
-            
-              'Session Date : [frxDS."SessionStart" #d DDD dd MMM YYYY, HH:MM A' +
-              'M/PM]')
+            '[frxClubInfo."SessionStart"]')
           ParentFont = False
         end
       end
@@ -332,6 +338,7 @@ object MarshallReportA: TMarshallReportA
   end
   object qryReport: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'HeatNum'
     Connection = SCM.scmConnection
     UpdateOptions.KeyFields = 'HeatID'
@@ -448,5 +455,54 @@ object MarshallReportA: TMarshallReportA
     BCDToCurrency = False
     Left = 160
     Top = 272
+  end
+  object qryClubInfoRpt: TFDQuery
+    Active = True
+    IndexFieldNames = 'SwimClubID'
+    Connection = SCM.scmConnection
+    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
+    UpdateOptions.EnableDelete = False
+    UpdateOptions.EnableInsert = False
+    UpdateOptions.EnableUpdate = False
+    SQL.Strings = (
+      'USE SwimClubMeet;'
+      ''
+      'DECLARE @SwimClubID AS INTEGER;'
+      'SET @SwimClubID = :SWIMCLUBID;'
+      ''
+      'IF @SwimClubID IS NULL'
+      '    SET @SwimClubID = 1;'
+      ''
+      'SELECT SwimClub.[SwimClubID]'
+      '     , [NickName]'
+      '     , SwimClub.[Caption] AS SwimClubName'
+      '     , [NumOfLanes]'
+      '     , [LenOfPool]'
+      '     , [StartOfSwimSeason]'
+      '     --,[PoolTypeID]'
+      '     --,[SwimClubTypeID]'
+      '     , [Session].[Caption] AS SessionTitle'
+      '     , [SessionStart]'
+      'FROM SwimClub'
+      '    INNER JOIN Session'
+      '        ON SwimClub.SwimClubID = [Session].[SwimClubID]'
+      'WHERE SwimClub.[SwimClubID] = @SwimClubID;')
+    Left = 48
+    Top = 368
+    ParamData = <
+      item
+        Name = 'SWIMCLUBID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = Null
+      end>
+  end
+  object frxClubInfo: TfrxDBDataset
+    UserName = 'frxClubInfo'
+    CloseDataSource = False
+    DataSet = qryClubInfoRpt
+    BCDToCurrency = False
+    Left = 160
+    Top = 368
   end
 end

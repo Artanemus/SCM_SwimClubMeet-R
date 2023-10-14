@@ -154,7 +154,7 @@ begin
   aHeatStatusID := Heat_HeatStatusID(aHeatID);
   if (aHeatStatusID = 1) or (DoExclude = false) then
   begin
-    DeleteHeat(aHeatID);
+    result := DeleteHeat(aHeatID);
   end;
 end;
 

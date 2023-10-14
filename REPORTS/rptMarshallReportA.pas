@@ -17,6 +17,8 @@ type
     frxHTMLExport1: TfrxHTMLExport;
     frxPDFExport1: TfrxPDFExport;
     frxSessionReport: TfrxDBDataset;
+    qryClubInfoRpt: TFDQuery;
+    frxClubInfo: TfrxDBDataset;
     procedure frxReport1PrintReport(Sender: TObject);
   private
     { Private declarations }

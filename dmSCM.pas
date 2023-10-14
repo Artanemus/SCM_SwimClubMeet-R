@@ -2015,7 +2015,10 @@ end;
 procedure TSCM.qryEventAfterDelete(DataSet: TDataSet);
 begin
   if Owner is TForm then
+  begin
       PostMessage(TForm(Owner).Handle, SCM_RENUMBEREVENTS, 0, 0);
+      PostMessage(TForm(Owner).Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);
+  end;
 end;
 
 procedure TSCM.qryEventAfterInsert(DataSet: TDataSet);
@@ -2043,7 +2046,10 @@ begin
   end;
 
   if Owner is TForm then
+  begin
       PostMessage(TForm(Owner).Handle, SCM_UPDATEINDVTEAM, 0, 0);
+      PostMessage(TForm(Owner).Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);
+  end;
 
   if DataSet.FieldByName('DistanceID').IsNull then fCurrEventType := etUnknown
   else
@@ -2291,7 +2297,7 @@ end;
 procedure TSCM.qrySessionAfterDelete(DataSet: TDataSet);
 begin
   if Owner is TForm then
-      PostMessage(TForm(Owner).Handle, SCM_EVENTASSERTSTATE, 0, 0);
+      PostMessage(TForm(Owner).Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);
 
 end;
 
@@ -2301,7 +2307,7 @@ begin
   // after any post (or insert) assert that events is visible
   //
   if Owner is TForm then
-      PostMessage(TForm(Owner).Handle, SCM_EVENTASSERTSTATE, 0, 0);
+      PostMessage(TForm(Owner).Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);
 end;
 
 procedure TSCM.qrySessionAfterScroll(DataSet: TDataSet);
