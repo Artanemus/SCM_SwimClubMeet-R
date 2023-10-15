@@ -2988,17 +2988,19 @@ begin
   try
     if ((GetKeyState(VK_CONTROL) and 128) = 128) then
     begin
-      rptB := TTimeKeeperReportB.Create(self);
-      rptB.Prepare(SCM.scmConnection, HeatID);
-      rptB.RunReport;
-      rptB.Free;
-    end
-    else
-    begin
+      // displays stripe lines for cutting. compact. inc. PB.TTB.
       rptA := TTimeKeeperReportA.Create(self);
       rptA.Prepare(SCM.scmConnection, HeatID);
       rptA.RunReport;
       rptA.Free;
+    end
+    else
+    begin
+      // basic - oversize racetime box. inc. PB.TTB
+      rptB := TTimeKeeperReportB.Create(self);
+      rptB.Prepare(SCM.scmConnection, HeatID);
+      rptB.RunReport;
+      rptB.Free;
     end;
   except
     on E: Exception do ShowMessage('Error opening report.');

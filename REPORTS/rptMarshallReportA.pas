@@ -19,6 +19,7 @@ type
     frxSessionReport: TfrxDBDataset;
     qryClubInfoRpt: TFDQuery;
     frxClubInfo: TfrxDBDataset;
+    procedure frxReport1BeforePrint(Sender: TfrxReportComponent);
     procedure frxReport1PrintReport(Sender: TObject);
   private
     { Private declarations }
@@ -37,6 +38,12 @@ implementation
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 {$R *.dfm}
+
+procedure TMarshallReportA.frxReport1BeforePrint(Sender: TfrxReportComponent);
+begin
+//  PageHeaderTeamName.visible := false;
+end;
+
 { TMarshallReportA }
 
 procedure TMarshallReportA.frxReport1PrintReport(Sender: TObject);

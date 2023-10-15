@@ -1,9 +1,9 @@
 object TimeKeeperReportB: TTimeKeeperReportB
-  OldCreateOrder = False
   Height = 446
   Width = 442
   object qryReport: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'SessionID'
     Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Event'
@@ -76,7 +76,7 @@ object TimeKeeperReportB: TTimeKeeperReportB
         Name = 'HEATID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = Null
+        Value = 276
       end>
   end
   object frxXLSExport1: TfrxXLSExport
@@ -165,6 +165,10 @@ object TimeKeeperReportB: TTimeKeeperReportB
     Top = 48
     Datasets = <
       item
+        DataSet = frxClubInfo
+        DataSetName = 'frxClubInfo'
+      end
+      item
         DataSet = frxDSReport
         DataSetName = 'frxDS'
       end>
@@ -193,7 +197,7 @@ object TimeKeeperReportB: TTimeKeeperReportB
         FillType = ftBrush
         Frame.Typ = []
         Height = 26.456710000000000000
-        Top = 245.669450000000000000
+        Top = 283.464750000000000000
         Width = 718.110700000000000000
         object TotalPages: TfrxMemoView
           AllowVectorExport = True
@@ -229,148 +233,23 @@ object TimeKeeperReportB: TTimeKeeperReportB
           Font.Style = []
           Frame.Typ = []
           Memo.UTF8W = (
-            'Printed On: [Date]')
+            'Printed On: [Date #d  dd MMM YYYY HH:MM AM/PM]')
           ParentFont = False
         end
       end
       object GroupHeader1: TfrxGroupHeader
         FillType = ftBrush
         Frame.Typ = []
-        Height = 22.677180000000000000
+        Height = 13.177180000000000000
         Top = 98.267780000000000000
         Width = 718.110700000000000000
         Condition = 'frxDS."HeatNum"'
-        object Memo1: TfrxMemoView
-          AllowVectorExport = True
-          Left = 15.118120000000000000
-          Top = 1.220470000000000000
-          Width = 45.354360000000000000
-          Height = 18.897650000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -11
-          Font.Name = 'Arial'
-          Font.Style = []
-          Frame.Typ = []
-          HAlign = haCenter
-          Memo.UTF8W = (
-            'Lane')
-          ParentFont = False
-          VAlign = vaBottom
-        end
-        object Memo2: TfrxMemoView
-          AllowVectorExport = True
-          Left = 64.252010000000000000
-          Top = 1.220470000000000000
-          Width = 64.252010000000000000
-          Height = 18.897650000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -11
-          Font.Name = 'Arial'
-          Font.Style = []
-          Frame.Typ = []
-          Memo.UTF8W = (
-            'Entrant')
-          ParentFont = False
-          VAlign = vaBottom
-        end
-        object Memo3: TfrxMemoView
-          AllowVectorExport = True
-          Left = 283.464750000000000000
-          Top = 1.220470000000000000
-          Width = 139.842610000000000000
-          Height = 18.897650000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -12
-          Font.Name = 'Arial'
-          Font.Style = [fsBold]
-          Frame.Typ = []
-          HAlign = haCenter
-          Memo.UTF8W = (
-            'RaceTime')
-          ParentFont = False
-          VAlign = vaBottom
-        end
-        object Memo4: TfrxMemoView
-          AllowVectorExport = True
-          Left = 442.205010000000000000
-          Top = 1.220470000000000000
-          Width = 71.811070000000000000
-          Height = 18.897650000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -11
-          Font.Name = 'Arial'
-          Font.Style = []
-          Frame.Typ = []
-          HAlign = haCenter
-          Memo.UTF8W = (
-            'TTB')
-          ParentFont = False
-          VAlign = vaBottom
-        end
-        object Memo5: TfrxMemoView
-          AllowVectorExport = True
-          Left = 517.795610000000000000
-          Top = 1.220470000000000000
-          Width = 79.370130000000000000
-          Height = 18.897650000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -11
-          Font.Name = 'Arial'
-          Font.Style = []
-          Frame.Typ = []
-          HAlign = haCenter
-          Memo.UTF8W = (
-            'PB')
-          ParentFont = False
-          VAlign = vaBottom
-        end
-        object Memo6: TfrxMemoView
-          AllowVectorExport = True
-          Left = 612.283860000000000000
-          Top = 1.220470000000000000
-          Width = 45.354360000000000000
-          Height = 18.897650000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -11
-          Font.Name = 'Arial'
-          Font.Style = []
-          Frame.Typ = []
-          HAlign = haCenter
-          Memo.UTF8W = (
-            'D')
-          ParentFont = False
-          VAlign = vaBottom
-        end
-        object Memo7: TfrxMemoView
-          AllowVectorExport = True
-          Left = 661.417750000000000000
-          Top = 1.220470000000000000
-          Width = 45.354360000000000000
-          Height = 18.897650000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -11
-          Font.Name = 'Arial'
-          Font.Style = []
-          Frame.Typ = []
-          HAlign = haCenter
-          Memo.UTF8W = (
-            'S')
-          ParentFont = False
-          VAlign = vaBottom
-        end
       end
       object MasterData1: TfrxMasterData
         FillType = ftBrush
         Frame.Typ = []
         Height = 41.574830000000000000
-        Top = 143.622140000000000000
+        Top = 181.417440000000000000
         Width = 718.110700000000000000
         DataSet = frxDSReport
         DataSetName = 'frxDS'
@@ -419,9 +298,9 @@ object TimeKeeperReportB: TTimeKeeperReportB
         end
         object frxDSTime: TfrxMemoView
           AllowVectorExport = True
-          Left = 264.567100000000000000
+          Left = 265.067100000000000000
           Top = 1.779530000000000000
-          Width = 173.858380000000000000
+          Width = 212.358380000000000000
           Height = 34.015770000000000000
           DataSet = frxDSReport
           DataSetName = 'frxDS'
@@ -439,7 +318,7 @@ object TimeKeeperReportB: TTimeKeeperReportB
         end
         object frxDSTimeToBet: TfrxMemoView
           AllowVectorExport = True
-          Left = 445.984540000000000000
+          Left = 485.984540000000000000
           Top = 1.779530000000000000
           Width = 68.031540000000000000
           Height = 26.456710000000000000
@@ -460,7 +339,7 @@ object TimeKeeperReportB: TTimeKeeperReportB
         end
         object frxDSPersonalBest: TfrxMemoView
           AllowVectorExport = True
-          Left = 517.795610000000000000
+          Left = 557.795610000000000000
           Top = 1.779530000000000000
           Width = 79.370130000000000000
           Height = 26.456710000000000000
@@ -479,30 +358,11 @@ object TimeKeeperReportB: TTimeKeeperReportB
           WordWrap = False
           VAlign = vaCenter
         end
-        object frxDSIsDisqualified: TfrxMemoView
-          AllowVectorExport = True
-          Left = 612.283860000000000000
-          Top = 1.779530000000000000
-          Width = 45.354360000000000000
-          Height = 26.456710000000000000
-          DataSet = frxDSReport
-          DataSetName = 'frxDS'
-          DisplayFormat.Kind = fkBoolean
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -16
-          Font.Name = 'Arial'
-          Font.Style = []
-          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
-          Frame.Width = 3.000000000000000000
-          ParentFont = False
-          VAlign = vaCenter
-        end
         object frxDSIsScratched: TfrxMemoView
           AllowVectorExport = True
-          Left = 661.417750000000000000
+          Left = 645.417750000000000000
           Top = 1.779530000000000000
-          Width = 45.354360000000000000
+          Width = 61.354360000000000000
           Height = 26.456710000000000000
           DataSet = frxDSReport
           DataSetName = 'frxDS'
@@ -572,19 +432,24 @@ object TimeKeeperReportB: TTimeKeeperReportB
         end
         object frxDScSwimClub: TfrxMemoView
           AllowVectorExport = True
-          Top = 22.677180000000000000
-          Width = 219.212740000000000000
+          Left = 283.500000000000000000
+          Top = 40.177180000000000000
+          Width = 433.712740000000000000
           Height = 18.897650000000000000
-          DataSet = frxDSReport
-          DataSetName = 'frxDS'
+          AutoWidth = True
+          DataSet = frxClubInfo
+          DataSetName = 'frxClubInfo'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
           Font.Height = -11
           Font.Name = 'Arial'
           Font.Style = []
           Frame.Typ = []
+          HAlign = haRight
           Memo.UTF8W = (
-            '[frxDS."SessionStart" #dDDD dd MMM YYYY HH:MM AM/PM]')
+            
+              'Session: [<frxClubInfo."SessionStart">  #dDDD dd MMM YYYY HH:MM ' +
+              'AM/PM]')
           ParentFont = False
           VAlign = vaCenter
         end
@@ -593,8 +458,9 @@ object TimeKeeperReportB: TTimeKeeperReportB
           Top = 3.779530000000000000
           Width = 158.740260000000000000
           Height = 18.897650000000000000
-          DataSet = frxDSReport
-          DataSetName = 'frxDS'
+          DataField = 'SwimClubName'
+          DataSet = frxClubInfo
+          DataSetName = 'frxClubInfo'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
           Font.Height = -11
@@ -602,11 +468,176 @@ object TimeKeeperReportB: TTimeKeeperReportB
           Font.Style = []
           Frame.Typ = []
           Memo.UTF8W = (
-            '[frxDS."cSwimClub"]')
+            '[frxClubInfo."SwimClubName"]')
           ParentFont = False
           VAlign = vaCenter
         end
       end
+      object GroupHeader3: TfrxGroupHeader
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 22.677180000000000000
+        Top = 136.063080000000000000
+        Width = 718.110700000000000000
+        Condition = 'frxDS."HeatNum"'
+        object Memo1: TfrxMemoView
+          AllowVectorExport = True
+          Left = 2.500000000000000000
+          Top = 1.708410000000000000
+          Width = 45.354360000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -11
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = []
+          HAlign = haCenter
+          Memo.UTF8W = (
+            'Lane')
+          ParentFont = False
+          VAlign = vaBottom
+        end
+        object Memo2: TfrxMemoView
+          AllowVectorExport = True
+          Left = 52.133890000000000000
+          Top = 1.708410000000000000
+          Width = 64.252010000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -11
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = []
+          Memo.UTF8W = (
+            'Entrant')
+          ParentFont = False
+          VAlign = vaBottom
+        end
+        object Memo3: TfrxMemoView
+          AllowVectorExport = True
+          Left = 271.346630000000000000
+          Top = 1.708410000000000000
+          Width = 139.842610000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -12
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = []
+          HAlign = haCenter
+          Memo.UTF8W = (
+            'RaceTime')
+          ParentFont = False
+          VAlign = vaBottom
+        end
+        object Memo4: TfrxMemoView
+          AllowVectorExport = True
+          Left = 470.086890000000000000
+          Top = 1.708410000000000000
+          Width = 71.811070000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -11
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = []
+          HAlign = haCenter
+          Memo.UTF8W = (
+            'TTB')
+          ParentFont = False
+          VAlign = vaBottom
+        end
+        object Memo5: TfrxMemoView
+          AllowVectorExport = True
+          Left = 545.677490000000000000
+          Top = 1.708410000000000000
+          Width = 79.370130000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -11
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = []
+          HAlign = haCenter
+          Memo.UTF8W = (
+            'PB')
+          ParentFont = False
+          VAlign = vaBottom
+        end
+        object Memo6: TfrxMemoView
+          AllowVectorExport = True
+          Left = 632.165740000000000000
+          Top = 1.708410000000000000
+          Width = 62.854360000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -11
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = []
+          HAlign = haCenter
+          Memo.UTF8W = (
+            'DCODE')
+          ParentFont = False
+          VAlign = vaBottom
+        end
+      end
     end
+  end
+  object qryClubInfoRpt: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    Active = True
+    IndexFieldNames = 'SwimClubID'
+    Connection = SCM.scmConnection
+    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
+    UpdateOptions.EnableDelete = False
+    UpdateOptions.EnableInsert = False
+    UpdateOptions.EnableUpdate = False
+    SQL.Strings = (
+      'USE SwimClubMeet;'
+      ''
+      'DECLARE @SwimClubID AS INTEGER;'
+      'SET @SwimClubID = :SWIMCLUBID;'
+      ''
+      'IF @SwimClubID IS NULL'
+      '    SET @SwimClubID = 1;'
+      ''
+      'SELECT SwimClub.[SwimClubID]'
+      '     , [NickName]'
+      '     , SwimClub.[Caption] AS SwimClubName'
+      '     , [NumOfLanes]'
+      '     , [LenOfPool]'
+      '     , [StartOfSwimSeason]'
+      '     --,[PoolTypeID]'
+      '     --,[SwimClubTypeID]'
+      '     , [Session].[Caption] AS SessionTitle'
+      '     , [SessionStart]'
+      'FROM SwimClub'
+      '    INNER JOIN Session'
+      '        ON SwimClub.SwimClubID = [Session].[SwimClubID]'
+      'WHERE SwimClub.[SwimClubID] = @SwimClubID;')
+    Left = 56
+    Top = 376
+    ParamData = <
+      item
+        Name = 'SWIMCLUBID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = Null
+      end>
+  end
+  object frxClubInfo: TfrxDBDataset
+    UserName = 'frxClubInfo'
+    CloseDataSource = False
+    DataSet = qryClubInfoRpt
+    BCDToCurrency = False
+    Left = 168
+    Top = 376
   end
 end

@@ -53,7 +53,6 @@ type
     function TeamEntrantSumTTB(aTeamID: Integer): Integer;
     function UpdateTeamTTB(aTeamID, milliseconds: Integer): Integer;
   public
-    fDoStatusBarUpdate: boolean; // FLAG ACTION - SCM_StatusBar.Enabled
     procedure AfterConstruction; override;
     function ClearLane(): Integer;
     function ClearSlot(): Integer;
@@ -373,8 +372,8 @@ begin
 
   aTeamID := Grid.DataSource.DataSet.FieldByName('TeamID').AsInteger;
 
-  // handle the ellipse button for the disqualification code
-  { TODO -oBSA -cGeneral : DCode Team Specific }
+  // ---------------------------------
+  // Disqualification code - DCODE
   fld := TDBGrid(Sender).SelectedField;
   if fld.FieldName = 'DCode' then
   begin
@@ -385,15 +384,14 @@ begin
     if IsPositiveResult(rtnValue) then
     begin
       SCM.dsTeam.DataSet.DisableControls;
-      Grid.DataSource.DataSet.Refresh;
-//      SCM.IndvTeam_LocateLane(aTeamID, etTeam);
+      Grid.DataSource.DataSet.Refresh; // NOTE: relocate not required.
       SCM.dsTeam.DataSet.EnableControls;
     end;
   end
-  // handle the ellipse entrant
+  // ---------------------------------
+  // Relay TEAMNAME 'name picker'.
   else if fld.FieldName = 'TeamName' then
   begin
-    // display the relay team 'name picker'.
     dlgPickTeam := TTeamNamePicker.Create(self);
     dlgPickTeam.Prepare(SCM.scmConnection, aTeamID);
     dlgPickTeam.Position := poDesigned;
@@ -403,57 +401,19 @@ begin
     dlgPickTeam.Top := aRect.Top;
     rtnValue := dlgPickTeam.ShowModal;
     dlgPickTeam.Free;
-    // require a refresh to update members details
     if IsPositiveResult(rtnValue) then
     begin
-      // Repaint the teamname selected.
-      SCM.dsTeam.DataSet.Refresh;
-      // Pad out missing slots
+      SCM.dsTeam.DataSet.Refresh; // Repaint the teamname selected.
       if GridEntrant.DataSource.DataSet.IsEmpty or
         (GridEntrant.DataSource.DataSet.RecordCount < 4) then
       begin
-        // we need team entrant slots - minimium 4xslots...
-        // AUTO CREATE 4xTeamEntrants
+        // Pad out missing slots - AUTO CREATE 4xTeamEntrants
         rows := TeamEntrantPadSlots(aTeamID);
         if (rows > 0) then
           GridEntrant.DataSource.DataSet.Refresh;
       end;
-
-      // Estimate the TimeToBeat for the relay.
-      {
-      SCM.dsTeam.DataSet.DisableControls;
-      milliseconds := TeamEntrantSumTTB(aTeamID);
-      UpdateTeamTTB(aTeamID, milliseconds);
-      Grid.DataSource.DataSet.Refresh;
-      SCM.dsTeam.DataSet.EnableControls;
-      }
-
-      {
-      if milliseconds = 0 then
-      begin
-        // clear the timetobeat field
-        SQL := 'UPDATE SwimClubMeet.dbo.Team SET [Team].[TimeToBeat] = NULL ' +
-          'WHERE [Team].[TeamID] = :ID';
-        SCM.scmConnection.ExecSQL(SQL, [aTeamID]);
-      end
-      else
-      begin
-        TimeToBeatTOT := milliseconds / (24 * 60 * 60 * 1000);
-        SQL := 'UPDATE SwimClubMeet.dbo.Team SET [Team].[TimeToBeat] = ' +
-          ':ID1 WHERE [Team].[TeamID] = :ID2';
-        SCM.scmConnection.ExecSQL(SQL, [TimeToBeatTOT, aTeamID],
-          [ftDateTime, ftInteger]);
-      end;
-      Grid.DataSource.DataSet.Refresh;
-      SCM.IndvTeam_LocateLane(aTeamID, etTeam);
-      }
-
     end;
   end;
-
-//  SCM.dsTeam.DataSet.EnableControls;
-  // S T A T U S B A R .
-  fDoStatusBarUpdate := true;
 end;
 
 procedure TframeTEAM.GridEnter(Sender: TObject);

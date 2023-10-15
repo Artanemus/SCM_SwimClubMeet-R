@@ -1,6 +1,5 @@
 object TimeKeeperReportA: TTimeKeeperReportA
-  OldCreateOrder = False
-  Height = 389
+  Height = 575
   Width = 385
   object frxReport1: TfrxReport
     Version = '6.6.11'
@@ -22,6 +21,10 @@ object TimeKeeperReportA: TTimeKeeperReportA
     Left = 160
     Top = 16
     Datasets = <
+      item
+        DataSet = frxClubInfo
+        DataSetName = 'frxClubInfo'
+      end
       item
         DataSet = frxDSReport
         DataSetName = 'frxDS'
@@ -51,7 +54,7 @@ object TimeKeeperReportA: TTimeKeeperReportA
         FillType = ftBrush
         Frame.Typ = []
         Height = 26.456710000000000000
-        Top = 211.653680000000000000
+        Top = 317.480520000000000000
         Width = 718.110700000000000000
         object TotalPages: TfrxMemoView
           AllowVectorExport = True
@@ -89,13 +92,14 @@ object TimeKeeperReportA: TTimeKeeperReportA
         FillType = ftBrush
         Frame.Typ = []
         Height = 45.354360000000000000
-        Top = 18.897650000000000000
+        Top = 124.724490000000000000
         Width = 718.110700000000000000
         Condition = 'frxDS."Lane"'
         object frxDScDistance: TfrxMemoView
           AllowVectorExport = True
-          Top = 0.220470000000000000
-          Width = 188.976500000000000000
+          Left = 4.500000000000000000
+          Top = 0.720470000000000000
+          Width = 255.476500000000000000
           Height = 18.897650000000000000
           DataSet = frxDSReport
           DataSetName = 'frxDS'
@@ -114,31 +118,6 @@ object TimeKeeperReportA: TTimeKeeperReportA
           Formats = <
             item
             end
-            item
-            end>
-        end
-        object frxDScSwimClub: TfrxMemoView
-          AllowVectorExport = True
-          Left = 438.425480000000000000
-          Width = 279.685220000000000000
-          Height = 18.897650000000000000
-          DataSet = frxDSReport
-          DataSetName = 'frxDS'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -11
-          Font.Name = 'Arial'
-          Font.Style = []
-          Frame.Typ = []
-          HAlign = haRight
-          Memo.UTF8W = (
-            
-              '[frxDS."cSwimClub"] - [<frxDS."SessionStart"> #dddd dd mmm yyyy ' +
-              'HH:MM AM/PM]')
-          ParentFont = False
-          WordWrap = False
-          VAlign = vaCenter
-          Formats = <
             item
             end
             item
@@ -271,8 +250,9 @@ object TimeKeeperReportA: TTimeKeeperReportA
         end
         object frxDScEvent: TfrxMemoView
           AllowVectorExport = True
-          Left = 188.976500000000000000
-          Width = 400.630180000000000000
+          Left = 264.476500000000000000
+          Top = 1.000000000000000000
+          Width = 223.130180000000000000
           Height = 18.897650000000000000
           DataField = 'cEvent'
           DataSet = frxDSReport
@@ -293,7 +273,7 @@ object TimeKeeperReportA: TTimeKeeperReportA
         FillType = ftBrush
         Frame.Typ = []
         Height = 64.252010000000000000
-        Top = 86.929190000000000000
+        Top = 192.756030000000000000
         Width = 718.110700000000000000
         DataSet = frxDSReport
         DataSetName = 'frxDS'
@@ -451,10 +431,72 @@ object TimeKeeperReportA: TTimeKeeperReportA
           VAlign = vaCenter
         end
       end
+      object PageHeader1: TfrxPageHeader
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 45.354360000000000000
+        Top = 18.897650000000000000
+        Width = 718.110700000000000000
+        object FDQuery1cSwimClub: TfrxMemoView
+          AllowVectorExport = True
+          Width = 400.630180000000000000
+          Height = 30.236240000000000000
+          AutoWidth = True
+          DataField = 'SwimClubName'
+          DataSet = frxClubInfo
+          DataSetName = 'frxClubInfo'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -19
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[frxClubInfo."SwimClubName"]')
+          ParentFont = False
+        end
+        object FDQuery1NickName: TfrxMemoView
+          AllowVectorExport = True
+          Top = 22.677180000000000000
+          Width = 400.630180000000000000
+          Height = 18.897650000000000000
+          DataField = 'NickName'
+          DataSet = frxClubInfo
+          DataSetName = 'frxClubInfo'
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[frxClubInfo."NickName"]')
+        end
+        object FDQuery1SessionStart: TfrxMemoView
+          AllowVectorExport = True
+          Left = 417.236550000000000000
+          Top = 22.677180000000000000
+          Width = 297.094620000000000000
+          Height = 18.897650000000000000
+          AutoWidth = True
+          DataSet = frxClubInfo
+          DataSetName = 'frxClubInfo'
+          DisplayFormat.FormatStr = 'mmmm dd, yyyy, hh:mm am/pm'
+          DisplayFormat.Kind = fkDateTime
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = []
+          HAlign = haRight
+          Memo.UTF8W = (
+            
+              'Session Date : [frxClubInfo."SessionStart" #d DDD dd MMM YYYY HH' +
+              ':MM AM/PM]')
+          ParentFont = False
+        end
+      end
     end
   end
   object qryReport: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'SessionID'
     Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Event'
@@ -496,10 +538,7 @@ object TimeKeeperReportA: TTimeKeeperReportA
       #9',Entrant.IsDisqualified'
       #9',Entrant.IsScratched'
       #9',Event.EventNum'
-      #9',Session.SessionStart'
-      #9',SwimClub.NickName'
-      #9',SwimClub.Caption AS cSwimClub'
-      #9',Event.SessionID'
+      ' ,Event.SessionID'
       'FROM Event'
       'INNER JOIN Stroke ON Event.StrokeID = Stroke.StrokeID'
       'INNER JOIN Distance ON Event.DistanceID = Distance.DistanceID'
@@ -508,20 +547,18 @@ object TimeKeeperReportA: TTimeKeeperReportA
         'tID'
       'INNER JOIN Entrant ON Entrant.HeatID = HeatIndividual.HeatID'
       'LEFT JOIN Member ON Entrant.MemberID = Member.MemberID'
-      'INNER JOIN Session ON Event.SessionID = Session.SessionID'
-      'INNER JOIN SwimClub ON Session.SwimClubID = SwimClub.SwimClubID'
       'WHERE HeatIndividual.HeatID = @HeatID'
       'ORDER BY Event.EventNum'
       #9',HeatIndividual.HeatNum'
       #9',Entrant.Lane')
-    Left = 160
-    Top = 272
+    Left = 64
+    Top = 288
     ParamData = <
       item
         Name = 'HEATID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = Null
+        Value = 276
       end>
   end
   object frxXLSExport1: TfrxXLSExport
@@ -584,9 +621,75 @@ object TimeKeeperReportA: TTimeKeeperReportA
   object frxDSReport: TfrxDBDataset
     UserName = 'frxDS'
     CloseDataSource = False
+    FieldAliases.Strings = (
+      'EventID=EventID'
+      'cEvent=cEvent'
+      'cDistance=cDistance'
+      'cStroke=cStroke'
+      'HeatNum=HeatNum'
+      'HeatID=HeatID'
+      'Lane=Lane'
+      'FNAME=FNAME'
+      'RaceTime=RaceTime'
+      'TimeToBeat=TimeToBeat'
+      'PersonalBest=PersonalBest'
+      'IsDisqualified=IsDisqualified'
+      'IsScratched=IsScratched'
+      'EventNum=EventNum'
+      'SessionID=SessionID')
     DataSet = qryReport
     BCDToCurrency = False
-    Left = 64
-    Top = 272
+    Left = 152
+    Top = 288
+  end
+  object qryClubInfoRpt: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    Active = True
+    IndexFieldNames = 'SwimClubID'
+    Connection = SCM.scmConnection
+    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
+    UpdateOptions.EnableDelete = False
+    UpdateOptions.EnableInsert = False
+    UpdateOptions.EnableUpdate = False
+    SQL.Strings = (
+      'USE SwimClubMeet;'
+      ''
+      'DECLARE @SwimClubID AS INTEGER;'
+      'SET @SwimClubID = :SWIMCLUBID;'
+      ''
+      'IF @SwimClubID IS NULL'
+      '    SET @SwimClubID = 1;'
+      ''
+      'SELECT SwimClub.[SwimClubID]'
+      '     , [NickName]'
+      '     , SwimClub.[Caption] AS SwimClubName'
+      '     , [NumOfLanes]'
+      '     , [LenOfPool]'
+      '     , [StartOfSwimSeason]'
+      '     --,[PoolTypeID]'
+      '     --,[SwimClubTypeID]'
+      '     , [Session].[Caption] AS SessionTitle'
+      '     , [SessionStart]'
+      'FROM SwimClub'
+      '    INNER JOIN Session'
+      '        ON SwimClub.SwimClubID = [Session].[SwimClubID]'
+      'WHERE SwimClub.[SwimClubID] = @SwimClubID;')
+    Left = 56
+    Top = 376
+    ParamData = <
+      item
+        Name = 'SWIMCLUBID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = Null
+      end>
+  end
+  object frxClubInfo: TfrxDBDataset
+    UserName = 'frxClubInfo'
+    CloseDataSource = False
+    DataSet = qryClubInfoRpt
+    BCDToCurrency = False
+    Left = 168
+    Top = 376
   end
 end

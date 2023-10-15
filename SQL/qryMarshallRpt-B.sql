@@ -34,8 +34,9 @@ IF @EventTypeID = 1
         ORDER BY
         HeatIndividual.HeatNum,
         Entrant.Lane;
-    END
-ELSE 
+  END
+
+  ELSE 
     BEGIN
         SELECT
         HeatIndividual.HeatID,

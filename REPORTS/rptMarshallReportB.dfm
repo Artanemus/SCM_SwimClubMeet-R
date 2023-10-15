@@ -1,5 +1,4 @@
 object MarshallReportB: TMarshallReportB
-  OldCreateOrder = False
   Height = 450
   Width = 442
   object frxReport1: TfrxReport
@@ -12,9 +11,29 @@ object MarshallReportB: TMarshallReportB
     PrintOptions.Printer = 'Default'
     PrintOptions.PrintOnSheet = 0
     ReportOptions.CreateDate = 43428.811813125000000000
-    ReportOptions.LastChange = 43434.512179675900000000
+    ReportOptions.LastChange = 45214.562654930600000000
     ScriptLanguage = 'PascalScript'
     ScriptText.Strings = (
+      'procedure GroupHeader3OnAfterCalcHeight(Sender: TfrxComponent);'
+      'begin'
+      '    If   <frxDS."TeamNameID"> = 0 then'
+      '    begin                '
+      '      GroupHeader3.Height := 0.0;'
+      
+        '      // clipping not working - perform manually                ' +
+        '                                                                ' +
+        '            '
+      '      Memo5.Visible := false;'
+      
+        '      Memo4.Visible := false;                                   ' +
+        '                     '
+      '      Memo1.Visible := false;'
+      
+        '      frxDSTeamName.Visible := false;                           ' +
+        '                             '
+      '    end;              '
+      'end;'
+      ''
       'begin'
       ''
       'end.')
@@ -22,6 +41,10 @@ object MarshallReportB: TMarshallReportB
     Left = 272
     Top = 40
     Datasets = <
+      item
+        DataSet = frxClubInfo
+        DataSetName = 'frxClubInfo'
+      end
       item
         DataSet = frxSessionReport
         DataSetName = 'frxDS'
@@ -43,6 +66,70 @@ object MarshallReportB: TMarshallReportB
       ColumnWidth = 95.000000000000000000
       Frame.Typ = []
       MirrorMode = []
+      object GroupHeader3: TfrxGroupHeader
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 64.177180000000000000
+        Top = 234.330860000000000000
+        Width = 718.110700000000000000
+        OnAfterCalcHeight = 'GroupHeader3OnAfterCalcHeight'
+        Condition = 'frxDS."TeamNameID"'
+        object frxDSTeamName: TfrxMemoView
+          IndexTag = 1
+          AllowVectorExport = True
+          Left = 151.000000000000000000
+          Top = 6.000000000000000000
+          Width = 330.559060000000000000
+          Height = 18.897650000000000000
+          DataField = 'TeamName'
+          DataSet = frxSessionReport
+          DataSetName = 'frxDS'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -16
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[frxDS."TeamName"]')
+          ParentFont = False
+        end
+        object Memo4: TfrxMemoView
+          AllowVectorExport = True
+          Left = 5.000000000000000000
+          Top = 34.618120000000000000
+          Width = 138.988250000000000000
+          Height = 11.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -9
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = []
+          HAlign = haRight
+          Memo.UTF8W = (
+            'RaceTime')
+          ParentFont = False
+        end
+        object Memo1: TfrxMemoView
+          AllowVectorExport = True
+          Left = 1.500000000000000000
+          Top = 9.618120000000000000
+          Width = 147.401670000000000000
+          Height = 37.795300000000000000
+          DataSet = frxSessionReport
+          DataSetName = 'frxDS'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
+          Frame.Width = 2.000000000000000000
+          HAlign = haCenter
+          ParentFont = False
+        end
+      end
       object PageHeader1: TfrxPageHeader
         FillType = ftBrush
         Frame.Typ = []
@@ -54,7 +141,9 @@ object MarshallReportB: TMarshallReportB
           Width = 400.630180000000000000
           Height = 30.236240000000000000
           AutoWidth = True
-          DataSetName = 'FDQuery1'
+          DataField = 'SwimClubName'
+          DataSet = frxClubInfo
+          DataSetName = 'frxClubInfo'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
           Font.Height = -19
@@ -62,7 +151,7 @@ object MarshallReportB: TMarshallReportB
           Font.Style = [fsBold]
           Frame.Typ = []
           Memo.UTF8W = (
-            '[frxDS."cSwimClub"]')
+            '[frxClubInfo."SwimClubName"]')
           ParentFont = False
         end
         object FDQuery1NickName: TfrxMemoView
@@ -70,10 +159,12 @@ object MarshallReportB: TMarshallReportB
           Top = 22.677180000000000000
           Width = 400.630180000000000000
           Height = 18.897650000000000000
-          DataSetName = 'FDQuery1'
+          DataField = 'NickName'
+          DataSet = frxClubInfo
+          DataSetName = 'frxClubInfo'
           Frame.Typ = []
           Memo.UTF8W = (
-            '[frxDS."NickName"]')
+            '[frxClubInfo."NickName"]')
         end
         object FDQuery1SessionStart: TfrxMemoView
           AllowVectorExport = True
@@ -82,7 +173,8 @@ object MarshallReportB: TMarshallReportB
           Width = 204.094620000000000000
           Height = 18.897650000000000000
           AutoWidth = True
-          DataSetName = 'FDQuery1'
+          DataSet = frxClubInfo
+          DataSetName = 'frxClubInfo'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
           Font.Height = -13
@@ -92,8 +184,8 @@ object MarshallReportB: TMarshallReportB
           HAlign = haRight
           Memo.UTF8W = (
             
-              'Session Date : [frxDS."SessionStart" #d DDD dd MMM YYYY HH:MM AM' +
-              '/PM]')
+              'Session Date : [frxClubInfo."SessionStart" #d DDD dd MMM YYYY HH' +
+              ':MM AM/PM]')
           ParentFont = False
         end
       end
@@ -114,10 +206,11 @@ object MarshallReportB: TMarshallReportB
         KeepTogether = True
         object frxDScDistance: TfrxMemoView
           AllowVectorExport = True
-          Left = 7.456710000000000000
-          Top = 3.779530000000000000
-          Width = 79.370130000000000000
+          Left = 58.456710000000000000
+          Top = 7.779530000000000000
+          Width = 296.370130000000000000
           Height = 18.897650000000000000
+          DataField = 'cDistanceStroke'
           DataSet = frxSessionReport
           DataSetName = 'frxDS'
           Font.Charset = DEFAULT_CHARSET
@@ -126,52 +219,66 @@ object MarshallReportB: TMarshallReportB
           Font.Name = 'Arial'
           Font.Style = [fsBold]
           Frame.Typ = []
-          HAlign = haRight
           Memo.UTF8W = (
-            '[frxDS."cDistance"]')
+            '[frxDS."cDistanceStroke"]')
           ParentFont = False
           WordWrap = False
           VAlign = vaCenter
         end
         object frxDScEvent: TfrxMemoView
           AllowVectorExport = True
-          Left = 238.110390000000000000
-          Top = 3.779530000000000000
-          Width = 434.645950000000000000
+          Left = 358.610390000000000000
+          Top = 7.779530000000000000
+          Width = 346.850650000000000000
           Height = 18.897650000000000000
           DataField = 'cEvent'
           DataSet = frxSessionReport
           DataSetName = 'frxDS'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = []
           Frame.Typ = []
+          HAlign = haRight
           Memo.UTF8W = (
             '[frxDS."cEvent"]')
+          ParentFont = False
         end
-        object Memo5: TfrxMemoView
+        object Memo9: TfrxMemoView
+          IndexTag = 1
           AllowVectorExport = True
-          Left = 86.929190000000000000
-          Top = 3.779530000000000000
-          Width = 151.181200000000000000
-          Height = 18.897650000000000000
+          Left = 12.000000000000000000
+          Top = 2.275510000000000000
+          Width = 43.130180000000000000
+          Height = 27.397650000000000000
+          DataField = 'EventNumStr'
           DataSet = frxSessionReport
           DataSetName = 'frxDS'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
-          Font.Height = -16
+          Font.Height = -24
           Font.Name = 'Arial'
           Font.Style = [fsBold]
           Frame.Typ = []
           Memo.UTF8W = (
-            ' [frxDS."cStroke"]')
+            '[frxDS."EventNumStr"]')
           ParentFont = False
-          WordWrap = False
-          VAlign = vaCenter
+        end
+        object Shape1: TfrxShapeView
+          AllowVectorExport = True
+          Left = 6.000000000000000000
+          Top = 1.775510000000000000
+          Width = 44.500000000000000000
+          Height = 29.720470000000000000
+          Frame.Typ = []
         end
       end
       object MasterData1: TfrxMasterData
         FillType = ftBrush
         Frame.Typ = []
         Height = 41.574830000000000000
-        Top = 249.448980000000000000
+        Top = 321.260050000000000000
         Width = 718.110700000000000000
         Columns = 2
         ColumnWidth = 351.496062992126000000
@@ -202,7 +309,7 @@ object MarshallReportB: TMarshallReportB
           AllowVectorExport = True
           Left = 175.637910000000000000
           Top = 10.779530000000000000
-          Width = 166.299320000000000000
+          Width = 172.799320000000000000
           Height = 18.897650000000000000
           DataSet = frxSessionReport
           DataSetName = 'frxDS'
@@ -234,12 +341,29 @@ object MarshallReportB: TMarshallReportB
           HAlign = haCenter
           ParentFont = False
         end
+        object Memo5: TfrxMemoView
+          AllowVectorExport = True
+          Left = 4.000000000000000000
+          Top = 26.858070000000000000
+          Width = 138.988250000000000000
+          Height = 11.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -9
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = []
+          HAlign = haRight
+          Memo.UTF8W = (
+            'Split')
+          ParentFont = False
+        end
       end
       object PageFooter1: TfrxPageFooter
         FillType = ftBrush
         Frame.Typ = []
         Height = 22.677180000000000000
-        Top = 385.512060000000000000
+        Top = 457.323130000000000000
         Width = 718.110700000000000000
         object TotalPages: TfrxMemoView
           AllowVectorExport = True
@@ -276,7 +400,7 @@ object MarshallReportB: TMarshallReportB
       object GroupHeader2: TfrxGroupHeader
         FillType = ftBrush
         Frame.Typ = []
-        Height = 45.354360000000000000
+        Height = 31.354330710000000000
         Top = 181.417440000000000000
         Width = 718.110700000000000000
         Condition = 'frxDS."HeatNum"'
@@ -284,7 +408,7 @@ object MarshallReportB: TMarshallReportB
         object frxDSHeatCount: TfrxMemoView
           AllowVectorExport = True
           Left = 3.779530000000000000
-          Top = 4.779530000000000000
+          Top = 9.779530000000000000
           Width = 105.826840000000000000
           Height = 18.897650000000000000
           DataSet = frxSessionReport
@@ -299,78 +423,28 @@ object MarshallReportB: TMarshallReportB
             'HEAT: [frxDS."HeatNum" #n%2.0f]')
           ParentFont = False
         end
-        object Memo1: TfrxMemoView
+        object Line1: TfrxLineView
           AllowVectorExport = True
-          Left = 147.401670000000000000
-          Top = 25.456710000000000000
-          Width = 34.015770000000000000
-          Height = 18.897650000000000000
-          Frame.Typ = []
-          Memo.UTF8W = (
-            'Lane')
-        end
-        object Memo2: TfrxMemoView
-          AllowVectorExport = True
-          Left = 181.417440000000000000
-          Top = 25.456710000000000000
-          Width = 166.299320000000000000
-          Height = 18.897650000000000000
-          Frame.Typ = []
-          Memo.UTF8W = (
-            'Entrant')
-        end
-        object Memo4: TfrxMemoView
-          AllowVectorExport = True
-          Left = 4.338590000000000000
-          Top = 25.456710000000000000
-          Width = 105.826840000000000000
-          Height = 18.897650000000000000
-          Frame.Typ = []
-          Memo.UTF8W = (
-            'RaceTime')
-        end
-        object Memo6: TfrxMemoView
-          AllowVectorExport = True
-          Left = 505.897960000000000000
-          Top = 26.456710000000000000
-          Width = 34.015770000000000000
-          Height = 18.897650000000000000
-          Frame.Typ = []
-          Memo.UTF8W = (
-            'Lane')
-        end
-        object Memo7: TfrxMemoView
-          AllowVectorExport = True
-          Left = 539.913730000000000000
-          Top = 26.456710000000000000
-          Width = 166.299320000000000000
-          Height = 18.897650000000000000
-          Frame.Typ = []
-          Memo.UTF8W = (
-            'Entrant')
-        end
-        object Memo8: TfrxMemoView
-          AllowVectorExport = True
-          Left = 362.834880000000000000
-          Top = 26.456710000000000000
-          Width = 105.826840000000000000
-          Height = 18.897650000000000000
-          Frame.Typ = []
-          Memo.UTF8W = (
-            'RaceTime')
+          Left = 4.500000000000000000
+          Top = 8.082560000000000000
+          Width = 702.500000000000000000
+          Color = clBlack
+          Frame.Typ = [ftTop]
+          Frame.Width = 2.000000000000000000
         end
       end
       object GroupFooter1: TfrxGroupFooter
         FillType = ftBrush
         Frame.Typ = []
         Height = 11.338590000000000000
-        Top = 313.700990000000000000
+        Top = 385.512060000000000000
         Width = 718.110700000000000000
       end
     end
   end
   object qryReport: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'HeatNum'
     Connection = SCM.scmConnection
     UpdateOptions.KeyFields = 'HeatID'
@@ -378,40 +452,104 @@ object MarshallReportB: TMarshallReportB
       'USE SwimClubMeet;'
       ''
       'DECLARE @EventID as integer;'
-      'SET @EventID = :EVENTID;'
+      'DECLARE @EventTypeID as integer;'
       ''
-      'SELECT'
-      '  HeatIndividual.HeatID,'
-      '  HeatIndividual.HeatNum,'
-      '  Distance.Caption AS cDistance,'
-      '  Stroke.Caption AS cStroke,'
-      '  Event.EventNum,'
-      '  Event.Caption AS cEvent,'
-      '  Entrant.Lane,'
+      'SET @EventID = :EVENTID;'
+      'SET @EventTypeID = (SELECT EventTypeID FROM [EVENT] '
       
-        '  Concat(Member.FirstName, '#39' '#39', Upper(Member.LastName)) AS FNAME' +
-        ','
-      '  SwimClub.NickName,'
-      '  SwimClub.Caption AS cSwimClub,'
-      '  Session.SessionStart,'
-      '  Event.SessionID,'
-      '  HeatIndividual.EventID'
-      'FROM'
-      '  HeatIndividual'
-      '  INNER JOIN Event ON HeatIndividual.EventID = Event.EventID'
-      '  INNER JOIN Distance ON Event.DistanceID = Distance.DistanceID'
-      '  INNER JOIN Stroke ON Event.StrokeID = Stroke.StrokeID'
-      '  INNER JOIN Entrant ON Entrant.HeatID = HeatIndividual.HeatID'
-      '  LEFT JOIN Member ON Entrant.MemberID = Member.MemberID'
-      '  INNER JOIN Session ON Event.SessionID = Session.SessionID'
+        '    INNER JOIN Distance ON [Event].DistanceID = Distance.Distanc' +
+        'eID'
+      '    WHERE EventID = @EventID);'
+      ''
+      'IF @EventTypeID = 1     '
+      '    BEGIN'
+      '        SELECT'
+      '        HeatIndividual.HeatID,'
+      '        HeatIndividual.HeatNum,'
       
-        '  INNER JOIN SwimClub ON Session.SwimClubID = SwimClub.SwimClubI' +
-        'D'
-      'WHERE'
-      '  HeatIndividual.EventID = @EventID'
-      'ORDER BY'
-      '  HeatIndividual.HeatNum,'
-      '  Entrant.Lane')
+        '        Concat (Distance.Caption, '#39' '#39', Stroke.Caption) AS cDista' +
+        'nceStroke,'
+      '        Event.EventNum,'
+      '        FORMAT(Event.EventNum, '#39'00'#39') AS EventNumStr,'
+      '        Event.Caption AS cEvent,'
+      '        Entrant.Lane,'
+      
+        '        Concat(Member.FirstName, '#39' '#39', Upper(Member.LastName)) AS' +
+        ' FNAME,'
+      '        '#39#39' AS TeamName,'
+      '        0 AS TeamNameID,'
+      '        HeatIndividual.EventID'
+      '        FROM'
+      '        HeatIndividual'
+      
+        '        INNER JOIN Event ON HeatIndividual.EventID = Event.Event' +
+        'ID'
+      
+        '        INNER JOIN Distance ON Event.DistanceID = Distance.Dista' +
+        'nceID'
+      '        INNER JOIN Stroke ON Event.StrokeID = Stroke.StrokeID'
+      
+        '        INNER JOIN Entrant ON Entrant.HeatID = HeatIndividual.He' +
+        'atID'
+      '        LEFT JOIN Member ON Entrant.MemberID = Member.MemberID'
+      '        WHERE'
+      '        HeatIndividual.EventID = @EventID'
+      '        ORDER BY'
+      '        HeatIndividual.HeatNum,'
+      '        Entrant.Lane;'
+      '  END'
+      ''
+      '  ELSE '
+      '    BEGIN'
+      '        SELECT'
+      '        HeatIndividual.HeatID,'
+      '        HeatIndividual.HeatNum,'
+      
+        '        Concat (Distance.Caption, '#39' RELAY '#39', Stroke.Caption) AS ' +
+        'cDistanceStroke,'
+      '        Event.EventNum,'
+      '        FORMAT(Event.EventNum, '#39'00'#39') AS EventNumStr,'
+      '        Event.Caption AS cEvent,'
+      '        Team.Lane,'
+      
+        '        Concat('#39'(#'#39',TeamEntrant.Lane,'#39') '#39',Member.FirstName, '#39' '#39',' +
+        ' Upper(Member.LastName)) AS FNAME,'
+      '        TeamName.Caption AS TeamName,'
+      '        TeamName.TeamNameID,'
+      '        HeatIndividual.EventID'
+      '        FROM'
+      '        HeatIndividual'
+      
+        '        INNER JOIN Event ON HeatIndividual.EventID = Event.Event' +
+        'ID'
+      
+        '        INNER JOIN Distance ON Event.DistanceID = Distance.Dista' +
+        'nceID'
+      '        INNER JOIN Stroke ON Event.StrokeID = Stroke.StrokeID'
+      '        INNER JOIN Team ON HeatIndividual.HeatID = Team.HeatID'
+      
+        '        INNER JOIN TeamEntrant ON Team.TeamID = TeamEntrant.Team' +
+        'ID'
+      
+        '        LEFT JOIN TeamName ON Team.TeamNameID = TeamName.TeamNam' +
+        'eID'
+      
+        '        LEFT JOIN Member ON TeamEntrant.MemberID = Member.Member' +
+        'ID'
+      '        WHERE'
+      
+        '        HeatIndividual.EventID = @EventID AND Team.TeamNameID IS' +
+        ' NOT NULL AND TeamEntrant.MemberID IS NOT NULL'
+      '        ORDER BY'
+      '        HeatIndividual.HeatNum,'
+      '        Team.Lane,'
+      '        TeamEntrant.Lane;'
+      '    END'
+      ''
+      ''
+      ''
+      ''
+      '')
     Left = 136
     Top = 280
     ParamData = <
@@ -419,7 +557,7 @@ object MarshallReportB: TMarshallReportB
         Name = 'EVENTID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = Null
+        Value = 65
       end>
   end
   object frxXLSExport1: TfrxXLSExport
@@ -482,9 +620,70 @@ object MarshallReportB: TMarshallReportB
   object frxSessionReport: TfrxDBDataset
     UserName = 'frxDS'
     CloseDataSource = False
+    FieldAliases.Strings = (
+      'HeatID=HeatID'
+      'HeatNum=HeatNum'
+      'cDistanceStroke=cDistanceStroke'
+      'EventNum=EventNum'
+      'EventNumStr=EventNumStr'
+      'cEvent=cEvent'
+      'Lane=Lane'
+      'FNAME=FNAME'
+      'TeamName=TeamName'
+      'TeamNameID=TeamNameID'
+      'EventID=EventID')
     DataSet = qryReport
     BCDToCurrency = False
     Left = 264
     Top = 280
+  end
+  object qryClubInfoRpt: TFDQuery
+    Active = True
+    IndexFieldNames = 'SwimClubID'
+    Connection = SCM.scmConnection
+    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
+    UpdateOptions.EnableDelete = False
+    UpdateOptions.EnableInsert = False
+    UpdateOptions.EnableUpdate = False
+    SQL.Strings = (
+      'USE SwimClubMeet;'
+      ''
+      'DECLARE @SwimClubID AS INTEGER;'
+      'SET @SwimClubID = :SWIMCLUBID;'
+      ''
+      'IF @SwimClubID IS NULL'
+      '    SET @SwimClubID = 1;'
+      ''
+      'SELECT SwimClub.[SwimClubID]'
+      '     , [NickName]'
+      '     , SwimClub.[Caption] AS SwimClubName'
+      '     , [NumOfLanes]'
+      '     , [LenOfPool]'
+      '     , [StartOfSwimSeason]'
+      '     --,[PoolTypeID]'
+      '     --,[SwimClubTypeID]'
+      '     , [Session].[Caption] AS SessionTitle'
+      '     , [SessionStart]'
+      'FROM SwimClub'
+      '    INNER JOIN Session'
+      '        ON SwimClub.SwimClubID = [Session].[SwimClubID]'
+      'WHERE SwimClub.[SwimClubID] = @SwimClubID;')
+    Left = 152
+    Top = 376
+    ParamData = <
+      item
+        Name = 'SWIMCLUBID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = Null
+      end>
+  end
+  object frxClubInfo: TfrxDBDataset
+    UserName = 'frxClubInfo'
+    CloseDataSource = False
+    DataSet = qryClubInfoRpt
+    BCDToCurrency = False
+    Left = 264
+    Top = 376
   end
 end
