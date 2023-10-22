@@ -131,11 +131,38 @@ object MarshallReportA: TMarshallReportA
         Width = 718.110700000000000000
         Condition = 'frxDS."EventID"'
         KeepTogether = True
+        object Shape1: TfrxShapeView
+          AllowVectorExport = True
+          Left = 4.500000000000000000
+          Top = 0.775510000000000000
+          Width = 113.515770000000000000
+          Height = 29.720470000000000000
+          Frame.Typ = []
+        end
+        object frxDSEventNumStr: TfrxMemoView
+          IndexTag = 1
+          AllowVectorExport = True
+          Left = 6.500000000000000000
+          Top = 3.275510000000000000
+          Width = 108.850650000000000000
+          Height = 27.397650000000000000
+          DataSet = frxSessionReport
+          DataSetName = 'frxDS'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -21
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = []
+          Memo.UTF8W = (
+            'EVENT [frxDS."EventNumStr"]')
+          ParentFont = False
+        end
         object frxDScDistance: TfrxMemoView
           AllowVectorExport = True
-          Left = 55.456710000000000000
+          Left = 126.956710000000000000
           Top = 7.000000000000000000
-          Width = 297.047310000000000000
+          Width = 256.842610000000000000
           Height = 18.897650000000000000
           DataField = 'cDistanceStroke'
           DataSet = frxSessionReport
@@ -154,16 +181,16 @@ object MarshallReportA: TMarshallReportA
         end
         object frxDScEvent: TfrxMemoView
           AllowVectorExport = True
-          Left = 359.551330000000000000
+          Left = 387.051330000000000000
           Top = 7.000000000000000000
-          Width = 350.437230000000000000
+          Width = 322.937230000000000000
           Height = 18.897650000000000000
           DataField = 'cEvent'
           DataSet = frxSessionReport
           DataSetName = 'frxDS'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
-          Font.Height = -13
+          Font.Height = -12
           Font.Name = 'Arial'
           Font.Style = []
           Frame.Typ = []
@@ -171,34 +198,7 @@ object MarshallReportA: TMarshallReportA
           Memo.UTF8W = (
             '[frxDS."cEvent"]')
           ParentFont = False
-        end
-        object frxDSEventNumStr: TfrxMemoView
-          IndexTag = 1
-          AllowVectorExport = True
-          Left = 10.500000000000000000
-          Top = 1.275510000000000000
-          Width = 43.130180000000000000
-          Height = 27.397650000000000000
-          DataField = 'EventNumStr'
-          DataSet = frxSessionReport
-          DataSetName = 'frxDS'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -24
-          Font.Name = 'Arial'
-          Font.Style = [fsBold]
-          Frame.Typ = []
-          Memo.UTF8W = (
-            '[frxDS."EventNumStr"]')
-          ParentFont = False
-        end
-        object Shape1: TfrxShapeView
-          AllowVectorExport = True
-          Left = 4.500000000000000000
-          Top = 0.775510000000000000
-          Width = 44.500000000000000000
-          Height = 29.720470000000000000
-          Frame.Typ = []
+          VAlign = vaCenter
         end
       end
       object MasterData1: TfrxMasterData
