@@ -1,6 +1,6 @@
 object MarshallReportA: TMarshallReportA
-  Height = 499
-  Width = 424
+  Height = 486
+  Width = 528
   object frxReport1: TfrxReport
     Version = '6.6.11'
     DotMatrixReport = False
@@ -207,49 +207,19 @@ object MarshallReportA: TMarshallReportA
         Height = 22.677180000000000000
         Top = 283.464750000000000000
         Width = 718.110700000000000000
+        Child = frxReport1.Child1
         Columns = 2
         ColumnWidth = 351.496062992126000000
         ColumnGap = 11.338582677165400000
         DataSet = frxSessionReport
         DataSetName = 'frxDS'
         RowCount = 0
-        object frxDSLane: TfrxMemoView
-          AllowVectorExport = True
-          Left = 3.779530000000000000
-          Top = 1.000000000000000000
-          Width = 37.795300000000000000
-          Height = 18.897650000000000000
-          DataSet = frxSessionReport
-          DataSetName = 'frxDS'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Arial'
-          Font.Style = [fsBold]
-          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
-          HAlign = haCenter
-          Memo.UTF8W = (
-            '[frxDS."Lane" #n%2.0f]')
-          ParentFont = False
-        end
-        object frxDSFNAME: TfrxMemoView
-          AllowVectorExport = True
-          Left = 42.133890000000000000
-          Top = 1.000000000000000000
-          Width = 302.362400000000000000
-          Height = 18.897650000000000000
-          DataSet = frxSessionReport
-          DataSetName = 'frxDS'
-          Frame.Typ = [ftRight, ftTop, ftBottom]
-          Memo.UTF8W = (
-            ' [frxDS."FNAME"]')
-        end
       end
       object PageFooter1: TfrxPageFooter
         FillType = ftBrush
         Frame.Typ = []
         Height = 22.677180000000000000
-        Top = 400.630180000000000000
+        Top = 445.984540000000000000
         Width = 718.110700000000000000
         object TotalPages: TfrxMemoView
           AllowVectorExport = True
@@ -323,7 +293,7 @@ object MarshallReportA: TMarshallReportA
         FillType = ftBrush
         Frame.Typ = []
         Height = 11.338590000000000000
-        Top = 328.819110000000000000
+        Top = 374.173470000000000000
         Width = 718.110700000000000000
       end
       object GroupHeader3: TfrxGroupHeader
@@ -354,6 +324,90 @@ object MarshallReportA: TMarshallReportA
             '[frxDS."TeamName"]')
           ParentFont = False
         end
+      end
+      object Child1: TfrxChild
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 22.677180000000000000
+        Top = 328.819110000000000000
+        Width = 718.110700000000000000
+        ToNRows = 0
+        ToNRowsMode = rmCount
+        object Subreport1: TfrxSubreport
+          AllowVectorExport = True
+          Left = 2.500000000000000000
+          Top = 2.310760000000000000
+          Width = 94.488250000000000000
+          Height = 18.897650000000000000
+          Page = frxReport1.Page2
+        end
+      end
+    end
+    object Page2: TfrxReportPage
+      PaperWidth = 210.000000000000000000
+      PaperHeight = 297.000000000000000000
+      PaperSize = 9
+      LeftMargin = 10.000000000000000000
+      RightMargin = 10.000000000000000000
+      TopMargin = 10.000000000000000000
+      BottomMargin = 10.000000000000000000
+      ColumnWidth = 95.000000000000000000
+      Frame.Typ = []
+      MirrorMode = []
+      object MasterData2: TfrxMasterData
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 24.397650000000000000
+        Top = 154.960730000000000000
+        Width = 718.110700000000000000
+        Columns = 4
+        ColumnWidth = 170.078740157480000000
+        ColumnGap = 7.559055118110240000
+        DataSet = frxSessionReport
+        DataSetName = 'frxDS'
+        RowCount = 0
+        object Memo2: TfrxMemoView
+          AllowVectorExport = True
+          Left = 5.854360000000000000
+          Top = 3.500000000000000000
+          Width = 126.362400000000000000
+          Height = 18.897650000000000000
+          DataSet = frxSessionReport
+          DataSetName = 'frxDS'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
+          Memo.UTF8W = (
+            ' [frxDS."FNAME"]')
+          ParentFont = False
+        end
+      end
+      object GroupHeader4: TfrxGroupHeader
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 22.677180000000000000
+        Top = 18.897650000000000000
+        Width = 718.110700000000000000
+        Condition = 'frxDS."EventNum"'
+      end
+      object GroupHeader5: TfrxGroupHeader
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 22.677180000000000000
+        Top = 64.252010000000000000
+        Width = 718.110700000000000000
+        Condition = 'frxDS."HeatNum"'
+      end
+      object GroupHeader6: TfrxGroupHeader
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 22.677180000000000000
+        Top = 109.606370000000000000
+        Width = 718.110700000000000000
+        Condition = 'frxDS."TeamNameID"'
       end
     end
   end
