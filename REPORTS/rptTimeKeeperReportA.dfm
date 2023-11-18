@@ -204,7 +204,7 @@ object TimeKeeperReportA: TTimeKeeperReportA
         object frxDScDistance: TfrxMemoView
           AllowVectorExport = True
           Left = 4.500000000000000000
-          Top = 2.055040000000000000
+          Top = 1.555040000000000000
           Width = 336.476500000000000000
           Height = 16.897650000000000000
           OnBeforePrint = 'frxDScDistanceOnBeforePrint'
@@ -580,7 +580,7 @@ object TimeKeeperReportA: TTimeKeeperReportA
           AllowVectorExport = True
           Left = 55.000000000000000000
           Top = 22.118120000000000000
-          Width = 166.401670000000000000
+          Width = 232.818897637795300000
           Height = 37.795300000000000000
           DataSet = frxDSReport
           DataSetName = 'frxDS'
@@ -597,7 +597,7 @@ object TimeKeeperReportA: TTimeKeeperReportA
         object frxDSTeamName: TfrxMemoView
           IndexTag = 1
           AllowVectorExport = True
-          Left = 224.000000000000000000
+          Left = 293.000000000000000000
           Top = 21.125850000000000000
           Width = 236.059060000000000000
           Height = 37.897650000000000000

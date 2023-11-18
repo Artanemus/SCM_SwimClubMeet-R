@@ -18,6 +18,8 @@ type
     frxDBTEAM: TfrxDBDataset;
     frxDBINDV: TfrxDBDataset;
     frxReport1: TfrxReport;
+    qryClubInfoRpt: TFDQuery;
+    frxClubInfo: TfrxDBDataset;
   private
     { Private declarations }
   public

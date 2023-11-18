@@ -30,8 +30,8 @@ object MarshallReportB: TMarshallReportB
       '      Memo1.Visible := false;'
       '      Memo8.Visible := false;'
       
-        '      Memo9.Visible := false;                                   ' +
-        '                     '
+        '     // Memo9.Visible := false;                                 ' +
+        '                       '
       '      frxDSTeamName.Visible := false;'
       '    end;              '
       'end;'
@@ -95,29 +95,11 @@ object MarshallReportB: TMarshallReportB
         Width = 718.110700000000000000
         OnAfterCalcHeight = 'GroupHeader3OnAfterCalcHeight'
         Condition = 'frxDS."TeamNameID"'
-        object Memo9: TfrxMemoView
-          AllowVectorExport = True
-          Left = 5.500000000000000000
-          Top = 7.889610000000000000
-          Width = 45.901670000000000000
-          Height = 37.795300000000000000
-          DataSet = frxSessionReport
-          DataSetName = 'frxDS'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Arial'
-          Font.Style = []
-          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
-          Frame.Width = 2.000000000000000000
-          HAlign = haCenter
-          ParentFont = False
-        end
         object Memo8: TfrxMemoView
           AllowVectorExport = True
           Left = 8.000000000000000000
           Top = 12.389610000000000000
-          Width = 39.456710000000000000
+          Width = 115.956710000000000000
           Height = 27.397650000000000000
           DataSet = frxSessionReport
           DataSetName = 'frxDS'
@@ -129,16 +111,16 @@ object MarshallReportB: TMarshallReportB
           Frame.Typ = []
           HAlign = haCenter
           Memo.UTF8W = (
-            '[frxDS."Lane" #n00]')
+            'LANE [frxDS."Lane" #n00]')
           ParentFont = False
           VAlign = vaCenter
         end
         object frxDSTeamName: TfrxMemoView
           IndexTag = 1
           AllowVectorExport = True
-          Left = 258.000000000000000000
+          Left = 373.500000000000000000
           Top = 7.000000000000000000
-          Width = 338.059060000000000000
+          Width = 335.559060000000000000
           Height = 37.897650000000000000
           DataSet = frxSessionReport
           DataSetName = 'frxDS'
@@ -155,9 +137,9 @@ object MarshallReportB: TMarshallReportB
         end
         object Memo1: TfrxMemoView
           AllowVectorExport = True
-          Left = 55.000000000000000000
+          Left = 134.000000000000000000
           Top = 8.118120000000000000
-          Width = 198.901670000000000000
+          Width = 232.818897637795000000
           Height = 37.795300000000000000
           DataSet = frxSessionReport
           DataSetName = 'frxDS'

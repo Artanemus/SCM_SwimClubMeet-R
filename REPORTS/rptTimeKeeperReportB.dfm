@@ -266,7 +266,7 @@ object TimeKeeperReportB: TTimeKeeperReportB
     PrintOptions.Printer = 'Default'
     PrintOptions.PrintOnSheet = 0
     ReportOptions.CreateDate = 43428.811813125000000000
-    ReportOptions.LastChange = 43480.811662002300000000
+    ReportOptions.LastChange = 45248.594399733800000000
     ScriptLanguage = 'PascalScript'
     ScriptText.Strings = (
       'procedure GroupHeader3OnAfterCalcHeight(Sender: TfrxComponent);'
@@ -329,7 +329,26 @@ object TimeKeeperReportB: TTimeKeeperReportB
         '          '
       '    TfrxMemoView(Sender).Visible := false;'
       'end;'
+      ''
+      ''
+      'procedure Memo2OnBeforePrint(Sender: TfrxComponent);'
+      'begin'
+      '  if  <frxDS."TeamNameID"> > 0 then'
+      '  begin              '
+      '    TfrxMemoView(Sender).Memo.Clear;'
+      
+        '    TfrxMemoView(Sender).Memo.Add('#39'Team'#39#39's RaceTime'#39');          ' +
+        '                '
+      '  end;  '
+      'end;'
+      ''
+      'procedure Memo10OnBeforePrint(Sender: TfrxComponent);'
+      'begin'
+      '  if  <frxDS."TeamNameID"> = 0 then      '
+      '    TfrxMemoView(Sender).Visible := false;           '
       '  '
+      'end;'
+      ''
       'begin'
       ''
       'end.')
@@ -524,6 +543,17 @@ object TimeKeeperReportB: TTimeKeeperReportB
           ParentFont = False
           VAlign = vaCenter
         end
+        object Memo10: TfrxMemoView
+          AllowVectorExport = True
+          Left = 489.500000000000000000
+          Top = 26.417130000000000000
+          Width = 27.488250000000000000
+          Height = 18.897650000000000000
+          OnBeforePrint = 'Memo10OnBeforePrint'
+          Frame.Typ = []
+          Memo.UTF8W = (
+            'Split')
+        end
       end
       object PageHeader1: TfrxPageHeader
         FillType = ftBrush
@@ -665,8 +695,9 @@ object TimeKeeperReportB: TTimeKeeperReportB
           AllowVectorExport = True
           Left = 69.811070000000000000
           Top = 29.488250000000000000
-          Width = 64.252010000000000000
+          Width = 391.252010000000000000
           Height = 18.897650000000000000
+          OnBeforePrint = 'Memo2OnBeforePrint'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
           Font.Height = -11
@@ -775,7 +806,7 @@ object TimeKeeperReportB: TTimeKeeperReportB
           AllowVectorExport = True
           Left = 55.000000000000000000
           Top = 10.118120000000000000
-          Width = 166.401670000000000000
+          Width = 232.818897637795000000
           Height = 37.795300000000000000
           DataSet = frxDSReport
           DataSetName = 'frxDS'
@@ -792,7 +823,7 @@ object TimeKeeperReportB: TTimeKeeperReportB
         object frxDSTeamName: TfrxMemoView
           IndexTag = 1
           AllowVectorExport = True
-          Left = 224.000000000000000000
+          Left = 296.000000000000000000
           Top = 9.125850000000000000
           Width = 236.059060000000000000
           Height = 37.897650000000000000
