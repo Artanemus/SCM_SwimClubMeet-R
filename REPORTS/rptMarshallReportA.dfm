@@ -49,7 +49,6 @@ object MarshallReportA: TMarshallReportA
       'begin          '
       '  '
       'end.')
-    OnBeforePrint = frxReport1BeforePrint
     OnPrintReport = frxReport1PrintReport
     Left = 160
     Top = 16

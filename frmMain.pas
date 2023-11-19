@@ -552,7 +552,7 @@ uses
   dlgSelectPrinter, ioutils, dlgBatchProgress, dlgAutoBuild_Batch, ShellAPI,
   UEnvVars, dlgEntrantPicker, dlgEntrantPickerCTRL, dmSCMNom, dlgSwapLanes,
   dlgDBVerInfo, rptHeatReportA, rptHeatReportB, frmDisqualificationCodes,
-  dlgAutoSchedule, dlgDCodePicker, dmSCMHelper;
+  dlgAutoSchedule, dlgDCodePicker, dmSCMHelper, rptMarshallReportC;
 
 procedure TMain.ActionManager1Update(Action: TBasicAction;
   var Handled: boolean);
@@ -2587,13 +2587,23 @@ procedure TMain.Heat_MarshallReportExecute(Sender: TObject);
 var
   rptA: TMarshallReportA;
   rptB: TMarshallReportB;
+  rptC: TMarshallReportC;
   EventID: integer;
 begin
   if not AssertConnection then exit;
 
   EventID := SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger;
   try
-    if ((GetKeyState(VK_CONTROL) and 128) = 128) then
+    if ((GetKeyState(VK_CONTROL) and 128) = 128) and
+      ((GetKeyState(VK_SHIFT) and 128) = 128) then
+    begin
+      rptC := TMarshallReportC.Create(self);
+      rptC.Prepare(SCM.scmConnection, EventID);
+      rptC.RunReport;
+      rptC.Free;
+    end
+
+    else if ((GetKeyState(VK_CONTROL) and 128) = 128) then
     begin
       rptB := TMarshallReportB.Create(self);
       rptB.Prepare(SCM.scmConnection, EventID);

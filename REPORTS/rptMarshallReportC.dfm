@@ -1,6 +1,6 @@
 object MarshallReportC: TMarshallReportC
   Height = 480
-  Width = 640
+  Width = 393
   object qryMain: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     Active = True
@@ -16,7 +16,7 @@ object MarshallReportC: TMarshallReportC
       ''
       'DECLARE @EventID AS integer;'
       ''
-      'SET @EventID = 65; --:EVENTID;'
+      'SET @EventID = :EVENTID;  -- 65 TEAM 62 INDV'
       ''
       ''
       '    SELECT HeatIndividual.HeatID'
@@ -41,6 +41,13 @@ object MarshallReportC: TMarshallReportC
       '    ORDER BY HeatIndividual.HeatNum')
     Left = 48
     Top = 232
+    ParamData = <
+      item
+        Name = 'EVENTID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = 65
+      end>
   end
   object frxDBMain: TfrxDBDataset
     UserName = 'frxMain'
@@ -136,8 +143,8 @@ object MarshallReportC: TMarshallReportC
       #9#9',[Entrant].[DisqualifyCodeID]'
       'FROM [SwimClubMeet].[dbo].[Entrant] '
       
-        'INNER JOIN [SwimClubMeet].[dbo].Member ON Entrant.MemberID = Mem' +
-        'ber.MemberID'
+        'LEFT JOIN [SwimClubMeet].[dbo].Member ON Entrant.MemberID = Memb' +
+        'er.MemberID'
       'ORDER BY HeatID, [Entrant].[Lane]')
     Left = 48
     Top = 400
@@ -167,7 +174,7 @@ object MarshallReportC: TMarshallReportC
     DataSet = qryTEAM
     BCDToCurrency = False
     Left = 232
-    Top = 328
+    Top = 320
   end
   object frxDBINDV: TfrxDBDataset
     UserName = 'frxINDV'
@@ -199,9 +206,22 @@ object MarshallReportC: TMarshallReportC
     ReportOptions.LastChange = 45241.622454375000000000
     ScriptLanguage = 'PascalScript'
     ScriptText.Strings = (
+      '  '
+      ''
+      'procedure MasterData4OnBeforePrint(Sender: TfrxComponent);'
+      'begin'
+      '     Set ('#39'CurrHeatID'#39', <frxMain."HeatID">);  '
+      'end;'
+      ''
+      'procedure MasterData3OnBeforePrint(Sender: TfrxComponent);'
+      'begin'
+      '     Set ('#39'CurrLaneNum'#39', <frxTEAM."lane">);  '
+      'end;'
+      ''
       'begin'
       ''
       'end.')
+    OnPrintReport = frxReport1PrintReport
     Left = 232
     Top = 64
     Datasets = <
@@ -221,7 +241,19 @@ object MarshallReportC: TMarshallReportC
         DataSet = frxDBTEAM
         DataSetName = 'frxTEAM'
       end>
-    Variables = <>
+    Variables = <
+      item
+        Name = ' SubReportVariables'
+        Value = Null
+      end
+      item
+        Name = 'CurrHeatID'
+        Value = ''
+      end
+      item
+        Name = 'CurrLaneNum'
+        Value = ''
+      end>
     Style = <>
     object Data: TfrxDataPage
       Height = 1000.000000000000000000
@@ -302,7 +334,7 @@ object MarshallReportC: TMarshallReportC
         FillType = ftBrush
         Frame.Typ = []
         Height = 22.677180000000000000
-        Top = 430.866420000000000000
+        Top = 321.260050000000000000
         Width = 740.409927000000000000
         object TotalPages: TfrxMemoView
           AllowVectorExport = True
@@ -414,14 +446,14 @@ object MarshallReportC: TMarshallReportC
       object GroupHeader1: TfrxGroupHeader
         FillType = ftBrush
         Frame.Typ = []
-        Height = 22.677180000000000000
+        Height = 33.523500000000000000
         Top = 181.417440000000000000
         Width = 740.409927000000000000
         Condition = 'frxMain."HeatNum"'
         object frxDSHeatCount: TfrxMemoView
           AllowVectorExport = True
           Left = 3.279530000000000000
-          Top = -1.295300000000000000
+          Top = 9.000000000000000000
           Width = 176.826840000000000000
           Height = 19.897650000000000000
           DataSet = frxDBMain
@@ -439,66 +471,39 @@ object MarshallReportC: TMarshallReportC
         object Line2: TfrxLineView
           AllowVectorExport = True
           Left = 3.000000000000000000
-          Top = 22.228200000000000000
+          Top = 32.523500000000000000
           Width = 702.500000000000000000
           Color = clBlack
           Frame.Typ = [ftTop]
           Frame.Width = 2.000000000000000000
         end
       end
-      object Child1: TfrxChild
-        FillType = ftBrush
-        Frame.Typ = []
-        Height = 22.677180000000000000
-        Top = 257.008040000000000000
-        Width = 740.409927000000000000
-        ToNRows = 0
-        ToNRowsMode = rmCount
-        object SubreportINDV: TfrxSubreport
-          AllowVectorExport = True
-          Left = 4.500000000000000000
-          Top = 2.078540000000000000
-          Width = 94.488250000000000000
-          Height = 18.897650000000000000
-          Page = frxReport1.Page2
-        end
-      end
-      object Child2: TfrxChild
-        FillType = ftBrush
-        Frame.Typ = []
-        Height = 22.677180000000000000
-        Top = 302.362400000000000000
-        Width = 740.409927000000000000
-        ToNRows = 0
-        ToNRowsMode = rmCount
-        object SubreportTEAM: TfrxSubreport
-          AllowVectorExport = True
-          Left = 4.500000000000000000
-          Top = 3.224180000000000000
-          Width = 94.488250000000000000
-          Height = 18.897650000000000000
-          Page = frxReport1.Page3
-        end
-      end
       object MasterData4: TfrxMasterData
         FillType = ftBrush
         Frame.Typ = []
-        Height = 5.677180000000000000
-        Top = 226.771800000000000000
+        Height = 23.405380000000000000
+        Top = 238.110390000000000000
         Width = 740.409927000000000000
+        OnBeforePrint = 'MasterData4OnBeforePrint'
         DataSet = frxDBMain
         DataSetName = 'frxMain'
         RowCount = 0
-      end
-      object DetailData1: TfrxDetailData
-        FillType = ftBrush
-        Frame.Typ = []
-        Height = 22.677180000000000000
-        Top = 347.716760000000000000
-        Width = 740.409927000000000000
-        DataSet = frxDBINDV
-        DataSetName = 'frxINDV'
-        RowCount = 0
+        object SubreportTEAM: TfrxSubreport
+          AllowVectorExport = True
+          Left = 32.000000000000000000
+          Top = 1.507730000000000000
+          Width = 44.988250000000000000
+          Height = 8.897650000000000000
+          Page = frxReport1.Page3
+        end
+        object SubreportINDV: TfrxSubreport
+          AllowVectorExport = True
+          Left = 32.000000000000000000
+          Top = 12.991960000000000000
+          Width = 45.488250000000000000
+          Height = 9.070866141732280000
+          Page = frxReport1.Page2
+        end
       end
     end
     object Page2: TfrxReportPage
@@ -509,43 +514,39 @@ object MarshallReportC: TMarshallReportC
       RightMargin = 10.000000000000000000
       TopMargin = 10.000000000000000000
       BottomMargin = 10.000000000000000000
+      ColumnWidth = 97.950000000000000000
       Frame.Typ = []
       MirrorMode = []
-      object GroupHeader2: TfrxGroupHeader
+      object MasterData2: TfrxMasterData
         FillType = ftBrush
         Frame.Typ = []
         Height = 22.677180000000000000
         Top = 18.897650000000000000
         Width = 740.409927000000000000
-        Condition = 'frxINDV."lane"'
-      end
-      object MasterData2: TfrxMasterData
-        FillType = ftBrush
-        Frame.Typ = []
-        Height = 22.677180000000000000
-        Top = 64.252010000000000000
-        Width = 740.409927000000000000
+        Columns = 2
+        ColumnWidth = 340.157480314961000000
+        ColumnGap = 18.897637795275600000
         DataSet = frxDBINDV
         DataSetName = 'frxINDV'
+        Filter = '<frxINDV."HeatID"> = <CurrHeatID>'
         RowCount = 0
         object frxINDVlane: TfrxMemoView
           IndexTag = 1
           AllowVectorExport = True
           Left = 4.000000000000000000
           Top = 2.747990000000000000
-          Width = 79.370130000000000000
+          Width = 36.870130000000000000
           Height = 18.897650000000000000
-          DataField = 'lane'
           DataSet = frxDBINDV
           DataSetName = 'frxINDV'
           Frame.Typ = []
           Memo.UTF8W = (
-            '[frxINDV."lane"]')
+            '[frxINDV."lane" #n00]')
         end
         object frxINDVFNAME: TfrxMemoView
           IndexTag = 1
           AllowVectorExport = True
-          Left = 88.000000000000000000
+          Left = 42.500000000000000000
           Top = 2.747990000000000000
           Width = 400.630180000000000000
           Height = 18.897650000000000000
@@ -559,95 +560,152 @@ object MarshallReportC: TMarshallReportC
       end
     end
     object Page3: TfrxReportPage
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -11
+      Font.Name = 'Arial'
+      Font.Style = []
       PaperWidth = 215.900000000000000000
       PaperHeight = 279.400000000000000000
       PaperSize = 1
-      LeftMargin = 10.000000000000000000
+      LeftMargin = 20.000000000000000000
       RightMargin = 10.000000000000000000
       TopMargin = 10.000000000000000000
       BottomMargin = 10.000000000000000000
+      ColumnWidth = 92.950000000000000000
       Frame.Typ = []
       MirrorMode = []
       object GroupHeader4: TfrxGroupHeader
         FillType = ftBrush
         Frame.Typ = []
-        Height = 22.677180000000000000
+        Height = 42.397650000000000000
         Top = 18.897650000000000000
-        Width = 740.409927000000000000
+        Width = 702.614627000000000000
         Condition = 'frxTEAM."lane"'
         object frxTEAMTeamNameID: TfrxMemoView
           IndexTag = 1
           AllowVectorExport = True
-          Left = 86.000000000000000000
-          Top = 1.602350000000000000
-          Width = 79.370130000000000000
+          Left = 71.500000000000000000
+          Top = 6.602350000000000000
+          Width = 406.370130000000000000
           Height = 18.897650000000000000
-          DataField = 'TeamNameID'
-          DataSet = frxDBTEAM
-          DataSetName = 'frxTEAM'
-          Frame.Typ = []
-          Memo.UTF8W = (
-            '[frxTEAM."TeamNameID"]')
-        end
-        object frxTEAMlane: TfrxMemoView
-          IndexTag = 1
-          AllowVectorExport = True
-          Left = 3.500000000000000000
-          Top = 1.102350000000000000
-          Width = 79.370130000000000000
-          Height = 18.897650000000000000
-          DataField = 'lane'
-          DataSet = frxDBTEAM
-          DataSetName = 'frxTEAM'
-          Frame.Typ = []
-          Memo.UTF8W = (
-            '[frxTEAM."lane"]')
-        end
-      end
-      object MasterData3: TfrxMasterData
-        FillType = ftBrush
-        Frame.Typ = []
-        Height = 22.677180000000000000
-        Top = 102.047310000000000000
-        Width = 740.409927000000000000
-        DataSet = frxDBTEAM
-        DataSetName = 'frxTEAM'
-        RowCount = 0
-        object frxTEAMcTeamName: TfrxMemoView
-          IndexTag = 1
-          AllowVectorExport = True
-          Left = 88.500000000000000000
-          Top = 1.747990000000000000
-          Width = 177.630180000000000000
-          Height = 18.897650000000000000
-          DataField = 'cTeamName'
           DataSet = frxDBTEAM
           DataSetName = 'frxTEAM'
           Frame.Typ = []
           Memo.UTF8W = (
             '[frxTEAM."cTeamName"]')
         end
-        object frxTEAMSwimOrder: TfrxMemoView
+        object frxTEAMlane: TfrxMemoView
           IndexTag = 1
           AllowVectorExport = True
-          Left = 3.500000000000000000
-          Top = 1.747990000000000000
-          Width = 79.370130000000000000
+          Left = 3.000000000000000000
+          Top = 6.602350000000000000
+          Width = 66.870130000000000000
           Height = 18.897650000000000000
-          DataField = 'SwimOrder'
           DataSet = frxDBTEAM
           DataSetName = 'frxTEAM'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
           Frame.Typ = []
           Memo.UTF8W = (
-            '[frxTEAM."SwimOrder"]')
+            'LANE [frxTEAM."lane" #n00]')
+          ParentFont = False
+        end
+        object Memo5: TfrxMemoView
+          AllowVectorExport = True
+          Left = 5.000000000000000000
+          Top = 26.500000000000000000
+          Width = 63.488250000000000000
+          Height = 12.397650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -11
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = []
+          Memo.UTF8W = (
+            'Swim-Order')
+          ParentFont = False
+        end
+        object Memo8: TfrxMemoView
+          AllowVectorExport = True
+          Left = 70.000000000000000000
+          Top = 26.500000000000000000
+          Width = 120.988250000000000000
+          Height = 12.397650000000000000
+          Visible = False
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -11
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = []
+          Memo.UTF8W = (
+            'Entrant')
+          ParentFont = False
+        end
+      end
+      object MasterData3: TfrxMasterData
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 20.409400000000000000
+        Top = 105.826840000000000000
+        Width = 702.614627000000000000
+        OnBeforePrint = 'MasterData3OnBeforePrint'
+        ColumnWidth = 302.362204724409000000
+        ColumnGap = 18.897637795275600000
+        DataSet = frxDBTEAM
+        DataSetName = 'frxTEAM'
+        Filter = '<frxTEAM."HeatID"> = <CurrHeatID>'
+        RowCount = 0
+        object Memo3: TfrxMemoView
+          IndexTag = 1
+          AllowVectorExport = True
+          Left = 71.000000000000000000
+          Top = 0.511750000000000000
+          Width = 244.630180000000000000
+          Height = 18.897650000000000000
+          DataSet = frxDBTEAM
+          DataSetName = 'frxTEAM'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = []
+          Memo.UTF8W = (
+            ' [frxTEAM."FNAME"]')
+          ParentFont = False
+        end
+        object Memo4: TfrxMemoView
+          IndexTag = 1
+          AllowVectorExport = True
+          Left = 37.500000000000000000
+          Top = 0.511750000000000000
+          Width = 31.370130000000000000
+          Height = 18.897650000000000000
+          DataSet = frxDBTEAM
+          DataSetName = 'frxTEAM'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[frxTEAM."SwimOrder" #n00]')
+          ParentFont = False
         end
       end
       object GroupHeader5: TfrxGroupHeader
         FillType = ftBrush
         Frame.Typ = []
-        Height = 14.177180000000000000
-        Top = 64.252010000000000000
-        Width = 740.409927000000000000
+        Height = 1.397650000000000000
+        Top = 83.149660000000000000
+        Width = 702.614627000000000000
         Condition = 'frxTEAM."SwimOrder"'
       end
     end
