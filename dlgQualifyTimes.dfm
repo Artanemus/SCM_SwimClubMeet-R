@@ -33,6 +33,7 @@ object QualifyTimes: TQualifyTimes
         Width = 613
         Height = 475
         Align = alClient
+        DataSource = DSQualify
         Options = [dgEditing, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
         TabOrder = 0
         TitleFont.Charset = DEFAULT_CHARSET
@@ -271,7 +272,7 @@ object QualifyTimes: TQualifyTimes
       621
       41)
     object BtnClose: TButton
-      Left = 527
+      Left = 523
       Top = 6
       Width = 75
       Height = 25
@@ -279,11 +280,12 @@ object QualifyTimes: TQualifyTimes
       Caption = 'Close'
       TabOrder = 0
       OnClick = BtnCloseClick
-      ExplicitLeft = 523
+      ExplicitLeft = 519
     end
   end
   object qryQualify: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'QualifyID'
     Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Qualify'
@@ -406,6 +408,7 @@ object QualifyTimes: TQualifyTimes
   end
   object tblQDistance: TFDTable
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'DistanceID'
     Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Distance'
@@ -415,6 +418,7 @@ object QualifyTimes: TQualifyTimes
   end
   object tblStroke: TFDTable
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'StrokeID'
     Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Stroke'
@@ -424,6 +428,7 @@ object QualifyTimes: TQualifyTimes
   end
   object tblGender: TFDTable
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'GenderID'
     Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Gender'
@@ -433,6 +438,7 @@ object QualifyTimes: TQualifyTimes
   end
   object tblTDistance: TFDTable
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'DistanceID'
     Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Distance'

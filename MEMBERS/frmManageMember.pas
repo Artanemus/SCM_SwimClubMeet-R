@@ -34,7 +34,6 @@ type
     Label2: TLabel;
     Label1: TLabel;
     Label10: TLabel;
-    DBText3: TDBText;
     Label6: TLabel;
     Label7: TLabel;
     Label12: TLabel;
@@ -63,7 +62,6 @@ type
     Label18: TLabel;
     RegistrationNum: TDBEdit;
     Label8: TLabel;
-    dtpickDOB: TCalendarPicker;
     lblCount: TLabel;
     btnGotoMembership: TButton;
     DBgridHistoryPB: TDBGrid;
@@ -93,6 +91,10 @@ type
     MemSearch_FindMember: TAction;
     ImageCollectMember: TImageCollection;
     VirtlImageListMember: TVirtualImageList;
+    DBEdit1: TDBEdit;
+    btnClearDOB: TButton;
+    btnDOBPicker: TButton;
+    lblMembersAge: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure About2Click(Sender: TObject);
     procedure DBGrid3CellClick(Column: TColumn);
@@ -104,12 +106,12 @@ type
       Shift: TShiftState);
     procedure DrawCheckBoxes(oGrid: TObject; Rect: TRect; Column: TColumn;
   fontColor, bgColor: TColor);
-    procedure dtpickDOBChange(Sender: TObject);
     procedure chkbHideArchivedClick(Sender: TObject);
     procedure chkbHideInActiveClick(Sender: TObject);
     procedure chkbHideNonSwimmersClick(Sender: TObject);
     procedure DBGrid3EditButtonClick(Sender: TObject);
     procedure btnClearClick(Sender: TObject);
+    procedure btnClearDOBClick(Sender: TObject);
     procedure btnFindMemberClick(Sender: TObject);
     procedure btnGotoMemberIDClick(Sender: TObject);
     procedure btnGotoMembershipClick(Sender: TObject);
@@ -125,6 +127,7 @@ type
     procedure btnClubMembersSummaryClick(Sender: TObject);
     procedure btnClubMembersDetailedClick(Sender: TObject);
     procedure btnClubMembersListClick(Sender: TObject);
+    procedure btnDOBPickerClick(Sender: TObject);
     procedure MemFile_ExitExecute(Sender: TObject);
     procedure MemSearch_FindMemberExecute(Sender: TObject);
 
@@ -139,7 +142,9 @@ type
 
     function FindMember(MemberID: Integer): Boolean;
     function AssertConnection: Boolean;
+    function GetMembersAge(aMemberID: Integer; aDate: TDate): Integer;
 
+    procedure UpdateMembersAge();
     procedure ReadPreferences();
     procedure WritePreferences();
 
@@ -147,6 +152,8 @@ type
     // windows messages ....
     procedure ManageMemberAfterScroll(var Msg: TMessage);
       message SCM_AFTERSCROLL;
+    procedure ManageMemberAfterPost(var Msg: TMessage);
+      message SCM_AFTERPOST;
     procedure ManageMemberUpdate(var Msg: TMessage);
       message SCM_UPDATE;
 
@@ -213,6 +220,17 @@ begin
   end;
 end;
 
+procedure TManageMember.btnClearDOBClick(Sender: TObject);
+begin
+  if not assigned(ManageMemberData) then exit;
+  with ManageMemberData.dsMember.DataSet do
+  begin
+    if not(Active) then exit;
+    if (State <> dsInsert) or (State <> dsEdit) then Edit;
+    FieldByName('DOB').Clear;
+  end;
+end;
+
 procedure TManageMember.btnClubMembersDetailedClick(Sender: TObject);
 var
 rpt: TMembersDetail;
@@ -241,6 +259,35 @@ begin
     rpt := TMembersSummary.Create(self);
     rpt.RunReport(FConnection, FSwimClubID);
     rpt.Free;
+end;
+
+procedure TManageMember.btnDOBPickerClick(Sender: TObject);
+var
+  dlg: TDOBPicker;
+  Rect: TRect;
+  rtn: TModalResult;
+begin
+  dlg := TDOBPicker.Create(Self);
+  dlg.Position := poDesigned;
+  // Assign date to DB Field.
+  Rect := btnDOBPicker.ClientToScreen(btnDOBPicker.ClientRect);
+  dlg.Left := Rect.Left;
+  dlg.Top := Rect.Bottom + 1;
+  dlg.CalendarView1.Date := ManageMemberData.dsMember.DataSet.FieldByName('DOB')
+    .AsDateTime;
+  rtn := dlg.ShowModal;
+  if IsPositiveResult(rtn) then
+  begin
+    with ManageMemberData.dsMember.DataSet do
+    begin
+      if (State <> dsEdit) or (State <> dsInsert) then
+      begin
+        Edit;
+        FieldByName('DOB').AsDateTime := dlg.CalendarView1.Date;
+      end;
+    end;
+  end;
+  dlg.Free;
 end;
 
 procedure TManageMember.btnFindMemberClick(Sender: TObject);
@@ -669,18 +716,6 @@ begin
   end;
 end;
 
-procedure TManageMember.dtpickDOBChange(Sender: TObject);
-begin
-  if Assigned(ManageMemberData) and (ManageMemberData.qryMember.Active) then
-  begin
-    if (ManageMemberData.qryMember.State <> dsEdit) then
-      ManageMemberData.qryMember.Edit();
-    ManageMemberData.qryMember.FieldByName('DOB').AsDateTime := dtpickDOB.Date;
-    // let user perform manual post
-    // ManageMemberData.qryMember.Post();
-  end;
-end;
-
 function TManageMember.FindMember(MemberID: Integer): Boolean;
 var
   b: Boolean;
@@ -779,13 +814,44 @@ begin
     ManageMemberData.qrySwimClub.FieldByName('DetailStr').AsString;
 end;
 
+function TManageMember.GetMembersAge(aMemberID: Integer; aDate: TDate): Integer;
+var
+  SQL: string;
+  v: Variant;
+  dt: TDateTime;
+begin
+  result := 0;
+  if not AssertConnection then exit;
+  with ManageMemberData.dsMember.DataSet do
+  begin
+    if not Active or IsEmpty then exit;
+    if FieldByName('DOB').IsNull then exit;
+    dt := FieldByName('DOB').AsDateTime;
+    SQL := 'SELECT dbo.SwimmerAge(GETDATE(), :ID1) AS SwimmerAge FROM ' +
+      '[SwimClubMeet].[dbo].[Member] WHERE MemberID = :ID2';
+    v := FConnection.ExecSQLScalar(SQL, [dt, aMemberID],
+      [ftDateTime, ftInteger]);
+    if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
+  end;
+end;
+
+procedure TManageMember.ManageMemberAfterPost(var Msg: TMessage);
+begin
+  if not AssertConnection then exit;
+  // Update member's age.
+  UpdateMembersAge();
+  // UPDATE THE NUMBER OF RECORDS.
+  lblCount.Caption := IntToStr(ManageMemberData.RecordCount);
+end;
+
 procedure TManageMember.ManageMemberAfterScroll(var Msg: TMessage);
 begin
-  if not AssertConnection then
-    exit;
-  // DATE-OF-BIRTH - DATETIME PICKER INIT
-  dtpickDOB.Date := ManageMemberData.qryMember.FieldByName('DOB').AsDateTime;
-
+  lblMembersAge.Caption := '';
+  if not AssertConnection then exit;
+  // Update member's age.
+  UpdateMembersAge();
+  // UPDATE THE NUMBER OF RECORDS.
+  lblCount.Caption := IntToStr(ManageMemberData.RecordCount);
 end;
 
 procedure TManageMember.ManageMemberUpdate(var Msg: TMessage);
@@ -889,6 +955,26 @@ begin
   base_URL := 'http://artanemus.github.io';
   ShellExecute(0, 'open', PChar(base_URL), NIL, NIL, SW_SHOWNORMAL);
 
+end;
+
+procedure TManageMember.UpdateMembersAge;
+var
+  dt: TDate;
+  age: Integer;
+begin
+  lblMembersAge.Caption := '';
+  if not AssertConnection then exit;
+  with ManageMemberData.dsMember.DataSet do
+  BEGIN // calculate the age of the member
+    if not Active or IsEmpty then exit;
+    if FieldByName('MemberID').IsNull then exit;
+    if FieldByName('DOB').IsNull then exit;
+    dt := FieldByName('DOB').AsDateTime;
+    if (dt <= 0) then exit;
+    age := GetMembersAge(FieldByName('MemberID').AsInteger, dt);
+    if (age <= 0) then exit;
+    lblMembersAge.Caption := IntToStr(age);
+  END;
 end;
 
 procedure TManageMember.WritePreferences;

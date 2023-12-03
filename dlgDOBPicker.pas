@@ -4,11 +4,16 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.WinXCalendars, System.DateUtils;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.WinXCalendars, System.DateUtils,
+  Vcl.StdCtrls;
 
 type
   TDOBPicker = class(TForm)
     CalendarView1: TCalendarView;
+    btnCancel: TButton;
+    btnOk: TButton;
+    procedure btnCancelClick(Sender: TObject);
+    procedure btnOkClick(Sender: TObject);
     procedure CalendarView1DblClick(Sender: TObject);
   private
     { Private declarations }
@@ -23,6 +28,16 @@ implementation
 
 {$R *.dfm}
 
+procedure TDOBPicker.btnCancelClick(Sender: TObject);
+begin
+ModalResult := mrCancel;
+end;
+
+procedure TDOBPicker.btnOkClick(Sender: TObject);
+begin
+ModalResult := mrOk;
+end;
+
 procedure TDOBPicker.CalendarView1DblClick(Sender: TObject);
 var
 d1, d2: TDateTime;
@@ -34,7 +49,9 @@ begin
   d1 := Date();
   d2 := CalendarView1.Date;
   if (WithinPastYears(d1, d2, 99))  then
+  begin
     ModalResult := mrOk;
+  end;
 end;
 
 end.

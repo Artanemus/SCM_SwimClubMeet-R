@@ -220,6 +220,8 @@ begin
   tblQDistance.Active := true;
   tblTDistance.Active := true;
 
+  DBGrid1.DataSource := DSQualify;
+
   // If changes have been made in option dialogue during the
   // current connection session  or on another station
   // then refreshing the SwimClub table

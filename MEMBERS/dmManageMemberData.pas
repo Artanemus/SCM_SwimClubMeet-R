@@ -86,6 +86,10 @@ type
     procedure qryMemberAfterInsert(DataSet: TDataSet);
     procedure qryMemberBeforeDelete(DataSet: TDataSet);
     procedure qryMemberAfterDelete(DataSet: TDataSet);
+    procedure qryMemberAfterPost(DataSet: TDataSet);
+    procedure qryMemberDOBGetText(Sender: TField; var Text: string; DisplayText:
+        Boolean);
+    procedure qryMemberDOBSetText(Sender: TField; const Text: string);
   private
     { Private declarations }
     fManageMemberDataActive: boolean;
@@ -124,7 +128,7 @@ implementation
 
 uses
   System.IOUtils, IniFiles, SCMUtility, SCMDefines, Winapi.Windows,
-  Winapi.Messages, vcl.Dialogs, System.UITypes, Vcl.Forms;
+  Winapi.Messages, vcl.Dialogs, System.UITypes, Vcl.Forms, System.DateUtils;
 
 procedure TManageMemberData.ActivateTable;
 begin
@@ -246,6 +250,12 @@ begin
 
 end;
 
+procedure TManageMemberData.qryMemberAfterPost(DataSet: TDataSet);
+begin
+  if Owner is TForm then
+    PostMessage(TForm(Owner).Handle, SCM_AFTERPOST, 0, 0);
+end;
+
 procedure TManageMemberData.qryMemberAfterScroll(DataSet: TDataSet);
 begin
   // Display Members Personal Best
@@ -318,6 +328,38 @@ begin
     *)
 
     qryMember.EnableControls;
+  end;
+end;
+
+procedure TManageMemberData.qryMemberDOBGetText(Sender: TField; var Text:
+    string; DisplayText: Boolean);
+var
+  LFormatSettings: TFormatSettings;
+begin
+  LFormatSettings := TFormatSettings.Create; // Use the system locale
+  if (Sender.IsNull) or (DateOf(Sender.AsDateTime) = 0) then Text := ''
+  else Text := FormatDateTime('ddddd', Sender.AsDateTime, LFormatSettings);
+end;
+
+procedure TManageMemberData.qryMemberDOBSetText(Sender: TField; const Text:
+    string);
+var
+  dt: TDateTime;
+  LFormatSettings: TFormatSettings;
+begin
+  LFormatSettings := TFormatSettings.Create; // Use the system locale
+  if Text.IsNullOrEmpty(Text) then Sender.Clear
+  else
+  begin
+    try
+      dt := StrToDate(Text, LFormatSettings);
+      Sender.AsDateTime := dt;
+    except
+      on E: EConvertError do
+      begin
+        ShowMessage('Invalid date format: ' + E.Message);
+      end;
+    end;
   end;
 end;
 

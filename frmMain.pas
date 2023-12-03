@@ -13,7 +13,8 @@ uses
   Vcl.ImageCollection, Vcl.WinXCtrls, Vcl.ControlList, Data.Bind.EngExt,
   Vcl.Bind.DBEngExt, Vcl.Bind.ControlList, System.Rtti, System.Bindings.Outputs,
   Vcl.Bind.Editors, Data.Bind.Components, Data.Bind.Grid, Data.Bind.DBScope,
-  Vcl.ToolWin, Vcl.ActnCtrls, Vcl.ActnMenus, Vcl.PlatformVclStylesActnCtrls;
+  Vcl.ToolWin, Vcl.ActnCtrls, Vcl.ActnMenus, Vcl.PlatformVclStylesActnCtrls,
+  FireDAC.Moni.Base, FireDAC.Moni.RemoteClient;
 
 type
 
@@ -263,6 +264,7 @@ type
     Help_Website: TAction;
     VirtualImageListMenu: TVirtualImageList;
     Nominate_MemeberDetails: TAction;
+    FDMoniRemoteClientLink1: TFDMoniRemoteClientLink;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure SCM_RefreshExecute(Sender: TObject);

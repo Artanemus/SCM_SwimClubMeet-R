@@ -49,6 +49,7 @@ object ManageMemberData: TManageMemberData
   object qryMember: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     AfterInsert = qryMemberAfterInsert
+    AfterPost = qryMemberAfterPost
     BeforeDelete = qryMemberBeforeDelete
     AfterDelete = qryMemberAfterDelete
     AfterScroll = qryMemberAfterScroll
@@ -213,6 +214,8 @@ object ManageMemberData: TManageMemberData
       DisplayWidth = 12
       FieldName = 'DOB'
       Origin = 'DOB'
+      OnGetText = qryMemberDOBGetText
+      OnSetText = qryMemberDOBSetText
       DisplayFormat = 'dd/mm/yyyy'
     end
     object qryMemberSwimmerAge: TIntegerField

@@ -18,15 +18,14 @@ object ManageMember: TManageMember
   TextHeight = 19
   object Panel1: TPanel
     Left = 0
-    Top = 27
+    Top = 31
     Width = 1342
     Height = 49
     Align = alTop
     BevelEdges = []
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 0
-    ExplicitWidth = 1346
+    ExplicitWidth = 1338
     object lblMemberCount: TLabel
       Left = 669
       Top = 12
@@ -120,8 +119,8 @@ object ManageMember: TManageMember
     BevelEdges = []
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 757
-    ExplicitWidth = 1346
+    ExplicitTop = 775
+    ExplicitWidth = 1338
     object DBNavigator1: TDBNavigator
       Left = 385
       Top = 6
@@ -139,29 +138,29 @@ object ManageMember: TManageMember
   end
   object PageControl1: TPageControl
     Left = 0
-    Top = 76
+    Top = 80
     Width = 1342
-    Height = 700
+    Height = 696
     ActivePage = TabSheet1
     Align = alClient
     MultiLine = True
     TabHeight = 40
     TabOrder = 2
     TabWidth = 160
-    ExplicitTop = 49
-    ExplicitWidth = 1346
-    ExplicitHeight = 708
+    ExplicitWidth = 1338
+    ExplicitHeight = 695
     object TabSheet1: TTabSheet
       Caption = 'Member'#39's Details'
       object Panel7: TPanel
         Left = 0
         Top = 0
-        Width = 1338
-        Height = 651
+        Width = 1334
+        Height = 646
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitHeight = 658
+        ExplicitWidth = 1330
+        ExplicitHeight = 645
         object Label3: TLabel
           Left = 105
           Top = 139
@@ -213,13 +212,6 @@ object ManageMember: TManageMember
           Height = 19
           Alignment = taRightJustify
           Caption = 'Email'
-        end
-        object DBText3: TDBText
-          Left = 313
-          Top = 170
-          Width = 65
-          Height = 17
-          DataField = 'SwimmerAge'
         end
         object Label6: TLabel
           Left = 52
@@ -337,6 +329,13 @@ object ManageMember: TManageMember
           ParentFont = False
           Layout = tlCenter
         end
+        object lblMembersAge: TLabel
+          Left = 313
+          Top = 170
+          Width = 109
+          Height = 19
+          Caption = 'lblMembersAge'
+        end
         object DBlucboGender: TDBLookupComboBox
           Left = 145
           Top = 208
@@ -354,7 +353,7 @@ object ManageMember: TManageMember
           ListSource = ManageMemberData.dsGender
           NullValueKey = 32776
           ParentFont = False
-          TabOrder = 3
+          TabOrder = 2
         end
         object DBedtFirstName: TDBEdit
           Left = 144
@@ -391,7 +390,7 @@ object ManageMember: TManageMember
           ListSource = ManageMemberData.dsMembershipType
           NullValueKey = 32776
           ParentFont = False
-          TabOrder = 10
+          TabOrder = 9
         end
         object DBedtMembershipNum: TDBEdit
           Left = 145
@@ -400,7 +399,7 @@ object ManageMember: TManageMember
           Height = 27
           DataField = 'MembershipNum'
           DataSource = ManageMemberData.dsMember
-          TabOrder = 9
+          TabOrder = 8
         end
         object DBchkIsActive: TDBCheckBox
           Left = 144
@@ -410,7 +409,7 @@ object ManageMember: TManageMember
           Caption = 'Is Active - Indicates full membership. '
           DataField = 'IsActive'
           DataSource = ManageMemberData.dsMember
-          TabOrder = 6
+          TabOrder = 5
         end
         object DBEdtEmail: TDBEdit
           Left = 144
@@ -419,7 +418,7 @@ object ManageMember: TManageMember
           Height = 27
           DataField = 'Email'
           DataSource = ManageMemberData.dsMember
-          TabOrder = 12
+          TabOrder = 11
         end
         object DBlucboHouse: TDBLookupComboBox
           Left = 144
@@ -433,7 +432,7 @@ object ManageMember: TManageMember
           ListField = 'Caption'
           ListSource = ManageMemberData.dsHouse
           NullValueKey = 32776
-          TabOrder = 13
+          TabOrder = 12
         end
         object DBchkIsSwimmer: TDBCheckBox
           Left = 144
@@ -443,7 +442,7 @@ object ManageMember: TManageMember
           Caption = 'Is Swimmer - Participates in events.'
           DataField = 'IsSwimmer'
           DataSource = ManageMemberData.dsMember
-          TabOrder = 7
+          TabOrder = 6
         end
         object DBchkIsArchived: TDBCheckBox
           Left = 144
@@ -453,7 +452,7 @@ object ManageMember: TManageMember
           Caption = 'Is Archived - Retired from club.'
           DataField = 'IsArchived'
           DataSource = ManageMemberData.dsMember
-          TabOrder = 5
+          TabOrder = 4
         end
         object btnClearHouse: TButton
           Tag = 3
@@ -465,7 +464,7 @@ object ManageMember: TManageMember
           Caption = 'Clear'
           ImageIndex = 0
           Images = ImageList1
-          TabOrder = 14
+          TabOrder = 13
           OnClick = btnClearClick
         end
         object btnClearMembershipType: TButton
@@ -478,7 +477,7 @@ object ManageMember: TManageMember
           Caption = 'Clear'
           ImageIndex = 0
           Images = ImageList1
-          TabOrder = 11
+          TabOrder = 10
           OnClick = btnClearClick
         end
         object btnClearGender: TButton
@@ -491,7 +490,7 @@ object ManageMember: TManageMember
           Caption = 'Clear'
           ImageIndex = 0
           Images = ImageList1
-          TabOrder = 4
+          TabOrder = 3
           OnClick = btnClearClick
         end
         object RegistrationNum: TDBEdit
@@ -501,32 +500,7 @@ object ManageMember: TManageMember
           Height = 27
           DataField = 'MembershipStr'
           DataSource = ManageMemberData.dsMember
-          TabOrder = 8
-        end
-        object dtpickDOB: TCalendarPicker
-          Left = 143
-          Top = 128
-          Height = 32
-          CalendarHeaderInfo.DaysOfWeekFont.Charset = DEFAULT_CHARSET
-          CalendarHeaderInfo.DaysOfWeekFont.Color = clWindowText
-          CalendarHeaderInfo.DaysOfWeekFont.Height = -13
-          CalendarHeaderInfo.DaysOfWeekFont.Name = 'Segoe UI'
-          CalendarHeaderInfo.DaysOfWeekFont.Style = []
-          CalendarHeaderInfo.Font.Charset = DEFAULT_CHARSET
-          CalendarHeaderInfo.Font.Color = clWindowText
-          CalendarHeaderInfo.Font.Height = -20
-          CalendarHeaderInfo.Font.Name = 'Segoe UI'
-          CalendarHeaderInfo.Font.Style = []
-          Color = clWindow
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clGray
-          Font.Height = -16
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          OnChange = dtpickDOBChange
-          ParentFont = False
-          TabOrder = 2
-          TextHint = 'select a date'
+          TabOrder = 7
         end
         object DBgridHistoryPB: TDBGrid
           Left = 632
@@ -534,7 +508,7 @@ object ManageMember: TManageMember
           Width = 321
           Height = 382
           DataSource = ManageMemberData.dsMemberPB
-          TabOrder = 15
+          TabOrder = 14
           TitleFont.Charset = DEFAULT_CHARSET
           TitleFont.Color = clWindowText
           TitleFont.Height = -16
@@ -562,7 +536,7 @@ object ManageMember: TManageMember
           Height = 204
           DataSource = ManageMemberData.dsContactNum
           Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
-          TabOrder = 16
+          TabOrder = 15
           TitleFont.Charset = DEFAULT_CHARSET
           TitleFont.Color = clWindowText
           TitleFont.Height = -16
@@ -607,7 +581,38 @@ object ManageMember: TManageMember
           Kind = dbnVertical
           ParentShowHint = False
           ShowHint = True
+          TabOrder = 16
+        end
+        object DBEdit1: TDBEdit
+          Left = 143
+          Top = 137
+          Width = 150
+          Height = 27
+          DataField = 'DOB'
+          DataSource = ManageMemberData.dsMember
           TabOrder = 17
+        end
+        object btnClearDOB: TButton
+          Tag = 1
+          Left = 299
+          Top = 132
+          Width = 75
+          Height = 32
+          Hint = 'Clear the house name.'
+          Caption = 'Clear'
+          ImageIndex = 0
+          Images = ImageList1
+          TabOrder = 18
+          OnClick = btnClearDOBClick
+        end
+        object btnDOBPicker: TButton
+          Left = 389
+          Top = 135
+          Width = 75
+          Height = 25
+          Caption = 'PICK'
+          TabOrder = 19
+          OnClick = btnDOBPickerClick
         end
       end
     end
@@ -617,8 +622,8 @@ object ManageMember: TManageMember
       object DBGrid3: TDBGrid
         Left = 0
         Top = 0
-        Width = 1342
-        Height = 637
+        Width = 1334
+        Height = 646
         Align = alClient
         BorderStyle = bsNone
         DataSource = ManageMemberData.dsMember
@@ -833,7 +838,7 @@ object ManageMember: TManageMember
     Left = 0
     Top = 0
     Width = 1342
-    Height = 27
+    Height = 31
     UseSystemFont = False
     ActionManager = ActnManagerMember
     Caption = 'Member Menu Bar'
@@ -849,6 +854,7 @@ object ManageMember: TManageMember
     Font.Style = []
     HorzMargin = 10
     Spacing = 10
+    ExplicitWidth = 1338
   end
   object ImageList1: TImageList
     Height = 24
