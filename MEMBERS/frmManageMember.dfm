@@ -163,7 +163,7 @@ object ManageMember: TManageMember
         ExplicitHeight = 645
         object Label3: TLabel
           Left = 105
-          Top = 139
+          Top = 132
           Width = 32
           Height = 19
           Alignment = taRightJustify
@@ -171,7 +171,7 @@ object ManageMember: TManageMember
         end
         object Label4: TLabel
           Left = 87
-          Top = 212
+          Top = 220
           Width = 51
           Height = 19
           Alignment = taRightJustify
@@ -268,8 +268,8 @@ object ManageMember: TManageMember
           Caption = 'House'
         end
         object Label22: TLabel
-          Left = 116
-          Top = 170
+          Left = 145
+          Top = 188
           Width = 191
           Height = 19
           Alignment = taRightJustify
@@ -277,7 +277,7 @@ object ManageMember: TManageMember
         end
         object Label24: TLabel
           Left = 144
-          Top = 263
+          Top = 253
           Width = 204
           Height = 19
           Caption = '(Checkboxes use Specificity.)'
@@ -330,15 +330,22 @@ object ManageMember: TManageMember
           Layout = tlCenter
         end
         object lblMembersAge: TLabel
-          Left = 313
-          Top = 170
+          Left = 342
+          Top = 188
           Width = 109
           Height = 19
           Caption = 'lblMembersAge'
         end
+        object Label11: TLabel
+          Left = 145
+          Top = 163
+          Width = 100
+          Height = 19
+          Caption = 'Date Syntax : '
+        end
         object DBlucboGender: TDBLookupComboBox
           Left = 145
-          Top = 208
+          Top = 216
           Width = 148
           Height = 27
           DataField = 'GenderID'
@@ -403,7 +410,7 @@ object ManageMember: TManageMember
         end
         object DBchkIsActive: TDBCheckBox
           Left = 144
-          Top = 317
+          Top = 307
           Width = 292
           Height = 17
           Caption = 'Is Active - Indicates full membership. '
@@ -436,7 +443,7 @@ object ManageMember: TManageMember
         end
         object DBchkIsSwimmer: TDBCheckBox
           Left = 144
-          Top = 344
+          Top = 334
           Width = 344
           Height = 17
           Caption = 'Is Swimmer - Participates in events.'
@@ -446,7 +453,7 @@ object ManageMember: TManageMember
         end
         object DBchkIsArchived: TDBCheckBox
           Left = 144
-          Top = 290
+          Top = 280
           Width = 255
           Height = 17
           Caption = 'Is Archived - Retired from club.'
@@ -483,7 +490,7 @@ object ManageMember: TManageMember
         object btnClearGender: TButton
           Tag = 1
           Left = 299
-          Top = 208
+          Top = 216
           Width = 75
           Height = 32
           Hint = 'Clear the house name.'
@@ -585,7 +592,7 @@ object ManageMember: TManageMember
         end
         object DBEdit1: TDBEdit
           Left = 143
-          Top = 137
+          Top = 130
           Width = 150
           Height = 27
           DataField = 'DOB'
@@ -595,7 +602,7 @@ object ManageMember: TManageMember
         object btnClearDOB: TButton
           Tag = 1
           Left = 299
-          Top = 132
+          Top = 125
           Width = 75
           Height = 32
           Hint = 'Clear the house name.'
@@ -607,9 +614,9 @@ object ManageMember: TManageMember
         end
         object btnDOBPicker: TButton
           Left = 389
-          Top = 135
+          Top = 125
           Width = 75
-          Height = 25
+          Height = 32
           Caption = 'PICK'
           TabOrder = 19
           OnClick = btnDOBPickerClick
@@ -655,27 +662,32 @@ object ManageMember: TManageMember
           item
             Expanded = False
             FieldName = 'MembershipNum'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'FirstName'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'LastName'
+            Width = 64
             Visible = True
           end
           item
             ButtonStyle = cbsEllipsis
             Expanded = False
             FieldName = 'DOB'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luGender'
+            Width = 64
             Visible = True
           end
           item
@@ -683,6 +695,7 @@ object ManageMember: TManageMember
             Expanded = False
             FieldName = 'IsArchived'
             Title.Caption = 'Archive'
+            Width = 64
             Visible = True
           end
           item
@@ -696,16 +709,19 @@ object ManageMember: TManageMember
             Expanded = False
             FieldName = 'IsSwimmer'
             Title.Caption = 'Swims'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luMembershipType'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luHouse'
+            Width = 64
             Visible = True
           end
           item

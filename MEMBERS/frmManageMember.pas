@@ -95,6 +95,7 @@ type
     btnClearDOB: TButton;
     btnDOBPicker: TButton;
     lblMembersAge: TLabel;
+    Label11: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure About2Click(Sender: TObject);
     procedure DBGrid3CellClick(Column: TColumn);
@@ -755,7 +756,7 @@ end;
 procedure TManageMember.FormCreate(Sender: TObject);
 var
   css: TCustomStyleServices;
-
+  LFormatSettings: TFormatSettings;
 begin
   // ----------------------------------------------------
   // R E G I S T E R   W I N D O W S   M E S S A G E S  .
@@ -788,7 +789,8 @@ begin
 
   // Display tabsheet
   PageControl1.TabIndex := 0;
-
+  LFormatSettings := TFormatSettings.Create;
+  Label11.Caption := 'Date Syntax : ' + LFormatSettings.ShortDateFormat;
 end;
 
 procedure TManageMember.FormDestroy(Sender: TObject);
