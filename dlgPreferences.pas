@@ -445,7 +445,7 @@ begin
 
   // 2023.06.26
   prefEnableTeamEvents.Checked := iFile.ReadBool('Preferences',
-    'EnableTeamEvents', false);
+    'EnableTeamEvents', true);
   prefEnableDCodes.Checked := iFile.ReadBool('Preferences',
     'EnableDCodes', false);
   prefDisplaySwimmerCAT.Checked := iFile.ReadBool('Preferences',

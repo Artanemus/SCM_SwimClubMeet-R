@@ -490,6 +490,7 @@ type
       DoRenumber: boolean = false);
     procedure Refresh_Nominate(DoBookmark: boolean = true);
     procedure Refresh_TeamEntrant(DoBookmark: boolean = true); // --
+    procedure Refresh_Members();
     // Generic TAction onExecute (extended params) for BATCH PRINT
     procedure Session_BatchReportExecute(Sender: TObject; RptType: scmRptType);
     // ENTRANT_GRID Toggle column display
@@ -1186,24 +1187,14 @@ var
   DoEnable: boolean;
 begin
   DoEnable := false;
-  // no connection
-  if not AssertConnection then
-  begin
-    TAction(Sender).Enabled := DoEnable;
-    exit;
-  end;
-  // session is locked
-  if (SCM.dsSession.DataSet.FieldByName('SessionStatusID').AsInteger = 2) then
-  begin
-    TAction(Sender).Enabled := DoEnable;
-    exit;
-  end;
-  // we need events to move up or down
-  { TODO -oBSA -cGeneral : In a perfect world we would need a least two events. }
-  if not SCM.dsEvent.DataSet.IsEmpty then DoEnable := true;
-  // 13.10.2020
-  // events can be moved up or down (re-ordered)
-  // even if the heat has been raced or closed
+  { TODO -oBSA -cGeneral :
+    In a perfect world we would need a least two events to move up or down. }
+  // connected?
+  if AssertConnection then
+    // Checks if session is Empty. Then checks if locked..
+    if not (SCM.Session_IsLocked) then
+      if not SCM.dsEvent.DataSet.IsEmpty then DoEnable := true;
+  // finally
   TAction(Sender).Enabled := DoEnable;
 end;
 
@@ -1223,7 +1214,7 @@ begin
   // connected?
   if AssertConnection then
     // Checks if session is Empty. Then checks if locked..
-    if not SCM.Session_IsLocked then DoEnable := true;
+    if not (SCM.Session_IsLocked) then DoEnable := true;
   TAction(Sender).Enabled := DoEnable;
 end;
 
@@ -1384,7 +1375,6 @@ var
 begin
   DoEnable := false;
   if AssertConnection then
-    // Event_grid View can be toggled if no event?
       DoEnable := true;
   TAction(Sender).Enabled := DoEnable;
 end;
@@ -3535,6 +3525,18 @@ begin
   end;
 end;
 
+procedure TMain.Refresh_Members;
+begin
+  if not AssertConnection then exit;
+  with SCM.dsMember.DataSet do
+  begin
+    DisableControls;
+    Close;
+    Open;
+    EnableControls;
+  end;
+end;
+
 procedure TMain.Refresh_Nominate(DoBookmark: boolean = true);
 var
   bm: TBookmark;
@@ -3616,6 +3618,11 @@ begin
   finally
     dlg.Free;
   end;
+  // requery on dmSCM members
+  Refresh_Members;
+  // 'No Members' Caption maybe visible in TLabel lblNomWarning
+  if lblNomWarning.Visible then
+    PostMessage(Self.Handle, SCM_TABSHEETDISPLAYSTATE, 0, 0);
 end;
 
 procedure TMain.SCM_ManageMembersUpdate(Sender: TObject);
@@ -3655,6 +3662,9 @@ begin
   Refresh_IndvTeam(true, DoRenumber);
   // TEAMENTRANT
   Refresh_TeamEntrant;
+  // Cheeky refresh of the members data
+  // No disablecontrols needed here - done within routine
+  Refresh_Members;
   SCM.dsSession.DataSet.EnableControls;
   SCM.dsEvent.DataSet.EnableControls;
   SCM.dsHeat.DataSet.EnableControls;
@@ -4242,22 +4252,17 @@ begin
     Session_Grid.Visible := true;
     Event_Grid.Visible := true;
     lblMsgTab1.Visible := false;
-    lblSessionEventCaption.Caption := 'EVENTS';
     StatusBar1.Panels[3].Text := '';
     if SCM.dsSession.DataSet.IsEmpty then
     begin
       Event_Grid.Visible := false;
-      lblSessionEventCaption.Caption := 'The sessions table is empty...';
       lblMsgTab1.Caption := 'No Sessions';
       lblMsgTab1.Visible := true;
-      StatusBar1.Panels[3].Text := 'HINT: To get started, create a new session';
     end
     else if SCM.dsEvent.DataSet.IsEmpty then
     begin
       lblMsgTab1.Caption := 'No Events';
       lblMsgTab1.Visible := true;
-      StatusBar1.Panels[3].Text :=
-        'HINT: Create a new event. Assign a distance and stroke.';
     end;
   end;
   if (Msg.WParam = 0) or (Msg.WParam = 2) then
@@ -4325,15 +4330,15 @@ begin
       pnlClient.Visible := false;
       lblMsgTab3.Caption := 'No Sessions';
       lblMsgTab3.Visible := true;
-      StatusBar1.Panels[3].Text := 'Create a new session.';
+      //StatusBar1.Panels[3].Text := 'Create a new session.';
     end
     else if SCM.dsEvent.DataSet.IsEmpty then
     begin
       pnlClient.Visible := false;
       lblMsgTab3.Caption := 'No Events';
       lblMsgTab3.Visible := true;
-      StatusBar1.Panels[3].Text :=
-        'Use the NEW EVENT button to create an event.';
+      //StatusBar1.Panels[3].Text :=
+      //  'Use the NEW EVENT button to create an event.';
     end
     else if SCM.dsEvent.DataSet.FieldByName('DistanceID').IsNull or
       SCM.dsEvent.DataSet.FieldByName('StrokeID').IsNull then
@@ -4341,13 +4346,13 @@ begin
       pnlClient.Visible := false;
       lblMsgTab3.Caption := 'Distance-Stroke?';
       lblMsgTab3.Visible := true;
-      StatusBar1.Panels[3].Text := 'Assign a distance and stroke to the event.';
+      //StatusBar1.Panels[3].Text := 'Assign a distance and stroke to the event.';
     end
     else if SCM.dsHeat.DataSet.IsEmpty then
     begin
       lblMsgTab3.Caption := 'No Heats';
       lblMsgTab3.Visible := true;
-      StatusBar1.Panels[3].Text := 'Use the NEW HEAT button to create a heat';
+      //StatusBar1.Panels[3].Text := 'Use the NEW HEAT button to create a heat';
     end
     else
     begin
@@ -4356,7 +4361,7 @@ begin
       begin
         lblMsgTab3.Caption := 'No Nominees';
         lblMsgTab3.Visible := true;
-        StatusBar1.Panels[3].Text := 'Nominate members to your events.';
+        //StatusBar1.Panels[3].Text := 'Nominate members to your events.';
       end;
     end;
 

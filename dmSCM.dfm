@@ -32,6 +32,7 @@ object SCM: TSCM
     Active = True
     IndexFieldNames = 'StrokeID'
     Connection = scmConnection
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Stroke'
     UpdateOptions.KeyFields = 'StrokeID'
     TableName = 'SwimClubMeet..Stroke'
@@ -53,6 +54,7 @@ object SCM: TSCM
     Active = True
     IndexFieldNames = 'DistanceID'
     Connection = scmConnection
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Distance'
     UpdateOptions.KeyFields = 'DistanceID'
     TableName = 'SwimClubMeet..Distance'
@@ -119,6 +121,7 @@ object SCM: TSCM
     Active = True
     IndexFieldNames = 'EventStatusID'
     Connection = scmConnection
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
     UpdateOptions.UpdateTableName = 'SwimClubMeet..EventStatus'
     UpdateOptions.KeyFields = 'EventStatusID'
     TableName = 'SwimClubMeet..EventStatus'
@@ -400,6 +403,7 @@ object SCM: TSCM
     MasterFields = 'SwimClubID'
     DetailFields = 'SwimClubID'
     Connection = scmConnection
+    UpdateOptions.AssignedValues = [uvEInsert]
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Session'
     UpdateOptions.KeyFields = 'SessionID'
     SQL.Strings = (
@@ -1856,6 +1860,7 @@ object SCM: TSCM
     Active = True
     IndexFieldNames = 'SwimmerCategoryID'
     Connection = scmConnection
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
     UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
     UpdateOptions.EnableDelete = False
     UpdateOptions.EnableInsert = False

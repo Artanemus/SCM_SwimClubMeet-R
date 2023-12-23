@@ -18,7 +18,7 @@ object ManageMember: TManageMember
   TextHeight = 19
   object Panel1: TPanel
     Left = 0
-    Top = 31
+    Top = 25
     Width = 1363
     Height = 49
     Align = alTop
@@ -112,29 +112,27 @@ object ManageMember: TManageMember
   end
   object PageControl1: TPageControl
     Left = 0
-    Top = 80
+    Top = 74
     Width = 1363
-    Height = 696
-    ActivePage = TabSheet4
+    Height = 702
+    ActivePage = TabSheet1
     Align = alClient
     MultiLine = True
     TabHeight = 40
     TabOrder = 2
     TabWidth = 180
     ExplicitWidth = 1359
-    ExplicitHeight = 695
+    ExplicitHeight = 701
     object TabSheet1: TTabSheet
       Caption = 'Member'#39's Details 1'
       object Panel7: TPanel
         Left = 0
         Top = 0
         Width = 1355
-        Height = 646
+        Height = 652
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitWidth = 1351
-        ExplicitHeight = 645
         object Label3: TLabel
           Left = 33
           Top = 179
@@ -745,7 +743,7 @@ object ManageMember: TManageMember
         Left = 0
         Top = 0
         Width = 1355
-        Height = 646
+        Height = 652
         Align = alClient
         BorderStyle = bsNone
         DataSource = ManageMemberData.dsMember
@@ -777,27 +775,32 @@ object ManageMember: TManageMember
           item
             Expanded = False
             FieldName = 'MembershipNum'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'FirstName'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'LastName'
+            Width = 64
             Visible = True
           end
           item
             ButtonStyle = cbsEllipsis
             Expanded = False
             FieldName = 'DOB'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luGender'
+            Width = 64
             Visible = True
           end
           item
@@ -805,6 +808,7 @@ object ManageMember: TManageMember
             Expanded = False
             FieldName = 'IsArchived'
             Title.Caption = 'Archive'
+            Width = 64
             Visible = True
           end
           item
@@ -818,11 +822,13 @@ object ManageMember: TManageMember
             Expanded = False
             FieldName = 'IsSwimmer'
             Title.Caption = 'Swims'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luHouse'
+            Width = 64
             Visible = True
           end
           item
@@ -955,7 +961,7 @@ object ManageMember: TManageMember
     Left = 0
     Top = 0
     Width = 1363
-    Height = 31
+    Height = 25
     UseSystemFont = False
     ActionManager = ActnManagerMember
     Caption = 'Member Menu Bar'

@@ -26,7 +26,7 @@ object Preferences: TPreferences
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 650
+    ExplicitWidth = 642
     object DBText1: TDBText
       Left = 13
       Top = 9
@@ -51,13 +51,13 @@ object Preferences: TPreferences
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 543
-    ExplicitWidth = 650
+    ExplicitTop = 541
+    ExplicitWidth = 642
     DesignSize = (
       646
       48)
     object btnClose: TButton
-      Left = 480
+      Left = 476
       Top = 6
       Width = 101
       Height = 33
@@ -65,7 +65,7 @@ object Preferences: TPreferences
       Caption = 'Close'
       TabOrder = 0
       OnClick = btnCloseClick
-      ExplicitLeft = 492
+      ExplicitLeft = 472
     end
   end
   object PageControl1: TPageControl
@@ -77,8 +77,8 @@ object Preferences: TPreferences
     Align = alClient
     TabOrder = 2
     OnChanging = PageControl1Changing
-    ExplicitWidth = 650
-    ExplicitHeight = 502
+    ExplicitWidth = 642
+    ExplicitHeight = 500
     object TabSheet1: TTabSheet
       Caption = 'Club'
       object Label2: TLabel
@@ -368,7 +368,7 @@ object Preferences: TPreferences
         ParentFont = False
       end
       object btn1: TSpeedButton
-        Left = 149
+        Left = 145
         Top = 15
         Width = 33
         Height = 33
@@ -550,7 +550,10 @@ object Preferences: TPreferences
         Width = 241
         Height = 19
         Caption = 'Enable Team Events.'
+        Checked = True
+        State = cbChecked
         TabOrder = 0
+        Visible = False
       end
       object prefEnableDCodes: TCheckBox
         Left = 32

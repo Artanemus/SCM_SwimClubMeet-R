@@ -325,6 +325,8 @@ type
     function Session_ID(): integer; // current session
     function Session_IsLocked: Boolean; overload;// current session
     function Session_IsLocked(aSessionID: integer): Boolean; overload;
+//    function Session_IsUnLocked: Boolean; overload;// current session
+//    function Session_IsUnLocked(aSessionID: integer): Boolean; overload;
     function Session_Locate(SessionID: integer): Boolean;
     function Session_Start(): TDateTime; overload;
     function Session_Start(SessionID: integer): TDateTime; overload;
@@ -2923,15 +2925,29 @@ end;
 
 function TSCM.Session_IsLocked: Boolean;
 begin
-  result := false;
+  result := true;
   if not fSCMActive then exit;
   if dsSession.DataSet.Active then
     if not dsSession.DataSet.IsEmpty then
-      if (dsSession.DataSet.FieldByName('SessionStatusID').AsInteger = 2) then
-          result := true;
+      if (dsSession.DataSet.FieldByName('SessionStatusID').AsInteger <> 2) then
+          result := false;
 end;
 
 function TSCM.Session_IsLocked(aSessionID: integer): Boolean;
+var
+SQL: string;
+v: variant;
+begin
+  result := true;
+  if not fSCMActive then exit;
+  if (aSessionID = 0) then exit;
+  SQL := 'SELECT SessionStatusID FROM SwimClubMeet.dbo.Session ' +
+         'WHERE SessionID = :aID';
+  v := scmConnection.ExecSQLScalar(SQL, [aSessionID]);
+  if not VarIsNull(v) and not VarIsEmpty(v) and (v <> 2) then result := false;
+end;
+{
+function TSCM.Session_IsUnLocked(aSessionID: integer): Boolean;
 var
 SQL: string;
 v: variant;
@@ -2942,9 +2958,19 @@ begin
   SQL := 'SELECT SessionStatusID FROM SwimClubMeet.dbo.Session ' +
          'WHERE SessionID = :aID';
   v := scmConnection.ExecSQLScalar(SQL, [aSessionID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 1) then result := true;
+  if not VarIsNull(v) and not VarIsEmpty(v) and (v <> 2) then result := true;
 end;
 
+function TSCM.Session_IsUnLocked: Boolean;
+begin
+  result := false;
+  if fSCMActive then // we are connected
+    if dsSession.DataSet.Active then // table is active
+      if not dsSession.DataSet.IsEmpty then // we have sessions
+        if (dsSession.DataSet.FieldByName('SessionStatusID').AsInteger <> 2)
+        then result := true; // explicient not locked
+end;
+}
 function TSCM.Session_Locate(SessionID: integer): Boolean;
 var
   SearchOptions: TLocateOptions;
