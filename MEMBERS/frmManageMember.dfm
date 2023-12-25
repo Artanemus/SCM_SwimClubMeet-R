@@ -39,6 +39,21 @@ object ManageMember: TManageMember
       OnClick = btnInfoFilterClick
       OnMouseLeave = btnInfoMouseLeave
     end
+    object DBTextFullName: TDBText
+      Left = 21
+      Top = 6
+      Width = 154
+      Height = 25
+      AutoSize = True
+      DataField = 'FName'
+      DataSource = ManageMemberData.dsMember
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -21
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
     object btnFindMember: TButton
       Left = 906
       Top = 9
@@ -115,7 +130,7 @@ object ManageMember: TManageMember
     Top = 74
     Width = 1363
     Height = 702
-    ActivePage = TabSheet1
+    ActivePage = TabSheet3
     Align = alClient
     MultiLine = True
     TabHeight = 40
@@ -133,13 +148,15 @@ object ManageMember: TManageMember
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
+        ExplicitWidth = 1351
+        ExplicitHeight = 651
         object Label3: TLabel
-          Left = 33
-          Top = 179
-          Width = 105
+          Left = 23
+          Top = 227
+          Width = 115
           Height = 19
           Alignment = taRightJustify
-          Caption = 'Date of Birth'
+          Caption = '*Date of Birth'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -16
@@ -148,20 +165,26 @@ object ManageMember: TManageMember
           ParentFont = False
         end
         object Label4: TLabel
-          Left = 85
+          Left = 68
           Top = 348
-          Width = 51
+          Width = 69
           Height = 19
           Alignment = taRightJustify
-          Caption = 'Gender'
+          Caption = '*Gender'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'Tahoma'
+          Font.Style = [fsBold]
+          ParentFont = False
         end
         object Label2: TLabel
-          Left = 52
-          Top = 95
-          Width = 86
+          Left = 42
+          Top = 143
+          Width = 96
           Height = 19
           Alignment = taRightJustify
-          Caption = 'Last Name'
+          Caption = '*Last Name'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -16
@@ -170,12 +193,12 @@ object ManageMember: TManageMember
           ParentFont = False
         end
         object Label1: TLabel
-          Left = 50
-          Top = 59
-          Width = 88
+          Left = 40
+          Top = 107
+          Width = 98
           Height = 19
           Alignment = taRightJustify
-          Caption = 'First Name'
+          Caption = '*First Name'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -16
@@ -185,7 +208,7 @@ object ManageMember: TManageMember
         end
         object Label10: TLabel
           Left = 732
-          Top = 174
+          Top = 222
           Width = 39
           Height = 19
           Alignment = taRightJustify
@@ -193,7 +216,7 @@ object ManageMember: TManageMember
         end
         object Label7: TLabel
           Left = 586
-          Top = 95
+          Top = 143
           Width = 185
           Height = 19
           Alignment = taRightJustify
@@ -229,7 +252,7 @@ object ManageMember: TManageMember
         end
         object Label21: TLabel
           Left = 727
-          Top = 213
+          Top = 261
           Width = 44
           Height = 19
           Alignment = taRightJustify
@@ -237,14 +260,14 @@ object ManageMember: TManageMember
         end
         object Label22: TLabel
           Left = 144
-          Top = 248
+          Top = 296
           Width = 191
           Height = 19
           Alignment = taRightJustify
           Caption = 'Member'#39's age as of today :'
         end
         object Label24: TLabel
-          Left = 142
+          Left = 143
           Top = 382
           Width = 204
           Height = 19
@@ -252,7 +275,7 @@ object ManageMember: TManageMember
         end
         object Label18: TLabel
           Left = 508
-          Top = 59
+          Top = 107
           Width = 264
           Height = 19
           Alignment = taRightJustify
@@ -260,14 +283,14 @@ object ManageMember: TManageMember
         end
         object Label8: TLabel
           Left = 853
-          Top = 95
+          Top = 143
           Width = 277
           Height = 19
           Caption = '(Recommended - minimum of 4 digits)'
         end
         object lblMembersAge: TLabel
           Left = 341
-          Top = 246
+          Top = 294
           Width = 128
           Height = 23
           Caption = 'lblMembersAge'
@@ -280,14 +303,14 @@ object ManageMember: TManageMember
         end
         object Label11: TLabel
           Left = 144
-          Top = 217
+          Top = 265
           Width = 193
           Height = 19
           Caption = 'Locale Date Format Syntax '
         end
         object btnInfoDateTime: TVirtualImage
           Left = 343
-          Top = 210
+          Top = 258
           Width = 25
           Height = 26
           ImageCollection = ImageCollectMember
@@ -300,14 +323,21 @@ object ManageMember: TManageMember
         end
         object Label15: TLabel
           Left = 670
-          Top = 266
+          Top = 314
           Width = 102
           Height = 19
           Alignment = taRightJustify
           Caption = 'Metadata Tags'
         end
+        object Label25: TLabel
+          Left = 146
+          Top = 63
+          Width = 323
+          Height = 19
+          Caption = 'Fields marked with an asterisk * are required.'
+        end
         object DBlucboGender: TDBLookupComboBox
-          Left = 143
+          Left = 144
           Top = 344
           Width = 148
           Height = 27
@@ -323,11 +353,11 @@ object ManageMember: TManageMember
           ListSource = ManageMemberData.dsGender
           NullValueKey = 32776
           ParentFont = False
-          TabOrder = 2
+          TabOrder = 5
         end
         object DBedtFirstName: TDBEdit
           Left = 144
-          Top = 56
+          Top = 104
           Width = 292
           Height = 27
           DataField = 'FirstName'
@@ -336,7 +366,7 @@ object ManageMember: TManageMember
         end
         object DBedtLastName: TDBEdit
           Left = 144
-          Top = 92
+          Top = 140
           Width = 292
           Height = 27
           DataField = 'LastName'
@@ -345,35 +375,35 @@ object ManageMember: TManageMember
         end
         object DBedtMembershipNum: TDBEdit
           Left = 777
-          Top = 92
+          Top = 140
           Width = 70
           Height = 27
           DataField = 'MembershipNum'
           DataSource = ManageMemberData.dsMember
-          TabOrder = 8
+          TabOrder = 11
         end
         object DBchkIsActive: TDBCheckBox
-          Left = 142
+          Left = 143
           Top = 436
           Width = 292
           Height = 17
           Caption = 'Is Active - Indicates full membership. '
           DataField = 'IsActive'
           DataSource = ManageMemberData.dsMember
-          TabOrder = 5
+          TabOrder = 8
         end
         object DBEdtEmail: TDBEdit
           Left = 777
-          Top = 171
+          Top = 219
           Width = 407
           Height = 27
           DataField = 'Email'
           DataSource = ManageMemberData.dsMember
-          TabOrder = 9
+          TabOrder = 12
         end
         object DBlucboHouse: TDBLookupComboBox
           Left = 777
-          Top = 209
+          Top = 257
           Width = 233
           Height = 27
           Hint = 'Assign house (Clear .. Ctrl-Del)'
@@ -383,32 +413,32 @@ object ManageMember: TManageMember
           ListField = 'Caption'
           ListSource = ManageMemberData.dsHouse
           NullValueKey = 32776
-          TabOrder = 10
+          TabOrder = 13
         end
         object DBchkIsSwimmer: TDBCheckBox
-          Left = 142
+          Left = 143
           Top = 463
           Width = 344
           Height = 17
           Caption = 'Is Swimmer - Participates in events.'
           DataField = 'IsSwimmer'
           DataSource = ManageMemberData.dsMember
-          TabOrder = 6
+          TabOrder = 9
         end
         object DBchkIsArchived: TDBCheckBox
-          Left = 142
+          Left = 143
           Top = 409
           Width = 255
           Height = 17
           Caption = 'Is Archived - Retired from club.'
           DataField = 'IsArchived'
           DataSource = ManageMemberData.dsMember
-          TabOrder = 4
+          TabOrder = 7
         end
         object btnClearHouse: TButton
           Tag = 3
           Left = 1016
-          Top = 204
+          Top = 252
           Width = 75
           Height = 32
           Hint = 'Clear the house name.'
@@ -416,12 +446,12 @@ object ManageMember: TManageMember
           ImageIndex = 3
           ImageName = 'BackSpace_FILL'
           Images = BTNImageList32x32
-          TabOrder = 11
+          TabOrder = 14
           OnClick = btnClearClick
         end
         object btnClearGender: TButton
           Tag = 1
-          Left = 297
+          Left = 298
           Top = 344
           Width = 75
           Height = 32
@@ -430,22 +460,22 @@ object ManageMember: TManageMember
           ImageIndex = 3
           ImageName = 'BackSpace_FILL'
           Images = BTNImageList32x32
-          TabOrder = 3
+          TabOrder = 6
           OnClick = btnClearClick
         end
         object RegistrationNum: TDBEdit
           Left = 778
-          Top = 56
+          Top = 104
           Width = 184
           Height = 27
           DataField = 'MembershipStr'
           DataSource = ManageMemberData.dsMember
-          TabOrder = 7
+          TabOrder = 10
         end
         object btnClearDOB: TButton
           Tag = 1
           Left = 290
-          Top = 172
+          Top = 220
           Width = 75
           Height = 32
           Hint = 'Clear the house name.'
@@ -453,13 +483,13 @@ object ManageMember: TManageMember
           ImageIndex = 3
           ImageName = 'BackSpace_FILL'
           Images = BTNImageList32x32
-          TabOrder = 12
+          TabOrder = 3
           OnClick = btnClearDOBClick
         end
         object btnDOBPicker: TButton
           Tag = 1
           Left = 371
-          Top = 172
+          Top = 220
           Width = 127
           Height = 32
           Hint = 'Clear the house name.'
@@ -467,21 +497,21 @@ object ManageMember: TManageMember
           ImageIndex = 1
           ImageName = 'dialogs'
           Images = BTNImageList32x32
-          TabOrder = 13
+          TabOrder = 4
           OnClick = btnDOBPickerClick
         end
         object DBedtDOB: TDBEdit
           Left = 144
-          Top = 174
+          Top = 222
           Width = 140
           Height = 27
           DataField = 'DOB'
           DataSource = ManageMemberData.dsMember
-          TabOrder = 14
+          TabOrder = 2
         end
         object DBMemo1: TDBMemo
           Left = 778
-          Top = 263
+          Top = 311
           Width = 407
           Height = 124
           DataField = 'TAGS'
@@ -566,6 +596,22 @@ object ManageMember: TManageMember
         Font.Style = []
         ParentFont = False
       end
+      object Label26: TLabel
+        Left = 557
+        Top = 248
+        Width = 21
+        Height = 108
+        Alignment = taRightJustify
+        Caption = 'EVENTS SWUM'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Tahoma'
+        Font.Orientation = 900
+        Font.Style = []
+        ParentFont = False
+        Layout = tlCenter
+      end
       object DBGridRole: TDBGrid
         Left = 584
         Top = 8
@@ -574,7 +620,7 @@ object ManageMember: TManageMember
         DataSource = ManageMemberData.dsMemberRoleLnk
         DefaultDrawing = False
         Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
-        TabOrder = 0
+        TabOrder = 2
         TitleFont.Charset = DEFAULT_CHARSET
         TitleFont.Color = clWindowText
         TitleFont.Height = -16
@@ -651,7 +697,7 @@ object ManageMember: TManageMember
         Kind = dbnVertical
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 1
+        TabOrder = 3
       end
       object DBContactNumNavigator: TDBNavigator
         Left = 408
@@ -676,7 +722,7 @@ object ManageMember: TManageMember
         Kind = dbnVertical
         ParentShowHint = False
         ShowHint = True
-        TabOrder = 2
+        TabOrder = 1
       end
       object DBgridContactInfo: TDBGrid
         Left = 81
@@ -685,7 +731,7 @@ object ManageMember: TManageMember
         Height = 210
         DataSource = ManageMemberData.dsContactNum
         Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
-        TabOrder = 3
+        TabOrder = 0
         TitleFont.Charset = DEFAULT_CHARSET
         TitleFont.Color = clWindowText
         TitleFont.Height = -16
@@ -733,6 +779,50 @@ object ManageMember: TManageMember
             FieldName = 'PB'
             Width = 90
             Visible = True
+          end>
+      end
+      object DBGrid1: TDBGrid
+        Left = 584
+        Top = 248
+        Width = 417
+        Height = 385
+        DataSource = ManageMemberData.dsMemberEvents
+        TabOrder = 5
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -16
+        TitleFont.Name = 'Tahoma'
+        TitleFont.Style = []
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'EventStr'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'RaceTime'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'EventDate'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'EventID'
+            Visible = False
+          end
+          item
+            Expanded = False
+            FieldName = 'MemberID'
+            Visible = False
+          end
+          item
+            Expanded = False
+            FieldName = 'FName'
+            Visible = False
           end>
       end
     end
@@ -925,7 +1015,7 @@ object ManageMember: TManageMember
         Width = 218
         Height = 38
         Caption = 'Club Members Summary'
-        TabOrder = 1
+        TabOrder = 2
         OnClick = btnClubMembersSummaryClick
       end
       object btnMemberHistory: TButton
@@ -934,7 +1024,7 @@ object ManageMember: TManageMember
         Width = 218
         Height = 38
         Caption = 'Member History'
-        TabOrder = 2
+        TabOrder = 1
         OnClick = btnMemberHistoryClick
       end
       object btnClubMembersDetailed: TButton
@@ -1401,6 +1491,37 @@ object ManageMember: TManageMember
               8138D504A28F00D2BD0978099CF141F41540BA278C13670D44E596A3CF00D2AD
               7B3839B136EAC6B4EF0082D860002A03671C006A237EEC01D601D3CB87317D5F
               A3B20000000049454E44AE426082}
+          end>
+      end
+      item
+        Name = 'asterisk'
+        SourceImages = <
+          item
+            Image.Data = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000017352474200AECE1CE9000002B3494441546843ED983BAF8D411486
+              9FD3F157F813FC08B72808E27E4D284828244810B720C43D41E2D2684814C869
+              4EA150088946A191884621110D7BC94CF265CEAC6FD69A3D67B3E39B6437FB9B
+              59EB7DE69DFB0C535E66A65C3F03C0DF76707040716019F032F9B61C78D5DAB1
+              85726000B03AF5AF39B004786F152FF5BC007780C5A3242B0B496A8690887F08
+              3C030E58213C006781BD21F0A3028417208A5F1AE25F03365B20AC00C7804349
+              C03E080F402A3EA6B90FAC2D4158018E028733C134082B80265E52955CFE23C7
+              0A20758F03078D101680B1C57B01A4FE496582A5BD55026822BE0640DA9C01F6
+              159CE8036826BE1640DA5D0076F54068005FC25219579B6E08D3984F737AE640
+              DAF632B04D81906FB9B3D0C5D1E46C267E1C07A26E59AF3729102B92FFDFB516
+              DF024062DC02D697D66BE57BD5B0E9C61A670875E3DCB56C3A8E8DD0DC1F1A80
+              4C426FD90AAC3236929E9779E22DF3EE131AC02F6FE409D59FA777009850CFC7
+              34FF8F033593783B90AEFD9A416F81DD15EE9927B137B6DCA4ACE263EC37C09A
+              D1EF833759EB7DA0467CD4F01A580D7CAC85187723D3C43FC8EC09B9FF44F75C
+              80F85403310E8026FE1E705D39CCC9B929774D9C0D109FBD10B5009A7879B590
+              7351DF7DE036B02E23F44570EDAB07A20640137FA373322DDDC8C4A18D19A1CF
+              C36BC7372B841740137F1590B3502C2500A97705D89211FA34407CB740780034
+              F197809D49320B8034910BCE8E8CD02701E26709C20AA0893FDF79ECEAE6B202
+              489B73C09E8CD0C701A2F7606905D800C818EF96D33D4F801E0089790AD89FC4
+              973972B395031247B67EE9712927322F75B50EC476DD772771441E0E8AC5EA40
+              0C24CF8B8B802385C85E0762387901FC111ED18AE2A58217C014B4B00F586398
+              EA0D004A37D50E2153AF772B0D0EB8BBAC71838572A0B14C3DDC0030B1AE5612
+              4DBD03BF012DBC9C31D9C92A1A0000000049454E44AE426082}
           end>
       end>
     Left = 1112

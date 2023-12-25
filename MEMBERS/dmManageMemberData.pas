@@ -85,8 +85,17 @@ type
     qryMemberTAGS: TWideMemoField;
     qryMemberRoleLnkElectedOn: TSQLTimeStampField;
     qryMemberRoleLnkRetiredOn: TSQLTimeStampField;
+    dsMemberEvents: TDataSource;
+    qryMemberEvents: TFDQuery;
+    qryMemberEventsEventID: TFDAutoIncField;
+    qryMemberEventsMemberID: TIntegerField;
+    qryMemberEventsFName: TWideStringField;
+    qryMemberEventsEventStr: TWideStringField;
+    qryMemberEventsRaceTime: TTimeField;
+    qryMemberEventsEventDate: TStringField;
     procedure DataModuleCreate(Sender: TObject);
     procedure qryMemberAfterInsert(DataSet: TDataSet);
+    procedure qryMemberAfterPost(DataSet: TDataSet);
     procedure qryMemberAfterScroll(DataSet: TDataSet);
     procedure qryMemberBeforeDelete(DataSet: TDataSet);
     procedure qryMemberBeforeScroll(DataSet: TDataSet);
@@ -203,6 +212,7 @@ begin
         // Lookup table used by contactnum
         qryContactNum.Open;
         qryMemberRoleLnk.Open;
+        qryMemberEvents.Open;
         if qryContactNum.Active then
         begin
           fManageMemberDataActive := True;
@@ -286,13 +296,23 @@ begin
 
 end;
 
+procedure TManageMemberData.qryMemberAfterPost(DataSet: TDataSet);
+begin
+  // As there is a calculation field (FNAME) in this query - the call to
+  // refresh ensures that the main forms header banner will display the new
+  // member's name.
+  // ie. frmManageMember.DBTextFullName uses field qrMember.FNAME.
+  qryMember.Refresh;
+  if Owner is TForm then
+    // Updates the display of the member's age.
+    PostMessage(TForm(Owner).Handle, SCM_AFTERPOST, 0, 0);
+end;
+
 procedure TManageMemberData.qryMemberAfterScroll(DataSet: TDataSet);
 begin
   // Display Members Personal Best
   UpdateMembersPersonalBest();
-  // Post directly to parent form : TForm(Self.GetOwner).Handle;
-  // Uses : Vcl.Forms
-  // Updates the dtpickDOB.Date control.
+  // Updates the display of the member's age.
   if Owner is TForm then
     PostMessage(TForm(Owner).Handle, SCM_AFTERSCROLL, 0, 0);
 end;

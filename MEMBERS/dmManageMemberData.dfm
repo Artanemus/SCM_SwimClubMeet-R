@@ -7,6 +7,7 @@ object ManageMemberData: TManageMemberData
     Active = True
     IndexFieldNames = 'ContactNumTypeID'
     Connection = SCM.scmConnection
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
     UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
     UpdateOptions.EnableDelete = False
     UpdateOptions.EnableInsert = False
@@ -51,6 +52,7 @@ object ManageMemberData: TManageMemberData
   object qryMember: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     AfterInsert = qryMemberAfterInsert
+    AfterPost = qryMemberAfterPost
     BeforeDelete = qryMemberBeforeDelete
     BeforeScroll = qryMemberBeforeScroll
     AfterScroll = qryMemberAfterScroll
@@ -293,6 +295,7 @@ object ManageMemberData: TManageMemberData
     Active = True
     IndexFieldNames = 'GenderID'
     Connection = SCM.scmConnection
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Gender'
     TableName = 'SwimClubMeet..Gender'
     Left = 184
@@ -313,6 +316,7 @@ object ManageMemberData: TManageMemberData
     Active = True
     IndexFieldNames = 'HouseID'
     Connection = SCM.scmConnection
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
     UpdateOptions.UpdateTableName = 'SwimClubMeet..House'
     TableName = 'SwimClubMeet..House'
     Left = 184
@@ -793,8 +797,102 @@ object ManageMemberData: TManageMemberData
     Active = True
     IndexFieldNames = 'MemberRoleID'
     Connection = SCM.scmConnection
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
     TableName = 'SwimClubMeet.dbo.MemberRole'
     Left = 184
     Top = 608
+  end
+  object dsMemberEvents: TDataSource
+    DataSet = qryMemberEvents
+    Left = 448
+    Top = 216
+  end
+  object qryMemberEvents: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    Active = True
+    Indexes = <
+      item
+        Name = 'mcMember_ContactNum'
+        Fields = 'MemberID;ContactNumID'
+        DescFields = 'ContactNumID'
+      end>
+    IndexFieldNames = 'MemberID'
+    MasterSource = dsMember
+    MasterFields = 'MemberID'
+    DetailFields = 'MemberID'
+    Connection = SCM.scmConnection
+    FormatOptions.AssignedValues = [fvFmtDisplayTime]
+    FormatOptions.FmtDisplayTime = 'nn:ss.zzz'
+    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
+    UpdateOptions.EnableDelete = False
+    UpdateOptions.EnableInsert = False
+    UpdateOptions.EnableUpdate = False
+    UpdateOptions.KeyFields = 'EventID'
+    SQL.Strings = (
+      'USE [SwimClubMeet];'
+      ''
+      'SELECT '
+      'Event.EventID'
+      ',Entrant.MemberID '
+      ',Concat(Member.FirstName, '#39' '#39', Member.LastName) AS FName'
+      ',Concat(Distance.Caption, '#39' '#39', Stroke.Caption) AS EventStr'
+      ',Entrant.RaceTime'
+      ', CONVERT(VARCHAR(11), Session.SessionStart, 106) AS EventDate '
+      ''
+      'FROM Event'
+      'INNER JOIN Session ON Event.SessionID = Session.SessionID'
+      'INNER JOIN Stroke ON Event.StrokeID = Stroke.StrokeID'
+      'INNER JOIN Distance ON Event.DistanceID = Distance.DistanceID'
+      
+        'INNER JOIN HeatIndividual ON Event.EventID = HeatIndividual.Even' +
+        'tID'
+      'INNER JOIN Entrant ON HeatIndividual.HeatID = Entrant.HeatID'
+      'INNER JOIN Member ON Entrant.MemberID = Member.MemberID'
+      'WHERE RaceTime IS NOT NULL'
+      
+        'ORDER BY MemberID, EventDate DESC, Event.StrokeID, Event.Distanc' +
+        'eID'
+      ';')
+    Left = 448
+    Top = 160
+    object qryMemberEventsEventID: TFDAutoIncField
+      DisplayWidth = 5
+      FieldName = 'EventID'
+      Origin = 'EventID'
+      ReadOnly = True
+    end
+    object qryMemberEventsMemberID: TIntegerField
+      DisplayWidth = 5
+      FieldName = 'MemberID'
+      Origin = 'MemberID'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+    end
+    object qryMemberEventsFName: TWideStringField
+      DisplayWidth = 20
+      FieldName = 'FName'
+      Origin = 'FName'
+      ReadOnly = True
+      Required = True
+      Size = 257
+    end
+    object qryMemberEventsEventStr: TWideStringField
+      DisplayWidth = 18
+      FieldName = 'EventStr'
+      Origin = 'EventStr'
+      ReadOnly = True
+      Required = True
+      Size = 257
+    end
+    object qryMemberEventsRaceTime: TTimeField
+      FieldName = 'RaceTime'
+      Origin = 'RaceTime'
+      DisplayFormat = 'nn:ss.zzz'
+    end
+    object qryMemberEventsEventDate: TStringField
+      FieldName = 'EventDate'
+      Origin = 'EventDate'
+      ReadOnly = True
+      Size = 11
+    end
   end
 end

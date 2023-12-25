@@ -57,7 +57,7 @@ object Preferences: TPreferences
       646
       48)
     object btnClose: TButton
-      Left = 476
+      Left = 472
       Top = 6
       Width = 101
       Height = 33
@@ -65,7 +65,7 @@ object Preferences: TPreferences
       Caption = 'Close'
       TabOrder = 0
       OnClick = btnCloseClick
-      ExplicitLeft = 472
+      ExplicitLeft = 468
     end
   end
   object PageControl1: TPageControl
@@ -73,7 +73,7 @@ object Preferences: TPreferences
     Top = 41
     Width = 646
     Height = 501
-    ActivePage = TabSheet6
+    ActivePage = TabSheet3
     Align = alClient
     TabOrder = 2
     OnChanging = PageControl1Changing
@@ -368,7 +368,7 @@ object Preferences: TPreferences
         ParentFont = False
       end
       object btn1: TSpeedButton
-        Left = 145
+        Left = 141
         Top = 15
         Width = 33
         Height = 33
@@ -598,7 +598,7 @@ object Preferences: TPreferences
       end
       object Label13: TLabel
         Left = 27
-        Top = 200
+        Top = 272
         Width = 162
         Height = 17
         Caption = 'On Auto-Build, Inject Data ...'
@@ -624,7 +624,7 @@ object Preferences: TPreferences
       end
       object Label9: TLabel
         Left = 27
-        Top = 359
+        Top = 431
         Width = 358
         Height = 34
         AutoSize = False
@@ -641,7 +641,7 @@ object Preferences: TPreferences
       end
       object Label17: TLabel
         Left = 27
-        Top = 311
+        Top = 383
         Width = 358
         Height = 50
         AutoSize = False
@@ -659,7 +659,7 @@ object Preferences: TPreferences
       end
       object prefImportSeedTime: TRadioGroup
         Left = 27
-        Top = 223
+        Top = 295
         Width = 358
         Height = 82
         Caption = 'Send dbo.Nominee.SeedTime too  ...'
@@ -688,9 +688,9 @@ object Preferences: TPreferences
       object prefGenerateEventDescription: TCheckBox
         Left = 27
         Top = 123
-        Width = 366
+        Width = 422
         Height = 17
-        Caption = 'Generate an event description for new events.'
+        Caption = 'Generate an event description for new individual events.'
         TabOrder = 2
       end
       object prefGenerateEventDescStr: TEdit
@@ -700,6 +700,22 @@ object Preferences: TPreferences
         Height = 29
         TabOrder = 3
         Text = ' - Individual, all genders, all ages.'
+      end
+      object prefGenerateEventTeamDesc: TCheckBox
+        Left = 27
+        Top = 187
+        Width = 422
+        Height = 17
+        Caption = 'Generate an event description for new team events.'
+        TabOrder = 5
+      end
+      object prefGenerateEventTeamDescStr: TEdit
+        Left = 48
+        Top = 210
+        Width = 488
+        Height = 29
+        TabOrder = 6
+        Text = ' - RELAY'
       end
     end
   end
@@ -785,7 +801,7 @@ object Preferences: TPreferences
       'END'
       ''
       'SELECT * from #TempSCMSwimClub;')
-    Left = 408
-    Top = 448
+    Left = 544
+    Top = 328
   end
 end

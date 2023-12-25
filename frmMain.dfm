@@ -665,6 +665,8 @@ object Main: TMain
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 0
+          ExplicitWidth = 1402
+          ExplicitHeight = 764
           DesignSize = (
             1406
             765)
@@ -726,6 +728,7 @@ object Main: TMain
               Align = alLeft
               BevelOuter = bvNone
               TabOrder = 0
+              ExplicitHeight = 744
               DesignSize = (
                 352
                 745)
@@ -854,6 +857,7 @@ object Main: TMain
               Align = alLeft
               BevelOuter = bvNone
               TabOrder = 1
+              ExplicitHeight = 716
               DesignSize = (
                 60
                 717)
@@ -940,6 +944,7 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 2
+              ExplicitHeight = 744
               object Nominate_ControlList: TControlList
                 Left = 57
                 Top = 0
@@ -1098,8 +1103,6 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 0
-              ExplicitLeft = 1032
-              ExplicitHeight = 637
               object EntrantWidgets: TRelativePanel
                 Left = 0
                 Top = 0
@@ -1178,7 +1181,6 @@ object Main: TMain
                 Align = alClient
                 BevelOuter = bvNone
                 TabOrder = 0
-                ExplicitHeight = 637
                 DesignSize = (
                   88
                   638)
@@ -1315,8 +1317,8 @@ object Main: TMain
                 ParentColor = False
                 ParentFont = False
                 TabOrder = 0
-                ExplicitTop = 460
-                ExplicitWidth = 1032
+                ExplicitTop = 461
+                ExplicitWidth = 1036
                 ExplicitHeight = 177
                 inherited Grid: TDBGrid
                   Width = 1036
@@ -1346,7 +1348,7 @@ object Main: TMain
                 end
                 inherited Panel1: TPanel
                   Width = 1036
-                  ExplicitWidth = 1032
+                  ExplicitWidth = 1036
                   inherited Grid: TDBGrid
                     Width = 1034
                   end
@@ -1354,7 +1356,7 @@ object Main: TMain
                 inherited Panel2: TPanel
                   Width = 1036
                   Height = 128
-                  ExplicitWidth = 1032
+                  ExplicitWidth = 1036
                   ExplicitHeight = 128
                   inherited rpnlTeamEntrantTools: TRelativePanel
                     Height = 128
@@ -1493,7 +1495,6 @@ object Main: TMain
             Align = alTop
             BevelOuter = bvNone
             TabOrder = 2
-            ExplicitWidth = 1402
             DesignSize = (
               1406
               107)
@@ -1672,7 +1673,6 @@ object Main: TMain
             Align = alLeft
             BevelOuter = bvNone
             TabOrder = 0
-            ExplicitHeight = 637
             object HeatWidgets: TRelativePanel
               AlignWithMargins = True
               Left = 192
@@ -1846,7 +1846,6 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 0
-              ExplicitHeight = 617
               DesignSize = (
                 60
                 618)
@@ -2063,6 +2062,8 @@ object Main: TMain
               Height = 638
               Align = alLeft
               BorderStyle = bsNone
+              ItemCount = 77
+              ItemIndex = 0
               ItemMargins.Left = 0
               ItemMargins.Top = 0
               ItemMargins.Right = 0
@@ -2071,7 +2072,6 @@ object Main: TMain
               PopupMenu = pumHeat
               TabOrder = 1
               OnBeforeDrawItem = HeatControlListBeforeDrawItem
-              ExplicitHeight = 637
               object vimgHeatNum: TVirtualImage
                 Left = 16
                 Top = 11
@@ -2104,6 +2104,7 @@ object Main: TMain
                 Height = 32
                 Alignment = taCenter
                 AutoSize = False
+                Caption = '1'
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -24

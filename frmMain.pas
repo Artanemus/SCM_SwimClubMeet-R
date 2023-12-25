@@ -3620,6 +3620,8 @@ begin
   end;
   // requery on dmSCM members
   Refresh_Members;
+  Refresh_Nominate;
+
   // 'No Members' Caption maybe visible in TLabel lblNomWarning
   if lblNomWarning.Visible then
     PostMessage(Self.Handle, SCM_TABSHEETDISPLAYSTATE, 0, 0);

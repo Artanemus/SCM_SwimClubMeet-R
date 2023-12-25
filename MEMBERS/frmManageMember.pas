@@ -104,6 +104,10 @@ type
     btnFilter: TButton;
     actnFilter: TAction;
     btnInfoFilter: TVirtualImage;
+    Label25: TLabel;
+    Label26: TLabel;
+    DBGrid1: TDBGrid;
+    DBTextFullName: TDBText;
     procedure About2Click(Sender: TObject);
     procedure actnFilterExecute(Sender: TObject);
     procedure btnClearClick(Sender: TObject);
@@ -165,11 +169,14 @@ type
     procedure ReadPreferences();
     procedure WritePreferences();
     procedure UpdateFilterCount();
+    procedure UpdateMembersAge();
 
   protected
     // windows messages ....
     procedure ManageMemberAfterScroll(var Msg: TMessage);
       message SCM_AFTERSCROLL;
+    procedure ManageMemberAfterPost(var Msg: TMessage);
+      message SCM_AFTERPOST;
     procedure FilterDlgUpdated(var Msg: TMessage); message SCM_FILTERUPDATED;
     procedure FilterDlgDeactivated(var Msg: TMessage);
       message SCM_FILTERDEACTIVATED;
@@ -860,24 +867,15 @@ begin
   end;
 end;
 
-procedure TManageMember.ManageMemberAfterScroll(var Msg: TMessage);
-var
-  dt: TDate;
-  age: Integer;
+
+procedure TManageMember.ManageMemberAfterPost(var Msg: TMessage);
 begin
-  lblMembersAge.Caption := '';
-  if not AssertConnection then exit;
-  with ManageMemberData.dsMember.DataSet do
-  BEGIN // calculate the age of the member
-    if not Active or IsEmpty then exit;
-    if FieldByName('MemberID').IsNull then exit;
-    if FieldByName('DOB').IsNull then exit;
-    dt := FieldByName('DOB').AsDateTime;
-    if (dt <= 0) then exit;
-    age := GetMembersAge(FieldByName('MemberID').AsInteger, dt);
-    if (age <= 0) then exit;
-    lblMembersAge.Caption := IntToStr(age);
-  END;
+  UpdateMembersAge;
+end;
+
+procedure TManageMember.ManageMemberAfterScroll(var Msg: TMessage);
+begin
+  UpdateMembersAge;
 end;
 
 procedure TManageMember.FilterDlgUpdated(var Msg: TMessage);
@@ -998,6 +996,26 @@ begin
   // display record count
   actnFilter.Caption := 'Filter (' +
     IntToStr(ManageMemberData.RecordCount) + ')';
+end;
+
+procedure TManageMember.UpdateMembersAge;
+var
+  dt: TDate;
+  age: Integer;
+begin
+  lblMembersAge.Caption := '';
+  if not AssertConnection then exit;
+  with ManageMemberData.dsMember.DataSet do
+  BEGIN // calculate the age of the member
+    if not Active or IsEmpty then exit;
+    if FieldByName('MemberID').IsNull then exit;
+    if FieldByName('DOB').IsNull then exit;
+    dt := FieldByName('DOB').AsDateTime;
+    if (dt <= 0) then exit;
+    age := GetMembersAge(FieldByName('MemberID').AsInteger, dt);
+    if (age <= 0) then exit;
+    lblMembersAge.Caption := IntToStr(age);
+  END;
 end;
 
 procedure TManageMember.WritePreferences;

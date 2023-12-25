@@ -84,6 +84,8 @@ type
     prefEnableDCodes: TCheckBox;
     prefDisplaySwimmerCAT: TCheckBox;
     prefDisplayDivisions: TCheckBox;
+    prefGenerateEventTeamDesc: TCheckBox;
+    prefGenerateEventTeamDescStr: TEdit;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
@@ -431,11 +433,18 @@ begin
   prefGroupBy.ItemIndex := iFile.ReadInteger('Preferences', 'GroupBy', 0);
   rgpSeedMethod.ItemIndex := iFile.ReadInteger('Preferences', 'SeedMethod', 0);
 
-  // Generate event descriptions
+  // Generate event descriptions (INDV)
   i := iFile.ReadInteger('Preferences', 'GenerateEventDescription', iUnChecked);
   prefGenerateEventDescription.State := TCheckBoxState(i);
   prefGenerateEventDescStr.Text := iFile.ReadString('Preferences',
     'GenerateEventDescStr', ' - Individual, all genders, all ages.');
+
+  // Generate event descriptions (TEAM)
+  i := iFile.ReadInteger('Preferences', 'GenerateEventTeamDesc', iUnChecked);
+  prefGenerateEventTeamDesc.State := TCheckBoxState(i);
+  prefGenerateEventTeamDescStr.Text := iFile.ReadString('Preferences',
+    'GenerateEventTeamDescStr', ' - RELAY.');
+
   rgpSeedMethod.ItemIndex := iFile.ReadInteger('Preferences', 'SeedMethod', 0);
 
   { /* 2020-11-01 auto-build v2 seed method */ }
@@ -481,11 +490,17 @@ begin
     integer(prefSeperateGender.State));
   iFile.WriteInteger('Preferences', 'GroupBy', prefGroupBy.ItemIndex);
 
-  // generate event description
+  // generate event description (INDV)
   iFile.WriteInteger('Preferences', 'GenerateEventDescription',
     integer(prefGenerateEventDescription.State));
   iFile.WriteString('Preferences', 'GenerateEventDescStr',
     prefGenerateEventDescStr.Text);
+
+  // generate event description (TEAM)
+  iFile.WriteInteger('Preferences', 'GenerateEventTeamDesc',
+    integer(prefGenerateEventTeamDesc.State));
+  iFile.WriteString('Preferences', 'GenerateEventTeamDescStr',
+    prefGenerateEventTeamDescStr.Text);
 
   { 2020-11-01 auto-build v2 seed method }
   iFile.WriteInteger('Preferences', 'SeedMethod', rgpSeedMethod.ItemIndex);
