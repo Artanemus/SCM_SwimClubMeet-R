@@ -122,7 +122,6 @@ object ManageMember: TManageMember
       ShowHint = True
       TabOrder = 0
       BeforeAction = DBNavigator1BeforeAction
-      OnClick = DBNavigator1Click
     end
   end
   object PageControl1: TPageControl
@@ -130,7 +129,7 @@ object ManageMember: TManageMember
     Top = 74
     Width = 1363
     Height = 702
-    ActivePage = TabSheet3
+    ActivePage = TabSheet1
     Align = alClient
     MultiLine = True
     TabHeight = 40
@@ -148,8 +147,6 @@ object ManageMember: TManageMember
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitWidth = 1351
-        ExplicitHeight = 651
         object Label3: TLabel
           Left = 23
           Top = 227
@@ -865,32 +862,27 @@ object ManageMember: TManageMember
           item
             Expanded = False
             FieldName = 'MembershipNum'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'FirstName'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'LastName'
-            Width = 64
             Visible = True
           end
           item
             ButtonStyle = cbsEllipsis
             Expanded = False
             FieldName = 'DOB'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luGender'
-            Width = 64
             Visible = True
           end
           item
@@ -898,7 +890,6 @@ object ManageMember: TManageMember
             Expanded = False
             FieldName = 'IsArchived'
             Title.Caption = 'Archive'
-            Width = 64
             Visible = True
           end
           item
@@ -912,13 +903,11 @@ object ManageMember: TManageMember
             Expanded = False
             FieldName = 'IsSwimmer'
             Title.Caption = 'Swims'
-            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luHouse'
-            Width = 64
             Visible = True
           end
           item

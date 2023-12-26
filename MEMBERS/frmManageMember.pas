@@ -138,7 +138,6 @@ type
     procedure DBGridGenericKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure DBNavigator1BeforeAction(Sender: TObject; Button: TNavigateBtn);
-    procedure DBNavigator1Click(Sender: TObject; Button: TNavigateBtn);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -153,7 +152,6 @@ type
     fColorEditBoxFocused: TColor;
     fColorEditBoxNormal: TColor;
     FConnection: TFDConnection;
-    fDoDelete: Boolean;
     fSwimClubID: Integer;
     // Used to convert DATETIME and then post TMessage to Member DataModule.
     fSystemTime: TSystemTime;
@@ -710,10 +708,11 @@ var
   dlg: TDeleteMember;
   FName, s: string;
   ID: Integer;
+  fDoDelete: boolean;
 begin
+  fDoDelete := false;
   if Button = nbDelete then
   begin
-    fDoDelete := false;
     dlg := TDeleteMember.Create(Self);
     // get the fullname of the member to delete
     FName := ManageMemberData.dsMember.DataSet.FieldByName('FName').AsString;
@@ -723,24 +722,11 @@ begin
       ' from the SwimClubMeet database ?';
     // display the confirm delete dlg
     if IsPositiveResult(dlg.ShowModal) then
-    begin
       fDoDelete := true;
-      // the delete action is allowed to continue ...
-    end
-    else
-      // raises a silent exception - cancelling the action.
-        Abort;
     dlg.Free;
-  end;
-end;
-
-procedure TManageMember.DBNavigator1Click(Sender: TObject;
-  Button: TNavigateBtn);
-begin
-  if Button = nbDelete then
-  begin
-    // click occurs after action...
-    fDoDelete := false;
+    if not fDoDelete then
+      // raises a silent exception - cancelling the action.
+      Abort;
   end;
 end;
 

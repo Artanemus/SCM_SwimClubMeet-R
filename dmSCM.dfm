@@ -804,6 +804,10 @@ object SCM: TSCM
     Active = True
     IndexFieldNames = 'MemberID'
     Connection = scmConnection
+    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
+    UpdateOptions.EnableDelete = False
+    UpdateOptions.EnableInsert = False
+    UpdateOptions.EnableUpdate = False
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Member'
     UpdateOptions.KeyFields = 'MemberID'
     SQL.Strings = (

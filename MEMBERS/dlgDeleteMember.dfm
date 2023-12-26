@@ -12,11 +12,9 @@ object DeleteMember: TDeleteMember
   Font.Name = 'Segoe UI'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   OnKeyDown = FormKeyDown
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 21
   object RelativePanel1: TRelativePanel
     Left = 0
@@ -95,6 +93,8 @@ object DeleteMember: TDeleteMember
     BevelEdges = []
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 540
+    ExplicitHeight = 327
     DesignSize = (
       544
       328)
@@ -161,8 +161,8 @@ object DeleteMember: TDeleteMember
       Anchors = []
       Caption = 
         'Remove contact numbers, team and indivual entrant data,  team an' +
-        'd indivual nominations, sessions attended, events swum and race ' +
-        'times!'
+        'd indivual nominations, sessions attendance, events swum and rac' +
+        'e times!'
       WordWrap = True
     end
     object VirtualImage3: TVirtualImage
@@ -201,11 +201,13 @@ object DeleteMember: TDeleteMember
     BevelKind = bkFlat
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitTop = 327
+    ExplicitWidth = 540
     DesignSize = (
       544
       61)
     object btnYes: TButton
-      Left = 180
+      Left = 181
       Top = 16
       Width = 80
       Height = 28
@@ -214,9 +216,10 @@ object DeleteMember: TDeleteMember
       ModalResult = 6
       TabOrder = 0
       OnClick = btnYesClick
+      ExplicitLeft = 179
     end
     object btnNo: TButton
-      Left = 284
+      Left = 283
       Top = 16
       Width = 80
       Height = 28
@@ -226,6 +229,7 @@ object DeleteMember: TDeleteMember
       ModalResult = 7
       TabOrder = 1
       OnClick = btnNoClick
+      ExplicitLeft = 281
     end
   end
   object ImageCollection1: TImageCollection

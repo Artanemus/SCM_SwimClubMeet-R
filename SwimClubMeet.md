@@ -1,28 +1,25 @@
+
+
+
 # SwimClubMeet
 
-## Folder Layout
+[//]: a comment
 
-#### FRAME
+![my image](C:\Users\Ben\Documents\GitHub\SCM_SwimClubMeet-R\ASSETS\PNG\filter_alt_off.png)
 
-Team Events
+![css:](C:\Users\Ben\Documents\GitHub\SCM_SwimClubMeet-R\SwimClubMeet.css)
 
-- Individual events frame
-- Relay events frame
-- Pickers for team events
 
-#### MEMBERS
+<h4>CSS font-family</h4>
 
-Self contained data access to club members
+<p> SwimClubMeet overview </p>
 
-- Member main form
-- Dialogues
-- Reports
-- Data module
+<main>
+SwimClubMeet overview
 
-#### REPORTS
+</main>
 
-All reports used by the core application
 
-#### TOOLS
 
-SCM utilities grouped under the TActionManager 'Tools' category.
+
+

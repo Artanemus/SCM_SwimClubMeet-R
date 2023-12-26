@@ -414,6 +414,7 @@
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <None Include="SwimClubMeet.md"/>
+        <None Include="SwimClubMeet.css"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -441,10 +442,16 @@
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp280.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
                 <WelcomePageFile Path="SwimClubMeet.md"/>
-                <WelcomePageFolder/>
+                <WelcomePageFolder Path="..\SCM_SwimClubMeet-R\ASSETS"/>
             </Delphi.Personality>
             <Deployment Version="4">
-                <DeployFile LocalName="Untitled1.md" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="SwimClubMeet.md" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Untitled1.css" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>

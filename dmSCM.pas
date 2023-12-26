@@ -441,41 +441,43 @@ begin
       qrySession.Open;
       if (qrySession.Active) then
       begin
-        qryMember.Open;
-        if (qryMember.Active) then
-        begin
-          // contact numbers - non critical
-          qryContactNum.Open;
-          (*
-            if (GetVerInfoMajor < 6) and (GetVerInfoMinor < 2) then
-            begin
-            // need to remove field-name ScheduleDT
-            fld := qryEvent.Fields.FindField('ScheduleDT');
-            if Assigned(fld) then qryEvent.Fields.Remove(fld);
-            end;
-          *)
-          qryEvent.Open; // EVENT
-          if (qryEvent.Active) then
+        (*
+          if (GetVerInfoMajor < 6) and (GetVerInfoMinor < 2) then
           begin
-            // DEPENDANTS OF EVENT
-            qryNominee.Open;
-            qryHeat.Open;
-            if (qryHeat.Active) and (qryNominee.Active) then
+          // need to remove field-name ScheduleDT
+          fld := qryEvent.Fields.FindField('ScheduleDT');
+          if Assigned(fld) then qryEvent.Fields.Remove(fld);
+          end;
+        *)
+        qryEvent.Open; // EVENT
+        if (qryEvent.Active) then
+        begin
+          // DEPENDANTS OF EVENT
+          qryNominee.Open;
+          qryHeat.Open;
+          if (qryHeat.Active) and (qryNominee.Active) then
+          begin
+            qryTeam.Open;
+            qryTeamEntrant.Open;
+            qryTeamSplit.Open;
+            qryEntrant.Open;
+            qrySplit.Open;
+            if (qryEntrant.Active) then
             begin
-              qryTeam.Open;
-              qryTeamEntrant.Open;
-              qryTeamSplit.Open;
-              qryEntrant.Open;
-              qrySplit.Open;
-              if (qryEntrant.Active) then
-              begin
-                fSCMActive := true;
-              end;
+              fSCMActive := true;
             end;
           end;
         end;
       end;
     end;
+
+    { qryMember.Open;
+      if (qryMember.Active) then
+      begin
+      // contact numbers - non critical
+      qryContactNum.Open;
+      end
+    }
 
     qryNominateEvent.Active := true;
     qryNominateMembers.Active := true;
@@ -725,8 +727,10 @@ begin
   qryNominee.Close;
   qryEvent.Close;
   qrySession.Close;
-  qryContactNum.Close;
-  qryMember.Close;
+
+//  qryContactNum.Close;
+//  qryMember.Close;
+
   qrySwimClub.Close;
   // SUPPORT-LOOKUP TABLES
   tblHouse.Active := false;

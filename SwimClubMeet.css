@@ -1,0 +1,111 @@
+
+/* This is a comment that explains the purpose of this .css file */
+
+.p1 {
+  font-family: "Times New Roman", Times, serif;
+}
+
+.p2 {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.p3 {
+  font-family: "Lucida Console", "Courier New", monospace;
+}
+
+/* Define the default font and background color for the body element */
+body {
+  font-family: class="p3"; /* , sans-serif; */
+  background-color: #f0f0f0;
+}
+
+/* Define the style and layout of the header element */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: #333;
+  color: white;
+}
+
+/* @group Headings */
+
+h1,h2,h3,h4,h5,h6 {
+	line-height: 1;
+	margin: 0;
+	margin-top: 1.5rem;
+	text-rendering: optimizeLegibility;
+}
+
+h1 { font-size: 2.75rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.65rem; }
+h4 { font-size: 1.25rem; }
+h5 { font-size: 1.1rem; }
+h6 { font-size: 1rem; }
+
+h2 em, h3 em{
+	color:grey;
+}
+
+
+
+/* Define the style and layout of the logo element */
+.logo {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+/* Define the style and layout of the navigation element */
+nav {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Define the style and layout of the links inside the navigation element */
+nav a {
+  color: white;
+  text-decoration: none;
+}
+
+/* Define the style and layout of the main element */
+main {
+  margin: 2rem;
+}
+
+/* Define the style and layout of the article element */
+article {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+/* Define the style and layout of the card element */
+.card {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Define the style and layout of the image element inside the card element */
+.card img {
+  width: 100%;
+  height: auto;
+}
+
+/* Define the style and layout of the title element inside the card element */
+.card h3 {
+  margin: 0.5rem 0;
+  font-size: 1.5rem;
+}
+
+/* Define the style and layout of the footer element */
+footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: #333;
+  color: white;
+}

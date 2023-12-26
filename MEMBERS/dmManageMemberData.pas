@@ -185,8 +185,10 @@ begin
     qrySwimClub.Connection := FConnection;
     qryMember.Connection := FConnection;
     qryContactNum.Connection := FConnection;
-    qryMemberPB.Connection := FConnection;
     qryMemberRoleLnk.Connection := FConnection;
+    qryMemberPB.Connection := FConnection;
+    qryMemberEvents.Connection := FConnection;
+
     // prepare lookup tables.
     tblStroke.Connection := FConnection;
     tblDistance.Connection := FConnection;
@@ -212,13 +214,13 @@ begin
         // Lookup table used by contactnum
         qryContactNum.Open;
         qryMemberRoleLnk.Open;
+        qryMemberPB.Open;
         qryMemberEvents.Open;
         if qryContactNum.Active then
         begin
           fManageMemberDataActive := True;
         end;
       end;
-
     end;
   end;
 end;
@@ -321,9 +323,11 @@ procedure TManageMemberData.qryMemberBeforeDelete(DataSet: TDataSet);
 var
   SQL: string;
   MemberID, result: Integer;
+  tmpQry: TFDQuery;
 begin
   // Best to finalize any editing - prior to calling execute statements.
-  DataSet.CheckBrowseMode;
+  // DataSet.CheckBrowseMode;
+
   MemberID := DataSet.FieldByName('MemberID').AsInteger;
   if MemberID <> 0 then
   begin
@@ -350,6 +354,7 @@ begin
       end;
       qryEntrantDataCount.Close;
     end;
+
     qryMember.DisableControls;
     // remove all C O N T A C T N U Mbers for this member.
     SQL := 'DELETE FROM [SwimClubMeet].[dbo].[ContactNum] WHERE MemberID = ' +
@@ -360,17 +365,45 @@ begin
       + IntToStr(MemberID) + ';';
     FConnection.ExecSQL(SQL);
 
-    { TODO -oBen -cGeneral : db.Split and dbo.TeamSplit need to be handled prior to cleaning dbo.Entrant. }
+    // remove all split data for indv events
+    SQL := 'SELECT EntrantID FROM [SwimClubMeet].[dbo].Entrant WHERE MemberID = ' +
+      IntToStr(MemberID) + ';';
+    tmpQry := TFDQuery.Create(self);
+    tmpQry.Connection := FConnection;
+    tmpQry.SQL.Add(SQL);
+    tmpQry.IndexFieldNames := 'EntrantID';
+    tmpQry.Open;
+    if tmpQry.Active then
+    begin
+      while not tmpQry.Eof do
+      begin
+        SQL := 'DELETE FROM [SwimClubMeet].[dbo].[Split] WHERE EntrantID = ' +
+          IntToStr(tmpQry.FieldByName('EntrantID').AsInteger) + ';';
+        FConnection.ExecSQL(SQL);
+        tmpQry.Next;
+      end;
+    end;
+    tmpQry.Close;
+    tmpQry.Free;
+
+    // Remove all split data assigned to TeamEntrant for TEAM EVENT
+    // NOTE: no individual split data store for members in relays.
+    // Split data is linked to dbo.Team.
+
+    // ENTRANTS
     SQL := 'UPDATE [SwimClubMeet].[dbo].[Entrant] SET [MemberID] = NULL, ' +
       '[RaceTime] = NULL, [TimeToBeat] = NULL, [PersonalBest] = NULL, ' +
-      '[IsDisqualified] = 0,[IsScratched] = 0 WHERE MemberID = ' +
+      '[IsDisqualified] = 0,[IsScratched] = 0, DisqualifyCodeID = NULL WHERE MemberID = ' +
       IntToStr(MemberID) + ';';
     FConnection.ExecSQL(SQL);
-    { TODO -oBen -cGeneral : TeamEntrant table design incomplete. Additional fields needed. }
-    SQL := 'UPDATE [SwimClubMeet].[dbo].[TeamEntrant] SET [MemberID] = NULL,  [RaceTime] = NULL WHERE MemberID = '
-      + IntToStr(MemberID) + ';';
+    // TEAM ENTRANTS
+    SQL := 'UPDATE [SwimClubMeet].[dbo].[TeamEntrant] SET [MemberID] = NULL, ' +
+      '[RaceTime] = NULL, [TimeToBeat] = NULL, [PersonalBest] = NULL, ' +
+      '[IsDisqualified] = 0,[IsScratched] = 0, DisqualifyCodeID = NULL WHERE MemberID = ' +
+      IntToStr(MemberID) + ';';
     FConnection.ExecSQL(SQL);
-    { TODO -oBen -cGeneral : DELETE from TeamNominee - remove all member's nominations to relay events. }
+
+    // DELETE MEMBERS NOMINATIONS TO EVENTS
     SQL := 'DELETE FROM [SwimClubMeet].[dbo].[Nominee] WHERE MemberID = ' +
       IntToStr(MemberID) + ';';
     FConnection.ExecSQL(SQL);
@@ -384,6 +417,7 @@ begin
     *)
 
     qryMember.EnableControls;
+
   end;
 end;
 
