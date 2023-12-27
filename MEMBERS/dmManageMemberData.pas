@@ -328,6 +328,8 @@ begin
   // Best to finalize any editing - prior to calling execute statements.
   // DataSet.CheckBrowseMode;
 
+
+
   MemberID := DataSet.FieldByName('MemberID').AsInteger;
   if MemberID <> 0 then
   begin
@@ -355,7 +357,6 @@ begin
       qryEntrantDataCount.Close;
     end;
 
-    qryMember.DisableControls;
     // remove all C O N T A C T N U Mbers for this member.
     SQL := 'DELETE FROM [SwimClubMeet].[dbo].[ContactNum] WHERE MemberID = ' +
       IntToStr(MemberID) + ';';
@@ -416,7 +417,6 @@ begin
       FConnection.ExecSQL(SQL);
     *)
 
-    qryMember.EnableControls;
 
   end;
 end;

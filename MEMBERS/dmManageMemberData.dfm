@@ -408,7 +408,7 @@ object ManageMemberData: TManageMemberData
       'FROM SwimCLub'
       'WHERE Swimclub.SwimClubID = 1;')
     Left = 200
-    Top = 64
+    Top = 40
     ParamData = <
       item
         Name = 'SWIMCLUBID'
@@ -420,7 +420,7 @@ object ManageMemberData: TManageMemberData
   object dsSwimClub: TDataSource
     DataSet = qrySwimClub
     Left = 272
-    Top = 64
+    Top = 40
   end
   object qryFindMember: TFDQuery
     ActiveStoredUsage = [auDesignTime]

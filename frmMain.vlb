@@ -509,14 +509,8 @@ Coordinates=475,940,192,58
 [MoveDown1]
 Coordinates=1729,1653,85,36
 
-[SCM.qryContactNum]
-Coordinates=1709,632,135,58
-
 [spbtnEventDelete]
 Coordinates=1779,940,116,36
-
-[SCM.dsMember]
-Coordinates=227,1308,107,36
 
 [spbtnHeatToggleStatus]
 Coordinates=940,940,149,36
@@ -548,14 +542,8 @@ Coordinates=828,1653,86,36
 [N10]
 Coordinates=730,1653,40,36
 
-[SCM.dsContactNum]
-Coordinates=94,1212,131,36
-
 [Session_Clone]
 Coordinates=621,1653,101,36
-
-[SCM.qryMember]
-Coordinates=1870,429,111,58
 
 [N5]
 Coordinates=463,1653,40,36
@@ -914,7 +902,7 @@ Coordinates=1781,1,152,36
 Coordinates=1017,863,55,58
 
 [SCM.]
-Coordinates=10,632,193,58
+Coordinates=94,1212,131,36
 
 [Grid_MoveUp]
 Coordinates=1781,1211,111,36

@@ -111,11 +111,6 @@ object SCM: TSCM
     Left = 848
     Top = 312
   end
-  object dsMember: TDataSource
-    DataSet = qryMember
-    Left = 280
-    Top = 96
-  end
   object tblEventStatus: TFDTable
     ActiveStoredUsage = [auDesignTime]
     Active = True
@@ -798,63 +793,6 @@ object SCM: TSCM
     DataSet = qryFNameEllipse
     Left = 848
     Top = 584
-  end
-  object qryMember: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    Active = True
-    IndexFieldNames = 'MemberID'
-    Connection = scmConnection
-    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
-    UpdateOptions.EnableDelete = False
-    UpdateOptions.EnableInsert = False
-    UpdateOptions.EnableUpdate = False
-    UpdateOptions.UpdateTableName = 'SwimClubMeet..Member'
-    UpdateOptions.KeyFields = 'MemberID'
-    SQL.Strings = (
-      'SELECT * FROM Member ORDER BY [LastName]')
-    Left = 224
-    Top = 96
-  end
-  object qryContactNum: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    Active = True
-    Indexes = <
-      item
-        Active = True
-        Name = 'mcMember_ContactNum'
-        Fields = 'MemberID'
-        DescFields = 'MemberID'
-      end>
-    IndexFieldNames = 'ContactNumID'
-    MasterSource = dsMember
-    MasterFields = 'MemberID'
-    Connection = scmConnection
-    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
-    UpdateOptions.EnableDelete = False
-    UpdateOptions.EnableInsert = False
-    UpdateOptions.EnableUpdate = False
-    UpdateOptions.UpdateTableName = 'SwimClubMeet..ContactNumType'
-    UpdateOptions.KeyFields = 'ContactNumID'
-    SQL.Strings = (
-      'USE [SwimClubMeet]'
-      ''
-      ''
-      'SELECT ContactNum.ContactNumID'
-      #9',ContactNum.Number'
-      #9',ContactNum.ContactNumTypeID'
-      #9',ContactNum.MemberID'
-      #9',ContactNumType.Caption'
-      'FROM ContactNum'
-      
-        'INNER JOIN ContactNumType ON ContactNum.ContactNumTypeID = Conta' +
-        'ctNumType.ContactNumTypeID')
-    Left = 384
-    Top = 96
-  end
-  object dsContactNum: TDataSource
-    DataSet = qryContactNum
-    Left = 472
-    Top = 96
   end
   object qryNominee: TFDQuery
     ActiveStoredUsage = [auDesignTime]

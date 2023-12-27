@@ -16,9 +16,6 @@ Coordinates=763,10,69,105
 [qryGetNextHeat]
 Coordinates=78,395,92,51
 
-[dsMember]
-Coordinates=721,405,65,33
-
 [luSessionStatus]
 Coordinates=90,860,94,33
 
@@ -145,9 +142,6 @@ Coordinates=721,125,77,33
 [qryEventEventStatusID]
 Coordinates=930,801,128,33
 
-[qryMember]
-Coordinates=209,492,69,51
-
 [qryNominateMembersFName]
 Coordinates=930,853,156,33
 
@@ -165,9 +159,6 @@ Coordinates=930,1009,133,33
 
 [luEventStatus]
 Coordinates=482,701,83,33
-
-[dsContactNum]
-Coordinates=721,265,87,33
 
 [qryNominateMembers]
 Coordinates=631,10,122,123
@@ -239,9 +230,6 @@ Coordinates=1124,209,124,33
 
 [qryEntrantMemberID]
 Coordinates=1124,261,116,33
-
-[qryContactNum]
-Coordinates=761,553,91,51
 
 [tblSessionStatus]
 Coordinates=102,492,97,51
@@ -348,5 +336,5 @@ EditingLayerName=Heat
 ActiveLayerNames=
 
 []
-Coordinates=863,395,140,51
+Coordinates=721,265,87,33
 

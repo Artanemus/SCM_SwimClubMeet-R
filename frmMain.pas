@@ -468,6 +468,8 @@ type
     fscmStyleName: String;
     fSessionClosedBgColor: TColor;
     fSessionClosedFontColor: TColor;
+    // number of members - called OnCreate and after frmManageMembers dialogue
+    fCountOfMembers: integer;
     prefDisplayDivisions: boolean;
     prefDisplaySwimmerCAT: boolean;
     prefEnableDCode: boolean;
@@ -490,7 +492,6 @@ type
       DoRenumber: boolean = false);
     procedure Refresh_Nominate(DoBookmark: boolean = true);
     procedure Refresh_TeamEntrant(DoBookmark: boolean = true); // --
-    procedure Refresh_Members();
     // Generic TAction onExecute (extended params) for BATCH PRINT
     procedure Session_BatchReportExecute(Sender: TObject; RptType: scmRptType);
     // ENTRANT_GRID Toggle column display
@@ -1403,7 +1404,7 @@ begin
   fSessionClosedBgColor := clAppWorkSpace; // Use to custom draw closed session
   fFrameBgColor := clAppWorkSpace;
   fMyInternetConnected := true;
-
+  fCountOfMembers := 0;
   prefEnableTeamEvents := false;
   prefEnableDCode := false;
 
@@ -1683,6 +1684,10 @@ begin
   ToggleDCode(prefEnableDCode);
   ToggleSwimmerCAT(prefDisplaySwimmerCAT);
   ToggleDivisions(prefDisplayDivisions);
+
+  // Calculation of fCountOfMembers made 'OnCreate' and 'SCM_ManageMembers' (TAction)
+  // Always call prior to post of SCM_TABSHEETDISPLAYSTATE
+  fCountOfMembers := SCM.Members_Count;
   PostMessage(Handle, SCM_TABSHEETDISPLAYSTATE, 0, 0);
 
 {$IFDEF DEBUG}
@@ -3525,17 +3530,7 @@ begin
   end;
 end;
 
-procedure TMain.Refresh_Members;
-begin
-  if not AssertConnection then exit;
-  with SCM.dsMember.DataSet do
-  begin
-    DisableControls;
-    Close;
-    Open;
-    EnableControls;
-  end;
-end;
+
 
 procedure TMain.Refresh_Nominate(DoBookmark: boolean = true);
 var
@@ -3619,9 +3614,9 @@ begin
     dlg.Free;
   end;
   // requery on dmSCM members
-  Refresh_Members;
   Refresh_Nominate;
-
+  // count the number of members in DB prior to PostMessage
+  fCountOfMembers := SCM.Members_Count;
   // 'No Members' Caption maybe visible in TLabel lblNomWarning
   if lblNomWarning.Visible then
     PostMessage(Self.Handle, SCM_TABSHEETDISPLAYSTATE, 0, 0);
@@ -3664,9 +3659,7 @@ begin
   Refresh_IndvTeam(true, DoRenumber);
   // TEAMENTRANT
   Refresh_TeamEntrant;
-  // Cheeky refresh of the members data
-  // No disablecontrols needed here - done within routine
-  Refresh_Members;
+
   SCM.dsSession.DataSet.EnableControls;
   SCM.dsEvent.DataSet.EnableControls;
   SCM.dsHeat.DataSet.EnableControls;
@@ -4239,7 +4232,7 @@ procedure TMain.SetTabSheetDisplayState(var Msg: TMessage);
 var
   aEventType: scmEventType;
 begin
-  // The following routines send the windows message SCM_EVENTASSERTSTATE
+  // The following routines send the windows message SCM_TABSHEETDISPLAY
   // 1. SCM->qrySession. (on events : AfterPost, AfterDelete)
   // 2. dlgNewSession TNewSession::tblSessionAfterPost(TDataSet *DataSet)
   //
@@ -4306,11 +4299,12 @@ begin
       lblNomWarning.Caption := 'Distance .. Stroke?';
       lblNomWarning.Visible := true;
     end
-    else if (SCM.dsMember.DataSet.IsEmpty) then
+    // Calculation of fCountOfMembers made 'OnCreate' and 'SCM_ManageMembers' (TAction)
+    else if (fCountOfMembers = 0) then
     begin
-      // lblNomWarning.Font.Color := clWebTomato;
-      lblNomWarning.Caption := 'No Members';
-      lblNomWarning.Visible := true;
+    // lblNomWarning.Font.Color := clWebTomato;
+    lblNomWarning.Caption := 'No Members';
+    lblNomWarning.Visible := true;
     end;
 
   end;

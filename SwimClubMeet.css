@@ -10,12 +10,16 @@
 }
 
 .p3 {
-  font-family: "Lucida Console", "Courier New", monospace;
+  font-family: "Fira Code", "Lucida Console", "Courier New", monospace;
+}
+
+p {
+  font-family: class="p3";
 }
 
 /* Define the default font and background color for the body element */
 body {
-  font-family: class="p3"; /* , sans-serif; */
+  font-family: class="p3";
   background-color: #f0f0f0;
 }
 
@@ -48,7 +52,6 @@ h6 { font-size: 1rem; }
 h2 em, h3 em{
 	color:grey;
 }
-
 
 
 /* Define the style and layout of the logo element */

@@ -18,13 +18,11 @@ type
   TSCM = class(TDataModule)
     BooleanField1: TBooleanField;
     BooleanField2: TBooleanField;
-    dsContactNum: TDataSource;
     dsEntrant: TDataSource;
     dsEvent: TDataSource;
     dsFNameEllipse: TDataSource;
     dsHeat: TDataSource;
     dsIsQualified: TDataSource;
-    dsMember: TDataSource;
     dsNomateEvent: TDataSource;
     dsNominateControlList: TDataSource;
     dsNominateMembers: TDataSource;
@@ -51,7 +49,6 @@ type
     luSessionStatus: TDataSource;
     luStroke: TDataSource;
     luSwimmerCAT: TDataSource;
-    qryContactNum: TFDQuery;
     qryCountEventsNotClosed: TFDQuery;
     qryCountHeatsNotClosed: TFDQuery;
     qryEntrant: TFDQuery;
@@ -102,7 +99,6 @@ type
     qryHeatHeatTypeID: TIntegerField;
     qryIsQualified: TFDQuery;
     qryIsQualifiedALT: TFDQuery;
-    qryMember: TFDQuery;
     qryNominateControlList: TFDQuery;
     qryNominateControlListCaption: TWideStringField;
     qryNominateControlListDistanceID: TIntegerField;

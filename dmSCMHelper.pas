@@ -86,6 +86,8 @@ type
     function NormalizeDistanceID(aDistanceID: integer): integer;
     }
 
+    function Members_Count(): integer;
+
   end;
 
 implementation
@@ -505,6 +507,18 @@ begin
       end;
     end;
   end;
+end;
+
+function TSCMHelper.Members_Count: integer;
+var
+  SQL: string;
+  v: variant;
+begin
+  result := 0;
+  if not SCMActive then exit;
+  SQL := 'SELECT Count(MemberID) FROM SwimClubMeet.dbo.Member';
+  v := SCM.scmConnection.ExecSQLScalar(SQL);
+  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
 end;
 
 function TSCMHelper.NOM_ClearLane(aMemberID, aEventID: integer;
