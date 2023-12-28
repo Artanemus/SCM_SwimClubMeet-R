@@ -17,6 +17,14 @@ type
     frxHTMLExport1: TfrxHTMLExport;
     frxPDFExport1: TfrxPDFExport;
     frxDSReport: TfrxDBDataset;
+    qryClubInfoRpt: TFDQuery;
+    frxClubInfo: TfrxDBDataset;
+    qrySessionINDV: TFDQuery;
+    frxdsINDV: TfrxDBDataset;
+    qrySessionTEAM: TFDQuery;
+    frxdsTEAM: TfrxDBDataset;
+    frxReportINDV: TfrxReport;
+    frxReportTEAM: TfrxReport;
     procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }
