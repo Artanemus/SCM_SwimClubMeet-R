@@ -25,6 +25,7 @@ type
     frxdsTEAM: TfrxDBDataset;
     frxReportINDV: TfrxReport;
     frxReportTEAM: TfrxReport;
+    procedure DataModuleDestroy(Sender: TObject);
     procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }
@@ -42,6 +43,12 @@ implementation
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 {$R *.dfm}
 
+procedure TSessionReportA.DataModuleDestroy(Sender: TObject);
+begin
+  qryReport.Close;
+  qrySessionTEAM.Open;
+end;
+
 procedure TSessionReportA.DataModuleCreate(Sender: TObject);
 begin
   if not Assigned(SCM) then
@@ -56,10 +63,17 @@ begin
   aSessionID := SCM.Session_ID;
   if (aSessionID > 0) then
   begin
+    // CLUBINFO, EVENTS, INDV etc.
+    qryReport.Close;
     qryReport.ParamByName('SID').AsInteger := aSessionID;
     qryReport.Prepare;
     qryReport.Open;
-    if qryReport.Active then
+    // ONLY TEAM EVENTS
+    qrySessionTEAM.Close;
+    qrySessionTEAM.ParamByName('SID').AsInteger := aSessionID;
+    qrySessionTEAM.Prepare;
+    qrySessionTEAM.Open;
+    if qryReport.Active and qrySessionTEAM.Active then
       frxReport1.ShowReport();
     qryReport.Close;
   end;

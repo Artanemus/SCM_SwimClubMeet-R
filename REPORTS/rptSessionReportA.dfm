@@ -1,6 +1,7 @@
 object SessionReportA: TSessionReportA
   OnCreate = DataModuleCreate
-  Height = 582
+  OnDestroy = DataModuleDestroy
+  Height = 696
   Width = 377
   object frxReport1: TfrxReport
     Version = '6.6.11'
@@ -24,6 +25,10 @@ object SessionReportA: TSessionReportA
       item
         DataSet = frxDSReport
         DataSetName = 'frxDS'
+      end
+      item
+        DataSet = frxdsTEAM
+        DataSetName = 'frxDS2'
       end>
     Variables = <>
     Style = <>
@@ -284,7 +289,7 @@ object SessionReportA: TSessionReportA
       object MasterData1: TfrxMasterData
         FillType = ftBrush
         Frame.Typ = []
-        Height = 18.897650000000000000
+        Height = 19.897650000000000000
         Top = 302.362400000000000000
         Width = 718.110700000000000000
         DataSet = frxDSReport
@@ -407,7 +412,7 @@ object SessionReportA: TSessionReportA
         FillType = ftBrush
         Frame.Typ = []
         Height = 22.677180000000000000
-        Top = 423.307360000000000000
+        Top = 457.323130000000000000
         Width = 718.110700000000000000
         object TotalPages: TfrxMemoView
           AllowVectorExport = True
@@ -472,7 +477,7 @@ object SessionReportA: TSessionReportA
           Frame.Typ = []
           HAlign = haRight
           Memo.UTF8W = (
-            'Heat#')
+            'HEAT')
           ParentFont = False
         end
         object frxDSHeatNum1: TfrxMemoView
@@ -498,8 +503,286 @@ object SessionReportA: TSessionReportA
         FillType = ftBrush
         Frame.Typ = []
         Height = 18.897650000000000000
+        Top = 377.953000000000000000
+        Width = 718.110700000000000000
+      end
+      object MasterData3: TfrxMasterData
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 12.177180000000000000
         Top = 343.937230000000000000
         Width = 718.110700000000000000
+        DataSet = frxdsTEAM
+        DataSetName = 'frxDS2'
+        RowCount = 0
+        object Subreport1: TfrxSubreport
+          AllowVectorExport = True
+          Width = 718.110700000000000000
+          Height = 11.177180000000000000
+          Page = frxReport1.Page2
+        end
+      end
+    end
+    object Page2: TfrxReportPage
+      PaperWidth = 210.000000000000000000
+      PaperHeight = 297.000000000000000000
+      PaperSize = 9
+      LeftMargin = 10.000000000000000000
+      RightMargin = 10.000000000000000000
+      TopMargin = 10.000000000000000000
+      BottomMargin = 10.000000000000000000
+      Frame.Typ = []
+      MirrorMode = []
+      object GroupHeader4: TfrxGroupHeader
+        FillType = ftBrush
+        Fill.BackColor = 15004642
+        Frame.Typ = []
+        Height = 30.913420000000000000
+        Top = 18.897650000000000000
+        Width = 718.110700000000000000
+        Condition = 'frxDS2."EventID"'
+        KeepTogether = True
+        object Memo10: TfrxMemoView
+          AllowVectorExport = True
+          Left = 7.059060000000000000
+          Top = 3.559060000000000000
+          Width = 321.260050000000000000
+          Height = 18.897650000000000000
+          AutoWidth = True
+          DataSet = frxdsTEAM
+          DataSetName = 'frxDS2'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -16
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = []
+          Memo.UTF8W = (
+            
+              'Event: [frxDS2."EventNum"] - [frxDS2."DistanceStr"] [frxDS2."Str' +
+              'okeStr"] ')
+          ParentFont = False
+          WordWrap = False
+          Formats = <
+            item
+            end
+            item
+            end
+            item
+            end>
+        end
+        object Memo11: TfrxMemoView
+          AllowVectorExport = True
+          Left = 343.437230000000000000
+          Top = 3.559060000000000000
+          Width = 362.834880000000000000
+          Height = 18.897650000000000000
+          DataSet = frxdsTEAM
+          DataSetName = 'frxDS2'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = []
+          HAlign = haRight
+          Memo.UTF8W = (
+            '[frxDS2."cEvent"]')
+          ParentFont = False
+        end
+      end
+      object MasterData2: TfrxMasterData
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 19.141620000000000000
+        Top = 196.535560000000000000
+        Width = 718.110700000000000000
+        ColumnWidth = 151.181102362205000000
+        ColumnGap = 7.559055118110240000
+        DataSet = frxdsTEAM
+        DataSetName = 'frxDS2'
+        RowCount = 0
+        object frxDS2FNAME: TfrxMemoView
+          IndexTag = 1
+          AllowVectorExport = True
+          Left = 117.000000000000000000
+          Top = 0.346320000000000000
+          Width = 334.130180000000000000
+          Height = 18.897650000000000000
+          DataField = 'FNAME'
+          DataSet = frxdsTEAM
+          DataSetName = 'frxDS2'
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[frxDS2."FNAME"]')
+        end
+      end
+      object GroupHeader5: TfrxGroupHeader
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 58.236240000000000000
+        Top = 71.811070000000000000
+        Width = 718.110700000000000000
+        Condition = 'frxDS2."HeatNum"'
+        KeepTogether = True
+        object Shape2: TfrxShapeView
+          AllowVectorExport = True
+          Left = 5.779530000000000000
+          Top = 8.779530000000000000
+          Width = 94.488250000000000000
+          Height = 22.677180000000000000
+          Frame.Typ = []
+          Frame.Width = 2.000000000000000000
+        end
+        object Memo12: TfrxMemoView
+          AllowVectorExport = True
+          Left = 12.000000000000000000
+          Top = 11.000000000000000000
+          Width = 42.354360000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = []
+          HAlign = haRight
+          Memo.UTF8W = (
+            'HEAT')
+          ParentFont = False
+        end
+        object Memo13: TfrxMemoView
+          AllowVectorExport = True
+          Left = 57.633890000000000000
+          Top = 11.000000000000000000
+          Width = 45.354360000000000000
+          Height = 18.897650000000000000
+          DataSet = frxdsTEAM
+          DataSetName = 'frxDS2'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[frxDS2."HeatNum" #n%2.0f]')
+          ParentFont = False
+        end
+        object Memo14: TfrxMemoView
+          AllowVectorExport = True
+          Left = 411.732530000000000000
+          Top = 35.145640000000000000
+          Width = 71.811070000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = []
+          HAlign = haCenter
+          Memo.UTF8W = (
+            'RaceTime')
+          ParentFont = False
+        end
+        object Memo15: TfrxMemoView
+          AllowVectorExport = True
+          Left = 38.559060000000000000
+          Top = 35.145640000000000000
+          Width = 49.133890000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = []
+          HAlign = haRight
+          Memo.UTF8W = (
+            'Lane')
+          ParentFont = False
+        end
+        object Memo16: TfrxMemoView
+          AllowVectorExport = True
+          Left = 91.752010000000000000
+          Top = 35.145640000000000000
+          Width = 230.551330000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = []
+          Memo.UTF8W = (
+            'Team Name')
+          ParentFont = False
+        end
+      end
+      object GroupFooter2: TfrxGroupFooter
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 8.397650000000000000
+        Top = 238.110390000000000000
+        Width = 718.110700000000000000
+      end
+      object GroupHeader6: TfrxGroupHeader
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 22.677180000000000000
+        Top = 151.181200000000000000
+        Width = 718.110700000000000000
+        Condition = 'frxDS2."TeamID"'
+        object Memo17: TfrxMemoView
+          AllowVectorExport = True
+          Left = 38.559060000000000000
+          Top = 0.354360000000000000
+          Width = 49.133890000000000000
+          Height = 18.897650000000000000
+          DataSet = frxdsTEAM
+          DataSetName = 'frxDS2'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = []
+          HAlign = haCenter
+          Memo.UTF8W = (
+            '[frxDS2."Lane" #n%2.0f]')
+          ParentFont = False
+        end
+        object Memo18: TfrxMemoView
+          AllowVectorExport = True
+          Left = 411.732530000000000000
+          Top = 0.354360000000000000
+          Width = 71.811070000000000000
+          Height = 18.897650000000000000
+          DataSet = frxdsTEAM
+          DataSetName = 'frxDS2'
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[frxDS2."RaceTime"]')
+        end
+        object Memo19: TfrxMemoView
+          AllowVectorExport = True
+          Left = 91.752010000000000000
+          Top = 0.818800000000000000
+          Width = 230.551330000000000000
+          Height = 18.897650000000000000
+          DataSet = frxdsTEAM
+          DataSetName = 'frxDS2'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[frxDS2."TeamNameStr"]')
+          ParentFont = False
+        end
       end
     end
   end
@@ -558,8 +841,8 @@ object SessionReportA: TSessionReportA
       
         'RIGHT OUTER JOIN Event ON Distance.DistanceID = Event.DistanceID' +
         ' ON Stroke.StrokeID = Event.StrokeID ON HeatIndividual.EventID =' +
-        ' Event.EventID ON Session.SessionID = Event.SessionID WHERE (Ses' +
-        'sion.SessionID = @SID)'
+        ' Event.EventID ON Session.SessionID = Event.SessionID '
+      'WHERE (Session.SessionID = @SID)'
       #9'AND Member.MemberID IS NOT NULL ORDER BY EventNum'
       #9',HeatNum'
       #9',Lane'
@@ -572,7 +855,7 @@ object SessionReportA: TSessionReportA
         Name = 'SID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = 2
+        Value = 1
       end>
   end
   object frxXLSExport1: TfrxXLSExport
@@ -642,7 +925,6 @@ object SessionReportA: TSessionReportA
   end
   object qryClubInfoRpt: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'SwimClubID'
     Connection = SCM.scmConnection
     UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
@@ -672,8 +954,8 @@ object SessionReportA: TSessionReportA
       '    INNER JOIN Session'
       '        ON SwimClub.SwimClubID = [Session].[SwimClubID]'
       'WHERE SwimClub.[SwimClubID] = @SwimClubID;')
-    Left = 64
-    Top = 344
+    Left = 56
+    Top = 408
     ParamData = <
       item
         Name = 'SWIMCLUBID'
@@ -685,14 +967,22 @@ object SessionReportA: TSessionReportA
   object frxClubInfo: TfrxDBDataset
     UserName = 'frxClubInfo'
     CloseDataSource = False
+    FieldAliases.Strings = (
+      'SwimClubID=SwimClubID'
+      'NickName=NickName'
+      'SwimClubName=SwimClubName'
+      'NumOfLanes=NumOfLanes'
+      'LenOfPool=LenOfPool'
+      'StartOfSwimSeason=StartOfSwimSeason'
+      'SessionTitle=SessionTitle'
+      'SessionStart=SessionStart')
     DataSet = qryClubInfoRpt
     BCDToCurrency = False
-    Left = 176
-    Top = 344
+    Left = 168
+    Top = 408
   end
   object qrySessionINDV: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'SessionID'
     Connection = SCM.scmConnection
     FormatOptions.AssignedValues = [fvMaxBcdPrecision, fvFmtDisplayTime, fvFmtDisplayNumeric, fvFmtEditNumeric]
@@ -749,8 +1039,8 @@ object SessionReportA: TSessionReportA
       ''
       ''
       '')
-    Left = 64
-    Top = 400
+    Left = 56
+    Top = 464
     ParamData = <
       item
         Name = 'SID'
@@ -764,8 +1054,8 @@ object SessionReportA: TSessionReportA
     CloseDataSource = False
     DataSet = qrySessionINDV
     BCDToCurrency = False
-    Left = 176
-    Top = 400
+    Left = 168
+    Top = 464
   end
   object qrySessionTEAM: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -791,7 +1081,9 @@ object SessionReportA: TSessionReportA
       '     , SUBSTRING(Distance.Caption, 0, 10) AS DistanceStr'
       '     , Event.EventNum'
       '     , HeatIndividual.HeatNum'
+      '     , Team.TeamID'
       '     , Team.Lane'
+      '     , TeamName.TeamNameID'
       '     , TeamName.Caption AS TeamNameStr'
       '     , dbo.SwimmerGenderToString(Member.MemberID) AS GENDER'
       '     , dbo.SwimmerAge(Session.SessionStart, DOB) AS Age'
@@ -832,8 +1124,8 @@ object SessionReportA: TSessionReportA
       ''
       ''
       '')
-    Left = 64
-    Top = 456
+    Left = 56
+    Top = 520
     ParamData = <
       item
         Name = 'SID'
@@ -845,10 +1137,26 @@ object SessionReportA: TSessionReportA
   object frxdsTEAM: TfrxDBDataset
     UserName = 'frxDS2'
     CloseDataSource = False
+    FieldAliases.Strings = (
+      'SessionID=SessionID'
+      'EventID=EventID'
+      'cEvent=cEvent'
+      'SessionDate=SessionDate'
+      'StrokeStr=StrokeStr'
+      'DistanceStr=DistanceStr'
+      'EventNum=EventNum'
+      'HeatNum=HeatNum'
+      'TeamID=TeamID'
+      'Lane=Lane'
+      'TeamNameStr=TeamNameStr'
+      'GENDER=GENDER'
+      'Age=Age'
+      'RaceTime=RaceTime'
+      'FNAME=FNAME')
     DataSet = qrySessionTEAM
     BCDToCurrency = False
-    Left = 176
-    Top = 456
+    Left = 168
+    Top = 520
   end
   object frxReportINDV: TfrxReport
     Version = '6.6.11'
@@ -865,8 +1173,8 @@ object SessionReportA: TSessionReportA
       'begin'
       ''
       'end.')
-    Left = 296
-    Top = 400
+    Left = 288
+    Top = 464
     Datasets = <
       item
         DataSet = frxdsINDV
@@ -1265,15 +1573,15 @@ object SessionReportA: TSessionReportA
     PreviewOptions.Zoom = 1.000000000000000000
     PrintOptions.Printer = 'Default'
     PrintOptions.PrintOnSheet = 0
-    ReportOptions.CreateDate = 45288.619140057870000000
-    ReportOptions.LastChange = 45288.627020150460000000
+    ReportOptions.CreateDate = 45288.619140057900000000
+    ReportOptions.LastChange = 45288.627020150500000000
     ScriptLanguage = 'PascalScript'
     ScriptText.Strings = (
       'begin'
       ''
       'end.')
-    Left = 296
-    Top = 456
+    Left = 288
+    Top = 520
     Datasets = <
       item
         DataSet = frxdsTEAM
@@ -1295,92 +1603,33 @@ object SessionReportA: TSessionReportA
       BottomMargin = 10.000000000000000000
       Frame.Typ = []
       MirrorMode = []
-      object GroupHeader1: TfrxGroupHeader
+      object GroupHeader2: TfrxGroupHeader
         FillType = ftBrush
         Fill.BackColor = 15461355
         Frame.Typ = []
-        Height = 26.456710000000000000
+        Height = 30.913420000000000000
         Top = 18.897650000000000000
-        Visible = False
-        Width = 740.409927000000000000
-        Condition = 'frxDS2."SessionID"'
-      end
-      object GroupHeader2: TfrxGroupHeader
-        FillType = ftBrush
-        Fill.BackColor = 13816530
-        Frame.Typ = []
-        Height = 52.913420000000000000
-        Top = 68.031540000000000000
         Width = 740.409927000000000000
         Condition = 'frxDS2."EventID"'
         KeepTogether = True
-        object Memo3: TfrxMemoView
-          AllowVectorExport = True
-          Left = 7.559060000000000000
-          Top = 30.236240000000000000
-          Width = 49.133890000000000000
-          Height = 18.897650000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Arial'
-          Font.Style = []
-          Frame.Typ = []
-          HAlign = haRight
-          Memo.UTF8W = (
-            'Lane')
-          ParentFont = False
-        end
-        object Memo4: TfrxMemoView
-          AllowVectorExport = True
-          Left = 64.252010000000000000
-          Top = 30.236240000000000000
-          Width = 230.551330000000000000
-          Height = 18.897650000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Arial'
-          Font.Style = []
-          Frame.Typ = []
-          Memo.UTF8W = (
-            'Swimmer')
-          ParentFont = False
-        end
-        object Memo5: TfrxMemoView
-          AllowVectorExport = True
-          Left = 381.732530000000000000
-          Top = 30.236240000000000000
-          Width = 71.811070000000000000
-          Height = 18.897650000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Arial'
-          Font.Style = []
-          Frame.Typ = []
-          HAlign = haCenter
-          Memo.UTF8W = (
-            'RaceTime')
-          ParentFont = False
-        end
         object Memo2: TfrxMemoView
           AllowVectorExport = True
-          Left = 7.559060000000000000
-          Top = 7.559060000000000000
+          Left = 7.059060000000000000
+          Top = 3.559060000000000000
           Width = 321.260050000000000000
           Height = 18.897650000000000000
           AutoWidth = True
-          DataSetName = 'FDQuery1'
+          DataSet = frxdsTEAM
+          DataSetName = 'frxDS2'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
-          Font.Height = -13
+          Font.Height = -16
           Font.Name = 'Arial'
           Font.Style = [fsBold]
           Frame.Typ = []
           Memo.UTF8W = (
             
-              'Event: [frxDS1."EventNum"] - [frxDS1."DistanceStr"] [frxDS1."Str' +
+              'Event: [frxDS2."EventNum"] - [frxDS2."DistanceStr"] [frxDS2."Str' +
               'okeStr"] ')
           ParentFont = False
           WordWrap = False
@@ -1392,107 +1641,11 @@ object SessionReportA: TSessionReportA
             item
             end>
         end
-        object Memo6: TfrxMemoView
-          AllowVectorExport = True
-          Left = 294.803340000000000000
-          Top = 30.236240000000000000
-          Width = 34.015770000000000000
-          Height = 18.897650000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Arial'
-          Font.Style = []
-          Frame.Typ = []
-          HAlign = haCenter
-          Memo.UTF8W = (
-            'M/F')
-          ParentFont = False
-        end
-        object Memo7: TfrxMemoView
-          AllowVectorExport = True
-          Left = 328.819110000000000000
-          Top = 30.236240000000000000
-          Width = 45.354360000000000000
-          Height = 18.897650000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Arial'
-          Font.Style = []
-          Frame.Typ = []
-          HAlign = haCenter
-          Memo.UTF8W = (
-            'Age')
-          ParentFont = False
-        end
-        object Memo9: TfrxMemoView
-          AllowVectorExport = True
-          Left = 532.913730000000000000
-          Top = 30.236240000000000000
-          Width = 75.590600000000000000
-          Height = 18.897650000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Arial'
-          Font.Style = []
-          Frame.Typ = []
-          HAlign = haCenter
-          Memo.UTF8W = (
-            'DIFF')
-          ParentFont = False
-        end
-        object Memo1: TfrxMemoView
-          AllowVectorExport = True
-          Left = 457.323130000000000000
-          Top = 30.236240000000000000
-          Width = 71.811070000000000000
-          Height = 18.897650000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Arial'
-          Font.Style = []
-          Frame.Typ = []
-          HAlign = haCenter
-          Memo.UTF8W = (
-            'PB')
-          ParentFont = False
-        end
         object frxDScEvent: TfrxMemoView
           AllowVectorExport = True
-          Left = 343.937230000000000000
-          Top = 7.559060000000000000
+          Left = 343.437230000000000000
+          Top = 3.559060000000000000
           Width = 362.834880000000000000
-          Height = 18.897650000000000000
-          DataSet = frxDSReport
-          DataSetName = 'frxDS'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Arial'
-          Font.Style = []
-          Frame.Typ = []
-          HAlign = haRight
-          Memo.UTF8W = (
-            '[frxDS1."cEvent"]')
-          ParentFont = False
-        end
-      end
-      object MasterData1: TfrxMasterData
-        FillType = ftBrush
-        Frame.Typ = []
-        Height = 18.897650000000000000
-        Top = 196.535560000000000000
-        Width = 740.409927000000000000
-        DataSet = frxdsTEAM
-        DataSetName = 'frxDS2'
-        RowCount = 0
-        object FDQuery1FNAME: TfrxMemoView
-          AllowVectorExport = True
-          Left = 64.252010000000000000
-          Width = 230.551330000000000000
           Height = 18.897650000000000000
           DataSet = frxdsTEAM
           DataSetName = 'frxDS2'
@@ -1502,13 +1655,159 @@ object SessionReportA: TSessionReportA
           Font.Name = 'Arial'
           Font.Style = []
           Frame.Typ = []
+          HAlign = haRight
           Memo.UTF8W = (
-            '[frxDS1."FNAME"]')
+            '[frxDS2."cEvent"]')
           ParentFont = False
         end
+      end
+      object MasterData1: TfrxMasterData
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 19.141620000000000000
+        Top = 196.535560000000000000
+        Width = 740.409927000000000000
+        ColumnWidth = 151.181102362205000000
+        ColumnGap = 7.559055118110240000
+        DataSet = frxdsTEAM
+        DataSetName = 'frxDS2'
+        RowCount = 0
+        object frxDS2FNAME: TfrxMemoView
+          IndexTag = 1
+          AllowVectorExport = True
+          Left = 147.500000000000000000
+          Top = -0.256030000000000000
+          Width = 334.130180000000000000
+          Height = 18.897650000000000000
+          DataField = 'FNAME'
+          DataSet = frxdsTEAM
+          DataSetName = 'frxDS2'
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[frxDS2."FNAME"]')
+        end
+      end
+      object GroupHeader3: TfrxGroupHeader
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 58.236240000000000000
+        Top = 71.811070000000000000
+        Width = 740.409927000000000000
+        Condition = 'frxDS2."HeatNum"'
+        KeepTogether = True
+        object Shape1: TfrxShapeView
+          AllowVectorExport = True
+          Left = 5.779530000000000000
+          Top = 8.779530000000000000
+          Width = 94.488250000000000000
+          Height = 22.677180000000000000
+          Frame.Typ = []
+          Frame.Width = 2.000000000000000000
+        end
+        object Memo8: TfrxMemoView
+          AllowVectorExport = True
+          Left = 12.000000000000000000
+          Top = 11.000000000000000000
+          Width = 42.354360000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = []
+          HAlign = haRight
+          Memo.UTF8W = (
+            'HEAT')
+          ParentFont = False
+        end
+        object frxDSHeatNum1: TfrxMemoView
+          AllowVectorExport = True
+          Left = 57.633890000000000000
+          Top = 11.000000000000000000
+          Width = 45.354360000000000000
+          Height = 18.897650000000000000
+          DataSet = frxdsTEAM
+          DataSetName = 'frxDS2'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[frxDS2."HeatNum" #n%2.0f]')
+          ParentFont = False
+        end
+        object Memo5: TfrxMemoView
+          AllowVectorExport = True
+          Left = 411.732530000000000000
+          Top = 35.145640000000000000
+          Width = 71.811070000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = []
+          HAlign = haCenter
+          Memo.UTF8W = (
+            'RaceTime')
+          ParentFont = False
+        end
+        object Memo3: TfrxMemoView
+          AllowVectorExport = True
+          Left = 38.559060000000000000
+          Top = 35.145640000000000000
+          Width = 49.133890000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = []
+          HAlign = haRight
+          Memo.UTF8W = (
+            'Lane')
+          ParentFont = False
+        end
+        object Memo4: TfrxMemoView
+          AllowVectorExport = True
+          Left = 91.752010000000000000
+          Top = 35.145640000000000000
+          Width = 230.551330000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = []
+          Memo.UTF8W = (
+            'Team Name')
+          ParentFont = False
+        end
+      end
+      object GroupFooter1: TfrxGroupFooter
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 8.397650000000000000
+        Top = 238.110390000000000000
+        Width = 740.409927000000000000
+      end
+      object GroupHeader4: TfrxGroupHeader
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 22.677180000000000000
+        Top = 151.181200000000000000
+        Width = 740.409927000000000000
+        Condition = 'frxDS2."TeamID"'
         object FDQuery1Lane: TfrxMemoView
           AllowVectorExport = True
-          Left = 7.559060000000000000
+          Left = 38.559060000000000000
+          Top = 0.354360000000000000
           Width = 49.133890000000000000
           Height = 18.897650000000000000
           DataSet = frxdsTEAM
@@ -1521,71 +1820,26 @@ object SessionReportA: TSessionReportA
           Frame.Typ = []
           HAlign = haCenter
           Memo.UTF8W = (
-            '[frxDS1."Lane" #n%2.0f]')
-          ParentFont = False
-        end
-        object frxDSGENDER: TfrxMemoView
-          AllowVectorExport = True
-          Left = 294.803340000000000000
-          Width = 34.015770000000000000
-          Height = 18.897650000000000000
-          DataSet = frxdsTEAM
-          DataSetName = 'frxDS2'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Arial'
-          Font.Style = []
-          Frame.Typ = []
-          HAlign = haCenter
-          Memo.UTF8W = (
-            '[frxDS1."GENDER"]')
-          ParentFont = False
-        end
-        object frxDSAge: TfrxMemoView
-          AllowVectorExport = True
-          Left = 328.819110000000000000
-          Width = 34.015770000000000000
-          Height = 18.897650000000000000
-          DataSet = frxdsTEAM
-          DataSetName = 'frxDS2'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Arial'
-          Font.Style = []
-          Frame.Typ = []
-          HAlign = haRight
-          Memo.UTF8W = (
-            '[frxDS1."Age"]')
+            '[frxDS2."Lane" #n%2.0f]')
           ParentFont = False
         end
         object frxDSRaceTimeStr: TfrxMemoView
           AllowVectorExport = True
-          Left = 381.732530000000000000
+          Left = 411.732530000000000000
+          Top = 0.354360000000000000
           Width = 71.811070000000000000
           Height = 18.897650000000000000
           DataSet = frxdsTEAM
           DataSetName = 'frxDS2'
           Frame.Typ = []
           Memo.UTF8W = (
-            '[frxDS1."RaceTime"]')
+            '[frxDS2."RaceTime"]')
         end
-        object frxDSPersonalBestStr: TfrxMemoView
+        object Memo12: TfrxMemoView
           AllowVectorExport = True
-          Left = 457.323130000000000000
-          Width = 71.811070000000000000
-          Height = 18.897650000000000000
-          DataSet = frxdsTEAM
-          DataSetName = 'frxDS2'
-          Frame.Typ = []
-          Memo.UTF8W = (
-            '[frxDS1."PersonalBest"]')
-        end
-        object frxDSDIFF: TfrxMemoView
-          AllowVectorExport = True
-          Left = 532.913730000000000000
-          Width = 71.811070000000000000
+          Left = 91.752010000000000000
+          Top = 0.818800000000000000
+          Width = 230.551330000000000000
           Height = 18.897650000000000000
           DataSet = frxdsTEAM
           DataSetName = 'frxDS2'
@@ -1595,72 +1849,10 @@ object SessionReportA: TSessionReportA
           Font.Name = 'Arial'
           Font.Style = []
           Frame.Typ = []
-          HAlign = haCenter
-          HideZeros = True
           Memo.UTF8W = (
-            '[frxDS1."DIFF" #n%3.2f]')
+            '[frxDS2."TeamNameStr"]')
           ParentFont = False
         end
-      end
-      object GroupHeader3: TfrxGroupHeader
-        FillType = ftBrush
-        Frame.Typ = []
-        Height = 30.236240000000000000
-        Top = 143.622140000000000000
-        Width = 740.409927000000000000
-        Condition = 'frxDS2."HeatNum"'
-        KeepTogether = True
-        object Shape1: TfrxShapeView
-          AllowVectorExport = True
-          Left = 5.779530000000000000
-          Top = 2.779530000000000000
-          Width = 94.488250000000000000
-          Height = 22.677180000000000000
-          Frame.Typ = []
-          Frame.Width = 2.000000000000000000
-        end
-        object Memo8: TfrxMemoView
-          AllowVectorExport = True
-          Left = 12.000000000000000000
-          Top = 5.000000000000000000
-          Width = 45.354360000000000000
-          Height = 18.897650000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Arial'
-          Font.Style = [fsBold]
-          Frame.Typ = []
-          HAlign = haRight
-          Memo.UTF8W = (
-            'Heat#')
-          ParentFont = False
-        end
-        object frxDSHeatNum1: TfrxMemoView
-          AllowVectorExport = True
-          Left = 61.133890000000000000
-          Top = 5.000000000000000000
-          Width = 45.354360000000000000
-          Height = 18.897650000000000000
-          DataSet = frxdsTEAM
-          DataSetName = 'frxDS2'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Arial'
-          Font.Style = [fsBold]
-          Frame.Typ = []
-          Memo.UTF8W = (
-            '[frxDS1."HeatNum" #n%2.0f]')
-          ParentFont = False
-        end
-      end
-      object GroupFooter1: TfrxGroupFooter
-        FillType = ftBrush
-        Frame.Typ = []
-        Height = 18.897650000000000000
-        Top = 238.110390000000000000
-        Width = 740.409927000000000000
       end
     end
   end
