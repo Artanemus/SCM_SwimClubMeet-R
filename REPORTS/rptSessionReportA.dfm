@@ -19,8 +19,8 @@ object SessionReportA: TSessionReportA
       'begin'
       ''
       'end.')
-    Left = 224
-    Top = 24
+    Left = 288
+    Top = 240
     Datasets = <
       item
         DataSet = frxDSReport
@@ -955,7 +955,7 @@ object SessionReportA: TSessionReportA
       '        ON SwimClub.SwimClubID = [Session].[SwimClubID]'
       'WHERE SwimClub.[SwimClubID] = @SwimClubID;')
     Left = 56
-    Top = 408
+    Top = 488
     ParamData = <
       item
         Name = 'SWIMCLUBID'
@@ -979,7 +979,7 @@ object SessionReportA: TSessionReportA
     DataSet = qryClubInfoRpt
     BCDToCurrency = False
     Left = 168
-    Top = 408
+    Top = 488
   end
   object qrySessionINDV: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -1040,7 +1040,7 @@ object SessionReportA: TSessionReportA
       ''
       '')
     Left = 56
-    Top = 464
+    Top = 544
     ParamData = <
       item
         Name = 'SID'
@@ -1055,7 +1055,7 @@ object SessionReportA: TSessionReportA
     DataSet = qrySessionINDV
     BCDToCurrency = False
     Left = 168
-    Top = 464
+    Top = 544
   end
   object qrySessionTEAM: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -1124,8 +1124,8 @@ object SessionReportA: TSessionReportA
       ''
       ''
       '')
-    Left = 56
-    Top = 520
+    Left = 64
+    Top = 304
     ParamData = <
       item
         Name = 'SID'
@@ -1155,8 +1155,8 @@ object SessionReportA: TSessionReportA
       'FNAME=FNAME')
     DataSet = qrySessionTEAM
     BCDToCurrency = False
-    Left = 168
-    Top = 520
+    Left = 176
+    Top = 304
   end
   object frxReportINDV: TfrxReport
     Version = '6.6.11'
@@ -1174,7 +1174,7 @@ object SessionReportA: TSessionReportA
       ''
       'end.')
     Left = 288
-    Top = 464
+    Top = 544
     Datasets = <
       item
         DataSet = frxdsINDV
@@ -1581,7 +1581,7 @@ object SessionReportA: TSessionReportA
       ''
       'end.')
     Left = 288
-    Top = 520
+    Top = 600
     Datasets = <
       item
         DataSet = frxdsTEAM
