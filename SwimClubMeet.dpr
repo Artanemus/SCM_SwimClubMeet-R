@@ -76,7 +76,8 @@ uses
   rptQTNotQualified in 'REPORTS\rptQTNotQualified.pas' {QTNotQualified: TDataModule},
   dlgMemberFilter in 'MEMBERS\dlgMemberFilter.pas' {MemberFilter},
   dlgTeamNamePicker in 'FRAME\dlgTeamNamePicker.pas' {TeamNamePicker},
-  rptMarshallReportC in 'REPORTS\rptMarshallReportC.pas' {MarshallReportC: TDataModule};
+  rptMarshallReportC in 'REPORTS\rptMarshallReportC.pas' {MarshallReportC: TDataModule},
+  dlgSplitTime in 'FRAME\dlgSplitTime.pas' {SplitTime};
 
 {$R *.res}
 

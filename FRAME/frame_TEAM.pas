@@ -47,6 +47,8 @@ type
     fTeamEditBoxFocused: TColor;
     fTeamEditBoxNormal: TColor;
     fTeamFontColor: TColor;
+    fEnableSplitTimesForTEAM: boolean;
+
     // ASSERT CONNECTION TO MSSQL DATABASE
     function AssertConnection(): boolean;
     function TeamEntrantPadSlots(aTeamID: Integer): Integer;
@@ -69,7 +71,10 @@ type
     function StrikeSlot(): Integer;
     procedure TeamScroll();
     procedure ToggleDCode(DoEnable: boolean);
+
     property TeamActiveGrid: Integer read fTeamActiveGrid;
+    property EnableSplitTimesForTEAM: boolean read fEnableSplitTimesForTEAM
+      write fEnableSplitTimesForTEAM;
   end;
 
 implementation
@@ -78,7 +83,7 @@ implementation
 
 { TframeTEAM }
 uses dlgEntrantPickerCTRL, dlgEntrantPicker, dlgDCodePicker, System.UITypes,
-  dlgTeamNameMenu, dmSCMHelper, dlgTeamNamePicker, DateUtils;
+  dlgTeamNameMenu, dmSCMHelper, dlgTeamNamePicker, DateUtils, dlgSplitTime;
 
 procedure TframeTEAM.AfterConstruction;
 var
@@ -86,6 +91,7 @@ var
 begin
   inherited;
   fTeamActiveGrid := 1;
+  fEnableSplitTimesForTEAM := false;
   // Special color assignment - used in TDBGrid painting...
   // -------------------------------------------
   css := TStyleManager.Style[TStyleManager.ActiveStyle.Name];
@@ -153,7 +159,7 @@ begin
     if result > 0 then
     begin
       Grid.DataSource.DataSet.Refresh;
-//      SCM.IndvTeam_LocateLane(aTeamID, etTeam);
+      // SCM.IndvTeam_LocateLane(aTeamID, etTeam);
     end;
   end
 end;
@@ -177,12 +183,18 @@ begin
   begin
     col := Grid.Columns.Items[i];
     // MOD 23.06.27
-    if (col.FieldName = 'TeamName') or (col.FieldName = 'RaceTime') or
-      (col.FieldName = 'DCode') then
+    if (col.FieldName = 'TeamName') or (col.FieldName = 'DCode') then
     begin
       col.ButtonStyle := cbsEllipsis;
       Grid.Repaint;
-      break;
+    end;
+    // 24.01.01
+    if (col.FieldName = 'RaceTime') then
+    begin
+      // if enabled ...
+      if fEnableSplitTimesForTEAM then col.ButtonStyle := cbsEllipsis
+      else col.ButtonStyle := cbsNone;
+      Grid.Repaint;
     end;
   end;
 end;
@@ -362,6 +374,7 @@ procedure TframeTEAM.GridEditButtonClick(Sender: TObject);
 var
   dlgDCode: TDCodePicker;
   dlgPickTeam: TTeamNamePicker;
+  dlgSplitTime: TSplitTime;
   aTeamID, rows: Integer;
   rtnValue: TModalResult;
   fld: TField;
@@ -409,11 +422,24 @@ begin
       begin
         // Pad out missing slots - AUTO CREATE 4xTeamEntrants
         rows := TeamEntrantPadSlots(aTeamID);
-        if (rows > 0) then
-          GridEntrant.DataSource.DataSet.Refresh;
+        if (rows > 0) then GridEntrant.DataSource.DataSet.Refresh;
       end;
     end;
+  end
+  else if fld.FieldName = 'RaceTime' then
+  begin
+    dlgSplitTime := TSplitTime.Create(self);
+    dlgSplitTime.TeamID := aTeamID;
+    rtnValue := dlgSplitTime.ShowModal;
+    dlgSplitTime.Free;
+    if IsPositiveResult(rtnValue) then
+    begin
+      SCM.dsTeam.DataSet.Refresh; // Repaint the teamname selected.
+    end;
   end;
+
+
+
 end;
 
 procedure TframeTEAM.GridEnter(Sender: TObject);
@@ -850,8 +876,7 @@ begin
     fld := fields.FindField('TimeToBeat');
     if Assigned(fld) and (fld.readonly = true) then fld.readonly := false;
     Edit;
-    if milliseconds = 0 then
-      FieldByName('TimeToBeat').Clear
+    if milliseconds = 0 then FieldByName('TimeToBeat').Clear
     else
     begin
       dt := milliseconds / (24 * 60 * 60 * 1000);

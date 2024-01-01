@@ -73,7 +73,7 @@ object Preferences: TPreferences
     Top = 41
     Width = 646
     Height = 501
-    ActivePage = TabSheet3
+    ActivePage = TabSheet6
     Align = alClient
     TabOrder = 2
     OnChanging = PageControl1Changing
@@ -557,7 +557,7 @@ object Preferences: TPreferences
       end
       object prefEnableDCodes: TCheckBox
         Left = 32
-        Top = 64
+        Top = 67
         Width = 313
         Height = 20
         Caption = 'Enable FINA disqualification codes.'
@@ -565,7 +565,7 @@ object Preferences: TPreferences
       end
       object prefDisplaySwimmerCAT: TCheckBox
         Left = 32
-        Top = 98
+        Top = 104
         Width = 369
         Height = 22
         Caption = 'Display Swimmer Category in the entrant'#39's grid.'
@@ -573,11 +573,27 @@ object Preferences: TPreferences
       end
       object prefDisplayDivisions: TCheckBox
         Left = 32
-        Top = 136
+        Top = 142
         Width = 313
         Height = 22
         Caption = 'Display Divisions in the entrant'#39's grid.'
         TabOrder = 3
+      end
+      object prefEnableSplitTimesForINDV: TCheckBox
+        Left = 32
+        Top = 179
+        Width = 337
+        Height = 22
+        Caption = 'Enable split-time entry in individual events.'
+        TabOrder = 4
+      end
+      object prefEnableSplitTimesForTEAM: TCheckBox
+        Left = 32
+        Top = 217
+        Width = 297
+        Height = 22
+        Caption = 'Enable split-time entry in team events.'
+        TabOrder = 5
       end
     end
     object TabSheet3: TTabSheet

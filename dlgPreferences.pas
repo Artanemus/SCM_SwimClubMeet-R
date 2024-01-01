@@ -86,6 +86,8 @@ type
     prefDisplayDivisions: TCheckBox;
     prefGenerateEventTeamDesc: TCheckBox;
     prefGenerateEventTeamDescStr: TEdit;
+    prefEnableSplitTimesForINDV: TCheckBox;
+    prefEnableSplitTimesForTEAM: TCheckBox;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
@@ -461,6 +463,11 @@ begin
     'DisplaySwimmerCAT', false);
   prefDisplayDivisions.Checked := iFile.ReadBool('Preferences',
     'DisplayDivisions', false);
+  //2024/1/1
+  prefEnableSplitTimesForINDV.Checked := iFile.ReadBool('Preferences',
+    'EnableSplitTimesForINDV', false);
+  prefEnableSplitTimesForTeam.Checked := iFile.ReadBool('Preferences',
+    'EnableSplitTimesForTEAM', false);
 
   iFile.free;
 end;
@@ -514,6 +521,12 @@ begin
     prefEnableDCodes.Checked);
   iFile.WriteBool('Preferences', 'DisplaySwimmerCAT', prefDisplaySwimmerCAT.Checked);
   iFile.WriteBool('Preferences', 'DisplayDivision',   prefDisplayDivisions.Checked);
+
+  //2024/1/1
+  iFile.WriteBool('Preferences', 'EnableSplitTimesForINDV',
+    prefEnableSplitTimesForINDV.Checked);
+  iFile.WriteBool('Preferences', 'EnableSplitTimesForTEAM',
+    prefEnableSplitTimesForTEAM.Checked);
 
   iFile.free;
 end;

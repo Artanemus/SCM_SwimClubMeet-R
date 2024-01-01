@@ -474,6 +474,9 @@ type
     prefDisplaySwimmerCAT: boolean;
     prefEnableDCode: boolean;
     prefEnableTeamEvents: boolean;
+    prefEnableSplitTimesForINDV: boolean;
+    prefEnableSplitTimesForTEAM: boolean;
+
     SCMEventList: TObjectList;
     function AssertConnection(): boolean; // Check connection to MSSQL DATABASE
     procedure DBGridWndProc(var Msg: TMessage);
@@ -1831,9 +1834,20 @@ begin
   prefDisplayDivisions := iFile.ReadBool('Preferences',
     'DisplayDivisions', false);
 
+
+  //2024/1/1
+  prefEnableSplitTimesForINDV := iFile.ReadBool('Preferences',
+    'EnableSplitTimesForINDV', false);
+  prefEnableSplitTimesForTeam := iFile.ReadBool('Preferences',
+    'EnableSplitTimesForTEAM', false);
+
   iFile.Free;
 
-  // Update the preferences used by dmSCM
+    // Permits the user to enter split times for relays.
+  TEAM.EnableSplitTimesForTEAM := prefEnableSplitTimesForTEAM;
+  TEAM.Enable_GridEllipse();
+
+  // Update the preferences used by THE DATAMODULE
   if AssertConnection then SCM.ReadPreferences(iniFileName);
 
 end;
@@ -4232,6 +4246,7 @@ procedure TMain.SetTabSheetDisplayState(var Msg: TMessage);
 var
   aEventType: scmEventType;
 begin
+
   // The following routines send the windows message SCM_TABSHEETDISPLAY
   // 1. SCM->qrySession. (on events : AfterPost, AfterDelete)
   // 2. dlgNewSession TNewSession::tblSessionAfterPost(TDataSet *DataSet)
