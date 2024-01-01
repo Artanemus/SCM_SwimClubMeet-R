@@ -11,20 +11,30 @@ uses
 
 type
   TSessionReportA = class(TDataModule)
-    frxReport1: TfrxReport;
-    qryReport: TFDQuery;
     frxXLSExport1: TfrxXLSExport;
     frxHTMLExport1: TfrxHTMLExport;
     frxPDFExport1: TfrxPDFExport;
-    frxDSReport: TfrxDBDataset;
-    qryClubInfoRpt: TFDQuery;
+    qryClubInfo: TFDQuery;
     frxClubInfo: TfrxDBDataset;
-    qrySessionINDV: TFDQuery;
-    frxdsINDV: TfrxDBDataset;
-    qrySessionTEAM: TFDQuery;
+    qrySession: TFDQuery;
+    qryEvent: TFDQuery;
+    dsSession: TDataSource;
+    dsEvent: TDataSource;
+    dsHeat: TDataSource;
+    qryHeat: TFDQuery;
+    frxdsSession: TfrxDBDataset;
+    frxdsEvent: TfrxDBDataset;
+    frxdsHeat: TfrxDBDataset;
+    qryEntrant: TFDQuery;
+    dsEntrant: TDataSource;
+    frxdsEntrant: TfrxDBDataset;
+    frxReport2: TfrxReport;
+    qryTEAM: TFDQuery;
+    dsTEAM: TDataSource;
     frxdsTEAM: TfrxDBDataset;
-    frxReportINDV: TfrxReport;
-    frxReportTEAM: TfrxReport;
+    qryTeamEntrant: TFDQuery;
+    dsTeamEntrant: TDataSource;
+    frxdsTeamEntrant: TfrxDBDataset;
     procedure DataModuleDestroy(Sender: TObject);
     procedure DataModuleCreate(Sender: TObject);
   private
@@ -45,8 +55,13 @@ implementation
 
 procedure TSessionReportA.DataModuleDestroy(Sender: TObject);
 begin
-  qryReport.Close;
-  qrySessionTEAM.Open;
+    qryClubInfo.Close;
+    qrySession.Close;
+    qryEvent.Close;
+    qryHeat.Close;
+    qryEntrant.Close;
+    qryTEAM.Close;
+    qryTeamEntrant.Close;
 end;
 
 procedure TSessionReportA.DataModuleCreate(Sender: TObject);
@@ -58,24 +73,65 @@ end;
 procedure TSessionReportA.RunReport;
 var
   aSessionID: integer;
+  aSessionStart: TDateTime;
+  aSwimClubID: integer;
 begin
-  qryReport.Connection := SCM.scmConnection;
+
+  qryClubInfo.Connection := SCM.scmConnection;
+  qrySession.Connection := SCM.scmConnection;
+  qryEvent.Connection := SCM.scmConnection;
+  qryHeat.Connection := SCM.scmConnection;
+  qryEntrant.Connection := SCM.scmConnection;
+  qryTEAM.Connection := SCM.scmConnection;
+  qryTeamEntrant.Connection := SCM.scmConnection;
+
   aSessionID := SCM.Session_ID;
+  aSessionStart := SCM.Session_Start;
+  aSwimClubID := SCM.SwimClub_ID;
+
   if (aSessionID > 0) then
   begin
-    // CLUBINFO, EVENTS, INDV etc.
-    qryReport.Close;
-    qryReport.ParamByName('SID').AsInteger := aSessionID;
-    qryReport.Prepare;
-    qryReport.Open;
-    // ONLY TEAM EVENTS
-    qrySessionTEAM.Close;
-    qrySessionTEAM.ParamByName('SID').AsInteger := aSessionID;
-    qrySessionTEAM.Prepare;
-    qrySessionTEAM.Open;
-    if qryReport.Active and qrySessionTEAM.Active then
-      frxReport1.ShowReport();
-    qryReport.Close;
+    // HEADER BANNER DATA
+    qryClubInfo.Close;
+    qryClubInfo.ParamByName('SWIMCLUBID').AsInteger := aSwimClubID;
+    qryClubInfo.Prepare;
+    qryClubInfo.Open;
+
+    // SESSION REPORT
+    qrySession.Close;
+    qrySession.ParamByName('SESSIONID').AsInteger := aSessionID;
+    qrySession.Prepare;
+    qrySession.Open;
+
+    qryEvent.Open;
+    qryHeat.Open;
+
+    // CALCULATE AGE
+    qryEntrant.Close;
+    qryEntrant.ParamByName('SESSIONDATE').AsDateTime := aSessionStart;
+    qryEntrant.Prepare;
+    qryEntrant.Open;
+
+    qryTEAM.Open;
+
+    // CALCULATE AGE
+    qryTeamEntrant.Close;
+    qryTeamEntrant.ParamByName('SESSIONDATE').AsDateTime := aSessionStart;
+    qryTeamEntrant.Prepare;
+    qryTeamEntrant.Open;
+
+
+    if qrySession.Active then
+      frxReport2.ShowReport();
+
+    qryClubInfo.Close;
+    qrySession.Close;
+    qryEvent.Close;
+    qryHeat.Close;
+    qryEntrant.Close;
+    qryTEAM.Close;
+    qryTeamEntrant.Close;
+
   end;
 end;
 
