@@ -69,7 +69,6 @@ type
     qryEvent: TFDQuery;
     qryEventABREV: TWideStringField;
     qryEventCaption: TWideStringField;
-    qryEventClosedDT: TSQLTimeStampField;
     qryEventDistanceID: TIntegerField;
     qryEventEntrantCount: TIntegerField;
     qryEventEventID: TFDAutoIncField;
@@ -90,7 +89,6 @@ type
     qryGetNextHeat: TFDQuery;
     qryGetPrevHeat: TFDQuery;
     qryHeat: TFDQuery;
-    qryHeatClosedDT: TSQLTimeStampField;
     qryHeatcStatus: TWideStringField;
     qryHeatEventID: TIntegerField;
     qryHeatHeatID: TFDAutoIncField;
@@ -171,6 +169,8 @@ type
     TimeField5: TTimeField;
     WideStringField1: TWideStringField;
     WideStringField2: TWideStringField;
+    qryHeatCloseDT: TSQLTimeStampField;
+    qryEventCloseDT: TSQLTimeStampField;
     procedure DataModuleCreate(Sender: TObject);
     procedure qryEntrantAfterScroll(DataSet: TDataSet);
     procedure qryEntrantTIMEGetText(Sender: TField; var Text: string;
@@ -219,6 +219,8 @@ type
     prefCheckUnNomination: integer;
     prefGenerateEventDescription: Boolean;
     prefGenerateEventDescStr: string;
+
+
   protected
     // Swimmers have MemberID's. Empty lanes excluded from TOT.
     function ClearLane(aIndvTeamID: integer; aEventType: scmEventType): integer;
@@ -993,6 +995,8 @@ begin
     if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
 end;
 
+
+
 function TSCM.Entrant_SwapLanes(EntrantIDA, EntrantIDB: integer): Boolean;
 begin
   result := false;
@@ -1490,7 +1494,7 @@ begin
           // toggle to CLOSED ...
           FieldByName('HeatStatusID').AsInteger := 3;
           // 22.09.2020 TimeStamp
-          FieldByName('ClosedDT').AsDateTime := Now;
+          FieldByName('CloseDT').AsDateTime := Now;
         end;
     else
       // toggle to OPEN ...
@@ -2267,6 +2271,11 @@ begin
 
 //  if Owner is TForm then // Heat_Renumber();
 //      PostMessage(TForm(Owner).Handle, SCM_RENUMBERHEATS, 0, 0);
+
+  // lblMsgTab3.Caption 'Heat Raced' 'Heat Closed'
+  //
+//  if Owner is TForm then
+//      PostMessage(TForm(Owner).Handle, SCM_TABSHEETDISPLAYSTATE, 3, 0);
 end;
 
 procedure TSCM.qryHeatAfterScroll(DataSet: TDataSet);

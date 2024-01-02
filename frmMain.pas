@@ -502,6 +502,8 @@ type
     procedure ToggleDivisions(SetVisible: boolean);
     procedure ToggleSwimmerCAT(SetVisible: boolean);
 
+    procedure DisplayHeatStatusMsg(aHeatStatusID: integer);
+
   protected
     // posted by dmSCMNom : a refresh of the entrant grid is required.
     procedure Entrant_LaneWasCleaned(var Msg: TMessage);
@@ -739,6 +741,24 @@ begin
   if Assigned(FOrgDBGridWndProc) then FOrgDBGridWndProc(Msg);
 end;
 
+procedure TMain.DisplayHeatStatusMsg(aHeatStatusID: integer);
+begin
+  case aHeatStatusID of
+    2:
+      begin
+        lblMsgTab3.Caption := 'Heat Raced';
+        lblMsgTab3.Visible := true;
+      end;
+    3:
+      begin
+        lblMsgTab3.Caption := 'Heat Closed';
+        lblMsgTab3.Visible := true;
+      end;
+    else
+      lblMsgTab3.Visible := false;
+  end;
+end;
+
 procedure TMain.DrawEventStatus(oGrid: TObject; Rect: TRect; Column: TColumn);
 var
   MyRect: TRect;
@@ -809,7 +829,7 @@ begin
       if (SCM.dsEvent.DataSet.FieldByName('EventStatusID').AsInteger <>
         newEventStatusID) then
       begin
-        bm := SCM.dsEvent.DataSet.GetBookmark;
+//        bm := SCM.dsEvent.DataSet.GetBookmark;
 
         { ALTERNATIVE METHOD
           if SCM.Event_SetEventStatusID(aEventID, newEventStatusID) then
@@ -832,16 +852,17 @@ begin
         // with the most resently closed event.
         if AllClosed then
           // Only timestamp if needed
-            SCM.dsEvent.DataSet.FieldByName('ClosedDT').AsDateTime := Now();
+            SCM.dsEvent.DataSet.FieldByName('CloseDT').AsDateTime := Now();
         SCM.dsEvent.DataSet.Post;
         SCM.dsEvent.DataSet.Refresh;
         if Assigned(fld) then fld.ReadOnly := true;
         // que to event record
-        try
-          SCM.dsEvent.DataSet.GotoBookmark(bm);
-        except
-          on E: Exception do
-        end;
+        SCM.Event_Locate(aEventID);
+//        try
+//          SCM.dsEvent.DataSet.GotoBookmark(bm);
+//        except
+//          on E: Exception do
+//        end;
       end;
       SCM.dsEvent.DataSet.EnableControls();
     end;
@@ -1300,6 +1321,7 @@ begin
 
   if PageControl1.ActivePageIndex = 2 then
     PostMessage(Handle, SCM_TABSHEETDISPLAYSTATE, 3, 0);
+
 
   // SYNC the enabled state of the INDVTEAM Grids
   aEventType := SCM.CurrEventType;
@@ -2994,6 +3016,24 @@ begin
     if (TEAM.Grid.Enabled <> DoEnable) then
     TEAM.Grid.Enabled := DoEnable;
   }
+ var i: integer;
+  i := BindSourceDB3.DataSource.DataSet.FieldByName('HeatStatusID').AsInteger;
+  case i of
+    1:
+      begin
+        lblMsgTab3.Visible := false;
+      end;
+    2:
+      begin
+        lblMsgTab3.Caption := 'Heat Raced';
+        lblMsgTab3.Visible := true;
+      end;
+    3:
+      begin
+        lblMsgTab3.Caption := 'Heat Closed';
+        lblMsgTab3.Visible := true;
+      end;
+  end;
 end;
 
 procedure TMain.Heat_TimeKeeperReportExecute(Sender: TObject);
@@ -3046,14 +3086,27 @@ begin
   i := BindSourceDB3.DataSource.DataSet.FieldByName('HeatStatusID').AsInteger;
   // i := SCM.dsHeat.DataSet.FieldByName('HeatStatusID').AsInteger;
   case i of
-    1: INDV.Grid.Enabled := true;
     2:
       begin
         INDV.Grid.Enabled := true;
         INDV.Grid.Invalidate; // Text color changes - needs a repaint.
+        TEAM.Grid.Enabled := true;
+        TEAM.Grid.Invalidate; // Text color changes - needs a repaint.
       end;
-    3: INDV.Grid.Enabled := false;
+    3:
+      begin
+        INDV.Grid.Enabled := false;
+        TEAM.Grid.Enabled := false;
+      end;
+  else
+    begin
+      INDV.Grid.Enabled := true;
+      TEAM.Grid.Enabled := true;
+    end;
   end;
+
+  DisplayHeatStatusMsg(i);
+
   if HeatControlList.CanFocus then HeatControlList.SetFocus;
 
   // All the heats have been closed then the event grid will display a tick.
@@ -3813,7 +3866,7 @@ begin
       SCM.dsEvent.DataSet.Edit;
       SCM.dsEvent.DataSet.FieldByName('EventStatusID').AsInteger := reqStatus;
       if (AllClosed = true) then
-          SCM.dsEvent.DataSet.FieldByName('ClosedDT').AsDateTime := Now;
+          SCM.dsEvent.DataSet.FieldByName('CloseDT').AsDateTime := Now;
       SCM.dsEvent.DataSet.Post;
       SCM.dsEvent.DataSet.Refresh;
       if Assigned(fld) then fld.ReadOnly := true;
@@ -4245,12 +4298,11 @@ end;
 procedure TMain.SetTabSheetDisplayState(var Msg: TMessage);
 var
   aEventType: scmEventType;
+  aHeatStatusID: integer;
 begin
 
-  // The following routines send the windows message SCM_TABSHEETDISPLAY
-  // 1. SCM->qrySession. (on events : AfterPost, AfterDelete)
-  // 2. dlgNewSession TNewSession::tblSessionAfterPost(TDataSet *DataSet)
-  //
+  // SCM_TABSHEETDISPLAYSTATE
+
   if not AssertConnection then exit;
   if (Msg.WParam = 0) or (Msg.WParam = 1) then
   begin
@@ -4367,13 +4419,20 @@ begin
     end
     else
     begin
-      if not SCM.Event_HasNominees(SCM.dsEvent.DataSet.FieldByName('EventID')
-        .AsInteger) then
+      if not SCM.Event_HasNominees(SCM.Event_ID) then
       begin
         lblMsgTab3.Caption := 'No Nominees';
         lblMsgTab3.Visible := true;
-        //StatusBar1.Panels[3].Text := 'Nominate members to your events.';
+        // StatusBar1.Panels[3].Text := 'Nominate members to your events.';
       end;
+
+    end;
+
+    // if not message to display - check if a heatstatus can be shown
+    if (PageControl1.ActivePageIndex = 2) and (lblMsgTab3.Visible = false) then
+    begin
+      aHeatStatusID := SCM.Heat_HeatStatusID(SCM.Heat_ID);
+      DisplayHeatStatusMsg(aHeatStatusID);
     end;
 
     if SCM.dsEvent.DataSet.IsEmpty or SCM.dsHeat.DataSet.IsEmpty then

@@ -24,8 +24,8 @@ object LeaderBoard: TLeaderBoard
     ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 1476
-    ExplicitHeight = 938
+    ExplicitWidth = 1464
+    ExplicitHeight = 935
     object TabSheet5: TTabSheet
       Caption = 'Setup'
       ImageIndex = 4
@@ -269,7 +269,7 @@ object LeaderBoard: TLeaderBoard
       object RelativePanel1: TRelativePanel
         Left = 0
         Top = 0
-        Width = 1464
+        Width = 1460
         Height = 57
         ControlCollection = <
           item
@@ -351,7 +351,6 @@ object LeaderBoard: TLeaderBoard
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitWidth = 1468
         DesignSize = (
           1460
           57)
@@ -479,8 +478,6 @@ object LeaderBoard: TLeaderBoard
         FindFmVisible = False
         UseReportHints = True
         HideScrolls = False
-        ExplicitWidth = 1464
-        ExplicitHeight = 848
       end
     end
     object TabSheet2: TTabSheet
@@ -537,8 +534,8 @@ object LeaderBoard: TLeaderBoard
         Text = 'Status and error messages are displayed here.'
         Width = 400
       end>
-    ExplicitTop = 938
-    ExplicitWidth = 1476
+    ExplicitTop = 935
+    ExplicitWidth = 1464
   end
   object ImageCollection1: TImageCollection
     Images = <

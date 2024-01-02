@@ -21,7 +21,6 @@ type
     procedure GridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     fGridBgColor: TColor;
-    { Private declarations }
     fEntrantEditBoxFocused: TColor;
     fEntrantEditBoxNormal: TColor;
     fRacedFontColor: TColor;

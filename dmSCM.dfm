@@ -571,7 +571,7 @@ object SCM: TSCM
       'SELECT [Event].[EventID]'
       '     , [Event].[EventNum]'
       '     , [Event].[Caption]'
-      '     , [Event].[ClosedDT]'
+      '     , [Event].[CloseDT]'
       '     , [Event].[ScheduleDT]'
       '     , [Event].[SessionID]'
       '     , [Event].[StrokeID]'
@@ -714,9 +714,9 @@ object SCM: TSCM
       ReadOnly = True
       DisplayFormat = '00'
     end
-    object qryEventClosedDT: TSQLTimeStampField
-      FieldName = 'ClosedDT'
-      Origin = 'ClosedDT'
+    object qryEventCloseDT: TSQLTimeStampField
+      FieldName = 'CloseDT'
+      Origin = 'CloseDT'
       Visible = False
     end
     object qryEventEventStr: TWideStringField
@@ -1159,7 +1159,6 @@ object SCM: TSCM
   end
   object qryHeat: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     AfterInsert = qryHeatAfterInsert
     AfterPost = qryHeatAfterPost
     AfterDelete = qryHeatAfterDelete
@@ -1181,7 +1180,7 @@ object SCM: TSCM
       '  HeatIndividual.EventID,'
       '  HeatIndividual.HeatTypeID,'
       '  HeatIndividual.HeatStatusID,'
-      '  HeatIndividual.ClosedDT,'
+      '  HeatIndividual.CloseDT,'
       '  HeatStatus.Caption AS cStatus'
       ''
       'FROM'
@@ -1231,9 +1230,9 @@ object SCM: TSCM
       ReadOnly = True
       Size = 60
     end
-    object qryHeatClosedDT: TSQLTimeStampField
-      FieldName = 'ClosedDT'
-      Origin = 'ClosedDT'
+    object qryHeatCloseDT: TSQLTimeStampField
+      FieldName = 'CloseDT'
+      Origin = 'CloseDT'
       Visible = False
     end
   end

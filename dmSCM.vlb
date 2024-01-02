@@ -76,9 +76,6 @@ Coordinates=645,492,73,51
 [qryFNameEllipse]
 Coordinates=862,553,97,51
 
-[qryEventClosedDT]
-Coordinates=721,911,106,33
-
 [dsNominee]
 Coordinates=577,1,69,33
 
@@ -212,9 +209,6 @@ Coordinates=286,1093,109,33
 [qryEntrantTIME]
 Coordinates=187,1093,91,33
 
-[qryHeatClosedDT]
-Coordinates=78,1093,100,33
-
 [qrySession]
 Coordinates=539,10,82,177
 
@@ -336,5 +330,5 @@ EditingLayerName=Heat
 ActiveLayerNames=
 
 []
-Coordinates=721,265,87,33
+Coordinates=721,911,106,33
 
