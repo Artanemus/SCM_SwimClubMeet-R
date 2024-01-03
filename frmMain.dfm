@@ -1348,7 +1348,7 @@ object Main: TMain
                   Width = 1032
                   ExplicitWidth = 1028
                   inherited Grid: TDBGrid
-                    Width = 1030
+                    Width = 1028
                   end
                 end
                 inherited Panel2: TPanel
@@ -1445,7 +1445,7 @@ object Main: TMain
                     Height = 128
                     ExplicitHeight = 128
                     inherited GridEntrant: TDBGrid
-                      Height = 126
+                      Height = 124
                     end
                   end
                 end
@@ -2224,6 +2224,7 @@ object Main: TMain
       Proportional = True
       Stretch = True
       TabOrder = 0
+      OnClick = Tools_PreferencesExecute
     end
     object pnlClubData: TRelativePanel
       Left = 79

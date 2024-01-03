@@ -34,6 +34,8 @@ type
       DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure GridEditButtonClick(Sender: TObject);
     procedure GridEnter(Sender: TObject);
+    procedure GridEntrantDrawColumnCell(Sender: TObject; const Rect: TRect;
+        DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure GridEntrantEditButtonClick(Sender: TObject);
     procedure GridEntrantEnter(Sender: TObject);
     procedure spbtnAddSlotClick(Sender: TObject);
@@ -69,6 +71,7 @@ type
     function RenumberLanes(): Integer;
     function StrikeLane(): Integer;
     function StrikeSlot(): Integer;
+    procedure TeamEntrantScroll();
     procedure TeamScroll();
     procedure ToggleDCode(DoEnable: boolean);
 
@@ -313,16 +316,15 @@ procedure TframeTEAM.GridDrawColumnCell(Sender: TObject; const Rect: TRect;
   DataCol: Integer; Column: TColumn; State: TGridDrawState);
 var
   clFont, clBg: TColor;
-  s: variant;
   Size: TSize;
-  topMargin: Integer;
   MyRect: TRect;
     aHeatID: integer;
   YMargin: integer;
 
 begin
   aHeatID := TDBGrid(Sender).DataSource.DataSet.FieldByName('HeatID').AsInteger;
-  if (Column.Field.FieldName = 'TeamName') or (Column.FieldName = 'DCode') then
+  if (Column.Field.FieldName = 'TeamName') or (Column.FieldName = 'DCode') or
+  (Column.Field.FieldName = 'RaceTime') then
   begin
     // ASSERT button visible in column
     if (Column.ButtonStyle <> TColumnButtonStyle.cbsEllipsis) then
@@ -536,7 +538,8 @@ begin
   end
   else if fld.FieldName = 'RaceTime' then
   begin
-    dlgSplitTime := TSplitTime.Create(self);
+    SCM.dsTeam.DataSet.CheckBrowseMode;
+    dlgSplitTime := TSplitTime.CreateWithConnection(self, SCM.scmConnection);
     dlgSplitTime.TeamID := aTeamID;
     rtnValue := dlgSplitTime.ShowModal;
     dlgSplitTime.Free;
@@ -568,6 +571,74 @@ begin
   // if you tab into the grid or your first click goes to
   // the first column then OnColEnter doesn't fire.
   GridColEnter(Grid);
+end;
+
+procedure TframeTEAM.GridEntrantDrawColumnCell(Sender: TObject; const Rect:
+    TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+var
+  clFont, clBg: TColor;
+  Size: TSize;
+  MyRect: TRect;
+    aHeatID: integer;
+  YMargin: integer;
+
+begin
+  aHeatID := Grid.DataSource.DataSet.FieldByName('HeatID').AsInteger;
+  if (Column.Field.FieldName = 'FullName') or (Column.FieldName = 'DCode') then
+  begin
+    // ASSERT button visible in column
+    if (Column.ButtonStyle <> TColumnButtonStyle.cbsEllipsis) then
+        Column.ButtonStyle := TColumnButtonStyle.cbsEllipsis;
+  end;
+
+   // NOTE : DEFAULT DRAWING IS DISABLED ....
+  if (Column.Field.FieldName = 'IsScratched') or
+    (Column.Field.FieldName = 'IsDisqualified') then
+  begin
+    if gdFocused in State then
+      clFont := fEditBoxFocused
+    else
+      clFont := fEditBoxNormal;
+    clBg := fGridBgColor;
+    TDBGrid(Sender).DrawCheckBoxes(TDBGrid(Sender), Rect, Column, clFont, clBg);
+    // draw 'Focused' frame  (for boolean datatype only)
+    if gdFocused in State then
+      TDBGrid(Sender).Canvas.DrawFocusRect(Rect);
+  end
+  // Recolor the text if the heat is RACED.
+  else if (SCM.Heat_HeatStatusID(aHeatID) = 2) then
+  begin
+    // CLEAR THE CANVAS
+    TDBGrid(Sender).Canvas.Brush.Color := fGridBgColor;
+    TDBGrid(Sender).Canvas.Brush.Style := bsSolid;
+    TDBGrid(Sender).Canvas.FillRect(Rect);
+    // PRINT THE TEXT
+    TDBGrid(Sender).Canvas.Font.Color := fRacedFontColor;
+    Size := TDBGrid(Sender).Canvas.TextExtent(Column.Field.DisplayText);
+    YMargin := Round((Rect.Height - Size.Height) / 2 + 0.5);
+    // calculate margins
+    MyRect.Top := Rect.Top + YMargin;
+    // Right align
+    if (Column.Field.FieldName = 'RaceTime') or
+      (Column.Field.FieldName = 'TimeToBeat') or
+      (Column.Field.FieldName = 'PersonalBest') then
+        MyRect.Left := Rect.Left + (Rect.Width - Size.Width - 3)
+    else
+      // left align
+        MyRect.Left := Rect.Left + 3;
+    MyRect.Bottom := Rect.Bottom;
+    MyRect.Right := Rect.Right;
+    TDBGrid(Sender).Canvas.TextRect(myRect, myRect.Left, myRect.Top,
+      Column.Field.DisplayText);
+    if gdFocused in State then
+      TDBGrid(Sender).Canvas.DrawFocusRect(Rect);
+  end
+  else
+  begin
+    TDBGrid(Sender).DefaultDrawColumnCell(Rect, DataCol, Column, State);
+    if gdFocused in State then
+      TDBGrid(Sender).Canvas.DrawFocusRect(Rect);
+  end;
 end;
 
 procedure TframeTEAM.GridEntrantEditButtonClick(Sender: TObject);
@@ -930,6 +1001,27 @@ begin
     result := v;
   end;
 
+end;
+
+procedure TframeTEAM.TeamEntrantScroll;
+var
+  fld: TField;
+begin
+  if GridEntrant.Focused then
+  begin
+    // After moving row re-engage editing for selected fields.
+    fld := GridEntrant.SelectedField;
+    if Assigned(fld) then
+    begin
+      if (fld.FieldName = 'RaceTime') or (fld.FieldName = 'DCode') or
+        (fld.FieldName = 'FullName') then GridEntrant.EditorMode := true
+      else GridEntrant.EditorMode := false;
+    end;
+
+    if SCM.dsTeam.DataSet.FieldByName('TeamNameID').IsNull then
+        GridEntrant.Visible := false
+    else GridEntrant.Visible := true;
+  end;
 end;
 
 procedure TframeTEAM.TeamScroll;

@@ -70,24 +70,24 @@ procedure TNewSession.btnPostClick(Sender: TObject);
 var
   dt: TDateTime;
 begin
-with dsSessionDlg.DataSet do begin
-  // Finalise the edit. Note NewRecord is assigned by SCM, SessionStatusID = 1;
-  if (State = dsEdit) or (State = dsInsert) then
+  with dsSessionDlg.DataSet do
   begin
-    dt := DatePicker1.Date + TimePicker1.Time;
-    // Manually assign date - only if modified.
-    if FieldByName('SessionStart').AsDateTime <> dt then
-      FieldByName('SessionStart').AsDateTime := dt;
-    FieldByName('SessionStatusID').AsInteger := 1;
-    FieldByName('SwimClubID').AsInteger := 1;
-    // finalise the changes...
-    Post;
-  end;
-  if (State = dsEdit) then
-    fSessionID := FieldByName('SessionID').AsInteger;
+    // Finalise the edit. Note NewRecord is assigned by SCM, SessionStatusID = 1;
+    if (State = dsEdit) or (State = dsInsert) then
+    begin
+      dt := DatePicker1.Date + TimePicker1.Time;
+      // Manually assign date - only if modified.
+      if FieldByName('SessionStart').AsDateTime <> dt then
+          FieldByName('SessionStart').AsDateTime := dt;
+      FieldByName('SessionStatusID').AsInteger := 1;
+      FieldByName('SwimClubID').AsInteger := 1;
+      // finalise the changes...
+      Post;
+    end;
+    if (State = dsEdit) then fSessionID := FieldByName('SessionID').AsInteger;
 
-  ModalResult := mrOk;
-end;
+    ModalResult := mrOk;
+  end;
 end;
 
 constructor TNewSession.CreateWithConnection(AOwner: TComponent;

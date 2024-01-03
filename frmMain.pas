@@ -804,7 +804,6 @@ end;
 procedure TMain.Event_AssertStatusState(var Msg: TMessage);
 var
   AllClosed: boolean;
-  bm: TBookmark;
   aEventID, newEventStatusID: integer;
   fld: TField;
 begin
@@ -829,7 +828,6 @@ begin
       if (SCM.dsEvent.DataSet.FieldByName('EventStatusID').AsInteger <>
         newEventStatusID) then
       begin
-//        bm := SCM.dsEvent.DataSet.GetBookmark;
 
         { ALTERNATIVE METHOD
           if SCM.Event_SetEventStatusID(aEventID, newEventStatusID) then
@@ -858,11 +856,6 @@ begin
         if Assigned(fld) then fld.ReadOnly := true;
         // que to event record
         SCM.Event_Locate(aEventID);
-//        try
-//          SCM.dsEvent.DataSet.GotoBookmark(bm);
-//        except
-//          on E: Exception do
-//        end;
       end;
       SCM.dsEvent.DataSet.EnableControls();
     end;
@@ -3085,6 +3078,7 @@ begin
   SCM.Heat_ToggleStatus;
   i := BindSourceDB3.DataSource.DataSet.FieldByName('HeatStatusID').AsInteger;
   // i := SCM.dsHeat.DataSet.FieldByName('HeatStatusID').AsInteger;
+  // i := SCM.Heat_HeatID;
   case i of
     2:
       begin
@@ -3092,16 +3086,19 @@ begin
         INDV.Grid.Invalidate; // Text color changes - needs a repaint.
         TEAM.Grid.Enabled := true;
         TEAM.Grid.Invalidate; // Text color changes - needs a repaint.
+        TEAM.GridEntrant.Invalidate;
       end;
     3:
       begin
         INDV.Grid.Enabled := false;
         TEAM.Grid.Enabled := false;
+        TEAM.GridEntrant.Enabled := false;
       end;
   else
     begin
       INDV.Grid.Enabled := true;
       TEAM.Grid.Enabled := true;
+      TEAM.GridEntrant.Enabled := true;
     end;
   end;
 
@@ -4468,29 +4465,11 @@ begin
 end;
 
 procedure TMain.TeamEntrant_Scroll(var Msg: TMessage);
-var
-  fld: TField;
-  aEventType: scmEventType;
 begin
   // messaged by TSCM.qryMemberQuickPickAfterScroll
   // messaged by TSCM.qryTeamEntrantAfterScroll
   if not AssertConnection then exit;
-  aEventType := SCM.CurrEventType;
-  if (aEventType = etTEAM) and TEAM.GridEntrant.Focused then
-  begin
-    // After moving row re-engage editing for selected fields.
-    fld := TEAM.GridEntrant.SelectedField;
-    if Assigned(fld) then
-    begin
-      if (fld.FieldName = 'RaceTime') or (fld.FieldName = 'DCode') or
-        (fld.FieldName = 'TeamName') then TEAM.GridEntrant.EditorMode := true
-      else TEAM.GridEntrant.EditorMode := false;
-    end;
-
-    if SCM.dsTeam.DataSet.FieldByName('TeamNameID').IsNull then
-        TEAM.GridEntrant.Visible := false
-    else TEAM.GridEntrant.Visible := true;
-  end;
+  if (PageControl1.ActivePageIndex = 2) then TEAM.TeamEntrantScroll;
 end;
 
 procedure TMain.Team_Scroll(var Msg: TMessage);

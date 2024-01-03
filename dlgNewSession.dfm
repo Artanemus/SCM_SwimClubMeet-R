@@ -12,12 +12,10 @@ object NewSession: TNewSession
   Font.Name = 'Segoe UI'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poOwnerFormCenter
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 21
   object Panel1: TPanel
     Left = 0
@@ -27,6 +25,8 @@ object NewSession: TNewSession
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 245
+    ExplicitHeight = 273
     object Label1: TLabel
       Left = 15
       Top = 189
@@ -57,6 +57,8 @@ object NewSession: TNewSession
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitTop = 273
+    ExplicitWidth = 245
     object btnCancel: TButton
       Left = 47
       Top = 6

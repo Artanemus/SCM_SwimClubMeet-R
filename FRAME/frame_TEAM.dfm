@@ -310,12 +310,14 @@ object frameTEAM: TframeTEAM
         Align = alClient
         BorderStyle = bsNone
         DataSource = SCM.dsTeamEntrant
+        DefaultDrawing = False
         TabOrder = 0
         TitleFont.Charset = DEFAULT_CHARSET
         TitleFont.Color = clWindowText
         TitleFont.Height = -16
         TitleFont.Name = 'Segoe UI'
         TitleFont.Style = []
+        OnDrawColumnCell = GridEntrantDrawColumnCell
         OnEditButtonClick = GridEntrantEditButtonClick
         OnEnter = GridEntrantEnter
         Columns = <
