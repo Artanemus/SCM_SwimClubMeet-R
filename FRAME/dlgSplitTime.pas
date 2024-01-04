@@ -8,7 +8,9 @@ uses
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.DBCtrls,
-  Vcl.Mask, Vcl.ExtCtrls, Vcl.Grids, Vcl.DBGrids;
+  Vcl.Mask, Vcl.ExtCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.BaseImageCollection,
+  Vcl.ImageCollection, System.ImageList, Vcl.ImgList, Vcl.VirtualImageList,
+  Vcl.Buttons;
 
 type
   TSplitTime = class(TForm)
@@ -16,9 +18,7 @@ type
     Panel2: TPanel;
     Panel3: TPanel;
     DBGrid1: TDBGrid;
-    DBEdit1: TDBEdit;
     Label1: TLabel;
-    DBNavigator1: TDBNavigator;
     btnPost: TButton;
     qryTeamSplit: TFDQuery;
     dsTeamSplit: TDataSource;
@@ -32,12 +32,25 @@ type
     qryTeamTeamNameStr: TWideStringField;
     qryTeamSplitLapNum: TIntegerField;
     btnCancel: TButton;
+    DBGrid2: TDBGrid;
+    VirtualImageList1: TVirtualImageList;
+    ImageCollection1: TImageCollection;
+    spbtnMoveUp: TSpeedButton;
+    sbtnMoveDown: TSpeedButton;
+    sbtnNew: TSpeedButton;
+    sbtnDelete: TSpeedButton;
     procedure btnCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnPostClick(Sender: TObject);
+    procedure DBGrid2KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
+    procedure qryTeamRaceTimeSetText(Sender: TField; const Text: string);
     procedure qryTeamSplitNewRecord(DataSet: TDataSet);
+    procedure sbtnDeleteClick(Sender: TObject);
+    procedure sbtnMoveDownClick(Sender: TObject);
+    procedure sbtnNewClick(Sender: TObject);
+    procedure spbtnMoveUpClick(Sender: TObject);
     procedure TimeFieldGetText(Sender: TField; var Text: string; DisplayText:
         Boolean);
     procedure TimeFieldSetText(Sender: TField; const Text: string);
@@ -46,6 +59,7 @@ type
     fTeamID: integer;
     fConnection: TFDConnection;
     fDefLapNum: integer;
+    procedure RenumberLaps(aTeamID: integer);
 //    function LocateTeam(ATeamID: Integer): Boolean;
 // !00:00.000;1;0
   public
@@ -86,7 +100,7 @@ begin
       dsTeam.DataSet.Post;
   if (dsTeamSplit.DataSet.State = dsEdit) or
     (dsTeamSplit.DataSet.State = dsInsert) then dsTeamSplit.DataSet.Post;
-  ModalResult := mrClose;
+  ModalResult := mrOk;
 end;
 
 constructor TSplitTime.CreateWithConnection(AOwner: TComponent;
@@ -94,6 +108,12 @@ constructor TSplitTime.CreateWithConnection(AOwner: TComponent;
 begin
    inherited Create(AOwner);
   fConnection := aConnection;
+end;
+
+procedure TSplitTime.DBGrid2KeyDown(Sender: TObject; var Key: Word; Shift:
+    TShiftState);
+begin
+  if (Key = VK_UP) or (Key = VK_DOWN) then Key := 0;
 end;
 
 procedure TSplitTime.FormKeyDown(Sender: TObject; var Key: Word; Shift:
@@ -125,10 +145,55 @@ begin
   // Team not found
   if not qryTeam.Active or qryTeam.IsEmpty then Close;
 
+  if not qryTeamSplit.IsEmpty then
+  begin
+    dsTeamSplit.DataSet.DisableControls;
+    RenumberLaps(fTeamID);
+    dsTeamSplit.DataSet.Refresh;
+    dsTeamSplit.DataSet.EnableControls;
+  end;
+
   fDefLapNum := qryteamSplit.RecordCount;
 
   Caption := qryTeam.FieldByName('TeamNameStr').AsString;
 
+end;
+
+procedure TSplitTime.qryTeamRaceTimeSetText(Sender: TField; const Text: string);
+var
+  dt: TDateTime;
+  LFormatSettings: TFormatSettings;
+  i: integer;
+  s: string;
+begin
+  LFormatSettings := TFormatSettings.Create;
+  LFormatSettings.TimeSeparator := ':';
+  LFormatSettings.DecimalSeparator := '.';
+  // I think StrToTime uses ShortTimeFormat
+  LFormatSettings.LongTimeFormat := 'nn:ss.zzz';
+  LFormatSettings.ShortTimeFormat := 'nn:ss.zzz';
+
+
+  if Text.IsNullOrEmpty(Text) then Sender.Clear
+  else
+  begin
+    // EditMask does say fill with zeros. Apparently not working.
+    s := Text;
+    for i := 1 to Length(s) do
+    begin
+      if (s[i] = ' ') then s[i] := '0';
+    end;
+
+    try
+      dt := StrToTime(s, LFormatSettings);
+      Sender.AsDateTime := dt;
+    except
+      on E: EConvertError do
+      begin
+        ShowMessage('Invalid time format: ' + E.Message);
+      end;
+    end;
+  end;
 end;
 
 procedure TSplitTime.qryTeamSplitNewRecord(DataSet: TDataSet);
@@ -206,4 +271,172 @@ begin
   result := qryTeam.Locate('TeamID', ATeamID, SearchOptions);
 end;
 }
+
+procedure TSplitTime.RenumberLaps(aTeamID: integer);
+var
+  qry: TFDQuery;
+  i, aTeamSplitID: integer;
+  sl: TStringList;
+begin
+  if not Assigned(fConnection) then exit;  // no connection
+  sl := TStringList.Create;
+  // Legal, qryEvent has master..child relationship with dsSession.
+  sl.Add('USE [SwimClubMeet]; ');
+  sl.Add('SELECT [TeamSplitID], [LapNum] FROM [dbo].[TeamSplit] ');
+  sl.Add('WHERE [TeamID] = ' + IntToStr(aTeamID));
+  sl.Add(' ORDER BY [LapNum];');
+  // Find valid EventNum
+  qry := TFDQuery.Create(self);
+  qry.Connection := fConnection;
+  qry.SQL := sl;
+  qry.UpdateOptions.KeyFields := 'TeamSplitID';
+  qry.UpdateOptions.UpdateTableName := 'SwimClubMeet..TeamSplit';
+  qry.Open;
+  if (qry.Active) then
+  begin
+    i := 1;
+    // Clean up list after each new record - renumber event number
+    while not qry.Eof do
+    begin
+      qry.Edit;
+      qry.FieldByName('LapNum').AsInteger := i;
+      qry.Post;
+      i := i + 1;
+      qry.Next;
+    end;
+  end;
+  qry.Close;
+  qry.Free;
+  sl.Free;
+end;
+
+procedure TSplitTime.sbtnDeleteClick(Sender: TObject);
+var
+  aTeamSlitID: integer;
+  SQL: string;
+begin
+//  if (dsTeamSplit.DataSet.State = dsEdit) then
+    dsTeamSplit.DataSet.delete;
+
+  {
+  aTeamSlitID := dsTeamSplit.DataSet.FieldByName('TeamSplitID').AsInteger;
+//  dsTeamSplit.DataSet.CheckBrowseMode;
+  dsTeamSplit.DataSet.DisableControls;
+  SQL := 'DELETE FROM SwimClubMeet.dbo.TeamSplit WHERE TeamSplit.TeamSplitID = :ID';
+  fConnection.ExecSQL(SQL, [aTeamSlitID]);
+  dsTeamSplit.DataSet.EnableControls;
+  dsTeamSplit.DataSet.Refresh;
+  }
+end;
+
+procedure TSplitTime.sbtnMoveDownClick(Sender: TObject);
+var
+  bm: TBookmark;
+  enA, enB: integer;
+  ds: TDataSet;
+  fld: TField;
+begin
+  ds := DBGrid1.DataSource.DataSet;
+  if not Assigned(SCM) then exit;
+  if not ds.Active then exit;
+  if ds.IsEmpty then exit;
+  if SCM.IsLastRecord(ds) then
+  begin
+    beep;
+    exit;
+  end;
+
+  fld := ds.FindField('LapNum');
+  if Assigned(fld) then fld.ReadOnly := false;
+  ds.DisableControls();
+  bm := ds.Bookmark;
+  enA := ds.FieldByName('LapNum').AsInteger;
+  enB := 0;
+  try
+    ds.Next;
+    enB := ds.FieldByName('LapNum').AsInteger;
+    ds.Edit;
+    ds.FieldByName('LapNum').AsInteger := enA;
+    ds.Post;
+  finally
+    ds.Bookmark := bm;
+    ds.Edit;
+    ds.FieldByName('LapNum').AsInteger := enB;
+    ds.Post;
+  end;
+  ds.Refresh;
+  if Assigned(fld) then fld.ReadOnly := true;
+  ds.EnableControls();
+end;
+
+procedure TSplitTime.sbtnNewClick(Sender: TObject);
+var
+fld:TField;
+begin
+
+    fld := dsTeamSplit.DataSet.FindField('LapNum');
+    if Assigned(fld) then fld.ReadOnly := false;
+    dsTeamSplit.DataSet.insert;
+    dsTeamSplit.DataSet.post;
+    if Assigned(fld) then fld.ReadOnly := true;
+
+  if not qryTeamSplit.IsEmpty then
+  begin
+    dsTeamSplit.DataSet.DisableControls;
+    RenumberLaps(fTeamID);
+    dsTeamSplit.DataSet.Refresh;
+
+    dsTeamSplit.DataSet.EnableControls;
+  end;
+  dsTeamSplit.DataSet.Last;
+end;
+
+procedure TSplitTime.spbtnMoveUpClick(Sender: TObject);
+// move event up
+var
+  bm: TBookmark;
+  enA, enB: integer;
+  ds: TDataSet;
+  fld: TField;
+begin
+  ds := dbGrid1.DataSource.DataSet;
+  if not Assigned(SCM) then exit;
+  if not ds.Active then exit;
+  if ds.IsEmpty then exit;
+  if SCM.IsFirstRecord(ds) then
+  begin
+    beep;
+    exit;
+  end;
+
+  fld := ds.FindField('LapNum');
+  if Assigned(fld) then fld.ReadOnly := false;
+  ds.DisableControls();
+  bm := ds.Bookmark;
+  enA := ds.FieldByName('LapNum').AsInteger;
+  enB := 0;
+  try
+    begin
+      ds.Prior;
+      enB := ds.FieldByName('LapNum').AsInteger;
+      ds.Edit;
+      ds.FieldByName('LapNum').AsInteger := enA;
+      ds.Post;
+    end;
+  finally
+    begin
+      ds.Bookmark := bm;
+      ds.Edit;
+      ds.FieldByName('LapNum').AsInteger := enB;
+      ds.Post;
+    end;
+  end;
+  if Assigned(fld) then fld.ReadOnly := true;
+  ds.Refresh;
+  ds.EnableControls();
+end;
+
+
+
+
 end.
