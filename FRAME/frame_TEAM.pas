@@ -60,8 +60,8 @@ type
     procedure AfterConstruction; override;
     function ClearLane(): Integer;
     function ClearSlot(): Integer;
-    procedure Enable_GridEllipse();
-    procedure Enable_GridEntrantEllipse();
+//    procedure Enable_GridEllipse();
+//    procedure Enable_GridEntrantEllipse();
     procedure EventScroll();
     // TActionManager:  Sender: TAction
     procedure GridMoveDown(Sender: TObject);
@@ -87,7 +87,8 @@ implementation
 
 { TframeTEAM }
 uses dlgEntrantPickerCTRL, dlgEntrantPicker, dlgDCodePicker, System.UITypes,
-  dlgTeamNameMenu, dmSCMHelper, dlgTeamNamePicker, DateUtils, dlgSplitTime;
+  dlgTeamNameMenu, dmSCMHelper, dlgTeamNamePicker, DateUtils,
+  dlgTEAMSplitTime;
 
 procedure TframeTEAM.AfterConstruction;
 var
@@ -140,8 +141,8 @@ begin
   GridEntrant.Options := GridEntrant.Options - [dgAlwaysShowEditor];
   GridEntrant.Options := GridEntrant.Options + [dgEditing];
 
-  Enable_GridEllipse;
-  Enable_GridEntrantEllipse;
+//  Enable_GridEllipse;
+//  Enable_GridEntrantEllipse;
 
 end;
 
@@ -184,7 +185,9 @@ begin
   if aTeamEntrantID > 0 then result := SCM.TeamEntrant_Clear(aTeamEntrantID);
 end;
 
-procedure TframeTEAM.Enable_GridEllipse;
+
+{
+procedure TframeTEAM.Enable_GridEllipse();
 var
   i: Integer;
   col: TColumn;
@@ -202,12 +205,16 @@ begin
     if (col.FieldName = 'RaceTime') then
     begin
       // if enabled ...
-      if fEnableSplitTimesForTEAM then col.ButtonStyle := cbsEllipsis
-      else col.ButtonStyle := cbsNone;
+      if fEnableSplitTimesForTEAM then
+      col.ButtonStyle := cbsEllipsis
+      else
+      col.ButtonStyle := cbsNone;
+
       Grid.Repaint;
     end;
   end;
 end;
+
 
 procedure TframeTEAM.Enable_GridEntrantEllipse;
 var
@@ -226,6 +233,8 @@ begin
     end;
   end;
 end;
+
+}
 
 procedure TframeTEAM.EventScroll;
 begin
@@ -323,13 +332,28 @@ var
 
 begin
   aHeatID := TDBGrid(Sender).DataSource.DataSet.FieldByName('HeatID').AsInteger;
-  if (Column.Field.FieldName = 'TeamName') or (Column.FieldName = 'DCode') or
-  (Column.Field.FieldName = 'RaceTime') then
+  if (Column.Field.FieldName = 'TeamName') or (Column.FieldName = 'DCode') then
   begin
     // ASSERT button visible in column
     if (Column.ButtonStyle <> TColumnButtonStyle.cbsEllipsis) then
         Column.ButtonStyle := TColumnButtonStyle.cbsEllipsis;
   end;
+
+  // Required to suppress unnecessary additional paints.
+  if (Column.Field.FieldName = 'RaceTime') then
+  begin
+    if fEnableSplitTimesForTEAM  then
+    begin
+      if (Column.ButtonStyle <> TColumnButtonStyle.cbsEllipsis) then
+        Column.ButtonStyle := TColumnButtonStyle.cbsEllipsis
+    end
+    else
+    begin
+      if (Column.ButtonStyle = TColumnButtonStyle.cbsEllipsis) then
+        Column.ButtonStyle := TColumnButtonStyle.cbsNone;
+    end;
+  end;
+
 
    // NOTE : DEFAULT DRAWING IS DISABLED ....
   if (Column.Field.FieldName = 'IsScratched') or
@@ -484,7 +508,7 @@ procedure TframeTEAM.GridEditButtonClick(Sender: TObject);
 var
   dlgDCode: TDCodePicker;
   dlgPickTeam: TTeamNamePicker;
-  dlgSplitTime: TSplitTime;
+  dlgTeamSplitTime: TTEAMSplitTime;
   aTeamID, rows: Integer;
   rtnValue: TModalResult;
   fld: TField;
@@ -539,10 +563,10 @@ begin
   else if fld.FieldName = 'RaceTime' then
   begin
     SCM.dsTeam.DataSet.CheckBrowseMode;
-    dlgSplitTime := TSplitTime.CreateWithConnection(self, SCM.scmConnection);
-    dlgSplitTime.TeamID := aTeamID;
-    rtnValue := dlgSplitTime.ShowModal;
-    dlgSplitTime.Free;
+    dlgTeamSplitTime := TTEAMSplitTime.CreateWithConnection(self, SCM.scmConnection);
+    dlgTeamSplitTime.TeamID := aTeamID;
+    rtnValue := dlgTeamSplitTime.ShowModal;
+    dlgTeamSplitTime.Free;
     if IsPositiveResult(rtnValue) then
     begin
       SCM.dsTeam.DataSet.Refresh; // Repaint the teamname selected.

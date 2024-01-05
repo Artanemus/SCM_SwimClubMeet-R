@@ -1,9 +1,9 @@
-object SplitTime: TSplitTime
+object INDVSplitTime: TINDVSplitTime
   Left = 0
   Top = 0
   BorderStyle = bsDialog
   Caption = 'RaceTime and SplitTimes'
-  ClientHeight = 448
+  ClientHeight = 420
   ClientWidth = 321
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -21,12 +21,13 @@ object SplitTime: TSplitTime
     Left = 0
     Top = 0
     Width = 321
-    Height = 89
+    Height = 65
     Align = alTop
     BevelEdges = [beBottom]
     BevelKind = bkFlat
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 317
     object Label1: TLabel
       Left = 3
       Top = 17
@@ -40,12 +41,12 @@ object SplitTime: TSplitTime
       Font.Style = []
       ParentFont = False
     end
-    object DBGrid2: TDBGrid
+    object DBGridRaceTime: TDBGrid
       Left = 90
       Top = 13
       Width = 154
       Height = 39
-      DataSource = dsTeam
+      DataSource = dsEntrant
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -21
@@ -59,8 +60,7 @@ object SplitTime: TSplitTime
       TitleFont.Height = -16
       TitleFont.Name = 'Segoe UI'
       TitleFont.Style = []
-      StyleElements = [seClient, seBorder]
-      OnKeyDown = DBGrid2KeyDown
+      OnKeyDown = DBGridRaceTimeKeyDown
       Columns = <
         item
           Alignment = taLeftJustify
@@ -73,22 +73,21 @@ object SplitTime: TSplitTime
   end
   object Panel2: TPanel
     Left = 0
-    Top = 89
+    Top = 65
     Width = 321
-    Height = 303
+    Height = 299
     Align = alClient
     BevelEdges = []
     BevelKind = bkFlat
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 49
     ExplicitWidth = 317
-    ExplicitHeight = 342
+    ExplicitHeight = 298
     DesignSize = (
       321
-      303)
+      299)
     object spbtnMoveUp: TSpeedButton
-      Left = 259
+      Left = 243
       Top = 6
       Width = 48
       Height = 48
@@ -101,10 +100,11 @@ object SplitTime: TSplitTime
       Margin = 0
       NumGlyphs = 2
       OnClick = spbtnMoveUpClick
+      ExplicitLeft = 259
     end
     object sbtnMoveDown: TSpeedButton
-      Left = 259
-      Top = 60
+      Left = 243
+      Top = 59
       Width = 48
       Height = 48
       Anchors = []
@@ -116,10 +116,12 @@ object SplitTime: TSplitTime
       Margin = 0
       NumGlyphs = 2
       OnClick = sbtnMoveDownClick
+      ExplicitLeft = 259
+      ExplicitTop = 60
     end
     object sbtnNew: TSpeedButton
-      Left = 259
-      Top = 114
+      Left = 243
+      Top = 113
       Width = 48
       Height = 48
       Anchors = []
@@ -131,10 +133,12 @@ object SplitTime: TSplitTime
       Margin = 0
       NumGlyphs = 2
       OnClick = sbtnNewClick
+      ExplicitLeft = 259
+      ExplicitTop = 114
     end
     object sbtnDelete: TSpeedButton
-      Left = 259
-      Top = 168
+      Left = 243
+      Top = 165
       Width = 48
       Height = 48
       Anchors = []
@@ -146,15 +150,17 @@ object SplitTime: TSplitTime
       Margin = 0
       NumGlyphs = 2
       OnClick = sbtnDeleteClick
+      ExplicitLeft = 259
+      ExplicitTop = 168
     end
-    object DBGrid1: TDBGrid
+    object DBGridSplit: TDBGrid
       AlignWithMargins = True
       Left = 3
       Top = 3
       Width = 241
-      Height = 297
+      Height = 293
       Align = alLeft
-      DataSource = dsTeamSplit
+      DataSource = dsSplit
       Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       TabOrder = 0
       TitleFont.Charset = DEFAULT_CHARSET
@@ -179,19 +185,19 @@ object SplitTime: TSplitTime
         end
         item
           Expanded = False
-          FieldName = 'TeamSplitID'
+          FieldName = 'SplitID'
           Visible = False
         end
         item
           Expanded = False
-          FieldName = 'TeamID'
+          FieldName = 'EntrantID'
           Visible = False
         end>
     end
   end
   object Panel3: TPanel
     Left = 0
-    Top = 392
+    Top = 364
     Width = 321
     Height = 56
     Align = alBottom
@@ -199,30 +205,21 @@ object SplitTime: TSplitTime
     BevelKind = bkFlat
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitTop = 391
+    ExplicitTop = 363
     ExplicitWidth = 317
     object btnPost: TButton
-      Left = 163
+      Left = 123
       Top = 10
       Width = 75
       Height = 34
-      Caption = 'Ok'
+      Caption = 'Close'
       TabOrder = 0
       OnClick = btnPostClick
     end
-    object btnCancel: TButton
-      Left = 82
-      Top = 10
-      Width = 75
-      Height = 34
-      Caption = 'Cancel'
-      TabOrder = 1
-      OnClick = btnCancelClick
-    end
   end
-  object qryTeamSplit: TFDQuery
+  object qrySplit: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    OnNewRecord = qryTeamSplitNewRecord
+    OnNewRecord = qrySplitNewRecord
     Indexes = <
       item
         Active = True
@@ -240,17 +237,17 @@ object SplitTime: TSplitTime
       'USE SwimClubMeet'
       ';'
       ''
-      'DECLARE @TeamID AS INTEGER;'
-      'SET @TeamID = :TEAMID'
+      'DECLARE @EntrantID AS INTEGER;'
+      'SET @EntrantID = :ENTRANTID'
       ''
       'SELECT  '
-      'TeamSplitID, '
+      'SplitID, '
       'LapNum,'
       'SplitTime, '
-      'TeamSplit.TeamID'
+      'EntrantID'
       'FROM '
-      'TeamSplit'
-      'WHERE TeamID = @TeamID'
+      'Split'
+      'WHERE EntrantID = @EntrantID'
       'ORDER BY LapNum Desc'
       ';'
       '')
@@ -258,19 +255,19 @@ object SplitTime: TSplitTime
     Top = 264
     ParamData = <
       item
-        Name = 'TEAMID'
+        Name = 'ENTRANTID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = 1
+        Value = Null
       end>
-    object qryTeamSplitLapNum: TIntegerField
+    object qrySplitLapNum: TIntegerField
       Alignment = taCenter
       DisplayLabel = 'Lap'
       DisplayWidth = 6
       FieldName = 'LapNum'
       Origin = 'LapNum'
     end
-    object qryTeamSplitSplitTime: TTimeField
+    object qrySplitSplitTime: TTimeField
       Alignment = taRightJustify
       DisplayLabel = 'Split-Time'
       DisplayWidth = 10
@@ -281,26 +278,22 @@ object SplitTime: TSplitTime
       DisplayFormat = 'nn:ss.zzz'
       EditMask = '!00:00.000;1;0'
     end
-    object qryTeamSplitTeamSplitID: TFDAutoIncField
-      DisplayLabel = 'ID'
-      DisplayWidth = 4
-      FieldName = 'TeamSplitID'
-      Origin = 'TeamSplitID'
-      ProviderFlags = [pfInWhere, pfInKey]
+    object qrySplitSplitID: TFDAutoIncField
+      FieldName = 'SplitID'
+      Origin = 'SplitID'
       ReadOnly = True
     end
-    object qryTeamSplitTeamID: TIntegerField
-      DisplayWidth = 12
-      FieldName = 'TeamID'
-      Origin = 'TeamID'
+    object qrySplitEntrantID: TIntegerField
+      FieldName = 'EntrantID'
+      Origin = 'EntrantID'
     end
   end
-  object dsTeamSplit: TDataSource
-    DataSet = qryTeamSplit
+  object dsSplit: TDataSource
+    DataSet = qrySplit
     Left = 88
     Top = 265
   end
-  object qryTeam: TFDQuery
+  object qryEntrant: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'TeamID'
     Connection = SCM.scmConnection
@@ -314,50 +307,51 @@ object SplitTime: TSplitTime
     SQL.Strings = (
       'USE SwimClubMeet'
       ';'
-      'DECLARE @TeamID AS INTEGER;'
-      'SET @TeamID = :TEAMID;'
+      'DECLARE @EntrantID AS INTEGER;'
+      'SET @EntrantID = :ENTRANTID;'
       ''
       'Select '
-      'Team.TeamID'
+      'Entrant.EntrantID'
       ',RaceTime'
-      ',TeamName.Caption AS TeamNameStr'
-      ' FROM Team'
-      ' LEFT JOIN TeamName ON Team.TeamNameID = TeamName.TeamNameID'
-      ' WHERE TeamID = @TeamID'
+      ',CONCAT(FirstName, '#39' '#39', UPPER(LastName)) AS FullName'
+      ' FROM Entrant'
+      ' INNER JOIN Member ON Entrant.MemberID = Member.MemberID'
+      ' WHERE EntrantID = @EntrantID'
       ' ;')
     Left = 32
     Top = 209
     ParamData = <
       item
-        Name = 'TEAMID'
+        Name = 'ENTRANTID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = 11
+        Value = Null
       end>
-    object qryTeamTeamID: TFDAutoIncField
-      FieldName = 'TeamID'
-      Origin = 'TeamID'
-      ProviderFlags = [pfInWhere, pfInKey]
+    object qryEntrantEntrantID: TFDAutoIncField
+      FieldName = 'EntrantID'
+      Origin = 'EntrantID'
       ReadOnly = True
     end
-    object qryTeamRaceTime: TTimeField
+    object qryEntrantRaceTime: TTimeField
       Alignment = taRightJustify
       DisplayWidth = 10
       FieldName = 'RaceTime'
       Origin = 'RaceTime'
       OnGetText = TimeFieldGetText
-      OnSetText = qryTeamRaceTimeSetText
+      OnSetText = qryEntrantRaceTimeSetText
       DisplayFormat = 'nn:ss.zzz'
       EditMask = '!00:00.000;1;0'
     end
-    object qryTeamTeamNameStr: TWideStringField
-      FieldName = 'TeamNameStr'
-      Origin = 'TeamNameStr'
-      Size = 64
+    object qryEntrantFullName: TWideStringField
+      FieldName = 'FullName'
+      Origin = 'FullName'
+      ReadOnly = True
+      Required = True
+      Size = 257
     end
   end
-  object dsTeam: TDataSource
-    DataSet = qryTeam
+  object dsEntrant: TDataSource
+    DataSet = qryEntrant
     Left = 88
     Top = 208
   end

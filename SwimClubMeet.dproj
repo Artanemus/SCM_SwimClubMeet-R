@@ -414,8 +414,12 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="FRAME\dlgSplitTime.pas">
-            <Form>SplitTime</Form>
+        <DCCReference Include="FRAME\dlgTEAMSplitTime.pas">
+            <Form>TEAMSplitTime</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="FRAME\dlgINDVSplitTime.pas">
+            <Form>INDVSplitTime</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <None Include="SwimClubMeet.md"/>

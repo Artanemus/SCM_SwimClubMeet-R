@@ -1901,7 +1901,7 @@ object SCM: TSCM
     end
     object TimeField1: TTimeField
       Alignment = taRightJustify
-      DisplayWidth = 12
+      DisplayWidth = 10
       FieldName = 'RaceTime'
       Origin = 'RaceTime'
       OnGetText = qryEntrantTIMEGetText

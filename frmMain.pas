@@ -559,7 +559,8 @@ uses
   dlgSelectPrinter, ioutils, dlgBatchProgress, dlgAutoBuild_Batch, ShellAPI,
   UEnvVars, dlgEntrantPicker, dlgEntrantPickerCTRL, dmSCMNom, dlgSwapLanes,
   dlgDBVerInfo, rptHeatReportA, rptHeatReportB, frmDisqualificationCodes,
-  dlgAutoSchedule, dlgDCodePicker, dmSCMHelper, rptMarshallReportC;
+  dlgAutoSchedule, dlgDCodePicker, dmSCMHelper, rptMarshallReportC,
+  dlgTEAMSplitTime;
 
 procedure TMain.ActionManager1Update(Action: TBasicAction;
   var Handled: boolean);
@@ -1624,9 +1625,6 @@ begin
   TEAM.Grid.DataSource := SCM.dsTeam;
   TEAM.GridEntrant.DataSource := SCM.dsTeamEntrant;
 
-  TEAM.Enable_GridEllipse;
-  TEAM.Enable_GridEntrantEllipse;
-
   // L I N K   T D B T e x t
   dbtxtSwimClubCaption.DataSource := SCM.dsSwimClub;
   dbtxtSwimClubNickName.DataSource := SCM.dsSwimClub;
@@ -1858,9 +1856,9 @@ begin
 
   iFile.Free;
 
-    // Permits the user to enter split times for relays.
+  // Permits the user to enter split times for relays.
+  // Takes effect on the next repaint of the grid
   TEAM.EnableSplitTimesForTEAM := prefEnableSplitTimesForTEAM;
-  TEAM.Enable_GridEllipse();
 
   // Update the preferences used by THE DATAMODULE
   if AssertConnection then SCM.ReadPreferences(iniFileName);

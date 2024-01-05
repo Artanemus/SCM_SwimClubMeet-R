@@ -30,7 +30,7 @@ object Main: TMain
       Top = 0
       Width = 1410
       Height = 803
-      ActivePage = TabSheet1
+      ActivePage = TabSheet3
       Align = alClient
       Style = tsFlatButtons
       TabOrder = 0

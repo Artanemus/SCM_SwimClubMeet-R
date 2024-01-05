@@ -1,4 +1,4 @@
-unit dlgSplitTime;
+unit dlgTEAMSplitTime;
 
 interface
 
@@ -13,36 +13,34 @@ uses
   Vcl.Buttons;
 
 type
-  TSplitTime = class(TForm)
+  TTEAMSplitTime = class(TForm)
+    btnPost: TButton;
+    DBGridRaceTime: TDBGrid;
+    DBGridSplit: TDBGrid;
+    dsTeam: TDataSource;
+    dsTeamSplit: TDataSource;
+    ImageCollection1: TImageCollection;
+    Label1: TLabel;
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
-    DBGrid1: TDBGrid;
-    Label1: TLabel;
-    btnPost: TButton;
+    qryTeam: TFDQuery;
+    qryTeamRaceTime: TTimeField;
     qryTeamSplit: TFDQuery;
-    dsTeamSplit: TDataSource;
-    qryTeamSplitTeamSplitID: TFDAutoIncField;
+    qryTeamSplitLapNum: TIntegerField;
     qryTeamSplitSplitTime: TTimeField;
     qryTeamSplitTeamID: TIntegerField;
-    qryTeam: TFDQuery;
-    dsTeam: TDataSource;
+    qryTeamSplitTeamSplitID: TFDAutoIncField;
     qryTeamTeamID: TFDAutoIncField;
-    qryTeamRaceTime: TTimeField;
     qryTeamTeamNameStr: TWideStringField;
-    qryTeamSplitLapNum: TIntegerField;
-    btnCancel: TButton;
-    DBGrid2: TDBGrid;
-    VirtualImageList1: TVirtualImageList;
-    ImageCollection1: TImageCollection;
-    spbtnMoveUp: TSpeedButton;
+    sbtnDelete: TSpeedButton;
     sbtnMoveDown: TSpeedButton;
     sbtnNew: TSpeedButton;
-    sbtnDelete: TSpeedButton;
-    procedure btnCancelClick(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
+    spbtnMoveUp: TSpeedButton;
+    VirtualImageList1: TVirtualImageList;
     procedure btnPostClick(Sender: TObject);
-    procedure DBGrid2KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure DBGridRaceTimeKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FormCreate(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
     procedure qryTeamRaceTimeSetText(Sender: TField; const Text: string);
@@ -55,13 +53,11 @@ type
         Boolean);
     procedure TimeFieldSetText(Sender: TField; const Text: string);
   private
+    fConnection: TFDConnection;
+    fMaxLapNum: integer;
     { Private declarations }
     fTeamID: integer;
-    fConnection: TFDConnection;
-    fDefLapNum: integer;
     procedure RenumberLaps(aTeamID: integer);
-//    function LocateTeam(ATeamID: Integer): Boolean;
-// !00:00.000;1;0
   public
     { Public declarations }
     constructor CreateWithConnection(AOwner: TComponent;
@@ -70,53 +66,43 @@ type
   end;
 
 var
-  SplitTime: TSplitTime;
+  TEAMSplitTime: TTEAMSplitTime;
 
 implementation
 
 {$R *.dfm}
 
-procedure TSplitTime.btnCancelClick(Sender: TObject);
-begin
-  dsTeam.DataSet.Cancel;
-  dsTeamSplit.DataSet.Cancel;
-  fTeamID := 0;
-  ModalResult := mrCancel;
-end;
-
-procedure TSplitTime.FormCreate(Sender: TObject);
-begin
-  fTeamID := 0;
-  fDefLapNum := 0;
-  if not Assigned(fConnection) then
-    raise Exception.Create('Connection not assigned.');
-  qryTeam.Connection := fConnection;
-  qryTeamSplit.Connection := fConnection;
-end;
-
-procedure TSplitTime.btnPostClick(Sender: TObject);
-begin
-  if (dsTeam.DataSet.State = dsEdit) or (dsTeam.DataSet.State = dsInsert) then
-      dsTeam.DataSet.Post;
-  if (dsTeamSplit.DataSet.State = dsEdit) or
-    (dsTeamSplit.DataSet.State = dsInsert) then dsTeamSplit.DataSet.Post;
-  ModalResult := mrOk;
-end;
-
-constructor TSplitTime.CreateWithConnection(AOwner: TComponent;
+constructor TTEAMSplitTime.CreateWithConnection(AOwner: TComponent;
   aConnection: TFDConnection);
 begin
    inherited Create(AOwner);
   fConnection := aConnection;
 end;
 
-procedure TSplitTime.DBGrid2KeyDown(Sender: TObject; var Key: Word; Shift:
+procedure TTEAMSplitTime.btnPostClick(Sender: TObject);
+begin
+  dsTeam.DataSet.CheckBrowseMode;
+  dsTeamSplit.DataSet.CheckBrowseMode;
+  ModalResult := mrOk;
+end;
+
+procedure TTEAMSplitTime.DBGridRaceTimeKeyDown(Sender: TObject; var Key: Word; Shift:
     TShiftState);
 begin
   if (Key = VK_UP) or (Key = VK_DOWN) then Key := 0;
 end;
 
-procedure TSplitTime.FormKeyDown(Sender: TObject; var Key: Word; Shift:
+procedure TTEAMSplitTime.FormCreate(Sender: TObject);
+begin
+  fTeamID := 0;
+  fMaxLapNum := 0;
+  if not Assigned(fConnection) then
+    raise Exception.Create('Connection not assigned.');
+  qryTeam.Connection := fConnection;
+  qryTeamSplit.Connection := fConnection;
+end;
+
+procedure TTEAMSplitTime.FormKeyDown(Sender: TObject; var Key: Word; Shift:
     TShiftState);
 begin
   if Key = VK_ESCAPE then
@@ -129,9 +115,9 @@ begin
   end;
 end;
 
-procedure TSplitTime.FormShow(Sender: TObject);
+procedure TTEAMSplitTime.FormShow(Sender: TObject);
 begin
-  if TeamID = 0 then Close;
+  if fTeamID = 0 then Close;
 
   qryTeam.Close;
   qryTeam.ParamByName('TEAMID').AsInteger := fTeamID;
@@ -144,7 +130,7 @@ begin
 
   // Team not found
   if not qryTeam.Active or qryTeam.IsEmpty then Close;
-
+  // Renumber Laps
   if not qryTeamSplit.IsEmpty then
   begin
     dsTeamSplit.DataSet.DisableControls;
@@ -152,14 +138,14 @@ begin
     dsTeamSplit.DataSet.Refresh;
     dsTeamSplit.DataSet.EnableControls;
   end;
-
-  fDefLapNum := qryteamSplit.RecordCount;
+  // MAX = RecordCount (after renumber)
+  fMaxLapNum := qryteamSplit.RecordCount;
 
   Caption := qryTeam.FieldByName('TeamNameStr').AsString;
 
 end;
 
-procedure TSplitTime.qryTeamRaceTimeSetText(Sender: TField; const Text: string);
+procedure TTEAMSplitTime.qryTeamRaceTimeSetText(Sender: TField; const Text: string);
 var
   dt: TDateTime;
   LFormatSettings: TFormatSettings;
@@ -173,91 +159,33 @@ begin
   LFormatSettings.LongTimeFormat := 'nn:ss.zzz';
   LFormatSettings.ShortTimeFormat := 'nn:ss.zzz';
 
-
   if Text.IsNullOrEmpty(Text) then Sender.Clear
   else
   begin
-    // EditMask does say fill with zeros. Apparently not working.
+    // EditMask fills blanks with zeros. Text however isn't.
     s := Text;
     for i := 1 to Length(s) do
     begin
       if (s[i] = ' ') then s[i] := '0';
     end;
-
+    // conversion to TTime
     try
       dt := StrToTime(s, LFormatSettings);
       Sender.AsDateTime := dt;
     except
       on E: EConvertError do
       begin
-        ShowMessage('Invalid time format: ' + E.Message);
+        ShowMessage('Invalid race-time format: ' + E.Message);
       end;
     end;
   end;
 end;
 
-procedure TSplitTime.qryTeamSplitNewRecord(DataSet: TDataSet);
+procedure TTEAMSplitTime.qryTeamSplitNewRecord(DataSet: TDataSet);
 begin
-  fDefLapNum := fDefLapNum + 1;
+  fMaxLapNum := fMaxLapNum + 1;
   DataSet.FieldByName('TeamID').AsInteger := fTeamID;
-  Dataset.FieldByName('LapNum').AsInteger := fDefLapNum;
-end;
-
-procedure TSplitTime.TimeFieldGetText(Sender: TField; var Text: string;
-    DisplayText: Boolean);
-var
-  Hour, Min, Sec, MSec: word;
-begin
-  // CALLED BY TimeToBeat AND PersonalBest (Read Only fields)
-  // this FIXES display format issues.
-  DecodeTime(Sender.AsDateTime, Hour, Min, Sec, MSec);
-  // DisplayText is true if the field's value is to be used for display only;
-  // false if the string is to be used for editing the field's value.
-  // "%" [index ":"] ["-"] [width] ["." prec] type
-  if DisplayText then
-  begin
-    if (Min > 0) then Text := Format('%0:2u:%1:2.2u.%2:3.3u', [Min, Sec, MSec])
-    else if ((Min = 0) and (Sec > 0)) then
-        Text := Format('%1:2u.%2:3.3u', [Min, Sec, MSec])
-
-    else if ((Min = 0) and (Sec = 0)) then Text := '';
-  end
-  else Text := Format('%0:2.2u:%1:2.2u.%2:3.3u', [Min, Sec, MSec]);
-end;
-
-procedure TSplitTime.TimeFieldSetText(Sender: TField; const Text: string);
-var
-  Min, Sec, MSec: word;
-  s: string;
-  dt: TDateTime;
-  i: integer;
-  failed: Boolean;
-begin
-  s := Text;
-  failed := false;
-
-  // Take the user input that was entered into the time mask and replace
-  // spaces with '0'. Resulting in a valid TTime string.
-  // UnicodeString is '1-based'
-  for i := 1 to Length(s) do
-  begin
-    if (s[i] = ' ') then s[i] := '0';
-  end;
-
-  // SubString is '0-based'
-  Min := StrToIntDef(s.SubString(0, 2), 0);
-  Sec := StrToIntDef(s.SubString(3, 2), 0);
-  MSec := StrToIntDef(s.SubString(6, 3), 0);
-  try
-    begin
-      dt := EncodeTime(0, Min, Sec, MSec);
-      Sender.AsDateTime := dt;
-    end;
-  except
-    failed := true;
-  end;
-
-  if failed then Sender.Clear; // Sets the value of the field to NULL
+  Dataset.FieldByName('LapNum').AsInteger := fMaxLapNum;
 end;
 
 {
@@ -272,7 +200,7 @@ begin
 end;
 }
 
-procedure TSplitTime.RenumberLaps(aTeamID: integer);
+procedure TTEAMSplitTime.RenumberLaps(aTeamID: integer);
 var
   qry: TFDQuery;
   i, aTeamSplitID: integer;
@@ -310,13 +238,17 @@ begin
   sl.Free;
 end;
 
-procedure TSplitTime.sbtnDeleteClick(Sender: TObject);
+procedure TTEAMSplitTime.sbtnDeleteClick(Sender: TObject);
 var
   aTeamSlitID: integer;
   SQL: string;
 begin
-//  if (dsTeamSplit.DataSet.State = dsEdit) then
-    dsTeamSplit.DataSet.delete;
+  dsTeamSplit.DataSet.delete;
+  dsTeamSplit.DataSet.DisableControls;
+  RenumberLaps(fTeamID);
+  dsTeamSplit.DataSet.Refresh;
+  dsTeamSplit.DataSet.EnableControls;
+  fMaxLapNum := dsTeamSplit.DataSet.RecordCount;
 
   {
   aTeamSlitID := dsTeamSplit.DataSet.FieldByName('TeamSplitID').AsInteger;
@@ -329,14 +261,14 @@ begin
   }
 end;
 
-procedure TSplitTime.sbtnMoveDownClick(Sender: TObject);
+procedure TTEAMSplitTime.sbtnMoveDownClick(Sender: TObject);
 var
   bm: TBookmark;
   enA, enB: integer;
   ds: TDataSet;
   fld: TField;
 begin
-  ds := DBGrid1.DataSource.DataSet;
+  ds := DBGridSplit.DataSource.DataSet;
   if not Assigned(SCM) then exit;
   if not ds.Active then exit;
   if ds.IsEmpty then exit;
@@ -369,29 +301,20 @@ begin
   ds.EnableControls();
 end;
 
-procedure TSplitTime.sbtnNewClick(Sender: TObject);
+procedure TTEAMSplitTime.sbtnNewClick(Sender: TObject);
 var
-fld:TField;
+  fld: TField;
 begin
-
-    fld := dsTeamSplit.DataSet.FindField('LapNum');
-    if Assigned(fld) then fld.ReadOnly := false;
-    dsTeamSplit.DataSet.insert;
-    dsTeamSplit.DataSet.post;
-    if Assigned(fld) then fld.ReadOnly := true;
-
-  if not qryTeamSplit.IsEmpty then
-  begin
-    dsTeamSplit.DataSet.DisableControls;
-    RenumberLaps(fTeamID);
-    dsTeamSplit.DataSet.Refresh;
-
-    dsTeamSplit.DataSet.EnableControls;
-  end;
+  // LapNum ... ReadOnly
+  fld := dsTeamSplit.DataSet.FindField('LapNum');
+  if Assigned(fld) then fld.ReadOnly := false;
+  dsTeamSplit.DataSet.insert;
+  dsTeamSplit.DataSet.Post;
+  if Assigned(fld) then fld.ReadOnly := true;
   dsTeamSplit.DataSet.Last;
 end;
 
-procedure TSplitTime.spbtnMoveUpClick(Sender: TObject);
+procedure TTEAMSplitTime.spbtnMoveUpClick(Sender: TObject);
 // move event up
 var
   bm: TBookmark;
@@ -399,7 +322,7 @@ var
   ds: TDataSet;
   fld: TField;
 begin
-  ds := dbGrid1.DataSource.DataSet;
+  ds := DBGridSplit.DataSource.DataSet;
   if not Assigned(SCM) then exit;
   if not ds.Active then exit;
   if ds.IsEmpty then exit;
@@ -436,6 +359,59 @@ begin
   ds.EnableControls();
 end;
 
+procedure TTEAMSplitTime.TimeFieldGetText(Sender: TField; var Text: string;
+    DisplayText: Boolean);
+var
+  Hour, Min, Sec, MSec: word;
+begin
+  // CALLED BY TimeToBeat AND PersonalBest (Read Only fields)
+  // this FIXES display format issues.
+  DecodeTime(Sender.AsDateTime, Hour, Min, Sec, MSec);
+  // DisplayText is true if the field's value is to be used for display only;
+  // false if the string is to be used for editing the field's value.
+  // "%" [index ":"] ["-"] [width] ["." prec] type
+  if DisplayText then
+  begin
+    if (Min > 0) then Text := Format('%0:2u:%1:2.2u.%2:3.3u', [Min, Sec, MSec])
+    else if ((Min = 0) and (Sec > 0)) then
+        Text := Format('%1:2u.%2:3.3u', [Min, Sec, MSec])
+    else if ((Min = 0) and (Sec = 0)) then Text := '';
+  end
+  else Text := Format('%0:2.2u:%1:2.2u.%2:3.3u', [Min, Sec, MSec]);
+end;
+
+procedure TTEAMSplitTime.TimeFieldSetText(Sender: TField; const Text: string);
+var
+  Min, Sec, MSec: word;
+  s: string;
+  dt: TDateTime;
+  i: integer;
+  failed: Boolean;
+begin
+  s := Text;
+  failed := false;
+  // Take the user input that was entered into the time mask and replace
+  // spaces with '0'. Resulting in a valid TTime string.
+  // UnicodeString is '1-based'
+  for i := 1 to Length(s) do
+  begin
+    if (s[i] = ' ') then s[i] := '0';
+  end;
+  // SubString is '0-based'
+  Min := StrToIntDef(s.SubString(0, 2), 0);
+  Sec := StrToIntDef(s.SubString(3, 2), 0);
+  MSec := StrToIntDef(s.SubString(6, 3), 0);
+  try
+    begin
+      dt := EncodeTime(0, Min, Sec, MSec);
+      Sender.AsDateTime := dt;
+    end;
+  except
+    failed := true;
+  end;
+
+  if failed then Sender.Clear; // Sets the value of the field to NULL
+end;
 
 
 
