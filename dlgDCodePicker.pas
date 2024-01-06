@@ -81,12 +81,21 @@ procedure TDCodePicker.btnClearCodeExitClick(Sender: TObject);
 var
   SQL: string;
 begin
-  // remove disqualification code and exit
-  SQL := 'UPDATE SwimClubMeet.dbo.Entrant SET' +
-    ' [DisqualifyCodeID] = NULL, [IsScratched] = 0,' +
-    ' [IsDisqualified] = 0 WHERE [Entrant].EntrantID = :ID1;';
-
-  fConnection.ExecSQL(SQL, [fEntrantID]);
+  if fDoINDV then
+  begin
+    // remove disqualification code and exit
+    SQL := 'UPDATE SwimClubMeet.dbo.Entrant SET' +
+      ' [DisqualifyCodeID] = NULL, [IsScratched] = 0,' +
+      ' [IsDisqualified] = 0 WHERE [Entrant].EntrantID = :ID1;';
+    fConnection.ExecSQL(SQL, [fEntrantID]);
+  end
+  else
+  begin
+    SQL := 'UPDATE SwimClubMeet.dbo.Team SET' +
+      ' [DisqualifyCodeID] = NULL, [IsScratched] = 0,' +
+      ' [IsDisqualified] = 0 WHERE [Team].TeamID = :ID1;';
+    fConnection.ExecSQL(SQL, [fTeamID]);
+  end;
   ModalResult := mrOk;
 end;
 

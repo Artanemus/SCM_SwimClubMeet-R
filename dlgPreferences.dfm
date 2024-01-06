@@ -57,7 +57,7 @@ object Preferences: TPreferences
       646
       48)
     object btnClose: TButton
-      Left = 468
+      Left = 464
       Top = 6
       Width = 101
       Height = 33
@@ -65,7 +65,7 @@ object Preferences: TPreferences
       Caption = 'Close'
       TabOrder = 0
       OnClick = btnCloseClick
-      ExplicitLeft = 464
+      ExplicitLeft = 460
     end
   end
   object PageControl1: TPageControl
@@ -368,7 +368,7 @@ object Preferences: TPreferences
         ParentFont = False
       end
       object btn1: TSpeedButton
-        Left = 137
+        Left = 133
         Top = 15
         Width = 33
         Height = 33
@@ -585,7 +585,6 @@ object Preferences: TPreferences
         Width = 337
         Height = 22
         Caption = 'Enable split-time entry in individual events.'
-        Enabled = False
         TabOrder = 4
       end
       object prefEnableSplitTimesForTEAM: TCheckBox

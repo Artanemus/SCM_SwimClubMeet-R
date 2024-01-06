@@ -1,4 +1,4 @@
-unit dlgTEAMSplitTime;
+unit dlgSplitTimeINDV;
 
 interface
 
@@ -10,41 +10,42 @@ uses
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.DBCtrls,
   Vcl.Mask, Vcl.ExtCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.BaseImageCollection,
   Vcl.ImageCollection, System.ImageList, Vcl.ImgList, Vcl.VirtualImageList,
-  Vcl.Buttons;
+  Vcl.Buttons, Vcl.WinXCtrls;
 
 type
-  TTEAMSplitTime = class(TForm)
+  TSplitTimeINDV = class(TForm)
     btnPost: TButton;
     DBGridRaceTime: TDBGrid;
     DBGridSplit: TDBGrid;
-    dsTeam: TDataSource;
-    dsTeamSplit: TDataSource;
+    dsEntrant: TDataSource;
+    dsSplit: TDataSource;
     ImageCollection1: TImageCollection;
     Label1: TLabel;
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
-    qryTeam: TFDQuery;
-    qryTeamRaceTime: TTimeField;
-    qryTeamSplit: TFDQuery;
-    qryTeamSplitLapNum: TIntegerField;
-    qryTeamSplitSplitTime: TTimeField;
-    qryTeamSplitTeamID: TIntegerField;
-    qryTeamSplitTeamSplitID: TFDAutoIncField;
-    qryTeamTeamID: TFDAutoIncField;
-    qryTeamTeamNameStr: TWideStringField;
+    qryEntrant: TFDQuery;
+    qryEntrantRaceTime: TTimeField;
+    qrySplit: TFDQuery;
+    qrySplitLapNum: TIntegerField;
+    qrySplitSplitTime: TTimeField;
     sbtnDelete: TSpeedButton;
     sbtnMoveDown: TSpeedButton;
     sbtnNew: TSpeedButton;
     spbtnMoveUp: TSpeedButton;
     VirtualImageList1: TVirtualImageList;
+    qryEntrantEntrantID: TFDAutoIncField;
+    qryEntrantFullName: TWideStringField;
+    qrySplitSplitID: TFDAutoIncField;
+    qrySplitEntrantID: TIntegerField;
+    RelativePanel1: TRelativePanel;
     procedure btnPostClick(Sender: TObject);
     procedure DBGridRaceTimeKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
-    procedure qryTeamRaceTimeSetText(Sender: TField; const Text: string);
-    procedure qryTeamSplitNewRecord(DataSet: TDataSet);
+    procedure qryEntrantRaceTimeSetText(Sender: TField; const Text: string);
+    procedure qrySplitNewRecord(DataSet: TDataSet);
     procedure sbtnDeleteClick(Sender: TObject);
     procedure sbtnMoveDownClick(Sender: TObject);
     procedure sbtnNewClick(Sender: TObject);
@@ -56,96 +57,96 @@ type
     fConnection: TFDConnection;
     fMaxLapNum: integer;
     { Private declarations }
-    fTeamID: integer;
-    procedure RenumberLaps(aTeamID: integer);
+    fEntrantID: integer;
+    procedure RenumberLaps(aEntrantID: integer);
   public
     { Public declarations }
     constructor CreateWithConnection(AOwner: TComponent;
       aConnection: TFDConnection);
-    property TeamID: integer read FTeamID write FTeamID;
+    property EntrantID: integer read fEntrantID write fEntrantID;
   end;
 
 var
-  TEAMSplitTime: TTEAMSplitTime;
+  SplitTimeINDV: TSplitTimeINDV;
 
 implementation
 
 {$R *.dfm}
 
-constructor TTEAMSplitTime.CreateWithConnection(AOwner: TComponent;
+constructor TSplitTimeINDV.CreateWithConnection(AOwner: TComponent;
   aConnection: TFDConnection);
 begin
    inherited Create(AOwner);
   fConnection := aConnection;
 end;
 
-procedure TTEAMSplitTime.btnPostClick(Sender: TObject);
+procedure TSplitTimeINDV.btnPostClick(Sender: TObject);
 begin
-  dsTeam.DataSet.CheckBrowseMode;
-  dsTeamSplit.DataSet.CheckBrowseMode;
+  dsEntrant.DataSet.CheckBrowseMode;
+  dsSplit.DataSet.CheckBrowseMode;
   ModalResult := mrOk;
 end;
 
-procedure TTEAMSplitTime.DBGridRaceTimeKeyDown(Sender: TObject; var Key: Word; Shift:
+procedure TSplitTimeINDV.DBGridRaceTimeKeyDown(Sender: TObject; var Key: Word; Shift:
     TShiftState);
 begin
   if (Key = VK_UP) or (Key = VK_DOWN) then Key := 0;
 end;
 
-procedure TTEAMSplitTime.FormCreate(Sender: TObject);
+procedure TSplitTimeINDV.FormCreate(Sender: TObject);
 begin
-  fTeamID := 0;
+  fEntrantID := 0;
   fMaxLapNum := 0;
   if not Assigned(fConnection) then
     raise Exception.Create('Connection not assigned.');
-  qryTeam.Connection := fConnection;
-  qryTeamSplit.Connection := fConnection;
+  qryEntrant.Connection := fConnection;
+  qrySplit.Connection := fConnection;
 end;
 
-procedure TTEAMSplitTime.FormKeyDown(Sender: TObject; var Key: Word; Shift:
+procedure TSplitTimeINDV.FormKeyDown(Sender: TObject; var Key: Word; Shift:
     TShiftState);
 begin
   if Key = VK_ESCAPE then
   begin
-    dsTeam.DataSet.Cancel;
-    dsTeamSplit.DataSet.Cancel;
+    dsEntrant.DataSet.Cancel;
+    dsSplit.DataSet.Cancel;
     Key := 0;
-    fTeamID := 0;
+    fEntrantID := 0;
     ModalResult := mrCancel;
   end;
 end;
 
-procedure TTEAMSplitTime.FormShow(Sender: TObject);
+procedure TSplitTimeINDV.FormShow(Sender: TObject);
 begin
-  if fTeamID = 0 then Close;
+  if fEntrantID = 0 then Close;
 
-  qryTeam.Close;
-  qryTeam.ParamByName('TEAMID').AsInteger := fTeamID;
-  qryTeam.Prepare;
-  qryTeam.Open;
-  qryTeamSplit.Close;
-  qryTeamSplit.ParamByName('TEAMID').AsInteger := fTeamID;
-  qryTeamSplit.Prepare;
-  qryTeamSplit.Open;
+  qryEntrant.Close;
+  qryEntrant.ParamByName('ENTRANTID').AsInteger := fEntrantID;
+  qryEntrant.Prepare;
+  qryEntrant.Open;
+  qrySplit.Close;
+  qrySplit.ParamByName('ENTRANTID').AsInteger := fEntrantID;
+  qrySplit.Prepare;
+  qrySplit.Open;
 
   // Team not found
-  if not qryTeam.Active or qryTeam.IsEmpty then Close;
+  if not qryEntrant.Active or qryEntrant.IsEmpty then Close;
   // Renumber Laps
-  if not qryTeamSplit.IsEmpty then
+  if not qrySplit.IsEmpty then
   begin
-    dsTeamSplit.DataSet.DisableControls;
-    RenumberLaps(fTeamID);
-    dsTeamSplit.DataSet.Refresh;
-    dsTeamSplit.DataSet.EnableControls;
+    dsSplit.DataSet.DisableControls;
+    RenumberLaps(fEntrantID);
+    dsSplit.DataSet.Refresh;
+    dsSplit.DataSet.EnableControls;
   end;
   // MAX = RecordCount (after renumber)
-  fMaxLapNum := qryteamSplit.RecordCount;
+  fMaxLapNum := qrySplit.RecordCount;
 
-  Caption := qryTeam.FieldByName('TeamNameStr').AsString;
+  Caption := qryEntrant.FieldByName('FullName').AsString;
 
 end;
 
-procedure TTEAMSplitTime.qryTeamRaceTimeSetText(Sender: TField; const Text: string);
+procedure TSplitTimeINDV.qryEntrantRaceTimeSetText(Sender: TField; const Text: string);
 var
   dt: TDateTime;
   LFormatSettings: TFormatSettings;
@@ -181,26 +182,19 @@ begin
   end;
 end;
 
-procedure TTEAMSplitTime.qryTeamSplitNewRecord(DataSet: TDataSet);
+procedure TSplitTimeINDV.qrySplitNewRecord(DataSet: TDataSet);
+var
+fld: Tfield;
 begin
   fMaxLapNum := fMaxLapNum + 1;
-  DataSet.FieldByName('TeamID').AsInteger := fTeamID;
-  Dataset.FieldByName('LapNum').AsInteger := fMaxLapNum;
+  DataSet.FieldByName('EntrantID').AsInteger := fEntrantID;
+  fld := DataSet.FindField('LapNum');
+  if Assigned(fld) then fld.ReadOnly := false;
+    Dataset.FieldByName('LapNum').AsInteger := fMaxLapNum;
+  if Assigned(fld) then fld.ReadOnly := true;
 end;
 
-{
-function TSplitTime.LocateTeam(ATeamID: Integer): Boolean;
-var
-  SearchOptions: TLocateOptions;
-begin
-  result := false;
-  if not qryTeam.Active then exit;
-  SearchOptions := [];
-  result := qryTeam.Locate('TeamID', ATeamID, SearchOptions);
-end;
-}
-
-procedure TTEAMSplitTime.RenumberLaps(aTeamID: integer);
+procedure TSplitTimeINDV.RenumberLaps(aEntrantID: integer);
 var
   qry: TFDQuery;
   i, aTeamSplitID: integer;
@@ -210,15 +204,15 @@ begin
   sl := TStringList.Create;
   // Legal, qryEvent has master..child relationship with dsSession.
   sl.Add('USE [SwimClubMeet]; ');
-  sl.Add('SELECT [TeamSplitID], [LapNum] FROM [dbo].[TeamSplit] ');
-  sl.Add('WHERE [TeamID] = ' + IntToStr(aTeamID));
+  sl.Add('SELECT [SplitID], [LapNum] FROM [dbo].[Split] ');
+  sl.Add('WHERE [EntrantID] = ' + IntToStr(aEntrantID));
   sl.Add(' ORDER BY [LapNum];');
   // Find valid EventNum
   qry := TFDQuery.Create(self);
   qry.Connection := fConnection;
   qry.SQL := sl;
-  qry.UpdateOptions.KeyFields := 'TeamSplitID';
-  qry.UpdateOptions.UpdateTableName := 'SwimClubMeet..TeamSplit';
+  qry.UpdateOptions.KeyFields := 'SplitID';
+  qry.UpdateOptions.UpdateTableName := 'SwimClubMeet..Split';
   qry.Open;
   if (qry.Active) then
   begin
@@ -238,30 +232,20 @@ begin
   sl.Free;
 end;
 
-procedure TTEAMSplitTime.sbtnDeleteClick(Sender: TObject);
+procedure TSplitTimeINDV.sbtnDeleteClick(Sender: TObject);
 var
   aTeamSlitID: integer;
   SQL: string;
 begin
-  dsTeamSplit.DataSet.delete;
-  dsTeamSplit.DataSet.DisableControls;
-  RenumberLaps(fTeamID);
-  dsTeamSplit.DataSet.Refresh;
-  dsTeamSplit.DataSet.EnableControls;
-  fMaxLapNum := dsTeamSplit.DataSet.RecordCount;
-
-  {
-  aTeamSlitID := dsTeamSplit.DataSet.FieldByName('TeamSplitID').AsInteger;
-//  dsTeamSplit.DataSet.CheckBrowseMode;
-  dsTeamSplit.DataSet.DisableControls;
-  SQL := 'DELETE FROM SwimClubMeet.dbo.TeamSplit WHERE TeamSplit.TeamSplitID = :ID';
-  fConnection.ExecSQL(SQL, [aTeamSlitID]);
-  dsTeamSplit.DataSet.EnableControls;
-  dsTeamSplit.DataSet.Refresh;
-  }
+  dsSplit.DataSet.delete;
+  dsSplit.DataSet.DisableControls;
+  RenumberLaps(fEntrantID);
+  dsSplit.DataSet.Refresh;
+  dsSplit.DataSet.EnableControls;
+  fMaxLapNum := dsSplit.DataSet.RecordCount;
 end;
 
-procedure TTEAMSplitTime.sbtnMoveDownClick(Sender: TObject);
+procedure TSplitTimeINDV.sbtnMoveDownClick(Sender: TObject);
 var
   bm: TBookmark;
   enA, enB: integer;
@@ -301,20 +285,20 @@ begin
   ds.EnableControls();
 end;
 
-procedure TTEAMSplitTime.sbtnNewClick(Sender: TObject);
+procedure TSplitTimeINDV.sbtnNewClick(Sender: TObject);
 var
   fld: TField;
 begin
   // LapNum ... ReadOnly
-  fld := dsTeamSplit.DataSet.FindField('LapNum');
+  fld := dsSplit.DataSet.FindField('LapNum');
   if Assigned(fld) then fld.ReadOnly := false;
-  dsTeamSplit.DataSet.insert;
-  dsTeamSplit.DataSet.Post;
+  dsSplit.DataSet.insert;
+  dsSplit.DataSet.Post;
   if Assigned(fld) then fld.ReadOnly := true;
-  dsTeamSplit.DataSet.Last;
+  dsSplit.DataSet.Last;
 end;
 
-procedure TTEAMSplitTime.spbtnMoveUpClick(Sender: TObject);
+procedure TSplitTimeINDV.spbtnMoveUpClick(Sender: TObject);
 // move event up
 var
   bm: TBookmark;
@@ -359,7 +343,7 @@ begin
   ds.EnableControls();
 end;
 
-procedure TTEAMSplitTime.TimeFieldGetText(Sender: TField; var Text: string;
+procedure TSplitTimeINDV.TimeFieldGetText(Sender: TField; var Text: string;
     DisplayText: Boolean);
 var
   Hour, Min, Sec, MSec: word;
@@ -380,7 +364,7 @@ begin
   else Text := Format('%0:2.2u:%1:2.2u.%2:3.3u', [Min, Sec, MSec]);
 end;
 
-procedure TTEAMSplitTime.TimeFieldSetText(Sender: TField; const Text: string);
+procedure TSplitTimeINDV.TimeFieldSetText(Sender: TField; const Text: string);
 var
   Min, Sec, MSec: word;
   s: string;

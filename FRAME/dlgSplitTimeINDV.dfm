@@ -1,4 +1,4 @@
-object INDVSplitTime: TINDVSplitTime
+object SplitTimeINDV: TSplitTimeINDV
   Left = 0
   Top = 0
   BorderStyle = bsDialog
@@ -83,83 +83,13 @@ object INDVSplitTime: TINDVSplitTime
     TabOrder = 1
     ExplicitWidth = 317
     ExplicitHeight = 298
-    DesignSize = (
-      321
-      299)
-    object spbtnMoveUp: TSpeedButton
-      Left = 243
-      Top = 6
-      Width = 48
-      Height = 48
-      Anchors = []
-      ImageIndex = 1
-      ImageName = 'Up'
-      Images = VirtualImageList1
-      Flat = True
-      Layout = blGlyphTop
-      Margin = 0
-      NumGlyphs = 2
-      OnClick = spbtnMoveUpClick
-      ExplicitLeft = 259
-    end
-    object sbtnMoveDown: TSpeedButton
-      Left = 243
-      Top = 59
-      Width = 48
-      Height = 48
-      Anchors = []
-      ImageIndex = 0
-      ImageName = 'Down'
-      Images = VirtualImageList1
-      Flat = True
-      Layout = blGlyphTop
-      Margin = 0
-      NumGlyphs = 2
-      OnClick = sbtnMoveDownClick
-      ExplicitLeft = 259
-      ExplicitTop = 60
-    end
-    object sbtnNew: TSpeedButton
-      Left = 243
-      Top = 113
-      Width = 48
-      Height = 48
-      Anchors = []
-      ImageIndex = 2
-      ImageName = 'New'
-      Images = VirtualImageList1
-      Flat = True
-      Layout = blGlyphTop
-      Margin = 0
-      NumGlyphs = 2
-      OnClick = sbtnNewClick
-      ExplicitLeft = 259
-      ExplicitTop = 114
-    end
-    object sbtnDelete: TSpeedButton
-      Left = 243
-      Top = 165
-      Width = 48
-      Height = 48
-      Anchors = []
-      ImageIndex = 3
-      ImageName = 'DeleteForever'
-      Images = VirtualImageList1
-      Flat = True
-      Layout = blGlyphTop
-      Margin = 0
-      NumGlyphs = 2
-      OnClick = sbtnDeleteClick
-      ExplicitLeft = 259
-      ExplicitTop = 168
-    end
     object DBGridSplit: TDBGrid
       AlignWithMargins = True
       Left = 3
       Top = 3
-      Width = 241
+      Width = 250
       Height = 293
-      Align = alLeft
+      Align = alClient
       DataSource = dsSplit
       Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       TabOrder = 0
@@ -194,6 +124,140 @@ object INDVSplitTime: TINDVSplitTime
           Visible = False
         end>
     end
+    object RelativePanel1: TRelativePanel
+      Left = 256
+      Top = 0
+      Width = 65
+      Height = 299
+      ControlCollection = <
+        item
+          Control = sbtnDelete
+          AlignBottomWithPanel = False
+          AlignHorizontalCenterWithPanel = True
+          AlignLeftWithPanel = False
+          AlignRightWithPanel = False
+          AlignTopWithPanel = False
+          AlignVerticalCenterWithPanel = False
+          Below = sbtnNew
+        end
+        item
+          Control = sbtnMoveDown
+          AlignBottomWithPanel = False
+          AlignHorizontalCenterWithPanel = True
+          AlignLeftWithPanel = False
+          AlignRightWithPanel = False
+          AlignTopWithPanel = False
+          AlignVerticalCenterWithPanel = False
+          Below = spbtnMoveUp
+        end
+        item
+          Control = sbtnNew
+          AlignBottomWithPanel = False
+          AlignHorizontalCenterWithPanel = True
+          AlignLeftWithPanel = False
+          AlignRightWithPanel = False
+          AlignTopWithPanel = False
+          AlignVerticalCenterWithPanel = False
+          Below = sbtnMoveDown
+        end
+        item
+          Control = spbtnMoveUp
+          AlignBottomWithPanel = False
+          AlignHorizontalCenterWithPanel = True
+          AlignLeftWithPanel = False
+          AlignRightWithPanel = False
+          AlignTopWithPanel = True
+          AlignVerticalCenterWithPanel = False
+        end>
+      Align = alRight
+      BevelEdges = []
+      BevelKind = bkFlat
+      BevelOuter = bvNone
+      TabOrder = 1
+      DesignSize = (
+        65
+        299)
+      object sbtnDelete: TSpeedButton
+        AlignWithMargins = True
+        Left = 8
+        Top = 172
+        Width = 48
+        Height = 48
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Anchors = []
+        ImageIndex = 3
+        ImageName = 'DeleteForever'
+        Images = VirtualImageList1
+        Flat = True
+        Layout = blGlyphTop
+        Margin = 0
+        NumGlyphs = 2
+        OnClick = sbtnDeleteClick
+      end
+      object sbtnMoveDown: TSpeedButton
+        AlignWithMargins = True
+        Left = 8
+        Top = 60
+        Width = 48
+        Height = 48
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Anchors = []
+        ImageIndex = 0
+        ImageName = 'Down'
+        Images = VirtualImageList1
+        Flat = True
+        Layout = blGlyphTop
+        Margin = 0
+        NumGlyphs = 2
+        OnClick = sbtnMoveDownClick
+      end
+      object sbtnNew: TSpeedButton
+        AlignWithMargins = True
+        Left = 8
+        Top = 116
+        Width = 48
+        Height = 48
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Anchors = []
+        ImageIndex = 2
+        ImageName = 'New'
+        Images = VirtualImageList1
+        Flat = True
+        Layout = blGlyphTop
+        Margin = 0
+        NumGlyphs = 2
+        OnClick = sbtnNewClick
+      end
+      object spbtnMoveUp: TSpeedButton
+        AlignWithMargins = True
+        Left = 8
+        Top = 4
+        Width = 48
+        Height = 48
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Anchors = []
+        ImageIndex = 1
+        ImageName = 'Up'
+        Images = VirtualImageList1
+        Flat = True
+        Layout = blGlyphTop
+        Margin = 0
+        NumGlyphs = 2
+        OnClick = spbtnMoveUpClick
+      end
+    end
   end
   object Panel3: TPanel
     Left = 0
@@ -219,6 +283,7 @@ object INDVSplitTime: TINDVSplitTime
   end
   object qrySplit: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     OnNewRecord = qrySplitNewRecord
     Indexes = <
       item
@@ -231,8 +296,8 @@ object INDVSplitTime: TINDVSplitTime
     Connection = SCM.scmConnection
     FormatOptions.AssignedValues = [fvFmtDisplayTime]
     FormatOptions.FmtDisplayTime = 'nn:ss.zzz'
-    UpdateOptions.UpdateTableName = 'SwimClubMeet.dbo.TeamSplit'
-    UpdateOptions.KeyFields = 'TeamSplitID'
+    UpdateOptions.UpdateTableName = 'SwimClubMeet.dbo.Split'
+    UpdateOptions.KeyFields = 'SplitID'
     SQL.Strings = (
       'USE SwimClubMeet'
       ';'
@@ -258,7 +323,7 @@ object INDVSplitTime: TINDVSplitTime
         Name = 'ENTRANTID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = Null
+        Value = 612
       end>
     object qrySplitLapNum: TIntegerField
       Alignment = taCenter
@@ -281,6 +346,7 @@ object INDVSplitTime: TINDVSplitTime
     object qrySplitSplitID: TFDAutoIncField
       FieldName = 'SplitID'
       Origin = 'SplitID'
+      ProviderFlags = [pfInWhere, pfInKey]
       ReadOnly = True
     end
     object qrySplitEntrantID: TIntegerField
@@ -295,15 +361,16 @@ object INDVSplitTime: TINDVSplitTime
   end
   object qryEntrant: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    IndexFieldNames = 'TeamID'
+    Active = True
+    IndexFieldNames = 'EntrantID'
     Connection = SCM.scmConnection
     FormatOptions.AssignedValues = [fvFmtDisplayTime]
     FormatOptions.FmtDisplayTime = 'nn:ss.zzz'
     UpdateOptions.AssignedValues = [uvEDelete, uvEInsert]
     UpdateOptions.EnableDelete = False
     UpdateOptions.EnableInsert = False
-    UpdateOptions.UpdateTableName = 'SwimClubMeet.dbo.Team'
-    UpdateOptions.KeyFields = 'TeamID'
+    UpdateOptions.UpdateTableName = 'SwimClubMeet.dbo.Entrant'
+    UpdateOptions.KeyFields = 'EntrantID'
     SQL.Strings = (
       'USE SwimClubMeet'
       ';'
@@ -325,11 +392,12 @@ object INDVSplitTime: TINDVSplitTime
         Name = 'ENTRANTID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = Null
+        Value = 612
       end>
     object qryEntrantEntrantID: TFDAutoIncField
       FieldName = 'EntrantID'
       Origin = 'EntrantID'
+      ProviderFlags = [pfInWhere, pfInKey]
       ReadOnly = True
     end
     object qryEntrantRaceTime: TTimeField

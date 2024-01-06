@@ -35,7 +35,7 @@ type
     procedure GridEditButtonClick(Sender: TObject);
     procedure GridEnter(Sender: TObject);
     procedure GridEntrantDrawColumnCell(Sender: TObject; const Rect: TRect;
-        DataCol: Integer; Column: TColumn; State: TGridDrawState);
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure GridEntrantEditButtonClick(Sender: TObject);
     procedure GridEntrantEnter(Sender: TObject);
     procedure spbtnAddSlotClick(Sender: TObject);
@@ -47,9 +47,9 @@ type
     fEditBoxFocused: TColor;
     fEditBoxNormal: TColor;
     fRacedFontColor: TColor;
-    fApplicationBgColor: Tcolor;
-    fEnableSplitTimesForTEAM: boolean;
-    fTeamActiveGrid: integer;
+    fApplicationBgColor: TColor;
+    fEnableSplitTimes: boolean;
+    fTeamActiveGrid: Integer;
 
     // ASSERT CONNECTION TO MSSQL DATABASE
     function AssertConnection(): boolean;
@@ -60,10 +60,7 @@ type
     procedure AfterConstruction; override;
     function ClearLane(): Integer;
     function ClearSlot(): Integer;
-//    procedure Enable_GridEllipse();
-//    procedure Enable_GridEntrantEllipse();
     procedure EventScroll();
-    // TActionManager:  Sender: TAction
     procedure GridMoveDown(Sender: TObject);
     procedure GridMoveUp(Sender: TObject);
     procedure SlotMoveDown(Sender: TObject);
@@ -76,9 +73,8 @@ type
     procedure ToggleDCode(DoEnable: boolean);
 
     property TeamActiveGrid: Integer read fTeamActiveGrid;
-
-    property EnableSplitTimesForTEAM: boolean read fEnableSplitTimesForTEAM
-      write fEnableSplitTimesForTEAM;
+    property EnableSplitTimes: boolean read fEnableSplitTimes
+      write fEnableSplitTimes;
   end;
 
 implementation
@@ -88,7 +84,7 @@ implementation
 { TframeTEAM }
 uses dlgEntrantPickerCTRL, dlgEntrantPicker, dlgDCodePicker, System.UITypes,
   dlgTeamNameMenu, dmSCMHelper, dlgTeamNamePicker, DateUtils,
-  dlgTEAMSplitTime;
+  dlgSplitTimeTEAM;
 
 procedure TframeTEAM.AfterConstruction;
 var
@@ -96,7 +92,7 @@ var
 begin
   inherited;
   fTeamActiveGrid := 1;
-  fEnableSplitTimesForTEAM := false;
+  fEnableSplitTimes := false;
   // Special color assignment - used in TDBGrid painting...
   // -------------------------------------------
   css := TStyleManager.Style[TStyleManager.ActiveStyle.Name];
@@ -117,14 +113,6 @@ begin
     fRacedFontColor := clWebPeachPuff;
   end;
 
-  {
-  Panel3 and Panel1 uses ...
-  - default style elements seClient
-  - BevelInner bvNone
-  - BevelKind bkFlat
-  - BevelOuter bvNone
-  }
-
   Panel1.BorderWidth := 2;
   Panel3.BorderWidth := 2;
 
@@ -141,15 +129,11 @@ begin
   GridEntrant.Options := GridEntrant.Options - [dgAlwaysShowEditor];
   GridEntrant.Options := GridEntrant.Options + [dgEditing];
 
-//  Enable_GridEllipse;
-//  Enable_GridEntrantEllipse;
-
 end;
 
 function TframeTEAM.AssertConnection: boolean;
 begin
   result := false;
-  // test datamodule construction
   if Assigned(SCM) then
   begin
     // IsActive if TFDConnection::scmConnection && FireDAC tables are active
@@ -167,11 +151,7 @@ begin
     aTeamID := Grid.DataSource.DataSet.FieldByName('TeamID').AsInteger;
     Grid.EditorMode := false;
     result := SCM.IndvTeam_ClearLane(aTeamID, etTeam, true);
-    if result > 0 then
-    begin
-      Grid.DataSource.DataSet.Refresh;
-      // SCM.IndvTeam_LocateLane(aTeamID, etTeam);
-    end;
+    if result > 0 then Grid.DataSource.DataSet.Refresh;
   end
 end;
 
@@ -184,57 +164,6 @@ begin
     .AsInteger;
   if aTeamEntrantID > 0 then result := SCM.TeamEntrant_Clear(aTeamEntrantID);
 end;
-
-
-{
-procedure TframeTEAM.Enable_GridEllipse();
-var
-  i: Integer;
-  col: TColumn;
-begin
-  for i := 0 to Grid.Columns.Count - 1 do
-  begin
-    col := Grid.Columns.Items[i];
-    // MOD 23.06.27
-    if (col.FieldName = 'TeamName') or (col.FieldName = 'DCode') then
-    begin
-      col.ButtonStyle := cbsEllipsis;
-      Grid.Repaint;
-    end;
-    // 24.01.01
-    if (col.FieldName = 'RaceTime') then
-    begin
-      // if enabled ...
-      if fEnableSplitTimesForTEAM then
-      col.ButtonStyle := cbsEllipsis
-      else
-      col.ButtonStyle := cbsNone;
-
-      Grid.Repaint;
-    end;
-  end;
-end;
-
-
-procedure TframeTEAM.Enable_GridEntrantEllipse;
-var
-  i: Integer;
-  col: TColumn;
-begin
-  for i := 0 to GridEntrant.Columns.Count - 1 do
-  begin
-    col := GridEntrant.Columns.Items[i];
-    // MOD 23.06.27  - 23.08.31
-    if (col.FieldName = 'FullName') then
-    begin
-      col.ButtonStyle := cbsEllipsis;
-      GridEntrant.Repaint;
-      break;
-    end;
-  end;
-end;
-
-}
 
 procedure TframeTEAM.EventScroll;
 begin
@@ -327,8 +256,8 @@ var
   clFont, clBg: TColor;
   Size: TSize;
   MyRect: TRect;
-    aHeatID: integer;
-  YMargin: integer;
+  aHeatID: Integer;
+  YMargin: Integer;
 
 begin
   aHeatID := TDBGrid(Sender).DataSource.DataSet.FieldByName('HeatID').AsInteger;
@@ -342,32 +271,28 @@ begin
   // Required to suppress unnecessary additional paints.
   if (Column.Field.FieldName = 'RaceTime') then
   begin
-    if fEnableSplitTimesForTEAM  then
+    if fEnableSplitTimes then
     begin
       if (Column.ButtonStyle <> TColumnButtonStyle.cbsEllipsis) then
-        Column.ButtonStyle := TColumnButtonStyle.cbsEllipsis
+          Column.ButtonStyle := TColumnButtonStyle.cbsEllipsis
     end
     else
     begin
       if (Column.ButtonStyle = TColumnButtonStyle.cbsEllipsis) then
-        Column.ButtonStyle := TColumnButtonStyle.cbsNone;
+          Column.ButtonStyle := TColumnButtonStyle.cbsNone;
     end;
   end;
 
-
-   // NOTE : DEFAULT DRAWING IS DISABLED ....
+  // NOTE : DEFAULT DRAWING IS DISABLED ....
   if (Column.Field.FieldName = 'IsScratched') or
     (Column.Field.FieldName = 'IsDisqualified') then
   begin
-    if gdFocused in State then
-      clFont := fEditBoxFocused
-    else
-      clFont := fEditBoxNormal;
+    if gdFocused in State then clFont := fEditBoxFocused
+    else clFont := fEditBoxNormal;
     clBg := fGridBgColor;
     TDBGrid(Sender).DrawCheckBoxes(Grid, Rect, Column, clFont, clBg);
     // draw 'Focused' frame  (for boolean datatype only)
-    if gdFocused in State then
-      Grid.Canvas.DrawFocusRect(Rect);
+    if gdFocused in State then Grid.Canvas.DrawFocusRect(Rect);
   end
   // Recolor the text if the heat is RACED.
   else if (SCM.Heat_HeatStatusID(aHeatID) = 2) then
@@ -395,120 +320,22 @@ begin
         MyRect.Left := Rect.Left + 3;
     MyRect.Bottom := Rect.Bottom;
     MyRect.Right := Rect.Right;
-    TDBGrid(Sender).Canvas.TextRect(myRect, myRect.Left, myRect.Top,
+    TDBGrid(Sender).Canvas.TextRect(MyRect, MyRect.Left, MyRect.Top,
       Column.Field.DisplayText);
-    if gdFocused in State then
-      Grid.Canvas.DrawFocusRect(Rect);
+    if gdFocused in State then Grid.Canvas.DrawFocusRect(Rect);
   end
   else
   begin
     Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
-    if gdFocused in State then
-      Grid.Canvas.DrawFocusRect(Rect);
-  end;
-
-
-   {
-  // NOTE : GRID'S DEFAULT DRAWING IS DISABLED ....
-  if (Column.Field.FieldName = 'IsScratched') or
-    (Column.Field.FieldName = 'IsDisqualified') then
-  begin
-    if gdFocused in State then clFont := fTeamEditBoxFocused
-    else clFont := fTeamEditBoxNormal;
-    clBg := fTeamBgColor;
-    TDBGrid(Sender).DrawCheckBoxes(Grid, Rect, Column, clFont, clBg);
-    // draw 'Focused' frame  (for boolean datatype only)
-    if gdFocused in State then Grid.Canvas.DrawFocusRect(Rect);
-  end
-  else if (Column.FieldName = 'DCode') then
-  begin
-    // ENABLE the button if not enabled
-    if (Column.ButtonStyle <> TColumnButtonStyle.cbsEllipsis) then
-        Column.ButtonStyle := TColumnButtonStyle.cbsEllipsis;
-    Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
-    if gdFocused in State then Grid.Canvas.DrawFocusRect(Rect);
-  end
-  else if (Column.Field.FieldName = 'TeamName') then
-  begin
-    // ENABLE the button if not enabled
-    if (Column.ButtonStyle <> TColumnButtonStyle.cbsEllipsis) then
-        Column.ButtonStyle := TColumnButtonStyle.cbsEllipsis;
-    s := Grid.DataSource.DataSet.FieldByName('TeamName').AsString;
-    if Length(s) = 0 then
-        Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State)
-    else
-    begin
-      // Display the team's custom name given by the user.
-      // CLEAR THE CANVAS
-      Grid.Canvas.Brush.Color := fTeamBgColor;
-      Grid.Canvas.Brush.Style := bsSolid;
-      Grid.Canvas.FillRect(Rect);
-      // CALC EXTENT
-      if (SCM.Heat_HeatStatusID(aHeatID) = 2) then
-        TDBGrid(Sender).Canvas.Font.Color := fRacedFontColor
-      else
-        Grid.Canvas.Font.Color := fTeamFontColor;
-      Size := Grid.Canvas.TextExtent(s);
-      topMargin := Round((Rect.Height - Size.Height) / 2);
-      // CALC MARGINS
-      MyRect.Top := Rect.Top + topMargin;
-      MyRect.Left := Rect.Left + topMargin;
-      MyRect.Bottom := Rect.Bottom;
-      MyRect.Right := Rect.Right;
-      // PRINT THE TEXT
-      Grid.Canvas.TextRect(Rect, Rect.Left, Rect.Top, s);
-    end;
-
-    if gdFocused in State then Grid.Canvas.DrawFocusRect(Rect);
-  end
-
-  // Recolor the text if the heat is RACED.
-  else if (SCM.Heat_HeatStatusID(aHeatID) = 2) then
-  begin
-    // CLEAR THE CANVAS
-    TDBGrid(Sender).Canvas.Brush.Color := fTeamBgColor;
-    TDBGrid(Sender).Canvas.Brush.Style := bsSolid;
-    TDBGrid(Sender).Canvas.FillRect(Rect);
-    // PRINT THE TEXT
-    TDBGrid(Sender).Canvas.Font.Color := fRacedFontColor;
-    Size := TDBGrid(Sender).Canvas.TextExtent(Column.Field.DisplayText);
-    YMargin := Round((Rect.Height - Size.Height) / 2 + 0.5);
-    // calculate margins
-    MyRect.Top := Rect.Top + YMargin;
-    if (Column.Field.FieldName = 'Lane') then
-      // center align
-        MyRect.Left := Rect.Left + Round((Rect.Width - Size.Width) / 2)
-      // right align
-    else if (Column.Field.FieldName = 'RaceTime') or
-      (Column.Field.FieldName = 'TimeToBeat') or
-      (Column.Field.FieldName = 'PersonalBest') then
-        MyRect.Left := Rect.Left + (Rect.Width - Size.Width - 3)
-    else
-      // left align
-        MyRect.Left := Rect.Left + 3;
-    MyRect.Bottom := Rect.Bottom;
-    MyRect.Right := Rect.Right;
-    TDBGrid(Sender).Canvas.TextRect(myRect, myRect.Left, myRect.Top,
-      Column.Field.DisplayText);
-    if gdFocused in State then
-      Grid.Canvas.DrawFocusRect(Rect);
-  end
-
-  else
-  begin
-    // default drawing DOESN'T draw a themed (yellow) background color
-    Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
     if gdFocused in State then Grid.Canvas.DrawFocusRect(Rect);
   end;
-
-}
 end;
 
 procedure TframeTEAM.GridEditButtonClick(Sender: TObject);
 var
   dlgDCode: TDCodePicker;
   dlgPickTeam: TTeamNamePicker;
-  dlgTeamSplitTime: TTEAMSplitTime;
+  dlgSplitTimeTEAM: TSplitTimeTEAM;
   aTeamID, rows: Integer;
   rtnValue: TModalResult;
   fld: TField;
@@ -563,10 +390,11 @@ begin
   else if fld.FieldName = 'RaceTime' then
   begin
     SCM.dsTeam.DataSet.CheckBrowseMode;
-    dlgTeamSplitTime := TTEAMSplitTime.CreateWithConnection(self, SCM.scmConnection);
-    dlgTeamSplitTime.TeamID := aTeamID;
-    rtnValue := dlgTeamSplitTime.ShowModal;
-    dlgTeamSplitTime.Free;
+    dlgSplitTimeTEAM := TSplitTimeTEAM.CreateWithConnection(self,
+      SCM.scmConnection);
+    dlgSplitTimeTEAM.TeamID := aTeamID;
+    rtnValue := dlgSplitTimeTEAM.ShowModal;
+    dlgSplitTimeTEAM.Free;
     if IsPositiveResult(rtnValue) then
     begin
       SCM.dsTeam.DataSet.Refresh; // Repaint the teamname selected.
@@ -577,7 +405,7 @@ end;
 procedure TframeTEAM.GridEnter(Sender: TObject);
 begin
   fTeamActiveGrid := 1;
-  Panel1.BevelEdges := [beLeft,beTop,beRight,beBottom];
+  Panel1.BevelEdges := [beLeft, beTop, beRight, beBottom];
   Panel3.BevelEdges := [];
   if Grid.DataSource.DataSet.FieldByName('TeamNameID').IsNull then
   begin
@@ -597,14 +425,14 @@ begin
   GridColEnter(Grid);
 end;
 
-procedure TframeTEAM.GridEntrantDrawColumnCell(Sender: TObject; const Rect:
-    TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+procedure TframeTEAM.GridEntrantDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
 var
   clFont, clBg: TColor;
   Size: TSize;
   MyRect: TRect;
-    aHeatID: integer;
-  YMargin: integer;
+  aHeatID: Integer;
+  YMargin: Integer;
 
 begin
   aHeatID := Grid.DataSource.DataSet.FieldByName('HeatID').AsInteger;
@@ -615,19 +443,16 @@ begin
         Column.ButtonStyle := TColumnButtonStyle.cbsEllipsis;
   end;
 
-   // NOTE : DEFAULT DRAWING IS DISABLED ....
+  // NOTE : DEFAULT DRAWING IS DISABLED ....
   if (Column.Field.FieldName = 'IsScratched') or
     (Column.Field.FieldName = 'IsDisqualified') then
   begin
-    if gdFocused in State then
-      clFont := fEditBoxFocused
-    else
-      clFont := fEditBoxNormal;
+    if gdFocused in State then clFont := fEditBoxFocused
+    else clFont := fEditBoxNormal;
     clBg := fGridBgColor;
     TDBGrid(Sender).DrawCheckBoxes(TDBGrid(Sender), Rect, Column, clFont, clBg);
     // draw 'Focused' frame  (for boolean datatype only)
-    if gdFocused in State then
-      TDBGrid(Sender).Canvas.DrawFocusRect(Rect);
+    if gdFocused in State then TDBGrid(Sender).Canvas.DrawFocusRect(Rect);
   end
   // Recolor the text if the heat is RACED.
   else if (SCM.Heat_HeatStatusID(aHeatID) = 2) then
@@ -652,16 +477,14 @@ begin
         MyRect.Left := Rect.Left + 3;
     MyRect.Bottom := Rect.Bottom;
     MyRect.Right := Rect.Right;
-    TDBGrid(Sender).Canvas.TextRect(myRect, myRect.Left, myRect.Top,
+    TDBGrid(Sender).Canvas.TextRect(MyRect, MyRect.Left, MyRect.Top,
       Column.Field.DisplayText);
-    if gdFocused in State then
-      TDBGrid(Sender).Canvas.DrawFocusRect(Rect);
+    if gdFocused in State then TDBGrid(Sender).Canvas.DrawFocusRect(Rect);
   end
   else
   begin
     TDBGrid(Sender).DefaultDrawColumnCell(Rect, DataCol, Column, State);
-    if gdFocused in State then
-      TDBGrid(Sender).Canvas.DrawFocusRect(Rect);
+    if gdFocused in State then TDBGrid(Sender).Canvas.DrawFocusRect(Rect);
   end;
 end;
 
@@ -670,7 +493,7 @@ var
   passed: boolean;
   dlg: TEntrantPicker;
   dlgCntrl: TEntrantPickerCTRL;
-  // dlgDCode: TDCodePicker;
+  dlgDCode: TDCodePicker;
   aTeamEntrantID, aTeamID, Lane, rows: Integer;
   rtnValue: TModalResult;
   fld: TField;
@@ -681,34 +504,33 @@ var
 begin
   if not AssertConnection then exit;
   rtnValue := mrCancel;
-  aTeamEntrantID := 0; // redundant assignment - not needed in PASCAL
+  aTeamEntrantID := 0;
+
 
   CTRLPress := (GetKeyState(VK_CONTROL) and 128); // grab the keyboard state
   fld := TDBGrid(Sender).SelectedField; // only using field : 'fullname'
+
   if SCM.dsTeam.DataSet.Active and not SCM.dsTeam.DataSet.FieldByName('TeamID').IsNull
   then aTeamID := SCM.dsTeam.DataSet.FieldByName('TeamID').AsInteger
   else aTeamID := 0;
 
-  { // CODE STUB - TO BE IMPLIMENTED IN LATER VERSIONS ...
-    if fld.FieldName = 'DCode' then
-    begin
+  if (fld.FieldName = 'DCode') and (aTeamID <> 0)then
+  begin
     if not SCM.dsEntrant.DataSet.FieldByName('MemberID').IsNull then
     begin
-    dlgDCode := TDCodePicker.CreateWithConnection(self, SCM.scmConnection);
-    dlgDCode.TeamID := TeamID;
-    rtnValue := dlgDCode.ShowModal;
-    dlgDCode.Free;
-    if IsPositiveResult(rtnValue) then
-    begin
-    SCM.dsEntrant.DataSet.Refresh;
-    SCM.TeamEntrant_Locate(EntrantID);
+      dlgDCode := TDCodePicker.CreateWithConnection(self, SCM.scmConnection);
+      dlgDCode.TeamID := aTeamID;
+      rtnValue := dlgDCode.ShowModal;
+      dlgDCode.Free;
+      if IsPositiveResult(rtnValue) then
+      begin
+        SCM.dsTeam.DataSet.Refresh;
+        // SCM.Team_Locate(aTeamID);
+      end;
     end;
-    end;
-    end
-  }
-
+  end
   // handle the ellipse entrant
-  if (fld.FieldName = 'FullName') and (aTeamID <> 0) then
+  else if (fld.FieldName = 'FullName') and (aTeamID <> 0) then
   begin
     // TEST - CREATE - RELAY TEAM MEMBER
     with SCM.dsTeamEntrant.DataSet do
@@ -772,7 +594,7 @@ end;
 procedure TframeTEAM.GridEntrantEnter(Sender: TObject);
 begin
   fTeamActiveGrid := 2;
-  Panel3.BevelEdges := [beLeft,beTop,beRight,beBottom];
+  Panel3.BevelEdges := [beLeft, beTop, beRight, beBottom];
   Panel1.BevelEdges := [];
 end;
 
@@ -1064,7 +886,7 @@ begin
     end;
   end;
 
-  Panel1.BevelEdges := [beLeft,beTop,beRight,beBottom];
+  Panel1.BevelEdges := [beLeft, beTop, beRight, beBottom];
   Panel3.BevelEdges := [];
 
   // If TEAM.Grid isn't focused - TEAM.Panel3 may display as clWebTomatoe

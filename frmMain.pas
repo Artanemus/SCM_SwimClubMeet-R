@@ -560,7 +560,7 @@ uses
   UEnvVars, dlgEntrantPicker, dlgEntrantPickerCTRL, dmSCMNom, dlgSwapLanes,
   dlgDBVerInfo, rptHeatReportA, rptHeatReportB, frmDisqualificationCodes,
   dlgAutoSchedule, dlgDCodePicker, dmSCMHelper, rptMarshallReportC,
-  dlgTEAMSplitTime;
+  dlgSplitTimeTEAM, dlgSplitTimeINDV;
 
 procedure TMain.ActionManager1Update(Action: TBasicAction;
   var Handled: boolean);
@@ -1858,7 +1858,8 @@ begin
 
   // Permits the user to enter split times for relays.
   // Takes effect on the next repaint of the grid
-  TEAM.EnableSplitTimesForTEAM := prefEnableSplitTimesForTEAM;
+  TEAM.EnableSplitTimes := prefEnableSplitTimesForTEAM;
+  INDV.EnableSplitTimes := prefEnableSplitTimesForINDV;
 
   // Update the preferences used by THE DATAMODULE
   if AssertConnection then SCM.ReadPreferences(iniFileName);

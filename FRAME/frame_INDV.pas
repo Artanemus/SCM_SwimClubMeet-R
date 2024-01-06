@@ -24,6 +24,7 @@ type
     fEntrantEditBoxFocused: TColor;
     fEntrantEditBoxNormal: TColor;
     fRacedFontColor: TColor;
+    fEnableSplitTimes: boolean;
 
     // ASSERT CONNECTION TO MSSQL DATABASE
     function AssertConnection(): boolean;
@@ -40,6 +41,9 @@ type
     function ClearLane: integer;
     function StrikeLane(): integer;
     function RenumberLanes(): integer;
+
+    property EnableSplitTimes: boolean read fEnableSplitTimes
+      write fEnableSplitTimes;
   end;
 
 implementation
@@ -47,7 +51,7 @@ implementation
 {$R *.dfm}
 
 uses dlgEntrantPickerCTRL, dlgEntrantPicker, dlgDCodePicker, System.UITypes,
-  dmSCMHelper;
+  dmSCMHelper, dlgSplitTimeINDV;
 
 procedure TframeINDV.AfterConstruction;
 var
@@ -55,6 +59,9 @@ var
   col: TColumn;
 begin
   inherited;
+
+  fEnableSplitTimes := false;
+
   // Special color assignment - used in TDBGrid painting...
   // -------------------------------------------
   css := TStyleManager.Style[TStyleManager.ActiveStyle.Name];
@@ -225,6 +232,21 @@ begin
         Column.ButtonStyle := TColumnButtonStyle.cbsEllipsis;
   end;
 
+  // Required to suppress unnecessary additional paints.
+  if (Column.Field.FieldName = 'RaceTime') then
+  begin
+    if fEnableSplitTimes  then
+    begin
+      if (Column.ButtonStyle <> TColumnButtonStyle.cbsEllipsis) then
+        Column.ButtonStyle := TColumnButtonStyle.cbsEllipsis
+    end
+    else
+    begin
+      if (Column.ButtonStyle = TColumnButtonStyle.cbsEllipsis) then
+        Column.ButtonStyle := TColumnButtonStyle.cbsNone;
+    end;
+  end;
+
   // NOTE : DEFAULT DRAWING IS DISABLED ....
   if (Column.Field.FieldName = 'IsScratched') or
     (Column.Field.FieldName = 'IsDisqualified') then
@@ -284,6 +306,7 @@ var
   dlg: TEntrantPicker;
   dlgCntrl: TEntrantPickerCTRL;
   dlgDCode: TDCodePicker;
+  dlgSplitTimeINDV: TSplitTimeINDV;
   aEntrantID, aEventID: Integer;
   fld: TField;
   rtnValue: TModalResult;
@@ -346,6 +369,19 @@ begin
       SCM.IndvTeam_LocateLane(aEntrantID, etINDV); // restore record position
     end;
 
+  end
+  // enter racetime and split times for the entrant
+  else if fld.FieldName = 'RaceTime' then
+  begin
+    SCM.dsEntrant.DataSet.CheckBrowseMode;
+    dlgSplitTimeINDV := TSplitTimeINDV.CreateWithConnection(self, SCM.scmConnection);
+    dlgSplitTimeINDV.EntrantID := aEntrantID;
+    rtnValue := dlgSplitTimeINDV.ShowModal;
+    dlgSplitTimeINDV.Free;
+    if IsPositiveResult(rtnValue) then
+    begin
+      SCM.dsEntrant.DataSet.Refresh; // Repaint the teamname selected.
+    end;
   end;
 
   SCM.dsEntrant.DataSet.EnableControls;

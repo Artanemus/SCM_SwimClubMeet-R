@@ -77,8 +77,8 @@ uses
   dlgMemberFilter in 'MEMBERS\dlgMemberFilter.pas' {MemberFilter},
   dlgTeamNamePicker in 'FRAME\dlgTeamNamePicker.pas' {TeamNamePicker},
   rptMarshallReportC in 'REPORTS\rptMarshallReportC.pas' {MarshallReportC: TDataModule},
-  dlgTEAMSplitTime in 'FRAME\dlgTEAMSplitTime.pas' {TEAMSplitTime},
-  dlgINDVSplitTime in 'FRAME\dlgINDVSplitTime.pas' {INDVSplitTime};
+  dlgSplitTimeTEAM in 'FRAME\dlgSplitTimeTEAM.pas' {SplitTimeTEAM},
+  dlgSplitTimeINDV in 'FRAME\dlgSplitTimeINDV.pas' {SplitTimeINDV};
 
 {$R *.res}
 
@@ -87,6 +87,5 @@ begin
   Application.MainFormOnTaskbar := True;
   TStyleManager.TrySetStyle('Windows10 SlateGray');
   Application.CreateForm(TMain, Main);
-  Application.CreateForm(TINDVSplitTime, INDVSplitTime);
   Application.Run;
 end.
