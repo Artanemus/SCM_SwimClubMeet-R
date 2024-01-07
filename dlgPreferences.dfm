@@ -57,7 +57,7 @@ object Preferences: TPreferences
       646
       48)
     object btnClose: TButton
-      Left = 464
+      Left = 452
       Top = 6
       Width = 101
       Height = 33
@@ -65,7 +65,7 @@ object Preferences: TPreferences
       Caption = 'Close'
       TabOrder = 0
       OnClick = btnCloseClick
-      ExplicitLeft = 460
+      ExplicitLeft = 448
     end
   end
   object PageControl1: TPageControl
@@ -368,7 +368,7 @@ object Preferences: TPreferences
         ParentFont = False
       end
       object btn1: TSpeedButton
-        Left = 133
+        Left = 121
         Top = 15
         Width = 33
         Height = 33
@@ -544,56 +544,98 @@ object Preferences: TPreferences
     object TabSheet6: TTabSheet
       Caption = 'Switches'
       ImageIndex = 6
+      object Label1: TLabel
+        Left = 32
+        Top = 156
+        Width = 60
+        Height = 17
+        Caption = 'Event Grid'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsUnderline]
+        ParentFont = False
+      end
+      object Label18: TLabel
+        Left = 32
+        Top = 256
+        Width = 70
+        Height = 17
+        Caption = 'Entrant Grid'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsUnderline]
+        ParentFont = False
+      end
       object prefEnableTeamEvents: TCheckBox
         Left = 32
-        Top = 30
+        Top = 44
         Width = 241
         Height = 19
         Caption = 'Enable Team Events.'
         Checked = True
         State = cbChecked
-        TabOrder = 0
+        TabOrder = 1
         Visible = False
       end
       object prefEnableDCodes: TCheckBox
         Left = 32
-        Top = 67
+        Top = 11
         Width = 313
         Height = 20
         Caption = 'Enable FINA disqualification codes.'
-        TabOrder = 1
+        TabOrder = 0
       end
       object prefDisplaySwimmerCAT: TCheckBox
         Left = 32
-        Top = 104
+        Top = 279
         Width = 369
         Height = 22
         Caption = 'Display Swimmer Category in the entrant'#39's grid.'
-        TabOrder = 2
+        TabOrder = 6
       end
       object prefDisplayDivisions: TCheckBox
         Left = 32
-        Top = 142
+        Top = 307
         Width = 313
         Height = 22
         Caption = 'Display Divisions in the entrant'#39's grid.'
-        TabOrder = 3
+        TabOrder = 7
       end
       object prefEnableSplitTimesForINDV: TCheckBox
         Left = 32
-        Top = 179
+        Top = 78
         Width = 337
         Height = 22
         Caption = 'Enable split-time entry in individual events.'
-        TabOrder = 4
+        TabOrder = 2
       end
       object prefEnableSplitTimesForTEAM: TCheckBox
         Left = 32
-        Top = 217
+        Top = 112
         Width = 297
         Height = 22
         Caption = 'Enable split-time entry in team events.'
+        TabOrder = 3
+      end
+      object prefGenerateEventDescription: TCheckBox
+        Left = 32
+        Top = 179
+        Width = 422
+        Height = 17
+        Caption = 'Generate an event description for new events.'
+        TabOrder = 4
+      end
+      object prefGenerateEventDescStr: TEdit
+        Left = 53
+        Top = 202
+        Width = 488
+        Height = 29
         TabOrder = 5
+        Text = 'Boy and girls, all ages.'
       end
     end
     object TabSheet3: TTabSheet
@@ -618,19 +660,6 @@ object Preferences: TPreferences
         Width = 162
         Height = 17
         Caption = 'On Auto-Build, Inject Data ...'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Segoe UI'
-        Font.Style = [fsUnderline]
-        ParentFont = False
-      end
-      object Label1: TLabel
-        Left = 27
-        Top = 100
-        Width = 60
-        Height = 17
-        Caption = 'Event Grid'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -13
@@ -683,7 +712,7 @@ object Preferences: TPreferences
         Items.Strings = (
           'DISABLED (Default)'
           'dbo.Entrant.RaceTime')
-        TabOrder = 4
+        TabOrder = 2
       end
       object prefUseWindowsDefTheme: TCheckBox
         Left = 27
@@ -700,38 +729,6 @@ object Preferences: TPreferences
         Height = 26
         Caption = 'Show Debug Information.'
         TabOrder = 0
-      end
-      object prefGenerateEventDescription: TCheckBox
-        Left = 27
-        Top = 123
-        Width = 422
-        Height = 17
-        Caption = 'Generate an event description for new individual events.'
-        TabOrder = 2
-      end
-      object prefGenerateEventDescStr: TEdit
-        Left = 48
-        Top = 146
-        Width = 488
-        Height = 29
-        TabOrder = 3
-        Text = ' - Individual, all genders, all ages.'
-      end
-      object prefGenerateEventTeamDesc: TCheckBox
-        Left = 27
-        Top = 187
-        Width = 422
-        Height = 17
-        Caption = 'Generate an event description for new team events.'
-        TabOrder = 5
-      end
-      object prefGenerateEventTeamDescStr: TEdit
-        Left = 48
-        Top = 210
-        Width = 488
-        Height = 29
-        TabOrder = 6
-        Text = ' - RELAY'
       end
     end
   end

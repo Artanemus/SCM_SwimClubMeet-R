@@ -197,7 +197,7 @@ end;
 procedure TSplitTimeINDV.RenumberLaps(aEntrantID: integer);
 var
   qry: TFDQuery;
-  i, aTeamSplitID: integer;
+  i: integer;
   sl: TStringList;
 begin
   if not Assigned(fConnection) then exit;  // no connection
@@ -233,9 +233,6 @@ begin
 end;
 
 procedure TSplitTimeINDV.sbtnDeleteClick(Sender: TObject);
-var
-  aTeamSlitID: integer;
-  SQL: string;
 begin
   dsSplit.DataSet.delete;
   dsSplit.DataSet.DisableControls;

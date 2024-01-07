@@ -3,8 +3,8 @@ object SplitTimeTEAM: TSplitTimeTEAM
   Top = 0
   BorderStyle = bsDialog
   Caption = 'RaceTime and SplitTimes'
-  ClientHeight = 420
-  ClientWidth = 321
+  ClientHeight = 419
+  ClientWidth = 317
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,14 +20,13 @@ object SplitTimeTEAM: TSplitTimeTEAM
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 321
+    Width = 317
     Height = 65
     Align = alTop
     BevelEdges = [beBottom]
     BevelKind = bkFlat
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 317
     object Label1: TLabel
       Left = 3
       Top = 17
@@ -74,15 +73,13 @@ object SplitTimeTEAM: TSplitTimeTEAM
   object Panel2: TPanel
     Left = 0
     Top = 65
-    Width = 321
-    Height = 299
+    Width = 317
+    Height = 298
     Align = alClient
     BevelEdges = []
     BevelKind = bkFlat
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitWidth = 317
-    ExplicitHeight = 298
     object DBGridSplit: TDBGrid
       AlignWithMargins = True
       Left = 3
@@ -177,7 +174,7 @@ object SplitTimeTEAM: TSplitTimeTEAM
       ExplicitLeft = 250
       DesignSize = (
         65
-        299)
+        298)
       object sbtnDelete: TSpeedButton
         AlignWithMargins = True
         Left = 8
@@ -262,16 +259,14 @@ object SplitTimeTEAM: TSplitTimeTEAM
   end
   object Panel3: TPanel
     Left = 0
-    Top = 364
-    Width = 321
+    Top = 363
+    Width = 317
     Height = 56
     Align = alBottom
     BevelEdges = [beTop]
     BevelKind = bkFlat
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitTop = 363
-    ExplicitWidth = 317
     object btnPost: TButton
       Left = 123
       Top = 10

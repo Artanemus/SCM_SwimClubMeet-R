@@ -30,7 +30,7 @@ object Main: TMain
       Top = 0
       Width = 1410
       Height = 803
-      ActivePage = TabSheet3
+      ActivePage = TabSheet1
       Align = alClient
       Style = tsFlatButtons
       TabOrder = 0
@@ -305,7 +305,6 @@ object Main: TMain
             Align = alTop
             BevelOuter = bvNone
             TabOrder = 0
-            ExplicitWidth = 669
             object lblSessionEventCaption: TLabel
               Left = 6
               Top = -3
@@ -2260,7 +2259,7 @@ object Main: TMain
       object dbtxtSwimClubCaption: TDBText
         Left = 0
         Top = 0
-        Width = 74
+        Width = 161
         Height = 19
         Anchors = []
         AutoSize = True
@@ -2276,7 +2275,7 @@ object Main: TMain
       object dbtxtSwimClubNickName: TDBText
         Left = 0
         Top = 30
-        Width = 57
+        Width = 179
         Height = 21
         Anchors = []
         AutoSize = True

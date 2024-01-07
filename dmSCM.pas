@@ -177,7 +177,6 @@ type
       DisplayText: Boolean);
     procedure qryEntrantTIMESetText(Sender: TField; const Text: string);
     procedure qryEventAfterDelete(DataSet: TDataSet);
-    procedure qryEventAfterInsert(DataSet: TDataSet);
     procedure qryEventAfterPost(DataSet: TDataSet);
     procedure qryEventAfterScroll(DataSet: TDataSet);
     procedure qryEventBeforeEdit(DataSet: TDataSet);
@@ -186,7 +185,6 @@ type
     procedure qryEventDistanceIDValidate(Sender: TField);
     procedure qryEventEventStatusIDGetText(Sender: TField; var Text: string;
       DisplayText: Boolean);
-    procedure qryEventNewRecord(DataSet: TDataSet);
     procedure qryEventScheduleDTGetText(Sender: TField; var Text: string;
       DisplayText: Boolean);
     procedure qryEventScheduleDTSetText(Sender: TField; const Text: string);
@@ -219,7 +217,6 @@ type
     prefCheckUnNomination: integer;
     prefGenerateEventDescription: Boolean;
     prefGenerateEventDescStr: string;
-
 
   protected
     // Swimmers have MemberID's. Empty lanes excluded from TOT.
@@ -278,6 +275,7 @@ type
     function Event_SetEventStatusID(aEventID, aEventStatusID: integer): Boolean;
     // EVENT TYPE
     function GetEventType(aEventID: integer): scmEventType; // etUnknow,etINDV,etTEAM
+    function GetEventTypeByDistanceID(aDistanceID: integer): scmEventType; // etUnknow,etINDV,etTEAM
     {        H E A T S .       }
     function Heat_EventID(aHeatID: integer): integer;
     function Heat_EventType(aHeatID: integer): scmEventType;
@@ -704,8 +702,10 @@ begin
   fLastStrokeID := 0;
   fIsNewRecord := false;
   fCurrEventType := etUnknown;
-  prefGenerateEventDescription := false;;
+  prefGenerateEventDescription := false;
   prefGenerateEventDescStr := '';
+//  prefGenerateTEAMDescription := false;
+//  prefGenerateTEAMDescStr := '';
   // r e a d   p r e f e r e n c e .
   IniFileName := SCMUtility.GetSCMPreferenceFileName();
   if (FileExists(IniFileName)) then ReadPreferences(IniFileName);
@@ -1285,6 +1285,28 @@ begin
         'INNER JOIN Distance ON [Event].DistanceID = Distance.DistanceID ' +
         'WHERE EventID = :ID';
       v := scmConnection.ExecSQLScalar(SQL, [aEventID]);
+      if VarIsNull(v) or VarIsEmpty(v) or (v = 0) then exit;
+    end;
+    case v of
+      1: result := etINDV;
+      2: result := etTEAM;
+    end;
+  end;
+end;
+
+function TSCM.GetEventTypeByDistanceID(aDistanceID: integer): scmEventType;
+var
+  v: variant;
+  SQL: string;
+begin
+  result := etUnknown;
+  if fSCMActive and dsEvent.DataSet.Active then
+  begin
+    if not dsEvent.DataSet.IsEmpty then
+    begin
+      SQL := 'SELECT [EventTypeID] FROM [SwimClubMeet].[dbo].[Distance] ' +
+        'WHERE DistanceID = :ID';
+      v := scmConnection.ExecSQLScalar(SQL, [aDistanceID]);
       if VarIsNull(v) or VarIsEmpty(v) or (v = 0) then exit;
     end;
     case v of
@@ -2027,37 +2049,27 @@ begin
   end;
 end;
 
-procedure TSCM.qryEventAfterInsert(DataSet: TDataSet);
-begin
-  if Owner is TForm then
-      PostMessage(TForm(Owner).Handle, SCM_RENUMBEREVENTS, 0, 0);
-end;
-
 procedure TSCM.qryEventAfterPost(DataSet: TDataSet);
 var
   i, v: integer;
-  fld: TField;
   SQL: string;
 begin
+  // NOTE: DataSet.State := dsBrowse
   v := DataSet.FieldByName('EventNum').AsInteger;
   if (v = 0) then
   begin
     i := DataSet.RecordCount;
-    fld := DataSet.FindField('EventNum');
-    if Assigned(fld) then fld.ReadOnly := false;
     DataSet.Edit;
+    DataSet.FieldByName('EventNum').ReadOnly := false;
     DataSet.FieldByName('EventNum').AsInteger := i;
+    DataSet.FieldByName('EventNum').ReadOnly := true;
     DataSet.Post;
-    if Assigned(fld) then fld.ReadOnly := true;
+    if Owner is TForm then
+        PostMessage(TForm(Owner).Handle, SCM_RENUMBEREVENTS, 0, 0);
   end;
 
-  if Owner is TForm then
-  begin
-      PostMessage(TForm(Owner).Handle, SCM_UPDATEINDVTEAM, 0, 0);
-      PostMessage(TForm(Owner).Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);
-  end;
-
-  if DataSet.FieldByName('DistanceID').IsNull then fCurrEventType := etUnknown
+  v := DataSet.FieldByName('DistanceID').AsInteger;
+  if (v = 0) then fCurrEventType := etUnknown
   else
   begin
     SQL := 'SELECT [EventTypeID] FROM [SwimClubMeet].[dbo].[Distance] ' +
@@ -2070,6 +2082,47 @@ begin
         2: fCurrEventType := etTEAM;
       end;
   end;
+
+  if not DataSet.FieldByName('EventID').IsNull then
+  begin
+    var
+      DistanceID, StrokeID, entrantCount: integer;
+    DistanceID := DataSet.FieldByName('DistanceID').AsInteger;
+    StrokeID := DataSet.FieldByName('StrokeID').AsInteger;
+    if ((DistanceID <> fLastDistanceID) or (StrokeID <> fLastStrokeID)) then
+    begin
+      i := DataSet.FieldByName('EventID').AsInteger;
+      entrantCount := Event_GetEntrantCount(i);
+      if (entrantCount > 0) then
+      begin
+        // display warning message
+        MessageDlg('If an Event''s distance or stroke is changed' + slinebreak +
+          'then the nominees attached to that event also reflect' + slinebreak +
+          'those changes.', mtWarning, [mbOK], 0);
+      end;
+    end;
+  end;
+
+  // ADD A DEFAULT CAPTION
+  if DataSet.FieldByName('Caption').IsNull then
+  begin
+    if (prefGenerateEventDescription) then
+    begin
+      if not prefGenerateEventDescStr.IsEmpty then
+      begin
+        DataSet.Edit;
+        DataSet.FieldByName('Caption').AsString := prefGenerateEventDescStr;
+        DataSet.Post;
+      end;
+    end;
+  end;
+
+  if Owner is TForm then
+  begin
+    PostMessage(TForm(Owner).Handle, SCM_UPDATEINDVTEAM, 0, 0);
+    PostMessage(TForm(Owner).Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);
+  end;
+
 end;
 
 procedure TSCM.qryEventAfterScroll(DataSet: TDataSet);
@@ -2097,48 +2150,22 @@ end;
 
 procedure TSCM.qryEventBeforeEdit(DataSet: TDataSet);
 begin
-  // this is used later in the qryEvent BeforePost to determine if
-  // the Nominations should be cleared
+  // This is used later in the qryEvent BeforePost to determine if
+  // a warning message is displayed. wit: 'Nominees will be swimming a
+  // different stroke/distance'.
   fLastDistanceID := DataSet.FieldByName('DistanceID').AsInteger;
   fLastStrokeID := DataSet.FieldByName('StrokeID').AsInteger;;
 end;
 
 procedure TSCM.qryEventBeforePost(DataSet: TDataSet);
-var
-  i, entrantCount, DistanceID, StrokeID: integer;
 begin
-
   if not fSCMActive then exit;
-  DistanceID := DataSet.FieldByName('DistanceID').AsInteger;
-  StrokeID := DataSet.FieldByName('StrokeID').AsInteger;
-
-  if ((DistanceID <> fLastDistanceID) or (StrokeID <> fLastStrokeID)) then
+  if DataSet.UpdateStatus = usInserted then
   begin
-    i := DataSet.FieldByName('EventID').AsInteger;
-    entrantCount := Event_GetEntrantCount(i);
-    if (entrantCount > 0) then
-    begin
-      // display warning message
-      MessageDlg('If an Event''s distance or stroke is changed' + slinebreak +
-        'then the nominees attached to that event also reflect' + slinebreak +
-        'those changes.', mtWarning, [mbOK], 0);
-    end;
-  end;
-
-  if (DataSet.FieldByName('Caption').IsNull) then
-  begin
-    // err trap?
-    { TODO -oBSA -cGeneral : Needs to code a update preference routine.
-      This would be called each time the user uses dlgPreferences.
-      (via the main form.) }
-    if (prefGenerateEventDescription) then
-    begin
-      if not prefGenerateEventDescStr.IsEmpty then
-      begin
-        DataSet.FieldByName('Caption').AsString := prefGenerateEventDescStr;
-      end;
-    end;
-  end;
+    DataSet.FieldByName('EventStatusID').ReadOnly := false;
+    DataSet.FieldByName('EventStatusID').AsInteger := 1;
+    DataSet.FieldByName('EventStatusID').ReadOnly := true;
+  end
 end;
 
 procedure TSCM.qryEventDistanceIDChange(Sender: TField);
@@ -2193,21 +2220,6 @@ begin
   // column should only show a tick ...
   // TODO: disable selection of the column.
   Text := '';
-end;
-
-procedure TSCM.qryEventNewRecord(DataSet: TDataSet);
-var
-  fld: TField;
-begin
-  // 13.10.2020 qryEvent.EventStatusID is READ ONLY
-  fld := DataSet.FindField('EventStatusID');
-  if Assigned(fld) then fld.ReadOnly := false;
-
-  DataSet.Edit;
-  DataSet.FieldByName('EventStatusID').AsInteger := 1;
-  DataSet.Post;
-
-  if Assigned(fld) then fld.ReadOnly := true;
 end;
 
 procedure TSCM.qryEventScheduleDTGetText(Sender: TField; var Text: string;
@@ -2459,11 +2471,13 @@ end;
 
 procedure TSCM.qryTeamAfterScroll(DataSet: TDataSet);
 begin
+  // Update DISPLAY state of the main form's TEAM frame
   if Owner is TForm then PostMessage(TForm(Owner).Handle, SCM_TEAMSCROLL, 0, 0);
 end;
 
 procedure TSCM.qryTeamEntrantAfterScroll(DataSet: TDataSet);
 begin
+  // Update DISPLAY state of the main form's TEAM ENTRANT frame
   if Owner is TForm then
       PostMessage(TForm(Owner).Handle, SCM_TEAMENTRANTSCROLL, 0, 0);
 end;
@@ -2476,12 +2490,21 @@ begin
   iFile := TIniFile.Create(IniFileName);
   iUnChecked := integer(TCheckBoxState.cbUnchecked);
   iChecked := integer(TCheckBoxState.cbChecked);
+
   // Generate event descriptions
   i := iFile.ReadInteger('Preferences', 'GenerateEventDescription', iUnChecked);
   if (i = iChecked) then prefGenerateEventDescription := true
   else prefGenerateEventDescription := false;
   prefGenerateEventDescStr := iFile.ReadString('Preferences',
     'GenerateEventDescStr', ' - Individual, all genders, all ages.');
+
+  // Generate event TEAM descriptions
+//  i := iFile.ReadInteger('Preferences', 'GenerateTEAMDescription', iUnChecked);
+//  if (i = iChecked) then prefGenerateTEAMDescription := true
+//  else prefGenerateTEAMDescription := false;
+//  prefGenerateTEAMDescStr := iFile.ReadString('Preferences',
+//    'GenerateTEAMDescStr', ' - Individual, all genders, all ages.');
+
 
   i := iFile.ReadInteger('Preferences', 'CheckUnNomination', iUnChecked);
   prefCheckUnNomination := i;

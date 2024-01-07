@@ -6,7 +6,6 @@ object SCM: TSCM
     Params.Strings = (
       'ConnectionDef=MSSQL_SwimClubMeet')
     ConnectedStoredUsage = [auDesignTime]
-    Connected = True
     LoginPrompt = False
     AfterDisconnect = scmConnectionAfterDisconnect
     Left = 80
@@ -29,7 +28,6 @@ object SCM: TSCM
   end
   object tblStroke: TFDTable
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'StrokeID'
     Connection = scmConnection
     ResourceOptions.AssignedValues = [rvEscapeExpand]
@@ -51,7 +49,6 @@ object SCM: TSCM
   end
   object tblDistance: TFDTable
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'DistanceID'
     Connection = scmConnection
     ResourceOptions.AssignedValues = [rvEscapeExpand]
@@ -113,7 +110,6 @@ object SCM: TSCM
   end
   object tblEventStatus: TFDTable
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'EventStatusID'
     Connection = scmConnection
     ResourceOptions.AssignedValues = [rvEscapeExpand]
@@ -130,7 +126,6 @@ object SCM: TSCM
   end
   object qryNominateEvent: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'SessionID;EventID'
     MasterSource = dsSession
     MasterFields = 'SessionID'
@@ -200,7 +195,6 @@ object SCM: TSCM
   end
   object qryEntrant: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     BeforeInsert = qryEvTypeBeforeInsert
     AfterScroll = qryEntrantAfterScroll
     IndexFieldNames = 'HeatID'
@@ -388,7 +382,6 @@ object SCM: TSCM
   end
   object qrySession: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     BeforePost = qrySessionBeforePost
     AfterPost = qrySessionAfterPost
     AfterDelete = qrySessionAfterDelete
@@ -520,13 +513,11 @@ object SCM: TSCM
   end
   object qryEvent: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    AfterInsert = qryEventAfterInsert
     BeforeEdit = qryEventBeforeEdit
     BeforePost = qryEventBeforePost
     AfterPost = qryEventAfterPost
     AfterDelete = qryEventAfterDelete
     AfterScroll = qryEventAfterScroll
-    OnNewRecord = qryEventNewRecord
     IndexFieldNames = 'SessionID'
     MasterSource = dsSession
     MasterFields = 'SessionID'
@@ -796,7 +787,6 @@ object SCM: TSCM
   end
   object qryNominee: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     Indexes = <
       item
         Active = True
@@ -1390,7 +1380,6 @@ object SCM: TSCM
       end>
   end
   object qrySwimClub: TFDQuery
-    Active = True
     IndexFieldNames = 'SwimClubID'
     Connection = scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..SwimClub'
@@ -1770,7 +1759,6 @@ object SCM: TSCM
   end
   object qrySCMSystem: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     Connection = scmConnection
     SQL.Strings = (
       'USE SwimClubMeet;'
@@ -1798,7 +1786,6 @@ object SCM: TSCM
   end
   object tblSwimmerCAT: TFDTable
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'SwimmerCategoryID'
     Connection = scmConnection
     ResourceOptions.AssignedValues = [rvEscapeExpand]
@@ -1818,7 +1805,6 @@ object SCM: TSCM
   end
   object qryTeam: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     BeforeInsert = qryEvTypeBeforeInsert
     AfterScroll = qryTeamAfterScroll
     IndexFieldNames = 'HeatID'
@@ -1952,7 +1938,6 @@ object SCM: TSCM
   end
   object qryTeamEntrant: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     AfterScroll = qryTeamEntrantAfterScroll
     IndexFieldNames = 'TeamID'
     MasterSource = dsTeam

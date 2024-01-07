@@ -60,7 +60,6 @@ type
     procedure AfterConstruction; override;
     function ClearLane(): Integer;
     function ClearSlot(): Integer;
-    procedure EventScroll();
     procedure GridMoveDown(Sender: TObject);
     procedure GridMoveUp(Sender: TObject);
     procedure SlotMoveDown(Sender: TObject);
@@ -163,21 +162,6 @@ begin
   aTeamEntrantID := SCM.dsTeamEntrant.DataSet.FieldByName('TeamEntrantID')
     .AsInteger;
   if aTeamEntrantID > 0 then result := SCM.TeamEntrant_Clear(aTeamEntrantID);
-end;
-
-procedure TframeTEAM.EventScroll;
-begin
-  if Grid.DataSource.DataSet.FieldByName('TeamNameID').IsNull then
-  begin
-    GridEntrant.Visible := false;
-    rpnlTeamEntrantTools.Visible := false;
-  end
-  else
-  begin
-    GridEntrant.Visible := true;
-    rpnlTeamEntrantTools.Visible := true;
-  end;
-  if Grid.CanFocus then Grid.SetFocus;
 end;
 
 procedure TframeTEAM.GridCellClick(Column: TColumn);
@@ -894,7 +878,6 @@ begin
   begin
     GridEntrant.Visible := false;
     rpnlTeamEntrantTools.Visible := false;
-    if Grid.CanFocus then Grid.SetFocus;
   end
   else
   begin

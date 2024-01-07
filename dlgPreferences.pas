@@ -14,96 +14,94 @@ uses
 
 type
   TPreferences = class(TForm)
-    Panel1: TPanel;
-    DBText1: TDBText;
-    Panel2: TPanel;
+    Bevel1: TBevel;
+    btn1: TSpeedButton;
+    btnClearClubLogo: TButton;
     btnClose: TButton;
-    PageControl1: TPageControl;
-    TabSheet1: TTabSheet;
-    Label2: TLabel;
-    Label3: TLabel;
-    Label4: TLabel;
-    Label5: TLabel;
-    Label6: TLabel;
-    Label11: TLabel;
-    Label12: TLabel;
-    Label16: TLabel;
-    Label14: TLabel;
+    btnLoadClubLogo: TButton;
+    btnSaveClubLogo: TButton;
     DBEdit1: TDBEdit;
+    DBEdit10: TDBEdit;
     DBEdit2: TDBEdit;
     DBEdit3: TDBEdit;
     DBEdit4: TDBEdit;
     DBEdit5: TDBEdit;
     DBEdit9: TDBEdit;
-    DBEdit10: TDBEdit;
+    DBImage1: TDBImage;
+    DBText1: TDBText;
+    dsSwimClub: TDataSource;
     dtpStartOfSwimSeason: TDateTimePicker;
-    TabSheet2: TTabSheet;
+    Label1: TLabel;
+    Label10: TLabel;
+    Label11: TLabel;
+    Label12: TLabel;
+    Label13: TLabel;
+    Label14: TLabel;
+    Label15: TLabel;
+    Label16: TLabel;
+    Label17: TLabel;
+    Label18: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
     Label7: TLabel;
     Label8: TLabel;
-    lbl2: TLabel;
-    prefHeatAlgorithm: TRadioGroup;
-    prefUseDefRaceTime: TCheckBox;
-    prefRaceTimeTopPercent: TSpinEdit;
-    tab1: TTabSheet;
-    lbl3: TLabel;
-    btn1: TSpeedButton;
-    lblSeedDepth2: TLabel;
-    lblSeedDepth1: TLabel;
-    prefSeperateGender: TCheckBox;
-    prefExcludeOutsideLanes: TCheckBox;
-    prefGroupBy: TRadioGroup;
-    rgpSeedMethod: TRadioGroup;
-    spnSeedDepth: TSpinEdit;
-    TabSheet4: TTabSheet;
-    prefCheckUnNomination: TCheckBox;
-    TabSheet3: TTabSheet;
-    Label10: TLabel;
-    Label13: TLabel;
-    Label1: TLabel;
-    prefImportSeedTime: TRadioGroup;
-    prefUseWindowsDefTheme: TCheckBox;
-    prefShowDebugInfo: TCheckBox;
-    prefGenerateEventDescription: TCheckBox;
-    prefGenerateEventDescStr: TEdit;
-    dsSwimClub: TDataSource;
-    TabSheet5: TTabSheet;
-    Label15: TLabel;
-    btnLoadClubLogo: TButton;
-    OpenPictureDialog1: TOpenPictureDialog;
-    tblSystem: TFDTable;
-    Bevel1: TBevel;
-    btnClearClubLogo: TButton;
-    SavePictureDialog1: TSavePictureDialog;
-    btnSaveClubLogo: TButton;
-    DBImage1: TDBImage;
-    qrySwimClub: TFDQuery;
     Label9: TLabel;
-    Label17: TLabel;
-    TabSheet6: TTabSheet;
-    prefEnableTeamEvents: TCheckBox;
-    prefEnableDCodes: TCheckBox;
-    prefDisplaySwimmerCAT: TCheckBox;
+    lbl2: TLabel;
+    lbl3: TLabel;
+    lblSeedDepth1: TLabel;
+    lblSeedDepth2: TLabel;
+    OpenPictureDialog1: TOpenPictureDialog;
+    PageControl1: TPageControl;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    prefCheckUnNomination: TCheckBox;
     prefDisplayDivisions: TCheckBox;
-    prefGenerateEventTeamDesc: TCheckBox;
-    prefGenerateEventTeamDescStr: TEdit;
+    prefDisplaySwimmerCAT: TCheckBox;
+    prefEnableDCodes: TCheckBox;
     prefEnableSplitTimesForINDV: TCheckBox;
     prefEnableSplitTimesForTEAM: TCheckBox;
-    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure FormCreate(Sender: TObject);
-    procedure btnCloseClick(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
-    procedure btnLoadClubLogoClick(Sender: TObject);
+    prefEnableTeamEvents: TCheckBox;
+    prefExcludeOutsideLanes: TCheckBox;
+    prefGenerateEventDescription: TCheckBox;
+    prefGenerateEventDescStr: TEdit;
+    prefGroupBy: TRadioGroup;
+    prefHeatAlgorithm: TRadioGroup;
+    prefImportSeedTime: TRadioGroup;
+    prefRaceTimeTopPercent: TSpinEdit;
+    prefSeperateGender: TCheckBox;
+    prefShowDebugInfo: TCheckBox;
+    prefUseDefRaceTime: TCheckBox;
+    prefUseWindowsDefTheme: TCheckBox;
+    qrySwimClub: TFDQuery;
+    rgpSeedMethod: TRadioGroup;
+    SavePictureDialog1: TSavePictureDialog;
+    spnSeedDepth: TSpinEdit;
+    tab1: TTabSheet;
+    TabSheet1: TTabSheet;
+    TabSheet2: TTabSheet;
+    TabSheet3: TTabSheet;
+    TabSheet4: TTabSheet;
+    TabSheet5: TTabSheet;
+    TabSheet6: TTabSheet;
+    tblSystem: TFDTable;
     procedure btnClearClubLogoClick(Sender: TObject);
-    procedure PageControl1Changing(Sender: TObject; var AllowChange: Boolean);
+    procedure btnCloseClick(Sender: TObject);
+    procedure btnLoadClubLogoClick(Sender: TObject);
     procedure btnSaveClubLogoClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure PageControl1Changing(Sender: TObject; var AllowChange: Boolean);
   private
     FConnection: TFDConnection;
-    procedure WritePreferences(IniFileName: string);
-    procedure ReadPreferences(IniFileName: string);
 //    procedure AssignClubLogoToImage(AImage: TImage); //--
     procedure AssignDTtoStartOfSwimSeason();
     procedure AssignStartOfSwimSeasonToDT();
-
+    procedure ReadPreferences(IniFileName: string);
+    procedure WritePreferences(IniFileName: string);
   public
     constructor Create(AOwner: TComponent; AConnection: TFDConnection);
       reintroduce; overload;
@@ -118,6 +116,15 @@ implementation
 {$R *.dfm}
 
 uses SCMUtility, IniFiles, Imaging.jpeg, Imaging.pngimage, System.UITypes;
+
+constructor TPreferences.Create(AOwner: TComponent; AConnection: TFDConnection);
+begin
+  inherited Create(AOwner);
+  if Assigned(AConnection) then
+    FConnection := AConnection
+  else
+    FConnection := nil;
+end;
 
 { TPreferences }
 {
@@ -321,15 +328,6 @@ begin
   end;
 end;
 
-constructor TPreferences.Create(AOwner: TComponent; AConnection: TFDConnection);
-begin
-  inherited Create(AOwner);
-  if Assigned(AConnection) then
-    FConnection := AConnection
-  else
-    FConnection := nil;
-end;
-
 procedure TPreferences.FormCreate(Sender: TObject);
 var
   IniFileName: string;
@@ -435,17 +433,17 @@ begin
   prefGroupBy.ItemIndex := iFile.ReadInteger('Preferences', 'GroupBy', 0);
   rgpSeedMethod.ItemIndex := iFile.ReadInteger('Preferences', 'SeedMethod', 0);
 
-  // Generate event descriptions (INDV)
+  // Generate event descriptions
   i := iFile.ReadInteger('Preferences', 'GenerateEventDescription', iUnChecked);
   prefGenerateEventDescription.State := TCheckBoxState(i);
   prefGenerateEventDescStr.Text := iFile.ReadString('Preferences',
     'GenerateEventDescStr', ' - Individual, all genders, all ages.');
 
   // Generate event descriptions (TEAM)
-  i := iFile.ReadInteger('Preferences', 'GenerateEventTeamDesc', iUnChecked);
-  prefGenerateEventTeamDesc.State := TCheckBoxState(i);
-  prefGenerateEventTeamDescStr.Text := iFile.ReadString('Preferences',
-    'GenerateEventTeamDescStr', ' - RELAY.');
+//  i := iFile.ReadInteger('Preferences', 'GenerateTEAMDescription', iUnChecked);
+//  prefGenerateTEAMDescription.State := TCheckBoxState(i);
+//  prefGenerateTEAMDescStr.Text := iFile.ReadString('Preferences',
+//    'GenerateEventTeamDescStr', ' - RELAY.');
 
   rgpSeedMethod.ItemIndex := iFile.ReadInteger('Preferences', 'SeedMethod', 0);
 
@@ -497,17 +495,17 @@ begin
     integer(prefSeperateGender.State));
   iFile.WriteInteger('Preferences', 'GroupBy', prefGroupBy.ItemIndex);
 
-  // generate event description (INDV)
+  // generate event description
   iFile.WriteInteger('Preferences', 'GenerateEventDescription',
     integer(prefGenerateEventDescription.State));
   iFile.WriteString('Preferences', 'GenerateEventDescStr',
     prefGenerateEventDescStr.Text);
 
   // generate event description (TEAM)
-  iFile.WriteInteger('Preferences', 'GenerateEventTeamDesc',
-    integer(prefGenerateEventTeamDesc.State));
-  iFile.WriteString('Preferences', 'GenerateEventTeamDescStr',
-    prefGenerateEventTeamDescStr.Text);
+//  iFile.WriteInteger('Preferences', 'GenerateTEAMDescription',
+//    integer(prefGenerateTEAMDescription.State));
+//  iFile.WriteString('Preferences', 'GenerateTEAMDescStr',
+//    prefGenerateTEAMDescStr.Text);
 
   { 2020-11-01 auto-build v2 seed method }
   iFile.WriteInteger('Preferences', 'SeedMethod', rgpSeedMethod.ItemIndex);

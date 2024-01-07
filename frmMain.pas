@@ -533,8 +533,6 @@ type
     { Public declarations }
     fDoStatusBarUpdate: boolean; // FLAG ACTION - SCM_StatusBar.Enabled
     fSCMisInitializing: boolean; // FLAG FormCreate
-    prefGenerateEventDescription: boolean;
-    prefGenerateEventDescStr: string;
   end;
 
 var
@@ -1329,7 +1327,6 @@ begin
   begin
     if (TEAM.Grid.Enabled <> EnabledState) then
         TEAM.Grid.Enabled := EnabledState;
-    TEAM.EventScroll; // set control states and focus
   end;
 
 end;
@@ -1570,9 +1567,6 @@ begin
     end;
   end;
 
-  prefGenerateEventDescription := false;
-  prefGenerateEventDescStr := '';
-
   bootprogress.lblProgress.Caption := 'Loading user preferences.';
   bootprogress.lblProgress.Repaint;
   Application.ProcessMessages;
@@ -1793,16 +1787,6 @@ begin
   iniFileName := SCMUtility.GetSCMPreferenceFileName;
   if not FileExists(iniFileName) then exit;
   iFile := TIniFile.Create(iniFileName);
-
-  // Generate event descriptions for new events : see note AA.
-  // -------------------------------------------
-  i := iFile.ReadInteger('Preferences', 'GenerateEventDescription',
-    integer(cbUnchecked));
-  if (i = integer(cbChecked)) then prefGenerateEventDescription := true
-  else prefGenerateEventDescription := false;
-
-  prefGenerateEventDescStr := iFile.ReadString('Preferences',
-    'GenerateEventDescStr', ' - Individual, all genders, all ages.');
 
   // Display debug info ... see note AA.
   // -------------------------------------------
