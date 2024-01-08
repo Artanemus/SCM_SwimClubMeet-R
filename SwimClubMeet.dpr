@@ -78,7 +78,8 @@ uses
   dlgTeamNamePicker in 'FRAME\dlgTeamNamePicker.pas' {TeamNamePicker},
   rptMarshallReportC in 'REPORTS\rptMarshallReportC.pas' {MarshallReportC: TDataModule},
   dlgSplitTimeTEAM in 'FRAME\dlgSplitTimeTEAM.pas' {SplitTimeTEAM},
-  dlgSplitTimeINDV in 'FRAME\dlgSplitTimeINDV.pas' {SplitTimeINDV};
+  dlgSplitTimeINDV in 'FRAME\dlgSplitTimeINDV.pas' {SplitTimeINDV},
+  rptMarshallReportA_ALT in 'REPORTS\rptMarshallReportA_ALT.pas' {MarshallReportA_ALT: TDataModule};
 
 {$R *.res}
 
@@ -87,5 +88,6 @@ begin
   Application.MainFormOnTaskbar := True;
   TStyleManager.TrySetStyle('Windows10 SlateGray');
   Application.CreateForm(TMain, Main);
+  Application.CreateForm(TMarshallReportA_ALT, MarshallReportA_ALT);
   Application.Run;
 end.

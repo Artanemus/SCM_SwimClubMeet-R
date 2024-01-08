@@ -4,7 +4,7 @@
         <ProjectVersion>19.5</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -109,9 +109,9 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_MinorVer>7</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=Artanemus;FileDescription=$(MSBuildProjectName) - Manage club members and run your club nights.;FileVersion=1.7.0.3;InternalName=SwimClubMeet;LegalCopyright=Copyright (C) 2019-2023 Artanemus.  All rights reserved.;LegalTrademarks=;OriginalFilename=SwimClubMeet.exe;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.7;Comments=Manage club members and run your club nights.</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=Artanemus;FileDescription=$(MSBuildProjectName) - Manage club members and run your club nights.;FileVersion=1.7.0.4;InternalName=SwimClubMeet;LegalCopyright=Copyright (C) 2019-2024 Artanemus.  All rights reserved.;LegalTrademarks=;OriginalFilename=SwimClubMeet.exe;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.7;Comments=Manage club members and run your club nights.</VerInfo_Keys>
         <Icon_MainIcon>SwimClubMeet.ico</Icon_MainIcon>
-        <VerInfo_Build>3</VerInfo_Build>
+        <VerInfo_Build>4</VerInfo_Build>
         <VerInfo_PreRelease>true</VerInfo_PreRelease>
     </PropertyGroup>
     <ItemGroup>
@@ -420,6 +420,11 @@
         <DCCReference Include="FRAME\dlgSplitTimeINDV.pas">
             <Form>SplitTimeINDV</Form>
             <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="REPORTS\rptMarshallReportA_ALT.pas">
+            <Form>MarshallReportA_ALT</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <None Include="SwimClubMeet.md"/>
         <None Include="SwimClubMeet.css"/>
