@@ -108,6 +108,13 @@ type
     Label26: TLabel;
     DBGrid1: TDBGrid;
     DBTextFullName: TDBText;
+    TabSheet5: TTabSheet;
+    DBChart1: TDBChart;
+    Panel2: TPanel;
+    cmboDistance: TComboBox;
+    cmboStroke: TComboBox;
+    Label27: TLabel;
+    Label28: TLabel;
     procedure About2Click(Sender: TObject);
     procedure actnFilterExecute(Sender: TObject);
     procedure btnClearClick(Sender: TObject);
@@ -126,6 +133,10 @@ type
     procedure btnInfoMouseLeave(Sender: TObject);
     procedure btnMemberDetailClick(Sender: TObject);
     procedure btnMemberHistoryClick(Sender: TObject);
+    procedure cmboDistanceChange(Sender: TObject);
+    procedure cmboStrokeChange(Sender: TObject);
+    procedure DBChart1GetAxisLabel(Sender: TChartAxis; Series: TChartSeries;
+        ValueIndex: Integer; var LabelText: string);
     procedure DBGridCellClick(Column: TColumn);
     procedure DBGridColEnter(Sender: TObject);
     procedure DBGridColExit(Sender: TObject);
@@ -168,6 +179,8 @@ type
     procedure WritePreferences();
     procedure UpdateFilterCount();
     procedure UpdateMembersAge();
+    procedure UpdateChart();
+    procedure ChartReport();
 
   protected
     // windows messages ....
@@ -448,6 +461,70 @@ begin
   rpt := TMemberHistory.Create(Self);
   rpt.RunReport(FConnection, fSwimClubID, MemberID);
   rpt.Free;
+end;
+
+procedure TManageMember.ChartReport;
+begin
+(*
+	(void)Sender;
+	int aMemberID;
+	String s, s2;
+	TMemberChart *rpt;
+	// Distance
+	s = cmboDistance->Items->Strings[cmboDistance->ItemIndex];
+	// Stroke
+	s2 = cmboStroke->Items->Strings[cmboStroke->ItemIndex];
+	rpt = new TMemberChart(this);
+	aMemberID = dsMember->DataSet->FieldByName("MemberID")->AsInteger;
+	// params ... SwimClubID, MemberID
+	rpt->RunReport(aMemberID, DBChart1, s, s2);
+	delete rpt;
+*)
+end;
+
+procedure TManageMember.cmboDistanceChange(Sender: TObject);
+begin
+  UpdateChart;
+end;
+
+procedure TManageMember.cmboStrokeChange(Sender: TObject);
+begin
+  UpdateChart;
+end;
+
+procedure TManageMember.DBChart1GetAxisLabel(Sender: TChartAxis; Series:
+    TChartSeries; ValueIndex: Integer; var LabelText: string);
+begin
+(*
+
+  	TFDQuery *qry;
+  	TDateTime dt;
+  	TLocateOptions SearchOptions;
+  	Variant v[1]; // VarArray
+  	bool Success;
+  	// replace axis label with session date
+  	if (Sender == DBChart1->BottomAxis) {
+  		if (Series != nullptr) {
+  			if (Series->DataSource != nullptr) {
+  				qry = reinterpret_cast<TFDQuery*>(Series->DataSource);
+  				if (qry->Active == true) {
+  					v[0] = Variant((ValueIndex + 1));
+  					SearchOptions.Clear();
+  					Success = qry->Locate("ChartX", VarArrayOf(v, 0),
+  						SearchOptions);
+  					if (Success) {
+  						dt = qry->FieldByName("SessionStart")->AsDateTime;
+  						LabelText = dt.DateString();
+  					}
+  					else {
+  						LabelText = "ERR";
+  					}
+  				}
+  			}
+  		}
+  	}
+
+*)
 end;
 
 procedure TManageMember.DBGridCellClick(Column: TColumn);
@@ -801,6 +878,52 @@ begin
   PageControl1.TabIndex := 0;
   LFormatSettings := TFormatSettings.Create;
   Label11.Caption := 'Date Syntax : ' + LFormatSettings.ShortDateFormat;
+
+ (*
+	// only poulate the Chart combo-boxes if queries were enabled.
+	if (qryMember->Active) {
+
+		tblDistance->Open();
+		if (tblDistance->Active) {
+			// fill the combobox with data
+			tblDistance->Last();
+			// BSA 03/06/2022 cast
+			fArrayDistance =
+				new IntPtr[static_cast<unsigned int>(tblDistance->RecordCount)];
+			index = 0;
+			for (tblDistance->First(); !tblDistance->Eof; tblDistance->Next()) {
+				cmboDistance->Items->Add
+					(tblDistance->FieldByName("Caption")->AsString);
+				fArrayDistance[index] = tblDistance->FieldByName("DistanceID")
+					->AsInteger;
+				index++;
+			}
+			cmboDistance->ItemIndex = 0;
+		}
+
+		tblStroke->Open();
+		if (tblStroke->Active) {
+			tblStroke->Last();
+			// BSA 03/06/2022 cast
+			fArrayStroke =
+				new IntPtr[static_cast<unsigned int>(tblStroke->RecordCount)];
+			index = 0;
+			for (tblStroke->First(); !tblStroke->Eof; tblStroke->Next()) {
+				cmboStroke->Items->Add
+					(tblStroke->FieldByName("Caption")->AsString);
+				fArrayStroke[index] =
+					tblStroke->FieldByName("StrokeID")->AsInteger;
+				index++;
+			}
+			cmboStroke->ItemIndex = 0;
+		}
+		// Setup Chart Params and Open
+		UpdateChart();
+
+
+	}
+ *)
+
 end;
 
 procedure TManageMember.FormDestroy(Sender: TObject);
@@ -974,6 +1097,36 @@ begin
   base_URL := 'http://artanemus.github.io';
   ShellExecute(0, 'open', PChar(base_URL), NIL, NIL, SW_SHOWNORMAL);
 
+end;
+
+procedure TManageMember.UpdateChart;
+begin
+(*
+  	int DistanceID, StrokeID;
+  	String s;
+  	if (qryChart->Active)
+  		qryChart->Close();
+  	DistanceID = fArrayDistance[cmboDistance->ItemIndex];
+  	qryChart->ParamByName("DISTANCEID")->AsInteger = DistanceID;
+  	StrokeID = fArrayStroke[cmboStroke->ItemIndex];
+  	qryChart->ParamByName("STROKEID")->AsInteger = StrokeID;
+  	qryChart->ParamByName("MEMBERID")->AsInteger =
+  		qryMember->FieldByName("MemberID")->AsInteger;
+  	qryChart->Prepare();
+  	qryChart->Open();
+  	DBChart1->Title->Text->Clear();
+  	DBChart1->Title->Text->Add(qryMember->FieldByName("FName")->AsString);
+  	DBChart1->SubTitle->Text->Clear();
+  	if (qryChart->IsEmpty()) {
+  		DBChart1->SubTitle->Text->Add("No data for this distance and stroke");
+  	}
+  	else {
+  		s = qryChart->FieldByName("cDistance")->AsString + " - " +
+  			qryChart->FieldByName("cStroke")->AsString;
+  		DBChart1->SubTitle->Text->Add(s);
+  	}
+  	DBChart1->RefreshData();
+*)
 end;
 
 procedure TManageMember.UpdateFilterCount;

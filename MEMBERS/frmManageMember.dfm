@@ -135,8 +135,6 @@ object ManageMember: TManageMember
     TabHeight = 40
     TabOrder = 2
     TabWidth = 180
-    ExplicitWidth = 1359
-    ExplicitHeight = 701
     object TabSheet1: TTabSheet
       Caption = 'Member'#39's Details 1'
       object Panel7: TPanel
@@ -1033,6 +1031,118 @@ object ManageMember: TManageMember
         Caption = 'Club Members List'
         TabOrder = 4
         OnClick = btnClubMembersListClick
+      end
+    end
+    object TabSheet5: TTabSheet
+      Caption = 'CHART'
+      ImageIndex = 4
+      object DBChart1: TDBChart
+        Left = 0
+        Top = 65
+        Width = 1355
+        Height = 587
+        SubTitle.Font.Color = clBlack
+        SubTitle.Font.Height = -13
+        SubTitle.Font.Name = 'Segoe UI'
+        Title.Font.Color = clBlack
+        Title.Font.Height = -24
+        Title.Font.Name = 'Segoe UI'
+        Title.Text.Strings = (
+          'TDBChart')
+        BottomAxis.DateTimeFormat = 'dd/MM/yy'
+        BottomAxis.LabelsOnAxis = False
+        BottomAxis.LabelStyle = talPointValue
+        BottomAxis.Title.Caption = 'Session Date'
+        BottomAxis.Title.Font.Height = -13
+        BottomAxis.Title.Font.Name = 'Segoe UI'
+        LeftAxis.Increment = 1.000000000000000000
+        LeftAxis.MaximumRound = True
+        LeftAxis.MinimumRound = True
+        View3D = False
+        View3DWalls = False
+        OnGetAxisLabel = DBChart1GetAxisLabel
+        Align = alClient
+        Color = clWhite
+        TabOrder = 0
+        ExplicitWidth = 1351
+        ExplicitHeight = 586
+        DefaultCanvas = 'TGDIPlusCanvas'
+        PrintMargins = (
+          15
+          21
+          15
+          21)
+        ColorPaletteIndex = 6
+        object Series1: TLineSeries
+          HoverElement = [heCurrent]
+          Legend.Visible = False
+          Marks.Visible = True
+          Marks.AutoPosition = False
+          SeriesColor = clBlack
+          ShowInLegend = False
+          XLabelsSource = 'RaceTimeAsString'
+          Brush.BackColor = clDefault
+          DrawStyle = dsCurve
+          OutLine.Color = clDefault
+          OutLine.Visible = True
+          Pointer.InflateMargins = True
+          Pointer.Style = psHexagon
+          Pointer.Visible = True
+          XValues.Name = 'X'
+          XValues.Order = loAscending
+          XValues.ValueSource = 'ChartX'
+          YValues.Name = 'Y'
+          YValues.Order = loNone
+          YValues.ValueSource = 'Seconds'
+          object TSmoothingFunction
+            Period = 1.000000000000000000
+            Factor = 8
+          end
+        end
+      end
+      object Panel2: TPanel
+        Left = 0
+        Top = 0
+        Width = 1355
+        Height = 65
+        Align = alTop
+        Caption = 'Panel2'
+        TabOrder = 1
+        ExplicitWidth = 1351
+        object Label27: TLabel
+          Left = 24
+          Top = 11
+          Width = 59
+          Height = 19
+          Alignment = taRightJustify
+          Caption = 'Distance'
+        end
+        object Label28: TLabel
+          Left = 334
+          Top = 11
+          Width = 45
+          Height = 19
+          Alignment = taRightJustify
+          Caption = 'Stroke'
+        end
+        object cmboDistance: TComboBox
+          Left = 89
+          Top = 8
+          Width = 183
+          Height = 27
+          TabOrder = 0
+          Text = 'cmboDistance'
+          OnChange = cmboDistanceChange
+        end
+        object cmboStroke: TComboBox
+          Left = 385
+          Top = 9
+          Width = 184
+          Height = 27
+          TabOrder = 1
+          Text = 'cmboStroke'
+          OnChange = cmboStrokeChange
+        end
       end
     end
   end

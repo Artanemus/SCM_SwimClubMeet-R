@@ -93,6 +93,8 @@ type
     qryMemberEventsEventStr: TWideStringField;
     qryMemberEventsRaceTime: TTimeField;
     qryMemberEventsEventDate: TStringField;
+    qryChart: TFDQuery;
+    dsChart: TDataSource;
     procedure DataModuleCreate(Sender: TObject);
     procedure qryMemberAfterInsert(DataSet: TDataSet);
     procedure qryMemberAfterPost(DataSet: TDataSet);
@@ -188,6 +190,7 @@ begin
     qryMemberRoleLnk.Connection := FConnection;
     qryMemberPB.Connection := FConnection;
     qryMemberEvents.Connection := FConnection;
+    qryChart.Connection := FConnection;
 
     // prepare lookup tables.
     tblStroke.Connection := FConnection;
@@ -216,6 +219,7 @@ begin
         qryMemberRoleLnk.Open;
         qryMemberPB.Open;
         qryMemberEvents.Open;
+
         if qryContactNum.Active then
         begin
           fManageMemberDataActive := True;
@@ -317,6 +321,9 @@ begin
   // Updates the display of the member's age.
   if Owner is TForm then
     PostMessage(TForm(Owner).Handle, SCM_AFTERSCROLL, 0, 0);
+
+  // Update chart query?
+
 end;
 
 procedure TManageMemberData.qryMemberBeforeDelete(DataSet: TDataSet);

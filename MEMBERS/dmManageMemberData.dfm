@@ -885,4 +885,72 @@ object ManageMemberData: TManageMemberData
       Size = 11
     end
   end
+  object qryChart: TFDQuery
+    Connection = SCM.scmConnection
+    SQL.Strings = (
+      'USE [SwimClubMeet];'
+      ''
+      'DECLARE @StrokeID AS INT;'
+      'DECLARE @DistanceID AS INT;'
+      'DECLARE @MemberID AS INT;'
+      ''
+      'SET @StrokeID = :STROKEID;'
+      'SET @DistanceID = :DISTANCEID;'
+      'SET @MemberID = :MEMBERID;'
+      ''
+      
+        'SELECT [dbo].[SwimTimeToString](Entrant.RaceTime) AS RaceTimeAsS' +
+        'tring'
+      
+        #9',(DATEPART(MILLISECOND, Entrant.RaceTime) / 1000.0) + (DATEPART' +
+        '(SECOND, Entrant.RaceTime)) + (DATEPART(MINUTE, Entrant.RaceTime' +
+        ') / 60.0) AS Seconds'
+      ''
+      #9',Session.SessionStart'
+      #9',Distance.Caption AS cDistance'
+      #9',Stroke.Caption AS cStroke'
+      
+        ',ROW_NUMBER()OVER (PARTITION BY 1  ORDER BY SessionStart ) AS Ch' +
+        'artX'
+      'FROM Entrant'
+      
+        'INNER JOIN HeatIndividual ON Entrant.HeatID = HeatIndividual.Hea' +
+        'tID'
+      'INNER JOIN Event ON HeatIndividual.EventID = Event.EventID'
+      'INNER JOIN Session ON Event.SessionID = Session.SessionID'
+      'INNER JOIN Stroke ON Event.StrokeID = Stroke.StrokeID'
+      'INNER JOIN Distance ON Event.DistanceID = Distance.DistanceID'
+      'WHERE (Event.StrokeID = @StrokeID)'
+      
+        #9'AND (Event.DistanceID = @DistanceID) AND (Entrant.MemberID = @M' +
+        'emberID) AND [dbo].[SwimTimeToString](Entrant.RaceTime) IS NOT N' +
+        'ULL'
+      'ORDER BY SessionStart')
+    Left = 496
+    Top = 592
+    ParamData = <
+      item
+        Name = 'STROKEID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = 1
+      end
+      item
+        Name = 'DISTANCEID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = 1
+      end
+      item
+        Name = 'MEMBERID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = 1
+      end>
+  end
+  object dsChart: TDataSource
+    DataSet = qryChart
+    Left = 560
+    Top = 592
+  end
 end
