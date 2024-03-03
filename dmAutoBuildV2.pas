@@ -942,6 +942,9 @@ begin
         tbl_ABHeat.FieldByName('HeatID').AsInteger;
       // Assign lane number
       tbl_ABEntrant.FieldByName('Lane').AsInteger := (iterLanes + 1);
+      // manatory -  bit assignment
+      tbl_ABEntrant.FieldByName('IsDisqualified').AsBoolean := false;
+      tbl_ABEntrant.FieldByName('IsScratched').AsBoolean := false;
       tbl_ABEntrant.Post;
     end;
     tbl_ABEntrant.Close;

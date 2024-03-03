@@ -1,5 +1,4 @@
 object AutoBuildV2: TAutoBuildV2
-  OldCreateOrder = False
   OnCreate = DataModuleCreate
   Height = 501
   Width = 773

@@ -19,19 +19,19 @@ object Main: TMain
   TextHeight = 21
   object pnlPageControl: TPanel
     Left = 0
-    Top = 108
+    Top = 106
     Width = 1414
-    Height = 802
+    Height = 804
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
     ExplicitWidth = 1410
-    ExplicitHeight = 801
+    ExplicitHeight = 803
     object PageControl1: TPageControl
       Left = 0
       Top = 0
       Width = 1414
-      Height = 802
+      Height = 804
       ActivePage = TabSheet1
       Align = alClient
       Style = tsFlatButtons
@@ -39,18 +39,18 @@ object Main: TMain
       OnChange = PageControl1Change
       OnChanging = PageControl1Changing
       ExplicitWidth = 1410
-      ExplicitHeight = 801
+      ExplicitHeight = 803
       object TabSheet1: TTabSheet
         Caption = 'Session'
         object pnlSessionLeft: TPanel
           Left = 0
           Top = 0
           Width = 729
-          Height = 763
+          Height = 765
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitHeight = 762
+          ExplicitHeight = 764
           object pnlSessLeftTop: TPanel
             Left = 0
             Top = 0
@@ -72,7 +72,7 @@ object Main: TMain
             Left = 10
             Top = 20
             Width = 649
-            Height = 743
+            Height = 745
             Margins.Left = 10
             Margins.Top = 0
             Margins.Right = 10
@@ -93,7 +93,7 @@ object Main: TMain
             Left = 669
             Top = 20
             Width = 60
-            Height = 743
+            Height = 745
             ControlCollection = <
               item
                 Control = spbtnSessionToggleVisible
@@ -177,10 +177,10 @@ object Main: TMain
             Align = alRight
             BevelOuter = bvNone
             TabOrder = 2
-            ExplicitHeight = 742
+            ExplicitHeight = 744
             DesignSize = (
               60
-              743)
+              745)
             object spbtnSessionToggleVisible: TSpeedButton
               Left = 6
               Top = 0
@@ -288,13 +288,13 @@ object Main: TMain
           Left = 729
           Top = 0
           Width = 677
-          Height = 763
+          Height = 765
           Align = alClient
           BevelOuter = bvNone
           Caption = 'pnlSessionClient'
           TabOrder = 1
           ExplicitWidth = 673
-          ExplicitHeight = 762
+          ExplicitHeight = 764
           object pnlSessClientTop: TPanel
             Left = 0
             Top = 0
@@ -316,19 +316,19 @@ object Main: TMain
             Left = 0
             Top = 20
             Width = 677
-            Height = 743
+            Height = 745
             Align = alClient
             BevelOuter = bvNone
             Caption = 'Panel7'
             TabOrder = 1
             ExplicitWidth = 673
-            ExplicitHeight = 742
+            ExplicitHeight = 744
             object Event_Grid: TDBGrid
               AlignWithMargins = True
               Left = 10
               Top = 0
               Width = 597
-              Height = 743
+              Height = 745
               Margins.Left = 10
               Margins.Top = 0
               Margins.Right = 10
@@ -349,7 +349,7 @@ object Main: TMain
               Left = 617
               Top = 0
               Width = 60
-              Height = 743
+              Height = 745
               ControlCollection = <
                 item
                   Control = ShapeBarEv1
@@ -444,10 +444,10 @@ object Main: TMain
               BevelOuter = bvNone
               TabOrder = 1
               ExplicitLeft = 613
-              ExplicitHeight = 742
+              ExplicitHeight = 744
               DesignSize = (
                 60
-                743)
+                745)
               object ShapeBarEv1: TShape
                 AlignWithMargins = True
                 Left = 6
@@ -577,7 +577,7 @@ object Main: TMain
           Left = 0
           Top = 0
           Width = 1406
-          Height = 763
+          Height = 765
           ControlCollection = <
             item
               Control = NominateCenteredPanel
@@ -602,12 +602,12 @@ object Main: TMain
           TabOrder = 0
           DesignSize = (
             1406
-            763)
+            765)
           object NominateCenteredPanel: TPanel
             Left = 181
             Top = 0
             Width = 1044
-            Height = 763
+            Height = 765
             Anchors = []
             BevelOuter = bvNone
             TabOrder = 0
@@ -616,7 +616,7 @@ object Main: TMain
               Left = 0
               Top = 10
               Width = 352
-              Height = 743
+              Height = 745
               Margins.Left = 0
               Margins.Top = 10
               Margins.Right = 0
@@ -663,7 +663,7 @@ object Main: TMain
               TabOrder = 0
               DesignSize = (
                 352
-                743)
+                745)
               object Nominate_Edit: TEdit
                 AlignWithMargins = True
                 Left = 40
@@ -695,7 +695,7 @@ object Main: TMain
                 Left = 0
                 Top = 40
                 Width = 352
-                Height = 703
+                Height = 705
                 Margins.Left = 0
                 Margins.Top = 40
                 Margins.Right = 0
@@ -757,7 +757,7 @@ object Main: TMain
               Left = 352
               Top = 48
               Width = 60
-              Height = 715
+              Height = 717
               Margins.Left = 0
               Margins.Top = 48
               Margins.Right = 0
@@ -807,7 +807,7 @@ object Main: TMain
               TabOrder = 1
               DesignSize = (
                 60
-                715)
+                717)
               object spbtnNominateSortMember: TSpeedButton
                 Left = 6
                 Top = 0
@@ -863,7 +863,7 @@ object Main: TMain
               Left = 514
               Top = 10
               Width = 530
-              Height = 743
+              Height = 745
               Margins.Left = 0
               Margins.Top = 10
               Margins.Right = 0
@@ -895,7 +895,7 @@ object Main: TMain
                 Left = 57
                 Top = 0
                 Width = 473
-                Height = 743
+                Height = 745
                 Margins.Left = 0
                 Margins.Top = 0
                 Margins.Right = 0
@@ -977,7 +977,7 @@ object Main: TMain
                 Left = 12
                 Top = 40
                 Width = 45
-                Height = 700
+                Height = 702
                 Margins.Top = 40
                 Margins.Right = 0
                 Align = alRight
@@ -1023,7 +1023,7 @@ object Main: TMain
           Left = 282
           Top = 147
           Width = 1104
-          Height = 606
+          Height = 608
           Margins.Left = 0
           Margins.Top = 10
           Margins.Right = 20
@@ -1036,7 +1036,7 @@ object Main: TMain
             Left = 0
             Top = 0
             Width = 1044
-            Height = 606
+            Height = 608
             Margins.Left = 60
             Align = alClient
             Anchors = []
@@ -1061,7 +1061,7 @@ object Main: TMain
             Left = 1044
             Top = 0
             Width = 60
-            Height = 606
+            Height = 608
             ControlCollection = <
               item
                 Control = spbtnEntrantDown
@@ -1128,7 +1128,7 @@ object Main: TMain
             TabOrder = 1
             DesignSize = (
               60
-              606)
+              608)
             object spbtnEntrantDown: TSpeedButton
               Left = 6
               Top = 48
@@ -1411,7 +1411,7 @@ object Main: TMain
           Left = 20
           Top = 137
           Width = 252
-          Height = 626
+          Height = 628
           Margins.Left = 20
           Margins.Top = 0
           Margins.Right = 10
@@ -1424,7 +1424,7 @@ object Main: TMain
             Left = 192
             Top = 10
             Width = 60
-            Height = 606
+            Height = 608
             Margins.Left = 0
             Margins.Top = 10
             Margins.Right = 0
@@ -1594,7 +1594,7 @@ object Main: TMain
             TabOrder = 0
             DesignSize = (
               60
-              606)
+              608)
             object spbtnHeatUp: TSpeedButton
               Left = 6
               Top = 0
@@ -1805,7 +1805,7 @@ object Main: TMain
             Left = 0
             Top = 0
             Width = 176
-            Height = 626
+            Height = 628
             Align = alLeft
             BorderStyle = bsNone
             ItemMargins.Left = 0
@@ -1885,7 +1885,7 @@ object Main: TMain
   end
   object pnlTitleBar: TRelativePanel
     Left = 0
-    Top = 27
+    Top = 25
     Width = 1414
     Height = 81
     ControlCollection = <
@@ -2161,7 +2161,7 @@ object Main: TMain
     Left = 0
     Top = 0
     Width = 1414
-    Height = 27
+    Height = 25
     UseSystemFont = False
     ActionManager = ActionManager1
     Caption = 'ActionMainMenuBar1'
@@ -6701,14 +6701,14 @@ object Main: TMain
   object BindSourceDB1: TBindSourceDB
     DataSet = SCM.qryNominateControlList
     ScopeMappings = <>
-    Left = 1208
-    Top = 112
+    Left = 1216
+    Top = 104
   end
   object BindingsList1: TBindingsList
     Methods = <>
     OutputConverters = <>
-    Left = 1132
-    Top = 109
+    Left = 1100
+    Top = 101
     object LinkGridToDataSourceBindSourceDB1: TLinkGridToDataSource
       Category = 'Quick Bindings'
       DataSource = BindSourceDB1
@@ -7030,5 +7030,9 @@ object Main: TMain
     Height = 32
     Left = 400
     Top = 704
+  end
+  object FDMoniRemoteClientLink1: TFDMoniRemoteClientLink
+    Left = 1176
+    Top = 25
   end
 end
