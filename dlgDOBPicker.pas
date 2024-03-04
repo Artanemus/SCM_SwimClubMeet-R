@@ -4,11 +4,17 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.WinXCalendars, System.DateUtils;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.WinXCalendars, System.DateUtils,
+  Vcl.StdCtrls, Vcl.ExtCtrls;
 
 type
   TDOBPicker = class(TForm)
     CalendarView1: TCalendarView;
+    Panel1: TPanel;
+    btnOk: TButton;
+    btnCancel: TButton;
+    procedure btnCancelClick(Sender: TObject);
+    procedure btnOkClick(Sender: TObject);
     procedure CalendarView1DblClick(Sender: TObject);
   private
     { Private declarations }
@@ -23,18 +29,28 @@ implementation
 
 {$R *.dfm}
 
+procedure TDOBPicker.btnCancelClick(Sender: TObject);
+begin
+  ModalResult := mrCancel;
+end;
+
+procedure TDOBPicker.btnOkClick(Sender: TObject);
+begin
+    ModalResult := mrOk;
+end;
+
 procedure TDOBPicker.CalendarView1DblClick(Sender: TObject);
-var
-d1, d2: TDateTime;
+//var
+//d1, d2: TDateTime;
 begin
   // Sometimes a double click can produce a null result?
   // To produce a reliable result - assignment needed
   // TControl may be threaded and CalendarView1.Date isn't read correctly
   // when used inline.
-  d1 := Date();
-  d2 := CalendarView1.Date;
-  if (WithinPastYears(d1, d2, 99))  then
-    ModalResult := mrOk;
+  //  d1 := Date();
+  //  d2 := CalendarView1.Date;
+  //  if (WithinPastYears(d1, d2, 99))  then
+  //    ModalResult := mrOk;
 end;
 
 end.

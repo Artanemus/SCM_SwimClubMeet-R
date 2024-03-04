@@ -213,6 +213,8 @@ object ManageMemberData: TManageMemberData
       DisplayWidth = 12
       FieldName = 'DOB'
       Origin = 'DOB'
+      OnGetText = qryMemberDOBGetText
+      OnSetText = qryMemberDOBSetText
       DisplayFormat = 'dd/mm/yyyy'
     end
     object qryMemberSwimmerAge: TIntegerField

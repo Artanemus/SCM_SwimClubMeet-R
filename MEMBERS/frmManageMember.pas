@@ -15,7 +15,7 @@ uses
   Vcl.ExtCtrls, Vcl.Menus, Vcl.WinXCalendars, dmManageMemberData, SCMDefines,
   Vcl.VirtualImageList, Vcl.BaseImageCollection, Vcl.ImageCollection,
   System.Actions, Vcl.ActnList, Vcl.PlatformDefaultStyleActnCtrls, Vcl.ActnMan,
-  Vcl.ToolWin, Vcl.ActnCtrls, Vcl.ActnMenus;
+  Vcl.ToolWin, Vcl.ActnCtrls, Vcl.ActnMenus, Vcl.VirtualImage;
 
 type
   TManageMember = class(TForm)
@@ -29,18 +29,15 @@ type
     PageControl1: TPageControl;
     TabSheet1: TTabSheet;
     Panel7: TPanel;
-    Label3: TLabel;
     Label4: TLabel;
     Label2: TLabel;
     Label1: TLabel;
     Label10: TLabel;
-    DBText3: TDBText;
     Label6: TLabel;
     Label7: TLabel;
     Label12: TLabel;
     dblblMemberID: TDBText;
     Label21: TLabel;
-    Label22: TLabel;
     Label24: TLabel;
     DBlucboGender: TDBLookupComboBox;
     DBedtFirstName: TDBEdit;
@@ -57,13 +54,11 @@ type
     btnClearGender: TButton;
     TabSheet2: TTabSheet;
     DBGrid3: TDBGrid;
-    ImageList1: TImageList;
     btnFindMember: TButton;
     btnGotoMemberID: TButton;
     Label18: TLabel;
     RegistrationNum: TDBEdit;
     Label8: TLabel;
-    dtpickDOB: TCalendarPicker;
     lblCount: TLabel;
     btnGotoMembership: TButton;
     DBgridHistoryPB: TDBGrid;
@@ -91,8 +86,17 @@ type
     MemSearch_GotoMembershipNum: TAction;
     MemSearch_GotoMemberID: TAction;
     MemSearch_FindMember: TAction;
-    ImageCollectMember: TImageCollection;
     VirtlImageListMember: TVirtualImageList;
+    ImageCollectMember: TImageCollection;
+    BalloonHint1: TBalloonHint;
+    Label11: TLabel;
+    Label15: TLabel;
+    lblMembersAge: TLabel;
+    Label25: TLabel;
+    btnInfoDateTime: TVirtualImage;
+    btnClearDOB: TButton;
+    btnDOBPicker: TButton;
+    DBedtDOB: TDBEdit;
     procedure FormCreate(Sender: TObject);
     procedure About2Click(Sender: TObject);
     procedure DBGrid3CellClick(Column: TColumn);
@@ -104,12 +108,12 @@ type
       Shift: TShiftState);
     procedure DrawCheckBoxes(oGrid: TObject; Rect: TRect; Column: TColumn;
   fontColor, bgColor: TColor);
-    procedure dtpickDOBChange(Sender: TObject);
     procedure chkbHideArchivedClick(Sender: TObject);
     procedure chkbHideInActiveClick(Sender: TObject);
     procedure chkbHideNonSwimmersClick(Sender: TObject);
     procedure DBGrid3EditButtonClick(Sender: TObject);
     procedure btnClearClick(Sender: TObject);
+    procedure btnClearDOBClick(Sender: TObject);
     procedure btnFindMemberClick(Sender: TObject);
     procedure btnGotoMemberIDClick(Sender: TObject);
     procedure btnGotoMembershipClick(Sender: TObject);
@@ -125,6 +129,9 @@ type
     procedure btnClubMembersSummaryClick(Sender: TObject);
     procedure btnClubMembersDetailedClick(Sender: TObject);
     procedure btnClubMembersListClick(Sender: TObject);
+    procedure btnDOBPickerClick(Sender: TObject);
+    procedure btnInfoDateTimeClick(Sender: TObject);
+    procedure btnInfoDateTimeMouseLeave(Sender: TObject);
     procedure MemFile_ExitExecute(Sender: TObject);
     procedure MemSearch_FindMemberExecute(Sender: TObject);
 
@@ -139,9 +146,11 @@ type
 
     function FindMember(MemberID: Integer): Boolean;
     function AssertConnection: Boolean;
+    function GetMembersAge(aMemberID: Integer; aDate: TDate): Integer;
 
     procedure ReadPreferences();
     procedure WritePreferences();
+    procedure UpdateMembersAge();
 
   protected
     // windows messages ....
@@ -213,6 +222,17 @@ begin
   end;
 end;
 
+procedure TManageMember.btnClearDOBClick(Sender: TObject);
+begin
+  if not assigned(ManageMemberData) then exit;
+  with ManageMemberData.dsMember.DataSet do
+  begin
+    if not(Active) then exit;
+    if (State <> dsInsert) or (State <> dsEdit) then Edit;
+    FieldByName('DOB').Clear;
+  end;
+end;
+
 procedure TManageMember.btnClubMembersDetailedClick(Sender: TObject);
 var
 rpt: TMembersDetail;
@@ -241,6 +261,35 @@ begin
     rpt := TMembersSummary.Create(self);
     rpt.RunReport(FConnection, FSwimClubID);
     rpt.Free;
+end;
+
+procedure TManageMember.btnDOBPickerClick(Sender: TObject);
+var
+  dlg: TDOBPicker;
+  Rect: TRect;
+  rtn: TModalResult;
+begin
+  dlg := TDOBPicker.Create(Self);
+  dlg.Position := poDesigned;
+  // Assign date to DB Field.
+  Rect := btnDOBPicker.ClientToScreen(btnDOBPicker.ClientRect);
+  dlg.Left := Rect.Left;
+  dlg.Top := Rect.Bottom + 1;
+  dlg.CalendarView1.Date := ManageMemberData.dsMember.DataSet.FieldByName('DOB')
+    .AsDateTime;
+  rtn := dlg.ShowModal;
+  if IsPositiveResult(rtn) then
+  begin
+    with ManageMemberData.dsMember.DataSet do
+    begin
+      if (State <> dsEdit) or (State <> dsInsert) then
+      begin
+        Edit;
+        FieldByName('DOB').AsDateTime := dlg.CalendarView1.Date;
+      end;
+    end;
+  end;
+  dlg.Free;
 end;
 
 procedure TManageMember.btnFindMemberClick(Sender: TObject);
@@ -294,6 +343,21 @@ begin
     end;
     dlg.Free;
   end;
+end;
+
+procedure TManageMember.btnInfoDateTimeClick(Sender: TObject);
+begin
+  BalloonHint1.Title := 'Region Date.';
+  BalloonHint1.Description := 'SCM uses ''Short Date'' locale format.' +
+    sLinebreak +
+    'To modify how dates are displayed and the syntax used to enter dates, ' +
+    sLinebreak + 'go to the ''Region Settings'' in MS Windows. ';
+  BalloonHint1.ShowHint(btnInfoDateTime);
+end;
+
+procedure TManageMember.btnInfoDateTimeMouseLeave(Sender: TObject);
+begin
+   BalloonHint1.HideHint;
 end;
 
 procedure TManageMember.btnMemberDetailClick(Sender: TObject);
@@ -669,17 +733,6 @@ begin
   end;
 end;
 
-procedure TManageMember.dtpickDOBChange(Sender: TObject);
-begin
-  if Assigned(ManageMemberData) and (ManageMemberData.qryMember.Active) then
-  begin
-    if (ManageMemberData.qryMember.State <> dsEdit) then
-      ManageMemberData.qryMember.Edit();
-    ManageMemberData.qryMember.FieldByName('DOB').AsDateTime := dtpickDOB.Date;
-    // let user perform manual post
-    // ManageMemberData.qryMember.Post();
-  end;
-end;
 
 function TManageMember.FindMember(MemberID: Integer): Boolean;
 var
@@ -779,13 +832,30 @@ begin
     ManageMemberData.qrySwimClub.FieldByName('DetailStr').AsString;
 end;
 
+function TManageMember.GetMembersAge(aMemberID: Integer; aDate: TDate): Integer;
+var
+  SQL: string;
+  v: Variant;
+  dt: TDateTime;
+begin
+  result := 0;
+  if not AssertConnection then exit;
+  with ManageMemberData.dsMember.DataSet do
+  begin
+    if not Active or IsEmpty then exit;
+    if FieldByName('DOB').IsNull then exit;
+    dt := FieldByName('DOB').AsDateTime;
+    SQL := 'SELECT dbo.SwimmerAge(GETDATE(), :ID1) AS SwimmerAge FROM ' +
+      '[SwimClubMeet].[dbo].[Member] WHERE MemberID = :ID2';
+    v := FConnection.ExecSQLScalar(SQL, [dt, aMemberID],
+      [ftDateTime, ftInteger]);
+    if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
+  end;
+end;
+
 procedure TManageMember.ManageMemberAfterScroll(var Msg: TMessage);
 begin
-  if not AssertConnection then
-    exit;
-  // DATE-OF-BIRTH - DATETIME PICKER INIT
-  dtpickDOB.Date := ManageMemberData.qryMember.FieldByName('DOB').AsDateTime;
-
+  UpdateMembersAge;
 end;
 
 procedure TManageMember.ManageMemberUpdate(var Msg: TMessage);
@@ -889,6 +959,26 @@ begin
   base_URL := 'http://artanemus.github.io';
   ShellExecute(0, 'open', PChar(base_URL), NIL, NIL, SW_SHOWNORMAL);
 
+end;
+
+procedure TManageMember.UpdateMembersAge;
+var
+  dt: TDate;
+  age: Integer;
+begin
+  lblMembersAge.Caption := '';
+  if not AssertConnection then exit;
+  with ManageMemberData.dsMember.DataSet do
+  BEGIN // calculate the age of the member
+    if not Active or IsEmpty then exit;
+    if FieldByName('MemberID').IsNull then exit;
+    if FieldByName('DOB').IsNull then exit;
+    dt := FieldByName('DOB').AsDateTime;
+    if (dt <= 0) then exit;
+    age := GetMembersAge(FieldByName('MemberID').AsInteger, dt);
+    if (age <= 0) then exit;
+    lblMembersAge.Caption := IntToStr(age);
+  END;
 end;
 
 procedure TManageMember.WritePreferences;

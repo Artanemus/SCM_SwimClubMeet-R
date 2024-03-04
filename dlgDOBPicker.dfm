@@ -1,21 +1,18 @@
 object DOBPicker: TDOBPicker
   Left = 0
   Top = 0
-  AutoSize = True
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Date of Birth'
-  ClientHeight = 337
+  ClientHeight = 384
   ClientWidth = 294
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -11
+  Font.Height = -16
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
-  PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 19
   object CalendarView1: TCalendarView
     Left = 0
     Top = 0
@@ -38,5 +35,35 @@ object DOBPicker: TDOBPicker
     OnDblClick = CalendarView1DblClick
     ParentFont = False
     TabOrder = 0
+  end
+  object Panel1: TPanel
+    Left = 0
+    Top = 343
+    Width = 294
+    Height = 41
+    Align = alBottom
+    BevelOuter = bvNone
+    TabOrder = 1
+    ExplicitLeft = 104
+    ExplicitTop = 368
+    ExplicitWidth = 185
+    object btnOk: TButton
+      Left = 0
+      Top = 0
+      Width = 144
+      Height = 41
+      Caption = 'OK'
+      TabOrder = 0
+      OnClick = btnOkClick
+    end
+    object btnCancel: TButton
+      Left = 150
+      Top = 0
+      Width = 144
+      Height = 41
+      Caption = 'Cancel'
+      TabOrder = 1
+      OnClick = btnCancelClick
+    end
   end
 end
