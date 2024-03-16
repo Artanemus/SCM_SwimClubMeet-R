@@ -28,7 +28,7 @@ object Division: TDivision
     BevelOuter = bvNone
     TabOrder = 0
     ExplicitTop = 669
-    ExplicitWidth = 690
+    ExplicitWidth = 733
     DesignSize = (
       737
       41)
@@ -40,7 +40,7 @@ object Division: TDivision
       Caption = 'A division is an age range (inclusive) with a specific gender. '
     end
     object btnClose: TButton
-      Left = 627
+      Left = 623
       Top = 6
       Width = 88
       Height = 27
@@ -48,6 +48,7 @@ object Division: TDivision
       Caption = 'Close'
       TabOrder = 0
       OnClick = btnCloseClick
+      ExplicitLeft = 619
     end
   end
   object PageControl1: TPageControl
@@ -58,7 +59,8 @@ object Division: TDivision
     ActivePage = TabSheet3
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 694
+    ExplicitWidth = 733
+    ExplicitHeight = 669
     object TabSheet3: TTabSheet
       Caption = 'Divisions'
       DesignSize = (
@@ -232,6 +234,7 @@ object Division: TDivision
     Active = True
     IndexFieldNames = 'GenderID'
     Connection = SCM.scmConnection
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
     UpdateOptions.UpdateTableName = 'Gender'
     UpdateOptions.KeyFields = 'GenderID'
     TableName = 'Gender'

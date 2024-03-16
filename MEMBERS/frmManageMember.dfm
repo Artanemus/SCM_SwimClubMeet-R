@@ -129,12 +129,14 @@ object ManageMember: TManageMember
     Top = 74
     Width = 1363
     Height = 702
-    ActivePage = TabSheet1
+    ActivePage = TabSheet5
     Align = alClient
     MultiLine = True
     TabHeight = 40
     TabOrder = 2
     TabWidth = 180
+    ExplicitWidth = 1359
+    ExplicitHeight = 701
     object TabSheet1: TTabSheet
       Caption = 'Member'#39's Details 1'
       object Panel7: TPanel
@@ -797,11 +799,13 @@ object ManageMember: TManageMember
           item
             Expanded = False
             FieldName = 'RaceTime'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'EventDate'
+            Width = 64
             Visible = True
           end
           item
@@ -860,27 +864,32 @@ object ManageMember: TManageMember
           item
             Expanded = False
             FieldName = 'MembershipNum'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'FirstName'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'LastName'
+            Width = 64
             Visible = True
           end
           item
             ButtonStyle = cbsEllipsis
             Expanded = False
             FieldName = 'DOB'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luGender'
+            Width = 64
             Visible = True
           end
           item
@@ -888,6 +897,7 @@ object ManageMember: TManageMember
             Expanded = False
             FieldName = 'IsArchived'
             Title.Caption = 'Archive'
+            Width = 64
             Visible = True
           end
           item
@@ -901,11 +911,13 @@ object ManageMember: TManageMember
             Expanded = False
             FieldName = 'IsSwimmer'
             Title.Caption = 'Swims'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luHouse'
+            Width = 64
             Visible = True
           end
           item
@@ -1036,78 +1048,14 @@ object ManageMember: TManageMember
     object TabSheet5: TTabSheet
       Caption = 'CHART'
       ImageIndex = 4
-      object DBChart1: TDBChart
-        Left = 0
-        Top = 65
-        Width = 1355
-        Height = 587
-        SubTitle.Font.Color = clBlack
-        SubTitle.Font.Height = -13
-        SubTitle.Font.Name = 'Segoe UI'
-        Title.Font.Color = clBlack
-        Title.Font.Height = -24
-        Title.Font.Name = 'Segoe UI'
-        Title.Text.Strings = (
-          'TDBChart')
-        BottomAxis.DateTimeFormat = 'dd/MM/yy'
-        BottomAxis.LabelsOnAxis = False
-        BottomAxis.LabelStyle = talPointValue
-        BottomAxis.Title.Caption = 'Session Date'
-        BottomAxis.Title.Font.Height = -13
-        BottomAxis.Title.Font.Name = 'Segoe UI'
-        LeftAxis.Increment = 1.000000000000000000
-        LeftAxis.MaximumRound = True
-        LeftAxis.MinimumRound = True
-        View3D = False
-        View3DWalls = False
-        OnGetAxisLabel = DBChart1GetAxisLabel
-        Align = alClient
-        Color = clWhite
-        TabOrder = 0
-        ExplicitWidth = 1351
-        ExplicitHeight = 586
-        DefaultCanvas = 'TGDIPlusCanvas'
-        PrintMargins = (
-          15
-          21
-          15
-          21)
-        ColorPaletteIndex = 6
-        object Series1: TLineSeries
-          HoverElement = [heCurrent]
-          Legend.Visible = False
-          Marks.Visible = True
-          Marks.AutoPosition = False
-          SeriesColor = clBlack
-          ShowInLegend = False
-          XLabelsSource = 'RaceTimeAsString'
-          Brush.BackColor = clDefault
-          DrawStyle = dsCurve
-          OutLine.Color = clDefault
-          OutLine.Visible = True
-          Pointer.InflateMargins = True
-          Pointer.Style = psHexagon
-          Pointer.Visible = True
-          XValues.Name = 'X'
-          XValues.Order = loAscending
-          XValues.ValueSource = 'ChartX'
-          YValues.Name = 'Y'
-          YValues.Order = loNone
-          YValues.ValueSource = 'Seconds'
-          object TSmoothingFunction
-            Period = 1.000000000000000000
-            Factor = 8
-          end
-        end
-      end
       object Panel2: TPanel
         Left = 0
         Top = 0
         Width = 1355
-        Height = 65
+        Height = 41
         Align = alTop
-        Caption = 'Panel2'
-        TabOrder = 1
+        BevelOuter = bvNone
+        TabOrder = 0
         ExplicitWidth = 1351
         object Label27: TLabel
           Left = 24
@@ -1142,6 +1090,49 @@ object ManageMember: TManageMember
           TabOrder = 1
           Text = 'cmboStroke'
           OnChange = cmboStrokeChange
+        end
+        object chkbDoCurrSeason: TCheckBox
+          Left = 616
+          Top = 18
+          Width = 225
+          Height = 17
+          Caption = 'Current swimming season.'
+          Checked = True
+          State = cbChecked
+          TabOrder = 2
+          OnClick = chkbDoCurrSeasonClick
+        end
+      end
+      object DBChart1: TDBChart
+        Left = 0
+        Top = 41
+        Width = 1355
+        Height = 611
+        Title.Text.Strings = (
+          'TDBChart')
+        BottomAxis.ExactDateTime = False
+        BottomAxis.Increment = 1.000000000000000000
+        View3D = False
+        Align = alClient
+        TabOrder = 1
+        ExplicitWidth = 1351
+        ExplicitHeight = 610
+        DefaultCanvas = 'TGDIPlusCanvas'
+        ColorPaletteIndex = 13
+        object Series2: TLineSeries
+          HoverElement = [heCurrent]
+          DataSource = ManageMemberData.qryChart
+          XLabelsSource = 'ChartX'
+          Brush.BackColor = clDefault
+          Pointer.InflateMargins = True
+          Pointer.Style = psRectangle
+          Pointer.Visible = True
+          XValues.Name = 'X'
+          XValues.Order = loAscending
+          XValues.ValueSource = 'ChartX'
+          YValues.Name = 'Y'
+          YValues.Order = loNone
+          YValues.ValueSource = 'Seconds'
         end
       end
     end
@@ -1217,8 +1208,8 @@ object ManageMember: TManageMember
         ActionBar = ActnMemberMenuBar
       end>
     Images = VirtlImageListMember
-    Left = 1112
-    Top = 584
+    Left = 1120
+    Top = 536
     StyleName = 'Platform Default'
     object MemFile_AutoEdit: TAction
       Category = 'File'

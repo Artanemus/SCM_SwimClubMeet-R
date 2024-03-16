@@ -99,7 +99,6 @@ type
     Event_Renumber: TAction;
     Event_Report: TAction;
     Event_ToggleGridView: TAction;
-    FDMoniRemoteClientLink1: TFDMoniRemoteClientLink;
     File_Exit: TAction;
     File_ExportCarnival: TAction;
     File_ImportCarnival: TAction;

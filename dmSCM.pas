@@ -2059,14 +2059,16 @@ begin
   if (v = 0) then
   begin
     i := DataSet.RecordCount;
-    DataSet.Edit;
     DataSet.FieldByName('EventNum').ReadOnly := false;
+    DataSet.Edit;
     DataSet.FieldByName('EventNum').AsInteger := i;
-    DataSet.FieldByName('EventNum').ReadOnly := true;
     DataSet.Post;
     if Owner is TForm then
         PostMessage(TForm(Owner).Handle, SCM_RENUMBEREVENTS, 0, 0);
   end;
+  // Don’t need to put the dataset into edit mode to change readmode
+  if (DataSet.FieldByName('EventNum').ReadOnly = false) then
+    DataSet.FieldByName('EventNum').ReadOnly := true;
 
   v := DataSet.FieldByName('DistanceID').AsInteger;
   if (v = 0) then fCurrEventType := etUnknown
@@ -2164,7 +2166,10 @@ begin
   begin
     DataSet.FieldByName('EventStatusID').ReadOnly := false;
     DataSet.FieldByName('EventStatusID').AsInteger := 1;
-    DataSet.FieldByName('EventStatusID').ReadOnly := true;
+    // NOTE: 2024/03/16
+    // DataSet.FieldByName('EventStatusID').ReadOnly := true;
+    // Throws error - dataset enters Browse mode
+    // Test field read mode on AfterPost event
   end
 end;
 

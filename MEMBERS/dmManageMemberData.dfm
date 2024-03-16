@@ -886,6 +886,7 @@ object ManageMemberData: TManageMemberData
     end
   end
   object qryChart: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
     Connection = SCM.scmConnection
     SQL.Strings = (
       'USE [SwimClubMeet];'
@@ -893,18 +894,21 @@ object ManageMemberData: TManageMemberData
       'DECLARE @StrokeID AS INT;'
       'DECLARE @DistanceID AS INT;'
       'DECLARE @MemberID AS INT;'
+      'DECLARE @DoCurrSeason AS BIT;'
       ''
       'SET @StrokeID = :STROKEID;'
       'SET @DistanceID = :DISTANCEID;'
       'SET @MemberID = :MEMBERID;'
+      'SET @DoCurrSeason = :DOCURRSEASON;'
       ''
       
-        'SELECT [dbo].[SwimTimeToString](Entrant.RaceTime) AS RaceTimeAsS' +
-        'tring'
+        'SELECT TOP 25 [dbo].[SwimTimeToString](Entrant.RaceTime) AS Race' +
+        'TimeAsString'
+      #9',(DATEPART(MILLISECOND, Entrant.RaceTime) / 1000.0) '
+      '                + (DATEPART(SECOND, Entrant.RaceTime)) '
       
-        #9',(DATEPART(MILLISECOND, Entrant.RaceTime) / 1000.0) + (DATEPART' +
-        '(SECOND, Entrant.RaceTime)) + (DATEPART(MINUTE, Entrant.RaceTime' +
-        ') / 60.0) AS Seconds'
+        '                + (DATEPART(MINUTE, Entrant.RaceTime) / 60.0) AS' +
+        ' Seconds'
       ''
       #9',Session.SessionStart'
       #9',Distance.Caption AS cDistance'
@@ -918,13 +922,22 @@ object ManageMemberData: TManageMemberData
         'tID'
       'INNER JOIN Event ON HeatIndividual.EventID = Event.EventID'
       'INNER JOIN Session ON Event.SessionID = Session.SessionID'
+      'INNER JOIN SwimClub ON Session.SwimClubID = SwimClub.SwimClubID'
       'INNER JOIN Stroke ON Event.StrokeID = Stroke.StrokeID'
       'INNER JOIN Distance ON Event.DistanceID = Distance.DistanceID'
       'WHERE (Event.StrokeID = @StrokeID)'
+      #9'AND (Event.DistanceID = @DistanceID) '
+      '        AND (Entrant.MemberID = @MemberID) '
+      '        AND Entrant.RaceTime IS NOT NULL'
+      '        AND Entrant.RaceTime > '#39'00:00:00'#39
+      '        AND ('
       
-        #9'AND (Event.DistanceID = @DistanceID) AND (Entrant.MemberID = @M' +
-        'emberID) AND [dbo].[SwimTimeToString](Entrant.RaceTime) IS NOT N' +
-        'ULL'
+        '           (@DoCurrSeason = 1 AND Session.SessionStart >= SwimCl' +
+        'ub.StartOfSwimSeason)'
+      '           OR'
+      '           (@DoCurrSeason = 0 AND Session.SessionStart > 0)'
+      '        )'
+      '        '
       'ORDER BY SessionStart')
     Left = 496
     Top = 592
@@ -945,7 +958,13 @@ object ManageMemberData: TManageMemberData
         Name = 'MEMBERID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = 1
+        Value = 100
+      end
+      item
+        Name = 'DOCURRSEASON'
+        DataType = ftBoolean
+        ParamType = ptInput
+        Value = True
       end>
   end
   object dsChart: TDataSource

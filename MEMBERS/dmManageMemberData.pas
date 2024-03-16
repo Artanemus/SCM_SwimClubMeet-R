@@ -8,7 +8,11 @@ uses
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.VCLUI.Wait,
   Data.DB, FireDAC.Comp.Client, FireDAC.Stan.Param, FireDAC.DatS,
   FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Phys.MSSQL,
-  FireDAC.Phys.MSSQLDef, dmSCM, Windows, Winapi.Messages, SCMDefines;
+  FireDAC.Phys.MSSQLDef, dmSCM, Windows, Winapi.Messages, SCMDefines
+//  ,VclTee.TeEngine,
+//  VclTee.TeeSpline, VclTee.Series, VclTee.TeeProcs, VclTee.Chart,
+//  VclTee.DBChart
+  ;
 
 type
   TManageMemberData = class(TDataModule)
@@ -141,6 +145,7 @@ type
       hideArchived, hideInactive, hideNonSwimmer: Boolean);
     procedure UpdateElectedOn(aDate: TDate);
     procedure UpdateRetiredOn(aDate: TDate);
+    procedure UpdateChart(aMemberID, aDistanceID, aStrokeID: integer; DoCurrSeason: boolean = true);
 
     property Connection: TFDConnection read FConnection write FConnection;
     property ManageMemberDataActive: Boolean read fManageMemberDataActive
@@ -219,7 +224,7 @@ begin
         qryMemberRoleLnk.Open;
         qryMemberPB.Open;
         qryMemberEvents.Open;
-
+        qryChart.Open;
         if qryContactNum.Active then
         begin
           fManageMemberDataActive := True;
@@ -589,6 +594,32 @@ begin
   // begin
   // fld.AsInteger := 0;
   // end;
+end;
+
+procedure TManageMemberData.UpdateChart(aMemberID, aDistanceID, aStrokeID: integer; DoCurrSeason: boolean = true);
+begin
+  if not Assigned(FConnection) then
+    exit;
+  if not qryChart.Active then
+    exit;
+  qryChart.DisableControls;
+  qryChart.Close;
+  if (aMemberID = 0) and (qryMember.Active) then
+    aMemberID := qryMember.FieldByName('MemberID').AsInteger;
+  if aMemberID <> 0 then
+  begin
+    qryChart.ParamByName('MEMBERID').AsInteger := aMemberID;
+    qryChart.ParamByName('DISTANCEID').AsInteger := aDistanceID;
+    qryChart.ParamByName('STROKEID').AsInteger := aStrokeID;
+    qryChart.ParamByName('DOCURRSEASON').AsBoolean:= DoCurrSeason;
+    qryChart.Prepare;
+    qryChart.Open;
+    if qryChart.Active then
+    begin
+      // signal success?
+    end
+  end;
+  qryChart.EnableControls;
 end;
 
 procedure TManageMemberData.UpdateDOB(DOB: TDateTime);

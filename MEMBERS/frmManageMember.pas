@@ -18,7 +18,7 @@ uses
   Vcl.ToolWin, Vcl.ActnCtrls, Vcl.ActnMenus, Data.Bind.EngExt,
   Vcl.Bind.DBEngExt, System.Rtti, System.Bindings.Outputs, Vcl.Bind.Editors,
   Data.Bind.Components, Data.Bind.DBScope, Vcl.VirtualImage, SCMHelpers,
-  Vcl.ButtonGroup, dlgMemberFilter;
+  Vcl.ButtonGroup, dlgMemberFilter, VCLTee.TeeData;
 
 type
   TManageMember = class(TForm)
@@ -109,12 +109,14 @@ type
     DBGrid1: TDBGrid;
     DBTextFullName: TDBText;
     TabSheet5: TTabSheet;
-    DBChart1: TDBChart;
     Panel2: TPanel;
     cmboDistance: TComboBox;
     cmboStroke: TComboBox;
     Label27: TLabel;
     Label28: TLabel;
+    DBChart1: TDBChart;
+    Series2: TLineSeries;
+    chkbDoCurrSeason: TCheckBox;
     procedure About2Click(Sender: TObject);
     procedure actnFilterExecute(Sender: TObject);
     procedure btnClearClick(Sender: TObject);
@@ -133,6 +135,7 @@ type
     procedure btnInfoMouseLeave(Sender: TObject);
     procedure btnMemberDetailClick(Sender: TObject);
     procedure btnMemberHistoryClick(Sender: TObject);
+    procedure chkbDoCurrSeasonClick(Sender: TObject);
     procedure cmboDistanceChange(Sender: TObject);
     procedure cmboStrokeChange(Sender: TObject);
     procedure DBChart1GetAxisLabel(Sender: TChartAxis; Series: TChartSeries;
@@ -482,14 +485,69 @@ begin
 *)
 end;
 
-procedure TManageMember.cmboDistanceChange(Sender: TObject);
+procedure TManageMember.chkbDoCurrSeasonClick(Sender: TObject);
+var
+d,s: integer;
+docurrseason: boolean;
 begin
-  UpdateChart;
+  // Requery Chart
+  if not AssertConnection then exit;
+  if cmboDistance.ItemIndex <> -1 then
+    d := cmboDistance.ItemIndex + 1 else d := 1;
+  if cmboStroke.ItemIndex <> -1 then
+    s := cmboStroke.ItemIndex + 1 else s := 1;
+
+  if chkbDoCurrSeason.Checked then
+  docurrseason := true
+  else
+  docurrseason := false;
+
+  ManageMemberData.UpdateChart(0,d,s,docurrseason);
+
+    DBChart1.RefreshData;
+end;
+
+procedure TManageMember.cmboDistanceChange(Sender: TObject);
+var
+d,s: integer;
+docurrseason: boolean;
+begin
+  // Requery Chart
+  if not AssertConnection then exit;
+  if cmboDistance.ItemIndex <> -1 then
+    d := cmboDistance.ItemIndex + 1 else d := 1;
+  if cmboStroke.ItemIndex <> -1 then
+    s := cmboStroke.ItemIndex + 1 else s := 1;
+
+  if chkbDoCurrSeason.Checked then
+  docurrseason := true
+  else
+  docurrseason := false;
+
+  ManageMemberData.UpdateChart(0,d,s,docurrseason);
+
+    DBChart1.RefreshData;
 end;
 
 procedure TManageMember.cmboStrokeChange(Sender: TObject);
+var
+d,s: integer;
+docurrseason: boolean;
 begin
-  UpdateChart;
+  // Requery Chart
+  if not AssertConnection then exit;
+  if cmboDistance.ItemIndex <> -1 then
+    d := cmboDistance.ItemIndex + 1 else d := 1;
+  if cmboStroke.ItemIndex <> -1 then
+    s := cmboStroke.ItemIndex + 1 else s := 1;
+
+  if chkbDoCurrSeason.Checked then
+  docurrseason := true
+  else
+  docurrseason := false;
+
+  ManageMemberData.UpdateChart(0,d,s,docurrseason);
+  DBChart1.RefreshData;
 end;
 
 procedure TManageMember.DBChart1GetAxisLabel(Sender: TChartAxis; Series:
@@ -869,9 +927,9 @@ begin
   end
   else
   begin
-    fColorEditBoxFocused := clWebTomato;
-    fColorEditBoxNormal := clWindowText;
-    fColorBgColor := clAppWorkSpace;
+    fColorEditBoxFocused := cardinal(clWebTomato);   // TColors.Tomato;
+    fColorEditBoxNormal := cardinal(clWindowText);   //TColors.SysWindowText;
+    fColorBgColor := cardinal(clAppWorkSpace);  // TColors.SysAppWorkSpace;
   end;
 
   // Display tabsheet
@@ -879,50 +937,7 @@ begin
   LFormatSettings := TFormatSettings.Create;
   Label11.Caption := 'Date Syntax : ' + LFormatSettings.ShortDateFormat;
 
- (*
-	// only poulate the Chart combo-boxes if queries were enabled.
-	if (qryMember->Active) {
 
-		tblDistance->Open();
-		if (tblDistance->Active) {
-			// fill the combobox with data
-			tblDistance->Last();
-			// BSA 03/06/2022 cast
-			fArrayDistance =
-				new IntPtr[static_cast<unsigned int>(tblDistance->RecordCount)];
-			index = 0;
-			for (tblDistance->First(); !tblDistance->Eof; tblDistance->Next()) {
-				cmboDistance->Items->Add
-					(tblDistance->FieldByName("Caption")->AsString);
-				fArrayDistance[index] = tblDistance->FieldByName("DistanceID")
-					->AsInteger;
-				index++;
-			}
-			cmboDistance->ItemIndex = 0;
-		}
-
-		tblStroke->Open();
-		if (tblStroke->Active) {
-			tblStroke->Last();
-			// BSA 03/06/2022 cast
-			fArrayStroke =
-				new IntPtr[static_cast<unsigned int>(tblStroke->RecordCount)];
-			index = 0;
-			for (tblStroke->First(); !tblStroke->Eof; tblStroke->Next()) {
-				cmboStroke->Items->Add
-					(tblStroke->FieldByName("Caption")->AsString);
-				fArrayStroke[index] =
-					tblStroke->FieldByName("StrokeID")->AsInteger;
-				index++;
-			}
-			cmboStroke->ItemIndex = 0;
-		}
-		// Setup Chart Params and Open
-		UpdateChart();
-
-
-	}
- *)
 
 end;
 
@@ -983,8 +998,25 @@ begin
 end;
 
 procedure TManageMember.ManageMemberAfterScroll(var Msg: TMessage);
+var
+d, s: integer;
+docurrseason: boolean;
 begin
   UpdateMembersAge;
+  // Requery Chart
+  if not AssertConnection then exit;
+  if cmboDistance.ItemIndex <> -1 then
+    d := cmboDistance.ItemIndex + 1 else d := 1;
+  if cmboStroke.ItemIndex <> -1 then
+    s := cmboStroke.ItemIndex + 1 else s := 1;
+  if chkbDoCurrSeason.Checked then
+  docurrseason := true
+  else
+  docurrseason := false;
+
+  ManageMemberData.UpdateChart(0,d,s,docurrseason);
+  DBChart1.RefreshData;
+
 end;
 
 procedure TManageMember.FilterDlgUpdated(var Msg: TMessage);
@@ -1070,6 +1102,29 @@ begin
 
   // Cue-to-member
   if aMemberID > 0 then FindMember(aMemberID);
+
+  // prepare comboboxes - distance and stroke
+
+  if ManageMemberData.ManageMemberDataActive then
+  begin
+    ManageMemberData.tblDistance.First;
+    cmboDistance.Items.Clear;
+    while not ManageMemberData.tblDistance.eof and (ManageMemberData.tblDistance.FieldByName('EventTypeID').AsInteger = 1) do
+    begin
+      cmboDistance.Items.Add(ManageMemberData.tblDistance.FieldByName('Caption').AsString) ;
+      ManageMemberData.tblDistance.next;
+    end;
+    cmboDistance.ItemIndex := 0;
+
+    ManageMemberData.tblStroke.First;
+    cmboStroke.Items.Clear;
+    while not ManageMemberData.tblStroke.eof do
+    begin
+      cmboStroke.Items.Add(ManageMemberData.tblStroke.FieldByName('Caption').AsString) ;
+      ManageMemberData.tblStroke.next;
+    end;
+    cmboStroke.ItemIndex := 0;
+  end;
 
 end;
 

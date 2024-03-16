@@ -89,7 +89,5 @@ begin
   Application.MainFormOnTaskbar := True;
   TStyleManager.TrySetStyle('Windows10 SlateGray');
   Application.CreateForm(TMain, Main);
-  Application.CreateForm(TMarshallReportA_ALT, MarshallReportA_ALT);
-  Application.CreateForm(TMemberChart, MemberChart);
   Application.Run;
 end.
