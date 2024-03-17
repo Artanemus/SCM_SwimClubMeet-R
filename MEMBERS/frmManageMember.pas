@@ -140,6 +140,8 @@ type
     procedure cmboStrokeChange(Sender: TObject);
     procedure DBChart1GetAxisLabel(Sender: TChartAxis; Series: TChartSeries;
         ValueIndex: Integer; var LabelText: string);
+    procedure DBChart1GetLegendText(Sender: TCustomAxisPanel; LegendStyle:
+        TLegendStyle; Index: Integer; var LegendText: string);
     procedure DBGridCellClick(Column: TColumn);
     procedure DBGridColEnter(Sender: TObject);
     procedure DBGridColExit(Sender: TObject);
@@ -486,68 +488,18 @@ begin
 end;
 
 procedure TManageMember.chkbDoCurrSeasonClick(Sender: TObject);
-var
-d,s: integer;
-docurrseason: boolean;
 begin
-  // Requery Chart
-  if not AssertConnection then exit;
-  if cmboDistance.ItemIndex <> -1 then
-    d := cmboDistance.ItemIndex + 1 else d := 1;
-  if cmboStroke.ItemIndex <> -1 then
-    s := cmboStroke.ItemIndex + 1 else s := 1;
-
-  if chkbDoCurrSeason.Checked then
-  docurrseason := true
-  else
-  docurrseason := false;
-
-  ManageMemberData.UpdateChart(0,d,s,docurrseason);
-
-    DBChart1.RefreshData;
+  UpdateChart;
 end;
 
 procedure TManageMember.cmboDistanceChange(Sender: TObject);
-var
-d,s: integer;
-docurrseason: boolean;
 begin
-  // Requery Chart
-  if not AssertConnection then exit;
-  if cmboDistance.ItemIndex <> -1 then
-    d := cmboDistance.ItemIndex + 1 else d := 1;
-  if cmboStroke.ItemIndex <> -1 then
-    s := cmboStroke.ItemIndex + 1 else s := 1;
-
-  if chkbDoCurrSeason.Checked then
-  docurrseason := true
-  else
-  docurrseason := false;
-
-  ManageMemberData.UpdateChart(0,d,s,docurrseason);
-
-    DBChart1.RefreshData;
+  UpdateChart;
 end;
 
 procedure TManageMember.cmboStrokeChange(Sender: TObject);
-var
-d,s: integer;
-docurrseason: boolean;
 begin
-  // Requery Chart
-  if not AssertConnection then exit;
-  if cmboDistance.ItemIndex <> -1 then
-    d := cmboDistance.ItemIndex + 1 else d := 1;
-  if cmboStroke.ItemIndex <> -1 then
-    s := cmboStroke.ItemIndex + 1 else s := 1;
-
-  if chkbDoCurrSeason.Checked then
-  docurrseason := true
-  else
-  docurrseason := false;
-
-  ManageMemberData.UpdateChart(0,d,s,docurrseason);
-  DBChart1.RefreshData;
+  UpdateChart;
 end;
 
 procedure TManageMember.DBChart1GetAxisLabel(Sender: TChartAxis; Series:
@@ -583,6 +535,23 @@ begin
   	}
 
 *)
+end;
+
+procedure TManageMember.DBChart1GetLegendText(Sender: TCustomAxisPanel;
+    LegendStyle: TLegendStyle; Index: Integer; var LegendText: string);
+var
+s: string;
+ LFormatSettings: TFormatSettings;
+begin
+  if not AssertConnection then exit;
+  LFormatSettings := TFormatSettings.Create;
+  ManageMemberData.LocateChart((Index+1));
+  s := FormatDateTime(LFormatSettings.ShortDateFormat,
+    ManageMemberData.dsChart.DataSet.FieldByName('SessionStart').AsDateTime,
+     LFormatSettings) ;
+  LegendText :=
+    ManageMemberData.dsChart.DataSet.FieldByName('RaceTimeAsString').AsString
+    + '  ' +  s;
 end;
 
 procedure TManageMember.DBGridCellClick(Column: TColumn);
@@ -998,25 +967,10 @@ begin
 end;
 
 procedure TManageMember.ManageMemberAfterScroll(var Msg: TMessage);
-var
-d, s: integer;
-docurrseason: boolean;
+
 begin
   UpdateMembersAge;
-  // Requery Chart
-  if not AssertConnection then exit;
-  if cmboDistance.ItemIndex <> -1 then
-    d := cmboDistance.ItemIndex + 1 else d := 1;
-  if cmboStroke.ItemIndex <> -1 then
-    s := cmboStroke.ItemIndex + 1 else s := 1;
-  if chkbDoCurrSeason.Checked then
-  docurrseason := true
-  else
-  docurrseason := false;
-
-  ManageMemberData.UpdateChart(0,d,s,docurrseason);
-  DBChart1.RefreshData;
-
+  UpdateChart;
 end;
 
 procedure TManageMember.FilterDlgUpdated(var Msg: TMessage);
@@ -1155,33 +1109,32 @@ begin
 end;
 
 procedure TManageMember.UpdateChart;
+var
+  d, s: Integer;
+  docurrseason: Boolean;
+  str: string;
 begin
-(*
-  	int DistanceID, StrokeID;
-  	String s;
-  	if (qryChart->Active)
-  		qryChart->Close();
-  	DistanceID = fArrayDistance[cmboDistance->ItemIndex];
-  	qryChart->ParamByName("DISTANCEID")->AsInteger = DistanceID;
-  	StrokeID = fArrayStroke[cmboStroke->ItemIndex];
-  	qryChart->ParamByName("STROKEID")->AsInteger = StrokeID;
-  	qryChart->ParamByName("MEMBERID")->AsInteger =
-  		qryMember->FieldByName("MemberID")->AsInteger;
-  	qryChart->Prepare();
-  	qryChart->Open();
-  	DBChart1->Title->Text->Clear();
-  	DBChart1->Title->Text->Add(qryMember->FieldByName("FName")->AsString);
-  	DBChart1->SubTitle->Text->Clear();
-  	if (qryChart->IsEmpty()) {
-  		DBChart1->SubTitle->Text->Add("No data for this distance and stroke");
-  	}
-  	else {
-  		s = qryChart->FieldByName("cDistance")->AsString + " - " +
-  			qryChart->FieldByName("cStroke")->AsString;
-  		DBChart1->SubTitle->Text->Add(s);
-  	}
-  	DBChart1->RefreshData();
-*)
+  // Gather UI state
+  if not AssertConnection then exit;
+  if cmboDistance.ItemIndex <> -1 then d := cmboDistance.ItemIndex + 1
+  else d := 1;
+  if cmboStroke.ItemIndex <> -1 then s := cmboStroke.ItemIndex + 1
+  else s := 1;
+  if chkbDoCurrSeason.Checked then docurrseason := true
+  else docurrseason := false;
+  // Requery FireDAC Chart
+  ManageMemberData.UpdateChart(0, d, s, docurrseason);
+  // Chart title
+  DBChart1.Title.Text.Clear;
+  str := cmboDistance.Text + ' ' + cmboStroke.Text;
+  if docurrseason then
+    str := str + ' start of swiming season '
+      + ManageMemberData.dsSwimClub.DataSet.FieldByName('StartOfSwimSeason').AsString
+  else
+    str := str + ' (Maximum: 26 events)';
+  DBChart1.Title.Text.Add(str);
+  // Reload chart data
+  DBChart1.RefreshData;
 end;
 
 procedure TManageMember.UpdateFilterCount;

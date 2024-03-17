@@ -887,7 +887,10 @@ object ManageMemberData: TManageMemberData
   end
   object qryChart: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     Connection = SCM.scmConnection
+    FormatOptions.AssignedValues = [fvFmtDisplayDateTime]
+    FormatOptions.FmtDisplayDateTime = 'dd/mmm/yyyy'
     SQL.Strings = (
       'USE [SwimClubMeet];'
       ''
@@ -901,8 +904,12 @@ object ManageMemberData: TManageMemberData
       'SET @MemberID = :MEMBERID;'
       'SET @DoCurrSeason = :DOCURRSEASON;'
       ''
+      'IF OBJECT_ID('#39'tempdb..#charttemp'#39') IS NOT NULL'
+      '    DROP TABLE #charttemp;'
+      ''
+      ''
       
-        'SELECT TOP 25 [dbo].[SwimTimeToString](Entrant.RaceTime) AS Race' +
+        'SELECT TOP 26 [dbo].[SwimTimeToString](Entrant.RaceTime) AS Race' +
         'TimeAsString'
       #9',(DATEPART(MILLISECOND, Entrant.RaceTime) / 1000.0) '
       '                + (DATEPART(SECOND, Entrant.RaceTime)) '
@@ -913,9 +920,8 @@ object ManageMemberData: TManageMemberData
       #9',Session.SessionStart'
       #9',Distance.Caption AS cDistance'
       #9',Stroke.Caption AS cStroke'
-      
-        ',ROW_NUMBER()OVER (PARTITION BY 1  ORDER BY SessionStart ) AS Ch' +
-        'artX'
+      ''
+      'INTO #charttemp'
       'FROM Entrant'
       
         'INNER JOIN HeatIndividual ON Entrant.HeatID = HeatIndividual.Hea' +
@@ -929,16 +935,31 @@ object ManageMemberData: TManageMemberData
       #9'AND (Event.DistanceID = @DistanceID) '
       '        AND (Entrant.MemberID = @MemberID) '
       '        AND Entrant.RaceTime IS NOT NULL'
-      '        AND Entrant.RaceTime > '#39'00:00:00'#39
+      #9#9'-- playing it extra careful'
+      #9#9'AND CONVERT(time(0), Entrant.RaceTime) > '#39'00:00:00'#39
       '        AND ('
       
         '           (@DoCurrSeason = 1 AND Session.SessionStart >= SwimCl' +
         'ub.StartOfSwimSeason)'
       '           OR'
-      '           (@DoCurrSeason = 0 AND Session.SessionStart > 0)'
-      '        )'
+      '           (@DoCurrSeason = 0)'
+      #9#9' )'
       '        '
-      'ORDER BY SessionStart')
+      'ORDER BY SessionStart DESC;'
+      ''
+      'SELECT '
+      #9'RaceTimeAsString'
+      #9',Seconds'
+      #9',SessionStart'
+      #9',cDistance'
+      #9',cStroke'
+      
+        ',ROW_NUMBER()OVER (PARTITION BY 1  ORDER BY SessionStart ) AS Ch' +
+        'artX'
+      'FROM'
+      '#charttemp'
+      'ORDER BY SessionStart ASC;'
+      '')
     Left = 496
     Top = 592
     ParamData = <
@@ -952,19 +973,19 @@ object ManageMemberData: TManageMemberData
         Name = 'DISTANCEID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = 1
+        Value = 2
       end
       item
         Name = 'MEMBERID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = 100
+        Value = 9
       end
       item
         Name = 'DOCURRSEASON'
         DataType = ftBoolean
         ParamType = ptInput
-        Value = True
+        Value = False
       end>
   end
   object dsChart: TDataSource

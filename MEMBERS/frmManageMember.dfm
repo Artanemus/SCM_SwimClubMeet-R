@@ -1112,7 +1112,11 @@ object ManageMember: TManageMember
           'TDBChart')
         BottomAxis.ExactDateTime = False
         BottomAxis.Increment = 1.000000000000000000
+        Legend.Title.Alignment = taCenter
+        Legend.Title.Text.Strings = (
+          'Race Time & Date')
         View3D = False
+        OnGetLegendText = DBChart1GetLegendText
         Align = alClient
         TabOrder = 1
         ExplicitWidth = 1351
@@ -1124,6 +1128,8 @@ object ManageMember: TManageMember
           DataSource = ManageMemberData.qryChart
           XLabelsSource = 'ChartX'
           Brush.BackColor = clDefault
+          Pointer.Brush.Gradient.EndColor = 10708548
+          Pointer.Gradient.EndColor = 10708548
           Pointer.InflateMargins = True
           Pointer.Style = psRectangle
           Pointer.Visible = True
