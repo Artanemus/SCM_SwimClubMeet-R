@@ -1057,6 +1057,9 @@ object ManageMember: TManageMember
         BevelOuter = bvNone
         TabOrder = 0
         ExplicitWidth = 1351
+        DesignSize = (
+          1355
+          41)
         object Label27: TLabel
           Left = 24
           Top = 11
@@ -1101,6 +1104,16 @@ object ManageMember: TManageMember
           State = cbChecked
           TabOrder = 2
           OnClick = chkbDoCurrSeasonClick
+        end
+        object btmPrintChart: TButton
+          Left = 1223
+          Top = 10
+          Width = 129
+          Height = 25
+          Anchors = [akTop, akRight]
+          Caption = 'Print Chart'
+          TabOrder = 3
+          OnClick = btmPrintChartClick
         end
       end
       object DBChart1: TDBChart

@@ -9,9 +9,6 @@ uses
   Data.DB, FireDAC.Comp.Client, FireDAC.Stan.Param, FireDAC.DatS,
   FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Phys.MSSQL,
   FireDAC.Phys.MSSQLDef, dmSCM, Windows, Winapi.Messages, SCMDefines
-//  ,VclTee.TeEngine,
-//  VclTee.TeeSpline, VclTee.Series, VclTee.TeeProcs, VclTee.Chart,
-//  VclTee.DBChart
   ;
 
 type
@@ -123,6 +120,7 @@ type
     fManageMemberDataActive: Boolean;
     fRecordCount: Integer;
     fHandle: HWND;
+    prefChartMaxRecords: Integer;
 
     procedure UpdateMembersPersonalBest;
 
@@ -147,6 +145,7 @@ type
     procedure UpdateElectedOn(aDate: TDate);
     procedure UpdateRetiredOn(aDate: TDate);
     procedure UpdateChart(aMemberID, aDistanceID, aStrokeID: integer; DoCurrSeason: boolean = true);
+    procedure ReadPreferences(aIniFileName: string);
 
     property Connection: TFDConnection read FConnection write FConnection;
     property ManageMemberDataActive: Boolean read fManageMemberDataActive
@@ -159,6 +158,7 @@ type
 const
   SCMMEMBERPREF = 'SCM_MemberPref.ini';
   USEDSHAREDINIFILE = True; // NOTE: Always true. 26/09/2022
+  CHARTMAXRECORDS = 26; // max number of events show in TDBChart
 
 var
   ManageMemberData: TManageMemberData;
@@ -176,6 +176,7 @@ constructor TManageMemberData.Create(AOwner: TComponent);
 begin
   inherited;
   fHandle := AllocateHWnd(WndProc);
+  prefChartMaxRecords := CHARTMAXRECORDS;
 end;
 
 constructor TManageMemberData.CreateWithConnection(AOwner: TComponent;
@@ -613,6 +614,21 @@ begin
   // end;
 end;
 
+procedure TManageMemberData.ReadPreferences(aIniFileName: string);
+var
+  i: Integer;
+  iFile: TIniFile;
+begin
+  // ---------------------------------------------------------
+  // R E A D   P R E F E R E N C E S ...
+  // ---------------------------------------------------------
+  if not FileExists(aIniFileName) then exit;
+  iFile := TIniFile.Create(aIniFileName);
+  // 2024.03.18
+  prefChartMaxRecords := iFile.ReadInteger('ManageMemberData', 'ChartMaxRecords', CHARTMAXRECORDS);
+  iFile.Free;
+end;
+
 procedure TManageMemberData.UpdateChart(aMemberID, aDistanceID, aStrokeID: integer; DoCurrSeason: boolean = true);
 begin
   if not Assigned(FConnection) then
@@ -629,6 +645,7 @@ begin
     qryChart.ParamByName('DISTANCEID').AsInteger := aDistanceID;
     qryChart.ParamByName('STROKEID').AsInteger := aStrokeID;
     qryChart.ParamByName('DOCURRSEASON').AsBoolean:= DoCurrSeason;
+    qryChart.ParamByName('MAXRECORDS').AsInteger:= prefChartMaxRecords;
     qryChart.Prepare;
     qryChart.Open;
     if qryChart.Active then

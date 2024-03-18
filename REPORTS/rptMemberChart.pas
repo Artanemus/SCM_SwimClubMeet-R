@@ -7,7 +7,8 @@ uses
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, frxClass, frxDBSet,
   frxExportPDF, frxExportHTML, frxExportBaseDialog, frxExportXLS, Data.DB,
-  FireDAC.Comp.DataSet, FireDAC.Comp.Client, VclTee.DBChart;
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, VclTee.DBChart, dmSCM
+  , System.Types;
 
 type
   TMemberChart = class(TDataModule)
@@ -21,6 +22,9 @@ type
     procedure frxReport1BeforePrint(Sender: TfrxReportComponent);
   private
     { Private declarations }
+    fDBChart: TDBChart;
+    fDistanceStr: string;
+    fStrokeStr: string;
   public
     { Public declarations }
     procedure RunReport(aMemberID: integer; aDBChart: TDBChart;
@@ -33,67 +37,64 @@ var
 implementation
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
-
 {$R *.dfm}
 
 procedure TMemberChart.DataModuleCreate(Sender: TObject);
 begin
-(*
-	(void)Sender;
-	// As SCM is a TEMPORY connection - ASSERT assignment for FireDAC.
-	if (SCM != nullptr) {
-		qryReport->Connection = SCM->scmConnection;
-	}
-	fDBChart = nullptr;
-*)
+	// Assert connection
+	if Assigned (SCM) then
+		qryReport.Connection := SCM.scmConnection;
+	fDBChart := nil;
 end;
 
 procedure TMemberChart.frxReport1BeforePrint(Sender: TfrxReportComponent);
+var
+  myRect: TRect;
 begin
-(*
-	if (fDBChart != nullptr) {
-		if (Sender->Name == "Picture1") {
 
-			reinterpret_cast<TfrxPictureView*>(Sender)->Picture->Assign(
-
-				fDBChart->TeeCreateMetafile(False,
-				Rect(0, 0, int(Sender->Width), int(Sender->Height))));
-		}
-		if (Sender->Name == "memDistance") {
-			reinterpret_cast<TfrxMemoView*>(Sender)->Memo->Clear();
-			reinterpret_cast<TfrxMemoView*>(Sender)->Memo->Add
-				("Distance: " + fDistanceStr);
-		}
-		if (Sender->Name == "memStroke") {
-			reinterpret_cast<TfrxMemoView*>(Sender)->Memo->Clear();
-			reinterpret_cast<TfrxMemoView*>(Sender)->Memo->Add
-				("Stroke: " + fStrokeStr);
-		}
-	}
-*)
+  if Assigned(fDBChart) then
+  begin
+    if (Sender.Name = 'Picture1') then
+    begin
+      myRect := Rect(0, 0, Round(TfrxPictureView(Sender).Width),
+        Round(TfrxPictureView(Sender).Height));
+      TfrxPictureView(Sender).Picture.Assign
+        (fDBChart.TeeCreateMetafile(False, myRect));
+      TfrxPictureView(Sender).Picture.Assign
+        (fDBChart.TeeCreateMetafile(False, myRect));
+    end;
+    if (Sender.Name = 'memDistance') then
+    begin
+      TfrxMemoView(Sender).Memo.Clear();
+      TfrxMemoView(Sender).Memo.Add('Distance: ' + fDistanceStr);
+    end;
+    if (Sender.Name = 'memStroke') then
+    begin
+      TfrxMemoView(Sender).Memo.Clear();
+      TfrxMemoView(Sender).Memo.Add('Stroke: ' + fStrokeStr);
+    end;
+  end;
 end;
 
 procedure TMemberChart.RunReport(aMemberID: integer; aDBChart: TDBChart;
   aDistanceStr, aStrokeStr: string);
 begin
-(*
-	fDBChart = aDBChart;
-	fDistanceStr = aDistanceStr;
-	fStrokeStr = aStrokeStr;
 
-	if (qryReport->Active)
-		qryReport->Close();
-	qryReport->ParamByName("MEMEBERID")->AsInteger = aMemberID;
-	// changes to params will set Prepared to false
-	qryReport->Prepare();
-	qryReport->Open();
-	if (qryReport->Active) {
+	fDBChart := aDBChart;
+	fDistanceStr := aDistanceStr;
+	fStrokeStr := aStrokeStr;
+
+	if (qryReport.Active) then	qryReport.Close();
+	qryReport.ParamByName('MEMEBERID').AsInteger := aMemberID;
+	qryReport.Prepare();
+	qryReport.Open();
+	if (qryReport.Active) then
 		// this is no longer required ...
 		// qryReport->Refresh();
-		frxReport1->ShowReport();
-	}
-	qryReport->Close();
-*)
+		frxReport1.ShowReport();
+
+	qryReport.Close();
+
 end;
 
 end.

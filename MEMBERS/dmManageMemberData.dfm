@@ -898,23 +898,27 @@ object ManageMemberData: TManageMemberData
       'DECLARE @DistanceID AS INT;'
       'DECLARE @MemberID AS INT;'
       'DECLARE @DoCurrSeason AS BIT;'
+      'DECLARE @MaxRecords AS INT;'
       ''
       'SET @StrokeID = :STROKEID;'
       'SET @DistanceID = :DISTANCEID;'
       'SET @MemberID = :MEMBERID;'
       'SET @DoCurrSeason = :DOCURRSEASON;'
+      'SET @MaxRecords = :MAXRECORDS;'
       ''
       'IF OBJECT_ID('#39'tempdb..#charttemp'#39') IS NOT NULL'
       '    DROP TABLE #charttemp;'
+      '    '
+      'IF @MaxRecords IS NULL SET @MaxRecords = 26;'
       ''
       ''
       
-        'SELECT TOP 26 [dbo].[SwimTimeToString](Entrant.RaceTime) AS Race' +
-        'TimeAsString'
+        'SELECT TOP (@MaxRecords) [dbo].[SwimTimeToString](Entrant.RaceTi' +
+        'me) AS RaceTimeAsString'
       #9',(DATEPART(MILLISECOND, Entrant.RaceTime) / 1000.0) '
       '                + (DATEPART(SECOND, Entrant.RaceTime)) '
       
-        '                + (DATEPART(MINUTE, Entrant.RaceTime) / 60.0) AS' +
+        '                + (DATEPART(MINUTE, Entrant.RaceTime) * 60.0) AS' +
         ' Seconds'
       ''
       #9',Session.SessionStart'
@@ -967,7 +971,7 @@ object ManageMemberData: TManageMemberData
         Name = 'STROKEID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = 1
+        Value = 2
       end
       item
         Name = 'DISTANCEID'
@@ -986,6 +990,12 @@ object ManageMemberData: TManageMemberData
         DataType = ftBoolean
         ParamType = ptInput
         Value = False
+      end
+      item
+        Name = 'MAXRECORDS'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = 26
       end>
   end
   object dsChart: TDataSource

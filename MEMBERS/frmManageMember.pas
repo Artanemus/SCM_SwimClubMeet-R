@@ -117,8 +117,10 @@ type
     DBChart1: TDBChart;
     Series2: TLineSeries;
     chkbDoCurrSeason: TCheckBox;
+    btmPrintChart: TButton;
     procedure About2Click(Sender: TObject);
     procedure actnFilterExecute(Sender: TObject);
+    procedure btmPrintChartClick(Sender: TObject);
     procedure btnClearClick(Sender: TObject);
     procedure btnClearDOBClick(Sender: TObject);
     procedure btnClubMembersDetailedClick(Sender: TObject);
@@ -180,12 +182,13 @@ type
     function AssertConnection: Boolean;
     function FindMember(MemberID: Integer): Boolean;
     function GetMembersAge(aMemberID: Integer; aDate: TDate): Integer;
-    procedure ReadPreferences();
+    procedure ReadPreferences(aIniFileName: string);
     procedure WritePreferences();
     procedure UpdateFilterCount();
     procedure UpdateMembersAge();
     procedure UpdateChart();
     procedure ChartReport();
+
 
   protected
     // windows messages ....
@@ -218,7 +221,7 @@ uses SCMUtility, dlgBasicLogin, System.IniFiles, System.UITypes, dlgAbout,
   dlgDOBPicker, dlgFindMember, dlgGotoMember, dlgGotoMembership,
   System.IOUtils, Winapi.ShellAPI, dlgDeleteMember, Vcl.Themes, rptMemberDetail,
   rptMemberHistory, rptMembersList, rptMembersDetail, rptMembersSummary,
-  System.DateUtils;
+  System.DateUtils, rptMemberChart;
 
 procedure TManageMember.About2Click(Sender: TObject);
 var
@@ -260,6 +263,11 @@ begin
     // IsActive if TFDConnection::scmConnection && FireDAC tables are active
     if ManageMemberData.ManageMemberDataActive then result := true;
   end;
+end;
+
+procedure TManageMember.btmPrintChartClick(Sender: TObject);
+begin
+  ChartReport;
 end;
 
 procedure TManageMember.btnClearClick(Sender: TObject);
@@ -469,22 +477,20 @@ begin
 end;
 
 procedure TManageMember.ChartReport;
+var
+aMemberID: integer;
+s, s2: string;
+rpt: TMemberChart;
 begin
-(*
-	(void)Sender;
-	int aMemberID;
-	String s, s2;
-	TMemberChart *rpt;
 	// Distance
-	s = cmboDistance->Items->Strings[cmboDistance->ItemIndex];
+	s := cmboDistance.Text;
 	// Stroke
-	s2 = cmboStroke->Items->Strings[cmboStroke->ItemIndex];
-	rpt = new TMemberChart(this);
-	aMemberID = dsMember->DataSet->FieldByName("MemberID")->AsInteger;
+	s2 := cmboStroke.Text;
+	rpt := TMemberChart.Create(self);
+	aMemberID := ManageMemberData.dsMember.DataSet.FieldByName('MemberID').AsInteger;
 	// params ... SwimClubID, MemberID
-	rpt->RunReport(aMemberID, DBChart1, s, s2);
-	delete rpt;
-*)
+	rpt.RunReport(aMemberID, DBChart1, s, s2);
+	rpt.free;
 end;
 
 procedure TManageMember.chkbDoCurrSeasonClick(Sender: TObject);
@@ -917,11 +923,14 @@ begin
 end;
 
 procedure TManageMember.FormShow(Sender: TObject);
+var
+  iniFileName: string;
 begin
   // ----------------------------------------------------
   // R E A D   P R E F E R E N C E S .
   // ----------------------------------------------------
-  ReadPreferences;
+  iniFileName := SCMUtility.GetSCMPreferenceFileName;
+  ReadPreferences(iniFileName);
   if not AssertConnection then exit;
 
   // run filter
@@ -960,6 +969,29 @@ begin
   end;
 end;
 
+
+procedure TManageMember.ReadPreferences(aIniFileName: string);
+var
+  i: Integer;
+  iFile: TIniFile;
+begin
+  // ---------------------------------------------------------
+  // A S S I G N   MANAGEMEMBER  P R E F E R E N C E S ...
+  // ---------------------------------------------------------
+  if not FileExists(aIniFileName) then exit;
+  iFile := TIniFile.Create(aIniFileName);
+  fHideArchived := iFile.ReadBool(INIFILE_SECTION, 'HideArchived', true);
+  fHideInActive := iFile.ReadBool(INIFILE_SECTION, 'HideInActive', false);
+  fHideNonSwimmer := iFile.ReadBool(INIFILE_SECTION, 'HideNonSwimmer', false);
+  // 2024.03.18
+  i := iFile.ReadInteger('ManageMember', 'cmboDistanceItemIndex', 0);
+  if i < cmboDistance.Items.Count then cmboDistance.ItemIndex := i;
+  i := iFile.ReadInteger('ManageMember', 'cmboStrokeItemIndex', 0);
+  if i < cmboStroke.Items.Count then cmboStroke.ItemIndex := i;
+  chkbDoCurrSeason.Checked := iFile.ReadBool('ManageMember',
+    'chkbDoCurrSeason', false);
+  iFile.Free;
+end;
 
 procedure TManageMember.ManageMemberAfterPost(var Msg: TMessage);
 begin
@@ -1082,19 +1114,6 @@ begin
 
 end;
 
-procedure TManageMember.ReadPreferences;
-var
-  iFile: TIniFile;
-  iniFileName: string;
-begin
-  iniFileName := SCMUtility.GetSCMPreferenceFileName;
-  if not FileExists(iniFileName) then exit;
-  iFile := TIniFile.Create(iniFileName);
-  fHideArchived := iFile.ReadBool(INIFILE_SECTION, 'HideArchived', true);
-  fHideInActive := iFile.ReadBool(INIFILE_SECTION, 'HideInActive', false);
-  fHideNonSwimmer := iFile.ReadBool(INIFILE_SECTION, 'HideNonSwimmer', false);
-  iFile.Free;
-end;
 
 procedure TManageMember.SCMwebsite1Click(Sender: TObject);
 var
@@ -1126,12 +1145,13 @@ begin
   ManageMemberData.UpdateChart(0, d, s, docurrseason);
   // Chart title
   DBChart1.Title.Text.Clear;
-  str := cmboDistance.Text + ' ' + cmboStroke.Text;
+  str := ManageMemberData.dsMember.DataSet.FieldByName('FName').AsString;
+  str := str + ' ' +cmboDistance.Text + ' ' + cmboStroke.Text;
   if docurrseason then
-    str := str + ' start of swiming season '
+    str := str + ' - Start of season '
       + ManageMemberData.dsSwimClub.DataSet.FieldByName('StartOfSwimSeason').AsString
   else
-    str := str + ' (Maximum: 26 events)';
+    str := str + ' - (Max 26 events)';
   DBChart1.Title.Text.Add(str);
   // Reload chart data
   DBChart1.RefreshData;
@@ -1176,6 +1196,16 @@ begin
   iFile.WriteBool(INIFILE_SECTION, 'HideArchived', fHideArchived);
   iFile.WriteBool(INIFILE_SECTION, 'HideInActive', fHideInActive);
   iFile.WriteBool(INIFILE_SECTION, 'HideNonSwimmer', fHideNonSwimmer);
+
+  // 2024 03 18
+  if (cmboDistance.ItemIndex > -1) then
+    iFile.WriteInteger('ManageMember', 'cmboDistanceItemIndex', cmboDistance.ItemIndex);
+
+  if (cmboStroke.ItemIndex > -1) then
+    iFile.WriteInteger('ManageMember', 'cmboStrokeItemIndex', cmboStroke.ItemIndex);
+
+  iFile.WriteBool('ManageMember',  'chkbDoCurrSeason', chkbDoCurrSeason.Checked);
+
   iFile.Free;
 end;
 

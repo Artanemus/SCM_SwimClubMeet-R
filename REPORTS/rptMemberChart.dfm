@@ -12,7 +12,7 @@ object MemberChart: TMemberChart
     PrintOptions.Printer = 'Default'
     PrintOptions.PrintOnSheet = 0
     ReportOptions.CreateDate = 43428.811813125000000000
-    ReportOptions.LastChange = 43434.512179675900000000
+    ReportOptions.LastChange = 45369.586622858800000000
     ScriptLanguage = 'PascalScript'
     ScriptText.Strings = (
       'begin'
@@ -33,8 +33,9 @@ object MemberChart: TMemberChart
       Width = 1000.000000000000000000
     end
     object Page1: TfrxReportPage
-      PaperWidth = 210.000000000000000000
-      PaperHeight = 297.000000000000000000
+      Orientation = poLandscape
+      PaperWidth = 297.000000000000000000
+      PaperHeight = 210.000000000000000000
       PaperSize = 9
       LeftMargin = 10.000000000000000000
       RightMargin = 10.000000000000000000
@@ -47,7 +48,7 @@ object MemberChart: TMemberChart
         Frame.Typ = []
         Height = 71.811070000000000000
         Top = 18.897650000000000000
-        Width = 718.110700000000000000
+        Width = 1046.929810000000000000
         object FDQuery1cSwimClub: TfrxMemoView
           AllowVectorExport = True
           Width = 1043.150280000000000000
@@ -113,7 +114,7 @@ object MemberChart: TMemberChart
         Height = 33.881880000000000000
         ParentFont = False
         Top = 151.181200000000000000
-        Width = 718.110700000000000000
+        Width = 1046.929810000000000000
         Condition = 'frxDS."MemberID"'
         object Line1: TfrxLineView
           AllowVectorExport = True
@@ -169,7 +170,7 @@ object MemberChart: TMemberChart
         Height = 396.850650000000000000
         ParentFont = False
         Top = 207.874150000000000000
-        Width = 718.110700000000000000
+        Width = 1046.929810000000000000
         DataSet = frxDSReport
         DataSetName = 'frxDS'
         KeepTogether = True
@@ -177,7 +178,7 @@ object MemberChart: TMemberChart
         object Picture1: TfrxPictureView
           Align = baClient
           AllowVectorExport = True
-          Width = 718.110700000000000000
+          Width = 1046.929810000000000000
           Height = 396.850650000000000000
           Frame.Typ = []
           HightQuality = False
@@ -190,7 +191,7 @@ object MemberChart: TMemberChart
         Frame.Typ = []
         Height = 22.677180000000000000
         Top = 665.197280000000000000
-        Width = 718.110700000000000000
+        Width = 1046.929810000000000000
         object TotalPages: TfrxMemoView
           AllowVectorExport = True
           Left = 430.866420000000000000
@@ -227,12 +228,12 @@ object MemberChart: TMemberChart
   end
   object qryReport: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    IndexFieldNames = 'SessionID'
+    Active = True
+    IndexFieldNames = 'MemberID'
     Connection = SCM.scmConnection
     FormatOptions.AssignedValues = [fvFmtDisplayTime]
     FormatOptions.FmtDisplayTime = 'hh:nn'
     SQL.Strings = (
-      'USE SwimClubMeet'
       'USE SwimClubMeet'
       ''
       'DECLARE @MemberID AS INT'
@@ -243,19 +244,21 @@ object MemberChart: TMemberChart
       #9',SwimClub.SwimClubID'
       #9',SwimClub.NickName AS ClubNickName'
       #9',SwimClub.Caption AS ClubName'
-      ',CONCAT([FirstName] , '#39' '#39' , UPPER([LastName])) AS FName'
+      '        ,CONCAT([FirstName] , '#39' '#39' , UPPER([LastName])) AS FName'
       'FROM Member'
       'INNER JOIN SwimClub ON Member.SwimClubID = SwimClub.SwimClubID'
       'WHERE MemberID  = @MemberID'
       ''
       ''
       '')
-    Left = 160
-    Top = 272
+    Left = 48
+    Top = 280
     ParamData = <
       item
         Name = 'MEMEBERID'
+        DataType = ftInteger
         ParamType = ptInput
+        Value = 9
       end>
   end
   object frxXLSExport1: TfrxXLSExport
@@ -320,7 +323,7 @@ object MemberChart: TMemberChart
     CloseDataSource = False
     DataSet = qryReport
     BCDToCurrency = False
-    Left = 64
-    Top = 272
+    Left = 160
+    Top = 280
   end
 end
