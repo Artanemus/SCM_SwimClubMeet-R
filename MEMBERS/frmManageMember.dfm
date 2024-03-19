@@ -1087,7 +1087,7 @@ object ManageMember: TManageMember
         end
         object cmboStroke: TComboBox
           Left = 385
-          Top = 9
+          Top = 8
           Width = 184
           Height = 27
           TabOrder = 1
@@ -1096,7 +1096,7 @@ object ManageMember: TManageMember
         end
         object chkbDoCurrSeason: TCheckBox
           Left = 616
-          Top = 18
+          Top = 11
           Width = 225
           Height = 17
           Caption = 'Current swimming season.'
@@ -1107,7 +1107,7 @@ object ManageMember: TManageMember
         end
         object btmPrintChart: TButton
           Left = 1223
-          Top = 10
+          Top = 8
           Width = 129
           Height = 25
           Anchors = [akTop, akRight]

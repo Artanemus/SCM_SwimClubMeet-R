@@ -173,10 +173,17 @@ uses
   vcl.Dialogs, System.UITypes, vcl.Forms, System.DateUtils;
 
 constructor TManageMemberData.Create(AOwner: TComponent);
+var
+IniFileName: string;
 begin
   inherited;
   fHandle := AllocateHWnd(WndProc);
   prefChartMaxRecords := CHARTMAXRECORDS;
+
+  // r e a d   p r e f e r e n c e .
+  IniFileName := SCMUtility.GetSCMPreferenceFileName();
+  if (FileExists(IniFileName)) then
+    ReadPreferences(IniFileName);
 end;
 
 constructor TManageMemberData.CreateWithConnection(AOwner: TComponent;
@@ -625,7 +632,8 @@ begin
   if not FileExists(aIniFileName) then exit;
   iFile := TIniFile.Create(aIniFileName);
   // 2024.03.18
-  prefChartMaxRecords := iFile.ReadInteger('ManageMemberData', 'ChartMaxRecords', CHARTMAXRECORDS);
+  prefChartMaxRecords := iFile.ReadInteger('ManageMemberData', 'MemberChartDataPoints', CHARTMAXRECORDS);
+
   iFile.Free;
 end;
 
@@ -750,9 +758,18 @@ var
   dt, currDt: TDateTime;
   fldName: string;
   st: TSystemTime;
+  aMemberID: integer;
+
 begin
   if (wndMsg.WParam = 0) then
     exit;
+
+  if (wndMsg.Msg = SCM_LOCATEMEMBER) then
+  begin
+    aMemberID := wndMsg.WParam;
+    LocateMember(aMemberID);
+  end;
+
 
   if (wndMsg.Msg = SCM_DOBUPDATED) OR (wndMsg.Msg = SCM_ELECTEDONUPDATED) OR
     (wndMsg.Msg = SCM_RETIREDONUPDATED) then

@@ -426,7 +426,7 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="REPORTS\rptMemberChart.pas">
+        <DCCReference Include="MEMBERS\rptMemberChart.pas">
             <Form>MemberChart</Form>
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>

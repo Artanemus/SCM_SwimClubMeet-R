@@ -178,6 +178,7 @@ type
     fHideNonSwimmer: Boolean;
 
     fFilterDlg: TMemberFilter;
+    fMemberChartDataPoints: Integer;
 
     function AssertConnection: Boolean;
     function FindMember(MemberID: Integer): Boolean;
@@ -983,6 +984,11 @@ begin
   fHideArchived := iFile.ReadBool(INIFILE_SECTION, 'HideArchived', true);
   fHideInActive := iFile.ReadBool(INIFILE_SECTION, 'HideInActive', false);
   fHideNonSwimmer := iFile.ReadBool(INIFILE_SECTION, 'HideNonSwimmer', false);
+  i := iFile.ReadInteger(INIFILE_SECTION, 'TabIndex', -1);
+  // test bounds
+  if ((i > -1) and (i < PageControl1.PageCount)) then
+      PageControl1.ActivePageIndex := i;
+
   // 2024.03.18
   i := iFile.ReadInteger('ManageMember', 'cmboDistanceItemIndex', 0);
   if i < cmboDistance.Items.Count then cmboDistance.ItemIndex := i;
@@ -990,6 +996,11 @@ begin
   if i < cmboStroke.Items.Count then cmboStroke.ItemIndex := i;
   chkbDoCurrSeason.Checked := iFile.ReadBool('ManageMember',
     'chkbDoCurrSeason', false);
+
+  // 2024/03/19 Value used by TFDQuery qryChart to select TOP ###
+  fMemberChartDataPoints := iFile.ReadInteger('ManageMemberData', 'MemberChartDataPoints', 26);
+
+
   iFile.Free;
 end;
 
@@ -1086,9 +1097,6 @@ begin
   // ----------------------------------------------------
   PostMessage(Handle, SCM_UPDATE, 0, 0);
 
-  // Cue-to-member
-  if aMemberID > 0 then FindMember(aMemberID);
-
   // prepare comboboxes - distance and stroke
 
   if ManageMemberData.ManageMemberDataActive then
@@ -1111,6 +1119,14 @@ begin
     end;
     cmboStroke.ItemIndex := 0;
   end;
+
+  // TODO:
+  // DISABLE FILTERS IF REQUIRED TOO
+  // FindMember(MemberID: Integer): Boolean;
+  // Cue-to-member
+  if aMemberID > 0 then
+    PostMessage(ManageMemberData.Handle, SCM_LOCATEMEMBER,aMemberID, 0);
+
 
 end;
 
@@ -1148,10 +1164,10 @@ begin
   str := ManageMemberData.dsMember.DataSet.FieldByName('FName').AsString;
   str := str + ' ' +cmboDistance.Text + ' ' + cmboStroke.Text;
   if docurrseason then
-    str := str + ' - Start of season '
-      + ManageMemberData.dsSwimClub.DataSet.FieldByName('StartOfSwimSeason').AsString
-  else
-    str := str + ' - (Max 26 events)';
+    str := str + ' - Start of season'
+      + ManageMemberData.dsSwimClub.DataSet.FieldByName('StartOfSwimSeason').AsString;
+
+    str := str + ' - (Max ' + IntToStr(fMemberChartDataPoints) + ' events)';
   DBChart1.Title.Text.Add(str);
   // Reload chart data
   DBChart1.RefreshData;
@@ -1196,6 +1212,7 @@ begin
   iFile.WriteBool(INIFILE_SECTION, 'HideArchived', fHideArchived);
   iFile.WriteBool(INIFILE_SECTION, 'HideInActive', fHideInActive);
   iFile.WriteBool(INIFILE_SECTION, 'HideNonSwimmer', fHideNonSwimmer);
+  iFile.WriteInteger(INIFILE_SECTION, 'TabIndex', PageControl1.ActivePageIndex);
 
   // 2024 03 18
   if (cmboDistance.ItemIndex > -1) then

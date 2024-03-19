@@ -80,7 +80,7 @@ uses
   dlgSplitTimeTEAM in 'FRAME\dlgSplitTimeTEAM.pas' {SplitTimeTEAM},
   dlgSplitTimeINDV in 'FRAME\dlgSplitTimeINDV.pas' {SplitTimeINDV},
   rptMarshallReportA_ALT in 'REPORTS\rptMarshallReportA_ALT.pas' {MarshallReportA_ALT: TDataModule},
-  rptMemberChart in 'REPORTS\rptMemberChart.pas' {MemberChart: TDataModule};
+  rptMemberChart in 'MEMBERS\rptMemberChart.pas' {MemberChart: TDataModule};
 
 {$R *.res}
 

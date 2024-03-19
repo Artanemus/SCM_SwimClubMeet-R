@@ -87,6 +87,10 @@ type
     TabSheet5: TTabSheet;
     TabSheet6: TTabSheet;
     tblSystem: TFDTable;
+    TabSheet7: TTabSheet;
+    edtMemberChartDataPoints: TEdit;
+    Label19: TLabel;
+    Label20: TLabel;
     procedure btnClearClubLogoClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
     procedure btnLoadClubLogoClick(Sender: TObject);
@@ -106,6 +110,7 @@ type
     constructor Create(AOwner: TComponent; AConnection: TFDConnection);
       reintroduce; overload;
     property Connection: TFDConnection read FConnection write FConnection;
+//    property MemberChartDataPoints: integer read fMemberChartDataPoints write fMemberChartDataPoints;
   end;
 
 var
@@ -467,12 +472,17 @@ begin
   prefEnableSplitTimesForTeam.Checked := iFile.ReadBool('Preferences',
     'EnableSplitTimesForTEAM', false);
 
+  // 2024/03/19 Value used by TFDQuery qryChart to select TOP ###
+  i := iFile.ReadInteger('ManageMemberData', 'MemberChartDataPoints', 26);
+  edtMemberChartDataPoints.Text := IntToStr(i);
+
   iFile.free;
 end;
 
 procedure TPreferences.WritePreferences(IniFileName: string);
 var
   iFile: TIniFile;
+  i: integer;
 begin
   iFile := TIniFile.Create(IniFileName);
   iFile.WriteInteger('Preferences', 'ShowDebugInfo',
@@ -525,6 +535,17 @@ begin
     prefEnableSplitTimesForINDV.Checked);
   iFile.WriteBool('Preferences', 'EnableSplitTimesForTEAM',
     prefEnableSplitTimesForTEAM.Checked);
+
+  // 2024/03/19 Value used by TFDQuery qryChart to select TOP ###
+  try
+    i := Round(StrToFloatDef(edtMemberChartDataPoints.Text, 0));
+  except
+    on E: Exception do i := 26;
+  end;
+  if (i < 10) then i := 10;
+  if (i > 1000) then i := 1000;
+  iFile.WriteInteger('ManageMemberData', 'MemberChartDataPoints', i);
+
 
   iFile.free;
 end;

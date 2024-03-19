@@ -4,7 +4,7 @@ object Preferences: TPreferences
   BorderStyle = bsDialog
   Caption = 'SwimClubMeet Preferences...'
   ClientHeight = 590
-  ClientWidth = 646
+  ClientWidth = 728
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,7 +21,7 @@ object Preferences: TPreferences
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 646
+    Width = 728
     Height = 41
     Align = alTop
     BevelOuter = bvNone
@@ -46,7 +46,7 @@ object Preferences: TPreferences
   object Panel2: TPanel
     Left = 0
     Top = 542
-    Width = 646
+    Width = 728
     Height = 48
     Align = alBottom
     BevelOuter = bvNone
@@ -54,10 +54,10 @@ object Preferences: TPreferences
     ExplicitTop = 541
     ExplicitWidth = 642
     DesignSize = (
-      646
+      728
       48)
     object btnClose: TButton
-      Left = 452
+      Left = 623
       Top = 6
       Width = 101
       Height = 33
@@ -65,20 +65,17 @@ object Preferences: TPreferences
       Caption = 'Close'
       TabOrder = 0
       OnClick = btnCloseClick
-      ExplicitLeft = 448
     end
   end
   object PageControl1: TPageControl
     Left = 0
     Top = 41
-    Width = 646
+    Width = 728
     Height = 501
-    ActivePage = TabSheet6
+    ActivePage = TabSheet7
     Align = alClient
     TabOrder = 2
     OnChanging = PageControl1Changing
-    ExplicitWidth = 642
-    ExplicitHeight = 500
     object TabSheet1: TTabSheet
       Caption = 'Club'
       object Label2: TLabel
@@ -352,7 +349,7 @@ object Preferences: TPreferences
       Caption = 'AutoBuild'
       ImageIndex = 2
       DesignSize = (
-        638
+        720
         465)
       object lbl3: TLabel
         Left = 9
@@ -368,7 +365,7 @@ object Preferences: TPreferences
         ParentFont = False
       end
       object btn1: TSpeedButton
-        Left = 121
+        Left = 199
         Top = 15
         Width = 33
         Height = 33
@@ -572,7 +569,7 @@ object Preferences: TPreferences
       end
       object prefEnableTeamEvents: TCheckBox
         Left = 32
-        Top = 44
+        Top = 388
         Width = 241
         Height = 19
         Caption = 'Enable Team Events.'
@@ -607,7 +604,7 @@ object Preferences: TPreferences
       end
       object prefEnableSplitTimesForINDV: TCheckBox
         Left = 32
-        Top = 78
+        Top = 46
         Width = 337
         Height = 22
         Caption = 'Enable split-time entry in individual events.'
@@ -615,7 +612,7 @@ object Preferences: TPreferences
       end
       object prefEnableSplitTimesForTEAM: TCheckBox
         Left = 32
-        Top = 112
+        Top = 80
         Width = 297
         Height = 22
         Caption = 'Enable split-time entry in team events.'
@@ -729,6 +726,33 @@ object Preferences: TPreferences
         Height = 26
         Caption = 'Show Debug Information.'
         TabOrder = 0
+      end
+    end
+    object TabSheet7: TTabSheet
+      Caption = 'Member'
+      ImageIndex = 7
+      object Label19: TLabel
+        Left = 112
+        Top = 35
+        Width = 357
+        Height = 21
+        Caption = 'Number of data points to display in members chart.'
+      end
+      object Label20: TLabel
+        Left = 112
+        Top = 62
+        Width = 206
+        Height = 21
+        Caption = '(Range: 10-1000. Default: 26.)'
+      end
+      object edtMemberChartDataPoints: TEdit
+        Left = 48
+        Top = 32
+        Width = 49
+        Height = 29
+        NumbersOnly = True
+        TabOrder = 0
+        Text = '26'
       end
     end
   end
