@@ -623,7 +623,6 @@ end;
 
 procedure TManageMemberData.ReadPreferences(aIniFileName: string);
 var
-  i: Integer;
   iFile: TIniFile;
 begin
   // ---------------------------------------------------------
