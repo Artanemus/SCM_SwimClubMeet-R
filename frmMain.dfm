@@ -674,6 +674,8 @@ object Main: TMain
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 0
+          ExplicitWidth = 1398
+          ExplicitHeight = 763
           DesignSize = (
             1402
             764)
@@ -735,6 +737,7 @@ object Main: TMain
               Align = alLeft
               BevelOuter = bvNone
               TabOrder = 0
+              ExplicitHeight = 743
               DesignSize = (
                 352
                 744)
@@ -863,6 +866,7 @@ object Main: TMain
               Align = alLeft
               BevelOuter = bvNone
               TabOrder = 1
+              ExplicitHeight = 715
               DesignSize = (
                 60
                 716)
@@ -949,6 +953,7 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 2
+              ExplicitHeight = 743
               object Nominate_ControlList: TControlList
                 Left = 57
                 Top = 0
