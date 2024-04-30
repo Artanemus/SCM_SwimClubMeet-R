@@ -41,6 +41,7 @@ object SCM: TSCM
     ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'GenderID'
     Connection = scmConnection
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
     UpdateOptions.UpdateTableName = 'Gender'
     UpdateOptions.KeyFields = 'GenderID'
     TableName = 'Gender'
@@ -77,6 +78,7 @@ object SCM: TSCM
     ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'EventTypeID'
     Connection = scmConnection
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
     UpdateOptions.UpdateTableName = 'SwimClubMeet..EventType'
     UpdateOptions.KeyFields = 'EventTypeID'
     TableName = 'SwimClubMeet..EventType'
@@ -97,6 +99,7 @@ object SCM: TSCM
     ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'HeatTypeID'
     Connection = scmConnection
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
     UpdateOptions.UpdateTableName = 'SwimClubMeet..HeatType'
     UpdateOptions.KeyFields = 'HeatTypeID'
     TableName = 'SwimClubMeet..HeatType'
@@ -177,6 +180,7 @@ object SCM: TSCM
     ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'SessionStatusID'
     Connection = scmConnection
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
     UpdateOptions.UpdateTableName = 'SwimClubMeet..SessionStatus'
     UpdateOptions.KeyFields = 'SessionStatusID'
     TableName = 'SwimClubMeet..SessionStatus'
@@ -187,6 +191,7 @@ object SCM: TSCM
     ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'HeatStatusID'
     Connection = scmConnection
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
     UpdateOptions.UpdateTableName = 'SwimClubMeet..HeatStatus'
     UpdateOptions.KeyFields = 'HeatStatusID'
     TableName = 'SwimClubMeet..HeatStatus'
@@ -276,7 +281,6 @@ object SCM: TSCM
       FieldName = 'EntrantID'
       Origin = 'EntrantID'
       ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
       Visible = False
     end
     object qryEntrantMemberID: TIntegerField
@@ -438,7 +442,6 @@ object SCM: TSCM
       FieldName = 'SessionID'
       Origin = 'SessionID'
       ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
       Visible = False
     end
     object qrySessionSwimClubID: TIntegerField
@@ -600,7 +603,6 @@ object SCM: TSCM
       FieldName = 'EventID'
       Origin = 'EventID'
       ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
       Visible = False
     end
     object qryEventSessionID: TIntegerField
@@ -887,6 +889,7 @@ object SCM: TSCM
     ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'HouseID'
     Connection = scmConnection
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
     UpdateOptions.UpdateTableName = 'SwimClubMeet..House'
     UpdateOptions.KeyFields = 'HouseID'
     TableName = 'SwimClubMeet..House'
@@ -983,7 +986,6 @@ object SCM: TSCM
     object qryNominateMembersMemberID: TFDAutoIncField
       FieldName = 'MemberID'
       Origin = 'MemberID'
-      ReadOnly = True
       Visible = False
     end
     object qryNominateMembersFName: TWideStringField
@@ -1186,7 +1188,6 @@ object SCM: TSCM
       FieldName = 'HeatID'
       Origin = 'HeatID'
       ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
       Visible = False
     end
     object qryHeatEventID: TIntegerField
@@ -1369,7 +1370,7 @@ object SCM: TSCM
         'ORDER BY CASE WHEN HeatNum IS NULL then 2 else 1 end, HeatNum AS' +
         'C;'
       '*/')
-    Left = 1064
+    Left = 1088
     Top = 544
     ParamData = <
       item
@@ -1380,6 +1381,7 @@ object SCM: TSCM
       end>
   end
   object qrySwimClub: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'SwimClubID'
     Connection = scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..SwimClub'
@@ -1448,6 +1450,104 @@ object SCM: TSCM
         ParamType = ptInput
         Value = 1
       end>
+    object qrySwimClubSwimClubID: TFDAutoIncField
+      FieldName = 'SwimClubID'
+      Origin = 'SwimClubID'
+      ProviderFlags = [pfInWhere, pfInKey]
+    end
+    object qrySwimClubNickName: TWideStringField
+      FieldName = 'NickName'
+      Origin = 'NickName'
+      Size = 128
+    end
+    object qrySwimClubCaption: TWideStringField
+      FieldName = 'Caption'
+      Origin = 'Caption'
+      Size = 128
+    end
+    object qrySwimClubEmail: TWideStringField
+      FieldName = 'Email'
+      Origin = 'Email'
+      Size = 128
+    end
+    object qrySwimClubContactNum: TWideStringField
+      FieldName = 'ContactNum'
+      Origin = 'ContactNum'
+      Size = 30
+    end
+    object qrySwimClubWebSite: TWideStringField
+      FieldName = 'WebSite'
+      Origin = 'WebSite'
+      Size = 256
+    end
+    object qrySwimClubHeatAlgorithm: TIntegerField
+      FieldName = 'HeatAlgorithm'
+      Origin = 'HeatAlgorithm'
+    end
+    object qrySwimClubEnableTeamEvents: TBooleanField
+      FieldName = 'EnableTeamEvents'
+      Origin = 'EnableTeamEvents'
+      Required = True
+    end
+    object qrySwimClubEnableSwimOThon: TBooleanField
+      FieldName = 'EnableSwimOThon'
+      Origin = 'EnableSwimOThon'
+      Required = True
+    end
+    object qrySwimClubEnableExtHeatTypes: TBooleanField
+      FieldName = 'EnableExtHeatTypes'
+      Origin = 'EnableExtHeatTypes'
+      Required = True
+    end
+    object qrySwimClubEnableMembershipStr: TBooleanField
+      FieldName = 'EnableMembershipStr'
+      Origin = 'EnableMembershipStr'
+      Required = True
+    end
+    object qrySwimClubEnableSimpleDisqualification: TBooleanField
+      FieldName = 'EnableSimpleDisqualification'
+      Origin = 'EnableSimpleDisqualification'
+      Required = True
+    end
+    object qrySwimClubNumOfLanes: TIntegerField
+      FieldName = 'NumOfLanes'
+      Origin = 'NumOfLanes'
+    end
+    object qrySwimClubLenOfPool: TIntegerField
+      FieldName = 'LenOfPool'
+      Origin = 'LenOfPool'
+    end
+    object qrySwimClubStartOfSwimSeason: TSQLTimeStampField
+      FieldName = 'StartOfSwimSeason'
+      Origin = 'StartOfSwimSeason'
+    end
+    object qrySwimClubCreatedOn: TSQLTimeStampField
+      FieldName = 'CreatedOn'
+      Origin = 'CreatedOn'
+    end
+    object qrySwimClubLogoDir: TMemoField
+      FieldName = 'LogoDir'
+      Origin = 'LogoDir'
+      BlobType = ftMemo
+      Size = 2147483647
+    end
+    object qrySwimClubLogoImg: TBlobField
+      FieldName = 'LogoImg'
+      Origin = 'LogoImg'
+    end
+    object qrySwimClubLogoType: TWideStringField
+      FieldName = 'LogoType'
+      Origin = 'LogoType'
+      Size = 5
+    end
+    object qrySwimClubPoolTypeID: TIntegerField
+      FieldName = 'PoolTypeID'
+      Origin = 'PoolTypeID'
+    end
+    object qrySwimClubSwimClubTypeID: TIntegerField
+      FieldName = 'SwimClubTypeID'
+      Origin = 'SwimClubTypeID'
+    end
   end
   object qrySwapEntrants: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -1702,7 +1802,6 @@ object SCM: TSCM
       FieldName = 'EventID'
       Origin = 'EventID'
       ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
     end
     object qryNominateControlListEventNum: TIntegerField
       FieldName = 'EventNum'
@@ -1771,6 +1870,7 @@ object SCM: TSCM
     ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'DisqualifyCodeID'
     Connection = scmConnection
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
     UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
     UpdateOptions.EnableDelete = False
     UpdateOptions.EnableInsert = False
@@ -1855,7 +1955,6 @@ object SCM: TSCM
       FieldName = 'TeamID'
       Origin = 'TeamID'
       ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
       Visible = False
     end
     object IntegerField1: TIntegerField
@@ -2004,7 +2103,6 @@ object SCM: TSCM
       FieldName = 'TeamEntrantID'
       Origin = 'TeamEntrantID'
       ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
       Visible = False
     end
     object qryTeamEntrantTeamID: TIntegerField
@@ -2138,7 +2236,6 @@ object SCM: TSCM
     object qrySplitSplitID: TFDAutoIncField
       FieldName = 'SplitID'
       ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
       Visible = False
     end
     object qrySplitEntrantID: TIntegerField
@@ -2282,7 +2379,6 @@ object SCM: TSCM
       FieldName = 'TeamSplitID'
       Origin = 'TeamSplitID'
       ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
       Visible = False
     end
     object qryTeamSplitTeamID: TIntegerField
