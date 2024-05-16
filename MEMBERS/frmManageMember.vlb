@@ -1,281 +1,400 @@
 ﻿[DBedtFirstName]
-Coordinates=338,834,109,36
+Coordinates=338,834,95,33
 
 [btnGotoMembership]
-Coordinates=1590,540,131,58
+Coordinates=1590,540,115,51
 
 [ManageMemberData.tblHouse]
-Coordinates=461,10,189,278
+Coordinates=461,10,161,51
 
 [RegistrationNum]
-Coordinates=218,834,110,36
+Coordinates=218,834,97,33
 
 [ManageMemberData.qrySwimClub]
-Coordinates=1731,540,214,410
+Coordinates=1731,540,183,51
 
 [ManageMemberData.qryContactNum]
-Coordinates=1385,10,227,168
+Coordinates=1385,10,194,141
 
 [DBgridHistoryPB]
-Coordinates=97,834,111,36
+Coordinates=97,834,98,33
 
 [Label6]
-Coordinates=10,720,53,58
+Coordinates=10,720,46,51
 
 [Label17]
-Coordinates=1081,652,60,58
+Coordinates=1081,652,52,51
 
 [Label22]
-Coordinates=10,652,60,58
+Coordinates=10,652,52,51
 
 [TabSheet3]
-Coordinates=10,834,77,36
+Coordinates=10,834,66,33
 
 [DBGrid3]
-Coordinates=1780,788,64,36
+Coordinates=1780,788,56,33
 
 [btnMemberDetail]
-Coordinates=833,652,112,58
+Coordinates=833,652,97,51
 
 [ManageMemberData.qryFindMember]
-Coordinates=223,10,228,300
+Coordinates=223,10,194,249
 
 [DBlucboHouse]
-Coordinates=1670,788,100,36
+Coordinates=1670,788,88,33
 
 [ManageMemberData.tblStroke]
-Coordinates=1202,540,189,58
+Coordinates=1202,540,161,51
 
 [DBContactNumNavigator]
-Coordinates=1522,720,159,58
+Coordinates=1522,720,137,51
 
 [PageControl1]
-Coordinates=1567,788,93,36
+Coordinates=1567,788,81,33
 
 [VirtlImageListMember]
-Coordinates=1319,683,140,36
+Coordinates=1319,683,121,33
 
 [DBMemo1]
-Coordinates=1482,788,75,36
+Coordinates=1482,788,64,33
 
 [DBedtLastName]
-Coordinates=1364,788,108,36
+Coordinates=1364,788,93,33
 
 [btnClubMembersDetailed]
-Coordinates=1412,652,160,58
+Coordinates=1412,652,138,51
 
 [ActnMemberMenuBar]
-Coordinates=1215,788,139,36
+Coordinates=1215,788,120,33
 
 [Label14]
-Coordinates=1815,720,60,58
+Coordinates=1815,720,52,51
 
 [ManageMemberData.tblDistance]
-Coordinates=798,720,202,58
+Coordinates=798,720,172,51
 
 [btnClearHouse]
-Coordinates=723,652,100,58
+Coordinates=723,652,87,51
 
 [ManageMemberData.dsHouse]
-Coordinates=247,1,189,36
+Coordinates=247,1,160,33
 
 [ManageMemberData.tblGender]
-Coordinates=10,540,195,102
+Coordinates=10,540,166,51
 
 [ManageMemberData.dsMember]
-Coordinates=38,319,199,36
+Coordinates=38,319,168,33
 
 [Label19]
-Coordinates=539,652,60,58
+Coordinates=539,652,52,51
 
 [ManageMemberData.dsMemberRoleLnk]
-Coordinates=732,188,246,36
+Coordinates=732,188,209,33
 
 [btnClubMembersList]
-Coordinates=80,652,132,58
+Coordinates=80,652,116,51
 
 [ManageMemberData.tblContactNumType]
-Coordinates=1622,10,252,102
+Coordinates=1622,10,215,87
 
 [DBNavigator2]
-Coordinates=1418,720,94,58
+Coordinates=1418,720,82,51
 
 [Label21]
-Coordinates=280,540,60,58
+Coordinates=280,540,52,51
 
 [TabSheet1]
-Coordinates=1128,788,77,36
+Coordinates=1128,788,66,33
 
 [Label13]
-Coordinates=817,540,60,58
+Coordinates=817,540,52,51
 
 [MemSearch_FindMember]
-Coordinates=1319,958,162,36
+Coordinates=1319,958,139,33
 
 [DBGridRole]
-Coordinates=1035,788,83,36
+Coordinates=1035,788,72,33
 
 [DBedtMembershipNum]
-Coordinates=878,788,147,36
+Coordinates=878,788,128,33
 
 [Panel7]
-Coordinates=215,540,55,58
+Coordinates=215,540,47,51
 
 [ManageMemberData.dsMemberPB]
-Coordinates=474,188,216,36
+Coordinates=474,188,183,33
 
 [DBchkIsSwimmer]
-Coordinates=752,788,116,36
+Coordinates=752,788,101,33
 
 [ManageMemberData.qryMemberPB]
-Coordinates=920,10,220,168
+Coordinates=920,10,187,141
 
 [Label1]
-Coordinates=955,652,53,58
+Coordinates=955,652,46,51
 
 [btnMemberHistory]
-Coordinates=539,720,119,58
+Coordinates=539,720,105,51
 
 [Label10]
-Coordinates=73,720,60,58
+Coordinates=73,720,52,51
 
 [btnGotoMemberID]
-Coordinates=143,720,120,58
+Coordinates=143,720,104,51
 
 [ActnManagerMember]
-Coordinates=1319,1178,138,36
+Coordinates=1319,1178,119,33
 
 [MemFile_AutoEdit]
-Coordinates=1319,1288,120,36
+Coordinates=1319,1288,104,33
 
 [ManageMemberData.qAssertMemberID]
-Coordinates=950,540,242,58
+Coordinates=950,540,205,51
 
 [DBchkIsArchived]
-Coordinates=544,788,112,36
+Coordinates=544,788,99,33
 
 [Label23]
-Coordinates=469,720,60,58
+Coordinates=469,720,52,51
 
 [MemFile_Exit]
-Coordinates=1300,1392,92,36
+Coordinates=1300,1392,80,33
 
 [DBgridContactInfo]
-Coordinates=414,788,120,36
+Coordinates=414,788,105,33
 
 [Label2]
-Coordinates=406,720,53,58
+Coordinates=406,720,46,51
 
 [Panel3]
-Coordinates=668,720,55,58
+Coordinates=668,720,47,51
 
 [DBlucboGender]
-Coordinates=298,788,106,36
+Coordinates=298,788,92,33
+Visible=True
 
 [Label20]
-Coordinates=292,652,60,58
+Coordinates=292,652,52,51
 
 [DBEdtEmail]
-Coordinates=204,788,84,36
+Coordinates=204,788,73,33
 
 [DBNavigator1]
-Coordinates=1314,720,94,58
+Coordinates=1314,720,82,51
 
 [btnClearGender]
-Coordinates=1010,720,106,58
+Coordinates=1010,720,92,51
 
 [btnFindMember]
-Coordinates=609,652,104,58
+Coordinates=609,652,91,51
 
 [dblblMemberID]
-Coordinates=1582,652,102,58
+Coordinates=1582,652,88,51
 
 [MemSearch_GotoMemberID]
-Coordinates=1599,111,178,36
+Coordinates=1599,111,151,33
 
 [ManageMemberData.dsSwimClub]
-Coordinates=1319,386,210,36
+Coordinates=1319,386,179,33
 
 [Label9]
-Coordinates=1018,652,53,58
+Coordinates=1018,652,46,51
 
 [Panel1]
-Coordinates=733,720,55,58
+Coordinates=733,720,47,51
 
 [Label3]
-Coordinates=619,540,53,58
+Coordinates=619,540,46,51
 
 [Label4]
-Coordinates=754,540,53,58
+Coordinates=754,540,46,51
 
 [Label8]
-Coordinates=343,720,53,58
+Coordinates=343,720,46,51
 
 [Label18]
-Coordinates=1244,720,60,58
+Coordinates=1244,720,52,51
 
 [Label24]
-Coordinates=222,652,60,58
+Coordinates=222,652,52,51
 
 [ImageCollectMember]
-Coordinates=1599,166,137,36
+Coordinates=1599,166,117,33
 
 [Label7]
-Coordinates=887,540,53,58
+Coordinates=887,540,46,51
 
 [ManageMemberData.tblMemberRole]
-Coordinates=1150,10,225,168
+Coordinates=1150,10,191,51
 
 [Label12]
-Coordinates=1520,540,60,58
+Coordinates=1520,540,52,51
 
 [MemSearch_GotoMembershipNum]
-Coordinates=1599,276,216,36
+Coordinates=1599,276,185,33
 
 [ManageMemberData.qryEntrantDataCount]
-Coordinates=350,540,259,58
+Coordinates=350,540,221,51
 
 [Label5]
-Coordinates=1349,652,53,58
+Coordinates=1349,652,46,51
 
 [btnClubMembersSummary]
-Coordinates=362,652,167,58
+Coordinates=362,652,145,51
 
 [ManageMemberData.qryMember]
-Coordinates=223,20,203,498
+Coordinates=223,20,172,393
 
 [Label16]
-Coordinates=1279,652,60,58
+Coordinates=1279,652,52,51
 
 [ManageMemberData.dsGender]
-Coordinates=497,793,194,36
+Coordinates=497,793,165,33
 
 [ManageMemberData.dsContactNum]
-Coordinates=760,397,223,36
+Coordinates=760,397,190,33
 
 [ManageMemberData.qryMemberRoleLnk]
-Coordinates=660,10,250,234
+Coordinates=660,10,213,195
 
 [TabSheet2]
-Coordinates=117,788,77,36
+Coordinates=117,788,66,33
 
 [ManageMemberData.dsFindMember]
-Coordinates=497,914,224,36
+Coordinates=497,914,190,33
 
 [DBchkIsActive]
-Coordinates=10,788,97,36
+Coordinates=10,788,86,33
 
 []
-Coordinates=682,540,62,58
+Coordinates=0,187,82,33
 Visible=True
 ExplicitSubNodes=Date
 
 [BalloonHint1]
-Coordinates=489,375,88,36
+Coordinates=489,375,77,33
 
 [btnInfoContact]
-Coordinates=489,497,98,36
+Coordinates=489,497,87,33
 
 [btnInfoRoles]
-Coordinates=729,843,87,36
+Coordinates=729,843,77,33
+
+[Label15]
+Coordinates=1021,1042,52,51
+
+[btnClearDOB]
+Coordinates=470,87,78,51
+
+[btnDOBPicker]
+Coordinates=0,0,84,51
+
+[btnInfoFilter]
+Coordinates=849,833,74,33
+
+[Panel2]
+Coordinates=38,833,47,51
+
+[btnFilter]
+Coordinates=1021,428,55,51
+
+[ManageMemberData.qryChart]
+Coordinates=470,375,160,159
+
+[Label26]
+Coordinates=1021,351,52,51
+
+[TabSheet4]
+Coordinates=942,1061,66,33
+
+[ManageMemberData.dsMemberEvents]
+Coordinates=194,1,202,33
+
+[Label25]
+Coordinates=1021,274,52,51
+
+[ManageMemberData.qryMemberEvents]
+Coordinates=936,833,206,159
+
+[ManageMemberData.dsChart]
+Coordinates=201,833,156,33
+
+[Label11]
+Coordinates=17,77,52,51
+
+[btmPrintChart]
+Coordinates=1021,197,83,51
+
+[Series2]
+Coordinates=883,1061,50,33
+
+[lblMembersAge]
+Coordinates=46,239,91,51
+
+[DBChart1]
+Coordinates=728,584,61,51
+
+[Label27]
+Coordinates=155,239,52,51
+
+[cmboStroke]
+Coordinates=86,77,84,105
+
+[btnInfoDateTime]
+Coordinates=764,1061,95,33
+
+[DBTextFullName]
+Coordinates=728,833,96,51
+
+[DBGrid1]
+Coordinates=428,1061,56,33
+
+[Label28]
+Coordinates=115,1,52,51
+
+[chkbDoCurrSeason]
+Coordinates=341,534,110,51
+
+[DBedtDOB]
+Coordinates=349,1061,67,33
+
+[TabSheet5]
+Coordinates=270,1061,66,33
+
+[cmboDistance]
+Coordinates=390,833,84,105
+
+[BTNImageList32x32]
+Coordinates=131,1061,112,33
+
+[actnFilter]
+Coordinates=62,1061,60,33
+
+[ListBox1]
+Coordinates=729,910,84,105
+
+[Button3]
+Coordinates=1230,87,53,51
+
+[Label30]
+Coordinates=1230,318,52,51
+
+[Button1]
+Coordinates=1230,241,53,51
+
+[Label29]
+Coordinates=1230,164,52,51
+
+[DBLookupComboBox1]
+Coordinates=1413,197,127,33
+Visible=True
+
+[ManageMemberData.dsluSwimClub]
+Coordinates=719,1252,188,33
+
+[Button2]
+Coordinates=0,1003,53,51
+
+[ManageMemberData.tblSwimClub]
+Coordinates=948,1119,179,429
 

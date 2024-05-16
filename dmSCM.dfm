@@ -6,6 +6,7 @@ object SCM: TSCM
     Params.Strings = (
       'ConnectionDef=MSSQL_SwimClubMeet')
     ConnectedStoredUsage = [auDesignTime]
+    Connected = True
     LoginPrompt = False
     AfterDisconnect = scmConnectionAfterDisconnect
     Left = 80

@@ -96,6 +96,8 @@ type
     qryMemberEventsEventDate: TStringField;
     qryChart: TFDQuery;
     dsChart: TDataSource;
+    tblSwimClub: TFDTable;
+    dsluSwimClub: TDataSource;
     procedure DataModuleCreate(Sender: TObject);
     procedure qryMemberAfterInsert(DataSet: TDataSet);
     procedure qryMemberAfterPost(DataSet: TDataSet);
@@ -213,6 +215,7 @@ begin
     tblHouse.Connection := FConnection;
     tblContactNumType.Connection := FConnection;
     tblMemberRole.Connection := FConnection;
+    tblSwimClub.Connection := FConnection;
 
     qrySwimClub.Open;
     if qrySwimClub.Active then
@@ -224,6 +227,7 @@ begin
       tblHouse.Open;
       tblContactNumType.Open;
       tblMemberRole.Open;
+      tblSwimClub.Open;
 
       qryMember.Open;
       if qryMember.Active then

@@ -25,7 +25,6 @@ object ManageMember: TManageMember
     BevelEdges = []
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 1359
     object btnInfoFilter: TVirtualImage
       Left = 869
       Top = 6
@@ -108,8 +107,6 @@ object ManageMember: TManageMember
     BevelEdges = []
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 775
-    ExplicitWidth = 1359
     object DBNavigator1: TDBNavigator
       Left = 347
       Top = 9
@@ -129,14 +126,12 @@ object ManageMember: TManageMember
     Top = 74
     Width = 1363
     Height = 702
-    ActivePage = TabSheet5
+    ActivePage = TabSheet1
     Align = alClient
     MultiLine = True
     TabHeight = 40
     TabOrder = 2
     TabWidth = 180
-    ExplicitWidth = 1359
-    ExplicitHeight = 701
     object TabSheet1: TTabSheet
       Caption = 'Member'#39's Details 1'
       object Panel7: TPanel
@@ -205,7 +200,7 @@ object ManageMember: TManageMember
         end
         object Label10: TLabel
           Left = 732
-          Top = 222
+          Top = 176
           Width = 39
           Height = 19
           Alignment = taRightJustify
@@ -249,7 +244,7 @@ object ManageMember: TManageMember
         end
         object Label21: TLabel
           Left = 727
-          Top = 261
+          Top = 215
           Width = 44
           Height = 19
           Alignment = taRightJustify
@@ -320,7 +315,7 @@ object ManageMember: TManageMember
         end
         object Label15: TLabel
           Left = 670
-          Top = 314
+          Top = 268
           Width = 102
           Height = 19
           Alignment = taRightJustify
@@ -332,6 +327,35 @@ object ManageMember: TManageMember
           Width = 323
           Height = 19
           Caption = 'Fields marked with an asterisk * are required.'
+        end
+        object Label29: TLabel
+          Left = 680
+          Top = 399
+          Width = 90
+          Height = 19
+          Alignment = taRightJustify
+          Caption = '*Main Club'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'Tahoma'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Label30: TLabel
+          Left = 550
+          Top = 430
+          Width = 222
+          Height = 19
+          Alignment = taRightJustify
+          Caption = 'Extended Club Membership'
+          Enabled = False
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'Tahoma'
+          Font.Style = [fsBold]
+          ParentFont = False
         end
         object DBlucboGender: TDBLookupComboBox
           Left = 144
@@ -391,7 +415,7 @@ object ManageMember: TManageMember
         end
         object DBEdtEmail: TDBEdit
           Left = 777
-          Top = 219
+          Top = 173
           Width = 407
           Height = 27
           DataField = 'Email'
@@ -400,7 +424,7 @@ object ManageMember: TManageMember
         end
         object DBlucboHouse: TDBLookupComboBox
           Left = 777
-          Top = 257
+          Top = 211
           Width = 233
           Height = 27
           Hint = 'Assign house (Clear .. Ctrl-Del)'
@@ -435,7 +459,7 @@ object ManageMember: TManageMember
         object btnClearHouse: TButton
           Tag = 3
           Left = 1016
-          Top = 252
+          Top = 206
           Width = 75
           Height = 32
           Hint = 'Clear the house name.'
@@ -508,12 +532,67 @@ object ManageMember: TManageMember
         end
         object DBMemo1: TDBMemo
           Left = 778
-          Top = 311
+          Top = 265
           Width = 407
           Height = 124
           DataField = 'TAGS'
           DataSource = ManageMemberData.dsMember
           TabOrder = 15
+        end
+        object DBLookupComboBox1: TDBLookupComboBox
+          Left = 777
+          Top = 395
+          Width = 407
+          Height = 27
+          DataField = 'SwimClubID'
+          DataSource = ManageMemberData.dsMember
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          KeyField = 'SwimClubID'
+          ListField = 'Caption'
+          ListSource = ManageMemberData.dsluSwimClub
+          NullValueKey = 32776
+          ParentFont = False
+          TabOrder = 16
+        end
+        object ListBox1: TListBox
+          Left = 778
+          Top = 428
+          Width = 406
+          Height = 189
+          Enabled = False
+          ItemHeight = 19
+          TabOrder = 17
+        end
+        object Button1: TButton
+          Left = 1190
+          Top = 428
+          Width = 75
+          Height = 25
+          Caption = 'Add'
+          Enabled = False
+          TabOrder = 18
+        end
+        object Button2: TButton
+          Left = 1190
+          Top = 459
+          Width = 75
+          Height = 25
+          Caption = 'Remove'
+          Enabled = False
+          TabOrder = 19
+        end
+        object Button3: TButton
+          Left = 1190
+          Top = 490
+          Width = 75
+          Height = 25
+          Caption = 'Archive'
+          Enabled = False
+          TabOrder = 20
         end
       end
     end
@@ -1056,7 +1135,6 @@ object ManageMember: TManageMember
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitWidth = 1351
         DesignSize = (
           1355
           41)
@@ -1132,8 +1210,6 @@ object ManageMember: TManageMember
         OnGetLegendText = DBChart1GetLegendText
         Align = alClient
         TabOrder = 1
-        ExplicitWidth = 1351
-        ExplicitHeight = 610
         DefaultCanvas = 'TGDIPlusCanvas'
         ColorPaletteIndex = 13
         object Series2: TLineSeries
@@ -1176,7 +1252,6 @@ object ManageMember: TManageMember
     Font.Style = []
     HorzMargin = 10
     Spacing = 10
-    ExplicitWidth = 1359
   end
   object ActnManagerMember: TActionManager
     ActionBars = <
@@ -1227,8 +1302,8 @@ object ManageMember: TManageMember
         ActionBar = ActnMemberMenuBar
       end>
     Images = VirtlImageListMember
-    Left = 1120
-    Top = 536
+    Left = 152
+    Top = 648
     StyleName = 'Platform Default'
     object MemFile_AutoEdit: TAction
       Category = 'File'
@@ -1633,7 +1708,7 @@ object ManageMember: TManageMember
               4DBD03BF012DBC9C31D9C92A1A0000000049454E44AE426082}
           end>
       end>
-    Left = 1112
+    Left = 320
     Top = 624
   end
   object VirtlImageListMember: TVirtualImageList
@@ -1671,12 +1746,12 @@ object ManageMember: TManageMember
     ImageCollection = ImageCollectMember
     Width = 32
     Height = 32
-    Left = 1192
+    Left = 400
     Top = 648
   end
   object BalloonHint1: TBalloonHint
     Delay = 100
-    Left = 1116
+    Left = 324
     Top = 686
   end
   object BTNImageList32x32: TVirtualImageList
@@ -1734,7 +1809,7 @@ object ManageMember: TManageMember
     ImageCollection = ImageCollectMember
     Width = 32
     Height = 32
-    Left = 1048
+    Left = 256
     Top = 656
   end
 end

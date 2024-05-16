@@ -725,8 +725,9 @@ begin
   fCurrEventType := etUnknown;
   prefGenerateEventDescription := false;
   prefGenerateEventDescStr := '';
-//  prefGenerateTEAMDescription := false;
-//  prefGenerateTEAMDescStr := '';
+
+  if scmConnection.Connected then scmConnection.Close;
+
   // r e a d   p r e f e r e n c e .
   IniFileName := SCMUtility.GetSCMPreferenceFileName();
   if (FileExists(IniFileName)) then ReadPreferences(IniFileName);

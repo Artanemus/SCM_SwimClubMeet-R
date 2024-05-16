@@ -18,7 +18,6 @@ object ManageMemberData: TManageMemberData
       FieldName = 'ContactNumTypeID'
       Origin = 'ContactNumTypeID'
       ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
     end
     object tblContactNumTypeCaption: TWideStringField
       FieldName = 'Caption'
@@ -169,7 +168,6 @@ object ManageMemberData: TManageMemberData
       FieldName = 'MemberID'
       Origin = 'MemberID'
       ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
     end
     object qryMemberMembershipNum: TIntegerField
       Alignment = taLeftJustify
@@ -290,6 +288,7 @@ object ManageMemberData: TManageMemberData
   object tblGender: TFDTable
     ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'GenderID'
+    Connection = SCM.scmConnection
     ResourceOptions.AssignedValues = [rvEscapeExpand]
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Gender'
     TableName = 'SwimClubMeet..Gender'
@@ -350,7 +349,6 @@ object ManageMemberData: TManageMemberData
       FieldName = 'ContactNumID'
       Origin = 'ContactNumID'
       ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
     end
     object qryContactNumNumber: TWideStringField
       FieldName = 'Number'
@@ -464,7 +462,6 @@ object ManageMemberData: TManageMemberData
       FieldName = 'MemberID'
       Origin = 'MemberID'
       ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
       DisplayFormat = '0000'
     end
     object qryFindMemberMembershipNum: TIntegerField
@@ -686,19 +683,16 @@ object ManageMemberData: TManageMemberData
       FieldName = 'MemberID'
       Origin = 'MemberID'
       ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
       Visible = False
     end
     object qryMemberPBDistanceID: TFDAutoIncField
       FieldName = 'DistanceID'
       Origin = 'DistanceID'
-      ReadOnly = True
       Visible = False
     end
     object qryMemberPBStrokeID: TFDAutoIncField
       FieldName = 'StrokeID'
       Origin = 'StrokeID'
-      ReadOnly = True
       Visible = False
     end
   end
@@ -850,7 +844,6 @@ object ManageMemberData: TManageMemberData
       FieldName = 'EventID'
       Origin = 'EventID'
       ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
     end
     object qryMemberEventsMemberID: TIntegerField
       DisplayWidth = 5
@@ -1002,5 +995,22 @@ object ManageMemberData: TManageMemberData
     DataSet = qryChart
     Left = 560
     Top = 592
+  end
+  object tblSwimClub: TFDTable
+    ActiveStoredUsage = [auDesignTime]
+    Active = True
+    IndexFieldNames = 'SwimClubID'
+    DetailFields = 'SwimClubID'
+    Connection = SCM.scmConnection
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
+    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
+    TableName = 'SwimClubMeet..SwimClub'
+    Left = 184
+    Top = 672
+  end
+  object dsluSwimClub: TDataSource
+    DataSet = tblSwimClub
+    Left = 280
+    Top = 672
   end
 end
