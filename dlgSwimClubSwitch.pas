@@ -18,8 +18,10 @@ type
     btnSwimClubSwitch: TButton;
     qrySwimClub: TFDQuery;
     dsSwimClub: TDataSource;
-    DBComboBox1: TDBComboBox;
     lblSwimClubSelection: TLabel;
+    DBComboBox1: TDBLookupComboBox;
+    tblSwimClub: TFDTable;
+    dsluSwimClub: TDataSource;
     procedure btnCancelClick(Sender: TObject);
     procedure btnSwimClubSwitchClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -57,7 +59,10 @@ end;
 procedure TSwimClubSwitch.FormCreate(Sender: TObject);
 begin
   if Assigned(SCM) and SCM.scmConnection.Connected then
+  begin
+    tblSwimClub.Open;
     qrySwimClub.Open;
+  end;
   fActiveSwimClub := 0;
 end;
 

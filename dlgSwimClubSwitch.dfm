@@ -2690,10 +2690,6 @@ object SwimClubSwitch: TSwimClubSwitch
     Caption = 'Panel1'
     ShowCaption = False
     TabOrder = 0
-    ExplicitLeft = 168
-    ExplicitTop = 56
-    ExplicitWidth = 185
-    ExplicitHeight = 41
     object lblSwimClubSelection: TLabel
       Left = 8
       Top = 19
@@ -2707,18 +2703,22 @@ object SwimClubSwitch: TSwimClubSwitch
       Font.Style = []
       ParentFont = False
     end
-    object DBComboBox1: TDBComboBox
+    object DBComboBox1: TDBLookupComboBox
       Left = 8
       Top = 46
       Width = 401
       Height = 29
-      DataField = 'Caption'
+      DataField = 'SwimClubID'
       DataSource = dsSwimClub
+      DropDownWidth = 401
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -16
       Font.Name = 'Segoe UI'
       Font.Style = []
+      KeyField = 'SwimClubID'
+      ListField = 'Caption'
+      ListSource = dsluSwimClub
       ParentFont = False
       TabOrder = 0
     end
@@ -2733,9 +2733,6 @@ object SwimClubSwitch: TSwimClubSwitch
     Caption = 'Panel2'
     ShowCaption = False
     TabOrder = 1
-    ExplicitLeft = 232
-    ExplicitTop = 224
-    ExplicitWidth = 185
     object btnCancel: TButton
       Left = 122
       Top = 6
@@ -2788,5 +2785,24 @@ object SwimClubSwitch: TSwimClubSwitch
     DataSet = qrySwimClub
     Left = 248
     Top = 112
+  end
+  object tblSwimClub: TFDTable
+    ActiveStoredUsage = [auDesignTime]
+    Active = True
+    IndexFieldNames = 'SwimClubID'
+    Connection = SCM.scmConnection
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
+    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
+    UpdateOptions.EnableDelete = False
+    UpdateOptions.EnableInsert = False
+    UpdateOptions.EnableUpdate = False
+    TableName = 'SwimClubMeet.dbo.SwimClub'
+    Left = 160
+    Top = 208
+  end
+  object dsluSwimClub: TDataSource
+    DataSet = tblSwimClub
+    Left = 248
+    Top = 208
   end
 end
