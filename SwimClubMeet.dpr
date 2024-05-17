@@ -80,7 +80,10 @@ uses
   dlgSplitTimeTEAM in 'FRAME\dlgSplitTimeTEAM.pas' {SplitTimeTEAM},
   dlgSplitTimeINDV in 'FRAME\dlgSplitTimeINDV.pas' {SplitTimeINDV},
   rptMarshallReportA_ALT in 'REPORTS\rptMarshallReportA_ALT.pas' {MarshallReportA_ALT: TDataModule},
-  rptMemberChart in 'MEMBERS\rptMemberChart.pas' {MemberChart: TDataModule};
+  rptMemberChart in 'MEMBERS\rptMemberChart.pas' {MemberChart: TDataModule},
+  OKCANCL1 in 'c:\program files (x86)\embarcadero\studio\23.0\ObjRepos\EN\DelphiWin32\OKCANCL1.PAS' {OKBottomDlg},
+  dlgSwimClubSwitch in 'dlgSwimClubSwitch.pas' {SwimClubSwitch},
+  dlgSwimClubManage in 'dlgSwimClubManage.pas' {SwimClubManage};
 
 {$R *.res}
 

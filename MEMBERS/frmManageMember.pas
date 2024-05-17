@@ -18,7 +18,7 @@ uses
   Vcl.ToolWin, Vcl.ActnCtrls, Vcl.ActnMenus, Data.Bind.EngExt,
   Vcl.Bind.DBEngExt, System.Rtti, System.Bindings.Outputs, Vcl.Bind.Editors,
   Data.Bind.Components, Data.Bind.DBScope, Vcl.VirtualImage, SCMHelpers,
-  Vcl.ButtonGroup, dlgMemberFilter, VCLTee.TeeData;
+  Vcl.ButtonGroup, dlgMemberFilter, VCLTee.TeeData, Vcl.Buttons;
 
 type
   TManageMember = class(TForm)
@@ -118,6 +118,13 @@ type
     Series2: TLineSeries;
     chkbDoCurrSeason: TCheckBox;
     btmPrintChart: TButton;
+    DBLookupComboBox1: TDBLookupComboBox;
+    Label29: TLabel;
+    Label30: TLabel;
+    ListBox1: TListBox;
+    Button1: TButton;
+    Button2: TButton;
+    Button3: TButton;
     procedure About2Click(Sender: TObject);
     procedure actnFilterExecute(Sender: TObject);
     procedure btmPrintChartClick(Sender: TObject);

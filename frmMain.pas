@@ -310,6 +310,8 @@ type
     VirtualImageList2: TVirtualImageList;
     VirtualImageList3: TVirtualImageList;
     VirtualImageListMenu: TVirtualImageList;
+    SwimClub_Switch: TAction;
+    SwimClub_Manage: TAction;
     procedure ActionManager1Update(Action: TBasicAction; var Handled: boolean);
     procedure actnAddSlotExecute(Sender: TObject);
     procedure actnClearSlotExecute(Sender: TObject);
@@ -439,6 +441,10 @@ type
     procedure Session_ToggleLockUpdate(Sender: TObject);
     procedure Session_ToggleVisibleExecute(Sender: TObject);
     procedure Session_ToggleVisibleUpdate(Sender: TObject);
+    procedure SwimClub_ManageExecute(Sender: TObject);
+    procedure SwimClub_ManageUpdate(Sender: TObject);
+    procedure SwimClub_SwitchExecute(Sender: TObject);
+    procedure SwimClub_SwitchUpdate(Sender: TObject);
     procedure Tools_ConnectionManagerExecute(Sender: TObject);
     procedure Tools_DisqualifyCodesExecute(Sender: TObject);
     procedure Tools_DivisionsExecute(Sender: TObject);
@@ -557,7 +563,7 @@ uses
   UEnvVars, dlgEntrantPicker, dlgEntrantPickerCTRL, dmSCMNom, dlgSwapLanes,
   dlgDBVerInfo, rptHeatReportA, rptHeatReportB, frmDisqualificationCodes,
   dlgAutoSchedule, dlgDCodePicker, dmSCMHelper, rptMarshallReportC,
-  dlgSplitTimeTEAM, dlgSplitTimeINDV;
+  dlgSplitTimeTEAM, dlgSplitTimeINDV, dlgSwimClubSwitch, dlgSwimClubManage;
 
 procedure TMain.ActionManager1Update(Action: TBasicAction;
   var Handled: boolean);
@@ -1437,6 +1443,7 @@ begin
   end;
 
   if not Assigned(SCM) then exit;
+
 
   // -----------------------------------------------------------
   // 24/04/2020 Basic login using simple INI access
@@ -4444,6 +4451,60 @@ begin
     end;
   end;
 
+end;
+
+procedure TMain.SwimClub_ManageExecute(Sender: TObject);
+var
+dlg: TSwimClubManage;
+ASwimClubID: integer;
+begin
+  dlg := TSwimClubManage.Create(Self);
+  ASwimClubID := SCM.dsSwimClub.DataSet.FieldByName('SwimClubID').AsInteger;
+  dlg.ActiveSwimClub := ASwimClubID;
+  if  IsPositiveResult(dlg.ShowModal) and (dlg.ActiveSwimClub <> ASwimClubID) then
+  begin
+    SCM.SwimClub_Locate(dlg.ActiveSwimClub);
+    ExecuteAction(SCM_Refresh);
+  end;
+end;
+
+procedure TMain.SwimClub_ManageUpdate(Sender: TObject);
+var
+  DoEnable: boolean;
+begin
+  DoEnable := false;
+  if AssertConnection then
+    // Are there any clubs in this database?
+    if not SCM.dsSwimClub.DataSet.IsEmpty then DoEnable := true;
+  // finally ...
+  TAction(Sender).Enabled := DoEnable;
+end;
+
+procedure TMain.SwimClub_SwitchExecute(Sender: TObject);
+var
+dlg: TSwimClubSwitch;
+ASwimClubID: integer;
+begin
+  dlg := TSwimClubSwitch.Create(Self);
+  ASwimClubID := SCM.dsSwimClub.DataSet.FieldByName('SwimClubID').AsInteger;
+  dlg.ActiveSwimClub := ASwimClubID;
+  if  IsPositiveResult(dlg.ShowModal) and (dlg.ActiveSwimClub <> ASwimClubID) then
+  begin
+    SCM.SwimClub_Locate(dlg.ActiveSwimClub);
+    ExecuteAction(SCM_Refresh);
+  end;
+end;
+
+procedure TMain.SwimClub_SwitchUpdate(Sender: TObject);
+var
+  DoEnable: boolean;
+begin
+  DoEnable := false;
+  if AssertConnection then
+    // Are there any clubs in this database?
+    if not SCM.dsSwimClub.DataSet.IsEmpty then DoEnable := true;
+  // finally ...
+  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.TeamEntrant_Scroll(var Msg: TMessage);

@@ -547,7 +547,7 @@ begin
       if (SCM.dsEntrant.DataSet.State = dsEdit) then
       begin
         SCM.dsEntrant.DataSet.Post;
-        Key := NULL;
+        Key := 0;
       end;
     end;
   end;
