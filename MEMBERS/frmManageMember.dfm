@@ -126,7 +126,7 @@ object ManageMember: TManageMember
     Top = 74
     Width = 1363
     Height = 702
-    ActivePage = TabSheet1
+    ActivePage = TabSheet4
     Align = alClient
     MultiLine = True
     TabHeight = 40
@@ -329,12 +329,12 @@ object ManageMember: TManageMember
           Caption = 'Fields marked with an asterisk * are required.'
         end
         object Label29: TLabel
-          Left = 680
+          Left = 631
           Top = 399
-          Width = 90
+          Width = 139
           Height = 19
           Alignment = taRightJustify
-          Caption = '*Main Club'
+          Caption = '*Main Swim Club'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -16
@@ -343,12 +343,12 @@ object ManageMember: TManageMember
           ParentFont = False
         end
         object Label30: TLabel
-          Left = 550
+          Left = 575
           Top = 430
-          Width = 222
+          Width = 197
           Height = 19
           Alignment = taRightJustify
-          Caption = 'Extended Club Membership'
+          Caption = 'Swim Club Memberships'
           Enabled = False
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText

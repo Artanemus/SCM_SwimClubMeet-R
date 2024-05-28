@@ -795,12 +795,6 @@ object ManageMemberData: TManageMemberData
   end
   object qryMemberEvents: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Indexes = <
-      item
-        Name = 'mcMember_ContactNum'
-        Fields = 'MemberID;ContactNumID'
-        DescFields = 'ContactNumID'
-      end>
     IndexFieldNames = 'MemberID'
     MasterSource = dsMember
     MasterFields = 'MemberID'
@@ -813,8 +807,6 @@ object ManageMemberData: TManageMemberData
     UpdateOptions.EnableUpdate = False
     UpdateOptions.KeyFields = 'EventID'
     SQL.Strings = (
-      'USE [SwimClubMeet];'
-      ''
       'SELECT '
       'Event.EventID'
       ',Entrant.MemberID '
@@ -834,8 +826,8 @@ object ManageMemberData: TManageMemberData
       'INNER JOIN Member ON Entrant.MemberID = Member.MemberID'
       'WHERE RaceTime IS NOT NULL'
       
-        'ORDER BY MemberID, EventDate DESC, Event.StrokeID, Event.Distanc' +
-        'eID'
+        'ORDER BY Session.SessionStart ASC, dbo.Distance.Meters, dbo.Stro' +
+        'ke.StrokeID'
       ';')
     Left = 448
     Top = 160
