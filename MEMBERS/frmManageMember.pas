@@ -18,46 +18,72 @@ uses
   Vcl.ToolWin, Vcl.ActnCtrls, Vcl.ActnMenus, Data.Bind.EngExt,
   Vcl.Bind.DBEngExt, System.Rtti, System.Bindings.Outputs, Vcl.Bind.Editors,
   Data.Bind.Components, Data.Bind.DBScope, Vcl.VirtualImage, SCMHelpers,
-  Vcl.ButtonGroup, dlgMemberFilter, VCLTee.TeeData, Vcl.Buttons;
+  Vcl.ButtonGroup, dlgMemberFilter, VCLTee.TeeData, Vcl.Buttons, dlgMemberClub;
 
 type
   TManageMember = class(TForm)
+    actnFilter: TAction;
+    actnFilterClub: TAction;
     ActnManagerMember: TActionManager;
     ActnMemberMenuBar: TActionMainMenuBar;
+    BalloonHint1: TBalloonHint;
+    btmPrintChart: TButton;
+    btnClearDOB: TButton;
     btnClearGender: TButton;
     btnClearHouse: TButton;
     btnClubMembersDetailed: TButton;
     btnClubMembersList: TButton;
     btnClubMembersSummary: TButton;
+    btnDOBPicker: TButton;
+    btnFilter: TButton;
     btnFindMember: TButton;
     btnGotoMemberID: TButton;
     btnGotoMembership: TButton;
+    BTNImageList32x32: TVirtualImageList;
+    btnInfoContact: TVirtualImage;
+    btnInfoDateTime: TVirtualImage;
+    btnInfoFilter: TVirtualImage;
+    btnInfoRoles: TVirtualImage;
     btnMemberDetail: TButton;
     btnMemberHistory: TButton;
+    Button1: TButton;
+    Button2: TButton;
+    Button3: TButton;
+    btnFilterClub: TButton;
+    chkbDoCurrSeason: TCheckBox;
+    cmboDistance: TComboBox;
+    cmboStroke: TComboBox;
+    DBChart1: TDBChart;
     DBchkIsActive: TDBCheckBox;
     DBchkIsArchived: TDBCheckBox;
     DBchkIsSwimmer: TDBCheckBox;
     DBContactNumNavigator: TDBNavigator;
+    DBedtDOB: TDBEdit;
     DBEdtEmail: TDBEdit;
     DBedtFirstName: TDBEdit;
     DBedtLastName: TDBEdit;
     DBedtMembershipNum: TDBEdit;
+    DBGrid1: TDBGrid;
     DBGrid3: TDBGrid;
     DBgridContactInfo: TDBGrid;
     DBgridHistoryPB: TDBGrid;
     DBGridRole: TDBGrid;
     dblblMemberID: TDBText;
+    DBLookupComboBox1: TDBLookupComboBox;
     DBlucboGender: TDBLookupComboBox;
     DBlucboHouse: TDBLookupComboBox;
     DBMemo1: TDBMemo;
     DBNavigator1: TDBNavigator;
     DBNavigator2: TDBNavigator;
+    DBTextFullName: TDBText;
     ImageCollectMember: TImageCollection;
     Label1: TLabel;
     Label10: TLabel;
+    Label11: TLabel;
     Label12: TLabel;
     Label13: TLabel;
     Label14: TLabel;
+    Label15: TLabel;
     Label16: TLabel;
     Label17: TLabel;
     Label18: TLabel;
@@ -68,13 +94,21 @@ type
     Label22: TLabel;
     Label23: TLabel;
     Label24: TLabel;
+    Label25: TLabel;
+    Label26: TLabel;
+    Label27: TLabel;
+    Label28: TLabel;
+    Label29: TLabel;
     Label3: TLabel;
+    Label30: TLabel;
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
     Label7: TLabel;
     Label8: TLabel;
     Label9: TLabel;
+    lblMembersAge: TLabel;
+    ListBox1: TListBox;
     MemFile_AutoEdit: TAction;
     MemFile_Exit: TAction;
     MemSearch_FindMember: TAction;
@@ -82,50 +116,19 @@ type
     MemSearch_GotoMembershipNum: TAction;
     PageControl1: TPageControl;
     Panel1: TPanel;
+    Panel2: TPanel;
     Panel3: TPanel;
     Panel7: TPanel;
     RegistrationNum: TDBEdit;
+    Series2: TLineSeries;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
     TabSheet3: TTabSheet;
-    VirtlImageListMember: TVirtualImageList;
-    BalloonHint1: TBalloonHint;
-    btnInfoRoles: TVirtualImage;
-    btnInfoContact: TVirtualImage;
-    btnClearDOB: TButton;
-    lblMembersAge: TLabel;
     TabSheet4: TTabSheet;
-    btnDOBPicker: TButton;
-    BTNImageList32x32: TVirtualImageList;
-    DBedtDOB: TDBEdit;
-    Label11: TLabel;
-    btnInfoDateTime: TVirtualImage;
-    Label15: TLabel;
-    btnFilter: TButton;
-    actnFilter: TAction;
-    btnInfoFilter: TVirtualImage;
-    Label25: TLabel;
-    Label26: TLabel;
-    DBGrid1: TDBGrid;
-    DBTextFullName: TDBText;
     TabSheet5: TTabSheet;
-    Panel2: TPanel;
-    cmboDistance: TComboBox;
-    cmboStroke: TComboBox;
-    Label27: TLabel;
-    Label28: TLabel;
-    DBChart1: TDBChart;
-    Series2: TLineSeries;
-    chkbDoCurrSeason: TCheckBox;
-    btmPrintChart: TButton;
-    DBLookupComboBox1: TDBLookupComboBox;
-    Label29: TLabel;
-    Label30: TLabel;
-    ListBox1: TListBox;
-    Button1: TButton;
-    Button2: TButton;
-    Button3: TButton;
+    VirtlImageListMember: TVirtualImageList;
     procedure About2Click(Sender: TObject);
+    procedure actnFilterClubExecute(Sender: TObject);
     procedure actnFilterExecute(Sender: TObject);
     procedure btmPrintChartClick(Sender: TObject);
     procedure btnClearClick(Sender: TObject);
@@ -140,8 +143,8 @@ type
     procedure btnInfoContactClick(Sender: TObject);
     procedure btnInfoDateTimeClick(Sender: TObject);
     procedure btnInfoFilterClick(Sender: TObject);
-    procedure btnInfoRolesClick(Sender: TObject);
     procedure btnInfoMouseLeave(Sender: TObject);
+    procedure btnInfoRolesClick(Sender: TObject);
     procedure btnMemberDetailClick(Sender: TObject);
     procedure btnMemberHistoryClick(Sender: TObject);
     procedure chkbDoCurrSeasonClick(Sender: TObject);
@@ -157,11 +160,11 @@ type
     procedure DBGridDrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure DBGridEditButtonClick(Sender: TObject);
+    procedure DBGridGenericKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
     procedure DBGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure DBGridRoleCellClick(Column: TColumn);
     procedure DBGridRoleEditButtonClick(Sender: TObject);
-    procedure DBGridGenericKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
     procedure DBNavigator1BeforeAction(Sender: TObject; Button: TNavigateBtn);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormCreate(Sender: TObject);
@@ -177,37 +180,34 @@ type
     fColorEditBoxFocused: TColor;
     fColorEditBoxNormal: TColor;
     FConnection: TFDConnection;
-    fSwimClubID: Integer;
-    // Used to convert DATETIME and then post TMessage to Member DataModule.
-    fSystemTime: TSystemTime;
+    fFilterClubDlg: TMemberClub;
+    fFilterDlg: TMemberFilter;
     fHideArchived: Boolean;
     fHideInActive: Boolean;
     fHideNonSwimmer: Boolean;
-
-    fFilterDlg: TMemberFilter;
     fMemberChartDataPoints: Integer;
-
+    fSwimClubID: Integer;
+    // Used to convert DATETIME and then post TMessage to Member DataModule.
+    fSystemTime: TSystemTime;
     function AssertConnection: Boolean;
+    procedure ChartReport();
     function FindMember(MemberID: Integer): Boolean;
     function GetMembersAge(aMemberID: Integer; aDate: TDate): Integer;
     procedure ReadPreferences(aIniFileName: string);
-    procedure WritePreferences();
+    procedure UpdateChart();
     procedure UpdateFilterCount();
     procedure UpdateMembersAge();
-    procedure UpdateChart();
-    procedure ChartReport();
-
-
+    procedure WritePreferences();
   protected
+    procedure FilterClubDlgDeactivated(var Msg: TMessage); message SCM_FILTERCLUBDEACTIVATED;
+    procedure FilterClubDlgUpdated(var Msg: TMessage); message SCM_FILTERCLUBUPDATED;
+    procedure FilterDlgDeactivated(var Msg: TMessage); message SCM_FILTERDEACTIVATED;
+    procedure FilterDlgUpdated(var Msg: TMessage); message SCM_FILTERUPDATED;
+    procedure ManageMemberAfterPost(var Msg: TMessage);
+      message SCM_AFTERPOST;
     // windows messages ....
     procedure ManageMemberAfterScroll(var Msg: TMessage);
       message SCM_AFTERSCROLL;
-    procedure ManageMemberAfterPost(var Msg: TMessage);
-      message SCM_AFTERPOST;
-    procedure FilterDlgUpdated(var Msg: TMessage); message SCM_FILTERUPDATED;
-    procedure FilterDlgDeactivated(var Msg: TMessage);
-      message SCM_FILTERDEACTIVATED;
-
   public
     { Public declarations }
     procedure Prepare(AConnection: TFDConnection; ASwimClubID: Integer = 1;
@@ -238,6 +238,31 @@ begin
   dlg := TAbout.Create(Self);
   dlg.ShowModal;
   FreeAndNil(dlg);
+end;
+
+procedure TManageMember.actnFilterClubExecute(Sender: TObject);
+var
+  aRect: TRect;
+begin
+  // catches a double tap of the mouse ...
+  if assigned(fFilterClubDlg) then
+  begin
+    FreeAndNil(fFilterClubDlg);
+    exit;
+  end;
+
+  if not assigned(FConnection) then exit;
+
+  //  WritePreferences;
+
+  fFilterClubDlg := TMemberClub.Create(Self);
+  fFilterClubDlg.Position := poDesigned;
+  aRect := btnFilterClub.ClientToScreen(btnFilterClub.ClientRect);
+  fFilterClubDlg.Left := aRect.Left;
+  fFilterClubDlg.Top := aRect.Bottom + 1;
+  fFilterClubDlg.Prepare(FConnection, 1);
+  fFilterClubDlg.Show;
+
 end;
 
 procedure TManageMember.actnFilterExecute(Sender: TObject);
@@ -443,6 +468,11 @@ begin
   BalloonHint1.ShowHint(btnInfoFilter);
 end;
 
+procedure TManageMember.btnInfoMouseLeave(Sender: TObject);
+begin
+  BalloonHint1.HideHint;
+end;
+
 procedure TManageMember.btnInfoRolesClick(Sender: TObject);
 begin
   BalloonHint1.Title := 'Membership Roles.';
@@ -451,11 +481,6 @@ begin
     'To clear a selected cell, press ALT-BACKSPACE.'+ sLinebreak +
     'To delete a record, press CTRL-DEL';
   BalloonHint1.ShowHint(btnInfoRoles);
-end;
-
-procedure TManageMember.btnInfoMouseLeave(Sender: TObject);
-begin
-  BalloonHint1.HideHint;
 end;
 
 procedure TManageMember.btnMemberDetailClick(Sender: TObject);
@@ -490,15 +515,15 @@ aMemberID: integer;
 s, s2: string;
 rpt: TMemberChart;
 begin
-	// Distance
-	s := cmboDistance.Text;
-	// Stroke
-	s2 := cmboStroke.Text;
-	rpt := TMemberChart.Create(self);
-	aMemberID := ManageMemberData.dsMember.DataSet.FieldByName('MemberID').AsInteger;
-	// params ... SwimClubID, MemberID
-	rpt.RunReport(aMemberID, DBChart1, s, s2);
-	rpt.free;
+  // Distance
+  s := cmboDistance.Text;
+  // Stroke
+  s2 := cmboStroke.Text;
+  rpt := TMemberChart.Create(self);
+  aMemberID := ManageMemberData.dsMember.DataSet.FieldByName('MemberID').AsInteger;
+  // params ... SwimClubID, MemberID
+  rpt.RunReport(aMemberID, DBChart1, s, s2);
+  rpt.free;
 end;
 
 procedure TManageMember.chkbDoCurrSeasonClick(Sender: TObject);
@@ -521,32 +546,32 @@ procedure TManageMember.DBChart1GetAxisLabel(Sender: TChartAxis; Series:
 begin
 (*
 
-  	TFDQuery *qry;
-  	TDateTime dt;
-  	TLocateOptions SearchOptions;
-  	Variant v[1]; // VarArray
-  	bool Success;
-  	// replace axis label with session date
-  	if (Sender == DBChart1->BottomAxis) {
-  		if (Series != nullptr) {
-  			if (Series->DataSource != nullptr) {
-  				qry = reinterpret_cast<TFDQuery*>(Series->DataSource);
-  				if (qry->Active == true) {
-  					v[0] = Variant((ValueIndex + 1));
-  					SearchOptions.Clear();
-  					Success = qry->Locate("ChartX", VarArrayOf(v, 0),
-  						SearchOptions);
-  					if (Success) {
-  						dt = qry->FieldByName("SessionStart")->AsDateTime;
-  						LabelText = dt.DateString();
-  					}
-  					else {
-  						LabelText = "ERR";
-  					}
-  				}
-  			}
-  		}
-  	}
+    TFDQuery *qry;
+    TDateTime dt;
+    TLocateOptions SearchOptions;
+    Variant v[1]; // VarArray
+    bool Success;
+    // replace axis label with session date
+    if (Sender == DBChart1->BottomAxis) {
+      if (Series != nullptr) {
+        if (Series->DataSource != nullptr) {
+          qry = reinterpret_cast<TFDQuery*>(Series->DataSource);
+          if (qry->Active == true) {
+            v[0] = Variant((ValueIndex + 1));
+            SearchOptions.Clear();
+            Success = qry->Locate("ChartX", VarArrayOf(v, 0),
+              SearchOptions);
+            if (Success) {
+              dt = qry->FieldByName("SessionStart")->AsDateTime;
+              LabelText = dt.DateString();
+            }
+            else {
+              LabelText = "ERR";
+            }
+          }
+        }
+      }
+    }
 
 *)
 end;
@@ -660,6 +685,35 @@ begin
     end;
     cal.Free;
   end;
+end;
+
+procedure TManageMember.DBGridGenericKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+var
+  fld: TField;
+begin
+  if (Key = VK_BACK) and (ssAlt in Shift) then
+  BEGIN
+    with Sender as TDBGrid do
+    Begin
+      DataSource.DataSet.DisableControls;
+      fld := TDBGrid(Sender).SelectedField;
+      if assigned(fld) then
+      BEGIN
+        // if the query is not in edit mode
+        if (DataSource.DataSet.State <> dsEdit) or
+          (DataSource.DataSet.State <> dsInsert) then DataSource.DataSet.Edit;
+        // D B G r i d R o l e  ...
+        if (fld.FieldName = 'ElectedOn') or (fld.FieldName = 'RetiredOn') then
+            fld.Clear;
+        // D B G r i d C o n t a c t I n f o ...
+        if (fld.FieldName = 'luContactNumType') then fld.Clear;
+      end;
+      DataSource.DataSet.EnableControls;
+      // signal finished with key;
+      Key := 0;
+    END;
+  END;
 end;
 
 procedure TManageMember.DBGridKeyDown(Sender: TObject; var Key: Word;
@@ -791,35 +845,6 @@ begin
   end;
 end;
 
-procedure TManageMember.DBGridGenericKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
-var
-  fld: TField;
-begin
-  if (Key = VK_BACK) and (ssAlt in Shift) then
-  BEGIN
-    with Sender as TDBGrid do
-    Begin
-      DataSource.DataSet.DisableControls;
-      fld := TDBGrid(Sender).SelectedField;
-      if assigned(fld) then
-      BEGIN
-        // if the query is not in edit mode
-        if (DataSource.DataSet.State <> dsEdit) or
-          (DataSource.DataSet.State <> dsInsert) then DataSource.DataSet.Edit;
-        // D B G r i d R o l e  ...
-        if (fld.FieldName = 'ElectedOn') or (fld.FieldName = 'RetiredOn') then
-            fld.Clear;
-        // D B G r i d C o n t a c t I n f o ...
-        if (fld.FieldName = 'luContactNumType') then fld.Clear;
-      end;
-      DataSource.DataSet.EnableControls;
-      // signal finished with key;
-      Key := 0;
-    END;
-  END;
-end;
-
 procedure TManageMember.DBNavigator1BeforeAction(Sender: TObject;
   Button: TNavigateBtn);
 var
@@ -846,6 +871,56 @@ begin
       // raises a silent exception - cancelling the action.
       Abort;
   end;
+end;
+
+procedure TManageMember.FilterClubDlgDeactivated(var Msg: TMessage);
+begin
+  if assigned(fFilterClubDlg) then FreeAndNil(fFilterClubDlg);
+end;
+
+procedure TManageMember.FilterClubDlgUpdated(var Msg: TMessage);
+var
+  MyFilter: String;
+begin
+    MyFilter := '';
+    if (PChar(Msg.LParam) <> nil) then
+      MyFilter := PChar(Msg.LParam);
+
+    ManageMemberData.qryMember.Filter := MyFilter;
+    if not ManageMemberData.qryMember.Filtered then
+      ManageMemberData.qryMember.Filtered := true;
+end;
+
+procedure TManageMember.FilterDlgDeactivated(var Msg: TMessage);
+begin
+  if assigned(fFilterDlg) then FreeAndNil(fFilterDlg);
+end;
+
+procedure TManageMember.FilterDlgUpdated(var Msg: TMessage);
+var
+  CopyData: PCopyDataStruct;
+  FilterState: PFilterState;
+begin
+  if Msg.LParam = 0 then exit;
+  try
+    begin
+      CopyData := PCopyDataStruct(Msg.LParam);
+      FilterState := PFilterState(CopyData^.lpData);
+      // access the fields of the record
+      fHideArchived := FilterState^.HideArchived;
+      fHideInActive := FilterState^.HideInActive;
+      fHideNonSwimmer := FilterState^.HideNonSwimmer;
+    end
+  finally
+    begin
+      ManageMemberData.UpdateMember(fSwimClubID, fHideArchived, fHideInActive,
+        fHideNonSwimmer);
+
+      actnFilter.Caption := 'Filter (' +
+        IntToStr(ManageMemberData.RecordCount) + ')';
+    end;
+  end;
+
 end;
 
 function TManageMember.FindMember(MemberID: Integer): Boolean;
@@ -898,6 +973,7 @@ begin
   fHideInActive := false;
   fHideNonSwimmer := false;
   fFilterDlg := nil;
+  fFilterClubDlg := nil;
 
   // Special color assignment - used in TDBGrid painting...
   // -------------------------------------------
@@ -928,6 +1004,7 @@ procedure TManageMember.FormDestroy(Sender: TObject);
 begin
   WritePreferences;
   if assigned(fFilterDlg) then fFilterDlg.Free;
+  if assigned(fFilterClubDlg) then fFilterClubDlg.Free;
 end;
 
 procedure TManageMember.FormShow(Sender: TObject);
@@ -951,11 +1028,6 @@ begin
     IntToStr(ManageMemberData.RecordCount) + ')';
 end;
 
-procedure TManageMember.FilterDlgDeactivated(var Msg: TMessage);
-begin
-  if assigned(fFilterDlg) then FreeAndNil(fFilterDlg);
-end;
-
 function TManageMember.GetMembersAge(aMemberID: Integer; aDate: TDate): Integer;
 var
   SQL: string;
@@ -977,40 +1049,6 @@ begin
   end;
 end;
 
-
-procedure TManageMember.ReadPreferences(aIniFileName: string);
-var
-  i: Integer;
-  iFile: TIniFile;
-begin
-  // ---------------------------------------------------------
-  // A S S I G N   MANAGEMEMBER  P R E F E R E N C E S ...
-  // ---------------------------------------------------------
-  if not FileExists(aIniFileName) then exit;
-  iFile := TIniFile.Create(aIniFileName);
-  fHideArchived := iFile.ReadBool(INIFILE_SECTION, 'HideArchived', true);
-  fHideInActive := iFile.ReadBool(INIFILE_SECTION, 'HideInActive', false);
-  fHideNonSwimmer := iFile.ReadBool(INIFILE_SECTION, 'HideNonSwimmer', false);
-  i := iFile.ReadInteger(INIFILE_SECTION, 'TabIndex', -1);
-  // test bounds
-  if ((i > -1) and (i < PageControl1.PageCount)) then
-      PageControl1.ActivePageIndex := i;
-
-  // 2024.03.18
-  i := iFile.ReadInteger('ManageMember', 'cmboDistanceItemIndex', 0);
-  if i < cmboDistance.Items.Count then cmboDistance.ItemIndex := i;
-  i := iFile.ReadInteger('ManageMember', 'cmboStrokeItemIndex', 0);
-  if i < cmboStroke.Items.Count then cmboStroke.ItemIndex := i;
-  chkbDoCurrSeason.Checked := iFile.ReadBool('ManageMember',
-    'chkbDoCurrSeason', false);
-
-  // 2024/03/19 Value used by TFDQuery qryChart to select TOP ###
-  fMemberChartDataPoints := iFile.ReadInteger('ManageMemberData', 'MemberChartDataPoints', 26);
-
-
-  iFile.Free;
-end;
-
 procedure TManageMember.ManageMemberAfterPost(var Msg: TMessage);
 begin
   UpdateMembersAge;
@@ -1021,33 +1059,6 @@ procedure TManageMember.ManageMemberAfterScroll(var Msg: TMessage);
 begin
   UpdateMembersAge;
   UpdateChart;
-end;
-
-procedure TManageMember.FilterDlgUpdated(var Msg: TMessage);
-var
-  CopyData: PCopyDataStruct;
-  FilterState: PFilterState;
-begin
-  if Msg.LParam = 0 then exit;
-  try
-    begin
-      CopyData := PCopyDataStruct(Msg.LParam);
-      FilterState := PFilterState(CopyData^.lpData);
-      // access the fields of the record
-      fHideArchived := FilterState^.HideArchived;
-      fHideInActive := FilterState^.HideInActive;
-      fHideNonSwimmer := FilterState^.HideNonSwimmer;
-    end
-  finally
-    begin
-      ManageMemberData.UpdateMember(fSwimClubID, fHideArchived, fHideInActive,
-        fHideNonSwimmer);
-
-      actnFilter.Caption := 'Filter (' +
-        IntToStr(ManageMemberData.RecordCount) + ')';
-    end;
-  end;
-
 end;
 
 procedure TManageMember.MemFile_ExitExecute(Sender: TObject);
@@ -1137,6 +1148,38 @@ begin
 
 end;
 
+procedure TManageMember.ReadPreferences(aIniFileName: string);
+var
+  i: Integer;
+  iFile: TIniFile;
+begin
+  // ---------------------------------------------------------
+  // A S S I G N   MANAGEMEMBER  P R E F E R E N C E S ...
+  // ---------------------------------------------------------
+  if not FileExists(aIniFileName) then exit;
+  iFile := TIniFile.Create(aIniFileName);
+  fHideArchived := iFile.ReadBool(INIFILE_SECTION, 'HideArchived', true);
+  fHideInActive := iFile.ReadBool(INIFILE_SECTION, 'HideInActive', false);
+  fHideNonSwimmer := iFile.ReadBool(INIFILE_SECTION, 'HideNonSwimmer', false);
+  i := iFile.ReadInteger(INIFILE_SECTION, 'TabIndex', -1);
+  // test bounds
+  if ((i > -1) and (i < PageControl1.PageCount)) then
+      PageControl1.ActivePageIndex := i;
+
+  // 2024.03.18
+  i := iFile.ReadInteger('ManageMember', 'cmboDistanceItemIndex', 0);
+  if i < cmboDistance.Items.Count then cmboDistance.ItemIndex := i;
+  i := iFile.ReadInteger('ManageMember', 'cmboStrokeItemIndex', 0);
+  if i < cmboStroke.Items.Count then cmboStroke.ItemIndex := i;
+  chkbDoCurrSeason.Checked := iFile.ReadBool('ManageMember',
+    'chkbDoCurrSeason', false);
+
+  // 2024/03/19 Value used by TFDQuery qryChart to select TOP ###
+  fMemberChartDataPoints := iFile.ReadInteger('ManageMemberData', 'MemberChartDataPoints', 26);
+
+
+  iFile.Free;
+end;
 
 procedure TManageMember.SCMwebsite1Click(Sender: TObject);
 var
@@ -1232,5 +1275,6 @@ begin
 
   iFile.Free;
 end;
+
 
 end.

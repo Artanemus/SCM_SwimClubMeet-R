@@ -97,6 +97,18 @@ object ManageMember: TManageMember
       Images = BTNImageList32x32
       TabOrder = 3
     end
+    object btnFilterClub: TButton
+      Left = 579
+      Top = 9
+      Width = 142
+      Height = 34
+      Action = actnFilterClub
+      ImageIndex = 8
+      ImageMargins.Left = 4
+      ImageMargins.Right = -16
+      Images = BTNImageList32x32
+      TabOrder = 4
+    end
   end
   object Panel3: TPanel
     Left = 0
@@ -1237,7 +1249,6 @@ object ManageMember: TManageMember
     Top = 0
     Width = 1363
     Height = 25
-    UseSystemFont = False
     ActionManager = ActnManagerMember
     Caption = 'Member Menu Bar'
     Color = clMenuBar
@@ -1246,8 +1257,8 @@ object ManageMember: TManageMember
     ColorMap.BtnSelectedFont = clBlack
     ColorMap.UnusedColor = clWhite
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clBlack
-    Font.Height = -16
+    Font.Color = clWindowText
+    Font.Height = -12
     Font.Name = 'Segoe UI'
     Font.Style = []
     HorzMargin = 10
@@ -1346,6 +1357,12 @@ object ManageMember: TManageMember
       ImageIndex = 4
       ImageName = 'filter_alt'
       OnExecute = actnFilterExecute
+    end
+    object actnFilterClub: TAction
+      Caption = 'Swim Club'
+      ImageIndex = 4
+      ImageName = 'filter_alt'
+      OnExecute = actnFilterClubExecute
     end
   end
   object ImageCollectMember: TImageCollection

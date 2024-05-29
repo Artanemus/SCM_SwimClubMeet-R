@@ -193,6 +193,7 @@ begin
     CopyData.lpData := Buffer.Memory;
     // run filter on form
     SendMessage(TForm(Owner).Handle, SCM_FILTERUPDATED, 0, LParam(@CopyData));
+
   finally
     Buffer.free;
   end;
