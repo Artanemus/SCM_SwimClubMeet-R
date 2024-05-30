@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, Vcl.Graphics,
+  System.Classes, Vcl.Graphics,  System.Generics.Collections,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, VclTee.TeeGDIPlus,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
@@ -180,19 +180,23 @@ type
     fColorEditBoxFocused: TColor;
     fColorEditBoxNormal: TColor;
     FConnection: TFDConnection;
-    fFilterClubDlg: TMemberClub;
+    fFilterClubDlg: TMemberClub; // CheckBoxList to select Clubs to filter.
+    fListOfClubIDs: TList<Integer>; // List of SwimClubID's for member.Filter.
     fFilterDlg: TMemberFilter;
     fHideArchived: Boolean;
     fHideInActive: Boolean;
     fHideNonSwimmer: Boolean;
     fMemberChartDataPoints: Integer;
     fSwimClubID: Integer;
+
     // Used to convert DATETIME and then post TMessage to Member DataModule.
     fSystemTime: TSystemTime;
+
     function AssertConnection: Boolean;
     procedure ChartReport();
     function FindMember(MemberID: Integer): Boolean;
     function GetMembersAge(aMemberID: Integer; aDate: TDate): Integer;
+    function BuildSwimClubFilter(AListOfClubIDs: TList<integer>): string;
     procedure ReadPreferences(aIniFileName: string);
     procedure UpdateChart();
     procedure UpdateFilterCount();
@@ -260,7 +264,9 @@ begin
   aRect := btnFilterClub.ClientToScreen(btnFilterClub.ClientRect);
   fFilterClubDlg.Left := aRect.Left;
   fFilterClubDlg.Top := aRect.Bottom + 1;
-  fFilterClubDlg.Prepare(FConnection, 1);
+
+  // pass the filter settings for the Swimming Club selection.
+  fFilterClubDlg.Prepare(FConnection, fListOfClubIDs);
   fFilterClubDlg.Show;
 
 end;
@@ -507,6 +513,24 @@ begin
   rpt := TMemberHistory.Create(Self);
   rpt.RunReport(FConnection, fSwimClubID, MemberID);
   rpt.Free;
+end;
+
+function TManageMember.BuildSwimClubFilter(AListOfClubIDs: TList<integer>): string;
+var
+  ID: integer;
+  AFilter: string;
+  DoAnd: boolean;
+begin
+  AFilter := '';
+  DoAnd := false;
+  for ID IN AListOfClubIDs do
+  begin
+    if DoAnd then
+      AFilter := AFilter + ' OR';
+    AFilter := AFilter + ' SwimClubID = ' + IntToStr(ID);
+    DoAnd := true;
+  end;
+  result := AFilter;
 end;
 
 procedure TManageMember.ChartReport;
@@ -880,15 +904,28 @@ end;
 
 procedure TManageMember.FilterClubDlgUpdated(var Msg: TMessage);
 var
-  MyFilter: String;
+  AFilter: String;
 begin
-    MyFilter := '';
-    if (PChar(Msg.LParam) <> nil) then
-      MyFilter := PChar(Msg.LParam);
+    AFilter := '';
+    if Assigned(fFilterClubDlg) then
+    begin
+      fListOfClubIDs.Clear;
+      fListOfClubIDs.AddRange(fFilterClubDlg.ListOfClubIDs);
+      // BUILD FILTER ...
+      AFilter := BuildSwimClubFilter(fListOfClubIDs);
+      // ASSIGN FILTER ...
+      ManageMemberData.qryMember.Filter := AFilter;
+      if not ManageMemberData.qryMember.Filtered then
+        ManageMemberData.qryMember.Filtered := true;
+    end
+    else
+      ManageMemberData.qryMember.Filtered := false;
 
-    ManageMemberData.qryMember.Filter := MyFilter;
-    if not ManageMemberData.qryMember.Filtered then
-      ManageMemberData.qryMember.Filtered := true;
+    ManageMemberData.UpdateMember(fSwimClubID, fHideArchived, fHideInActive,
+      fHideNonSwimmer);
+
+    actnFilter.Caption := 'Filter (' +
+      IntToStr(ManageMemberData.RecordCount) + ')';
 end;
 
 procedure TManageMember.FilterDlgDeactivated(var Msg: TMessage);
@@ -906,7 +943,7 @@ begin
     begin
       CopyData := PCopyDataStruct(Msg.LParam);
       FilterState := PFilterState(CopyData^.lpData);
-      // access the fields of the record
+      // access the fields of the record.
       fHideArchived := FilterState^.HideArchived;
       fHideInActive := FilterState^.HideInActive;
       fHideNonSwimmer := FilterState^.HideNonSwimmer;
@@ -975,6 +1012,15 @@ begin
   fFilterDlg := nil;
   fFilterClubDlg := nil;
 
+  // ----------------------------------------------------
+  // F I L T E R   S W I M C L U B .
+  // ----------------------------------------------------
+  fListOfClubIDs := TList<Integer>.Create;
+  // FListOfClubIDs.Add(ManageMemberData.qrySwimClub.FieldByName('SwimClubID').AsInteger);
+  // BUILD FILTER TO DISPLAY SELECTED CLUBS
+  // BuildSwimClubFilter();
+  // ----------------------------------------------------
+
   // Special color assignment - used in TDBGrid painting...
   // -------------------------------------------
   css := TStyleManager.Style[TStyleManager.ActiveStyle.Name];
@@ -996,8 +1042,6 @@ begin
   LFormatSettings := TFormatSettings.Create;
   Label11.Caption := 'Date Syntax : ' + LFormatSettings.ShortDateFormat;
 
-
-
 end;
 
 procedure TManageMember.FormDestroy(Sender: TObject);
@@ -1005,6 +1049,7 @@ begin
   WritePreferences;
   if assigned(fFilterDlg) then fFilterDlg.Free;
   if assigned(fFilterClubDlg) then fFilterClubDlg.Free;
+  fListOfClubIDs.Free; // Used by dlgFilterClub.
 end;
 
 procedure TManageMember.FormShow(Sender: TObject);

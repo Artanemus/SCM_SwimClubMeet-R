@@ -443,6 +443,10 @@
             <Form>SwimClubManage</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="MEMBERS\dlgMemberClub.pas">
+            <Form>MemberClub</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <None Include="SwimClubMeet.md"/>
         <None Include="SwimClubMeet.css"/>
         <BuildConfiguration Include="Base">

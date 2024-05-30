@@ -4,7 +4,7 @@ object MemberClub: TMemberClub
   BorderIcons = [biSystemMenu]
   BorderStyle = bsNone
   Caption = 'Select Swimming Club ...'
-  ClientHeight = 334
+  ClientHeight = 221
   ClientWidth = 313
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -23,11 +23,11 @@ object MemberClub: TMemberClub
     Left = 3
     Top = 3
     Width = 307
-    Height = 328
+    Height = 215
     Align = alClient
     BorderStyle = bsNone
-    CheckBoxPadding = 6
-    ItemHeight = 27
+    CheckBoxPadding = 8
+    ItemHeight = 29
     Items.Strings = (
       'ALL CLUBS (Displays all members)'
       'SwimClub1'
@@ -37,8 +37,8 @@ object MemberClub: TMemberClub
       'NONE (Members not assigned a club)')
     TabOrder = 0
     OnClickCheck = chklstSwimClubClickCheck
-    ExplicitWidth = 318
-    ExplicitHeight = 321
+    ExplicitLeft = -2
+    ExplicitTop = -2
   end
   object qrySwimClub: TFDQuery
     ActiveStoredUsage = [auDesignTime]
