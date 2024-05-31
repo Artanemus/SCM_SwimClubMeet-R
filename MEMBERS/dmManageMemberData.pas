@@ -140,6 +140,8 @@ type
     procedure ActivateTable();
     procedure FixNullBooleans();
     function LocateMember(MemberID: Integer): Boolean;
+    function LocateSwimClub(SwimClubID: Integer): Boolean;
+
     function LocateChart(ChartX: Integer): Boolean;
     procedure UpdateDOB(DOB: TDateTime);
     procedure UpdateMember(SwimClubID: Integer;
@@ -294,6 +296,22 @@ begin
   try
     begin
       result := qryMember.Locate('MemberID', MemberID, SearchOptions);
+    end
+  except
+    on E: Exception do
+      // lblErrMsg.Caption := 'SCM DB access error.';
+  end;
+end;
+
+function TManageMemberData.LocateSwimClub(SwimClubID: Integer): Boolean;
+var
+  SearchOptions: TLocateOptions;
+begin
+  result := false;
+  SearchOptions := [loPartialKey];
+  try
+    begin
+      result := qrySwimClub.Locate('SwimClubID', SwimClubID, SearchOptions);
     end
   except
     on E: Exception do

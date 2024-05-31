@@ -191,6 +191,8 @@ type
 
     // Used to convert DATETIME and then post TMessage to Member DataModule.
     fSystemTime: TSystemTime;
+    fActiveSwimClubID: Integer;
+    fActiveSwimClubFilter: String;
 
     function AssertConnection: Boolean;
     procedure ChartReport();
@@ -1011,6 +1013,8 @@ begin
   fHideNonSwimmer := false;
   fFilterDlg := nil;
   fFilterClubDlg := nil;
+  fActiveSwimClubID := 1;
+  fActiveSwimClubFilter := 'SwimClubID = 1';
 
   // ----------------------------------------------------
   // F I L T E R   S W I M C L U B .
@@ -1155,13 +1159,28 @@ begin
       'The application will terminate!', mtError, [mbOk], 0);
     raise Exception.Create('ManageMemberData Member not active.');
   end;
+
+  // Set the filter for dmManageMember ... qrySwimClub
+  fActiveSwimClubID := ASwimClubID;
+  // CLUB NOT FOUND..
+  if not ManageMemberData.LocateSwimClub(fActiveSwimClubID) then
+  begin
+    ManageMemberData.qrySwimClub.First; // ASSUMPTION: at least one swimming club...
+    fActiveSwimClubID := ManageMemberData.qrySwimClub.FieldByName('SwimClubID').AsInteger;
+  end;
+  // BUILD FILTER, ASSIGN AND ACTIVATE FILTERING ...
+  fActiveSwimClubFilter := 'SwimClubID = ' + IntToStr(fActiveSwimClubID);
+  ManageMemberData.qrySwimClub.Filter := fActiveSwimClubFilter;
+  if not ManageMemberData.qrySwimClub.Filtered then
+    ManageMemberData.qrySwimClub.Filtered := true;
+
   // ----------------------------------------------------
   // Prepares all core queries  (Master+Child)
   // ----------------------------------------------------
-  PostMessage(Handle, SCM_UPDATE, 0, 0);
+  // No routine to handle this message - redundant.....
+  //  PostMessage(Handle, SCM_UPDATE, 0, 0);
 
   // prepare comboboxes - distance and stroke
-
   if ManageMemberData.ManageMemberDataActive then
   begin
     ManageMemberData.tblDistance.First;

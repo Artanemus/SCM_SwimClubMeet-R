@@ -10,7 +10,7 @@ uses
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, SCMDefines;
+  FireDAC.Comp.Client, SCMDefines, Vcl.DBCtrls;
 
 type
   TItemData = class
@@ -22,6 +22,7 @@ type
   TMemberClub = class(TForm)
     chklstSwimClub: TCheckListBox;
     qrySwimClub: TFDQuery;
+    dsSwimClub: TDataSource;
     procedure chklstSwimClubClickCheck(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);

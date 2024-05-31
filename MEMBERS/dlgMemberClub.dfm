@@ -37,8 +37,6 @@ object MemberClub: TMemberClub
       'NONE (Members not assigned a club)')
     TabOrder = 0
     OnClickCheck = chklstSwimClubClickCheck
-    ExplicitLeft = -2
-    ExplicitTop = -2
   end
   object qrySwimClub: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -49,7 +47,12 @@ object MemberClub: TMemberClub
     UpdateOptions.EnableUpdate = False
     SQL.Strings = (
       'Select SwimClubID, Caption FROM SwimClub ORDER BY SwimClubID ASC')
-    Left = 232
-    Top = 48
+    Left = 176
+    Top = 40
+  end
+  object dsSwimClub: TDataSource
+    DataSet = qrySwimClub
+    Left = 248
+    Top = 40
   end
 end

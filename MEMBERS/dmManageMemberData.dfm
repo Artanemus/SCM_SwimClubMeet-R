@@ -61,7 +61,6 @@ object ManageMemberData: TManageMemberData
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Member'
     UpdateOptions.KeyFields = 'MemberID'
     SQL.Strings = (
-      'USE [SwimClubMeet]'
       ''
       'DECLARE @HideInActive BIT;'
       'DECLARE @HideArchived BIT;'
@@ -71,7 +70,6 @@ object ManageMemberData: TManageMemberData
       'SET @HideInActive = :HIDE_INACTIVE;'
       'SET @HideArchived = :HIDE_ARCHIVED;'
       'SET @HideNonSwimmers = :HIDE_NONSWIMMERS;'
-      'SET @SwimClubID = :SWIMCLUBID; '
       ''
       'SELECT [MemberID],'
       '       [MembershipNum],'
@@ -154,12 +152,6 @@ object ManageMemberData: TManageMemberData
         DataType = ftBoolean
         ParamType = ptInput
         Value = False
-      end
-      item
-        Name = 'SWIMCLUBID'
-        DataType = ftAutoInc
-        ParamType = ptInput
-        Value = 1
       end>
     object qryMemberMemberID: TFDAutoIncField
       Alignment = taCenter
@@ -379,12 +371,6 @@ object ManageMemberData: TManageMemberData
     UpdateOptions.UpdateTableName = 'SwimClubMeet..SwimClub'
     UpdateOptions.KeyFields = 'SwimClubID'
     SQL.Strings = (
-      'USE SwimClubMeet;'
-      ''
-      ''
-      'DECLARE @SwimClubID AS Integer;'
-      'SET @SwimClubID = :SWIMCLUBID;'
-      ''
       'SELECT [SwimClubID],'
       '       [NickName],'
       '       [Caption],'
@@ -403,17 +389,10 @@ object ManageMemberData: TManageMemberData
       
         '       SUBSTRING(CONCAT(SwimClub.Caption, '#39' ('#39', SwimClub.NickNam' +
         'e, '#39')'#39'), 0, 60) AS DetailStr'
-      'FROM SwimCLub'
-      'WHERE Swimclub.SwimClubID = 1;')
+      'FROM SwimCLub;'
+      '')
     Left = 200
     Top = 40
-    ParamData = <
-      item
-        Name = 'SWIMCLUBID'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = 1
-      end>
   end
   object dsSwimClub: TDataSource
     DataSet = qrySwimClub
