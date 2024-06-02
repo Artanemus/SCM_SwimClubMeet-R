@@ -3,10 +3,12 @@ unit dlgMemberClub;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-   System.Generics.Collections,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes,
+  System.Generics.Collections,
   Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.CheckLst,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
+  Vcl.CheckLst,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
@@ -20,25 +22,21 @@ type
   end;
 
   TMemberClub = class(TForm)
+    btnOk: TButton;
     chklstSwimClub: TCheckListBox;
-    qrySwimClub: TFDQuery;
     dsSwimClub: TDataSource;
+    Panel1: TPanel;
+    qrySwimClub: TFDQuery;
+    procedure btnOkClick(Sender: TObject);
     procedure chklstSwimClubClickCheck(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure FormDeactivate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
-    { Private declarations }
-    fSwimClubID: integer;
-    fConnection: TFDConnection;
-    fListOfClubIDs: TList<Integer>;
+    fSwimClubID: Integer;
   public
-    { Public declarations }
-    procedure Prepare(AConnection: TFDConnection;  var ListOfClubIDs: TList<Integer> );
-    procedure SendFilterClubMessage();
-    property SwimClubID: integer read fSwimClubID write fSwimClubID;
-    property ListOfClubIDs: TList<Integer> read fListOfClubIDs;
+    procedure Prepare(AConnection: TFDConnection; ASwimClubID: Integer);
+    property SwimClubID: Integer read fSwimClubID write fSwimClubID;
   end;
 
 var
@@ -53,76 +51,82 @@ begin
   Value := AValue;
 end;
 
-procedure TMemberClub.chklstSwimClubClickCheck(Sender: TObject);
+procedure TMemberClub.btnOkClick(Sender: TObject);
 var
-idx, I, ASwimClubID: integer;
-itemdata: TItemData;
-IsChecked: boolean;
+  idx: Integer;
+  itemdata: TItemData;
 begin
-  // update state of fListOfClubIDs;
-  idx :=  TCheckListBox(Sender).ItemIndex;  // current item.
-  itemdata :=  TItemData(chklstSwimClub.Items.Objects[idx]); // TObject.
-  ASwimClubID := itemdata.Value; // dbo.tblSwimClub.SwimClubID.
-  IsChecked := chklstSwimClub.Checked[idx];
-  if IsChecked AND not fListOfClubIDs.Contains(ASwimClubID) then
-    fListOfClubIDs.Add(ASwimClubID);
-  if not IsChecked AND fListOfClubIDs.Contains(ASwimClubID)  then
+  fSwimClubID := 0;
+  for idx := 0 to chklstSwimClub.Count - 1 do
   begin
-    I := fListOfClubIDs.IndexOf(ASwimClubID);
-    fListOfClubIDs.Delete(I);
+    if chklstSwimClub.Checked[idx] then
+    begin
+      itemdata := TItemData(chklstSwimClub.Items.Objects[idx]);
+      fSwimClubID := itemdata.Value;
+      break;
+    end;
   end;
+  if fSwimClubID > 0 then
+    ModalResult := mrOK
+  else
+    ModalResult := mrCancel;
 
-  SendFilterClubMessage;
 end;
 
-procedure TMemberClub.FormDestroy(Sender: TObject);
+procedure TMemberClub.chklstSwimClubClickCheck(Sender: TObject);
 var
-  i: Integer;
+  idx, I: Integer;
 begin
-  // remove TItemData object associated with each TCheckboxList item.
-  for i := 0 to chklstSwimClub.Items.Count - 1 do
-    TItemData(chklstSwimClub.Items.Objects[i]).Free;
-  fListOfClubIDs.Free;
+  // update state of fListOfClubIDs;
+  idx := TCheckListBox(Sender).ItemIndex; // current item.
+  if chklstSwimClub.Checked[idx] then
+  begin
+    // clear any other checked items
+    for I := 0 to TCheckListBox(Sender).Count - 1 do
+      if I <> idx then
+        TCheckListBox(Sender).Checked[I] := false;
+  end;
 end;
 
 procedure TMemberClub.FormCreate(Sender: TObject);
 begin
   chklstSwimClub.Items.Clear; // Clear the list of prototype data
-  fListOfClubIDs := TList<Integer>.Create;
+  fSwimClubID := 0;
 end;
 
-procedure TMemberClub.FormDeactivate(Sender: TObject);
+procedure TMemberClub.FormDestroy(Sender: TObject);
+var
+  itemdata: TItemData;
+  idx: integer;
 begin
-  PostMessage(TForm(Owner).Handle, SCM_FILTERCLUBDEACTIVATED, 0, 0);
-end;
-
-procedure TMemberClub.FormKeyDown(Sender: TObject; var Key: Word; Shift:
-    TShiftState);
-begin
-  if Key = VK_ESCAPE then
+  for idx := 0 to chklstSwimClub.Count - 1 do
   begin
-    ModalResult := mrOk;
+    itemdata := TItemData(chklstSwimClub.Items.Objects[idx]);
+    itemdata.Free;
   end;
 end;
 
-procedure TMemberClub.Prepare(AConnection: TFDConnection; var ListOfClubIDs: TList<Integer> );
+procedure TMemberClub.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = VK_ESCAPE then
+  begin
+    ModalResult := mrCancel;
+  end;
+end;
+
+procedure TMemberClub.Prepare(AConnection: TFDConnection;  ASwimClubID: Integer);
 var
   idx: Integer;
   itemdata: TItemData;
 begin
-  // CLONE last checked state...
-  fListOfClubIDs.Clear;
-  fListOfClubIDs.AddRange(ListOfClubIDs);
-
-  if Assigned(AConnection) then
-  begin
-    fConnection := AConnection;
-    qrySwimClub.Connection := AConnection;
-    qrySwimClub.Open;
-  end;
+  if not Assigned(AConnection) then exit;
+  qrySwimClub.Connection := AConnection;
+  qrySwimClub.Open;
   if qrySwimClub.Active then
   begin
-    // BUILD THE LIST ITEMS AND OBJECTS FOR THE CHECKBOXLIST
+    // BUILD THE LIST ITEMS AND OBJECTS FOR THE CHECKBOXLIST.
+    // Check the current active swimming club.
     While not qrySwimClub.Eof DO
     begin
       itemdata := TItemData.Create(qrySwimClub.FieldByName('SwimClubID')
@@ -130,20 +134,13 @@ begin
       idx := chklstSwimClub.Items.Add(qrySwimClub.FieldByName('Caption')
         .AsString);
       chklstSwimClub.Items.Objects[idx] := TObject(itemdata);
-      // CHECK ITEMS ...
-      // checkboxlist.item 'checked' if the collection.contains -->
-      //  checkboxlist.object.value ... SwimClubID.
-      if (fListOfClubIDs.Contains(itemdata.Value) ) then
-        chklstSwimClub.Checked[idx] := true; // check item.
+      if itemdata.Value = ASwimClubID then
+        chklstSwimClub.Checked[idx] := true
+      else
+        chklstSwimClub.Checked[idx] := false;
       qrySwimClub.next;
     end;
   end;
 end;
-
-procedure TMemberClub.SendFilterClubMessage();
-begin
-  SendMessage(TForm(Owner).Handle, SCM_FILTERCLUBUPDATED, 0, 0);
-end;
-
 
 end.

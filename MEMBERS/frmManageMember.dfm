@@ -353,6 +353,7 @@ object ManageMember: TManageMember
           Font.Name = 'Tahoma'
           Font.Style = [fsBold]
           ParentFont = False
+          Visible = False
         end
         object Label30: TLabel
           Left = 575
@@ -569,6 +570,7 @@ object ManageMember: TManageMember
           NullValueKey = 32776
           ParentFont = False
           TabOrder = 16
+          Visible = False
         end
         object ListBox1: TListBox
           Left = 778

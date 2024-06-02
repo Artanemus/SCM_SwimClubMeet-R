@@ -139,13 +139,14 @@ type
 
     procedure ActivateTable();
     procedure FixNullBooleans();
+    function GetSwimClubID(): integer;
+    function GetMemberID(): integer;
     function LocateMember(MemberID: Integer): Boolean;
     function LocateSwimClub(SwimClubID: Integer): Boolean;
 
     function LocateChart(ChartX: Integer): Boolean;
     procedure UpdateDOB(DOB: TDateTime);
-    procedure UpdateMember(SwimClubID: Integer;
-      hideArchived, hideInactive, hideNonSwimmer: Boolean);
+    procedure UpdateMember(hideArchived, hideInactive, hideNonSwimmer: Boolean);
     procedure UpdateElectedOn(aDate: TDate);
     procedure UpdateRetiredOn(aDate: TDate);
     procedure UpdateChart(aMemberID, aDistanceID, aStrokeID: integer; DoCurrSeason: boolean = true);
@@ -270,6 +271,23 @@ begin
       cmdFixNullBooleans.Execute();
   end;
 end;
+
+function TManageMemberData.GetMemberID: integer;
+begin
+  result := 0;
+  if dsMember.DataSet.Active then
+    if not dsMember.DataSet.IsEmpty then
+        result := dsMember.DataSet.FieldByName('MemberID').AsInteger;
+end;
+
+function TManageMemberData.GetSwimClubID: integer;
+begin
+  result := 0;
+  if dsSwimClub.DataSet.Active then
+    if not dsSwimClub.DataSet.IsEmpty then
+        result := dsSwimClub.DataSet.FieldByName('SwimClubID').AsInteger;
+end;
+
 
 function TManageMemberData.LocateChart(ChartX: Integer): Boolean;
 var
@@ -710,8 +728,7 @@ begin
   end;
 end;
 
-procedure TManageMemberData.UpdateMember(SwimClubID: Integer;
-  hideArchived, hideInactive, hideNonSwimmer: Boolean);
+procedure TManageMemberData.UpdateMember(hideArchived, hideInactive, hideNonSwimmer: Boolean);
 begin
   if not Assigned(FConnection) then
     exit;
@@ -720,28 +737,22 @@ begin
 
   qryMember.DisableControls;
   qryMember.Close;
-  if SwimClubID <> 0 then
+  qryMember.ParamByName('HIDE_ARCHIVED').AsBoolean := hideArchived;
+  qryMember.ParamByName('HIDE_INACTIVE').AsBoolean := hideInactive;
+  qryMember.ParamByName('HIDE_NONSWIMMERS').AsBoolean := hideNonSwimmer;
+  qryMember.Prepare;
+  qryMember.Open;
+  if qryMember.Active then
   begin
-    qryMember.ParamByName('SWIMCLUBID').AsInteger := SwimClubID;
-    qryMember.ParamByName('HIDE_ARCHIVED').AsBoolean := hideArchived;
-    qryMember.ParamByName('HIDE_INACTIVE').AsBoolean := hideInactive;
-    qryMember.ParamByName('HIDE_NONSWIMMERS').AsBoolean := hideNonSwimmer;
-    qryMember.Prepare;
-    qryMember.Open;
-    if qryMember.Active then
-    begin
-      fRecordCount := qryMember.RecordCount;
-      if not Assigned(qryContactNum.Connection) then
-        qryContactNum.Connection := FConnection;
-      if not qryContactNum.Active then
-        qryContactNum.Open;
-    end
-    else
-      fRecordCount := 0;
-  end;
+    fRecordCount := qryMember.RecordCount;
+    if not Assigned(qryContactNum.Connection) then
+      qryContactNum.Connection := FConnection;
+    if not qryContactNum.Active then
+      qryContactNum.Open;
+  end
+  else
+    fRecordCount := 0;
   qryMember.EnableControls;
-
-
 end;
 
 procedure TManageMemberData.UpdateMembersPersonalBest;

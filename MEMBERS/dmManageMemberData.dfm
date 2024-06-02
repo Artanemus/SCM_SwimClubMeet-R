@@ -65,7 +65,7 @@ object ManageMemberData: TManageMemberData
       'DECLARE @HideInActive BIT;'
       'DECLARE @HideArchived BIT;'
       'DECLARE @HideNonSwimmers BIT;'
-      'DECLARE @SwimClubID INTEGER;'
+      ''
       ''
       'SET @HideInActive = :HIDE_INACTIVE;'
       'SET @HideArchived = :HIDE_ARCHIVED;'
