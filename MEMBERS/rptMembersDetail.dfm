@@ -468,7 +468,6 @@ object MembersDetail: TMembersDetail
   end
   object qryReport: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     Connection = SCM.scmConnection
     SQL.Strings = (
       'USE SwimClubMeet'
@@ -480,7 +479,9 @@ object MembersDetail: TMembersDetail
       ', Member.FirstName'
       ', Member.LastName'
       ', Member.MembershipNum'
-      ', UPPER(Member.LastName) + '#39', '#39' + Member.FirstName  AS ucFName'
+      
+        ', CONCAT(UPPER(Member.LastName), '#39', '#39', Member.FirstName)  AS ucF' +
+        'Name'
       ', Member.DOB'
       ', Member.IsActive'
       ', Member.Email'

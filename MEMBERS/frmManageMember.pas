@@ -127,6 +127,20 @@ type
     TabSheet4: TTabSheet;
     TabSheet5: TTabSheet;
     VirtlImageListMember: TVirtualImageList;
+    btnDataEntryTypos: TButton;
+    Label31: TLabel;
+    pnlDataCheck: TPanel;
+    lblDataCheck: TLabel;
+    DBGrid2: TDBGrid;
+    btnFirstName: TButton;
+    btnLastName: TButton;
+    btnGender: TButton;
+    btnDOB: TButton;
+    btnSwimmingClub: TButton;
+    btnBooleanNulls: TButton;
+    btnMembershipNum: TButton;
+    GridPanel1: TGridPanel;
+    Panel4: TPanel;
     procedure About2Click(Sender: TObject);
     procedure actnFilterClubExecute(Sender: TObject);
     procedure actnFilterExecute(Sender: TObject);
@@ -138,6 +152,7 @@ type
     procedure btnClubMembersSummaryClick(Sender: TObject);
     procedure btnDOBPickerClick(Sender: TObject);
     procedure btnFindMemberClick(Sender: TObject);
+    procedure btnCheckDataClick(Sender: TObject);
     procedure btnGotoMemberIDClick(Sender: TObject);
     procedure btnGotoMembershipClick(Sender: TObject);
     procedure btnInfoContactClick(Sender: TObject);
@@ -198,9 +213,10 @@ type
     procedure WritePreferences();
   protected
     procedure MSG_AfterPost(var Msg: TMessage); message SCM_AFTERPOST;
-    procedure MSG_AfterScroll(var Msg: TMessage);message SCM_AFTERSCROLL;
+    procedure MSG_AfterScroll(var Msg: TMessage); message SCM_AFTERSCROLL;
     procedure MSG_ChangeSwimClub(var Msg: TMessage); message SCM_CHANGESWIMCLUB;
-    procedure MSG_FilterDeactivated(var Msg: TMessage); message SCM_FILTERDEACTIVATED;
+    procedure MSG_FilterDeactivated(var Msg: TMessage);
+      message SCM_FILTERDEACTIVATED;
     procedure MSG_FilterUpdated(var Msg: TMessage); message SCM_FILTERUPDATED;
   public
     { Public declarations }
@@ -236,17 +252,17 @@ end;
 
 procedure TManageMember.actnFilterClubExecute(Sender: TObject);
 var
-  aRect: TRect;
+//  aRect: TRect;
   dlg: TMemberClub;
 begin
   if not assigned(FConnection) then
     exit;
 
   dlg := TMemberClub.Create(Self);
-  dlg.Position := poDesigned;
-  aRect := btnFilterClub.ClientToScreen(btnFilterClub.ClientRect);
-  dlg.Left := aRect.Left;
-  dlg.Top := aRect.Bottom + 1;
+  // dlg.Position := poDesigned;
+  // aRect := btnFilterClub.ClientToScreen(btnFilterClub.ClientRect);
+  // dlg.Left := aRect.Left;
+  // dlg.Top := aRect.Bottom + 1;
   dlg.Prepare(FConnection, ManageMemberData.GetSwimClubID);
   if IsPositiveResult(dlg.ShowModal) then
   begin
@@ -404,6 +420,25 @@ begin
   dlg.Free;
 end;
 
+procedure TManageMember.btnCheckDataClick(Sender: TObject);
+begin
+  if assigned(ManageMemberData) then
+  begin
+    ManageMemberData.DataCheckPart(TButton(Sender).Tag);
+    if ManageMemberData.dsDataCheckPart.Enabled then
+    begin
+      if ManageMemberData.dsDataCheckPart.DataSet.IsEmpty then
+        Panel4.Caption := TButton(Sender).Caption + ' - NO ERRORS'
+      else
+        Panel4.Caption := TButton(Sender).Caption + ' - ' +
+          IntToStr(ManageMemberData.dsDataCheckPart.DataSet.RecordCount) +
+          ' ERRORS';
+    end
+    else
+      Panel4.Caption := 'DATA CHECK FAILED.';
+  end;
+end;
+
 procedure TManageMember.btnGotoMemberIDClick(Sender: TObject);
 var
   dlg: TGotoMember;
@@ -464,10 +499,10 @@ end;
 
 procedure TManageMember.btnInfoFilterClick(Sender: TObject);
 begin
-  BalloonHint1.Title := 'Filter records.';
-  BalloonHint1.Description := 'The number displayed on the filter button' +
-    sLinebreak + 'is the number of records found using the ' + sLinebreak +
-    'current filter settings.';
+  BalloonHint1.Title := 'Filter ...';
+  BalloonHint1.Description := 'Click the main form to close.' + sLinebreak +
+    'Displays the number of records found' + sLinebreak +
+    'using the current filter settings.';
   BalloonHint1.ShowHint(btnInfoFilter);
 end;
 
@@ -493,7 +528,8 @@ begin
   if not assigned(ManageMemberData) then
     exit;
   rpt := TMemberDetail.Create(Self);
-  rpt.RunReport(FConnection, ManageMemberData.GetSwimClubID, ManageMemberData.GetMemberID);
+  rpt.RunReport(FConnection, ManageMemberData.GetSwimClubID,
+    ManageMemberData.GetMemberID);
   rpt.Free;
 end;
 
@@ -501,9 +537,11 @@ procedure TManageMember.btnMemberHistoryClick(Sender: TObject);
 var
   rpt: TMemberHistory;
 begin
-  if not assigned(ManageMemberData) then exit;
+  if not assigned(ManageMemberData) then
+    exit;
   rpt := TMemberHistory.Create(Self);
-  rpt.RunReport(FConnection, ManageMemberData.GetSwimClubID, ManageMemberData.GetMemberID);
+  rpt.RunReport(FConnection, ManageMemberData.GetSwimClubID,
+    ManageMemberData.GetMemberID);
   rpt.Free;
 end;
 
@@ -896,7 +934,11 @@ begin
       fHideArchived := false;
       fHideInActive := false;
       fHideNonSwimmer := false;
-
+      // run filter on form
+      ManageMemberData.UpdateMember(fHideArchived, fHideInActive,
+        fHideNonSwimmer);
+      actnFilter.Caption := 'Filter (' +
+        IntToStr(ManageMemberData.RecordCount) + ')';
       b := ManageMemberData.LocateMember(MemberID);
       if b then
         result := true;
@@ -1046,7 +1088,8 @@ begin
   if ManageMemberData.LocateSwimClub(Msg.LParam) then
   begin
     // SYNC MEMBER'S DATA.
-    ManageMemberData.UpdateMember(fHideArchived, fHideInActive, fHideNonSwimmer);
+    ManageMemberData.UpdateMember(fHideArchived, fHideInActive,
+      fHideNonSwimmer);
     actnFilter.Caption := 'Filter (' +
       IntToStr(ManageMemberData.RecordCount) + ')';
   end;
@@ -1079,7 +1122,8 @@ begin
     end
   finally
     begin
-      ManageMemberData.UpdateMember(fHideArchived, fHideInActive, fHideNonSwimmer);
+      ManageMemberData.UpdateMember(fHideArchived, fHideInActive,
+        fHideNonSwimmer);
 
       actnFilter.Caption := 'Filter (' +
         IntToStr(ManageMemberData.RecordCount) + ')';

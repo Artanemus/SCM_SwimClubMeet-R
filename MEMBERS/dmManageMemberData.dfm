@@ -1,7 +1,7 @@
 object ManageMemberData: TManageMemberData
   OnCreate = DataModuleCreate
   Height = 738
-  Width = 897
+  Width = 1139
   object tblContactNumType: TFDTable
     ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'ContactNumTypeID'
@@ -983,5 +983,126 @@ object ManageMemberData: TManageMemberData
     DataSet = tblSwimClub
     Left = 280
     Top = 672
+  end
+  object qryDataCheck: TFDQuery
+    Connection = SCM.scmConnection
+    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
+    UpdateOptions.EnableDelete = False
+    UpdateOptions.EnableInsert = False
+    UpdateOptions.EnableUpdate = False
+    SQL.Strings = (
+      'DECLARE @SwimClubID AS INteger;'
+      'SET @SwimClubID = :SWIMCLUBID;'
+      ''
+      ''
+      'SELECT [MemberID]'
+      '      ,'#39'No firstname.'#39' as MSG'
+      '  FROM [dbo].[Member]'
+      'WHERE firstname IS NULL AND SwimClubID = @SwimClubID'
+      ''
+      'UNION'
+      ''
+      'SELECT [MemberID]'
+      '      ,'#39'No lastname.'#39' as MSG'
+      '  FROM [dbo].[Member]'
+      'WHERE lastname IS NULL AND SwimClubID = @SwimClubID'
+      ''
+      'UNION'
+      ''
+      'SELECT [MemberID]'
+      '    ,'#39'Gender not given.'#39' as MSG'
+      'FROM [dbo].[Member]'
+      'WHERE GenderID IS NULL AND SwimClubID = @SwimClubID'
+      ''
+      'UNION'
+      ''
+      'SELECT [MemberID]'
+      '      ,'#39'Swimming Club not assigned.'#39' as MSG'
+      '  FROM [dbo].[Member]'
+      'WHERE SwimClubID IS NULL AND SwimClubID = @SwimClubID'
+      ''
+      'SELECT [MemberID]'
+      '      ,'#39'No date of birth.'#39' as MSG'
+      '  FROM [dbo].[Member]'
+      'WHERE DOB is null AND SwimClubID = @SwimClubID'
+      ''
+      'UNION'
+      ''
+      'SELECT [MemberID]'
+      '      ,'#39'Archived or Active or Swimmer unknown.'#39' as MSG'
+      '  FROM [dbo].[Member]'
+      
+        'WHERE IsArchived IS NULL OR IsActive IS NULL OR IsSwimmer IS NUL' +
+        'L  '
+      'AND SwimClubID = @SwimClubID'
+      ''
+      'UNION'
+      ''
+      'SELECT [MemberID]'
+      '      ,'#39'No membership number.'#39' as MSG'
+      '  FROM [dbo].[Member]'
+      'WHERE MembershipNum IS NULL  AND SwimClubID = @SwimClubID'
+      ''
+      'ORDER BY MemberID DESC;'
+      ''
+      ''
+      ''
+      ''
+      ''
+      '')
+    Left = 928
+    Top = 88
+    ParamData = <
+      item
+        Name = 'SWIMCLUBID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = 1
+      end>
+    object qryDataCheckMemberID: TIntegerField
+      DisplayLabel = 'Member'#39's ID'
+      FieldName = 'MemberID'
+      Origin = 'MemberID'
+      ReadOnly = True
+      Required = True
+    end
+    object qryDataCheckMSG: TStringField
+      DisplayLabel = 'Warnings ... Errors'
+      FieldName = 'MSG'
+      Origin = 'MSG'
+      ReadOnly = True
+      Required = True
+      Size = 27
+    end
+  end
+  object dsDataCheck: TDataSource
+    DataSet = qryDataCheck
+    Left = 1016
+    Top = 88
+  end
+  object qryDataCheckPart: TFDQuery
+    Connection = SCM.scmConnection
+    SQL.Strings = (
+      'DECLARE @SwimClubID AS INteger;'
+      'SET @SwimClubID = :SWIMCLUBID;'
+      ''
+      'SELECT [MemberID]'
+      '      ,'#39'No firstname.'#39' as MSG'
+      '  FROM [dbo].[Member]'
+      'WHERE firstname IS NULL AND SwimClubID = @SwimClubID'
+      'ORDER BY MemberID DESC;')
+    Left = 928
+    Top = 152
+    ParamData = <
+      item
+        Name = 'SWIMCLUBID'
+        ParamType = ptInput
+      end>
+  end
+  object dsDataCheckPart: TDataSource
+    DataSet = qryDataCheckPart
+    Enabled = False
+    Left = 1024
+    Top = 152
   end
 end

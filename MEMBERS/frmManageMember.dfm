@@ -892,11 +892,13 @@ object ManageMember: TManageMember
           item
             Expanded = False
             FieldName = 'RaceTime'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'EventDate'
+            Width = 64
             Visible = True
           end
           item
@@ -955,27 +957,32 @@ object ManageMember: TManageMember
           item
             Expanded = False
             FieldName = 'MembershipNum'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'FirstName'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'LastName'
+            Width = 64
             Visible = True
           end
           item
             ButtonStyle = cbsEllipsis
             Expanded = False
             FieldName = 'DOB'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luGender'
+            Width = 64
             Visible = True
           end
           item
@@ -983,6 +990,7 @@ object ManageMember: TManageMember
             Expanded = False
             FieldName = 'IsArchived'
             Title.Caption = 'Archive'
+            Width = 64
             Visible = True
           end
           item
@@ -996,11 +1004,13 @@ object ManageMember: TManageMember
             Expanded = False
             FieldName = 'IsSwimmer'
             Title.Caption = 'Swims'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'luHouse'
+            Width = 64
             Visible = True
           end
           item
@@ -1050,7 +1060,7 @@ object ManageMember: TManageMember
       end
       object Label9: TLabel
         Left = 242
-        Top = 339
+        Top = 328
         Width = 290
         Height = 19
         Caption = 'Prepare a compact list of club members. '
@@ -1081,6 +1091,13 @@ object ManageMember: TManageMember
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold, fsUnderline]
         ParentFont = False
+      end
+      object Label31: TLabel
+        Left = 242
+        Top = 372
+        Width = 148
+        Height = 19
+        Caption = 'List data entry typos.'
       end
       object btnMemberDetail: TButton
         Left = 3
@@ -1126,6 +1143,227 @@ object ManageMember: TManageMember
         Caption = 'Club Members List'
         TabOrder = 4
         OnClick = btnClubMembersListClick
+      end
+      object btnDataEntryTypos: TButton
+        Left = 3
+        Top = 364
+        Width = 218
+        Height = 38
+        Caption = 'Data check.'
+        TabOrder = 5
+      end
+      object pnlDataCheck: TPanel
+        Left = 902
+        Top = 0
+        Width = 453
+        Height = 652
+        Align = alRight
+        BevelOuter = bvNone
+        Caption = 'pnlDataCheck'
+        ShowCaption = False
+        TabOrder = 6
+        object lblDataCheck: TLabel
+          AlignWithMargins = True
+          Left = 3
+          Top = 10
+          Width = 447
+          Height = 33
+          Margins.Top = 10
+          Align = alTop
+          Alignment = taCenter
+          Caption = '... CHECK DATA ...'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -27
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          ExplicitWidth = 219
+        end
+        object DBGrid2: TDBGrid
+          Left = 0
+          Top = 344
+          Width = 453
+          Height = 308
+          Align = alBottom
+          DataSource = ManageMemberData.dsDataCheckPart
+          Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+          ReadOnly = True
+          TabOrder = 0
+          TitleFont.Charset = DEFAULT_CHARSET
+          TitleFont.Color = clWindowText
+          TitleFont.Height = -16
+          TitleFont.Name = 'Tahoma'
+          TitleFont.Style = []
+        end
+        object GridPanel1: TGridPanel
+          Left = 0
+          Top = 46
+          Width = 453
+          Height = 257
+          Align = alClient
+          Caption = 'GridPanel1'
+          ColumnCollection = <
+            item
+              Value = 50.000000000000000000
+            end
+            item
+              Value = 50.000000000000000000
+            end>
+          ControlCollection = <
+            item
+              Column = 0
+              Control = btnFirstName
+              Row = 0
+            end
+            item
+              Column = 1
+              Control = btnLastName
+              Row = 0
+            end
+            item
+              Column = 0
+              Control = btnGender
+              Row = 1
+            end
+            item
+              Column = 1
+              Control = btnDOB
+              Row = 1
+            end
+            item
+              Column = 0
+              Control = btnSwimmingClub
+              Row = 2
+            end
+            item
+              Column = 1
+              Control = btnBooleanNulls
+              Row = 2
+            end
+            item
+              Column = 0
+              Control = btnMembershipNum
+              Row = 3
+            end>
+          RowCollection = <
+            item
+              SizeStyle = ssAbsolute
+              Value = 60.000000000000000000
+            end
+            item
+              SizeStyle = ssAbsolute
+              Value = 60.000000000000000000
+            end
+            item
+              SizeStyle = ssAbsolute
+              Value = 60.000000000000000000
+            end
+            item
+              SizeStyle = ssAbsolute
+              Value = 60.000000000000000000
+            end>
+          ShowCaption = False
+          TabOrder = 1
+          ExplicitWidth = 403
+          DesignSize = (
+            453
+            257)
+          object btnFirstName: TButton
+            Tag = 1
+            Left = 45
+            Top = 12
+            Width = 137
+            Height = 38
+            Anchors = []
+            Caption = 'FirstName'
+            TabOrder = 0
+            OnClick = btnCheckDataClick
+            ExplicitLeft = 32
+          end
+          object btnLastName: TButton
+            Tag = 2
+            Left = 271
+            Top = 12
+            Width = 137
+            Height = 38
+            Anchors = []
+            Caption = 'LastName'
+            TabOrder = 1
+            OnClick = btnCheckDataClick
+            ExplicitLeft = 233
+          end
+          object btnGender: TButton
+            Tag = 3
+            Left = 45
+            Top = 72
+            Width = 137
+            Height = 38
+            Anchors = []
+            Caption = 'Gender'
+            TabOrder = 2
+            OnClick = btnCheckDataClick
+            ExplicitLeft = 32
+          end
+          object btnDOB: TButton
+            Tag = 4
+            Left = 271
+            Top = 72
+            Width = 137
+            Height = 38
+            Anchors = []
+            Caption = 'DOB'
+            TabOrder = 3
+            OnClick = btnCheckDataClick
+            ExplicitLeft = 233
+          end
+          object btnSwimmingClub: TButton
+            Tag = 5
+            Left = 45
+            Top = 132
+            Width = 137
+            Height = 38
+            Anchors = []
+            Caption = 'Swimming Club'
+            TabOrder = 4
+            OnClick = btnCheckDataClick
+            ExplicitLeft = 32
+          end
+          object btnBooleanNulls: TButton
+            Tag = 6
+            Left = 271
+            Top = 132
+            Width = 137
+            Height = 38
+            Anchors = []
+            Caption = 'Boolean NULLS'
+            TabOrder = 5
+            OnClick = btnCheckDataClick
+            ExplicitLeft = 233
+          end
+          object btnMembershipNum: TButton
+            Tag = 7
+            Left = 45
+            Top = 192
+            Width = 137
+            Height = 38
+            Anchors = []
+            Caption = 'Membership #'
+            TabOrder = 6
+            OnClick = btnCheckDataClick
+            ExplicitLeft = 32
+          end
+        end
+        object Panel4: TPanel
+          Left = 0
+          Top = 303
+          Width = 453
+          Height = 41
+          Align = alBottom
+          Caption = 'DESCRIPTION'
+          TabOrder = 2
+          ExplicitWidth = 403
+        end
       end
     end
     object TabSheet5: TTabSheet

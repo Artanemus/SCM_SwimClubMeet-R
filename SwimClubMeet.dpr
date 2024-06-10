@@ -83,7 +83,8 @@ uses
   rptMemberChart in 'MEMBERS\rptMemberChart.pas' {MemberChart: TDataModule},
   dlgSwimClubSwitch in 'dlgSwimClubSwitch.pas' {SwimClubSwitch},
   dlgSwimClubManage in 'dlgSwimClubManage.pas' {SwimClubManage},
-  dlgMemberClub in 'MEMBERS\dlgMemberClub.pas' {MemberClub};
+  dlgMemberClub in 'MEMBERS\dlgMemberClub.pas' {MemberClub},
+  rptMemberCheckData in 'MEMBERS\rptMemberCheckData.pas' {DataModule1: TDataModule};
 
 {$R *.res}
 

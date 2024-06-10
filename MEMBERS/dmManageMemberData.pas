@@ -98,6 +98,12 @@ type
     dsChart: TDataSource;
     tblSwimClub: TFDTable;
     dsluSwimClub: TDataSource;
+    qryDataCheck: TFDQuery;
+    dsDataCheck: TDataSource;
+    qryDataCheckMemberID: TIntegerField;
+    qryDataCheckMSG: TStringField;
+    qryDataCheckPart: TFDQuery;
+    dsDataCheckPart: TDataSource;
     procedure DataModuleCreate(Sender: TObject);
     procedure qryMemberAfterInsert(DataSet: TDataSet);
     procedure qryMemberAfterPost(DataSet: TDataSet);
@@ -151,6 +157,7 @@ type
     procedure UpdateRetiredOn(aDate: TDate);
     procedure UpdateChart(aMemberID, aDistanceID, aStrokeID: integer; DoCurrSeason: boolean = true);
     procedure ReadPreferences(aIniFileName: string);
+    procedure DataCheckPart(PartNumber: integer);
 
     property Connection: TFDConnection read FConnection write FConnection;
     property ManageMemberDataActive: Boolean read fManageMemberDataActive
@@ -210,6 +217,7 @@ begin
     qryMemberPB.Connection := FConnection;
     qryMemberEvents.Connection := FConnection;
     qryChart.Connection := FConnection;
+    qryDataCheck.Connection := FConnection;
 
     // prepare lookup tables.
     tblStroke.Connection := FConnection;
@@ -241,6 +249,7 @@ begin
         qryMemberPB.Open;
         qryMemberEvents.Open;
         qryChart.Open;
+        qryDataCheck.Open;
         if qryContactNum.Active then
         begin
           fManageMemberDataActive := True;
@@ -248,6 +257,91 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TManageMemberData.DataCheckPart(PartNumber: Integer);
+var
+  SQL: string;
+begin
+  if qryDataCheckPart.Active then
+    qryDataCheckPart.Close;
+  dsDataCheckPart.Enabled := false;
+  SQL := 'DECLARE @SwimClubID AS Integer;SET @SwimClubID = :SwimClubID;';
+
+  case PartNumber of
+    1: // FirstName
+      begin
+        SQL := SQL +
+          'SELECT[MemberID], ''No first-name.'' as MSG' + sLineBreak +
+          'FROM[dbo].[Member]' + sLineBreak +
+          'WHERE firstname IS NULL AND' + sLineBreak +
+          'SwimClubID = @SwimClubID' + sLineBreak +
+          'ORDER BY MemberID DESC;';
+
+      end;
+    2:
+      begin
+        SQL := SQL +
+          'SELECT[MemberID], ''No last-name.'' as MSG' + sLineBreak +
+          'FROM[dbo].[Member]' + sLineBreak +
+          'WHERE lastname IS NULL AND' + sLineBreak +
+          'SwimClubID = @SwimClubID' + sLineBreak +
+          'ORDER BY MemberID DESC;';
+      end;
+     3:
+     begin
+        SQL := SQL +
+          'SELECT[MemberID], ''Gender not given.'' as MSG' + sLineBreak +
+          'FROM[dbo].[Member]' + sLineBreak +
+          'WHERE genderID IS NULL AND' + sLineBreak +
+          'SwimClubID = @SwimClubID' + sLineBreak +
+          'ORDER BY MemberID DESC;';
+     end;
+     4:
+     begin
+        SQL := SQL +
+          'SELECT[MemberID], ''No date of birth.'' as MSG' + sLineBreak +
+          'FROM[dbo].[Member]' + sLineBreak +
+          'WHERE DOB IS NULL AND' + sLineBreak +
+          'SwimClubID = @SwimClubID' + sLineBreak +
+          'ORDER BY MemberID DESC;';
+     end;
+     5:
+     begin
+       SQL := SQL +
+          'SELECT[MemberID], ''Swimming Club not assigned.'' as MSG' + sLineBreak +
+          'FROM[dbo].[Member]' + sLineBreak +
+          'WHERE SwimClubID IS NULL AND' + sLineBreak +
+          'SwimClubID = @SwimClubID' + sLineBreak +
+          'ORDER BY MemberID DESC;';
+     end;
+     6:
+     begin
+       SQL := SQL +
+          'SELECT[MemberID], ''IsArchived, IsActive, IsSwimmer?'' as MSG' + sLineBreak +
+          'FROM[dbo].[Member]' + sLineBreak +
+          'WHERE IsArchived IS NULL OR IsActive IS NULL OR IsSwimmer IS NULL AND' + sLineBreak +
+          'SwimClubID = @SwimClubID' + sLineBreak +
+          'ORDER BY MemberID DESC;';
+     end;
+     7:
+     begin
+       SQL := SQL +
+          'SELECT[MemberID], ''No Membership number.'' as MSG' + sLineBreak +
+          'FROM[dbo].[Member]' + sLineBreak +
+          'WHERE MemberShipNum IS NULL AND' + sLineBreak +
+          'SwimClubID = @SwimClubID' + sLineBreak +
+          'ORDER BY MemberID DESC;';
+     end;
+  end;
+
+  qryDataCheckPart.SQL.Text := SQL;
+  qryDataCheckPart.ParamByName('SwimClubID').AsInteger :=
+    qrySwimClub.FieldByName('SwimClubID').AsInteger;
+  qryDataCheckPart.Prepare;
+  qryDataCheckPart.Open;
+  if qryDataCheckPart.Active then
+    dsDataCheckPart.Enabled := true;
 end;
 
 procedure TManageMemberData.DataModuleCreate(Sender: TObject);

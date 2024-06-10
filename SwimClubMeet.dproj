@@ -443,6 +443,11 @@
             <Form>MemberClub</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="MEMBERS\rptMemberCheckData.pas">
+            <Form>DataModule1</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
         <None Include="SwimClubMeet.md"/>
         <None Include="SwimClubMeet.css"/>
         <BuildConfiguration Include="Base">

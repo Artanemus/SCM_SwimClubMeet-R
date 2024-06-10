@@ -144,10 +144,7 @@ procedure TMemberFilter.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   if Key = VK_ESCAPE then
-  begin
-    WritePreferences;
-    ModalResult := mrOk;
-  end;
+    FormDeactivate(Self);
 end;
 
 procedure TMemberFilter.FormShow(Sender: TObject);

@@ -12,7 +12,8 @@ object MemberClub: TMemberClub
   Font.Height = -16
   Font.Name = 'Segoe UI'
   Font.Style = []
-  Position = poDesigned
+  KeyPreview = True
+  Position = poOwnerFormCenter
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
@@ -54,7 +55,7 @@ object MemberClub: TMemberClub
       Top = 7
       Width = 75
       Height = 32
-      Caption = 'OK'
+      Caption = 'Close'
       TabOrder = 0
       OnClick = btnOkClick
     end
