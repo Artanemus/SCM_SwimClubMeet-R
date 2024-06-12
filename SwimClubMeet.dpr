@@ -84,7 +84,7 @@ uses
   dlgSwimClubSwitch in 'dlgSwimClubSwitch.pas' {SwimClubSwitch},
   dlgSwimClubManage in 'dlgSwimClubManage.pas' {SwimClubManage},
   dlgMemberClub in 'MEMBERS\dlgMemberClub.pas' {MemberClub},
-  rptMemberCheckData in 'MEMBERS\rptMemberCheckData.pas' {DataModule1: TDataModule};
+  rptMemberCheckData in 'MEMBERS\rptMemberCheckData.pas' {MemberCheckData: TDataModule};
 
 {$R *.res}
 

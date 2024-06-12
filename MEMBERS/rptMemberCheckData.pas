@@ -10,7 +10,7 @@ uses
   frxExportBaseDialog, frxExportCSV, frxExportPDF;
 
 type
-  TDataModule1 = class(TDataModule)
+  TMemberCheckData = class(TDataModule)
     qryDataCheck: TFDQuery;
     frxDBDataCheck: TfrxDBDataset;
     frxReport1: TfrxReport;
@@ -25,7 +25,7 @@ type
   end;
 
 var
-  DataModule1: TDataModule1;
+  MemberCheckData: TMemberCheckData;
 
 implementation
 
@@ -35,11 +35,11 @@ implementation
 
 { TDataModule1 }
 
-procedure TDataModule1.RunReport(AConnection: TFDConnection;
+procedure TMemberCheckData.RunReport(AConnection: TFDConnection;
   ASwimClubID: integer);
 begin
 	qryDataCheck.Connection := AConnection;
-//	qryDataCheck.ParamByName('SWIMCLUBID').AsInteger := aSwimClubID;
+  qryDataCheck.ParamByName('SWIMCLUBID').AsInteger := aSwimClubID;
 	qryDataCheck.Prepare;
 	qryDataCheck.Open;
 	if qryDataCheck.Active then

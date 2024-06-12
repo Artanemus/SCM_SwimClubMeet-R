@@ -444,7 +444,7 @@
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="MEMBERS\rptMemberCheckData.pas">
-            <Form>DataModule1</Form>
+            <Form>MemberCheckData</Form>
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>

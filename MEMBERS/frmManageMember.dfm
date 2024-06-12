@@ -138,7 +138,7 @@ object ManageMember: TManageMember
     Top = 74
     Width = 1363
     Height = 702
-    ActivePage = TabSheet1
+    ActivePage = TabSheet3
     Align = alClient
     MultiLine = True
     TabHeight = 40
@@ -1092,13 +1092,6 @@ object ManageMember: TManageMember
         Font.Style = [fsBold, fsUnderline]
         ParentFont = False
       end
-      object Label31: TLabel
-        Left = 242
-        Top = 372
-        Width = 148
-        Height = 19
-        Caption = 'List data entry typos.'
-      end
       object btnMemberDetail: TButton
         Left = 3
         Top = 43
@@ -1144,14 +1137,6 @@ object ManageMember: TManageMember
         TabOrder = 4
         OnClick = btnClubMembersListClick
       end
-      object btnDataEntryTypos: TButton
-        Left = 3
-        Top = 364
-        Width = 218
-        Height = 38
-        Caption = 'Data check.'
-        TabOrder = 5
-      end
       object pnlDataCheck: TPanel
         Left = 902
         Top = 0
@@ -1161,7 +1146,7 @@ object ManageMember: TManageMember
         BevelOuter = bvNone
         Caption = 'pnlDataCheck'
         ShowCaption = False
-        TabOrder = 6
+        TabOrder = 5
         object lblDataCheck: TLabel
           AlignWithMargins = True
           Left = 3
@@ -1245,6 +1230,11 @@ object ManageMember: TManageMember
               Column = 0
               Control = btnMembershipNum
               Row = 3
+            end
+            item
+              Column = 1
+              Control = btnCheckDataReport
+              Row = 3
             end>
           RowCollection = <
             item
@@ -1265,7 +1255,6 @@ object ManageMember: TManageMember
             end>
           ShowCaption = False
           TabOrder = 1
-          ExplicitWidth = 403
           DesignSize = (
             453
             257)
@@ -1279,7 +1268,6 @@ object ManageMember: TManageMember
             Caption = 'FirstName'
             TabOrder = 0
             OnClick = btnCheckDataClick
-            ExplicitLeft = 32
           end
           object btnLastName: TButton
             Tag = 2
@@ -1291,7 +1279,6 @@ object ManageMember: TManageMember
             Caption = 'LastName'
             TabOrder = 1
             OnClick = btnCheckDataClick
-            ExplicitLeft = 233
           end
           object btnGender: TButton
             Tag = 3
@@ -1303,7 +1290,6 @@ object ManageMember: TManageMember
             Caption = 'Gender'
             TabOrder = 2
             OnClick = btnCheckDataClick
-            ExplicitLeft = 32
           end
           object btnDOB: TButton
             Tag = 4
@@ -1315,7 +1301,6 @@ object ManageMember: TManageMember
             Caption = 'DOB'
             TabOrder = 3
             OnClick = btnCheckDataClick
-            ExplicitLeft = 233
           end
           object btnSwimmingClub: TButton
             Tag = 5
@@ -1327,7 +1312,6 @@ object ManageMember: TManageMember
             Caption = 'Swimming Club'
             TabOrder = 4
             OnClick = btnCheckDataClick
-            ExplicitLeft = 32
           end
           object btnBooleanNulls: TButton
             Tag = 6
@@ -1339,7 +1323,6 @@ object ManageMember: TManageMember
             Caption = 'Boolean NULLS'
             TabOrder = 5
             OnClick = btnCheckDataClick
-            ExplicitLeft = 233
           end
           object btnMembershipNum: TButton
             Tag = 7
@@ -1351,7 +1334,17 @@ object ManageMember: TManageMember
             Caption = 'Membership #'
             TabOrder = 6
             OnClick = btnCheckDataClick
-            ExplicitLeft = 32
+          end
+          object btnCheckDataReport: TButton
+            Tag = 8
+            Left = 271
+            Top = 192
+            Width = 137
+            Height = 38
+            Anchors = []
+            Caption = 'Create Report'
+            TabOrder = 7
+            OnClick = btnCheckDataReportClick
           end
         end
         object Panel4: TPanel
@@ -1362,7 +1355,6 @@ object ManageMember: TManageMember
           Align = alBottom
           Caption = 'DESCRIPTION'
           TabOrder = 2
-          ExplicitWidth = 403
         end
       end
     end

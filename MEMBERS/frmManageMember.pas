@@ -127,8 +127,6 @@ type
     TabSheet4: TTabSheet;
     TabSheet5: TTabSheet;
     VirtlImageListMember: TVirtualImageList;
-    btnDataEntryTypos: TButton;
-    Label31: TLabel;
     pnlDataCheck: TPanel;
     lblDataCheck: TLabel;
     DBGrid2: TDBGrid;
@@ -141,6 +139,7 @@ type
     btnMembershipNum: TButton;
     GridPanel1: TGridPanel;
     Panel4: TPanel;
+    btnCheckDataReport: TButton;
     procedure About2Click(Sender: TObject);
     procedure actnFilterClubExecute(Sender: TObject);
     procedure actnFilterExecute(Sender: TObject);
@@ -153,6 +152,7 @@ type
     procedure btnDOBPickerClick(Sender: TObject);
     procedure btnFindMemberClick(Sender: TObject);
     procedure btnCheckDataClick(Sender: TObject);
+    procedure btnCheckDataReportClick(Sender: TObject);
     procedure btnGotoMemberIDClick(Sender: TObject);
     procedure btnGotoMembershipClick(Sender: TObject);
     procedure btnInfoContactClick(Sender: TObject);
@@ -239,7 +239,7 @@ uses SCMUtility, dlgBasicLogin, System.IniFiles, System.UITypes, dlgAbout,
   dlgDOBPicker, dlgFindMember, dlgGotoMember, dlgGotoMembership,
   System.IOUtils, Winapi.ShellAPI, dlgDeleteMember, Vcl.Themes, rptMemberDetail,
   rptMemberHistory, rptMembersList, rptMembersDetail, rptMembersSummary,
-  System.DateUtils, rptMemberChart;
+  System.DateUtils, rptMemberChart, rptMemberCheckData;
 
 procedure TManageMember.About2Click(Sender: TObject);
 var
@@ -437,6 +437,17 @@ begin
     else
       Panel4.Caption := 'DATA CHECK FAILED.';
   end;
+end;
+
+procedure TManageMember.btnCheckDataReportClick(Sender: TObject);
+var
+  rpt: TMemberCheckData;
+begin
+  if not assigned(ManageMemberData) then
+    exit;
+  rpt := TMemberCheckData.Create(Self);
+  rpt.RunReport(FConnection, ManageMemberData.GetSwimClubID);
+  rpt.Free;
 end;
 
 procedure TManageMember.btnGotoMemberIDClick(Sender: TObject);
