@@ -431,10 +431,6 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="c:\program files (x86)\embarcadero\studio\23.0\ObjRepos\EN\DelphiWin32\OKCANCL1.PAS">
-            <Form>OKBottomDlg</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <DCCReference Include="dlgSwimClubSwitch.pas">
             <Form>SwimClubSwitch</Form>
             <FormType>dfm</FormType>
@@ -442,6 +438,15 @@
         <DCCReference Include="dlgSwimClubManage.pas">
             <Form>SwimClubManage</Form>
             <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="MEMBERS\dlgMemberClub.pas">
+            <Form>MemberClub</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="MEMBERS\rptMemberCheckData.pas">
+            <Form>MemberCheckData</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <None Include="SwimClubMeet.md"/>
         <None Include="SwimClubMeet.css"/>

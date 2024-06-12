@@ -2736,7 +2736,6 @@ object Main: TMain
             Margins.Right = 10
             Margins.Bottom = 0
             Align = alClient
-            DataSource = SCM.dsSession
             DefaultDrawing = False
             PopupMenu = pumSession
             TabOrder = 0
@@ -2755,6 +2754,7 @@ object Main: TMain
               item
                 Expanded = False
                 FieldName = 'Caption'
+                Width = 64
                 Visible = True
               end>
           end
@@ -2995,7 +2995,6 @@ object Main: TMain
               Margins.Right = 10
               Margins.Bottom = 0
               Align = alClient
-              DataSource = SCM.dsEvent
               Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgTitleClick, dgTitleHotTrack]
               PopupMenu = pumEvent
               TabOrder = 0
@@ -3428,7 +3427,6 @@ object Main: TMain
                 Margins.Top = 40
                 Margins.Right = 0
                 Margins.Bottom = 0
-                DataSource = SCM.dsNominateMembers
                 DefaultDrawing = False
                 Options = [dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
                 PopupMenu = pumNominate
@@ -3695,7 +3693,6 @@ object Main: TMain
                 Anchors = []
                 AutoSize = True
                 DataField = 'FullName'
-                DataSource = SCM.dsNominateMembers
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -32
@@ -4966,7 +4963,6 @@ object Main: TMain
         Height = 20
         Alignment = taCenter
         DataField = 'SessionID'
-        DataSource = SCM.dsSession
       end
       object dbtxtDebugEvent: TDBText
         Left = 150
@@ -5056,7 +5052,6 @@ object Main: TMain
         Height = 20
         Alignment = taCenter
         DataField = 'EventTypeID'
-        DataSource = SCM.dsEvent
       end
       object Label3: TLabel
         Left = 210
@@ -5126,6 +5121,7 @@ object Main: TMain
     Top = 0
     Width = 1410
     Height = 25
+    UseSystemFont = False
     ActionManager = ActionManager1
     Caption = 'ActionMainMenuBar1'
     Color = clMenuBar
@@ -5134,7 +5130,7 @@ object Main: TMain
     ColorMap.BtnSelectedFont = clBlack
     ColorMap.UnusedColor = clWhite
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
+    Font.Color = clBlack
     Font.Height = -12
     Font.Name = 'Segoe UI'
     Font.Style = []
@@ -5169,6 +5165,7 @@ object Main: TMain
               end
               item
                 Action = SwimClub_Manage
+                Caption = '&Manage Swim Clubs ...'
                 ImageIndex = 50
                 ImageName = 'folder_managed'
               end
@@ -16885,7 +16882,6 @@ object Main: TMain
     Top = 528
   end
   object BindSourceDB1: TBindSourceDB
-    DataSet = SCM.qryNominateControlList
     ScopeMappings = <>
     Left = 1104
     Top = 168
@@ -16950,13 +16946,11 @@ object Main: TMain
     end
   end
   object BindSourceDB2: TBindSourceDB
-    DataSet = SCM.qryEvent
     ScopeMappings = <>
     Left = 1104
     Top = 232
   end
   object BindSourceDB3: TBindSourceDB
-    DataSet = SCM.qryHeat
     ScopeMappings = <>
     Left = 1104
     Top = 296

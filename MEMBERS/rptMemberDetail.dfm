@@ -923,19 +923,16 @@ object MemberDetail: TMemberDetail
       FieldName = 'MemberID'
       Origin = 'MemberID'
       ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
       Visible = False
     end
     object qryPBDistanceID: TFDAutoIncField
       FieldName = 'DistanceID'
       Origin = 'DistanceID'
-      ReadOnly = True
       Visible = False
     end
     object qryPBStrokeID: TFDAutoIncField
       FieldName = 'StrokeID'
       Origin = 'StrokeID'
-      ReadOnly = True
       Visible = False
     end
     object qryPBIsQualified: TBooleanField

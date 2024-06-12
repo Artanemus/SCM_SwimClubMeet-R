@@ -2963,14 +2963,20 @@ procedure TSCM.Session_HideLocked(IsChecked: Boolean);
 begin
   if (fSCMActive) then
   begin
+    qryEntrant.DisableControls;
+    qryHeat.DisableControls;
+    qryNominee.DisableControls;
+    qryEvent.DisableControls;
+    qrySession.DisableControls;
     qrySession.Close;
     qrySession.ParamByName('TOGGLE').AsBoolean := IsChecked;
     qrySession.Prepare;
     qrySession.Open;
-    qryEvent.Refresh;
-    qryHeat.Refresh;
-    qryEntrant.Refresh;
-    qryNominee.Refresh;
+    qrySession.EnableControls;
+    qryEvent.EnableControls;
+    qryNominee.EnableControls;
+    qryHeat.EnableControls;
+    qryEntrant.EnableControls;
   end;
 end;
 

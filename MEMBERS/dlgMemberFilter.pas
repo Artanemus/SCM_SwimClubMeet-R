@@ -144,10 +144,7 @@ procedure TMemberFilter.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   if Key = VK_ESCAPE then
-  begin
-    WritePreferences;
-    ModalResult := mrOk;
-  end;
+    FormDeactivate(Self);
 end;
 
 procedure TMemberFilter.FormShow(Sender: TObject);
@@ -193,6 +190,7 @@ begin
     CopyData.lpData := Buffer.Memory;
     // run filter on form
     SendMessage(TForm(Owner).Handle, SCM_FILTERUPDATED, 0, LParam(@CopyData));
+
   finally
     Buffer.free;
   end;

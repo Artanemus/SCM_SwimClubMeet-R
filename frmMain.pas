@@ -1619,6 +1619,7 @@ begin
 
   // 22/12/22
   // L I N K   G R I D S   T O   D A T A S O U R C E S .
+  Session_GRid.DataSource := SCM.dsSession;
   Event_Grid.DataSource := SCM.dsEvent;
   Nominate_Grid.DataSource := SCM.dsNominateMembers;
   INDV.Grid.DataSource := SCM.dsEntrant;
@@ -2977,6 +2978,7 @@ end;
 procedure TMain.Heat_Scroll(var Msg: TMessage);
 // var
 // DoEnable: boolean;
+ var i: integer;
 begin
   {
     DoEnable := false;
@@ -2998,7 +3000,10 @@ begin
     if (TEAM.Grid.Enabled <> DoEnable) then
     TEAM.Grid.Enabled := DoEnable;
   }
- var i: integer;
+
+ if not AssertConnection then     exit;
+ if not Assigned(BindSourceDB3.DataSource.DataSet) then exit;
+
   i := BindSourceDB3.DataSource.DataSet.FieldByName('HeatStatusID').AsInteger;
   case i of
     1:
@@ -3383,7 +3388,9 @@ var
   MemberID: integer;
   success: boolean;
 begin
-  if AssertConnection then
+  if not AssertConnection then exit;
+  if not Assigned(BindSourceDB1.DataSource.DataSet) then exit;
+
   begin
     MemberID := SCM.dsNominateMembers.DataSet.FieldByName('MemberID').AsInteger;
     success := SCM.Nominate_UpdateControlList(SCM.Session_ID, MemberID);
@@ -3391,6 +3398,7 @@ begin
     // -------------------------------------------------------------------
     if not BindSourceDB1.DataSet.Active then
         BindSourceDB1.DataSet.Active := true;
+
     if success then Nominate_ControlList.Invalidate;
   end;
 end;
@@ -3659,9 +3667,10 @@ procedure TMain.SCM_ManageMembersExecute(Sender: TObject);
 var
   dlg: TManageMember;
 begin
+  if not AssertConnection then exit;
   dlg := TManageMember.Create(self);
   try
-    dlg.Prepare(SCM.scmConnection, 1, 0);
+    dlg.Prepare(SCM.scmConnection, SCM.SwimClub_ID, 0);
     dlg.ShowModal();
   finally
     dlg.Free;
