@@ -448,6 +448,11 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
+        <DCCReference Include="MEMBERS\dmMemberHouse.pas">
+            <Form>MemberHouse</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
         <None Include="SwimClubMeet.md"/>
         <None Include="SwimClubMeet.css"/>
         <BuildConfiguration Include="Base">
