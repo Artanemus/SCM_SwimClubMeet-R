@@ -91,6 +91,7 @@ type
     edtMemberChartDataPoints: TEdit;
     Label19: TLabel;
     Label20: TLabel;
+    prefHideTitlePanel: TCheckBox;
     procedure btnClearClubLogoClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
     procedure btnLoadClubLogoClick(Sender: TObject);
@@ -404,6 +405,11 @@ begin
   iUnChecked := integer(TCheckBoxState.cbUnchecked);
   iChecked := integer(TCheckBoxState.cbChecked);
 
+  // 2024/08/31  Add more screen real estate.
+  i := iFile.ReadInteger('Preferences', 'HideTitlePanel',  iUnChecked);
+  prefHideTitlePanel.State := TCheckBoxState(i);
+
+
   i := iFile.ReadInteger('Preferences', 'ShowDebugInfo', iUnChecked);
   prefShowDebugInfo.State := TCheckBoxState(i);
 
@@ -485,6 +491,12 @@ var
   i: integer;
 begin
   iFile := TIniFile.Create(IniFileName);
+
+  // 2024/08/31
+  iFile.WriteInteger('Preferences', 'HideTitlePanel',
+    integer(prefHideTitlePanel.State));
+
+
   iFile.WriteInteger('Preferences', 'ShowDebugInfo',
     integer(prefShowDebugInfo.State));
   iFile.WriteInteger('Preferences', 'UseWindowsDefTheme',

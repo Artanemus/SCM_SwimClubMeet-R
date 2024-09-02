@@ -525,6 +525,7 @@ type
       message SCM_SESSIONASSERTSTATUSSTATE;
     // windows messages ....
     procedure Session_Scroll(var Msg: TMessage); message SCM_SESSIONSCROLL;
+    procedure Session_RenumberEvents(var Msg: TMessage); message SCM_RENUMBEREVENTS;
     procedure SetTabSheetDisplayState(var Msg: TMessage);
       message SCM_TABSHEETDISPLAYSTATE;
     procedure TeamEntrant_Scroll(var Msg: TMessage);
@@ -1001,9 +1002,16 @@ begin
 
   if (rtnValue = mrYes) then
   begin
-    SCM.Event_Delete(SCM.Event_ID); // delete the current selected event.
-    Refresh_Event(false); // don't bookmark
+    {
+    Delete the current selected event. USES dmSCMHelper.pas.
+    ExecSQL statements ... avoiding issues with BindSources.
+    Also renumbers events and locate-to-record.
+    }
+    SCM.Event_Delete(SCM.Event_ID);
     PostMessage(Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);
+
+//    Refresh_Event(false); // don't bookmark ????
+
   end;
 end;
 
@@ -1223,9 +1231,24 @@ end;
 procedure TMain.Event_NewRecordExecute(Sender: TObject);
 begin
   if not AssertConnection then exit;
+
+  // Diable all BindSource
+  BindSourceDB1.DataSet := nil;
+  BindSourceDB2.DataSet := nil;
+  BindSourceDB3.DataSet := nil;
+
   SCM.dsEvent.DataSet.CheckBrowseMode;
-  SCM.dsEvent.DataSet.Append();
+  SCM.dsEvent.DataSet.Insert();
+
+  BindSourceDB1.DataSet := SCM.qryNominateControlList;
+  if not BindSourceDB1.DataSet.Active then BindSourceDB1.DataSet.Active := true;
+  BindSourceDB2.DataSet := SCM.qryEvent;
+  if not BindSourceDB2.DataSet.Active then BindSourceDB2.DataSet.Active := true;
+  BindSourceDB3.DataSet := SCM.qryHeat;
+  if not BindSourceDB3.DataSet.Active then BindSourceDB3.DataSet.Active := true;
+
   PostMessage(Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);
+
 end;
 
 procedure TMain.Event_NewRecordUpdate(Sender: TObject);
@@ -1648,14 +1671,14 @@ begin
   dbimgSwimClubLogo.DataSource := SCM.dsSwimClub;
 
   // Assert binding - because it always fails!!!
-  BindSourceDB1.DataSet := SCM.qryNominateControlList;
-  if not BindSourceDB1.DataSet.Active then BindSourceDB1.DataSet.Active := true;
+//  BindSourceDB1.DataSet := SCM.qryNominateControlList;
+//  if not BindSourceDB1.DataSet.Active then BindSourceDB1.DataSet.Active := true;
 
-  BindSourceDB2.DataSet := SCM.qryEvent;
-  if not BindSourceDB2.DataSet.Active then BindSourceDB2.DataSet.Active := true;
+//  BindSourceDB2.DataSet := SCM.qryEvent;
+//  if not BindSourceDB2.DataSet.Active then BindSourceDB2.DataSet.Active := true;
 
-  BindSourceDB3.DataSet := SCM.qryHeat;
-  if not BindSourceDB3.DataSet.Active then BindSourceDB3.DataSet.Active := true;
+//  BindSourceDB3.DataSet := SCM.qryHeat;
+//  if not BindSourceDB3.DataSet.Active then BindSourceDB3.DataSet.Active := true;
 
   {
     Sort out the menubar font height - so tiny!
@@ -1800,6 +1823,15 @@ begin
   i := iFile.ReadInteger('Preferences', 'ShowDebugInfo', integer(cbUnchecked));
   if (i = integer(cbChecked)) then pnlDebugInfo.Visible := true
   else pnlDebugInfo.Visible := false;
+
+  // 2024-08-31
+  // Hide - Show title panel.
+  // Adds more screen real estate for 1080H laptop users using 125% scaling.
+  // -------------------------------------------
+  i := iFile.ReadInteger('Preferences', 'HideTitlePanel', integer(cbUnchecked));
+  if (i = integer(cbChecked)) then pnlTitleBar.Visible := false
+  else pnlTitleBar.Visible := true;
+
 
   // Switch to the default windows scheme else use stored fscmStyleName.
   // -------------------------------------------
@@ -3001,8 +3033,9 @@ begin
     TEAM.Grid.Enabled := DoEnable;
   }
 
- if not AssertConnection then     exit;
- if not Assigned(BindSourceDB3.DataSource.DataSet) then exit;
+  if not AssertConnection then     exit;
+  if not Assigned(BindSourceDB3.DataSet) then  exit;
+  if not Assigned(BindSourceDB3.DataSource.DataSet) then exit;
 
   i := BindSourceDB3.DataSource.DataSet.FieldByName('HeatStatusID').AsInteger;
   case i of
@@ -3432,17 +3465,45 @@ begin
   // Update page
   case (PageControl1.TabIndex) of
     0: // S e s s i o n .
-      PostMessage(Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);
+      begin
+        BindSourceDB1.DataSet := nil;
+        // if not BindSourceDB1.DataSet.Active then BindSourceDB1.DataSet.Active := true;
+        BindSourceDB2.DataSet := nil;
+        // if not BindSourceDB2.DataSet.Active then BindSourceDB2.DataSet.Active := true;
+        BindSourceDB3.DataSet := nil;
+        // if not BindSourceDB3.DataSet.Active then BindSourceDB3.DataSet.Active := true;
+
+        PostMessage(Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);
+      end;
 
     1: // N o m i n a t e .
       begin
+        BindSourceDB1.DataSet := SCM.qryNominateControlList;
+        if not BindSourceDB1.DataSet.Active then
+          BindSourceDB1.DataSet.Active := true;
+        // BindSourceDB2.DataSet := SCM.qryEvent;
+        // if not BindSourceDB2.DataSet.Active then BindSourceDB2.DataSet.Active := true;
+        // BindSourceDB3.DataSet := SCM.qryHeat;
+        // if not BindSourceDB3.DataSet.Active then BindSourceDB3.DataSet.Active := true;
+
         PostMessage(Handle, SCM_TABSHEETDISPLAYSTATE, 2, 0);
-        if Nominate_Grid.CanFocus then Nominate_Grid.SetFocus;
+        if Nominate_Grid.CanFocus then
+          Nominate_Grid.SetFocus;
       end;
     2: // H e a t s .
       begin
+        // BindSourceDB1.DataSet := SCM.qryNominateControlList;
+        // if not BindSourceDB1.DataSet.Active then BindSourceDB1.DataSet.Active := true;
+        BindSourceDB2.DataSet := SCM.qryEvent;
+        if not BindSourceDB2.DataSet.Active then
+          BindSourceDB2.DataSet.Active := true;
+        BindSourceDB3.DataSet := SCM.qryHeat;
+        if not BindSourceDB3.DataSet.Active then
+          BindSourceDB3.DataSet.Active := true;
+
         PostMessage(Handle, SCM_TABSHEETDISPLAYSTATE, 3, 0);
-        if HeatControlList.CanFocus then HeatControlList.SetFocus;
+        if HeatControlList.CanFocus then
+          HeatControlList.SetFocus;
       end;
   end;
 end;
@@ -3478,6 +3539,10 @@ begin
           SCM.qryEvent.CheckBrowseMode;
           SCM.qrySession.CheckBrowseMode;
         end;
+      1:
+      begin
+        ;
+      end;
       2:
         begin
           SCM.qryEntrant.CheckBrowseMode;
@@ -4113,7 +4178,15 @@ begin
   dlg.SessionMode := smNewSession;
   if IsPositiveResult(dlg.ShowModal) then
   begin
-    SCM.dsSession.DataSet.Refresh; // Requery, Sort.
+    // ATERNATIVE...
+    // This routine disables all controls across all tables..
+    // SCM_RefreshExecute(self);
+
+    SCM.DSSession.DataSet.DisableControls;
+    SCM.dsSession.DataSet.Close; // Requery,
+    SCM.dsSession.DataSet.Open;
+    SCM.DSSession.DataSet.EnableControls;
+
     SCM.Session_Locate(dlg.SessionID); // CUE-TO NEW session.
     PostMessage(Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);
   end;
@@ -4128,6 +4201,11 @@ begin
   // only a connection is required to create a new session
   if AssertConnection then DoEnable := true;
   TAction(Sender).Enabled := DoEnable;
+end;
+
+procedure TMain.Session_RenumberEvents(var Msg: TMessage);
+begin
+  SCM.Session_RenumberEvents(SCM.Session_ID, true);
 end;
 
 procedure TMain.Session_ReportExecute(Sender: TObject);
@@ -4208,7 +4286,10 @@ begin
   if AssertConnection then
   begin
     aSessionID := SCM.Session_ID;
-    Session_Grid.DataSource.DataSet.Refresh;
+    Session_Grid.DataSource.DataSet.Close;
+// ORIGINALLY ... simple refresh : not effective enough.
+//    Session_Grid.DataSource.DataSet.Refresh;
+    Session_Grid.DataSource.DataSet.Open;
     try
       SCM.Session_Locate(aSessionID);
     except

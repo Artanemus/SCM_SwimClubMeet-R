@@ -192,20 +192,24 @@ type
     qrySwimClubLogoType: TWideStringField;
     qrySwimClubPoolTypeID: TIntegerField;
     qrySwimClubSwimClubTypeID: TIntegerField;
+    qryDistance: TFDQuery;
+    dsDistance: TDataSource;
     procedure DataModuleCreate(Sender: TObject);
     procedure qryEntrantAfterScroll(DataSet: TDataSet);
     procedure qryEntrantTIMEGetText(Sender: TField; var Text: string;
       DisplayText: Boolean);
     procedure qryEntrantTIMESetText(Sender: TField; const Text: string);
     procedure qryEventAfterDelete(DataSet: TDataSet);
+    procedure qryEventAfterInsert(DataSet: TDataSet);
     procedure qryEventAfterPost(DataSet: TDataSet);
     procedure qryEventAfterScroll(DataSet: TDataSet);
     procedure qryEventBeforeEdit(DataSet: TDataSet);
+    procedure qryEventBeforeInsert(DataSet: TDataSet);
     procedure qryEventBeforePost(DataSet: TDataSet);
-    procedure qryEventDistanceIDChange(Sender: TField);
     procedure qryEventDistanceIDValidate(Sender: TField);
     procedure qryEventEventStatusIDGetText(Sender: TField; var Text: string;
       DisplayText: Boolean);
+    procedure qryEventNewRecord(DataSet: TDataSet);
     procedure qryEventScheduleDTGetText(Sender: TField; var Text: string;
       DisplayText: Boolean);
     procedure qryEventScheduleDTSetText(Sender: TField; const Text: string);
@@ -229,7 +233,6 @@ type
     procedure qryTeamEntrantAfterScroll(DataSet: TDataSet);
     procedure scmConnectionAfterDisconnect(Sender: TObject);
   private
-    fCurrEventType: scmEventType;
     fIsNewRecord: boolean;
     fLastDistanceID: integer;
     fLastStrokeID: integer;
@@ -348,6 +351,7 @@ type
     function Session_Start(): TDateTime; overload;
     function Session_Start(SessionID: integer): TDateTime; overload;
     procedure Session_ToggleLockState();
+    procedure Session_SetSortIndex(idx: integer);
     // SPLIT
     function Split_HeatStatusID(aSplitID: integer): integer;
     function Split_SessionIsLocked(aSplitID: integer): Boolean;
@@ -386,10 +390,14 @@ type
     function Team_Locate(aTeamID: integer): Boolean;
     // TOGGLE DISQUALIFICATION CODE
     procedure ToggleDCode(ADataSet: TDataSet; DoEnable: Boolean);
+
+    // CURRENT EVENT TYPE -
+    function GetCurrEventType(): scmEventType;
+
   published
     property CheckNomination: integer read prefCheckUnNomination
       write prefCheckUnNomination;
-    property CurrEventType: scmEventType read fCurrEventType;
+    property CurrEventType: scmEventType read GetCurrEventType;
     property SCMActive: Boolean read fSCMActive write fSCMActive;
   end;
 
@@ -455,7 +463,13 @@ begin
     qrySwimClub.Open;
     if (qrySwimClub.Active) then
     begin
-      qrySession.Open;
+
+    qrySession.Close;
+    qrySession.ParamByName('TOGGLE').AsBoolean := false;
+    qrySession.Prepare;
+    qrySession.Open;
+
+//      qrySession.Open;
       if (qrySession.Active) then
       begin
         (*
@@ -470,6 +484,7 @@ begin
         if (qryEvent.Active) then
         begin
           // DEPENDANTS OF EVENT
+          qryDistance.Open;
           qryNominee.Open;
           qryHeat.Open;
           if (qryHeat.Active) and (qryNominee.Active) then
@@ -722,7 +737,6 @@ begin
   fLastDistanceID := 0;
   fLastStrokeID := 0;
   fIsNewRecord := false;
-  fCurrEventType := etUnknown;
   prefGenerateEventDescription := false;
   prefGenerateEventDescStr := '';
 
@@ -745,6 +759,7 @@ begin
   qryEntrant.Close;
   qryHeat.Close;
   qryNominee.Close;
+  qryDistance.Close;
   qryEvent.Close;
   qrySession.Close;
 
@@ -1291,6 +1306,22 @@ begin
   else exit;
   v := scmConnection.ExecSQLScalar(SQL, [aHeatID]);
   if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
+end;
+
+function TSCM.GetCurrEventType(): scmEventType;
+var
+  i: integer;
+begin
+//    SQL := 'SELECT [EventTypeID] FROM [SwimClubMeet].[dbo].[Distance] ' +
+//      'INNER JOIN [dbo].[Event] ON Event.DistanceID = Distance.DistanceID ' +
+//      'WHERE EventID = :ID ';
+  result := scmEventType.etUnknown;
+  if qryDistance.IsEmpty then exit;
+  i := qryDistance.FieldByName('EventTypeID').AsInteger;
+    case i of
+      1: result := etINDV;
+      2: result := etTEAM;
+    end;
 end;
 
 function TSCM.GetEventType(aEventID: integer): scmEventType;
@@ -2067,14 +2098,23 @@ begin
   if Owner is TForm then
   begin
       PostMessage(TForm(Owner).Handle, SCM_RENUMBEREVENTS, 0, 0);
-      PostMessage(TForm(Owner).Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);
   end;
+end;
+
+procedure TSCM.qryEventAfterInsert(DataSet: TDataSet);
+var
+fld: TField;
+begin
+  fld := DataSet.FieldByName('EventStatusID');
+  fld.ReadOnly := true;
 end;
 
 procedure TSCM.qryEventAfterPost(DataSet: TDataSet);
 var
   i, v: integer;
-  SQL: string;
+  DistanceID, StrokeID, entrantCount: integer;
+  EventType : scmEventType;
+  Caption: string;
 begin
   // NOTE: DataSet.State := dsBrowse
   v := DataSet.FieldByName('EventNum').AsInteger;
@@ -2092,38 +2132,25 @@ begin
   if (DataSet.FieldByName('EventNum').ReadOnly = false) then
     DataSet.FieldByName('EventNum').ReadOnly := true;
 
-  v := DataSet.FieldByName('DistanceID').AsInteger;
-  if (v = 0) then fCurrEventType := etUnknown
-  else
+  DistanceID := DataSet.FieldByName('DistanceID').AsInteger;
+  StrokeID := DataSet.FieldByName('StrokeID').AsInteger;
+  if ((DistanceID <> fLastDistanceID) or (StrokeID <> fLastStrokeID)) then
   begin
-    SQL := 'SELECT [EventTypeID] FROM [SwimClubMeet].[dbo].[Distance] ' +
-      'WHERE DistanceID = :ID';
-    v := scmConnection.ExecSQLScalar(SQL,
-      [DataSet.FieldByName('DistanceID').AsInteger]);
-    if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
-      case v of
-        1: fCurrEventType := etINDV;
-        2: fCurrEventType := etTEAM;
-      end;
-  end;
-
-  if not DataSet.FieldByName('EventID').IsNull then
-  begin
-    var
-      DistanceID, StrokeID, entrantCount: integer;
-    DistanceID := DataSet.FieldByName('DistanceID').AsInteger;
-    StrokeID := DataSet.FieldByName('StrokeID').AsInteger;
-    if ((DistanceID <> fLastDistanceID) or (StrokeID <> fLastStrokeID)) then
+    i := DataSet.FieldByName('EventID').AsInteger;
+    entrantCount := Event_GetEntrantCount(i);
+    if (entrantCount > 0) then
     begin
-      i := DataSet.FieldByName('EventID').AsInteger;
-      entrantCount := Event_GetEntrantCount(i);
-      if (entrantCount > 0) then
-      begin
-        // display warning message
-        MessageDlg('If an Event''s distance or stroke is changed' + slinebreak +
-          'then the nominees attached to that event also reflect' + slinebreak +
-          'those changes.', mtWarning, [mbOK], 0);
-      end;
+      // display warning message
+      MessageDlg('If an Event''s distance or stroke is changed' + slinebreak +
+        'then the nominees attached to that event also reflect' + slinebreak +
+        'those changes.' + slinebreak +
+        'NOTE: The caption for this event has been changed.', mtWarning, [mbOK], 0);
+
+      // clear the caption ....
+      DataSet.Edit;
+      DataSet.FieldByName('Caption').Clear;
+      DataSet.Post;
+
     end;
   end;
 
@@ -2141,33 +2168,35 @@ begin
     end;
   end;
 
-  if Owner is TForm then
+  EventType := GetEventTypeByDistanceID(DistanceID);
+  Caption := DataSet.FieldByName('Caption').AsString;
+  if (Length(Caption) = 0) then
   begin
-    PostMessage(TForm(Owner).Handle, SCM_UPDATEINDVTEAM, 0, 0);
-    PostMessage(TForm(Owner).Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);
+    DataSet.Edit;
+    case EventType of
+      etINDV:
+        DataSet.FieldByName('Caption').AsString := 'INDV';
+      etTEAM:
+        DataSet.FieldByName('Caption').AsString := 'RELAY';
+      else
+        ;
+    end;
+    DataSet.Post;
   end;
+
+
+
+// BSA FIX ....
+//  if Owner is TForm then
+//  begin
+//    PostMessage(TForm(Owner).Handle, SCM_UPDATEINDVTEAM, 0, 0);
+//    PostMessage(TForm(Owner).Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);
+//  end;
 
 end;
 
 procedure TSCM.qryEventAfterScroll(DataSet: TDataSet);
-var
-  SQL: string;
-  v: variant;
 begin
-  if not DataSet.FieldByName('DistanceID').IsNull then
-  begin
-    fCurrEventType := etUnknown;
-    SQL := 'SELECT [EventTypeID] FROM [SwimClubMeet].[dbo].[Distance] ' +
-      'WHERE DistanceID = :ID';
-    v := scmConnection.ExecSQLScalar(SQL,
-      [DataSet.FieldByName('DistanceID').AsInteger]);
-    if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
-      case v of
-        1: fCurrEventType := etINDV;
-        2: fCurrEventType := etTEAM;
-      end;
-  end;
-
   if Owner is TForm then
       PostMessage(TForm(Owner).Handle, SCM_EVENTSCROLL, 0, 0);
 end;
@@ -2181,36 +2210,30 @@ begin
   fLastStrokeID := DataSet.FieldByName('StrokeID').AsInteger;;
 end;
 
-procedure TSCM.qryEventBeforePost(DataSet: TDataSet);
+procedure TSCM.qryEventBeforeInsert(DataSet: TDataSet);
+var
+fld: TField;
 begin
-  if not fSCMActive then exit;
-  if DataSet.UpdateStatus = usInserted then
-  begin
-    DataSet.FieldByName('EventStatusID').ReadOnly := false;
-    DataSet.FieldByName('EventStatusID').AsInteger := 1;
-    // NOTE: 2024/03/16
-    // DataSet.FieldByName('EventStatusID').ReadOnly := true;
-    // Throws error - dataset enters Browse mode
-    // Test field read mode on AfterPost event
-  end
+  // kill all BindSource
+
+  fld := DataSet.FieldByName('EventStatusID');
+  fld.ReadOnly := false;
 end;
 
-procedure TSCM.qryEventDistanceIDChange(Sender: TField);
+procedure TSCM.qryEventBeforePost(DataSet: TDataSet);
 var
-  SQL: string;
-  v: variant;
+fld: TField;
+i: integer;
 begin
-  fCurrEventType := etUnknown;
-  if not Sender.IsNull then
+  fld := DataSet.FieldByName('Caption');
+  if fld.IsNull then exit;
+  if (Length(fld.AsString) = 0) then
   begin
-  SQL := 'SELECT [EventTypeID] FROM [SwimClubMeet].[dbo].[Distance] ' +
-    'WHERE DistanceID = :ID';
-  v := scmConnection.ExecSQLScalar(SQL, [Sender.AsInteger]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
-    case v of
-      1: fCurrEventType := etINDV;
-      2: fCurrEventType := etTEAM;
-    end;
+    i :=  DataSet.FieldByName('EventTypeID').AsInteger;
+    if i = 2 then
+      DataSet.FieldByName('Caption').AsString := 'RELAY'
+    else
+      DataSet.FieldByName('Caption').AsString := 'INDV';
   end;
 end;
 
@@ -2247,6 +2270,16 @@ begin
   // column should only show a tick ...
   // TODO: disable selection of the column.
   Text := '';
+end;
+
+procedure TSCM.qryEventNewRecord(DataSet: TDataSet);
+begin
+  DataSet.FieldByName('EventStatusID').AsInteger := 1;
+//  DataSet.FieldByName('EventNum').AsInteger := 0;
+  DataSet.FieldByName('DistanceID').AsInteger := 1;
+  DataSet.FieldByName('StrokeID').AsInteger := 1;
+  DataSet.FieldByName('EventStatusID').AsInteger := 1;
+
 end;
 
 procedure TSCM.qryEventScheduleDTGetText(Sender: TField; var Text: string;
@@ -3054,6 +3087,28 @@ begin
   if fSCMActive and dsSession.DataSet.Active then
     if not dsSession.DataSet.IsEmpty then
         result := dsSession.DataSet.FieldByName('SessionStart').AsDateTime;
+end;
+
+procedure TSCM.Session_SetSortIndex(idx: integer);
+begin
+//  qrySession.Index
+  qrySession.IndexesActive := false;
+  case idx of
+  1:
+  begin
+  qrySession.IndexesActive := true;
+  qrySession.IndexName := 'idxStartDateDESC';
+  end;
+  2:
+  begin
+  qrySession.IndexesActive := true;
+  qrySession.IndexName := 'idxStartDateASC';
+  end
+  else
+    begin
+      qrySession.IndexFieldNames := 'SwimClubID';
+    end;
+  end;
 end;
 
 function TSCM.Session_Start(SessionID: integer): TDateTime;

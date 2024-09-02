@@ -118,7 +118,11 @@ begin
     SQL := 'DELETE FROM dbo.Event WHERE Event.EventID = :ID';
     result := scmConnection.ExecSQL(SQL, [aEventID]);
     dsEvent.DataSet.EnableControls;
+    // Renumber events and locate to record.
+    RenumberEvents(Session_ID(),true);
+
   end;
+
 end;
 
 function TSCMHelper.Event_RenumberHeats(aEventID: integer; DoLocate,

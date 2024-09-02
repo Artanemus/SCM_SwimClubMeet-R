@@ -6,7 +6,6 @@ object SCM: TSCM
     Params.Strings = (
       'ConnectionDef=MSSQL_SwimClubMeet')
     ConnectedStoredUsage = [auDesignTime]
-    Connected = True
     LoginPrompt = False
     AfterDisconnect = scmConnectionAfterDisconnect
     Left = 80
@@ -159,13 +158,13 @@ object SCM: TSCM
       'JOIN Stroke ON Stroke.StrokeID = Event.StrokeID'
       'JOIN Distance ON Distance.DistanceID = Event.DistanceID'
       'ORDER BY Event.SessionID')
-    Left = 207
-    Top = 200
+    Left = 367
+    Top = 208
   end
   object dsNomateEvent: TDataSource
     DataSet = qryNominateEvent
-    Left = 287
-    Top = 200
+    Left = 447
+    Top = 208
   end
   object luHeatStatus: TDataSource
     DataSet = tblHeatStatus
@@ -392,6 +391,18 @@ object SCM: TSCM
     AfterDelete = qrySessionAfterDelete
     AfterScroll = qrySessionAfterScroll
     OnNewRecord = qrySessionNewRecord
+    Indexes = <
+      item
+        Name = 'idxSortDESC'
+        Fields = 'SwimClubID;SessionStart'
+        DescFields = 'SessionStart'
+        Options = [soDescNullLast]
+      end
+      item
+        Name = 'idxSortASC'
+        Fields = 'SwimClubID;SessionStart'
+      end>
+    IndexFieldNames = 'SwimClubID'
     MasterSource = dsSwimClub
     MasterFields = 'SwimClubID'
     DetailFields = 'SwimClubID'
@@ -517,11 +528,14 @@ object SCM: TSCM
   end
   object qryEvent: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    BeforeInsert = qryEventBeforeInsert
+    AfterInsert = qryEventAfterInsert
     BeforeEdit = qryEventBeforeEdit
     BeforePost = qryEventBeforePost
     AfterPost = qryEventAfterPost
     AfterDelete = qryEventAfterDelete
     AfterScroll = qryEventAfterScroll
+    OnNewRecord = qryEventNewRecord
     IndexFieldNames = 'SessionID'
     MasterSource = dsSession
     MasterFields = 'SessionID'
@@ -623,7 +637,6 @@ object SCM: TSCM
       FieldName = 'DistanceID'
       Origin = 'DistanceID'
       Visible = False
-      OnChange = qryEventDistanceIDChange
       OnValidate = qryEventDistanceIDValidate
     end
     object qryEventEventTypeID: TIntegerField
@@ -816,13 +829,13 @@ object SCM: TSCM
       '      ,[EventID]'
       '      ,[MemberID]'
       '  FROM [dbo].[Nominee]')
-    Left = 208
-    Top = 256
+    Left = 368
+    Top = 264
   end
   object dsNominee: TDataSource
     DataSet = qryNominee
-    Left = 288
-    Top = 256
+    Left = 448
+    Top = 264
   end
   object qryCountHeatsNotClosed: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -2397,5 +2410,34 @@ object SCM: TSCM
     DataSet = qryTeamSplit
     Left = 384
     Top = 432
+  end
+  object qryDistance: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    IndexFieldNames = 'DistanceID'
+    MasterSource = dsEvent
+    MasterFields = 'DistanceID'
+    DetailFields = 'DistanceID'
+    Connection = scmConnection
+    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
+    UpdateOptions.EnableDelete = False
+    UpdateOptions.EnableInsert = False
+    UpdateOptions.EnableUpdate = False
+    UpdateOptions.UpdateTableName = 'SwimClubMeet.dbo.Distance'
+    UpdateOptions.KeyFields = 'DistanceID'
+    SQL.Strings = (
+      'SELECT '
+      #9#9' [DistanceID]'
+      #9#9',[Caption]'
+      #9#9',[Meters]'
+      #9#9',[ABREV]'
+      #9#9',[EventTypeID]'
+      'FROM [dbo].[Distance] ')
+    Left = 192
+    Top = 280
+  end
+  object dsDistance: TDataSource
+    DataSet = qryDistance
+    Left = 256
+    Top = 280
   end
 end

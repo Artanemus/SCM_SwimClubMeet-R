@@ -26,7 +26,6 @@ object Preferences: TPreferences
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 642
     object DBText1: TDBText
       Left = 13
       Top = 9
@@ -51,8 +50,6 @@ object Preferences: TPreferences
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 541
-    ExplicitWidth = 642
     DesignSize = (
       728
       48)
@@ -72,7 +69,7 @@ object Preferences: TPreferences
     Top = 41
     Width = 728
     Height = 501
-    ActivePage = TabSheet7
+    ActivePage = TabSheet3
     Align = alClient
     TabOrder = 2
     OnChanging = PageControl1Changing
@@ -219,7 +216,7 @@ object Preferences: TPreferences
         Width = 186
         Height = 29
         Date = 43786.000000000000000000
-        Time = 0.420016226853476800
+        Time = 0.420016226846200900
         TabOrder = 7
       end
     end
@@ -726,6 +723,14 @@ object Preferences: TPreferences
         Height = 26
         Caption = 'Show Debug Information.'
         TabOrder = 0
+      end
+      object prefHideTitlePanel: TCheckBox
+        Left = 27
+        Top = 92
+        Width = 350
+        Height = 26
+        Caption = 'Hide header panel (add more  screen real estate).'
+        TabOrder = 3
       end
     end
     object TabSheet7: TTabSheet

@@ -2,7 +2,7 @@ object frameTEAM: TframeTEAM
   Left = 0
   Top = 0
   Width = 1033
-  Height = 489
+  Height = 657
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -16
@@ -12,7 +12,7 @@ object frameTEAM: TframeTEAM
   TabOrder = 0
   object Splitter1: TSplitter
     Left = 0
-    Top = 297
+    Top = 345
     Width = 1033
     Height = 14
     Cursor = crVSplit
@@ -23,7 +23,7 @@ object frameTEAM: TframeTEAM
     Left = 0
     Top = 0
     Width = 1033
-    Height = 297
+    Height = 345
     Align = alTop
     BevelEdges = []
     BevelKind = bkFlat
@@ -37,7 +37,7 @@ object frameTEAM: TframeTEAM
       Left = 2
       Top = 2
       Width = 1029
-      Height = 293
+      Height = 341
       Margins.Left = 2
       Margins.Top = 2
       Margins.Right = 2
@@ -101,9 +101,9 @@ object frameTEAM: TframeTEAM
   end
   object Panel2: TPanel
     Left = 0
-    Top = 311
+    Top = 359
     Width = 1033
-    Height = 178
+    Height = 298
     Align = alClient
     BevelEdges = []
     BevelKind = bkFlat
@@ -111,11 +111,13 @@ object frameTEAM: TframeTEAM
     ParentColor = True
     ShowCaption = False
     TabOrder = 1
+    ExplicitTop = 311
+    ExplicitHeight = 178
     object rpnlTeamEntrantTools: TRelativePanel
       Left = 653
       Top = 0
       Width = 88
-      Height = 178
+      Height = 298
       ControlCollection = <
         item
           Control = spbtnMoveUpSlot
@@ -180,9 +182,10 @@ object frameTEAM: TframeTEAM
       BevelOuter = bvNone
       ParentColor = True
       TabOrder = 0
+      ExplicitHeight = 178
       DesignSize = (
         88
-        178)
+        298)
       object spbtnMoveUpSlot: TSpeedButton
         Left = 20
         Top = 0
@@ -290,19 +293,20 @@ object frameTEAM: TframeTEAM
       Left = 0
       Top = 0
       Width = 653
-      Height = 178
+      Height = 298
       Align = alLeft
       BevelEdges = []
       BevelKind = bkFlat
       BevelOuter = bvNone
       BevelWidth = 2
       TabOrder = 1
+      ExplicitHeight = 178
       object GridEntrant: TDBGrid
         AlignWithMargins = True
         Left = 2
         Top = 2
         Width = 649
-        Height = 174
+        Height = 294
         Margins.Left = 2
         Margins.Top = 2
         Margins.Right = 2
