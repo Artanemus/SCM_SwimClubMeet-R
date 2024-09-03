@@ -3422,18 +3422,17 @@ var
   success: boolean;
 begin
   if not AssertConnection then exit;
+  if not Assigned(BindSourceDB1.DataSet) then exit;
   if not Assigned(BindSourceDB1.DataSource.DataSet) then exit;
 
-  begin
-    MemberID := SCM.dsNominateMembers.DataSet.FieldByName('MemberID').AsInteger;
-    success := SCM.Nominate_UpdateControlList(SCM.Session_ID, MemberID);
-    // Close, prepare and open - the binding source must be reactivated.
-    // -------------------------------------------------------------------
-    if not BindSourceDB1.DataSet.Active then
-        BindSourceDB1.DataSet.Active := true;
+  MemberID := SCM.dsNominateMembers.DataSet.FieldByName('MemberID').AsInteger;
+  success := SCM.Nominate_UpdateControlList(SCM.Session_ID, MemberID);
+  // Close, prepare and open - the binding source must be reactivated.
+  // -------------------------------------------------------------------
+  if not BindSourceDB1.DataSet.Active then
+      BindSourceDB1.DataSet.Active := true;
 
-    if success then Nominate_ControlList.Invalidate;
-  end;
+  if success then Nominate_ControlList.Invalidate;
 end;
 
 procedure TMain.Nominate_SortMembersExecute(Sender: TObject);
@@ -3744,9 +3743,11 @@ begin
   Refresh_Nominate;
   // count the number of members in DB prior to PostMessage
   fCountOfMembers := SCM.Members_Count;
-  // 'No Members' Caption maybe visible in TLabel lblNomWarning
-  if lblNomWarning.Visible then
-    PostMessage(Self.Handle, SCM_TABSHEETDISPLAYSTATE, 0, 0);
+  // Assert the 'No Members' Caption in TLabel lblNomWarning
+  // refresh all controls and labels on active tabsheet
+  // via page control - it also actions SCM_TABSHEETDISPLAYSTATE
+  PageControl1Change(PageControl1);
+
 end;
 
 procedure TMain.SCM_ManageMembersUpdate(Sender: TObject);
