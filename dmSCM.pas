@@ -2155,7 +2155,10 @@ begin
   end;
 
   // ADD A DEFAULT CAPTION
-  if DataSet.FieldByName('Caption').IsNull then
+  EventType := GetEventTypeByDistanceID(DistanceID);
+  Caption := DataSet.FieldByName('Caption').AsString;
+
+  if Caption.IsEmpty then
   begin
     if (prefGenerateEventDescription) then
     begin
@@ -2165,33 +2168,39 @@ begin
         DataSet.FieldByName('Caption').AsString := prefGenerateEventDescStr;
         DataSet.Post;
       end;
+    end
+    else
+    begin
+      DataSet.Edit;
+      case EventType of
+        etINDV:
+          DataSet.FieldByName('Caption').AsString := 'INDV';
+        etTEAM:
+          DataSet.FieldByName('Caption').AsString := 'RELAY';
+      end;
+      DataSet.Post;
     end;
-  end;
-
-  EventType := GetEventTypeByDistanceID(DistanceID);
-  Caption := DataSet.FieldByName('Caption').AsString;
-  if (Length(Caption) = 0) then
+  end
+  else
   begin
-    DataSet.Edit;
-    case EventType of
-      etINDV:
-        DataSet.FieldByName('Caption').AsString := 'INDV';
-      etTEAM:
-        DataSet.FieldByName('Caption').AsString := 'RELAY';
+    if ((Caption = 'INDV') and (EventType = etTEAM)) or
+      ((Caption = 'TEAM') and (EventType = etINDV)) then
+    begin
+      DataSet.Edit;
+      if EventType = etTEAM then
+        DataSet.FieldByName('Caption').AsString := 'RELAY'
       else
-        ;
+        DataSet.FieldByName('Caption').AsString := 'INDV';
+      DataSet.Post;
     end;
-    DataSet.Post;
   end;
 
-
-
-// BSA FIX ....
-//  if Owner is TForm then
-//  begin
-//    PostMessage(TForm(Owner).Handle, SCM_UPDATEINDVTEAM, 0, 0);
-//    PostMessage(TForm(Owner).Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);
-//  end;
+  // BSA FIX .... 2024.09.02 commented out this section
+  //  if Owner is TForm then
+  //  begin
+  //    PostMessage(TForm(Owner).Handle, SCM_UPDATEINDVTEAM, 0, 0);
+  //    PostMessage(TForm(Owner).Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);
+  //  end;
 
 end;
 
