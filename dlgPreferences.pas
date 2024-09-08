@@ -402,8 +402,12 @@ var
   i, iUnChecked, iChecked: integer;
 begin
   iFile := TIniFile.Create(IniFileName);
-  iUnChecked := integer(TCheckBoxState.cbUnchecked);
-  iChecked := integer(TCheckBoxState.cbChecked);
+{
+Using Ord is generally considered best practice when converting an
+enumeration to its corresponding integer value in Delphi.
+}
+  iUnChecked := Ord(TCheckBoxState.cbUnchecked);
+  iChecked := Ord(TCheckBoxState.cbChecked);
 
   // 2024/08/31  Add more screen real estate.
   i := iFile.ReadInteger('Preferences', 'HideTitlePanel',  iUnChecked);

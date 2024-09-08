@@ -21,7 +21,6 @@ object AutoBuild_Relay: TAutoBuild_Relay
     BevelKind = bkFlat
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 508
     object btnCancel: TButton
       Left = 257
       Top = 6

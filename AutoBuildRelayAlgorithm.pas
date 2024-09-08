@@ -3,317 +3,472 @@ unit AutoBuildRelayAlgorithm;
 interface
 
 uses
-System.Classes;
+System.Classes, FireDAC.Comp.Client, FireDAC.Stan.Param, dmSCM, dmSCMHelper,
+  SCMUtility, System.SysUtils;
 
 // Bin packing algorithm in Delphi using a genetic algorithm
 
 // Define the container and item types
 type
-  TLane = record
-    Capacity: Integer;
-    Swimmers: array of Integer;
+
+  TTeam = record
+    // L A N E  >>> R E L A Y  - T E A M .
+    // (Typically a relay-team holds four swimmers)
+    ID: Integer; // IDENITY of the Team in dbo.Team.
+    Lane: Integer;   // Lane number.
+    RaceTime: TTime;  // The SUM of all PBs for swimmers in the relay-team.
+    Entrants: array of integer; // Holds memberID - 4 x swimmers per lane.
+    HeatID: Integer;
+  end;
+
+  TChromosome = array of TTeam;
+
+
+  THeat = record
+    // H E A T .
+    ID: integer;
+    HeatNum: integer;
+    EventID: integer;
   end;
 
   TSwimmer = record
-    RaceTime: Integer;
-    NormalizedRaceTime: Double;
+    // S W I M M E R .
+    NomineeID: Integer; // Nomination ID for the swimmer in dbo.Nominee.
+    MemberID: Integer; // Member ID for the swimmer used in dbo.Member table
+    TTB: TTime; // Time-to-beat. Estimated (calculated) swimming for XDistance.
+    PB: TTime; // Personal Best swimming time for the swimmer for the event.
   end;
 
-  TChromosome = record
-    Genes: array of Integer;
-    Fitness: Double;
-  end;
+var
+ NumOfNominees: integer; // Count of nominees.
+ NumOfTeams: integer; // Count of relay-teams.
+ NumOfHeats: integer; // Count of heats.
+ NumOfTeamsPerHeat: integer; // Count of relay-teams in each heat.
+ NumOfPoolLanes: integer; // takes into consideration preferences for gutter lanes.
+ NumOfEntrantsPerTeam: integer;
 
-const
-  POPULATION_SIZE = 100;
-  MUTATION_RATE = 0.05;
-  CROSSOVER_RATE = 0.8;
-  MAX_GENERATIONS = 1000;
+  Population: array of TChromosome;
+  PopulationSize: Integer = 100;
+  Generations: Integer = 1000;
+  MutationRate: Double = 0.01;
 
-//  var
-//  Population: array[0..POPULATION_SIZE - 1] of TChromosome;
+ // D Y N A M I C   A R R A Y S .
+ // Swimmers who nominated for the event.
+ Swimmers: array of TSwimmer;
+ // [HeatID][TeamID]. An array of heats - each containing a relay-team.
+ Heats: array of THeat;
+ // If the number of Relay-Teams exceeds the number of lanes
+ // then multi-heats are required.
+ Teams: array of TTeam;
+
+ function GetStrokeID(EventID: integer): integer;
+ function GetXDistanceID(EventID, teamSize: integer): integer;
 
 
 implementation
 
-uses System.Math, system.Generics.Collections;
+uses System.Math, system.Generics.Collections, System.IniFiles, System.Variants;
 
-// Define the comparison function for sorting the chromosomes by their fitness
-function CompareChromosomes(Item1, Item2: Pointer): Integer;
-begin
-  if TChromosome(Item1^).Fitness > TChromosome(Item2^).Fitness then
-    Result := -1
-  else if TChromosome(Item1^).Fitness < TChromosome(Item2^).Fitness then
-    Result := 1
-  else
-    Result := 0;
-end;
-
-// Define the quicksort function
-procedure QuickSort(var A: array of TChromosome; iLo, iHi: Integer; Compare: TListSortCompare);
-var
-  Lo, Hi: Integer;
-  Pivot, T: TChromosome;
-begin
-  Lo := iLo;
-  Hi := iHi;
-  Pivot := A[(Lo + Hi) div 2];
-  repeat
-    while Compare(@A[Lo], @Pivot) < 0 do Inc(Lo);
-    while Compare(@A[Hi], @Pivot) > 0 do Dec(Hi);
-    if Lo <= Hi then
-    begin
-      T := A[Lo];
-      A[Lo] := A[Hi];
-      A[Hi] := T;
-      Inc(Lo);
-      Dec(Hi);
-    end;
-  until Lo > Hi;
-  if Hi > iLo then QuickSort(A, iLo, Hi, Compare);
-  if Lo < iHi then QuickSort(A, Lo, iHi, Compare);
-end;
-
-// Define the mean function
-function Mean(Data: array of Integer): Double;
-var
-  i, Sum: Integer;
-begin
-  Sum := 0;
-  for i := 0 to High(Data) do Inc(Sum, Data[i]);
-  Result := Sum / Length(Data);
-end;
-
-// Define the standard deviation function
-function StandardDeviation(Data: array of Integer): Double;
-var
-  i: Integer;
-  MeanValue, SumOfSquares: Double;
-begin
-  MeanValue := Mean(Data);
-  SumOfSquares := 0;
-  for i := 0 to High(Data) do SumOfSquares := SumOfSquares + Sqr(Data[i] - MeanValue);
-  Result := Sqrt(SumOfSquares / Length(Data));
-end;
-
-// Define the fitness function
-function CalculateFitness(Chromosome: TChromosome; Lanes: array of TLane; Swimmers: array of TSwimmer): Double;
+function InitializePopulation: TChromosome;
 var
   i, j: Integer;
-  LaneRaceTimes: array of Integer;
+  Chromosome: TChromosome;
 begin
-  // Initialize the lane race times to zero
-  SetLength(LaneRaceTimes, Length(Lanes));
-  for i := 0 to High(LaneRaceTimes) do LaneRaceTimes[i] := 0;
-
-  // Calculate the total race time for each lane
-  for i := 0 to High(Chromosome.Genes) do begin
-    j := Chromosome.Genes[i];
-    Inc(LaneRaceTimes[j], Swimmers[i].RaceTime);
-  end;
-
-  // Calculate the fitness as the inverse of the standard deviation of the lane race times
-  //  Result := Mean(LaneRaceTimes);
-  Result := StandardDeviation(LaneRaceTimes);
-  if Result <> 0 then Result := 1 / Result else Result := MaxInt;
-end;
-
-// Define the selection function
-function SelectParent(Population: array of TChromosome): Integer;
-var
-  i: Integer;
-  TotalFitness, CumulativeFitness, RandomValue: Double;
-begin
-  // Calculate the total fitness of the population
-  TotalFitness := 0;
-  for i := 0 to High(Population) do
-  TotalFitness := TotalFitness + Population[i].Fitness;
-
-  // Select a parent using roulette wheel selection
-  RandomValue := Random * TotalFitness;
-  CumulativeFitness := 0;
-  for i := 0 to High(Population) do begin
-    CumulativeFitness := CumulativeFitness + Population[i].Fitness;
-    if CumulativeFitness >= RandomValue then begin
-      Result := i;
-      Exit;
+  SetLength(Chromosome, NumOfTeams);
+  for i := 0 to NumOfTeams - 1 do
+  begin
+    Chromosome[i].ID := i;
+    Chromosome[i].Lane := i mod NumOfPoolLanes;
+    SetLength(Chromosome[i].Entrants, NumOfEntrantsPerTeam);
+    for j := 0 to NumOfEntrantsPerTeam - 1 do
+    begin
+      Chromosome[i].Entrants[j] := Random(NumOfNominees);
     end;
   end;
-
-  // If no parent was selected, return the last chromosome in the population
-  Result := High(Population);
+  Result := Chromosome;
 end;
 
-// Define the crossover function
-procedure Crossover(var Chromosome1, Chromosome2: TChromosome);
+function Fitness(Chromosome: TChromosome): Double;
 var
-  i, j, k, CrossoverPoint: Integer;
+  i, j: Integer;
+  TotalTime, MaxTime, MinTime: TTime;
 begin
-  // Perform single-point crossover
-  if Random < CROSSOVER_RATE then begin
-    CrossoverPoint := RandomRange(0, Length(Chromosome1.Genes));
-    for i := CrossoverPoint to High(Chromosome1.Genes) do begin
-      j := Chromosome1.Genes[i];
-      k := Chromosome2.Genes[i];
-      Chromosome1.Genes[i] := k;
-      Chromosome2.Genes[i] := j;
+  MaxTime := 0;
+  MinTime := MaxInt;
+  TotalTime := 0;
+  for i := 0 to High(Chromosome) do
+  begin
+    Chromosome[i].RaceTime := 0;
+    for j := 0 to High(Chromosome[i].Entrants) do
+    begin
+      Chromosome[i].RaceTime := Chromosome[i].RaceTime + Swimmers[Chromosome[i].Entrants[j]].TTB;
+    end;
+    if Chromosome[i].RaceTime > MaxTime then
+      MaxTime := Chromosome[i].RaceTime;
+    if Chromosome[i].RaceTime < MinTime then
+      MinTime := Chromosome[i].RaceTime;
+    TotalTime := TotalTime + Chromosome[i].RaceTime;
+  end;
+  Result := MaxTime - MinTime;
+end;
+
+function TournamentSelection: TChromosome;
+var
+  i, BestIndex: Integer;
+  BestFitness, CurrentFitness: Double;
+begin
+  BestIndex := Random(PopulationSize);
+  BestFitness := Fitness(Population[BestIndex]);
+  for i := 1 to 4 do
+  begin
+    CurrentFitness := Fitness(Population[Random(PopulationSize)]);
+    if CurrentFitness < BestFitness then
+    begin
+      BestFitness := CurrentFitness;
+      BestIndex := i;
     end;
   end;
+  Result := Population[BestIndex];
 end;
 
-// Define the mutation function
+function Crossover(Parent1, Parent2: TChromosome): TChromosome;
+var
+  i, CrossoverPoint: Integer;
+  Child: TChromosome;
+begin
+  SetLength(Child, Length(Parent1));
+  CrossoverPoint := Random(Length(Parent1));
+  for i := 0 to CrossoverPoint do
+    Child[i] := Parent1[i];
+  for i := CrossoverPoint + 1 to High(Parent2) do
+    Child[i] := Parent2[i];
+  Result := Child;
+end;
+
+procedure Swap(var A, B: Integer);
+var
+  Temp: Integer;
+begin
+  Temp := A;
+  A := B;
+  B := Temp;
+end;
+
+
 procedure Mutate(var Chromosome: TChromosome);
 var
-  i, j, k: Integer;
+  Team1, Team2, Swimmer1, Swimmer2: Integer;
 begin
-  // Perform swap mutation on each gene with a small probability
-  for i := 0 to High(Chromosome.Genes) do begin
-    if Random < MUTATION_RATE then begin
-      j := Chromosome.Genes[i];
-      k := RandomRange(0, Length(Chromosome.Genes));
-      Chromosome.Genes[i] := Chromosome.Genes[k];
-      Chromosome.Genes[k] := j;
-    end;
-  end;
-end;
-
-// Define the bin packing function using a genetic algorithm
-function BinPack(Lanes: array of TLane; Swimmers: array of TSwimmer): TArray<Integer>;
-var
-  i, j, k, Generation: Integer;
-  Population: array[0..POPULATION_SIZE - 1] of TChromosome;
-  Parent1, Parent2, Offspring1, Offspring2: TChromosome;
-  BestChromosome: TChromosome;
-begin
-  // Initialize the population with random chromosomes
-  for i := 0 to High(Population) do begin
-    SetLength(Population[i].Genes, Length(Swimmers));
-    for j := 0 to High(Population[i].Genes) do Population[i].Genes[j] := Random(Length(Lanes));
-    Population[i].Fitness := CalculateFitness(Population[i], Lanes, Swimmers);
-  end;
-
-  // Initialize the best chromosome
-  BestChromosome.Fitness := 0;
-
-  // Run the genetic algorithm for a fixed number of generations
-  for Generation := 1 to MAX_GENERATIONS do begin
-    // Sort the population by fitness
-    QuickSort(Population, Length(Population), SizeOf(TChromosome), CompareChromosomes);
-
-    // Update the best chromosome
-    if Population[0].Fitness > BestChromosome.Fitness then BestChromosome := Population[0];
-
-    // Create a new population using selection, crossover, and mutation
-    for i := 0 to High(Population) div 2 do begin
-      // Select two parents
-      j := SelectParent(Population);
-      k := SelectParent(Population);
-      Parent1 := Population[j];
-      Parent2 := Population[k];
-
-      // Create two offspring using crossover
-      Offspring1 := Parent1;
-      Offspring2 := Parent2;
-      Crossover(Offspring1, Offspring2);
-
-      // Mutate the offspring
-      Mutate(Offspring1);
-      Mutate(Offspring2);
-
-      // Calculate the fitness of the offspring
-      Offspring1.Fitness := CalculateFitness(Offspring1, Lanes, Swimmers);
-      Offspring2.Fitness := CalculateFitness(Offspring2, Lanes, Swimmers);
-
-      // Add the offspring to the new population
-      Population[i * 2] := Offspring1;
-      Population[i * 2 + 1] := Offspring2;
-    end;
-  end;
-
-  // Return the best solution found by the genetic algorithm
-  SetLength(Result, Length(BestChromosome.Genes));
-  for i := Low(BestChromosome.Genes) to High(BestChromosome.Genes) do
-    Result[i] := BestChromosome.Genes[i];
-end;
-
-(*
-procedure QuickSortI(lLowBound, lHighBound: integer; lCompare: TListSortCompare;
-  lSwap: TListSortSwap);
-var
-  lLeft: Integer;
-  lRight: Integer;
-  lPivot: Integer;
-  lLeftCompare: Integer;
-  lRightCompare: Integer;
-  lStack: array of integer;
-  lStackLen: integer;
-begin
-  if lHighBound > lLowBound then
+  if Random < MutationRate then
   begin
-    lStackLen := 2;
-    SetLength(lStack, lStackLen);
-    lStack[lStackLen - 1] := lLowBound;
-    lStack[lStackLen - 2] := lHighBound;
-
-    repeat
-      lLowBound := lStack[lStackLen - 1];
-      lHighBound := lStack[lStackLen - 2];
-      SetLength(lStack, lStackLen - 2);
-      Dec(lStackLen, 2);
-
-      lLeft := lLowBound;
-      lRight := lHighBound;
-      lPivot := (lLowBound + lHighBound) div 2;
-      repeat
-        lLeftCompare := lCompare(lLeft, lPivot);
-        while lLeftCompare < 0 do
-        begin
-          Inc(lLeft);
-          lLeftCompare := lCompare(lLeft, lPivot);
-        end;
-        lRightCompare := lCompare(lRight, lPivot);
-        while lRightCompare > 0 do
-        begin
-          Dec(lRight);
-          lRightCompare := lCompare(lRight, lPivot);
-        end;
-
-        if lLeft <= lRight then
-        begin
-          if not ((lLeftCompare = 0) and (lRightCompare = 0)) then
-          begin
-            lSwap(lRight, lLeft);
-
-            if lPivot = lLeft then
-              lPivot := lRight
-            else if lPivot = lRight then
-              lPivot := lLeft;
-          end;
-          Inc(lLeft);
-          Dec(lRight);
-        end;
-      until lLeft > lRight;
-
-      if (lHighBound > lLeft) then
-      begin
-        Inc(lStackLen, 2);
-        SetLength(lStack, lStackLen);
-        lStack[lStackLen - 1] := lLeft;
-        lStack[lStackLen - 2] := lHighBound;
-      end;
-
-      if (lLowBound < lRight) then
-      begin
-        Inc(lStackLen, 2);
-        SetLength(lStack, lStackLen);
-        lStack[lStackLen - 1] := lLowBound;
-        lStack[lStackLen - 2] := lRight;
-      end;
-
-    until lStackLen = 0;
+    Team1 := Random(Length(Chromosome));
+    Team2 := Random(Length(Chromosome));
+    Swimmer1 := Random(Length(Chromosome[Team1].Entrants));
+    Swimmer2 := Random(Length(Chromosome[Team2].Entrants));
+    Swap(Chromosome[Team1].Entrants[Swimmer1], Chromosome[Team2].Entrants[Swimmer2]);
   end;
 end;
-*)
+
+procedure GeneticAlgorithm;
+var
+  i, j: Integer;
+  Parent1, Parent2, Child: TChromosome;
+  BestChromosome: TChromosome;
+  BestFitness, CurrentFitness: Double;
+begin
+  SetLength(Population, PopulationSize);
+  for i := 0 to PopulationSize - 1 do
+    Population[i] := InitializePopulation;
+
+  for i := 0 to Generations - 1 do
+  begin
+    for j := 0 to PopulationSize - 1 do
+    begin
+      Parent1 := TournamentSelection;
+      Parent2 := TournamentSelection;
+      Child := Crossover(Parent1, Parent2);
+      Mutate(Child);
+      Population[j] := Child;
+    end;
+  end;
+
+  BestChromosome := Population[0];
+  BestFitness := Fitness(BestChromosome);
+  for i := 1 to PopulationSize - 1 do
+  begin
+    CurrentFitness := Fitness(Population[i]);
+    if CurrentFitness < BestFitness then
+    begin
+      BestFitness := CurrentFitness;
+      BestChromosome := Population[i];
+    end;
+  end;
+
+  // Use BestChromosome to set your final teams
+  SetLength(Teams, Length(BestChromosome));
+  for i := 0 to High(BestChromosome) do
+    Teams[i] := BestChromosome[i];
+end;
+
+
+
+function GetStrokeID(EventID: integer): integer;
+var
+v: variant;
+begin
+  result := 0;
+  v := SCM.scmConnection.ExecSQLScalar('SELECT StrokeID FROM [dbo].[Event] WHERE [EventID] = :ID',[EventID]);
+  if not VarIsNull(v) then
+    result := v;
+end;
+
+function GetXDistanceID(EventID, teamSize: Integer): Integer;
+var
+  v: variant;
+  meters: Integer;
+begin
+  result := 0;
+  v := SCM.scmConnection.ExecSQLScalar('''
+
+    SELECT[meters]
+    FROM[SwimClubMeet].[dbo].[Distance]
+    INNER JOIN[dbo].[Event] ON[Distance].[DistanceID] = [Event].[DistanceID]
+    WHERE EventID = :ID
+    ''', [EventID]);
+  if not VarIsNull(v) then
+  begin
+    // divide the total relay distance by the number of swimmers in the relay
+    meters := Floor(v/teamSize);
+
+    // cross reference value 'meters' to find the XDistanceID for a swimmer.
+    v := SCM.scmConnection.ExecSQLScalar('''
+
+    SELECT[DistanceID]
+    FROM[SwimClubMeet].[dbo].[Distance]
+    WHERE[meters] = :ID
+    ''', [meters]);
+    if not VarIsNull(v) then
+    begin
+      result := v;
+    end;
+  end;
+end;
+
+
+procedure DistributeTeams(FDQuery: TFDQuery);
+var
+  i, j, k, m, n, AHeatID, AEventID, ATeamID, ATeamEntrantID, ALaneNum: Integer;
+  TeamRaceTime: TTIME;
+begin
+  i := 0;
+  // iterate through the list of nominees
+  while not FDQuery.Eof do
+  begin
+    Swimmers[i].MemberID := FDQuery.FieldByName('MemberID').AsInteger;
+    Swimmers[i].NomineeID := FDQuery.FieldByName('NomineeID').AsInteger;
+    Swimmers[i].TTB := FDQuery.FieldByName('TTB').AsDateTime;
+    Inc(i);
+    FDQuery.Next;
+  end;
+
+  // Distribute swimmers into teams
+  i := 0;   // Nominees - Swimmers
+  m := 0;   // 0 .. NumOfTeams-1
+  for j := 0 to NumOfHeats - 1 do
+  begin
+    // HEAT.
+    Heats[j].ID := j;
+    Heats[j].HeatNum := j+1;
+    Heats[j].EventID := AEventID;
+    for k := 0 to NumOfTeamsPerHeat - 1 do
+    begin
+      // TEAM.
+      Teams[m].ID := m; // Identifier 0...NumOfTeams-1
+      inc(m, 1);
+      ALaneNum := ScatterLanes(k, NumOfPoolLanes); // index is base 0
+      Teams[m].Lane := ALaneNum;
+      Teams[m].RaceTime := 0;
+
+      // set the number of swimmers permitted in a relay team
+      SetLength(Teams[k].Entrants, NumOfEntrantsPerTeam);
+      TeamRaceTime := 0;
+      // fill relay team with entrants.
+      for n := 0 to NumOfEntrantsPerTeam - 1 do
+      begin
+        if (i <= high(Swimmers)) then
+        begin
+          // TEAMENTRANT.
+          Teams[k].Entrants[n] := i;
+          TeamRaceTime := TeamRaceTime + Swimmers[i].TTB;
+        end;
+        inc(i, 1);
+      end;
+      // total est.racetime for this relay-team
+      Teams[k].RaceTime := TeamRaceTime;
+    end;
+    // TEST : exceed number of teams in total
+    if m >= NumOfTeams then break;
+  end;
+end;
+
+
+procedure InsertIntoTeams();
+var
+  qry1, qry2, qry3: TFDQuery;
+  AHeatID: integer;
+  ATeamID: integer;
+  ATeamEntrantID: integer;
+  i: integer;
+  j: integer;
+  k: integer;
+  m: integer;
+  n: integer;
+  p: integer;
+  r: integer;
+begin
+  k := 0;
+
+  for j := Low(Heats) to High(Heats) do
+  Begin
+    // Insert into dbo.HeatIndividual
+      qry1.SQL.Text := 'INSERT INTO HeatIndividual (HeatNum, OpenDT, HeatTypeID, HeatStatusID) VALUES (:HEATNUM, GETDATE(), 1, 1)';
+      qry1.ParamByName('HEATNUM').AsInteger := Heats[j].HeatNum;
+      qry1.ExecSQL;
+      // Get the new heat record's ID
+      AHeatID := qry1.Connection.GetLastAutoGenValue('HeatID');
+
+    for i := 0 to NumOfTeamsPerHeat - 1 do
+    begin
+      // Insert into Team table
+      qry2.SQL.Text := 'INSERT INTO Team (Lane, TeamNameID, HeatID) VALUES (:LANE, :TEAMNAMEID, :HEATID)';
+      qry2.ParamByName('LANE').AsInteger := Teams[i].Lane;
+      // dbo.TeamName is a table filled with ID's starting from 1, ending in 26 and Caption's TeamA...TeamZ.
+      // i is base 0.
+      // i is range 0 to NumOfTeams (unlikely, though not impossible, to exceed 25 (the number of team names - 1).
+      qry2.ParamByName('TEAMNAMEID').AsInteger := Teams[i].ID+1; // Base zero.
+      qry2.ParamByName('HEATID').AsInteger := AHeatID; // Base zero.
+      qry2.ExecSQL;
+      // Get the new team record's ID
+      ATeamID := qry2.Connection.GetLastAutoGenValue('TeamID');
+      p := 1; // Swimming order 1 to NumOfEntrantsPerTeam.
+      // Insert into TeamEntrant table
+      for m := Low(Teams[i].Entrants) to High(Teams[i].Entrants) do
+      begin
+        qry3.SQL.Text := 'INSERT INTO TeamEntrant (MemberID, Lane, TeamID, PersonalBest, TimeToBeat) VALUES (:MemberID, :Lane, :TeamID, :PersonalBest, :TimeToBeat)';
+        qry3.ParamByName('MemberID').AsInteger := Teams[i].Entrants[m];
+        qry3.ParamByName('Lane').AsInteger := p;
+        qry3.ParamByName('TeamID').AsInteger := ATeamID;
+        // locate swimmer in Swimmers...
+        for r  := Low(Swimmers) to High(Swimmers) do
+        begin
+          if Swimmers[r].MemberID = Teams[i].Entrants[m] then
+          begin
+            qry3.ParamByName('PersonalBest').AsTime := Swimmers[r].PB;
+            qry3.ParamByName('TimeToBeat').AsTime := Swimmers[r].TTB;
+            break;
+          end;
+        end;
+        qry3.ExecSQL;
+        inc(p, 1);
+      end;
+      inc(k, 1);
+    end;
+  End;
+end;
+
+
+
+{
+Retrieve Swimmer Data: Fetch the 16 swimmers’ data from the Nominee table,
+focusing on their MemberID and PB (Personal Best) times.
+}
+
+
+procedure RetriveSwimmingData(AEventID, poolLanes, teamSize: Integer);
+var
+  FDQuery: TFDQuery;
+  IniFileName: TFilename;
+  StrokeID, xDistanceID: integer;
+begin
+
+  FDQuery := TFDQuery.Create(nil);
+  try
+
+    StrokeID := GetStrokeID(AEventID);
+    xDistanceID := GetXDistanceID(AEventID, teamSize);
+    NumOfPoolLanes := poolLanes;
+    NumOfEntrantsPerTeam := teamSize;
+
+    FDQuery.Connection := SCM.scmConnection; // Your FireDAC connection
+    // Sort swimmers by personal best (PB)
+    // Order by ascending - FASTEST to SLOWEST
+    FDQuery.SQL.Text := '''
+    SELECT
+		 [NomineeID]
+		,[PB]
+		,[SeedTime]
+		,[AutoBuildFlag]
+		,[EventID]
+		,[MemberID]
+        -- Re-Calculate TimeToBeat...
+        -- algorithm 1 ... average of the 3 fastest racetimes
+        -- 1, 50%, MemberID, 25m, freestyle, SesssionStart.
+    ,dbo.TimeToBeat(1, default, default, [MemberID], :XDISTANCEID, :STROKEID, :SESSIONSTART) AS TTB
+    FROM [dbo].[Nominee]
+    WHERE [EventID] = :EVENTID
+    ORDER BY [TTB] ASC
+''';
+
+
+ //'SELECT MemberID, PB FROM dbo.Nominee WHERE EventID = :ID ORDER BY PB ASC';
+
+
+    FDQuery.ParamByName('EVENTID').AsInteger := AEventID;
+    FDQuery.ParamByName('SESSIONSTART').AsDateTime := SCM.Session_Start;
+    FDQuery.ParamByName('XDISTANCEID').AsDateTime := xDistanceID;
+    FDQuery.ParamByName('STROKEID').AsDateTime := StrokeID;
+    FDQuery.Open;
+
+    if FDQuery.IsEmpty then
+    begin
+      FDQuery.Close;
+      FDQuery.Free;
+      exit;
+    end;
+
+    // the number of club members who nominated for the relay event.
+    NumOfNominees := FDQuery.RecordCount;
+    // the number of teams
+    NumOfTeams := Ceil(NumOfNominees / teamsize);
+    if NumOfTeams = 0 then exit;
+    // check that the number of relay-teams doesn't exceed the number of lanes.
+    if NumOfTeams > poolLanes then
+      NumOfHeats := Ceil(NumOfTeams / poolLanes);
+
+    NumOfTeamsPerHeat := Ceil(NumOfTeams / NumOfHeats);
+
+    SetLength(Swimmers, NumOfNominees);
+    SetLength(Heats, NumOfHeats);
+    SetLength(Teams, NumOfTeams);
+
+    // Clean OUT ALL HEATs, TEAMs, TEAMSPLITs.
+    SCM.Heat_DeleteAll(AEventID);
+
+    // Process the data
+    // DistributeTeams(FDQuery);
+
+    // Process the data using Genetic Algorithm
+    GeneticAlgorithm();
+
+    InsertIntoTeams();
+
+  finally
+    FDQuery.Free;
+  end;
+end;
+
+
+
 
 
 end.
