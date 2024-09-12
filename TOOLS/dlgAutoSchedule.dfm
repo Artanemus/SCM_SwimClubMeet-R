@@ -131,8 +131,6 @@ object AutoSchedule: TAutoSchedule
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 318
-    ExplicitWidth = 667
     DesignSize = (
       671
       46)
@@ -145,7 +143,6 @@ object AutoSchedule: TAutoSchedule
       Caption = 'Cancel'
       TabOrder = 0
       OnClick = btnCancelClick
-      ExplicitLeft = 190
     end
     object btnOk: TButton
       Left = 275
@@ -156,7 +153,6 @@ object AutoSchedule: TAutoSchedule
       Caption = 'AUTO Schedule'
       TabOrder = 1
       OnClick = btnOkClick
-      ExplicitLeft = 271
     end
   end
   object tpHeatInterval: TTimePicker
