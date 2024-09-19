@@ -1,76 +1,6 @@
 object ABRelayData: TABRelayData
   Height = 480
   Width = 640
-  object qryXNominees: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    Connection = SCM.scmConnection
-    SQL.Strings = (
-      '    SELECT'
-      #9#9' [NomineeID]'
-      #9#9',[SeedTime]'
-      #9#9',[AutoBuildFlag]'
-      #9#9',[EventID]'
-      #9#9',[MemberID]'
-      '        -- Re-Calculate TimeToBeat...'
-      
-        '        -- algorithm default ... average of the 3 fastest raceti' +
-        'mes'
-      '        -- percentage default ... 50%'
-      '        -- MemberID, 25m, freestyle, SesssionStart.'
-      
-        '    ,dbo.TimeToBeat(1, :ALGORITHM, :PERCENT, [MemberID], :XDISTA' +
-        'NCEID, :STROKEID, :SESSIONSTART) AS TTB'
-      
-        '    ,dbo.PersonalBest([MemberID],:XDISTANCEID, :STROKEID, :SESSI' +
-        'ONSTART) AS PB'
-      '    FROM [dbo].[Nominee]'
-      '    WHERE [EventID] = :EVENTID'
-      '    ORDER BY [TTB] ASC')
-    Left = 128
-    Top = 248
-    ParamData = <
-      item
-        Name = 'ALGORITHM'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = 1
-      end
-      item
-        Name = 'PERCENT'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = 50
-      end
-      item
-        Name = 'XDISTANCEID'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = 1
-      end
-      item
-        Name = 'STROKEID'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = 1
-      end
-      item
-        Name = 'SESSIONSTART'
-        DataType = ftDate
-        ParamType = ptInput
-        Value = Null
-      end
-      item
-        Name = 'EVENTID'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = Null
-      end>
-  end
-  object dsXNominees: TDataSource
-    DataSet = qryXNominees
-    Left = 200
-    Top = 248
-  end
   object FDCommandUpdateEntrant: TFDCommand
     CommandText.Strings = (
       'USE [SwimClubMeet];'
@@ -148,7 +78,7 @@ object ABRelayData: TABRelayData
     Left = 128
     Top = 40
   end
-  object qryRNominee: TFDQuery
+  object qryRelayNominee: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     FilterOptions = [foCaseInsensitive]
     Filter = '[FName] LIKE '#39'%b%'#39
@@ -235,15 +165,16 @@ object ABRelayData: TABRelayData
       'DECLARE @Order INT;'
       'DECLARE @CalcDefault INT;'
       'DECLARE @BottomPercent FLOAT;'
-      'DECLARE @EventType AS INT;'
+      'DECLARE @TopNumber INT;'
+      ''
       ''
       'SET @EventID = :EVENTID;'
       'SET @Algorithm = :ALGORITHM;'
       'SET @ToggleName = :TOGGLENAME;'
       'SET @CalcDefault = :CALCDEFAULT'
       'SET @BottomPercent = :BOTTOMPERCENT'
-      'SET @EventType = :EVENTTYPE'
-      'SET @DistanceID = :DISTANCEID'
+      'SET @DistanceID = :XDISTANCEID'
+      'SET @TopNumber = :TOPNUMBER'
       ''
       'SET @StrokeID ='
       '('
@@ -270,17 +201,7 @@ object ABRelayData: TABRelayData
       ')'
       ''
       '-- Members given a swimming lane in the given event '
-      'IF @EventType = 1'
-      'BEGIN'
-      '    INSERT INTO #tmpID'
-      '    SELECT Entrant.MemberID'
-      '    FROM [SwimClubMeet].[dbo].[HeatIndividual]'
-      '        INNER JOIN Entrant'
-      '            ON Entrant.HeatID = HeatIndividual.HeatID'
-      '    WHERE HeatIndividual.EventID = @EventID;'
-      'END'
-      'ELSE'
-      'BEGIN'
+      ''
       '    INSERT INTO #tmpID'
       '    SELECT TeamEntrant.MemberID'
       '    FROM [SwimClubMeet].[dbo].[HeatIndividual]'
@@ -288,11 +209,11 @@ object ABRelayData: TABRelayData
       '            ON HeatIndividual.HeatID = Team.HeatID'
       '        INNER JOIN TeamEntrant'
       '            ON Team.TeamID = TeamEntrant.TeamID'
-      '    WHERE HeatIndividual.EventID = @EventID;'
-      'END'
+      '    WHERE HeatIndividual.EventID = @EventID'
+      '    AND HeatIndividual.HeatStatusID = 1;'
+      '     '
       ''
-      ''
-      'SELECT Nominee.EventID'
+      'SELECT TOP @TopNumber Nominee.EventID'
       '     , Nominee.MemberID'
       '     , Member.GenderID'
       '     , dbo.SwimmerAge(@SessionStart, Member.DOB) AS AGE'
@@ -319,7 +240,9 @@ object ABRelayData: TABRelayData
       '    LEFT OUTER JOIN Member'
       '        ON Nominee.MemberID = Member.MemberID'
       'WHERE Nominee.EventID = @EventID'
-      '      AND #tmpID.MemberID IS NULL ;'
+      '      AND #tmpID.MemberID IS NULL '
+      'ORDER BY TTB ASC      '
+      '      ;'
       '')
     Left = 128
     Top = 152
@@ -355,77 +278,21 @@ object ABRelayData: TABRelayData
         Value = 50.000000000000000000
       end
       item
-        Name = 'EVENTTYPE'
+        Name = 'XDISTANCEID'
         DataType = ftInteger
         ParamType = ptInput
         Value = 1
       end
       item
-        Name = 'DISTANCEID'
+        Name = 'TOPNUMBER'
         DataType = ftInteger
         ParamType = ptInput
-        Value = 1
+        Value = 1000
       end>
-    object qryRNomineeFName: TWideStringField
-      DisplayLabel = 'Nominees'
-      DisplayWidth = 30
-      FieldName = 'FName'
-      Origin = 'FName'
-      ReadOnly = True
-      Size = 60
-    end
-    object qryRNomineeTTB: TTimeField
-      Alignment = taCenter
-      DisplayLabel = 'TimeToBeat'
-      DisplayWidth = 12
-      FieldName = 'TTB'
-      Origin = 'TTB'
-      ReadOnly = True
-      DisplayFormat = 'nn:ss.zzz'
-    end
-    object qryRNomineePB: TTimeField
-      Alignment = taCenter
-      DisplayLabel = 'Personal Best'
-      DisplayWidth = 12
-      FieldName = 'PB'
-      Origin = 'PB'
-      ReadOnly = True
-      DisplayFormat = 'nn:ss.zzz'
-    end
-    object qryRNomineeAGE: TIntegerField
-      Alignment = taLeftJustify
-      DisplayLabel = '  AGE'
-      DisplayWidth = 5
-      FieldName = 'AGE'
-      Origin = 'AGE'
-      ReadOnly = True
-      DisplayFormat = '##0'
-    end
-    object qryRNomineeGender: TWideStringField
-      Alignment = taCenter
-      DisplayWidth = 9
-      FieldName = 'Gender'
-      Origin = 'Gender'
-      ReadOnly = True
-      Size = 2
-    end
-    object qryRNomineeMemberID: TIntegerField
-      FieldName = 'MemberID'
-      Origin = 'MemberID'
-      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
-    end
-    object qryRNomineeEventID: TIntegerField
-      FieldName = 'EventID'
-      Origin = 'EventID'
-    end
-    object qryRNomineeGenderID: TIntegerField
-      FieldName = 'GenderID'
-      Origin = 'GenderID'
-    end
   end
-  object dsRNominee: TDataSource
-    DataSet = qryRNominee
-    Left = 200
+  object dsRelayNominee: TDataSource
+    DataSet = qryRelayNominee
+    Left = 232
     Top = 152
   end
   object qryCountRNominee: TFDQuery
@@ -554,61 +421,5 @@ object ABRelayData: TABRelayData
         ParamType = ptInput
         Value = Null
       end>
-    object WideStringField: TWideStringField
-      DisplayLabel = 'Nominees'
-      DisplayWidth = 30
-      FieldName = 'FName'
-      Origin = 'FName'
-      ReadOnly = True
-      Size = 60
-    end
-    object TimeField1: TTimeField
-      Alignment = taCenter
-      DisplayLabel = 'TimeToBeat'
-      DisplayWidth = 12
-      FieldName = 'TTB'
-      Origin = 'TTB'
-      ReadOnly = True
-      DisplayFormat = 'nn:ss.zzz'
-    end
-    object TimeField2: TTimeField
-      Alignment = taCenter
-      DisplayLabel = 'Personal Best'
-      DisplayWidth = 12
-      FieldName = 'PB'
-      Origin = 'PB'
-      ReadOnly = True
-      DisplayFormat = 'nn:ss.zzz'
-    end
-    object IntegerField1: TIntegerField
-      Alignment = taLeftJustify
-      DisplayLabel = '  AGE'
-      DisplayWidth = 5
-      FieldName = 'AGE'
-      Origin = 'AGE'
-      ReadOnly = True
-      DisplayFormat = '##0'
-    end
-    object WideStringField2: TWideStringField
-      Alignment = taCenter
-      DisplayWidth = 9
-      FieldName = 'Gender'
-      Origin = 'Gender'
-      ReadOnly = True
-      Size = 2
-    end
-    object IntegerField2: TIntegerField
-      FieldName = 'MemberID'
-      Origin = 'MemberID'
-      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
-    end
-    object IntegerField3: TIntegerField
-      FieldName = 'EventID'
-      Origin = 'EventID'
-    end
-    object IntegerField4: TIntegerField
-      FieldName = 'GenderID'
-      Origin = 'GenderID'
-    end
   end
 end

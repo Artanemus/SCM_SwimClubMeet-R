@@ -443,7 +443,6 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="AUTOBUILD\uABRelayV1.pas"/>
         <DCCReference Include="AUTOBUILD\uABRelayExec.pas"/>
         <DCCReference Include="AUTOBUILD\dmABRelayData.pas">
             <Form>ABRelayData</Form>

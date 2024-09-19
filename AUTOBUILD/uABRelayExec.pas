@@ -8,49 +8,119 @@ System.Classes, dmSCM, dmSCMHelper,
 FireDAC.Comp.Client, FireDAC.Stan.Param,
 Vcl.Forms, SCMDefines, Data.DB;
 
+
+
 type
+
+  TTeam = record
+    // L A N E  >>> R E L A Y  - T E A M .
+    // (Typically a relay-team holds four swimmers)
+    ID: Integer; // IDENITY of the Team in dbo.Team.
+    Lane: Integer;   // Lane number.
+    RaceTime: TTime;  // The SUM of all PBs for swimmers in the relay-team.
+    Entrants: array of integer; // Holds memberID - 4 x swimmers per lane.
+    HeatID: Integer;
+  end;
+
+  TChromosome = array of TTeam;
+
+  THeat = record
+    // H E A T .
+    ID: integer;
+    HeatNum: integer;
+    EventID: integer;
+  end;
+
+  TSwimmer = record
+    // S W I M M E R .
+    NomineeID: Integer; // Nomination ID for the swimmer in dbo.Nominee.
+    MemberID: Integer; // Member ID for the swimmer used in dbo.Member table
+    TTB: TTime; // Time-to-beat. Estimated (calculated) swimming for XDistance.
+    PB: TTime; // Personal Best swimming time for the swimmer for the event.
+  end;
 
   TABRelayExec = class(TComponent)
   private
+
     { private declarations }
-    prefExcludeOutsideLanes: boolean;
-    prefNumOfSwimmersPerTeam: integer;
-    prefVerbose: boolean;
-    prefHeatAlgorithm: integer;
-    prefRaceTimeTopPercent: integer;
+    fExcludeOutsideLanes: boolean;
+    fVerbose: boolean;
+    fHeatAlgorithm: integer;
+    fRaceTimeBottomPercent: integer;
+    fUseDefRaceTime: boolean;
+    fSeperateGender: boolean;
+    fSeedMethod: integer;
+    fSeedDepth: integer;
+    fSuccess: boolean;
+    FConnection: TFDConnection;
+    fEventID: integer;
+    fDistanceID: integer;
+    fStrokeID: integer;
 
-    prefUseDefRaceTime: boolean;
-    prefSeperateGender: boolean;
-    rgpSeedMethod: integer;
-    spnSeedDepth: integer;
+    fTeamDistanceMetres: integer;
+    fIndvDistanceMetres: integer;
 
-  FConnection: TFDConnection;
-  fEventID: integer;
-  fXDistanceID: integer;
-  fStrokeID: integer;
+    fNumOfTeams: integer;
+    fNumOfNominees: integer;
+    fNumOfSwimmers: integer;
+    fNumOfHeats: integer;
+    fNumOfSwimmersPerTeam: integer;
+    fNumOfTeamsPerHeat: integer;
+    fNumOfPoolLanes: integer; // takes into consideration preferences for gutter lanes.
 
-  function GetPoolLaneCount: integer;
-  function GetXDistanceID(EventID, teamSize: integer): integer;
-  function GetStrokeID(EventID: integer): integer;
+    // D Y N A M I C   A R R A Y S .
+    // Nominee Database Pool : swimmers who nominated for the event.
+    Swimmers: array of TSwimmer;
+    // An array of heats.
+    Heats: array of THeat;
+    // An array of teams - each team will contain MemberID x fNumOfSwimmersPerTeam.
+    Teams: array of TTeam;
+    // An array of swimmers, used by 'bin packing routine' using a genetic algorithm.
+    Population: array of TChromosome;
 
-  procedure ReadPreferences(IniFileName: string);
-  procedure RetriveSwimmingData(AEventID, poolLanes, teamSize: Integer);
-  procedure InsertIntoTeams();
+    PopulationSize: Integer; // ... fDivNumOfSwimmers.
+    Generations: Integer; // = 1000;
+    MutationRate: Double; // = 0.01;
 
-//  procedure Distribute(FDQuery: TFDQuery; AEventID: integer);
+
+    function GetPoolLaneCount: integer;
+    function GetNumberOfSwimmersPerTeam(EventID: integer): integer;
+    function GetIndvDistanceMetres(EventID, fNumOfSwimmersPerTeam: integer): integer;
+    function GetStrokeID(AEventID: integer): integer;
+    function GetDistanceID(EventID: integer): integer;
+
+    procedure ReadPreferences(IniFileName: string);
+    procedure RetriveSwimmingData(AEventID, fNumOfPoolLanes, fNumOfSwimmersPerTeam: integer);
+    procedure InsertIntoTeams();
+
+    // B i n   p a c k i n g   r o u t i n e s .
+    function Crossover(Parent1, Parent2: TChromosome): TChromosome;
+    function Fitness(Chromosome: TChromosome): Double;
+    procedure GeneticAlgorithm;
+    function GetNumberOfNominees(AEventID: Integer): integer;
+    function InitializePopulation: TChromosome;
+    procedure Mutate(var Chromosome: TChromosome);
+    procedure Swap(var A, B: Integer);
+    function TournamentSelection: TChromosome;
+    function GetXDistanceID(EventID, fNumOfSwimmersPerTeam: integer): integer;
+
+
+
+    // procedure Distribute(FDQuery: TFDQuery; AEventID: integer);
 
   protected
     { protected declarations }
 
+
   public
     { public declarations }
     procedure ExecAutoBuildRelay();
-    procedure Prepare(AConnection: TFDConnection;  ASwimClubID, AEventID: Integer);
+    procedure Prepare(AConnection: TFDConnection; AEventID: integer);
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
 
-  published
     { published declarations }
+    property Success: boolean read fSuccess write fSuccess;
 
   end;
 
@@ -58,8 +128,8 @@ implementation
 
 { TAutoBuildRelayExec }
 
-uses System.Math, System.IniFiles, SCMUtility, uABRelayV1,
-  dmABRelayData;
+uses System.Math, System.IniFiles, SCMUtility,
+  dmABRelayData, system.Generics.Collections;
 
 {
 procedure TAutoBuildRelayExec.Distribute(FDQuery: TFDQuery; AEventID: integer);
@@ -113,21 +183,28 @@ constructor TABRelayExec.Create(AOwner: TComponent);
 begin
   inherited;
   fEventID := 0;
+  fDistanceID := 1;
   FConnection := nil;
-  fXDistanceID := 1;
+  fTeamDistanceMetres:=0;
+  fIndvDistanceMetres:=0;
   fStrokeID := 1;
+  fSuccess := false;
 
   // I N I T I A L I Z E   P R E F E R E N C E S .
-  prefExcludeOutsideLanes := false;
-  prefHeatAlgorithm := 1;
-  prefNumOfSwimmersPerTeam := 4;
-  prefRaceTimeTopPercent := 50;
-  prefVerbose := false;
-  prefRaceTimeTopPercent := 50;
-  prefUseDefRaceTime := true;
-  prefSeperateGender := false;
-  rgpSeedMethod := 0;
-  spnSeedDepth := 3;
+  fExcludeOutsideLanes := false;
+  fHeatAlgorithm := 1;
+  fNumOfSwimmersPerTeam := 4;
+  fRaceTimeBottomPercent := 50;
+  fVerbose := false;
+  fRaceTimeBottomPercent := 50;
+  fUseDefRaceTime := true;
+  fSeperateGender := false;
+  fSeedMethod := 0;
+  fSeedDepth := 3;
+
+  PopulationSize := 100;
+  Generations := 1000;
+  MutationRate := 0.01;
 
 end;
 
@@ -142,107 +219,204 @@ procedure TABRelayExec.ExecAutoBuildRelay();
 var
   IniFileName: TFileName;
   v: variant;
-  poolLanes: integer;
+  fNumOfPoolLanes: integer;
+  s: string;
 begin
   // A S S E R T .
+  fSuccess := false;
   // data module : use Prepare to initialize...
   if not assigned(ABRelayData) then exit;
   if fEventID = 0 then exit;
-  // is this a team event.
-
-  prefExcludeOutsideLanes := false;
-  prefNumOfSwimmersPerTeam := 4;
-
   // r e a d   p r e f e r e n c e .
   IniFileName := SCMUtility.GetSCMPreferenceFileName();
-  if (FileExists(IniFileName)) then
-    ReadPreferences(IniFileName);
-
+  if (FileExists(IniFileName)) then ReadPreferences(IniFileName);
+  // C h e c k   e v e n t   t y p e  .
   v :=
     SCM.scmConnection.ExecSQLScalar
     ('SELECT EventTypeID FROM [dbo].[Event] WHERE EventID = :ID', [fEventID]);
-  if VarIsNull(v) then
+
+  if VarIsNull(v) then  // Is this a team event?
   begin
-    if prefVerbose then
-      Application.MessageBox('Event type not assigned.', 'SCM Error', MB_OK)
-    else
-      exit; // error - NULL.
+    if fVerbose then
+    begin
+      s := '''
+      Event type isn't known by Auto-Build.
+      Auto-Build ENDED.
+      ''';
+      Application.MessageBox(PChar(s), 'Auto Build Relays Error', MB_OK);
+    end;
+    exit;
+  end;
+  if (v <> 2) then
+  begin
+    if fVerbose then
+    begin
+      s := '''
+      This event isn''t a relay.
+      Auto-Build ENDED.
+      ''';
+      Application.MessageBox(PChar(s), 'Auto Build Relays Error', MB_OK);
+    end;
+    exit; // event type not a team event.
   end;
 
-  if v <> 2 then
+  // S t r o k e I D .
+  fStrokeID := GetStrokeID(fEventID);
+  // C h e c k   s w i m m i n g   s t r o k e .
+
+  if (fStrokeID = 0) or (fStrokeID > 4) then
   begin
-    if prefVerbose then
-      Application.MessageBox('The event isn''t a relay', 'SCM Error', MB_OK)
-    else
-      exit; // error - event type not a team event.
+    if fVerbose then
+    begin
+      case fStrokeID of
+        5: // Is Medley team relays OK?
+        s := '''
+        Medley Relays cannot be constructed by Auto-Built.
+        Auto-Build ENDED.
+        ''';
+        else // NOT FS,BK, BS, BF ?
+        s := '''
+        The swimming stroke is not accepted by Auto-Build.
+        Auto-Build ENDED.
+        ''';
+      end;
+      Application.MessageBox(PChar(s), 'Auto Build Relays Error', MB_ICONERROR or MB_OK);
+    end;
+    exit;
   end;
 
-  v :=
-    SCM.scmConnection.ExecSQLScalar
-    ('SELECT StrokeID FROM [dbo].[Event] WHERE EventID = :ID', [fEventID]);
-  if VarIsNull(v) then exit; // error - unknow swimming stroke.
+  // D i s t a n c e I D .
+  fDistanceID := GetDistanceID(fEventID);
+  // C h e c k  P o o l   l a n e s .
+  fNumOfPoolLanes := GetPoolLaneCount;
+  // A S S E R T .
+  if fNumOfPoolLanes = 0 then
+  begin
+    if fVerbose then
+    begin
+      s := '''
+      No pool lanes are available. Check your swim-club preferences.
+      Auto-Build ENDED.
+      ''';
+      Application.MessageBox(PChar(s), 'SwimClubMeet Error', MB_ICONERROR or MB_OK)
+    end;
+    exit;
+  end;
 
-  if v = 5 then
-    if prefVerbose then
-      Application.MessageBox('''
-        Medley relays cannot be auto-built by SwimClubMeet.
-        Auto-build will abort.
-        ''',
-        'SwimClubMeet Error',
-        MB_ICONERROR or MB_OK)
-    else
-      exit; // error - relay-type = Medley
+  // use ABREV in dbo.Distance to calculate NumOfSwimmersInTeam.
+  // TODO:
+  fNumOfSwimmersPerTeam := GetNumberOfSwimmersPerTeam(fDistanceID);
+  // use Meters in dbo.Distance to calculate team distance.
+  fTeamDistanceMetres:= 0;
+  // Individual Distance = the distance swum by each swimmer in the team.
+  // WIT: 4x25m relay Total 100m ... entrants swim 25m.
+  fIndvDistanceMetres := GetIndvDistanceMetres(fEventID, fNumOfSwimmersPerTeam);
+  // use ABREV in dbo.Distance to calculate indv distance.
+  fIndvDistanceMetres:= 0;
 
-
-  poolLanes := GetPoolLaneCount;
-  // ASSERT
-  if poolLanes = 0 then
-    if prefVerbose then
-      Application.MessageBox('''
-        No pool lanes are available. Check swim-club preferences.
-        Note: Nominees for relays that have been raced or close are excluded.
-        Auto-build will abort.
-        ''',
-        'SwimClubMeet Error',
-        MB_ICONERROR or MB_OK)
-    else
-      exit;
-
-  // Test for nominees
-  v := 0;
-  ABRelayData.qryCountRNominee.Close;
-  ABRelayData.qryCountRNominee.ParamByName('EVENTID').AsInteger := fEventID;
-  ABRelayData.qryCountRNominee.Prepare;
-  ABRelayData.qryCountRNominee.Open;
-  if ABRelayData.qryCountRNominee.Active then
-    v := ABRelayData.qryCountRNominee.FieldByName('CountNominees').AsInteger;
-
-  if VarIsNull(v) OR v=0 then
-    if prefVerbose then
-      Application.MessageBox('''
+  fNumOfNominees := GetNumberOfNominees(fEventID);
+  if fNumOfNominees = 0 then // No swimmers!.
+  begin
+    if fVerbose then
+    begin
+      s := '''
         No nominees were found for the team event.
         Note: Nominees for this event that have been raced or close are excluded.
-        Auto-build will abort.
-        ''',
-        'SwimClubMeet Error',
-        MB_ICONERROR or MB_OK)
-    else
-    exit; // error - NULL.
+        Auto-build ENDED.
+      ''';
+      Application.MessageBox(Pchar(s), 'Auto Build Relay', MB_ICONEXCLAMATION or MB_OK);
+    end;
+    exit;
+  end;
+
+  // Perfect number of swimmers - no partial teams.
+  fNumOfSwimmers := v - (v mod fNumOfSwimmersPerTeam);
+  // Perfect number of teams.
+  fNumOfTeams := v div fNumOfSwimmers;
+
+  {TODO -oBSA -cAutoBuild Relay : Enable the user to select nominees to trim. }
+  if (fNumOfNominees > fNumOfSwimmers) then
+  begin
+    if fVerbose then
+    begin
+      s := '''
+        Not enough swimmers to complete all teams.
+        Entrants will be removed (slowest swimmer first. Nomination will remain).
+        Manually assign these nominees - should you wish them to participate.
+      ''';
+      // if fVerbose then
+      Application.MessageBox(Pchar(s), 'SwimClubMeet Warning', MB_ICONERROR or MB_OK);
+    end;
+  end;
+
+  // D I S R I B U T E  - TEAMS ACROSS MULIT-HEATS.
+  // check that the number of relay-teams doesn't exceed the number of lanes.
+  if fNumOfTeams > fNumOfPoolLanes then
+  fNumOfHeats := Ceil(fNumOfTeams / fNumOfPoolLanes);
+  // distribute evenly relay teams accross heats.
+  fNumOfTeamsPerHeat := Ceil(fNumOfTeams / fNumOfHeats);
 
 
 
-  {TODO -oBSA -cGeneral : Progress bar and captions ....}
+
+  // Assign params passed.
+  fNumOfPoolLanes := fNumOfPoolLanes;
+
+
+  {TODO -oBSA -cGeneral : Thread: AutoBuild Relays - Progress bar ....}
 
   // Clean OUT ALL HEATs, TEAMs, TEAMEntrants, TEAMSPLITs.
   // Does not remove raced or closed heats .
   SCM.Heat_DeleteAll(fEventID, true);
+  // D i s t r i b u t e  1 .  (Gender, house, etc)
 
-  // perform Auto-Build.
-  RetriveSwimmingData(fEventID, poolLanes, prefNumOfSwimmersPerTeam);
+  // R e t r i v e .  Check - fSuccess.
+  RetriveSwimmingData(fEventID, fNumOfPoolLanes, fNumOfSwimmersPerTeam);
+  if fSuccess then
+  begin
+    // Process the data using Genetic Algorithm
+    GeneticAlgorithm();
+    if fSuccess then InsertIntoTeams();
+    // D i s t r i b u t e  2 .  (Gender, house, etc)
+    // if fSuccess then DistributeTeams(FDQuery);
+  end;
 
   // Refresh UI and data
-  if Owner is TForm then
-    SendMessage(TForm(Owner).Handle, SCM_AUTOBUILDRELAYSFIN, 0, 0);
+  //  if Owner is TForm then
+  //    SendMessage(TForm(Owner).Handle, SCM_AUTOBUILDRELAYSFIN, 0, 0);
+end;
+
+function TABRelayExec.GetDistanceID(EventID: integer): integer;
+var
+  v: variant;
+begin
+  result := 0;
+  v := SCM.scmConnection.ExecSQLScalar
+  ('SELECT DistanceID FROM [dbo].[Event] WHERE EventID = :ID', [EventID]);
+  if not VarIsNull(v) then
+    result := v
+end;
+
+function TABRelayExec.GetIndvDistanceMetres(EventID,
+  fNumOfSwimmersPerTeam: integer): integer;
+begin
+
+end;
+
+function TABRelayExec.GetNumberOfSwimmersPerTeam(EventID: integer): integer;
+var
+  v: variant;
+  s: string;
+begin
+  result := 0;
+  s := '''
+  SELECT ABREV FROM [SwimClubMeet].[dbo].[Event]
+  INNER JOIN [dbo].[Distance] ON [Event].DistanceID = [Distance].[DistanceID]
+  WHERE EventID = :ID
+  ''';
+  v := SCM.scmConnection.ExecSQLScalar(s, [EventID]);
+  if VarIsNull(v) then exit;
+
 end;
 
 function TABRelayExec.GetPoolLaneCount: integer;
@@ -253,25 +427,25 @@ begin
   // Get number of lanes from dbo.SwimClub.NumOfLanes
   Lanes := SCM.SwimClub_NumberOfLanes;
   // Adjust lanes if excluding outside lanes
-  if (prefExcludeOutsideLanes) then Dec(Lanes, 2);
+  if (fExcludeOutsideLanes) then Dec(Lanes, 2);
   // Ensure there is at least one lane
   if (Lanes < 1) then Exit;
   result := Lanes;
 end;
 
-function TABRelayExec.GetStrokeID(EventID: integer): integer;
+function TABRelayExec.GetStrokeID(AEventID: integer): integer;
 var
   v: variant;
 begin
   result := 0;
   v := SCM.scmConnection.ExecSQLScalar
-    ('SELECT StrokeID FROM [dbo].[Event] WHERE [EventID] = :ID', [EventID]);
+    ('SELECT StrokeID FROM [dbo].[Event] WHERE [EventID] = :ID', [AEventID]);
   if not VarIsNull(v) then
     result := v;
 end;
 
 function TABRelayExec.GetXDistanceID(EventID,
-  teamSize: integer): integer;
+  fNumOfSwimmersPerTeam: integer): integer;
 var
   v: variant;
   meters: Integer;
@@ -286,12 +460,12 @@ begin
   if not VarIsNull(v) then
   begin
     // divide the total relay distance by the number of swimmers in the relay
-    meters := Floor(v/teamSize);
+    meters := Floor(v/fNumOfSwimmersPerTeam);
     // cross reference value 'meters' to find the XDistanceID for a swimmer.
     v := SCM.scmConnection.ExecSQLScalar('''
     SELECT[DistanceID]
     FROM[SwimClubMeet].[dbo].[Distance]
-    WHERE[meters] = :ID
+    WHERE[meters] = :ID AND [EventTypeID] = 1
     ''', [meters]);
     if not VarIsNull(v) then
     begin
@@ -328,7 +502,7 @@ begin
       // Get the new heat record's ID
       AHeatID := qry1.Connection.GetLastAutoGenValue('HeatID');
 
-    for i := 0 to NumOfTeamsPerHeat - 1 do
+    for i := 0 to fNumOfTeamsPerHeat - 1 do
     begin
       // Insert into Team table
       qry2.SQL.Text := 'INSERT INTO Team (Lane, TeamNameID, HeatID) VALUES (:LANE, :TEAMNAMEID, :HEATID)';
@@ -375,8 +549,7 @@ begin
 
 end;
 
-procedure TABRelayExec.Prepare(AConnection: TFDConnection; ASwimClubID,
-  AEventID: Integer);
+procedure TABRelayExec.Prepare(AConnection: TFDConnection; AEventID: Integer);
 begin
   FConnection := AConnection;
   fEventID := AEventID;
@@ -392,6 +565,7 @@ begin
     if not assigned(ABRelayData) then
       raise Exception.Create('Auto-Build Relay''s Data Module creation error.');
   end;
+
 end;
 
 procedure TABRelayExec.ReadPreferences(IniFileName: string);
@@ -403,175 +577,252 @@ begin
 
   // When true gutter lanes are not used in events.
   i := iFile.ReadInteger('Preferences', 'ExcludeOutsideLanes', 0);
-  prefExcludeOutsideLanes := (i = 1);
+  fExcludeOutsideLanes := (i = 1);
 
   // 2024-09-10
   // Relay teams, by default, have four swimmers.
-  prefNumOfSwimmersPerTeam := iFile.ReadInteger('Preferences', 'NumOfSwimmersPerTeam', 4);
+  fNumOfSwimmersPerTeam := iFile.ReadInteger('Preferences', 'NumOfSwimmersPerTeam', 4);
   // Verbose. Message all errors.
   i := iFile.ReadInteger('Preferences', 'Verbose', 0);
-  prefVerbose  := (i = 1);
+  fVerbose  := (i = 1);
 
   // TTB defaults to (1) .. the entrant's average of top 3 race-times
-  prefHeatAlgorithm :=
+  fHeatAlgorithm :=
     (iFile.ReadInteger('Preferences', 'HeatAlgorithm', 1));
 
   // default to - get an average race-time of other swimmers
   i := iFile.ReadInteger('Preferences',  'UseDefRaceTime', 1);
-  prefUseDefRaceTime  := (i = 1);
+  fUseDefRaceTime  := (i = 1);
 
   // The bottom percent to select from ... default is 50%
-  prefRaceTimeTopPercent :=
+  fRaceTimeBottomPercent :=
     (iFile.ReadInteger('Preferences', 'RaceTimeTopPercent', 50));
 
   i := iFile.ReadInteger('Preferences', 'SeperateGender', 0);
-  prefSeperateGender := (i = 1);
+  fSeperateGender := (i = 1);
 
   // SCM default seeding.
-  rgpSeedMethod := iFile.ReadInteger('Preferences', 'SeedMethod', 0);
+  fSeedMethod := iFile.ReadInteger('Preferences', 'SeedMethod', 0);
 
   // 2020-11-01 auto-build v2 seed depth for Circle Seed */
-  spnSeedDepth := (iFile.ReadInteger('Preferences', 'SeedDepth', 3));
+  fSeedDepth := (iFile.ReadInteger('Preferences', 'SeedDepth', 3));
 
   iFile.free;
 end;
 
-procedure TABRelayExec.RetriveSwimmingData(AEventID, poolLanes,
-  teamSize: Integer);
+procedure TABRelayExec.RetriveSwimmingData(AEventID, fNumOfPoolLanes,
+  fNumOfSwimmersPerTeam: Integer);
 var
-  FDQuery: TFDQuery;
-  IniFileName: TFilename;
   StrokeID, xDistanceID, i: integer;
+  qry: TFDQuery;
 begin
 {
 Retrieve Swimmer Data: Fetch swimmers’ data from the Nominee table,
 focusing on their MemberID TTB (TimeToBeat) and PB (Personal Best) times.
 }
 
-  {
-    SET @EventID = :EVENTID;
-    SET @Algorithm = :ALGORITHM;
-    SET @ToggleName = :TOGGLENAME;
-    SET @CalcDefault = :CALCDEFAULT
-    SET @BottomPercent = :BOTTOMPERCENT
-    SET @EventType = :EVENTTYPE
-    SET @DistanceID = :DISTANCEID
+
+  qry := ABRelayData.qryRelayNominee;  // improves reability.
+
+    qry.Close;
+    qry.ParamByName('TOPNUMBER').AsInteger := fNumOfSwimmers;
+    qry.ParamByName('EVENTID').AsInteger := AEventID;
+    qry.ParamByName('SESSIONSTART').AsDateTime := SCM.Session_Start;
+    qry.ParamByName('XDISTANCEID').AsDateTime := xDistanceID;
+    qry.ParamByName('STROKEID').AsDateTime := StrokeID;
+    qry.ParamByName('ALGORITHM').AsDateTime := fHeatAlgorithm;
+    qry.ParamByName('BOTTOMPERCENT').AsDateTime := fRaceTimeBottomPercent;
+    qry.Prepare;
+    qry.Open;
+
+    if not qry.Active then exit;
 
 
-  ABRelayData.qryRNominee.Close;
-  ABRelayData.qryRNominee.ParamByName('EVENTID').AsInteger := fEventID;
-  ABRelayData.qryRNominee.ParamByName('ALGORITHM').AsInteger := prefHeatAlgorithm;
-  ABRelayData.qryRNominee.ParamByName('TOGGLENAME').AsBoolean := false;
-  ABRelayData.qryRNominee.ParamByName('CALCDEFAULT').AsInteger := prefRaceTimeTopPercent;
-  ABRelayData.qryRNominee.ParamByName('BOTTOMPERCENT').AsInteger := prefRaceTimeTopPercent;
-  ABRelayData.qryRNominee.ParamByName('EVENTTYPE').AsInteger := prefRaceTimeTopPercent;
-  ABRelayData.qryRNominee.ParamByName('DISTANCEID').AsInteger := XDistanceID;
-
-   }
-
-
-{
-  poolLanes = swimming lanes - prefExcludeOutsideLanes
-  teamSize = number of swimmers in a relay-team. Default = 4;
-}
-
-  // r e a d   p r e f e r e n c e .
-  IniFileName := SCMUtility.GetSCMPreferenceFileName();
-  if (FileExists(IniFileName)) then
-    ReadPreferences(IniFileName);
-
-  // Freestyle, backstroke, breaststroke, butterfly.
-  // This routine doesn't autobuild Medley-Relays
-  // StrokeID = 5 (Medley-Relays) illegal.
-  StrokeID := GetStrokeID(AEventID);
-  // XDistance = the distance each entrant in relay-team swims.
-  // WIT: 4x25m relay Total 100m ... entrants swim 25m.
-  xDistanceID := GetXDistanceID(AEventID, teamSize);
-
-  // Assign params passed.
-  NumOfPoolLanes := poolLanes;
-  NumOfEntrantsPerTeam := teamSize;
-
-  FDQuery := TFDQuery.Create(nil);
-  try
-
-    FDQuery.Connection := SCM.scmConnection; // Your FireDAC connection
-    // Sort swimmers by personal best (PB)
-    // Order by ascending - FASTEST to SLOWEST
-    FDQuery.SQL.Text := '''
-    SELECT
-		 [NomineeID]
-		,[SeedTime]
-		,[AutoBuildFlag]
-		,[EventID]
-		,[MemberID]
-        -- Re-Calculate TimeToBeat...
-        -- algorithm default ... average of the 3 fastest racetimes
-        -- percentage default ... 50%
-        -- MemberID, 25m, freestyle, SesssionStart.
-    ,dbo.TimeToBeat(1, :ALGORITHM, :PERCENT, [MemberID], :XDISTANCEID, :STROKEID, :SESSIONSTART) AS TTB
-    ,dbo.PersonalBest([MemberID],:XDISTANCEID, :STROKEID, :SESSIONSTART) AS PB
-    FROM [dbo].[Nominee]
-    WHERE [EventID] = :EVENTID
-    ORDER BY [TTB] ASC
-''';
-
-    FDQuery.ParamByName('EVENTID').AsInteger := AEventID;
-    FDQuery.ParamByName('SESSIONSTART').AsDateTime := SCM.Session_Start;
-    FDQuery.ParamByName('XDISTANCEID').AsDateTime := xDistanceID;
-    FDQuery.ParamByName('STROKEID').AsDateTime := StrokeID;
-    FDQuery.ParamByName('ALGORITHM').AsDateTime := prefHeatAlgorithm;
-    FDQuery.ParamByName('PERCENT').AsDateTime := prefRaceTimeTopPercent;
-    FDQuery.Open;
-
-    if FDQuery.IsEmpty then
+    if qry.IsEmpty then
     begin
-      FDQuery.Close;
-      FDQuery.Free;
+      qry.Close;
+      fSuccess := false;
       exit;
     end;
 
-    // the number of club members who nominated for the relay event.
-    NumOfNominees := FDQuery.RecordCount;
-    // the number of teams
-    NumOfTeams := Ceil(NumOfNominees / teamsize);
-    // ASSERT
-    if NumOfTeams = 0 then exit;
-    // check that the number of relay-teams doesn't exceed the number of lanes.
-    if NumOfTeams > poolLanes then
-      NumOfHeats := Ceil(NumOfTeams / poolLanes);
-
-    NumOfTeamsPerHeat := Ceil(NumOfTeams / NumOfHeats);
-
-    SetLength(Swimmers, NumOfNominees);
-
+    // DIM ARRAY -
+    SetLength(Swimmers, fNumOfSwimmers);
     // iterate through the list of nominees
-    i := 0;
-    while not FDQuery.Eof do
+    for I := Low(Swimmers) to High(Swimmers) do
     begin
-      Swimmers[i].MemberID := FDQuery.FieldByName('MemberID').AsInteger;
-      Swimmers[i].NomineeID := FDQuery.FieldByName('NomineeID').AsInteger;
-      Swimmers[i].TTB := FDQuery.FieldByName('TTB').AsDateTime;
-      Swimmers[i].pB := FDQuery.FieldByName('pB').AsDateTime;
-      Inc(i, 1);
-      FDQuery.Next;
+      Swimmers[i].MemberID := qry.FieldByName('MemberID').AsInteger;
+      Swimmers[i].NomineeID := qry.FieldByName('NomineeID').AsInteger;
+      Swimmers[i].TTB := qry.FieldByName('TTB').AsDateTime;
+      Swimmers[i].PB := qry.FieldByName('pB').AsDateTime;
+      qry.Next;
     end;
 
-    SetLength(Heats, NumOfHeats);
-    SetLength(Teams, NumOfTeams);
+    SetLength(Heats, fNumOfHeats);
+    SetLength(Teams, fNumOfTeams);
 
 
-    // Process the data
-    // DistributeTeams(FDQuery);
 
-    // Process the data using Genetic Algorithm
-    GeneticAlgorithm();
+end;
 
-    InsertIntoTeams();
 
-  finally
-    FDQuery.Free;
+function TABRelayExec.InitializePopulation: TChromosome;
+var
+  i, j: Integer;
+  Chromosome: TChromosome;
+begin
+  SetLength(Chromosome, fNumOfTeams);
+  for i := 0 to fNumOfTeams - 1 do
+  begin
+    Chromosome[i].ID := i;
+    Chromosome[i].Lane := i mod fNumOfPoolLanes;
+    SetLength(Chromosome[i].Entrants, fNumOfSwimmersPerTeam);
+    for j := 0 to fNumOfSwimmersPerTeam - 1 do
+    begin
+      Chromosome[i].Entrants[j] := Random(fNumOfSwimmers);
+    end;
+  end;
+  Result := Chromosome;
+end;
+
+function TABRelayExec.Fitness(Chromosome: TChromosome): Double;
+var
+  i, j: Integer;
+  TotalTime, MaxTime, MinTime: TTime;
+begin
+  MaxTime := 0;
+  MinTime := MaxInt;
+  TotalTime := 0;
+  for i := 0 to High(Chromosome) do
+  begin
+    Chromosome[i].RaceTime := 0;
+    for j := 0 to High(Chromosome[i].Entrants) do
+    begin
+      Chromosome[i].RaceTime := Chromosome[i].RaceTime + Swimmers[Chromosome[i].Entrants[j]].TTB;
+    end;
+    if Chromosome[i].RaceTime > MaxTime then
+      MaxTime := Chromosome[i].RaceTime;
+    if Chromosome[i].RaceTime < MinTime then
+      MinTime := Chromosome[i].RaceTime;
+    TotalTime := TotalTime + Chromosome[i].RaceTime;
+  end;
+  Result := MaxTime - MinTime;
+end;
+
+function TABRelayExec.TournamentSelection: TChromosome;
+var
+  i, BestIndex: Integer;
+  BestFitness, CurrentFitness: Double;
+begin
+  BestIndex := Random(PopulationSize);
+  BestFitness := Fitness(Population[BestIndex]);
+  for i := 1 to 4 do
+  begin
+    CurrentFitness := Fitness(Population[Random(PopulationSize)]);
+    if CurrentFitness < BestFitness then
+    begin
+      BestFitness := CurrentFitness;
+      BestIndex := i;
+    end;
+  end;
+  Result := Population[BestIndex];
+end;
+
+function TABRelayExec.Crossover(Parent1, Parent2: TChromosome): TChromosome;
+var
+  i, CrossoverPoint: Integer;
+  Child: TChromosome;
+begin
+  SetLength(Child, Length(Parent1));
+  CrossoverPoint := Random(Length(Parent1));
+  for i := 0 to CrossoverPoint do
+    Child[i] := Parent1[i];
+  for i := CrossoverPoint + 1 to High(Parent2) do
+    Child[i] := Parent2[i];
+  Result := Child;
+end;
+
+procedure TABRelayExec.Swap(var A, B: Integer);
+var
+  Temp: Integer;
+begin
+  Temp := A;
+  A := B;
+  B := Temp;
+end;
+
+procedure TABRelayExec.Mutate(var Chromosome: TChromosome);
+var
+  Team1, Team2, Swimmer1, Swimmer2: Integer;
+begin
+  if Random < MutationRate then
+  begin
+    Team1 := Random(Length(Chromosome));
+    Team2 := Random(Length(Chromosome));
+    Swimmer1 := Random(Length(Chromosome[Team1].Entrants));
+    Swimmer2 := Random(Length(Chromosome[Team2].Entrants));
+    Swap(Chromosome[Team1].Entrants[Swimmer1], Chromosome[Team2].Entrants[Swimmer2]);
   end;
 end;
+
+procedure TABRelayExec.GeneticAlgorithm;
+var
+  i, j: Integer;
+  Parent1, Parent2, Child: TChromosome;
+  BestChromosome: TChromosome;
+  BestFitness, CurrentFitness: Double;
+begin
+  SetLength(Population, PopulationSize);
+  for i := 0 to PopulationSize - 1 do
+    Population[i] := InitializePopulation;
+
+  for i := 0 to Generations - 1 do
+  begin
+    for j := 0 to PopulationSize - 1 do
+    begin
+      Parent1 := TournamentSelection;
+      Parent2 := TournamentSelection;
+      Child := Crossover(Parent1, Parent2);
+      Mutate(Child);
+      Population[j] := Child;
+    end;
+  end;
+
+  BestChromosome := Population[0];
+  BestFitness := Fitness(BestChromosome);
+  for i := 1 to PopulationSize - 1 do
+  begin
+    CurrentFitness := Fitness(Population[i]);
+    if CurrentFitness < BestFitness then
+    begin
+      BestFitness := CurrentFitness;
+      BestChromosome := Population[i];
+    end;
+  end;
+
+  // Use BestChromosome to set your final teams
+  SetLength(Teams, Length(BestChromosome));
+  for i := 0 to High(BestChromosome) do
+    Teams[i] := BestChromosome[i];
+end;
+
+function TABRelayExec.GetNumberOfNominees(AEventID: Integer): integer;
+var
+  v: variant;
+  s: string;
+begin
+  Result := 0;
+  // Test for nominees. Count total number of nominees.
+  ABRelayData.qryCountRNominee.Close;
+  ABRelayData.qryCountRNominee.ParamByName('EVENTID').AsInteger := AEventID;
+  ABRelayData.qryCountRNominee.Prepare;
+  ABRelayData.qryCountRNominee.Open;
+  if ABRelayData.qryCountRNominee.Active then
+    v := ABRelayData.qryCountRNominee.FieldByName('CountNominees').AsInteger;
+  ABRelayData.qryCountRNominee.Close;
+  if VarIsNull(v) or (v=0) then exit;
+  Result := v;
+end;
+
+
 
 end.

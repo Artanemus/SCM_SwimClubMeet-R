@@ -83,7 +83,6 @@ uses
   dlgMemberClub in 'MEMBERS\dlgMemberClub.pas' {MemberClub},
   rptMemberCheckData in 'MEMBERS\rptMemberCheckData.pas' {MemberCheckData: TDataModule},
   dmMemberHouse in 'MEMBERS\dmMemberHouse.pas' {MemberHouse: TDataModule},
-  uABRelayV1 in 'AUTOBUILD\uABRelayV1.pas',
   uABRelayExec in 'AUTOBUILD\uABRelayExec.pas',
   dmABRelayData in 'AUTOBUILD\dmABRelayData.pas' {ABRelayData: TDataModule},
   dlgABRelay in 'AUTOBUILD\dlgABRelay.pas' {ABRelay};

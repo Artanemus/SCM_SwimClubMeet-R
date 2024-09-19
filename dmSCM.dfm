@@ -2440,4 +2440,256 @@ object SCM: TSCM
     Left = 256
     Top = 280
   end
+  object qryCountTEAMNominee: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    FilterOptions = [foCaseInsensitive]
+    Filter = '[FName] LIKE '#39'%b%'#39
+    Indexes = <
+      item
+        Active = True
+        Selected = True
+        Name = 'idxMemberFName'
+        Fields = 'FName'
+      end
+      item
+        Active = True
+        Name = 'idxMemberFNameDESC'
+        Fields = 'FName'
+        DescFields = 'FName'
+        Options = [soDescNullLast, soDescending]
+      end
+      item
+        Active = True
+        Name = 'idxTTB'
+        Fields = 'TTB'
+      end
+      item
+        Active = True
+        Name = 'idxTTBDESC'
+        Fields = 'TTB'
+        DescFields = 'TTB'
+        Options = [soDescending]
+      end
+      item
+        Active = True
+        Name = 'idxPB'
+        Fields = 'PB'
+      end
+      item
+        Active = True
+        Name = 'idxPBDESC'
+        Fields = 'PB'
+        DescFields = 'PB'
+        Options = [soDescending]
+      end
+      item
+        Active = True
+        Name = 'idxAge'
+        Fields = 'AGE'
+      end
+      item
+        Active = True
+        Name = 'idxAgeDESC'
+        Fields = 'AGE'
+        Options = [soDescNullLast, soDescending]
+      end
+      item
+        Active = True
+        Name = 'idxGender'
+        Fields = 'GenderID'
+      end
+      item
+        Active = True
+        Name = 'idxGenderDESC'
+        Fields = 'GenderID'
+        Options = [soDescNullLast, soDescending]
+      end>
+    IndexName = 'idxMemberFName'
+    DetailFields = 'MemberID'
+    Connection = scmConnection
+    FormatOptions.AssignedValues = [fvFmtDisplayTime]
+    FormatOptions.FmtDisplayTime = 'nn:ss.zzz'
+    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate, uvCheckReadOnly]
+    UpdateOptions.EnableDelete = False
+    UpdateOptions.EnableInsert = False
+    UpdateOptions.EnableUpdate = False
+    UpdateOptions.UpdateTableName = 'SwimClubMeet..Nominee'
+    UpdateOptions.KeyFields = 'MemberID'
+    SQL.Strings = (
+      'USE SwimClubMeet;'
+      ''
+      '-- NOTE: event type must be 2 (TEAM)'
+      '-- find nominees in relay event.'
+      '-- exclude raced and closed heats.'
+      '--'
+      '-- count nominees NO in event.'
+      ''
+      'DECLARE @EventID AS INT;'
+      'SET @EventID = :EVENTID;'
+      ''
+      '-- Drop a temporary table called '#39'#tmpA'#39
+      'IF OBJECT_ID('#39'tempDB..#tmpA'#39', '#39'U'#39') IS NOT NULL'
+      '    DROP TABLE #tmpA;'
+      ''
+      'CREATE TABLE #tmpA'
+      '('
+      '    MemberID INT'
+      ')'
+      '-- TEAM EVENT'
+      '-- Members given a swimming lane in the given event '
+      '-- HEAT IS NOT OPEN'
+      '    INSERT INTO #tmpA'
+      '    SELECT TeamEntrant.MemberID'
+      '    FROM [SwimClubMeet].[dbo].[HeatIndividual]'
+      '        INNER JOIN Team'
+      '            ON HeatIndividual.HeatID = Team.HeatID'
+      '        INNER JOIN TeamEntrant'
+      '            ON Team.TeamID = TeamEntrant.TeamID'
+      '    WHERE HeatIndividual.EventID = @EventID '
+      '    AND HeatIndividual.HeatStatusID <> 1;'
+      ''
+      'SELECT Count(NomineeID) AS CountNominees'
+      'FROM Nominee'
+      '    LEFT OUTER JOIN #tmpA'
+      '        ON #tmpA.MemberID = Nominee.MemberID'
+      '    LEFT OUTER JOIN Member'
+      '        ON Nominee.MemberID = Member.MemberID'
+      'WHERE Nominee.EventID = @EventID'
+      '      AND #tmpA.MemberID IS NULL ;'
+      '')
+    Left = 544
+    Top = 16
+    ParamData = <
+      item
+        Name = 'EVENTID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = Null
+      end>
+  end
+  object qryCountINDVNominee: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    FilterOptions = [foCaseInsensitive]
+    Filter = '[FName] LIKE '#39'%b%'#39
+    Indexes = <
+      item
+        Active = True
+        Selected = True
+        Name = 'idxMemberFName'
+        Fields = 'FName'
+      end
+      item
+        Active = True
+        Name = 'idxMemberFNameDESC'
+        Fields = 'FName'
+        DescFields = 'FName'
+        Options = [soDescNullLast, soDescending]
+      end
+      item
+        Active = True
+        Name = 'idxTTB'
+        Fields = 'TTB'
+      end
+      item
+        Active = True
+        Name = 'idxTTBDESC'
+        Fields = 'TTB'
+        DescFields = 'TTB'
+        Options = [soDescending]
+      end
+      item
+        Active = True
+        Name = 'idxPB'
+        Fields = 'PB'
+      end
+      item
+        Active = True
+        Name = 'idxPBDESC'
+        Fields = 'PB'
+        DescFields = 'PB'
+        Options = [soDescending]
+      end
+      item
+        Active = True
+        Name = 'idxAge'
+        Fields = 'AGE'
+      end
+      item
+        Active = True
+        Name = 'idxAgeDESC'
+        Fields = 'AGE'
+        Options = [soDescNullLast, soDescending]
+      end
+      item
+        Active = True
+        Name = 'idxGender'
+        Fields = 'GenderID'
+      end
+      item
+        Active = True
+        Name = 'idxGenderDESC'
+        Fields = 'GenderID'
+        Options = [soDescNullLast, soDescending]
+      end>
+    IndexName = 'idxMemberFName'
+    DetailFields = 'MemberID'
+    Connection = scmConnection
+    FormatOptions.AssignedValues = [fvFmtDisplayTime]
+    FormatOptions.FmtDisplayTime = 'nn:ss.zzz'
+    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate, uvCheckReadOnly]
+    UpdateOptions.EnableDelete = False
+    UpdateOptions.EnableInsert = False
+    UpdateOptions.EnableUpdate = False
+    UpdateOptions.UpdateTableName = 'SwimClubMeet..Nominee'
+    UpdateOptions.KeyFields = 'MemberID'
+    SQL.Strings = (
+      'USE SwimClubMeet;'
+      ''
+      '-- NOTE: event type must be 2 (TEAM)'
+      '-- find nominees in relay event.'
+      '-- exclude raced and closed heats.'
+      '--'
+      '-- count nominees NO in event.'
+      ''
+      'DECLARE @EventID AS INT;'
+      'SET @EventID = :EVENTID;'
+      ''
+      '-- Drop a temporary table called '#39'#tmpA'#39
+      'IF OBJECT_ID('#39'tempDB..#tmpA'#39', '#39'U'#39') IS NOT NULL'
+      '    DROP TABLE #tmpA;'
+      ''
+      'CREATE TABLE #tmpA'
+      '('
+      '    MemberID INT'
+      ')'
+      '-- INDIVIDUAL EVENT...'
+      '-- Members given a swimming lane in the given event '
+      '-- HEAT IS NOT OPEN'
+      '    INSERT INTO #tmpA'
+      '    SELECT Entrant.MemberID'
+      '    FROM [SwimClubMeet].[dbo].[HeatIndividual]'
+      '        INNER JOIN Entrant'
+      '            ON Entrant.HeatID = HeatIndividual.HeatID'
+      '    WHERE HeatIndividual.EventID = @EventID'
+      '    AND HeatIndividual.HeatStatusID <> 1;'
+      ''
+      'SELECT Count(NomineeID) AS CountNominees'
+      'FROM Nominee'
+      '    LEFT OUTER JOIN #tmpA'
+      '        ON #tmpA.MemberID = Nominee.MemberID'
+      '    LEFT OUTER JOIN Member'
+      '        ON Nominee.MemberID = Member.MemberID'
+      'WHERE Nominee.EventID = @EventID'
+      '      AND #tmpA.MemberID IS NULL ;'
+      '')
+    Left = 544
+    Top = 72
+    ParamData = <
+      item
+        Name = 'EVENTID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = Null
+      end>
+  end
 end

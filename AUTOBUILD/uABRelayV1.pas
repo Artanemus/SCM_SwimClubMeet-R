@@ -6,10 +6,7 @@ uses
 System.Classes, FireDAC.Comp.Client, FireDAC.Stan.Param, dmSCM, dmSCMHelper,
   SCMUtility, System.SysUtils;
 
-// Bin packing algorithm in Delphi using a genetic algorithm
-// Define the container and item types
 type
-
   TTeam = record
     // L A N E  >>> R E L A Y  - T E A M .
     // (Typically a relay-team holds four swimmers)
@@ -37,19 +34,9 @@ type
     PB: TTime; // Personal Best swimming time for the swimmer for the event.
   end;
 
+// Bin packing algorithm in Delphi using a genetic algorithm
+// Define the container and item types
 var
-
-  NumOfNominees: integer; // Count of nominees.
-  NumOfTeams: integer; // Count of relay-teams.
-  NumOfHeats: integer; // Count of heats.
-  NumOfTeamsPerHeat: integer; // Count of relay-teams in each heat.
-  NumOfPoolLanes: integer; // takes into consideration preferences for gutter lanes.
-  NumOfEntrantsPerTeam: integer;
-
-  Population: array of TChromosome;
-  PopulationSize: Integer = 100;
-  Generations: Integer = 1000;
-  MutationRate: Double = 0.01;
 
   // D Y N A M I C   A R R A Y S .
   // Swimmers who nominated for the event.
@@ -60,14 +47,34 @@ var
   // then multi-heats are required.
   Teams: array of TTeam;
 
+  fNumOfNominees: integer; // Count of nominees.
+  fNumOfTeams: integer; // Count of relay-teams.
+  fNumOfHeats: integer; // Count of heats.
+  fNumOfTeamsPerHeat: integer; // Count of relay-teams in each heat.
+  fNumOfPoolLanes: integer; // takes into consideration preferences for gutter lanes.
+  fNumOfEntrantsPerTeam: integer;
+
   // R E F E R E N C E S .
-  prefExcludeOutsideLanes: boolean;
-  prefHeatAlgorithm: integer;
-  prefNumOfSwimmersPerTeam: integer;
-  prefRaceTimeTopPercent: integer;
+  fExcludeOutsideLanes: boolean;
+  fHeatAlgorithm: integer;
+  fNumOfSwimmersPerTeam: integer;
+  fRaceTimeBottomPercent: integer;
+
+  Population: array of TChromosome;
+  PopulationSize: Integer = 100;
+  Generations: Integer = 1000;
+  MutationRate: Double = 0.01;
+
 
   procedure ReadPreferences(IniFileName: string);
   procedure GeneticAlgorithm();
+
+
+
+
+
+
+end;
 
 implementation
 
@@ -81,16 +88,16 @@ begin
   iFile := TIniFile.Create(IniFileName);
 
   // When true gutter lanes are not used in events.
-  prefExcludeOutsideLanes := (iFile.ReadInteger('Preferences',
+  fExcludeOutsideLanes := (iFile.ReadInteger('Preferences',
     'ExcludeOutsideLanes', 0) = 1);
   // Relay teams, by default, have four swimmers.
-  prefNumOfSwimmersPerTeam := iFile.ReadInteger('Preferences',
+  fNumOfSwimmersPerTeam := iFile.ReadInteger('Preferences',
     'NumOfSwimmersPerTeam', 4);
   // TTB defaults to (1) .. the entrant's average of top 3 race-times
-  prefHeatAlgorithm := (iFile.ReadInteger('Preferences', 'HeatAlgorithm', 1));
+  fHeatAlgorithm := (iFile.ReadInteger('Preferences', 'HeatAlgorithm', 1));
 
   // The bottom percent to select from ... default is 50%
-  prefRaceTimeTopPercent :=
+  fRaceTimeBottomPercent :=
     (iFile.ReadInteger('Preferences', 'RaceTimeTopPercent', 50));
 
   iFile.free;
@@ -101,15 +108,15 @@ var
   i, j: Integer;
   Chromosome: TChromosome;
 begin
-  SetLength(Chromosome, NumOfTeams);
-  for i := 0 to NumOfTeams - 1 do
+  SetLength(Chromosome, fNumOfTeams);
+  for i := 0 to fNumOfTeams - 1 do
   begin
     Chromosome[i].ID := i;
-    Chromosome[i].Lane := i mod NumOfPoolLanes;
-    SetLength(Chromosome[i].Entrants, NumOfEntrantsPerTeam);
-    for j := 0 to NumOfEntrantsPerTeam - 1 do
+    Chromosome[i].Lane := i mod fNumOfPoolLanes;
+    SetLength(Chromosome[i].Entrants, fNumOfEntrantsPerTeam);
+    for j := 0 to fNumOfEntrantsPerTeam - 1 do
     begin
-      Chromosome[i].Entrants[j] := Random(NumOfNominees);
+      Chromosome[i].Entrants[j] := Random(fNumOfNominees);
     end;
   end;
   Result := Chromosome;

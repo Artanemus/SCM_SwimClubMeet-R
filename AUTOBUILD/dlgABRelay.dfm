@@ -202,6 +202,8 @@ object ABRelay: TABRelay
       Width = 143
       Height = 21
       Caption = 'Swimmers per team.'
+      Enabled = False
+      Visible = False
     end
     object vimgHint1: TVirtualImage
       Left = 110
@@ -329,10 +331,12 @@ object ABRelay: TABRelay
       Top = 236
       Width = 52
       Height = 31
+      Enabled = False
       MaxValue = 12
       MinValue = 2
       TabOrder = 8
       Value = 4
+      Visible = False
     end
     object prefVerbose: TCheckBox
       Left = 22
