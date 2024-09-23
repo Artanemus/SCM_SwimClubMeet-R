@@ -1,6 +1,7 @@
 object ABRelay: TABRelay
   Left = 0
   Top = 0
+  BorderStyle = bsDialog
   Caption = 'AutoBuild Team Event ...'
   ClientHeight = 557
   ClientWidth = 507
@@ -10,6 +11,7 @@ object ABRelay: TABRelay
   Font.Height = -16
   Font.Name = 'Segoe UI'
   Font.Style = []
+  Position = poOwnerFormCenter
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow

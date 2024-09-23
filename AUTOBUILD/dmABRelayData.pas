@@ -15,6 +15,8 @@ type
     qryRelayNominee: TFDQuery;
     dsRelayNominee: TDataSource;
     qryCountRNominee: TFDQuery;
+    qryTNum: TFDQuery;
+    qryLastTeamNameID: TFDQuery;
   private
     fAutoBuildRelayDataActive: Boolean;
     FConnection: TFDConnection;
@@ -23,6 +25,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy(); override;
     procedure ActivateTable();
+    function GetLastTeamNameID(AEventID: integer): integer;
   end;
 
 var
@@ -64,5 +67,21 @@ begin
 end;
 
 
+
+function TABRelayData.GetLastTeamNameID(AEventID: integer): integer;
+begin
+  result := 0;
+  if AEventID = 0 then exit;
+  if Assigned(FConnection) and FConnection.Connected then
+  begin
+    qryLastTeamNameID.Close;
+    qryLastTeamNameID.ParamByName('EVENTID').AsInteger := AEventID;
+    qryLastTeamNameID.Prepare;
+    qryLastTeamNameID.Open;
+    if qryLastTeamNameID.Active then
+      result := qryLastTeamNameID.FieldByName('LastTeamNameID').AsInteger;
+    qryLastTeamNameID.Close;
+  end;
+end;
 
 end.

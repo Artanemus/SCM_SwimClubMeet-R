@@ -137,7 +137,7 @@ begin
   If a team doesn't have a full complement of swimmers,
   that team will be removed.
   ''';
-  bhintABRelay.ShowHint(vimgHint1);
+  bhintABRelay.ShowHint(vimgHint2);
 end;
 
 procedure TABRelay.vimgHint3Click(Sender: TObject);
@@ -147,7 +147,7 @@ begin
   Relay teams will only be allowed swimmers that share
   the same 'House' (as designated in the member's profile).
   ''';
-  bhintABRelay.ShowHint(vimgHint1);
+  bhintABRelay.ShowHint(vimgHint3);
 
 end;
 

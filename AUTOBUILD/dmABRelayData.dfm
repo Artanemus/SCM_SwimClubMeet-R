@@ -2,6 +2,7 @@ object ABRelayData: TABRelayData
   Height = 480
   Width = 640
   object FDCommandUpdateEntrant: TFDCommand
+    Connection = SCM.scmConnection
     CommandText.Strings = (
       'USE [SwimClubMeet];'
       ''
@@ -154,7 +155,8 @@ object ABRelayData: TABRelayData
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Nominee'
     UpdateOptions.KeyFields = 'MemberID'
     SQL.Strings = (
-      'USE SwimClubMeet;'
+      '--USE SwimClubMeet'
+      '--GO'
       ''
       'DECLARE @EventID AS INT;'
       'DECLARE @Algorithm INT;'
@@ -167,14 +169,16 @@ object ABRelayData: TABRelayData
       'DECLARE @BottomPercent FLOAT;'
       'DECLARE @TopNumber INT;'
       ''
+      'DECLARE @SQL NVARChar(MAX);'
+      ''
       ''
       'SET @EventID = :EVENTID;'
       'SET @Algorithm = :ALGORITHM;'
       'SET @ToggleName = :TOGGLENAME;'
-      'SET @CalcDefault = :CALCDEFAULT'
-      'SET @BottomPercent = :BOTTOMPERCENT'
-      'SET @DistanceID = :XDISTANCEID'
-      'SET @TopNumber = :TOPNUMBER'
+      'SET @CalcDefault = :CALCDEFAULT;'
+      'SET @BottomPercent = :BOTTOMPERCENT;'
+      'SET @DistanceID = :XDISTANCEID;'
+      'SET @TopNumber = :TOPNUMBER;'
       ''
       'SET @StrokeID ='
       '('
@@ -211,38 +215,40 @@ object ABRelayData: TABRelayData
       '            ON Team.TeamID = TeamEntrant.TeamID'
       '    WHERE HeatIndividual.EventID = @EventID'
       '    AND HeatIndividual.HeatStatusID = 1;'
-      '     '
+      '    '
+      '    '
+      '-- Construct dynamic SQL'
       ''
-      'SELECT TOP @TopNumber Nominee.EventID'
-      '     , Nominee.MemberID'
-      '     , Member.GenderID'
-      '     , dbo.SwimmerAge(@SessionStart, Member.DOB) AS AGE'
-      '     , dbo.SwimmerGenderToString(Member.MemberID) AS Gender'
+      'SELECT TOP (@TopNumber) '
+      'Nominee.NomineeID,'
+      '    Nominee.EventID,'
+      '    Nominee.MemberID,'
+      '    Member.GenderID,'
+      '    dbo.SwimmerAge(@SessionStart, Member.DOB) AS AGE,'
+      '    dbo.SwimmerGenderToString(Member.MemberID) AS Gender,'
       
-        '     , dbo.TimeToBeat(@Algorithm, @CalcDefault, @BottomPercent, ' +
-        'Member.MemberID, @DistanceID, @StrokeID, @SessionStart) AS TTB'
+        '    dbo.TimeToBeat(@Algorithm, @CalcDefault, @BottomPercent, Mem' +
+        'ber.MemberID, @DistanceID, @StrokeID, @SessionStart) AS TTB,'
       
-        '     , dbo.PersonalBest(Member.MemberID, @DistanceID, @StrokeID,' +
-        ' @SessionStart) AS PB'
-      '     , CASE'
-      '           WHEN @ToggleName = 0 THEN'
+        '    dbo.PersonalBest(Member.MemberID, @DistanceID, @StrokeID, @S' +
+        'essionStart) AS PB,'
+      '    CASE '
       
-        '               SUBSTRING(CONCAT(UPPER([LastName]), '#39', '#39', [FirstN' +
-        'ame]), 0, 30)'
-      '           WHEN @ToggleName = 1 THEN'
+        '        WHEN @ToggleName = 0 THEN SUBSTRING(CONCAT(UPPER([LastNa' +
+        'me]), '#39#39', '#39#39', [FirstName]), 0, 30)'
       
-        '               SUBSTRING(CONCAT([FirstName], '#39', '#39', UPPER([LastNa' +
-        'me])), 0, 48)'
-      '       END AS FName'
+        '        WHEN @ToggleName = 1 THEN SUBSTRING(CONCAT([FirstName], ' +
+        #39#39', '#39#39', UPPER([LastName])), 0, 48)'
+      '    END AS FName'
       'FROM Nominee'
-      '    LEFT OUTER JOIN #tmpID'
-      '        ON #tmpID.MemberID = Nominee.MemberID'
-      '    LEFT OUTER JOIN Member'
-      '        ON Nominee.MemberID = Member.MemberID'
+      'LEFT OUTER JOIN #tmpID ON #tmpID.MemberID = Nominee.MemberID'
+      'LEFT OUTER JOIN Member ON Nominee.MemberID = Member.MemberID'
       'WHERE Nominee.EventID = @EventID'
-      '      AND #tmpID.MemberID IS NULL '
-      'ORDER BY TTB ASC      '
-      '      ;'
+      'AND #tmpID.MemberID IS NULL'
+      'ORDER BY TTB ASC;'
+      '   '
+      ' '
+      '      '
       '')
     Left = 128
     Top = 152
@@ -292,75 +298,12 @@ object ABRelayData: TABRelayData
   end
   object dsRelayNominee: TDataSource
     DataSet = qryRelayNominee
-    Left = 232
+    Left = 272
     Top = 152
   end
   object qryCountRNominee: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     FilterOptions = [foCaseInsensitive]
-    Filter = '[FName] LIKE '#39'%b%'#39
-    Indexes = <
-      item
-        Active = True
-        Selected = True
-        Name = 'idxMemberFName'
-        Fields = 'FName'
-      end
-      item
-        Active = True
-        Name = 'idxMemberFNameDESC'
-        Fields = 'FName'
-        DescFields = 'FName'
-        Options = [soDescNullLast, soDescending]
-      end
-      item
-        Active = True
-        Name = 'idxTTB'
-        Fields = 'TTB'
-      end
-      item
-        Active = True
-        Name = 'idxTTBDESC'
-        Fields = 'TTB'
-        DescFields = 'TTB'
-        Options = [soDescending]
-      end
-      item
-        Active = True
-        Name = 'idxPB'
-        Fields = 'PB'
-      end
-      item
-        Active = True
-        Name = 'idxPBDESC'
-        Fields = 'PB'
-        DescFields = 'PB'
-        Options = [soDescending]
-      end
-      item
-        Active = True
-        Name = 'idxAge'
-        Fields = 'AGE'
-      end
-      item
-        Active = True
-        Name = 'idxAgeDESC'
-        Fields = 'AGE'
-        Options = [soDescNullLast, soDescending]
-      end
-      item
-        Active = True
-        Name = 'idxGender'
-        Fields = 'GenderID'
-      end
-      item
-        Active = True
-        Name = 'idxGenderDESC'
-        Fields = 'GenderID'
-        Options = [soDescNullLast, soDescending]
-      end>
-    IndexName = 'idxMemberFName'
-    DetailFields = 'MemberID'
     Connection = SCM.scmConnection
     FormatOptions.AssignedValues = [fvFmtDisplayTime]
     FormatOptions.FmtDisplayTime = 'nn:ss.zzz'
@@ -403,7 +346,7 @@ object ABRelayData: TABRelayData
       '    WHERE HeatIndividual.EventID = @EventID '
       '    AND HeatIndividual.HeatStatusID = 1;'
       ''
-      'SELECT Count(NomineeID) AS CountNominees'
+      'SELECT ISNULL(Count(NomineeID), 0) AS CountNominees'
       'FROM Nominee'
       '    LEFT OUTER JOIN #tmpA'
       '        ON #tmpA.MemberID = Nominee.MemberID'
@@ -420,6 +363,79 @@ object ABRelayData: TABRelayData
         DataType = ftInteger
         ParamType = ptInput
         Value = Null
+      end>
+  end
+  object qryTNum: TFDQuery
+    Connection = SCM.scmConnection
+    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
+    UpdateOptions.EnableDelete = False
+    UpdateOptions.EnableInsert = False
+    UpdateOptions.EnableUpdate = False
+    SQL.Strings = (
+      ''
+      ''
+      'DECLARE @TeamNumExists AS BIT;'
+      'DECLARE @DistanceID AS INTEGER;'
+      ''
+      'SET @DistanceID = :DISTANCEID;'
+      ''
+      'IF EXISTS (SELECT * '
+      '           FROM INFORMATION_SCHEMA.COLUMNS '
+      '           WHERE TABLE_NAME = '#39'Distance'#39' '
+      '           AND COLUMN_NAME = '#39'TeamNum'#39')'
+      'BEGIN'
+      '   SET @TeamNumExists = 1'
+      'END'
+      'ELSE'
+      'BEGIN'
+      '   SET @TeamNumExists = 0'
+      'END'
+      ''
+      'SELECT '
+      '  [ABREV], '
+      #9'CASE '
+      #9#9'WHEN @TeamNumExists = 1 THEN '#39'[TeamNum]'#39
+      #9#9'ELSE 0'
+      #9'END AS TNum'
+      'FROM '
+      '  [dbo].[Distance]'
+      'WHERE '
+      '  DistanceID = @DistanceID;'
+      ''
+      ''
+      '')
+    Left = 128
+    Top = 232
+    ParamData = <
+      item
+        Name = 'DISTANCEID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = Null
+      end>
+  end
+  object qryLastTeamNameID: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    Connection = SCM.scmConnection
+    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
+    UpdateOptions.EnableDelete = False
+    UpdateOptions.EnableInsert = False
+    UpdateOptions.EnableUpdate = False
+    SQL.Strings = (
+      'DECLARE @EventID INTEGER;'
+      'SET @EventID = :EVENTID;'
+      ''
+      'SELECT ISNULL(MAX(TeamNameID), 0) AS LastTeamNameID FROM Team '
+      'INNER JOIN HeatIndividual on Team.HeatID = HeatIndividual.HeatID'
+      'WHERE EventID = @EventID;')
+    Left = 128
+    Top = 304
+    ParamData = <
+      item
+        Name = 'EVENTID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = 65
       end>
   end
 end

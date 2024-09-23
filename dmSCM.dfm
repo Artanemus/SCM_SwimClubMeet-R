@@ -6,6 +6,7 @@ object SCM: TSCM
     Params.Strings = (
       'ConnectionDef=MSSQL_SwimClubMeet')
     ConnectedStoredUsage = [auDesignTime]
+    Connected = True
     LoginPrompt = False
     AfterDisconnect = scmConnectionAfterDisconnect
     Left = 80
@@ -2442,69 +2443,6 @@ object SCM: TSCM
   end
   object qryCountTEAMNominee: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    FilterOptions = [foCaseInsensitive]
-    Filter = '[FName] LIKE '#39'%b%'#39
-    Indexes = <
-      item
-        Active = True
-        Selected = True
-        Name = 'idxMemberFName'
-        Fields = 'FName'
-      end
-      item
-        Active = True
-        Name = 'idxMemberFNameDESC'
-        Fields = 'FName'
-        DescFields = 'FName'
-        Options = [soDescNullLast, soDescending]
-      end
-      item
-        Active = True
-        Name = 'idxTTB'
-        Fields = 'TTB'
-      end
-      item
-        Active = True
-        Name = 'idxTTBDESC'
-        Fields = 'TTB'
-        DescFields = 'TTB'
-        Options = [soDescending]
-      end
-      item
-        Active = True
-        Name = 'idxPB'
-        Fields = 'PB'
-      end
-      item
-        Active = True
-        Name = 'idxPBDESC'
-        Fields = 'PB'
-        DescFields = 'PB'
-        Options = [soDescending]
-      end
-      item
-        Active = True
-        Name = 'idxAge'
-        Fields = 'AGE'
-      end
-      item
-        Active = True
-        Name = 'idxAgeDESC'
-        Fields = 'AGE'
-        Options = [soDescNullLast, soDescending]
-      end
-      item
-        Active = True
-        Name = 'idxGender'
-        Fields = 'GenderID'
-      end
-      item
-        Active = True
-        Name = 'idxGenderDESC'
-        Fields = 'GenderID'
-        Options = [soDescNullLast, soDescending]
-      end>
-    IndexName = 'idxMemberFName'
     DetailFields = 'MemberID'
     Connection = scmConnection
     FormatOptions.AssignedValues = [fvFmtDisplayTime]
@@ -2570,68 +2508,6 @@ object SCM: TSCM
   object qryCountINDVNominee: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     FilterOptions = [foCaseInsensitive]
-    Filter = '[FName] LIKE '#39'%b%'#39
-    Indexes = <
-      item
-        Active = True
-        Selected = True
-        Name = 'idxMemberFName'
-        Fields = 'FName'
-      end
-      item
-        Active = True
-        Name = 'idxMemberFNameDESC'
-        Fields = 'FName'
-        DescFields = 'FName'
-        Options = [soDescNullLast, soDescending]
-      end
-      item
-        Active = True
-        Name = 'idxTTB'
-        Fields = 'TTB'
-      end
-      item
-        Active = True
-        Name = 'idxTTBDESC'
-        Fields = 'TTB'
-        DescFields = 'TTB'
-        Options = [soDescending]
-      end
-      item
-        Active = True
-        Name = 'idxPB'
-        Fields = 'PB'
-      end
-      item
-        Active = True
-        Name = 'idxPBDESC'
-        Fields = 'PB'
-        DescFields = 'PB'
-        Options = [soDescending]
-      end
-      item
-        Active = True
-        Name = 'idxAge'
-        Fields = 'AGE'
-      end
-      item
-        Active = True
-        Name = 'idxAgeDESC'
-        Fields = 'AGE'
-        Options = [soDescNullLast, soDescending]
-      end
-      item
-        Active = True
-        Name = 'idxGender'
-        Fields = 'GenderID'
-      end
-      item
-        Active = True
-        Name = 'idxGenderDESC'
-        Fields = 'GenderID'
-        Options = [soDescNullLast, soDescending]
-      end>
-    IndexName = 'idxMemberFName'
     DetailFields = 'MemberID'
     Connection = scmConnection
     FormatOptions.AssignedValues = [fvFmtDisplayTime]

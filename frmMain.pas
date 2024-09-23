@@ -2337,8 +2337,8 @@ var
   success: boolean;
   EventID, rtnValue: integer;
 begin
-
-  if SCM.CurrEventType = etINDV then
+  // A U T O - B U I L D   R E L A Y   TE A M .
+  if SCM.CurrEventType = etTEAM then
   begin
     Heat_AutoBuildRelayExecute(Sender);
     exit;
