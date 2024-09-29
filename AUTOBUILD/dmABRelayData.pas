@@ -12,11 +12,12 @@ uses
 type
   TABRelayData = class(TDataModule)
     FDCommandUpdateEntrant: TFDCommand;
-    qryRelayNominee: TFDQuery;
-    dsRelayNominee: TDataSource;
+    dsRNominee: TDataSource;
     qryCountRNominee: TFDQuery;
     qryTNum: TFDQuery;
     qryLastTeamNameID: TFDQuery;
+    qryRNominee: TFDQuery;
+    cmdInsertTeamEntrant: TFDCommand;
   private
     fAutoBuildRelayDataActive: Boolean;
     FConnection: TFDConnection;
@@ -42,7 +43,7 @@ begin
   fAutoBuildRelayDataActive := false;
   if Assigned(FConnection) and FConnection.Connected then
   begin
-    qryRelayNominee.Connection := FConnection;
+    qryRNominee.Connection := FConnection;
     qryCountRNominee.Connection  := FConnection;
     fAutoBuildRelayDataActive := true;
   end;

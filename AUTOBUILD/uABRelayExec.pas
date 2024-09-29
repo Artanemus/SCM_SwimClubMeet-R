@@ -12,32 +12,33 @@ Vcl.Forms, SCMDefines, Data.DB;
 
 type
 
+  // T E A M .
   TTeam = record
-    // L A N E  >>> R E L A Y  - T E A M .
-    // (Typically a relay-team holds four swimmers)
-    ID: Integer; // IDENITY of the Team in dbo.Team.
+    TeamID: Integer; // IDENITY of dbo.TeamID.
+    TeamNameID: integer; // IDENITY of dbo.TeamNameID.
     Lane: Integer;   // Lane number.
-    RaceTime: TTime;  // The SUM of all PBs for swimmers in the relay-team.
-    Entrants: array of integer; // Holds memberID - 4 x swimmers per lane.
+    idxSwimmer: array of integer; // Holds index of TSwimmer.
     HeatID: Integer;
+    SumNormTTB: TTime;  // The sum of NormTTB of each swimmer.
+    Deviation: double;  // Deviation from the average relay swimming time
   end;
-
-  TChromosome = array of TTeam;
-
+  // H E A T .
   THeat = record
-    // H E A T .
     ID: integer;
     HeatNum: integer;
     EventID: integer;
   end;
-
+  // S W I M M E R .
   TSwimmer = record
-    // S W I M M E R .
     NomineeID: Integer; // Nomination ID for the swimmer in dbo.Nominee.
     MemberID: Integer; // Member ID for the swimmer used in dbo.Member table
     TTB: TTime; // Time-to-beat. Estimated (calculated) swimming for XDistance.
     PB: TTime; // Personal Best swimming time for the swimmer for the event.
+    NormTTB: double; // normalized TTB.
   end;
+
+  TTeamArray = array of TTeam; // genetic algorithm
+
 
   TABRelayExec = class(TComponent)
   private
@@ -47,7 +48,8 @@ type
     { private declarations }
     fExcludeOutsideLanes: boolean;
     fHeatAlgorithm: integer;
-    fIndvDistanceMetres: integer;
+    fIndvDistanceMetres: integer; // distance swum by each swimmer in relay.
+    fxDistanceID: integer; // lookup value gained from fIndvDistanceMetres.
     fNumOfHeats: integer;
     fNumOfNominees: integer;
     fNumOfPoolLanes: integer; // takes into consideration preferences for gutter lanes.
@@ -64,35 +66,44 @@ type
     fTeamDistanceMetres: integer;
     fUseDefRaceTime: boolean;
     fVerbose: boolean;
-    Generations: Integer; // = 1000;
-    // An array of heats.
-    Heats: array of THeat;
-    MutationRate: Double; // = 0.01;
-    // An array of swimmers, used by 'bin packing routine' using a genetic algorithm.
-    Population: array of TChromosome;
-    PopulationSize: Integer; // ... fNumOfSwimmers.
+    fAcceptedMarginOfDeviation: double; // packing bin algorithm
+    fIterations: Integer; // genetic algorithm default = 1000.
+    fPackAlgorithm: integer;
+
+    { C A L C   R A C E - T I M E . }
+    fAvgINDVNormTTB: double; // Average optimum INDV TTB - normalized.
+    fAvgTEAMNormTTB: double; // Average optimum TEAM TTB - normalized.
+
     // D Y N A M I C   A R R A Y S .
+    Heats: array of THeat; // An array of heats.
     // Nominee Database Pool : swimmers who nominated for the event.
     Swimmers: array of TSwimmer;
     // An array of teams - each team will contain MemberID x fNumOfSwimmersPerTeam.
     Teams: array of TTeam;
-    // B i n   p a c k i n g   r o u t i n e s .
-    function Crossover(Parent1, Parent2: TChromosome): TChromosome;
-    function Fitness(Chromosome: TChromosome): Double;
-    function GeneticAlgorithm: Boolean;
+
     function GetDistanceID(EventID: integer): integer;
+    function GetxDistanceID(AMeters: integer): integer;
     function GetNumberOfNominees(AEventID: Integer): integer;
     function GetNumberOfSwimmersPerTeam(ADistanceID: integer): integer;
     function GetPoolLanes: integer;
     function GetStrokeID(AEventID: integer): integer;
     function GetTeamDistanceMetres(ADistanceID: integer): integer;
-    function InitializePopulation: TChromosome;
     function InsertIntoTeams(): boolean;
-    procedure Mutate(var Chromosome: TChromosome);
     procedure ReadPreferences(IniFileName: string);
     function RetriveSwimmingData(): boolean;
-    procedure Swap(var A, B: Integer);
-    function TournamentSelection: TChromosome;
+
+
+    // B i n   p a c k i n g   r o u t i n e s .
+    { R O U T I N E S . }
+    procedure GetAvgDeviation(var LowAvg: double; var HighAvg: double);
+    function CalculateAcceptableMargin(): double;
+    procedure NormalizeINDV_TTB;
+    procedure FirstFit;
+    procedure SecondFit;
+    procedure ThirdFit;
+    procedure GeneticAlgorithm;
+
+
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -110,64 +121,33 @@ implementation
 uses System.Math, System.IniFiles, SCMUtility,
   dmABRelayData, system.Generics.Collections, System.StrUtils;
 
-{
-procedure TAutoBuildRelayExec.Distribute(FDQuery: TFDQuery; AEventID: integer);
+function TABRelayExec.CalculateAcceptableMargin: double;
 var
-  i, j, k, m, n, ALaneNum: Integer;
-  TeamRaceTime: TTIME;
+  LowAvg, HighAvg: double;
 begin
-  // Distribute swimmers into teams
-  i := 0;   // Nominees - Swimmers
-  m := 0;   // 0 .. NumOfTeams-1
-  for j := 0 to NumOfHeats - 1 do
-  begin
-    // HEAT.
-    Heats[j].ID := j;
-    Heats[j].HeatNum := j+1;
-    Heats[j].EventID := AEventID;
-    for k := 0 to NumOfTeamsPerHeat - 1 do
-    begin
-      // TEAM.
-      Teams[m].ID := m; // Identifier 0...NumOfTeams-1
-      inc(m, 1);
-      ALaneNum := ScatterLanes(k, NumOfPoolLanes); // index is base 0
-      Teams[m].Lane := ALaneNum;
-      Teams[m].RaceTime := 0;
+  // Calculate average deviations
+  GetAvgDeviation(LowAvg, HighAvg);
 
-      // set the number of swimmers permitted in a relay team
-      SetLength(Teams[k].Entrants, NumOfEntrantsPerTeam);
-      TeamRaceTime := 0;
-      // fill relay team with entrants.
-      for n := 0 to NumOfEntrantsPerTeam - 1 do
-      begin
-        if (i <= high(Swimmers)) then
-        begin
-          // TEAMENTRANT.
-          Teams[k].Entrants[n] := i;
-          TeamRaceTime := TeamRaceTime + Swimmers[i].TTB;
-        end;
-        inc(i, 1);
-      end;
-      // total est.racetime for this relay-team
-      Teams[k].RaceTime := TeamRaceTime;
-    end;
-    // TEST : exceed number of teams in total
-    if m >= NumOfTeams then break;
-  end;
+  // Check for division by zero
+  if (LowAvg = 0) and (HighAvg = 0) then
+    Result := 0
+  else
+    Result := 0.1 * (LowAvg + HighAvg) / 2; // 10% of the average deviation
 end;
-}
-
 
 constructor TABRelayExec.Create(AOwner: TComponent);
 begin
   inherited;
   fEventID := 0;
-  fDistanceID := 1;
+  fDistanceID := 1; // 25m
+  fStrokeID := 1; // feestyle
+  fxDistanceID := 0;
   FConnection := nil;
   fTeamDistanceMetres:=0;
   fIndvDistanceMetres:=0;
-  fStrokeID := 1;
   fSuccess := false;
+  fAcceptedMarginOfDeviation := 0;
+  fIterations := 1000;
 
   // I N I T I A L I Z E   P R E F E R E N C E S .
   fExcludeOutsideLanes := false;
@@ -180,10 +160,8 @@ begin
   fSeperateGender := false;
   fSeedMethod := 0;
   fSeedDepth := 3;
-
-  PopulationSize := 100;
-  Generations := 1000;
-  MutationRate := 0.01;
+  fNumOfPoolLanes := 8;
+  fPackAlgorithm := 0;
 
 end;
 
@@ -192,20 +170,6 @@ begin
   if assigned(ABRelayData) then
     FreeAndNil( ABRelayData);
   inherited;
-end;
-
-function TABRelayExec.Crossover(Parent1, Parent2: TChromosome): TChromosome;
-var
-  i, CrossoverPoint: Integer;
-  Child: TChromosome;
-begin
-  SetLength(Child, Length(Parent1));
-  CrossoverPoint := Random(Length(Parent1));
-  for i := 0 to CrossoverPoint do
-    Child[i] := Parent1[i];
-  for i := CrossoverPoint + 1 to High(Parent2) do
-    Child[i] := Parent2[i];
-  Result := Child;
 end;
 
 procedure TABRelayExec.ExecAutoBuildRelay();
@@ -229,7 +193,7 @@ begin
   WHERE EventID = :ID
   ''';
 
-  v := SCM.scmConnection.ExecSQLScalar(s, [fEventID]);
+  v := fConnection.ExecSQLScalar(s, [fEventID]);
 
   if VarIsNull(v) then  // Is this a team event?
   begin
@@ -310,6 +274,9 @@ begin
   // Individual Distance = the distance swum by each swimmer in the team.
   // WIT: 4x25m relay Total 100m ... entrants swim 25m.
   fIndvDistanceMetres := (fTeamDistanceMetres div fNumOfSwimmersPerTeam);
+  fxDistanceID := GetxDistanceID(fIndvDistanceMetres);
+
+
   // number of members who indicated that they wanted to swim the relay event.
   // Does not include members in raced or closed heats for this relay event.
   fNumOfNominees := GetNumberOfNominees(fEventID);
@@ -372,92 +339,278 @@ begin
   SetLength(Teams, fNumOfTeams);
 
   // R e t r i v e  S w i m m e r s .  Check - fSuccess.
+  // populate array Swimmers.
+  // ORDER BY fastest first.
   fSuccess := RetriveSwimmingData();
-
-  if fSuccess then
+  if not fSuccess then
   begin
-    // Process the data using Genetic Algorithm.
-    PopulationSize := fNumOfSwimmers; // perfect number of swimmers.
-    fSuccess := GeneticAlgorithm();
-    if fSuccess then
+    if fVerbose then
     begin
-      fSuccess := InsertIntoTeams();
-      // D i s t r i b u t e  2 .  (Gender, house, etc)
-      // if fSuccess then DistributeTeams(FDQuery);
+      s := '''
+        While reteving data from the SCM database an unknown error occurred.
+        Auto-build ENDED.
+      ''';
+      Application.MessageBox(Pchar(s), 'SwimClubMeet Error', MB_ICONERROR or MB_OK);
     end;
+  exit;
   end;
+
+  // Normalize the TTB for all swimmers.
+  // this routine also calculates the average TTB (normalized) for a swimmer.
+  NormalizeINDV_TTB;
+
+  // Optimum swimming time for all teams.
+  fAvgTEAMNormTTB := fAvgINDVNormTTB * fNumOfSwimmersPerTeam;
+  if fPackAlgorithm = 0 then
+  begin
+    FirstFit; // First fit. Scatter swimmers across teams.
+//    SecondFit; // Find most (+/-) deviation and swap swimmers.
+//    ThirdFit;  // Refine deviation until within margin or looped fIterations.
+  end
+  else
+  begin
+    FirstFit; // First fit. Scatter swimmers across teams.
+    GeneticAlgorithm; // A Generic Algorithm - slower, perhaps better?
+  end;
+
+
+  // D i s t r i b u t e  2 .  (Gender, house, etc)
+  // if fSuccess then DistributeTeams(FDQuery);
+  fSuccess := InsertIntoTeams();
 
   // Refresh UI and data
   //  if Owner is TForm then
   //    SendMessage(TForm(Owner).Handle, SCM_AUTOBUILDRELAYSFIN, 0, 0);
 end;
 
-function TABRelayExec.Fitness(Chromosome: TChromosome): Double;
+procedure TABRelayExec.FirstFit;
 var
-  i, j: Integer;
-  TotalTime, MaxTime, MinTime: TTime;
+  I, j, k, swimmer: Integer;
+  d: TTime;
+  fwd: Boolean;
 begin
-  MaxTime := 0;
-  MinTime := MaxInt;
-  TotalTime := 0;
-  for i := 0 to High(Chromosome) do
+  { first fit of swimmers into teams.}
+  I := 0;
+
+  { number of swimmers per team - initialize ARRAY: idxSwimmer in TTeams.}
+  for j := Low(Teams) to High(Teams) do
+    SetLength(Teams[j].idxSwimmer, fNumOfSwimmersPerTeam);
+
+  { Scatter swimmers }
+  fwd := True;
+  for k := 0 to (fNumOfSwimmersPerTeam - 1) do
   begin
-    Chromosome[i].RaceTime := 0;
-    for j := 0 to High(Chromosome[i].Entrants) do
+    if fwd then
     begin
-      Chromosome[i].RaceTime := Chromosome[i].RaceTime + Swimmers[Chromosome[i].Entrants[j]].TTB;
+      for j := Low(Teams) to High(Teams) do
+      begin
+        if I > High(Swimmers) then break;
+        Teams[j].idxSwimmer[k] := I;
+        inc(I);
+      end;
+    end
+    else
+    begin
+      for j := High(Teams) downto Low(Teams) do
+      begin
+        if I > High(Swimmers) then break;
+        Teams[j].idxSwimmer[k] := I;
+        inc(I);
+      end;
     end;
-    if Chromosome[i].RaceTime > MaxTime then
-      MaxTime := Chromosome[i].RaceTime;
-    if Chromosome[i].RaceTime < MinTime then
-      MinTime := Chromosome[i].RaceTime;
-    TotalTime := TotalTime + Chromosome[i].RaceTime;
+    fwd := not fwd;  { Toggle the direction }
+    if I > High(Swimmers) then break;
   end;
-  Result := MaxTime - MinTime;
+
+  { calculate SumNormTTB and deviation }
+  for j := Low(Teams) to High(Teams) do
+  begin
+    d := 0;
+    for k := Low(Teams[j].idxSwimmer) to High(Teams[j].idxSwimmer) do
+    begin
+      swimmer := Teams[j].idxSwimmer[k];
+      d := d + Swimmers[Swimmer].NormTTB;
+    end;
+    Teams[j].SumNormTTB := d;
+    Teams[j].Deviation := fAvgTEAMNormTTB - d;
+  end;
 end;
 
-function TABRelayExec.GeneticAlgorithm: boolean;
+procedure TABRelayExec.GeneticAlgorithm;
+const
+  PopulationSize = 16;
+  MaxGenerations = 100;
+  MutationRate = 0.01;
 var
-  i, j: Integer;
-  Parent1, Parent2, Child: TChromosome;
-  BestChromosome: TChromosome;
-  BestFitness, CurrentFitness: Double;
+  Population: array of TTeamArray;
+  NewPopulation: array of TTeamArray;
+  Generation, i, j, k: Integer;
+  BestFitness: Double;
+
+  procedure CopyPopulation(var Dest: array of TTeamArray; const Src: array of TTeamArray);
+  var
+    i, j: Integer;
+  begin
+    SetLength(Population, Length(Src));
+    for i := Low(Src) to High(Src) do
+    begin
+      SetLength(Dest[i], Length(Src[i]));
+      for j := Low(Src[i]) to High(Src[i]) do
+      begin
+        Dest[i][j] := Src[i][j];
+      end;
+    end;
+  end;
+
+  function Fitness(Teams: TTeamArray): Double;
+  var
+    i: Integer;
+    TotalDeviation: Double;
+  begin
+    TotalDeviation := 0;
+    for i := Low(Teams) to High(Teams) do
+      TotalDeviation := TotalDeviation + Abs(Teams[i].Deviation);
+    Result := 1 / (1 + TotalDeviation); // Lower deviation means higher fitness
+  end;
+
+  procedure ShuffleTeams(var Teams: TTeamArray);
+  var
+    i, j, k, temp: Integer;
+  begin
+    for i := Low(Teams) to High(Teams) do
+    begin
+      for j := Low(Teams[i].idxSwimmer) to High(Teams[i].idxSwimmer) do
+      begin
+        k := Random(High(Teams[i].idxSwimmer) - Low(Teams[i].idxSwimmer) + 1) + Low(Teams[i].idxSwimmer);
+        temp := Teams[i].idxSwimmer[j];
+        Teams[i].idxSwimmer[j] := Teams[i].idxSwimmer[k];
+        Teams[i].idxSwimmer[k] := temp;
+      end;
+    end;
+  end;
+
+  procedure InitializePopulation;
+  var
+    i, j: Integer;
+  begin
+    SetLength(Population, PopulationSize);
+    for i := 0 to PopulationSize - 1 do
+    begin
+      SetLength(Population[i], Length(Teams));
+      for j := Low(Teams) to High(Teams) do
+        Population[i][j] := Teams[j]; // Copy initial teams
+      ShuffleTeams(Population[i]); // Randomize team compositions
+    end;
+  end;
+
+  procedure Crossover(Parent1, Parent2: TTeamArray; var Child1, Child2: TTeamArray);
+  var
+    i, crossoverPoint: Integer;
+  begin
+    crossoverPoint := Random(Length(Parent1));
+    for i := 0 to crossoverPoint do
+    begin
+      Child1[i] := Parent1[i];
+      Child2[i] := Parent2[i];
+    end;
+    for i := crossoverPoint + 1 to High(Parent1) do
+    begin
+      Child1[i] := Parent2[i];
+      Child2[i] := Parent1[i];
+    end;
+  end;
+
+  procedure Mutate(var Teams: TTeamArray);
+  var
+    i, j, k, temp: Integer;
+  begin
+    for i := Low(Teams) to High(Teams) do
+    begin
+      if Random < MutationRate then
+      begin
+        j := Random(High(Teams[i].idxSwimmer) - Low(Teams[i].idxSwimmer) + 1) + Low(Teams[i].idxSwimmer);
+        k := Random(High(Teams[i].idxSwimmer) - Low(Teams[i].idxSwimmer) + 1) + Low(Teams[i].idxSwimmer);
+        temp := Teams[i].idxSwimmer[j];
+        Teams[i].idxSwimmer[j] := Teams[i].idxSwimmer[k];
+        Teams[i].idxSwimmer[k] := temp;
+      end;
+    end;
+  end;
+
+  procedure EvaluatePopulation;
+  var
+    i, j: Integer;
+    dfitness: Double;
+  begin
+    BestFitness := 0;
+    for i := 0 to PopulationSize - 1 do
+    begin
+      dfitness := Fitness(Population[i]);
+      if dfitness > BestFitness then
+      begin
+        BestFitness := dfitness;
+        // Explicitly copy each team from the best individual in the population
+        for j := Low(Population[i]) to High(Population[i]) do
+        begin
+          Teams[j] := Population[i][j];
+        end;
+      end;
+    end;
+  end;
+
+
+
 begin
-
-  SetLength(Population, PopulationSize);
-  for i := 0 to PopulationSize - 1 do
-    Population[i] := InitializePopulation;
-
-  for i := 0 to Generations - 1 do
+  Randomize;
+  InitializePopulation;
+  for Generation := 1 to MaxGenerations do
   begin
-    for j := 0 to PopulationSize - 1 do
+    SetLength(NewPopulation, PopulationSize);
+    for i := 0 to PopulationSize div 2 - 1 do
     begin
-      Parent1 := TournamentSelection;
-      Parent2 := TournamentSelection;
-      Child := Crossover(Parent1, Parent2);
-      Mutate(Child);
-      Population[j] := Child;
+      // Selection (simple random selection for demonstration)
+      j := Random(PopulationSize);
+      k := Random(PopulationSize);
+      Crossover(Population[j], Population[k], NewPopulation[2 * i], NewPopulation[2 * i + 1]);
+      Mutate(NewPopulation[2 * i]);
+      Mutate(NewPopulation[2 * i + 1]);
     end;
+    CopyPopulation(Population, NewPopulation);
+    EvaluatePopulation;
+    if BestFitness >= 1 / (1 + fAcceptedMarginOfDeviation) then
+      Break; // Stop if we reach an acceptable fitness level
   end;
+end;
 
-  BestChromosome := Population[0];
-  BestFitness := Fitness(BestChromosome);
-  for i := 1 to PopulationSize - 1 do
-  begin
-    CurrentFitness := Fitness(Population[i]);
-    if CurrentFitness < BestFitness then
+procedure TABRelayExec.GetAvgDeviation(var LowAvg, HighAvg: double);
+var
+LowDeviation, HighDeviation: double;
+LowCount, HighCount, i: integer;
+begin
+    LowDeviation := 0;
+    HighDeviation := 0;
+    LowCount := 0;
+    HighCount := 0;
+    LowAvg := 0;
+    HighAvg := 0;
+    for i := Low(Teams) to High(Teams) do
     begin
-      BestFitness := CurrentFitness;
-      BestChromosome := Population[i];
+      LowDeviation := LowDeviation + Teams[i].Deviation;
+      if Teams[i].Deviation <= 0 then
+      begin
+         LowDeviation := LowDeviation + Abs(Teams[i].Deviation);
+         Inc(LowCount);
+      end;
+      if Teams[i].Deviation > 0 then
+      begin
+         HighDeviation := HighDeviation + Teams[i].Deviation;
+         Inc(HighCount);
+      end;
     end;
-  end;
-
-  // Use BestChromosome to set your final teams
-  SetLength(Teams, Length(BestChromosome));
-  for i := 0 to High(BestChromosome) do
-    Teams[i] := BestChromosome[i];
-
-  result := true;
+    if (LowDeviation > 0) then
+      LowAvg := LowDeviation / LowCount;
+    if (HighDeviation > 0) then
+      HighAvg := HighDeviation / HighCount;
 end;
 
 function TABRelayExec.GetDistanceID(EventID: integer): integer;
@@ -465,7 +618,7 @@ var
   v: variant;
 begin
   result := 0;
-  v := SCM.scmConnection.ExecSQLScalar
+  v := fConnection.ExecSQLScalar
   ('SELECT DistanceID FROM [dbo].[Event] WHERE EventID = :ID', [EventID]);
   if not VarIsNull(v) then
     result := v
@@ -539,7 +692,7 @@ var
   v: variant;
 begin
   result := 0;
-  v := SCM.scmConnection.ExecSQLScalar
+  v := fConnection.ExecSQLScalar
     ('SELECT StrokeID FROM [dbo].[Event] WHERE [EventID] = :ID', [AEventID]);
   if not VarIsNull(v) then
     result := v;
@@ -556,148 +709,226 @@ begin
     SELECT Meters FROM [dbo].[Distance]
     WHERE DistanceID = :ID
   ''';
-  v := SCM.scmConnection.ExecSQLScalar(s, [ADistanceID]);
+  v := fConnection.ExecSQLScalar(s, [ADistanceID]);
   if not VarIsNull(v) then
     result := v;
 end;
 
-function TABRelayExec.InitializePopulation: TChromosome;
+function TABRelayExec.GetxDistanceID(AMeters: integer): integer;
 var
-  i, j: Integer;
-  Chromosome: TChromosome;
+  v: variant;
+  s: string;
 begin
-  SetLength(Chromosome, fNumOfTeams);
-  for i := 0 to fNumOfTeams - 1 do
-  begin
-    Chromosome[i].ID := i;
-    Chromosome[i].Lane := i mod fNumOfPoolLanes;
-    SetLength(Chromosome[i].Entrants, fNumOfSwimmersPerTeam);
-    for j := 0 to fNumOfSwimmersPerTeam - 1 do
-    begin
-      Chromosome[i].Entrants[j] := Random(fNumOfSwimmers);
-    end;
-  end;
-  Result := Chromosome;
+  {
+    Get the distance ID using the metres swum value.
+    ABS(Meters - @SwumDistance) calculates the absolute difference
+    between the Meters column and the swum distance.
+  }
+  result := 0;
+  s := '''
+  SELECT TOP 1 DistanceID
+  FROM SwimClubMeet.dbo.Distance
+  WHERE EventTypeID = 1  AND ABS(Meters - :SwumDistance) <= 10
+  ORDER BY ABS(Meters - :SwumDistance);
+  ''';
+  v := fConnection.ExecSQLScalar(s, [AMeters]);
+  if not VarIsNull(v) then
+    result := v
 end;
 
 function TABRelayExec.InsertIntoTeams: Boolean;
 var
-  qry1, qry2, qry3: TFDQuery;
+  qry1, qry2: TFDQuery;
   AHeatID: integer;
   ATeamID: integer;
   ATeamEntrantID: integer;
   ATeamNameID: integer;
-  s: string;
-  i, j, m, n, p, r, lanenum: integer;
+  s, s2: string;
+  i, j, m, n, p, r, t, laneidx, lanenum, idx, lanes: integer;
+  v: variant;
+  ATeamTTB: TTime;
 begin
   result := false;
   qry1 := TFDQuery.Create(nil);
   qry2 := TFDQuery.Create(nil);
-  qry3 := TFDQuery.Create(nil);
 
-  qry1.Connection := SCM.scmConnection;
-  qry2.Connection := SCM.scmConnection;
-  qry3.Connection := SCM.scmConnection;
+  qry1.Connection := fConnection;
+  qry2.Connection := fConnection;
 
   for j := Low(Heats) to High(Heats) do
   Begin
+
     // Insert into dbo.HeatIndividual
     // HeatTypeID - Heat, HeatStatus - open, HeatNum - (1 ... )
+    qry1.Close;
     s := '''
     INSERT INTO HeatIndividual (EventID, HeatNum, OpenDT, HeatTypeID, HeatStatusID)
-    VALUES (:EVENTID, :HEATNUM, GETDATE(), 1, 1)';
+    VALUES (:EVENTID, :HEATNUM, GETDATE(), 1, 1);
     ''';
     qry1.SQL.Text := s;
     qry1.ParamByName('EVENTID').AsInteger := fEventID;
-    qry1.ParamByName('HEATNUM').AsInteger := Heats[j].HeatNum;
+    qry1.ParamByName('HEATNUM').AsInteger := (Heats[j].HeatNum + 1);
+    qry1.Prepare;
     qry1.ExecSQL;
-    // Get the newly created heat's record ID.
-    AHeatID := qry1.Connection.GetLastAutoGenValue('HeatID');
+    // Get the newly created heat's record IDENTITY.
+    v := qry1.Connection.GetLastAutoGenValue('');
+    if VarIsNull(v) or VarIsEmpty(v) then
+        raise Exception.Create('Failed to retrieve AHeatID');
+    AHeatID := v;
 
-    { T E A M N A M E   I D . }
-    // dbo.TeamName is a table filled with ID's starting from 1 .. 26
-    //  and Caption's (1)'TeamA' ... (26)'TeamZ'.
-    ATeamNameID := ABRelayData.GetLastTeamNameID(fEventID);
+    // ----------------------------------------
+    // Build all the lanes for this new heat...
+    // Assigns [HeatID], [Lane], BIT values, etc .
+    // Not assigned is TeamNameID. (wit: indicates empty Lane).
+    // returns number of lanes.
+    // ----------------------------------------
+    lanes := SCM.PadLanes(AHeatID);
 
-    for i := 0 to fNumOfTeamsPerHeat - 1 do
+    laneidx := 0;
+    { P L A C E   R E L A Y   T EA M .}
+    // Iterate accross all TTeams over multi-heats ...
+    for i := (j * fNumOfHeats) to (j * fNumOfHeats) + (fNumOfTeamsPerHeat - 1) do
     begin
+      if (i > High(Teams))  then  break;  // Out of range ...
+
+      { L A N E   N U M B E R .}
+      lanenum := SCMUtility.ScatterLanes(laneidx, fNumOfPoolLanes);
+
+      { T E A M N A M E   I D . }
+      // dbo.TeamName is a table filled with ID's starting from 1 .. 26
+      //  and Caption's (1)'TeamA' ... (26)'TeamZ'.
+      ATeamNameID := ABRelayData.GetLastTeamNameID(fEventID) + 1;
+
+      { L O O K U P   T E A M I D . }
       s := '''
-      INSERT INTO Team (Lane, TeamNameID, HeatID)
-      VALUES (:LANE, :TEAMNAMEID, :HEATID);
+      SELECT TeamID FROM SwimClubMeet.dbo.Team
+      WHERE HeatID = :HEATID AND Lane = :LANENUM;
       ''';
-      // Insert into Team table
-      qry2.SQL.Text := s;
-        // place team in lane - using center lanes first.
-      lanenum :=  SCMUtility.ScatterLanes(Teams[i].Lane, fNumOfPoolLanes);
-      qry2.ParamByName('LANE').AsInteger := lanenum;
-      inc(ATeamNameID, 1);
-      qry2.ParamByName('TEAMNAMEID').AsInteger := ATeamNameID;
-      qry2.ParamByName('HEATID').AsInteger := AHeatID; // Base zero.
-      qry2.ExecSQL;
-      // Get the new team record's ID
-      ATeamID := qry2.Connection.GetLastAutoGenValue('TeamID');
+      v := fConnection.ExecSQLScalar(s, [AHeatID, lanenum]);
+      if VarIsNull(v) or VarIsEmpty(v) then
+          raise Exception.Create('Failed to retrieve ATeamID');
+      ATeamID := v;
+      ATeamTTB := 0;
+
+      { A S S I G N   T E A M   D A T A (Part-A).}
+      s := '''
+      UPDATE  [dbo].[Team]
+      SET [TeamNameID] = :TEAMNAMEID
+      WHERE TeamID = :TEAMID;
+      ''';
+      fConnection.ExecSQL(s, [ATeamNameID, ATeamID]);
+
+      { ASSIGN SWIMMERS TO TEAM }
+      // ---------------------------------------------------------------------
 
       {TODO -oBSA -cAutoBuild Relay :
         Sort entrants - Fastest last, 2nd fastest first, etc... }
-      p := 1; // Swimming order 1 to NumOfEntrantsPerTeam.
 
-      // Insert into TeamEntrant table.
-      for m := Low(Teams[i].Entrants) to High(Teams[i].Entrants) do
+      p := 1; // Swimming order for relay team members.
+
+      // Insert into fNumOfSwimmersInTeam x TeamEntrant table.
+      for m := Low(Teams[i].idxSwimmer) to High(Teams[i].idxSwimmer) do
       begin
+        idx := Teams[i].idxSwimmer[m];  // TSwimming index to lookup swimmers.
+        qry2.Close;
         s := '''
-        INSERT INTO TeamEntrant
-        (MemberID, Lane, TeamID, PersonalBest, TimeToBeat, StrokeID, IsDisqualified)
+        INSERT INTO dbo.TeamEntrant
+        (MemberID, Lane, TeamID, PersonalBest, TimeToBeat, StrokeID, IsDisqualified, IsScratched)
         VALUES
-        (:MEMBERID, :LANE, :TEAMID, :PB, :TTB, :STROKEID, 0);
+        (:MEMBERID, :LANE, :TEAMID, :PB, :TTB, :STROKEID, :ISDISQUALIFIED, :ISSCRATCHED);
         ''';
-        qry3.SQL.Text := s;
-        qry3.ParamByName('MEMBERID').AsInteger := Teams[i].Entrants[m];
-        qry3.ParamByName('LANE').AsInteger := p;
-        qry3.ParamByName('TEAMID').AsInteger := ATeamID;
-        qry3.ParamByName('STROKEID').AsInteger := fStrokeID;
-        // TeamEntrant.Disqualified - BIT : NOT NULL
-        // qry3.ParamByName('DISQUALIFIED').AsBoolean := false;
+        qry2.SQL.Text := s;
+        // S e t   D a t a T y p e .
+//        qry2.ParamByName('ISDISQUALIFIED').DataType := ftBoolean;
+//        qry2.ParamByName('ISSCRATCHED').DataType := ftBoolean;
+//        qry2.ParamByName('PB').DataType := ftTime;
+//        qry2.ParamByName('TTB').DataType := ftTime;
+        // A s s i g n   v a l u  e .
+        qry2.ParamByName('MEMBERID').AsInteger := Swimmers[idx].MemberID;
+        qry2.ParamByName('LANE').AsInteger := p;
+        qry2.ParamByName('TEAMID').AsInteger := ATeamID;
+        qry2.ParamByName('PB').AsTime := Swimmers[idx].PB;
+        qry2.ParamByName('TTB').AsTime := Swimmers[idx].TTB;
+        qry2.ParamByName('STROKEID').AsInteger := fStrokeID;
+        qry2.ParamByName('ISDISQUALIFIED').AsBoolean := false;
+        qry2.ParamByName('ISSCRATCHED').AsBoolean := false;
 
-        // locate swimmer in Swimmers...
-        for r  := Low(Swimmers) to High(Swimmers) do
-        begin
-          if Swimmers[r].MemberID = Teams[i].Entrants[m] then
-          begin
-            qry3.ParamByName('PB').AsTime := Swimmers[r].PB;
-            qry3.ParamByName('TTB').AsTime := Swimmers[r].TTB;
-            break;
-          end;
-        end;
-        qry3.ExecSQL;
+        qry2.Prepare;
+        qry2.ExecSQL;
+        ATeamTTB := ATeamTTB + Swimmers[idx].TTB;
         inc(p, 1);
-      end;
-    end;
-  End;
+      end; { N E X T   T E A M   -   S W I M M E R . }
 
-  qry3.Close;
+      // ---------------------------------------------------------------------
+
+      { A S S I G N   T E A M   D A T A (Part-B).}
+      // Had to make a new var 's2' else ExecSQL uses cached 's'  ...!
+      s2 := '''
+      UPDATE dbo.Team
+      SET TimeToBeat = :ATEAMTTB
+      WHERE TeamID = :ATEAMID
+      ''';
+      // Explicently assign ATyes.
+      fConnection.ExecSQL(s2, [ATeamTTB, ATeamID],[ftTime, ftInteger]);
+
+      // next lane index for the current heat.
+      inc(laneIdx);
+
+    end; { N E X T   T E A M . }
+
+  End; { N E X T   H E A T . }
+
   qry2.Close;
   qry1.Close;
 
   qry1.Free;
   qry2.Free;
-  qry3.Free;
 
   result := true;
 
 end;
 
-procedure TABRelayExec.Mutate(var Chromosome: TChromosome);
+procedure TABRelayExec.NormalizeINDV_TTB;
 var
-  Team1, Team2, Swimmer1, Swimmer2: Integer;
+  I: integer;
+  minTTB, maxTTB: TTime;
+  range, totalNormTTB: TTime;
+
 begin
-  if Random < MutationRate then
+  if Length(Swimmers) = 0 then Exit;
+
+  // Initialize min and max with the first swimmer's TTB
+  minTTB := Swimmers[Low(Swimmers)].TTB;
+  maxTTB := Swimmers[Low(Swimmers)].TTB;
+
+  // Find the min and max TTB values
+  for I := Low(Swimmers) to High(Swimmers) do
   begin
-    Team1 := Random(Length(Chromosome));
-    Team2 := Random(Length(Chromosome));
-    Swimmer1 := Random(Length(Chromosome[Team1].Entrants));
-    Swimmer2 := Random(Length(Chromosome[Team2].Entrants));
-    Swap(Chromosome[Team1].Entrants[Swimmer1], Chromosome[Team2].Entrants[Swimmer2]);
+    if Swimmers[I].TTB < minTTB then
+      minTTB := Swimmers[I].TTB;
+    if Swimmers[I].TTB > maxTTB then
+      maxTTB := Swimmers[I].TTB;
   end;
+
+  // Calculate the range
+  range := maxTTB - minTTB;
+
+  // Normalize each swimmer's TTB to a value between 0 and 1
+  totalNormTTB := 0;
+  for I := Low(Swimmers) to High(Swimmers) do
+  begin
+    if range = 0 then
+      Swimmers[I].NormTTB := 0 // Avoid division by zero
+    else
+      Swimmers[I].NormTTB := (Swimmers[I].TTB - minTTB) / range;
+    totalNormTTB := totalNormTTB + Swimmers[I].NormTTB;
+  end;
+
+  // Calculate the normalized average TTB
+  if Length(Swimmers) > 0 then
+    fAvgINDVNormTTB := totalNormTTB / Length(Swimmers)
+  else
+    fAvgINDVNormTTB := 0;
 end;
 
 procedure TABRelayExec.Prepare(AConnection: TFDConnection; AEventID: Integer);
@@ -725,6 +956,13 @@ var
   i: Integer;
 begin
   iFile := TIniFile.Create(IniFileName);
+
+  // 2024-08-26 AUTO-BUILD RELAYS.
+  // Pack Method.
+  fPackAlgorithm :=
+    (iFile.ReadInteger('Preferences', 'PackAlgorithm', 0));
+
+
 
   // When true gutter lanes are not used in events.
   i := iFile.ReadInteger('Preferences', 'ExcludeOutsideLanes', 0);
@@ -764,53 +1002,57 @@ end;
 function TABRelayExec.RetriveSwimmingData(): boolean;
 var
   i: integer;
-  qry: TFDQuery;
 begin
   {
   Retrieve Swimmer Data: Fetch swimmers’ data from the Nominee table,
   focusing on their MemberID TTB (TimeToBeat) and PB (Personal Best) times.
   }
   result := false;
-  qry := ABRelayData.qryRelayNominee; // improves reability.
-
-  qry.Close;
-  // Relay Event ID.
-  qry.ParamByName('EVENTID').AsInteger := fEventID;
-  // 0,1,2 - Default: 1. The avgerage of the 3 fastest race times.
-  qry.ParamByName('ALGORITHM').AsInteger := fHeatAlgorithm;
-  // Lastname, firstname (format for display of entrants name)
-  qry.ParamByName('TOGGLENAME').AsBoolean := true;
-  // if then entrant has no race history then ...
-  // Calculate a race time based on the mean average of the bottom...
-  qry.ParamByName('CALCDEFAULT').AsInteger := 1;
-  // ... bottom precent (Default is 50%)
-  qry.ParamByName('BOTTOMPERCENT').AsFloat := fRaceTimeBottomPercent;
-  // Distance swum by a swimmer in the Team-Relay.
-  // Relay's total distance DIV number of swimmers in the relay-team.
-  qry.ParamByName('XDISTANCEID').AsInteger := fIndvDistanceMetres;
-  // Perfect number of swimmers to fill ALL relay-teams perfectly.
-  qry.ParamByName('TOPNUMBER').AsInteger := fNumOfSwimmers;
-  qry.Prepare;
-  qry.Open;
-
-  if not qry.Active then exit;
-
-  if qry.IsEmpty then
+  with ABRelayData.qryRNominee do
   begin
-    qry.Close;
-    exit;
+    //Connection := fConnection;
+    Close;
+    // Relay Event ID.
+    ParamByName('EVENTID').AsInteger := fEventID;
+    // 0,1,2 - Default: 1. The avgerage of the 3 fastest race times.
+    ParamByName('ALGORITHM').AsInteger := fHeatAlgorithm;
+    // Lastname, firstname (format for display of entrants name)
+    ParamByName('TOGGLENAME').AsBoolean := true;
+    // if then entrant has no race history then ...
+    // Calculate a race time based on the mean average of the bottom...
+    ParamByName('CALCDEFAULT').AsInteger := 1;
+    // ... bottom precent (Default is 50%)
+    ParamByName('BOTTOMPERCENT').AsFloat := fRaceTimeBottomPercent;
+    // Distance swum by a swimmer in the Team-Relay.
+    // Relay's total distance DIV number of swimmers in the relay-team.
+    // LOOKUP DISTANCE to determine ID number ...
+    ParamByName('XDISTANCEID').AsInteger := fxDistanceID;
+    // Perfect number of swimmers to fill ALL relay-teams perfectly.
+    ParamByName('TOPNUMBER').AsInteger := fNumOfSwimmers;
+    Prepare;
+    // DEBUG ...
+    // SQL.SaveToFile('C:\Users\Ben\Documents\GitHub\SCM_SwimClubMeet-R\SQL\dump.sql');
+    Open;
+    if not ABRelayData.qryRNominee.Active then exit;
+    if ABRelayData.qryRNominee.IsEmpty then exit;
   end;
+
+  // ASSERT array size.
+  i:= ABRelayData.qryRNominee.RecordCount;
+  if (Length(Swimmers) <> i) then
+  SetLength(Swimmers, i);
 
   // Populate the array with swimmers.
   // ARRAY SIZE: Perfect number of swimmers = qry.RecordCount.
+  ABRelayData.qryRNominee.First;
   try
     for I := Low(Swimmers) to High(Swimmers) do
     begin
-      Swimmers[i].MemberID := qry.FieldByName('MemberID').AsInteger;
-      Swimmers[i].NomineeID := qry.FieldByName('NomineeID').AsInteger;
-      Swimmers[i].TTB := qry.FieldByName('TTB').AsDateTime;
-      Swimmers[i].PB := qry.FieldByName('PB').AsDateTime;
-      qry.Next;
+      Swimmers[i].MemberID := ABRelayData.qryRNominee.FieldByName('MemberID').AsInteger;
+      Swimmers[i].NomineeID := ABRelayData.qryRNominee.FieldByName('NomineeID').AsInteger;
+      Swimmers[i].TTB := TTime(ABRelayData.qryRNominee.FieldByName('xTTB').AsDateTime);
+      Swimmers[i].PB := TTime(ABRelayData.qryRNominee.FieldByName('xPB').AsDateTime);
+      ABRelayData.qryRNominee.Next;
     end;
   except on E: Exception do
       exit;
@@ -820,33 +1062,153 @@ begin
 
 end;
 
-procedure TABRelayExec.Swap(var A, B: Integer);
+procedure TABRelayExec.SecondFit;
 var
-  Temp: Integer;
+  i, j, k, teamLow, teamHigh, swimmerLow, swimmerHigh: Integer;
+  minDeviation, maxDeviation, fAcceptedMarginOfDeviation: double;
+  tempSwimmer, iter: Integer;
 begin
-  Temp := A;
-  A := B;
-  B := Temp;
+  // Define your acceptable margin here
+  fAcceptedMarginOfDeviation := CalculateAcceptableMargin;
+  fIterations := 3000;
+  iter := 0; // Initialize iter
+  repeat
+    // Find the team with the lowest and highest deviation
+    minDeviation := MaxDouble;
+    maxDeviation := -MaxDouble;
+    teamLow := -1;
+    teamHigh := -1;
+
+    for i := Low(Teams) to High(Teams) do
+    begin
+      if Teams[i].Deviation < minDeviation then
+      begin
+        minDeviation := Teams[i].Deviation;
+        teamLow := i;
+      end;
+      if Teams[i].Deviation > maxDeviation then
+      begin
+        maxDeviation := Teams[i].Deviation;
+        teamHigh := i;
+      end;
+    end;
+
+    // If deviations are within the acceptable margin, break the loop
+    if Abs(maxDeviation - minDeviation) <= fAcceptedMarginOfDeviation then
+      Break;
+
+    // Try to find a swimmer to swap between the two teams
+    for j := Low(Teams[teamLow].idxSwimmer) to High(Teams[teamLow].idxSwimmer)
+      do
+    begin
+      swimmerLow := Teams[teamLow].idxSwimmer[j];
+      for k := Low(Teams[teamHigh].idxSwimmer) to
+        High(Teams[teamHigh].idxSwimmer) do
+      begin
+        swimmerHigh := Teams[teamHigh].idxSwimmer[k];
+
+        // Swap the swimmers
+        tempSwimmer := Teams[teamLow].idxSwimmer[j];
+        Teams[teamLow].idxSwimmer[j] := Teams[teamHigh].idxSwimmer[k];
+        Teams[teamHigh].idxSwimmer[k] := tempSwimmer;
+
+        // Recalculate deviations
+        Teams[teamLow].SumNormTTB := Teams[teamLow].SumNormTTB -
+          Swimmers[swimmerLow].NormTTB + Swimmers[swimmerHigh].NormTTB;
+        Teams[teamHigh].SumNormTTB := Teams[teamHigh].SumNormTTB -
+          Swimmers[swimmerHigh].NormTTB + Swimmers[swimmerLow].NormTTB;
+        Teams[teamLow].Deviation := fAvgTEAMNormTTB - Teams[teamLow].SumNormTTB;
+        Teams[teamHigh].Deviation := fAvgTEAMNormTTB -
+          Teams[teamHigh].SumNormTTB;
+
+        // Check if the deviations are now within the acceptable margin
+        if (Abs(Teams[teamLow].Deviation) <= fAcceptedMarginOfDeviation) and
+        (Abs(Teams[teamHigh].Deviation) <= fAcceptedMarginOfDeviation) then
+          Exit;
+      end;
+    end;
+    inc(iter);
+
+  until False OR (iter > fIterations);
 end;
 
-function TABRelayExec.TournamentSelection: TChromosome;
+procedure TABRelayExec.ThirdFit;
 var
-  i, BestIndex: Integer;
-  BestFitness, CurrentFitness: Double;
+  i, j, k, teamLow, teamHigh, swimmerLow, swimmerHigh: Integer;
+  minDeviation, maxDeviation, fAcceptedMarginOfDeviation: double;
+  tempSwimmer, iter: Integer;
+  improvement: Boolean;
 begin
-  BestIndex := Random(PopulationSize);
-  BestFitness := Fitness(Population[BestIndex]);
-  for i := 1 to 4 do
-  begin
-    CurrentFitness := Fitness(Population[Random(PopulationSize)]);
-    if CurrentFitness < BestFitness then
+  // Define your acceptable margin here
+  fAcceptedMarginOfDeviation := CalculateAcceptableMargin;
+  fIterations := 3000;
+  iter := 0; // Initialize iter
+
+  repeat
+    improvement := False;
+
+    // Find the team with the lowest and highest deviation
+    minDeviation := MaxDouble;
+    maxDeviation := -MaxDouble;
+    teamLow := -1;
+    teamHigh := -1;
+
+    for i := Low(Teams) to High(Teams) do
     begin
-      BestFitness := CurrentFitness;
-      BestIndex := i;
+      if Teams[i].Deviation < minDeviation then
+      begin
+        minDeviation := Teams[i].Deviation;
+        teamLow := i;
+      end;
+      if Teams[i].Deviation > maxDeviation then
+      begin
+        maxDeviation := Teams[i].Deviation;
+        teamHigh := i;
+      end;
     end;
-  end;
-  Result := Population[BestIndex];
+
+    // If deviations are within the acceptable margin, break the loop
+    if Abs(maxDeviation - minDeviation) <= fAcceptedMarginOfDeviation then
+      Break;
+
+    // Try to find a swimmer to swap between the two teams
+    for j := Low(Teams[teamLow].idxSwimmer) to High(Teams[teamLow].idxSwimmer) do
+    begin
+      swimmerLow := Teams[teamLow].idxSwimmer[j];
+      for k := Low(Teams[teamHigh].idxSwimmer) to High(Teams[teamHigh].idxSwimmer) do
+      begin
+        swimmerHigh := Teams[teamHigh].idxSwimmer[k];
+
+        // Swap the swimmers
+        tempSwimmer := Teams[teamLow].idxSwimmer[j];
+        Teams[teamLow].idxSwimmer[j] := Teams[teamHigh].idxSwimmer[k];
+        Teams[teamHigh].idxSwimmer[k] := tempSwimmer;
+
+        // Recalculate deviations
+        Teams[teamLow].SumNormTTB := Teams[teamLow].SumNormTTB -
+          Swimmers[swimmerLow].NormTTB + Swimmers[swimmerHigh].NormTTB;
+        Teams[teamHigh].SumNormTTB := Teams[teamHigh].SumNormTTB -
+          Swimmers[swimmerHigh].NormTTB + Swimmers[swimmerLow].NormTTB;
+        Teams[teamLow].Deviation := fAvgTEAMNormTTB - Teams[teamLow].SumNormTTB;
+        Teams[teamHigh].Deviation := fAvgTEAMNormTTB - Teams[teamHigh].SumNormTTB;
+
+        // Check if the deviations are now within the acceptable margin
+        if (Abs(Teams[teamLow].Deviation) <= fAcceptedMarginOfDeviation) and
+           (Abs(Teams[teamHigh].Deviation) <= fAcceptedMarginOfDeviation) then
+          Exit;
+
+        // If the swap improved the balance, mark improvement
+        if (Abs(Teams[teamLow].Deviation) < minDeviation) or (Abs(Teams[teamHigh].Deviation) < maxDeviation) then
+          improvement := True;
+      end;
+    end;
+
+    Inc(iter);
+
+  until (iter > fIterations) or not improvement;
 end;
+
+
 
 
 

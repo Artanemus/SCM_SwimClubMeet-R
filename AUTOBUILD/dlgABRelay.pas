@@ -38,10 +38,12 @@ type
     vimgHint1: TVirtualImage;
     vimgHint2: TVirtualImage;
     vimgHint3: TVirtualImage;
+    rgrpAlgorithm: TRadioGroup;
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure vimgHint1Click(Sender: TObject);
+    procedure vimgHintMouseLeave(Sender: TObject);
     procedure vimgHint2Click(Sender: TObject);
     procedure vimgHint3Click(Sender: TObject);
   private
@@ -92,6 +94,12 @@ var
   iFile: TIniFile;
 begin
   iFile := TIniFile.Create(IniFileName);
+
+  // 2024-08-26 AUTO-BUILD RELAYS.
+  // Pack Method.
+  rgrpAlgorithm.ItemIndex :=
+    (iFile.ReadInteger('Preferences', 'PackAlgorithm', 0));
+
   // TTB defaults to (1) .. the entrant's average of top 3 race-times
   prefHeatAlgorithm.ItemIndex :=
     (iFile.ReadInteger('Preferences', 'HeatAlgorithm', 1));
@@ -125,9 +133,14 @@ begin
   bhintABRelay.Title := 'Verbose.';
   bhintABRelay.Description := '''
   If a problem is encounted when trying to Auto-Build,
-  display an error message, prior to aborting.
+  then an error message will be displayed, prior to aborting.
   ''';
   bhintABRelay.ShowHint(vimgHint1);
+end;
+
+procedure TABRelay.vimgHintMouseLeave(Sender: TObject);
+begin
+  bhintABRelay.HideHint;
 end;
 
 procedure TABRelay.vimgHint2Click(Sender: TObject);
@@ -156,6 +169,12 @@ var
   iFile: TIniFile;
 begin
   iFile := TIniFile.Create(IniFileName);
+
+  // 2024-08-26 AUTO-BUILD RELAYS.
+  // Pack Method.
+  iFile.WriteInteger('Preferences', 'PackAlgorithm',
+    rgrpAlgorithm.ItemIndex);
+
   iFile.WriteInteger('Preferences', 'HeatAlgorithm',
     prefHeatAlgorithm.ItemIndex);
   iFile.WriteInteger('Preferences', 'UseDefRaceTime',

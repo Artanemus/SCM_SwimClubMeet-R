@@ -3,7 +3,7 @@ object ABRelay: TABRelay
   Top = 0
   BorderStyle = bsDialog
   Caption = 'AutoBuild Team Event ...'
-  ClientHeight = 557
+  ClientHeight = 616
   ClientWidth = 507
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -18,7 +18,7 @@ object ABRelay: TABRelay
   TextHeight = 21
   object Panel2: TPanel
     Left = 0
-    Top = 511
+    Top = 570
     Width = 507
     Height = 46
     Align = alBottom
@@ -166,7 +166,7 @@ object ABRelay: TABRelay
     Left = 0
     Top = 61
     Width = 507
-    Height = 450
+    Height = 509
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
@@ -191,8 +191,8 @@ object ABRelay: TABRelay
       Caption = 'percent. (With consideration to age and gender.)'
     end
     object lblSeedDepth: TLabel
-      Left = 362
-      Top = 387
+      Left = 344
+      Top = 334
       Width = 81
       Height = 21
       Caption = 'Seed depth:'
@@ -200,48 +200,50 @@ object ABRelay: TABRelay
     end
     object lblSwimmersPerTeam: TLabel
       Left = 80
-      Top = 239
+      Top = 334
       Width = 143
       Height = 21
       Caption = 'Swimmers per team.'
       Enabled = False
-      Visible = False
     end
     object vimgHint1: TVirtualImage
       Left = 110
-      Top = 284
+      Top = 406
       Width = 24
-      Height = 24
+      Height = 25
       ImageCollection = imgcolABRelay
       ImageWidth = 0
       ImageHeight = 0
       ImageIndex = 0
       ImageName = 'Info'
       OnClick = vimgHint1Click
+      OnMouseLeave = vimgHintMouseLeave
     end
     object vimgHint2: TVirtualImage
-      Left = 159
-      Top = 404
+      Left = 390
+      Top = 436
       Width = 24
-      Height = 24
+      Height = 25
       ImageCollection = imgcolABRelay
       ImageWidth = 0
       ImageHeight = 0
       ImageIndex = 0
       ImageName = 'Info'
       OnClick = vimgHint2Click
+      OnMouseLeave = vimgHintMouseLeave
     end
     object vimgHint3: TVirtualImage
-      Left = 183
-      Top = 374
+      Left = 414
+      Top = 406
       Width = 24
-      Height = 24
+      Height = 25
       ImageCollection = imgcolABRelay
       ImageWidth = 0
       ImageHeight = 0
       ImageIndex = 0
       ImageName = 'Info'
       OnClick = vimgHint3Click
+      OnMouseLeave = vimgHintMouseLeave
     end
     object prefHeatAlgorithm: TRadioGroup
       Left = 22
@@ -279,26 +281,26 @@ object ABRelay: TABRelay
     end
     object prefExcludeOutsideLanes: TCheckBox
       Left = 22
-      Top = 314
+      Top = 436
       Width = 187
-      Height = 24
+      Height = 25
       Caption = 'Exclude outside lanes.'
       TabOrder = 4
     end
     object prefSeperateGender: TCheckBox
       Left = 22
-      Top = 344
+      Top = 466
       Width = 155
-      Height = 24
+      Height = 25
       Caption = 'Seperate gender.'
       Enabled = False
       TabOrder = 3
     end
     object rgpSeedMethod: TRadioGroup
       Left = 253
-      Top = 284
-      Width = 244
-      Height = 94
+      Top = 230
+      Width = 225
+      Height = 95
       Hint = 'Decides what lane an entrant is given.'
       Caption = 'Seed Method.'
       Enabled = False
@@ -309,8 +311,8 @@ object ABRelay: TABRelay
       TabOrder = 5
     end
     object spnSeedDepth: TSpinEdit
-      Left = 449
-      Top = 384
+      Left = 431
+      Top = 331
       Width = 48
       Height = 31
       Enabled = False
@@ -320,17 +322,17 @@ object ABRelay: TABRelay
       Value = 3
     end
     object prefDoHouseRelays: TCheckBox
-      Left = 22
-      Top = 374
+      Left = 253
+      Top = 406
       Width = 155
-      Height = 24
+      Height = 25
       Caption = 'Arrange by house.'
       Enabled = False
       TabOrder = 7
     end
     object prefNumOfSwimmersPerTeam: TSpinEdit
       Left = 22
-      Top = 236
+      Top = 331
       Width = 52
       Height = 31
       Enabled = False
@@ -338,29 +340,42 @@ object ABRelay: TABRelay
       MinValue = 2
       TabOrder = 8
       Value = 4
-      Visible = False
     end
     object prefVerbose: TCheckBox
       Left = 22
-      Top = 284
+      Top = 406
       Width = 82
-      Height = 24
+      Height = 25
       Caption = 'Verbose.'
       TabOrder = 9
     end
     object prefTrimPartialTeams: TCheckBox
-      Left = 22
-      Top = 404
+      Left = 253
+      Top = 436
       Width = 131
-      Height = 24
+      Height = 25
       Caption = 'Remove partial.'
       Checked = True
       Enabled = False
       State = cbChecked
       TabOrder = 10
     end
+    object rgrpAlgorithm: TRadioGroup
+      Left = 22
+      Top = 230
+      Width = 225
+      Height = 95
+      Caption = 'Pack Method.'
+      Enabled = False
+      ItemIndex = 0
+      Items.Strings = (
+        'SCM bin pack routine.'
+        'Generic Algorithm.')
+      TabOrder = 11
+    end
   end
   object bhintABRelay: TBalloonHint
+    Delay = 200
     Left = 424
     Top = 120
   end

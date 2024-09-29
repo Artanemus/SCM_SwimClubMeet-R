@@ -604,8 +604,22 @@ begin
   ABRelay.ExecAutoBuildRelay();
   if ABRelay.Success then
   begin
-    Refresh_Heat;
-    Refresh_IndvTeam;
+    SCM.qryTeamEntrant.DisableControls;
+    SCM.qryTeam.DisableControls;
+    SCM.qryHeat.DisableControls;
+    SCM.qryTeamEntrant.Close;
+    SCM.qryTeam.Close;
+    SCM.qryHeat.Close;
+    SCM.qryHeat.Open;
+    SCM.qryTeam.Open;
+    SCM.qryTeamEntrant.Open;
+    SCM.qryHeat.EnableControls;
+    SCM.qryTeamEntrant.EnableControls;
+    SCM.qryTeam.EnableControls;
+
+//    Refresh_Heat;
+//    Refresh_IndvTeam;
+//
     // Requery SCM.qryEvent to update entrant count.
     PostMessage(Handle, SCM_UPDATEENTRANTCOUNT, 0, 0);
     // Set flag for statusbar update.

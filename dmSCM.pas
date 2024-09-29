@@ -268,7 +268,6 @@ type
     function InsertEmptyLanes(aHeatID: integer): integer;
     function LastLaneNum(aHeatID: integer): integer;
     function LocateLane(aIndvTeamID: integer; aEventType: scmEventType): boolean;
-    function PadLanes(aHeatID: integer): integer;
     function RenumberEvents(aSessionID: integer; DoLocate: Boolean = true): integer;
     function RenumberHeats(aEventID: integer; DoLocate: Boolean = true): integer;
     function RenumberLanes(aHeatID: integer): integer;
@@ -276,6 +275,9 @@ type
     function SessionIsLocked(aIndvTeamID: integer; aEventType: scmEventType): Boolean;
     procedure WndProc(var wndMsg: TMessage); virtual;
   public
+
+    function PadLanes(aHeatID: integer): integer; // Made public 2024.08.28.
+
     { Public declarations }
     procedure ActivateTable();
     procedure DeActivateTable();
