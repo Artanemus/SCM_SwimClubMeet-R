@@ -484,6 +484,7 @@ type
 
     SCMEventList: TObjectList;
     function AssertConnection(): boolean; // Check connection to MSSQL DATABASE
+    procedure Heat_AutoBuildRelayExecute(Sender: TObject);
     procedure DBGridWndProc(var Msg: TMessage);
     procedure DrawEventStatus(oGrid: TObject; Rect: TRect; Column: TColumn);
     // procedure EnableEvent_GridEllipse();
@@ -564,7 +565,68 @@ uses
   UEnvVars, dlgEntrantPicker, dlgEntrantPickerCTRL, dmSCMNom, dlgSwapLanes,
   dlgDBVerInfo, rptHeatReportA, rptHeatReportB, frmDisqualificationCodes,
   dlgAutoSchedule, dlgDCodePicker, dmSCMHelper, rptMarshallReportC,
-  dlgSplitTimeTEAM, dlgSplitTimeINDV, dlgSwimClubSwitch, dlgSwimClubManage;
+  dlgSplitTimeTEAM, dlgSplitTimeINDV, dlgSwimClubSwitch, dlgSwimClubManage,
+  dlgABRelay, uABRelayExec;
+
+procedure TMain.Heat_AutoBuildRelayExecute(Sender: TObject);
+var
+  i, rtnValue: Integer;
+  dlg: TABRelay;
+  ABRelay: TABRelayExec;
+begin
+  // NOTE: actn..Update determines if this routine is accessable.
+  { Count number of nominees (swimmers) for event.
+    Exclude entrants (swimmers) in RACED or CLOSED heats.
+    INCLUDE nominees (swimmers) in OPEN heats.
+    INCLUDE pooled nominees (swimmers) not assigned a lane to the event.
+    }
+  i := SCM.CountTEAMNominee();
+  if (i = 0) then
+  begin
+    MessageDlg('''
+    No available nominees were found for this event.
+    Note: nominees (swimmers) in closed or raced heats are excluded.
+    Auto-Build TEAM-RELAYs was aborted.
+    ''', mtError, [mbOK], 0, mbOK);
+    exit;
+  end;
+  {open the RELAY_TEAM dialogue.}
+  dlg := TABRelay.Create(self);
+  rtnValue := dlg.ShowModal;
+  {closing the form here ensures prefences have been
+    written out to the preference ini file.}
+  dlg.Free;
+  if not IsPositiveResult(rtnValue) then exit;
+  {TODO -oBSA -cAutoBuildRelay : Partial team. Exclude nominee dialogue.}
+  {Hand over process to uABRelayExec.}
+  ABRelay := TABRelayExec.Create(Self);
+  ABRelay.Prepare(SCM.scmConnection, SCM.Event_ID);
+  ABRelay.ExecAutoBuildRelay();
+  if ABRelay.Success then
+  begin
+    SCM.qryTeamEntrant.DisableControls;
+    SCM.qryTeam.DisableControls;
+    SCM.qryHeat.DisableControls;
+    SCM.qryTeamEntrant.Close;
+    SCM.qryTeam.Close;
+    SCM.qryHeat.Close;
+    SCM.qryHeat.Open;
+    SCM.qryTeam.Open;
+    SCM.qryTeamEntrant.Open;
+    SCM.qryHeat.EnableControls;
+    SCM.qryTeamEntrant.EnableControls;
+    SCM.qryTeam.EnableControls;
+
+//    Refresh_Heat;
+//    Refresh_IndvTeam;
+//
+    // Requery SCM.qryEvent to update entrant count.
+    PostMessage(Handle, SCM_UPDATEENTRANTCOUNT, 0, 0);
+    // Set flag for statusbar update.
+    PostMessage(Handle, SCM_UPDATESTATUSBAR, 0, 0);
+  end;
+  ABRelay.free;
+end;
 
 procedure TMain.ActionManager1Update(Action: TBasicAction;
   var Handled: boolean);
@@ -2289,8 +2351,14 @@ var
   success: boolean;
   EventID, rtnValue: integer;
 begin
-  // actn..Update determines if this routine is accessable.
+  // A U T O - B U I L D   R E L A Y   TE A M .
+  if SCM.CurrEventType = etTEAM then
+  begin
+    Heat_AutoBuildRelayExecute(Sender);
+    exit;
+  end;
 
+  // actn..Update determines if this routine is accessable.
   EventID := SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger;
 
   // 'Quick' check if we have nominees to auto-create heats.
@@ -2360,9 +2428,7 @@ begin
         // A distance and stroke is needed before a new heat can be built
         if not SCM.dsEvent.DataSet.FieldByName('DistanceID').IsNull and
           not SCM.dsEvent.DataSet.FieldByName('StrokeID').IsNull then
-          // no auto-build for TEAM EVENTS - yet...
-          { TODO -oBSA -cGeneral : AutoBuildUpdate TEAM events. }
-          if SCM.CurrEventType = etINDV then DoEnable := true;
+          DoEnable := true;
       end;
   TAction(Sender).Enabled := DoEnable;
 end;
@@ -4041,7 +4107,10 @@ begin
   try
     dlg := TCloneSession.Create(self);
     // raises exception if SCM not assigned.
-    if IsPositiveResult(dlg.ShowModal) then SCM_RefreshExecute(self);
+    if IsPositiveResult(dlg.ShowModal) then
+    begin
+      SCM_RefreshExecute(self);
+    end;
     dlg.Free;
   except
     on E: Exception do ShowMessage(E.Message);

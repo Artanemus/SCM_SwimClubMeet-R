@@ -194,6 +194,8 @@ type
     qrySwimClubSwimClubTypeID: TIntegerField;
     qryDistance: TFDQuery;
     dsDistance: TDataSource;
+    qryCountTEAMNominee: TFDQuery;
+    qryCountINDVNominee: TFDQuery;
     procedure DataModuleCreate(Sender: TObject);
     procedure qryEntrantAfterScroll(DataSet: TDataSet);
     procedure qryEntrantTIMEGetText(Sender: TField; var Text: string;
@@ -266,7 +268,6 @@ type
     function InsertEmptyLanes(aHeatID: integer): integer;
     function LastLaneNum(aHeatID: integer): integer;
     function LocateLane(aIndvTeamID: integer; aEventType: scmEventType): boolean;
-    function PadLanes(aHeatID: integer): integer;
     function RenumberEvents(aSessionID: integer; DoLocate: Boolean = true): integer;
     function RenumberHeats(aEventID: integer; DoLocate: Boolean = true): integer;
     function RenumberLanes(aHeatID: integer): integer;
@@ -274,6 +275,9 @@ type
     function SessionIsLocked(aIndvTeamID: integer; aEventType: scmEventType): Boolean;
     procedure WndProc(var wndMsg: TMessage); virtual;
   public
+
+    function PadLanes(aHeatID: integer): integer; // Made public 2024.08.28.
+
     { Public declarations }
     procedure ActivateTable();
     procedure DeActivateTable();
@@ -326,6 +330,7 @@ type
     function MoveUpLane(ADataSet: TDataSet): Boolean;
     function MoveUpToPrevHeat(ADataSet: TDataSet): Boolean;
     // NOMINATE
+    function CountTEAMNominee(): integer;
     function Nominate_Locate(MemberID: integer): Boolean;
     function Nominate_LocateEventNum(ADataSet: TDataSet;
       EventNum: integer): Boolean;
@@ -712,6 +717,28 @@ begin
   end;
   v := scmConnection.ExecSQLScalar(SQL, [aHeatID]);
   if not VarIsNull(v) or not VarIsEmpty(v) then result := v;
+end;
+
+function TSCM.CountTEAMNominee: integer;
+begin
+  { Count number of nominees (swimmers) for event.
+    Exclude entrants (swimmers) in RACED or CLOSED heats.
+    INCLUDE nominees (swimmers) in OPEN heats.
+    INCLUDE pooled nominees (swimmers) not assigned a lane to the event.
+    }
+  result := 0;
+  SCM.qryCountTEAMNominee.Close;
+  SCM.qryCountTEAMNominee.ParamByName('EVENTID').AsInteger := Event_ID;
+  SCM.qryCountTEAMNominee.Prepare;
+  try
+    SCM.qryCountTEAMNominee.Open;
+    if SCM.qryCountTEAMNominee.Active then
+    begin
+      result := SCM.qryCountTEAMNominee.FieldByName('CountNominees').AsInteger;
+    end;
+  finally
+    SCM.qryCountTEAMNominee.Close;
+  end;
 end;
 
 function TSCM.CountTeamSwimmers(aTeamID: integer): integer;

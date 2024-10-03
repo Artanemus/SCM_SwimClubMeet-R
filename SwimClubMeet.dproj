@@ -64,7 +64,7 @@
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <DCC_UsePackage>DBXSqliteDriver;RESTComponents;fmxase;DBXDb2Driver;DBXInterBaseDriver;vclactnband;fsDB27;vclFireDAC;bindcompvclsmp;emsclientfiredac;tethering;svnui;DataSnapFireDAC;FireDACADSDriver;frx27;DBXMSSQLDriver;fsTee27;DatasnapConnectorsFreePascal;FireDACMSSQLDriver;vcltouch;vcldb;bindcompfmx;svn;frxIBX27;DBXOracleDriver;inetdb;fs27;FmxTeeUI;emsedge;fmx;FireDACIBDriver;fmxdae;vcledge;vclib;FireDACDBXDriver;dbexpress;IndyCore;vclx;frxTee27;dsnap;emsclient;DataSnapCommon;FireDACCommon;RESTBackendComponents;DataSnapConnectors;VCLRESTComponents;soapserver;vclie;bindengine;DBXMySQLDriver;CloudService;FireDACOracleDriver;FireDACMySQLDriver;DBXFirebirdDriver;FireDACCommonODBC;FireDACCommonDriver;DataSnapClient;inet;IndyIPCommon;bindcompdbx;fsFD27;frxDB27;vcl;IndyIPServer;DBXSybaseASEDriver;IndySystem;FireDACDb2Driver;bindcompvclwinx;dsnapcon;FireDACMSAccDriver;fmxFireDAC;FireDACInfxDriver;vclimg;frxIntIOIndy27;TeeDB;FireDAC;fsIBX27;emshosting;frxIntIO27;frxOpenFiltersTemp27;FireDACSqliteDriver;FireDACPgDriver;ibmonitor;FireDACASADriver;frxFD27;DBXOdbcDriver;FireDACTDataDriver;FMXTee;soaprtl;DbxCommonDriver;ibxpress;Tee;DataSnapServer;xmlrtl;soapmidas;DataSnapNativeClient;fmxobj;vclwinx;FireDACDSDriver;rtl;emsserverresource;DbxClientDriver;ibxbindings;DBXSybaseASADriver;CustomIPTransport;vcldsnap;DOSCommandDR;bindcomp;appanalytics;frxADO27;DBXInformixDriver;IndyIPClient;fsADO27;bindcompvcl;frxe27;TeeUI;dbxcds;VclSmp;frxDBX27;adortl;FireDACODBCDriver;DataSnapIndy10ServerTransport;frxcs27;dsnapxml;DataSnapProviderClient;dbrtl;IndyProtocols;inetdbxpress;FireDACMongoDBDriver;DataSnapServerMidas;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_UsePackage>DBXSqliteDriver;RESTComponents;fmxase;DBXDb2Driver;DBXInterBaseDriver;vclactnband;fsDB27;vclFireDAC;bindcompvclsmp;emsclientfiredac;tethering;svnui;DataSnapFireDAC;FireDACADSDriver;frx27;DBXMSSQLDriver;fsTee27;DatasnapConnectorsFreePascal;FireDACMSSQLDriver;vcltouch;vcldb;bindcompfmx;svn;frxIBX27;DBXOracleDriver;inetdb;fs27;FmxTeeUI;emsedge;fmx;FireDACIBDriver;fmxdae;vcledge;vclib;FireDACDBXDriver;dbexpress;IndyCore;vclx;frxTee27;dsnap;emsclient;DataSnapCommon;FireDACCommon;RESTBackendComponents;DataSnapConnectors;VCLRESTComponents;soapserver;vclie;bindengine;DBXMySQLDriver;CloudService;FireDACOracleDriver;FireDACMySQLDriver;DBXFirebirdDriver;FireDACCommonODBC;FireDACCommonDriver;DataSnapClient;inet;IndyIPCommon;bindcompdbx;fsFD27;frxDB27;vcl;IndyIPServer;DBXSybaseASEDriver;IndySystem;FireDACDb2Driver;bindcompvclwinx;dsnapcon;FireDACMSAccDriver;fmxFireDAC;FireDACInfxDriver;vclimg;frxIntIOIndy27;TeeDB;FireDAC;fsIBX27;emshosting;frxIntIO27;frxOpenFiltersTemp27;FireDACSqliteDriver;FireDACPgDriver;ibmonitor;FireDACASADriver;frxFD27;DBXOdbcDriver;FireDACTDataDriver;FMXTee;soaprtl;DbxCommonDriver;ibxpress;Tee;DataSnapServer;xmlrtl;soapmidas;DataSnapNativeClient;fmxobj;vclwinx;FireDACDSDriver;rtl;emsserverresource;DbxClientDriver;ibxbindings;DBXSybaseASADriver;CustomIPTransport;vcldsnap;DOSCommandDR;bindcomp;appanalytics;frxADO27;DBXInformixDriver;IndyIPClient;fsADO27;bindcompvcl;frxe27;TeeUI;dbxcds;VclSmp;frxDBX27;adortl;FireDACODBCDriver;DataSnapIndy10ServerTransport;frxcs27;dsnapxml;DataSnapProviderClient;dbrtl;IndyProtocols;inetdbxpress;FireDACMongoDBDriver;DataSnapServerMidas;JclDeveloperTools;Jcl;JclVcl;JclContainers;JvCore;JvSystem;JvStdCtrls;JvAppFrm;JvBands;JvCustom;JvControls;JvDB;JvDlgs;JvDocking;JvDotNetCtrls;JvCrypt;JvGlobus;JvHMI;JvPascalInterpreter;JvJans;JvManagedThreads;JvCmp;JvMM;JvNet;JvPageComps;JvPluginSystem;JvPrintPreview;JvRuntimeDesign;JvTimeFramework;JvWizards;JvXPCtrls;$(DCC_UsePackage)</DCC_UsePackage>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <BT_BuildType>Debug</BT_BuildType>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
@@ -110,9 +110,10 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_MinorVer>7</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=Artanemus;FileDescription=$(MSBuildProjectName) - Manage club members and run your club nights.;FileVersion=1.7.1.0;InternalName=SwimClubMeet;LegalCopyright=Copyright (C) 2019-2024 Artanemus.  All rights reserved.;LegalTrademarks=;OriginalFilename=SwimClubMeet.exe;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.7;Comments=Manage club members and run your club nights.</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=Artanemus;FileDescription=$(MSBuildProjectName) - Manage club members and run your club nights.;FileVersion=1.7.1.2;InternalName=SwimClubMeet;LegalCopyright=Copyright (C) 2019-2024 Artanemus.  All rights reserved.;LegalTrademarks=;OriginalFilename=SwimClubMeet.exe;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.7;Comments=Manage club members and run your club nights.</VerInfo_Keys>
         <Icon_MainIcon>SwimClubMeet.ico</Icon_MainIcon>
         <VerInfo_Release>1</VerInfo_Release>
+        <VerInfo_Build>2</VerInfo_Build>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -153,11 +154,6 @@
         <DCCReference Include="dlgPreferences.pas">
             <Form>Preferences</Form>
             <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="dmAutoBuildV2.pas">
-            <Form>AutoBuildV2</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="dmReports.pas">
             <Form>RPTS</Form>
@@ -384,11 +380,6 @@
             <Form>DCodePicker</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="AutoBuildRelayAlgorithm.pas"/>
-        <DCCReference Include="dlgAutoBuild_Relay.pas">
-            <Form>AutoBuild_Relay</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <DCCReference Include="FRAME\dlgTeamNameMenu.pas">
             <Form>TeamNameMenu</Form>
             <FormType>dfm</FormType>
@@ -453,8 +444,16 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <None Include="SwimClubMeet.md"/>
-        <None Include="SwimClubMeet.css"/>
+        <DCCReference Include="AUTOBUILD\uABRelayExec.pas"/>
+        <DCCReference Include="AUTOBUILD\dmABRelayData.pas">
+            <Form>ABRelayData</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="AUTOBUILD\dlgABRelay.pas">
+            <Form>ABRelay</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -476,59 +475,15 @@
                     <Source Name="MainSource">SwimClubMeet.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\BPL\JclDebugExpert290.bpl">JCL Debug IDE extension</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\BPL\JclProjectAnalysisExpert290.bpl">JCL Project Analyzer</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\BPL\JclFavoriteFoldersExpert290.bpl">JCL Open and Save IDE dialogs with favorite folders</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\BPL\JclRepositoryExpert290.bpl">JCL Package containing repository wizards</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\BPL\JclSIMDViewExpert290.bpl">JCL Debug Window of XMM registers</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\BPL\JclStackTraceViewerExpert290.bpl">JCL Stack Trace Viewer</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvAppFrmDesign290.bpl">JVCL Application and Form Components</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvBandsDesign290.bpl">JVCL Band Objects</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvCmpDesign290.bpl">JVCL Non-Visual Components</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvControlsDesign290.bpl">JVCL Visual Controls</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvCryptDesign290.bpl">JVCL Encryption and Compression</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvCustomDesign290.bpl">JVCL Custom Controls</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvDBDesign290.bpl">JVCL Database Components</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvDlgsDesign290.bpl">JVCL Dialog Components</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvDockingDesign290.bpl">JVCL Docking Components</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvDotNetCtrlsDesign290.bpl">JVCL DotNet Controls</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvGlobusDesign290.bpl">JVCL Globus Components</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvHMIDesign290.bpl">JVCL HMI Controls</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvJansDesign290.bpl">JVCL Jans Components</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvManagedThreadsDesign290.bpl">JVCL Managed Threads</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvMMDesign290.bpl">JVCL Multimedia and Image Components</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvNetDesign290.bpl">JVCL Network Components</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvPageCompsDesign290.bpl">JVCL Page Style Components</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvPascalInterpreterDesign290.bpl">JVCL Interpreter Components</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvPluginSystemDesign290.bpl">JVCL Plugin Components</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvPrintPreviewDesign290.bpl">JVCL Print Preview Components</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvRuntimeDesignDesign290.bpl">JVCL Runtime Design Components</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvStdCtrlsDesign290.bpl">JVCL Standard Controls</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvSystemDesign290.bpl">JVCL System Components</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvTimeFrameworkDesign290.bpl">JVCL Time Framework</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvWizardsDesign290.bpl">JVCL Wizard</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\JvXPCtrlsDesign290.bpl">JVCL XP Controls</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\bcboffice2k290.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\bcbofficexp290.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k290.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp290.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
-                <WelcomePageFile Path="SwimClubMeet.md"/>
+                <WelcomePageFile/>
                 <WelcomePageFolder Path="..\SCM_SwimClubMeet-R\ASSETS"/>
             </Delphi.Personality>
             <Deployment Version="4">
-                <DeployFile LocalName="SwimClubMeet.css" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="SwimClubMeet.md" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="Win32\Debug\SwimClubMeet.exe" Configuration="Debug" Class="ProjectOutput"/>
                 <DeployFile LocalName="Win32\Debug\SwimClubMeet.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">

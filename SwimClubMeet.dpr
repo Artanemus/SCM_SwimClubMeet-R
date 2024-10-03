@@ -13,7 +13,6 @@ uses
   dlgNewSession in 'dlgNewSession.pas' {NewSession},
   dlgPointsScored in 'dlgPointsScored.pas' {PointsScored},
   dlgPreferences in 'dlgPreferences.pas' {Preferences},
-  dmAutoBuildV2 in 'dmAutoBuildV2.pas' {AutoBuildV2: TDataModule},
   dmReports in 'dmReports.pas' {RPTS: TDataModule},
   dmSCM in 'dmSCM.pas' {SCM: TDataModule},
   dmSCMNom in 'dmSCMNom.pas' {SCMNom: TDataModule},
@@ -68,8 +67,6 @@ uses
   frame_TEAM in 'FRAME\frame_TEAM.pas' {frameTEAM: TFrame},
   frame_INDV in 'FRAME\frame_INDV.pas' {frameINDV: TFrame},
   dlgDCodePicker in 'dlgDCodePicker.pas' {DCodePicker},
-  AutoBuildRelayAlgorithm in 'AutoBuildRelayAlgorithm.pas',
-  dlgAutoBuild_Relay in 'dlgAutoBuild_Relay.pas' {AutoBuild_Relay},
   dlgTeamNameMenu in 'FRAME\dlgTeamNameMenu.pas' {TeamNameMenu},
   SCMHelpers in '..\SCM_SHARED\SCMHelpers.pas',
   dmSCMHelper in 'dmSCMHelper.pas',
@@ -85,7 +82,10 @@ uses
   dlgSwimClubManage in 'dlgSwimClubManage.pas' {SwimClubManage},
   dlgMemberClub in 'MEMBERS\dlgMemberClub.pas' {MemberClub},
   rptMemberCheckData in 'MEMBERS\rptMemberCheckData.pas' {MemberCheckData: TDataModule},
-  dmMemberHouse in 'MEMBERS\dmMemberHouse.pas' {MemberHouse: TDataModule};
+  dmMemberHouse in 'MEMBERS\dmMemberHouse.pas' {MemberHouse: TDataModule},
+  uABRelayExec in 'AUTOBUILD\uABRelayExec.pas',
+  dmABRelayData in 'AUTOBUILD\dmABRelayData.pas' {ABRelayData: TDataModule},
+  dlgABRelay in 'AUTOBUILD\dlgABRelay.pas' {ABRelay};
 
 {$R *.res}
 
