@@ -8,13 +8,20 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.Client,
-  Data.DB, FireDAC.Comp.DataSet, Vcl.StdCtrls, Vcl.ExtCtrls, dmSCM;
+  Data.DB, FireDAC.Comp.DataSet, Vcl.StdCtrls, Vcl.ExtCtrls, dmSCM,
+  Vcl.VirtualImage, Vcl.BaseImageCollection, Vcl.ImageCollection;
 
 type
   TCloneSession = class(TForm)
     qrySrcEvent: TFDQuery;
     tblSession: TFDTable;
     tblEvent: TFDTable;
+    lblDescription: TLabel;
+    pnlFooter: TPanel;
+    btnClone: TButton;
+    btnCancel: TButton;
+    vimgClone: TVirtualImage;
+    imgcolClone: TImageCollection;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure btnCancelClick(Sender: TObject);
@@ -27,8 +34,8 @@ type
     { Public declarations }
   end;
 
-var
-  CloneSession: TCloneSession;
+//var
+//  CloneSession: TCloneSession;
 
 implementation
 
@@ -45,7 +52,6 @@ begin
     ModalResult := mrOk
   else
   begin
-    Beep;
     ModalResult := mrCancel;
   end;
 end;
@@ -107,6 +113,13 @@ begin
       tblSession.FieldByName('SessionID').AsInteger;
     // Status = open
     tblEvent.FieldByName('EventStatusID').AsInteger := 1;
+
+    // Schedule TTime for the event...
+    tblEvent.FieldByName('ScheduleDT').AsDateTime :=
+      qrySrcEvent.FieldByName('ScheduleDT').AsDateTime;
+
+    // RallyOpenDT .. RallyCloseDT .. OpenDT .. CloseDT
+
     tblEvent.Post();
     i := i + 1;
     qrySrcEvent.Next;

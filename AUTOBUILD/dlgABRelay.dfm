@@ -170,7 +170,7 @@ object ABRelay: TABRelay
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
-    object lbl7: TLabel
+    object lblMemberMissingData: TLabel
       Left = 22
       Top = 130
       Width = 238
@@ -183,24 +183,16 @@ object ABRelay: TABRelay
       Font.Style = [fsUnderline]
       ParentFont = False
     end
-    object lbl8: TLabel
+    object lblPercent: TLabel
       Left = 106
       Top = 187
       Width = 333
       Height = 21
       Caption = 'percent. (With consideration to age and gender.)'
     end
-    object lblSeedDepth: TLabel
-      Left = 344
-      Top = 334
-      Width = 81
-      Height = 21
-      Caption = 'Seed depth:'
-      Enabled = False
-    end
     object lblSwimmersPerTeam: TLabel
       Left = 80
-      Top = 334
+      Top = 372
       Width = 143
       Height = 21
       Caption = 'Swimmers per team.'
@@ -244,6 +236,39 @@ object ABRelay: TABRelay
       ImageName = 'Info'
       OnClick = vimgHint3Click
       OnMouseLeave = vimgHintMouseLeave
+    end
+    object lblAcceptableMargin: TLabel
+      Left = 229
+      Top = 283
+      Width = 230
+      Height = 21
+      Caption = 'Acceptable margin  (default 20%)'
+    end
+    object vimgPackMethod: TVirtualImage
+      Left = 479
+      Top = 240
+      Width = 24
+      Height = 25
+      ImageCollection = imgcolABRelay
+      ImageWidth = 0
+      ImageHeight = 0
+      ImageIndex = 0
+      ImageName = 'Info'
+      OnClick = vimgPackMethodClick
+      OnMouseLeave = vimgHintMouseLeave
+    end
+    object rgrpAlgorithm: TRadioGroup
+      Left = 22
+      Top = 232
+      Width = 451
+      Height = 117
+      Caption = 'Pack Method.'
+      ItemIndex = 0
+      Items.Strings = (
+        'SCM Basic bin pack.'
+        'SCM Refined.'
+        'Generic Algorithm.')
+      TabOrder = 9
     end
     object prefHeatAlgorithm: TRadioGroup
       Left = 22
@@ -296,31 +321,6 @@ object ABRelay: TABRelay
       Enabled = False
       TabOrder = 3
     end
-    object rgpSeedMethod: TRadioGroup
-      Left = 253
-      Top = 230
-      Width = 225
-      Height = 95
-      Hint = 'Decides what lane an entrant is given.'
-      Caption = 'Seed Method.'
-      Enabled = False
-      ItemIndex = 0
-      Items.Strings = (
-        'SwimClubMeet (default)'
-        'Circle Seeding')
-      TabOrder = 5
-    end
-    object spnSeedDepth: TSpinEdit
-      Left = 431
-      Top = 331
-      Width = 48
-      Height = 31
-      Enabled = False
-      MaxValue = 10
-      MinValue = 0
-      TabOrder = 6
-      Value = 3
-    end
     object prefDoHouseRelays: TCheckBox
       Left = 253
       Top = 406
@@ -328,17 +328,17 @@ object ABRelay: TABRelay
       Height = 25
       Caption = 'Arrange by house.'
       Enabled = False
-      TabOrder = 7
+      TabOrder = 5
     end
     object prefNumOfSwimmersPerTeam: TSpinEdit
       Left = 22
-      Top = 331
+      Top = 369
       Width = 52
       Height = 31
       Enabled = False
       MaxValue = 12
       MinValue = 2
-      TabOrder = 8
+      TabOrder = 6
       Value = 4
     end
     object prefVerbose: TCheckBox
@@ -347,7 +347,7 @@ object ABRelay: TABRelay
       Width = 82
       Height = 25
       Caption = 'Verbose.'
-      TabOrder = 9
+      TabOrder = 7
     end
     object prefTrimPartialTeams: TCheckBox
       Left = 253
@@ -358,20 +358,17 @@ object ABRelay: TABRelay
       Checked = True
       Enabled = False
       State = cbChecked
-      TabOrder = 10
+      TabOrder = 8
     end
-    object rgrpAlgorithm: TRadioGroup
-      Left = 22
-      Top = 230
-      Width = 225
-      Height = 95
-      Caption = 'Pack Method.'
-      Enabled = False
-      ItemIndex = 0
-      Items.Strings = (
-        'SCM bin pack routine.'
-        'Generic Algorithm.')
-      TabOrder = 11
+    object spnAcceptableMargin: TSpinEdit
+      Left = 160
+      Top = 283
+      Width = 63
+      Height = 31
+      MaxValue = 100
+      MinValue = 10
+      TabOrder = 10
+      Value = 20
     end
   end
   object bhintABRelay: TBalloonHint

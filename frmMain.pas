@@ -4107,7 +4107,10 @@ begin
   try
     dlg := TCloneSession.Create(self);
     // raises exception if SCM not assigned.
-    if IsPositiveResult(dlg.ShowModal) then SCM_RefreshExecute(self);
+    if IsPositiveResult(dlg.ShowModal) then
+    begin
+      SCM_RefreshExecute(self);
+    end;
     dlg.Free;
   except
     on E: Exception do ShowMessage(E.Message);

@@ -4,7 +4,7 @@
         <ProjectVersion>20.1</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -110,9 +110,10 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_MinorVer>7</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=Artanemus;FileDescription=$(MSBuildProjectName) - Manage club members and run your club nights.;FileVersion=1.7.1.0;InternalName=SwimClubMeet;LegalCopyright=Copyright (C) 2019-2024 Artanemus.  All rights reserved.;LegalTrademarks=;OriginalFilename=SwimClubMeet.exe;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.7;Comments=Manage club members and run your club nights.</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=Artanemus;FileDescription=$(MSBuildProjectName) - Manage club members and run your club nights.;FileVersion=1.7.1.2;InternalName=SwimClubMeet;LegalCopyright=Copyright (C) 2019-2024 Artanemus.  All rights reserved.;LegalTrademarks=;OriginalFilename=SwimClubMeet.exe;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.7;Comments=Manage club members and run your club nights.</VerInfo_Keys>
         <Icon_MainIcon>SwimClubMeet.ico</Icon_MainIcon>
         <VerInfo_Release>1</VerInfo_Release>
+        <VerInfo_Build>2</VerInfo_Build>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -453,8 +454,6 @@
             <Form>ABRelay</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <None Include="SwimClubMeet.md"/>
-        <None Include="SwimClubMeet.css"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -481,22 +480,10 @@
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k290.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp290.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
-                <WelcomePageFile Path="SwimClubMeet.md"/>
+                <WelcomePageFile/>
                 <WelcomePageFolder Path="..\SCM_SwimClubMeet-R\ASSETS"/>
             </Delphi.Personality>
             <Deployment Version="4">
-                <DeployFile LocalName="SwimClubMeet.css" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="SwimClubMeet.md" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="Win32\Debug\SwimClubMeet.exe" Configuration="Debug" Class="ProjectOutput"/>
                 <DeployFile LocalName="Win32\Debug\SwimClubMeet.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">

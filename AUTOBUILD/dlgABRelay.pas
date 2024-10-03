@@ -18,16 +18,13 @@ type
     Label1: TLabel;
     Image1: TImage;
     pnlPrefences: TPanel;
-    lbl7: TLabel;
-    lbl8: TLabel;
-    lblSeedDepth: TLabel;
+    lblMemberMissingData: TLabel;
+    lblPercent: TLabel;
     prefHeatAlgorithm: TRadioGroup;
     prefUseDefRaceTime: TCheckBox;
     prefRaceTimeTopPercent: TSpinEdit;
     prefExcludeOutsideLanes: TCheckBox;
     prefSeperateGender: TCheckBox;
-    rgpSeedMethod: TRadioGroup;
-    spnSeedDepth: TSpinEdit;
     prefDoHouseRelays: TCheckBox;
     prefNumOfSwimmersPerTeam: TSpinEdit;
     lblSwimmersPerTeam: TLabel;
@@ -39,6 +36,9 @@ type
     vimgHint2: TVirtualImage;
     vimgHint3: TVirtualImage;
     rgrpAlgorithm: TRadioGroup;
+    spnAcceptableMargin: TSpinEdit;
+    lblAcceptableMargin: TLabel;
+    vimgPackMethod: TVirtualImage;
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -46,6 +46,7 @@ type
     procedure vimgHintMouseLeave(Sender: TObject);
     procedure vimgHint2Click(Sender: TObject);
     procedure vimgHint3Click(Sender: TObject);
+    procedure vimgPackMethodClick(Sender: TObject);
   private
     { Private declarations }
     procedure ReadPreferences(IniFileName: string);
@@ -115,10 +116,15 @@ begin
     integer(cbUnchecked)));
   prefSeperateGender.State := TCheckBoxState(iFile.ReadInteger('Preferences',
     'SeperateGender', integer(cbUnchecked)));
+
 //  prefGroupBy.ItemIndex := iFile.ReadInteger('Preferences', 'GroupBy', 0);
-  rgpSeedMethod.ItemIndex := iFile.ReadInteger('Preferences', 'SeedMethod', 0);
+//  rgpSeedMethod.ItemIndex := iFile.ReadInteger('Preferences', 'SeedMethod', 0);
+
   // 2020-11-01 auto-build v2 seed depth for Circle Seed */
-  spnSeedDepth.Value := (iFile.ReadInteger('Preferences', 'SeedDepth', 3));
+//  spnSeedDepth.Value := (iFile.ReadInteger('Preferences', 'SeedDepth', 3));
+
+  // 2024-10-3 auto-build relays acceptable margin for refined algorithm */
+  spnAcceptableMargin.Value := (iFile.ReadInteger('Preferences', 'AcceptableMargin', 20));
 
   // 2024-09-10
   // Relay teams, by default, have four swimmers.
@@ -158,11 +164,24 @@ begin
   bhintABRelay.Title := 'Group by Club-House .';
   bhintABRelay.Description := '''
   Relay teams will only be allowed swimmers that share
-  the same 'House' (as designated in the member's profile).
+  the same House ...as designated in the member's profile.
   ''';
   bhintABRelay.ShowHint(vimgHint3);
 
 end;
+
+procedure TABRelay.vimgPackMethodClick(Sender: TObject);
+begin
+  bhintABRelay.Title := 'Pack Method';
+  bhintABRelay.Description := '''
+  The Basic pack method is ideal when members' race times vary widely. It uses this broad range to build teams.
+  The Refined method should be used when members' Time-To-Beat (TTB) values are closely grouped together.
+  The Acceptable margin sets a threshold for team member selection; default is 20%, adjustable from 10% to 60%. Lower margins are recommended for groups with less variation in TTB.
+  The Genetic Algorithm takes longer and may yield unpredictable results but often outperforms other methods by simulating natural selection principles to optimize team composition.
+  ''';
+  bhintABRelay.ShowHint(vimgPackMethod);
+end;
+
 
 procedure TABRelay.WritePreferences(IniFileName: string);
 var
@@ -186,9 +205,14 @@ begin
   iFile.WriteInteger('Preferences', 'SeperateGender',
     integer(prefSeperateGender.State));
 //  iFile.WriteInteger('Preferences', 'GroupBy', prefGroupBy.ItemIndex);
-  iFile.WriteInteger('Preferences', 'SeedMethod', rgpSeedMethod.ItemIndex);
+//  iFile.WriteInteger('Preferences', 'SeedMethod', rgpSeedMethod.ItemIndex);
+
   // 2020-11-01 auto-build v2 seed depth for Circle Seed */
-  iFile.WriteInteger('Preferences', 'SeedDepth', (spnSeedDepth.Value));
+//  iFile.WriteInteger('Preferences', 'SeedDepth', (spnSeedDepth.Value));
+
+  // 2024-10-3 auto-build relays acceptable margin for refined algorithm */
+  iFile.WriteInteger('Preferences', 'AcceptableMargin', (spnAcceptableMargin.Value));
+
 
   // 2024-09-10
   // Relay teams, by default, have four swimmers.

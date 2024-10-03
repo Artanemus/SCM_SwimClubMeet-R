@@ -69,6 +69,7 @@ type
     fAcceptedMarginOfDeviation: double; // packing bin algorithm
     fIterations: Integer; // genetic algorithm default = 1000.
     fPackAlgorithm: integer;
+    fAcceptableMargin: integer; // Refined Algorithm - default 20 percent.
 
     { C A L C   R A C E - T I M E . }
     fAvgINDVNormTTB: double; // Average optimum INDV TTB - normalized.
@@ -96,11 +97,11 @@ type
     // B i n   p a c k i n g   r o u t i n e s .
     { R O U T I N E S . }
     procedure GetAvgDeviation(var LowAvg: double; var HighAvg: double);
-    function CalculateAcceptableMargin(): double;
+    function CalculateAcceptableMargin(Percent: integer): double;
     procedure NormalizeINDV_TTB;
     procedure FirstFit;
-    procedure SecondFit;
-    procedure ThirdFit;
+    procedure SecondFit(Percent: integer);
+    procedure ThirdFit(Percent: integer);
     procedure GeneticAlgorithm;
 
 
@@ -121,7 +122,7 @@ implementation
 uses System.Math, System.IniFiles, SCMUtility,
   dmABRelayData, system.Generics.Collections, System.StrUtils;
 
-function TABRelayExec.CalculateAcceptableMargin: double;
+function TABRelayExec.CalculateAcceptableMargin(Percent: integer): double;
 var
   LowAvg, HighAvg: double;
 begin
@@ -132,7 +133,7 @@ begin
   if (LowAvg = 0) and (HighAvg = 0) then
     Result := 0
   else
-    Result := 0.1 * (LowAvg + HighAvg) / 2; // 10% of the average deviation
+    Result := (Percent/100) * (LowAvg + HighAvg) / 2; // 60% of the average deviation
 end;
 
 constructor TABRelayExec.Create(AOwner: TComponent);
@@ -148,6 +149,7 @@ begin
   fSuccess := false;
   fAcceptedMarginOfDeviation := 0;
   fIterations := 1000;
+  fAcceptableMargin := 20;
 
   // I N I T I A L I Z E   P R E F E R E N C E S .
   fExcludeOutsideLanes := false;
@@ -177,6 +179,7 @@ var
   IniFileName: TFileName;
   v: variant;
   s: string;
+  i: integer;
 begin
   // A S S E R T .
   fSuccess := false;
@@ -361,18 +364,34 @@ begin
 
   // Optimum swimming time for all teams.
   fAvgTEAMNormTTB := fAvgINDVNormTTB * fNumOfSwimmersPerTeam;
-  if fPackAlgorithm = 0 then
-  begin
-    FirstFit; // First fit. Scatter swimmers across teams.
-//    SecondFit; // Find most (+/-) deviation and swap swimmers.
-//    ThirdFit;  // Refine deviation until within margin or looped fIterations.
-  end
-  else
-  begin
-    FirstFit; // First fit. Scatter swimmers across teams.
-    GeneticAlgorithm; // A Generic Algorithm - slower, perhaps better?
+  case fPackAlgorithm of
+    0:
+    begin
+      FirstFit; // First fit. Scatter swimmers across teams.
+      SecondFit(60); // Find most (+/-) deviation and swap swimmers.
+      SecondFit(50); // Find most (+/-) deviation and swap swimmers.
+      SecondFit(40); // Find most (+/-) deviation and swap swimmers.
+    end;
+    1:
+    begin
+      FirstFit;   // First fit. Scatter swimmers across teams.
+      // Find most (+/-) deviation and swap swimmers. default 20 percent
+      SecondFit(fAcceptableMargin); // Find most (+/-) deviation and swap swimmers.
+      i := (fAcceptableMargin - 10);
+      if (i<10)  then i := 10;
+      ThirdFit(i); // Refine deviation until within margin or looped fIterations.
+    end;
+    2:
+    begin
+      FirstFit; // First fit. Scatter swimmers across teams.
+//      GeneticAlgorithm; // A Generic Algorithm - slower, perhaps better?
+      s := '''
+        The Genetic Algorithm option is not available for this build.
+        Auto-build ENDED.
+      ''';
+      Application.MessageBox(Pchar(s), 'SwimClubMeet AutoBuild', MB_ICONINFORMATION or MB_OK);
+    end;
   end;
-
 
   // D i s t r i b u t e  2 .  (Gender, house, etc)
   // if fSuccess then DistributeTeams(FDQuery);
@@ -438,7 +457,7 @@ end;
 
 procedure TABRelayExec.GeneticAlgorithm;
 const
-  PopulationSize = 16;
+  PopulationSize = 1000;
   MaxGenerations = 100;
   MutationRate = 0.01;
 var
@@ -449,18 +468,36 @@ var
 
   procedure CopyPopulation(var Dest: array of TTeamArray; const Src: array of TTeamArray);
   var
-    i, j: Integer;
+    i, j, k: Integer;
   begin
-    SetLength(Population, Length(Src));
+
+// caller ....
+//  CopyPopulation(Population, NewPopulation);
+
+    SetLength(Population, Length(Src));  // Dest = Population
     for i := Low(Src) to High(Src) do
     begin
       SetLength(Dest[i], Length(Src[i]));
       for j := Low(Src[i]) to High(Src[i]) do
       begin
-        Dest[i][j] := Src[i][j];
+        // Initialize the TTeam record
+        Dest[i][j].TeamID := Src[i][j].TeamID;
+        Dest[i][j].TeamNameID := Src[i][j].TeamNameID;
+        Dest[i][j].Lane := Src[i][j].Lane;
+        Dest[i][j].HeatID := Src[i][j].HeatID;
+        Dest[i][j].SumNormTTB := Src[i][j].SumNormTTB;
+        Dest[i][j].Deviation := Src[i][j].Deviation;
+
+        // Set the length of idxSwimmer and copy the values
+        SetLength(Dest[i][j].idxSwimmer, Length(Src[i][j].idxSwimmer));
+        for k := Low(Src[i][j].idxSwimmer) to High(Src[i][j].idxSwimmer) do
+        begin
+          Dest[i][j].idxSwimmer[k] := Src[i][j].idxSwimmer[k];
+        end;
       end;
     end;
   end;
+
 
   function Fitness(Teams: TTeamArray): Double;
   var
@@ -996,6 +1033,10 @@ begin
   // 2020-11-01 auto-build v2 seed depth for Circle Seed */
   fSeedDepth := (iFile.ReadInteger('Preferences', 'SeedDepth', 3));
 
+  // 2024-10-3 auto-build relays acceptable margin for refined algorithm */
+  fAcceptableMargin := (iFile.ReadInteger('Preferences', 'AcceptableMargin', 20));
+
+
   iFile.free;
 end;
 
@@ -1062,14 +1103,14 @@ begin
 
 end;
 
-procedure TABRelayExec.SecondFit;
+procedure TABRelayExec.SecondFit(Percent: integer);
 var
   i, j, k, teamLow, teamHigh, swimmerLow, swimmerHigh: Integer;
   minDeviation, maxDeviation, fAcceptedMarginOfDeviation: double;
-  tempSwimmer, iter: Integer;
+  tempSwimmer, lowSwimmer, highSwimmer, iter: Integer;
 begin
   // Define your acceptable margin here
-  fAcceptedMarginOfDeviation := CalculateAcceptableMargin;
+  fAcceptedMarginOfDeviation := CalculateAcceptableMargin(Percent);
   fIterations := 3000;
   iter := 0; // Initialize iter
   repeat
@@ -1122,9 +1163,15 @@ begin
           Teams[teamHigh].SumNormTTB;
 
         // Check if the deviations are now within the acceptable margin
-        if (Abs(Teams[teamLow].Deviation) <= fAcceptedMarginOfDeviation) and
-        (Abs(Teams[teamHigh].Deviation) <= fAcceptedMarginOfDeviation) then
-          Exit;
+        if ((Abs(Teams[teamLow].Deviation) <= fAcceptedMarginOfDeviation)) then
+        begin
+          if ((Abs(Teams[teamHigh].Deviation) <= fAcceptedMarginOfDeviation)) then
+          begin
+            highSwimmer := Teams[teamHigh].idxSwimmer[k];
+            lowSwimmer := Teams[teamLow].idxSwimmer[j];
+            Exit;
+          end;
+        end;
       end;
     end;
     inc(iter);
@@ -1132,7 +1179,7 @@ begin
   until False OR (iter > fIterations);
 end;
 
-procedure TABRelayExec.ThirdFit;
+procedure TABRelayExec.ThirdFit(Percent: integer);
 var
   i, j, k, teamLow, teamHigh, swimmerLow, swimmerHigh: Integer;
   minDeviation, maxDeviation, fAcceptedMarginOfDeviation: double;
@@ -1140,7 +1187,7 @@ var
   improvement: Boolean;
 begin
   // Define your acceptable margin here
-  fAcceptedMarginOfDeviation := CalculateAcceptableMargin;
+  fAcceptedMarginOfDeviation := CalculateAcceptableMargin(Percent);
   fIterations := 3000;
   iter := 0; // Initialize iter
 
