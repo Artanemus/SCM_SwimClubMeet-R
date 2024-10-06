@@ -101,6 +101,9 @@ begin
   savedlgJSON.Title := 'Save JSON File';
   savedlgJSON.Filter := 'JSON Files|*.json';
   savedlgJSON.DefaultExt := 'json';
+
+
+
   qryJSON.First;
 
   dt := qryJSON.FieldByName('SessionStart').AsDateTime;

@@ -25,8 +25,6 @@ object ExportSessionJSON: TExportSessionJSON
     BevelOuter = bvNone
     ShowCaption = False
     TabOrder = 0
-    ExplicitTop = 471
-    ExplicitWidth = 595
     object btnOK: TButton
       Left = 633
       Top = 16
@@ -70,7 +68,6 @@ object ExportSessionJSON: TExportSessionJSON
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitWidth = 595
     object lblDescription: TLabel
       Left = 221
       Top = 0
@@ -102,7 +99,6 @@ object ExportSessionJSON: TExportSessionJSON
   end
   object qryJSON: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'EventNum;HeatNum;Lane'
     Connection = SCM.scmConnection
     FormatOptions.AssignedValues = [fvFmtDisplayDateTime, fvFmtDisplayTime]
@@ -170,7 +166,7 @@ object ExportSessionJSON: TExportSessionJSON
         Name = 'SESSIONID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = 116
+        Value = Null
       end>
     object qryJSONSessionID: TFDAutoIncField
       FieldName = 'SessionID'
