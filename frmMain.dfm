@@ -2,7 +2,7 @@ object Main: TMain
   Left = 0
   Top = 0
   Caption = 'Main'
-  ClientHeight = 872
+  ClientHeight = 810
   ClientWidth = 1344
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -2682,18 +2682,23 @@ object Main: TMain
   TextHeight = 21
   object pnlPageControl: TPanel
     Left = 0
-    Top = 106
+    Top = 89
     Width = 1344
-    Height = 737
+    Height = 692
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
     object PageControl1: TPageControl
+      AlignWithMargins = True
       Left = 0
-      Top = 0
+      Top = 4
       Width = 1344
-      Height = 737
-      ActivePage = TabSheet3
+      Height = 688
+      Margins.Left = 0
+      Margins.Top = 4
+      Margins.Right = 0
+      Margins.Bottom = 0
+      ActivePage = TabSheet1
       Align = alClient
       Style = tsFlatButtons
       TabOrder = 0
@@ -2705,7 +2710,7 @@ object Main: TMain
           Left = 0
           Top = 0
           Width = 729
-          Height = 698
+          Height = 649
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 0
@@ -2730,13 +2735,14 @@ object Main: TMain
             Left = 10
             Top = 20
             Width = 649
-            Height = 678
+            Height = 629
             Margins.Left = 10
             Margins.Top = 0
             Margins.Right = 10
             Margins.Bottom = 0
             Align = alClient
             DefaultDrawing = False
+            GradientEndColor = 14079702
             PopupMenu = pumSession
             TabOrder = 0
             TitleFont.Charset = DEFAULT_CHARSET
@@ -2761,7 +2767,7 @@ object Main: TMain
             Left = 669
             Top = 20
             Width = 60
-            Height = 678
+            Height = 629
             ControlCollection = <
               item
                 Control = spbtnSessionToggleVisible
@@ -2847,7 +2853,7 @@ object Main: TMain
             TabOrder = 2
             DesignSize = (
               60
-              678)
+              629)
             object spbtnSessionToggleVisible: TSpeedButton
               Left = 6
               Top = 0
@@ -2955,7 +2961,7 @@ object Main: TMain
           Left = 729
           Top = 0
           Width = 607
-          Height = 698
+          Height = 649
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
@@ -2979,7 +2985,7 @@ object Main: TMain
             Left = 0
             Top = 20
             Width = 607
-            Height = 678
+            Height = 629
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 1
@@ -2988,12 +2994,13 @@ object Main: TMain
               Left = 10
               Top = 0
               Width = 527
-              Height = 678
+              Height = 629
               Margins.Left = 10
               Margins.Top = 0
               Margins.Right = 10
               Margins.Bottom = 0
               Align = alClient
+              GradientEndColor = 14079702
               Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgTitleClick, dgTitleHotTrack]
               PopupMenu = pumEvent
               TabOrder = 0
@@ -3043,7 +3050,7 @@ object Main: TMain
               Left = 547
               Top = 0
               Width = 60
-              Height = 678
+              Height = 629
               ControlCollection = <
                 item
                   Control = ShapeBarEv1
@@ -3149,7 +3156,7 @@ object Main: TMain
               TabOrder = 1
               DesignSize = (
                 60
-                678)
+                629)
               object ShapeBarEv1: TShape
                 AlignWithMargins = True
                 Left = 6
@@ -3302,7 +3309,7 @@ object Main: TMain
           Left = 0
           Top = 0
           Width = 1336
-          Height = 698
+          Height = 649
           ControlCollection = <
             item
               Control = NominateCenteredPanel
@@ -3328,12 +3335,12 @@ object Main: TMain
           TabOrder = 0
           DesignSize = (
             1336
-            698)
+            649)
           object NominateCenteredPanel: TPanel
             Left = 198
             Top = 0
             Width = 940
-            Height = 698
+            Height = 649
             Anchors = []
             BevelOuter = bvNone
             TabOrder = 0
@@ -3342,7 +3349,7 @@ object Main: TMain
               Left = 0
               Top = 10
               Width = 352
-              Height = 678
+              Height = 629
               Margins.Left = 0
               Margins.Top = 10
               Margins.Right = 0
@@ -3389,7 +3396,7 @@ object Main: TMain
               TabOrder = 0
               DesignSize = (
                 352
-                678)
+                629)
               object Nominate_Edit: TEdit
                 AlignWithMargins = True
                 Left = 40
@@ -3421,12 +3428,13 @@ object Main: TMain
                 Left = 0
                 Top = 40
                 Width = 352
-                Height = 638
+                Height = 589
                 Margins.Left = 0
                 Margins.Top = 40
                 Margins.Right = 0
                 Margins.Bottom = 0
                 DefaultDrawing = False
+                GradientEndColor = 14079702
                 Options = [dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
                 PopupMenu = pumNominate
                 TabOrder = 1
@@ -3466,7 +3474,7 @@ object Main: TMain
               Left = 352
               Top = 48
               Width = 60
-              Height = 650
+              Height = 601
               Margins.Left = 0
               Margins.Top = 48
               Margins.Right = 0
@@ -3516,7 +3524,7 @@ object Main: TMain
               TabOrder = 1
               DesignSize = (
                 60
-                650)
+                601)
               object spbtnNominateSortMember: TSpeedButton
                 Left = 6
                 Top = 0
@@ -3572,7 +3580,7 @@ object Main: TMain
               Left = 410
               Top = 10
               Width = 530
-              Height = 678
+              Height = 629
               Margins.Left = 0
               Margins.Top = 10
               Margins.Right = 0
@@ -3604,7 +3612,7 @@ object Main: TMain
                 Left = 57
                 Top = 0
                 Width = 473
-                Height = 678
+                Height = 629
                 Margins.Left = 0
                 Margins.Top = 0
                 Margins.Right = 0
@@ -3685,7 +3693,7 @@ object Main: TMain
                 Left = 12
                 Top = 40
                 Width = 45
-                Height = 635
+                Height = 586
                 Margins.Top = 40
                 Margins.Right = 0
                 Align = alRight
@@ -3732,7 +3740,7 @@ object Main: TMain
           Left = 0
           Top = 0
           Width = 1336
-          Height = 698
+          Height = 649
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 0
@@ -3740,7 +3748,7 @@ object Main: TMain
             Left = 282
             Top = 127
             Width = 1054
-            Height = 571
+            Height = 522
             Margins.Left = 0
             Margins.Top = 10
             Margins.Right = 20
@@ -3752,7 +3760,7 @@ object Main: TMain
               Left = 966
               Top = 0
               Width = 88
-              Height = 571
+              Height = 522
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 0
@@ -3760,7 +3768,7 @@ object Main: TMain
                 Left = 0
                 Top = 0
                 Width = 88
-                Height = 571
+                Height = 522
                 ControlCollection = <
                   item
                     Control = spbtnEntrantDown
@@ -3836,7 +3844,7 @@ object Main: TMain
                 TabOrder = 0
                 DesignSize = (
                   88
-                  571)
+                  522)
                 object spbtnEntrantDown: TSpeedButton
                   Left = 20
                   Top = 48
@@ -3951,13 +3959,13 @@ object Main: TMain
               Left = 0
               Top = 0
               Width = 966
-              Height = 571
+              Height = 522
               Align = alClient
               BevelOuter = bvNone
               TabOrder = 1
               inline INDV: TframeINDV
                 Left = 0
-                Top = 435
+                Top = 386
                 Width = 966
                 Height = 136
                 Align = alBottom
@@ -3970,7 +3978,7 @@ object Main: TMain
                 ParentColor = False
                 ParentFont = False
                 TabOrder = 0
-                ExplicitTop = 435
+                ExplicitTop = 386
                 ExplicitWidth = 966
                 ExplicitHeight = 136
                 inherited Grid: TDBGrid
@@ -4018,14 +4026,14 @@ object Main: TMain
                   ExplicitWidth = 966
                   ExplicitHeight = 99
                   inherited rpnlTeamEntrantTools: TRelativePanel
-                    Width = 76
+                    Width = 108
                     Height = 99
                     ControlCollection = <
                       item
                         Control = TEAM.spbtnMoveUpSlot
                         AlignBottomWithPanel = False
-                        AlignHorizontalCenterWithPanel = True
-                        AlignLeftWithPanel = False
+                        AlignHorizontalCenterWithPanel = False
+                        AlignLeftWithPanel = True
                         AlignRightWithPanel = False
                         AlignTopWithPanel = True
                         AlignVerticalCenterWithPanel = False
@@ -4033,8 +4041,8 @@ object Main: TMain
                       item
                         Control = TEAM.spbtnMoveDownSlot
                         AlignBottomWithPanel = False
-                        AlignHorizontalCenterWithPanel = True
-                        AlignLeftWithPanel = False
+                        AlignHorizontalCenterWithPanel = False
+                        AlignLeftWithPanel = True
                         AlignRightWithPanel = False
                         AlignTopWithPanel = False
                         AlignVerticalCenterWithPanel = False
@@ -4043,8 +4051,8 @@ object Main: TMain
                       item
                         Control = TEAM.spbtnTeamEntrantClear
                         AlignBottomWithPanel = False
-                        AlignHorizontalCenterWithPanel = True
-                        AlignLeftWithPanel = False
+                        AlignHorizontalCenterWithPanel = False
+                        AlignLeftWithPanel = True
                         AlignRightWithPanel = False
                         AlignTopWithPanel = False
                         AlignVerticalCenterWithPanel = False
@@ -4053,8 +4061,8 @@ object Main: TMain
                       item
                         Control = TEAM.spbtnTeamEntrantStrike
                         AlignBottomWithPanel = False
-                        AlignHorizontalCenterWithPanel = True
-                        AlignLeftWithPanel = False
+                        AlignHorizontalCenterWithPanel = False
+                        AlignLeftWithPanel = True
                         AlignRightWithPanel = False
                         AlignTopWithPanel = False
                         AlignVerticalCenterWithPanel = False
@@ -4063,57 +4071,48 @@ object Main: TMain
                       item
                         Control = TEAM.spbtnAddSlot
                         AlignBottomWithPanel = False
-                        AlignHorizontalCenterWithPanel = True
+                        AlignHorizontalCenterWithPanel = False
                         AlignLeftWithPanel = False
-                        AlignRightWithPanel = False
-                        AlignTopWithPanel = False
+                        AlignRightWithPanel = True
+                        AlignTopWithPanel = True
                         AlignVerticalCenterWithPanel = False
-                        Below = TEAM.spbtnTeamEntrantStrike
                       end
                       item
                         Control = TEAM.spbtnRemoveSlot
                         AlignBottomWithPanel = False
-                        AlignHorizontalCenterWithPanel = True
+                        AlignHorizontalCenterWithPanel = False
                         AlignLeftWithPanel = False
-                        AlignRightWithPanel = False
+                        AlignRightWithPanel = True
                         AlignTopWithPanel = False
                         AlignVerticalCenterWithPanel = False
                         Below = TEAM.spbtnAddSlot
                       end>
-                    ExplicitWidth = 76
+                    ExplicitWidth = 108
                     ExplicitHeight = 99
                     DesignSize = (
-                      76
+                      108
                       99)
                     inherited spbtnMoveUpSlot: TSpeedButton
-                      Left = 14
                       Action = actnMoveUpSlot
-                      ExplicitLeft = 14
                     end
                     inherited spbtnMoveDownSlot: TSpeedButton
-                      Left = 14
                       Action = actnMoveDownSlot
-                      ExplicitLeft = 14
                     end
                     inherited spbtnTeamEntrantClear: TSpeedButton
-                      Left = 14
                       Action = actnClearSlot
-                      ExplicitLeft = 14
                     end
                     inherited spbtnTeamEntrantStrike: TSpeedButton
-                      Left = 14
                       Action = actnStrikeSlot
-                      ExplicitLeft = 14
                     end
                     inherited spbtnAddSlot: TSpeedButton
-                      Left = 14
+                      Left = 60
                       Action = actnAddSlot
-                      ExplicitLeft = 14
+                      ExplicitLeft = 60
                     end
                     inherited spbtnRemoveSlot: TSpeedButton
-                      Left = 14
+                      Left = 60
                       Action = actnRemoveSlot
-                      ExplicitLeft = 14
+                      ExplicitLeft = 60
                     end
                   end
                   inherited Panel3: TPanel
@@ -4346,7 +4345,7 @@ object Main: TMain
             Left = 20
             Top = 127
             Width = 252
-            Height = 571
+            Height = 522
             Margins.Left = 20
             Margins.Top = 0
             Margins.Right = 10
@@ -4355,15 +4354,14 @@ object Main: TMain
             BevelOuter = bvNone
             TabOrder = 0
             object HeatWidgets: TRelativePanel
-              AlignWithMargins = True
               Left = 192
-              Top = 10
+              Top = 0
               Width = 60
-              Height = 551
+              Height = 522
               Margins.Left = 0
-              Margins.Top = 10
+              Margins.Top = 0
               Margins.Right = 0
-              Margins.Bottom = 10
+              Margins.Bottom = 0
               ControlCollection = <
                 item
                   Control = spbtnHeatUp
@@ -4529,7 +4527,7 @@ object Main: TMain
               TabOrder = 0
               DesignSize = (
                 60
-                551)
+                522)
               object spbtnHeatUp: TSpeedButton
                 Left = 6
                 Top = 0
@@ -4598,19 +4596,17 @@ object Main: TMain
               object ShapeHeatBar1: TShape
                 AlignWithMargins = True
                 Left = 6
-                Top = 250
+                Top = 243
                 Width = 48
                 Height = 4
                 Margins.Left = 0
-                Margins.Top = 10
                 Margins.Right = 0
-                Margins.Bottom = 10
                 Anchors = []
                 Brush.Color = 8421631
               end
               object spbtnHeatAutoBuild: TSpeedButton
                 Left = 6
-                Top = 264
+                Top = 250
                 Width = 48
                 Height = 48
                 Action = Heat_AutoBuild
@@ -4624,19 +4620,17 @@ object Main: TMain
               object ShapeHeatBar2: TShape
                 AlignWithMargins = True
                 Left = 6
-                Top = 322
+                Top = 301
                 Width = 48
                 Height = 4
                 Margins.Left = 0
-                Margins.Top = 10
                 Margins.Right = 0
-                Margins.Bottom = 10
                 Anchors = []
                 Brush.Color = 8421631
               end
               object spbtnHeatMarshall: TSpeedButton
                 Left = 6
-                Top = 336
+                Top = 308
                 Width = 48
                 Height = 48
                 Hint = 'Create a marshall'#39's sheet for the heats in this event.'
@@ -4650,7 +4644,7 @@ object Main: TMain
               end
               object spbtnHeatTimeKeeper: TSpeedButton
                 Left = 6
-                Top = 384
+                Top = 356
                 Width = 48
                 Height = 48
                 Hint = 'Create a timekeeper'#39's sheet for the selected heat.'
@@ -4665,19 +4659,17 @@ object Main: TMain
               object ShapeHeatBar3: TShape
                 AlignWithMargins = True
                 Left = 6
-                Top = 490
+                Top = 455
                 Width = 48
                 Height = 4
                 Margins.Left = 0
-                Margins.Top = 10
                 Margins.Right = 0
-                Margins.Bottom = 10
                 Anchors = []
                 Brush.Color = 8421631
               end
               object spbtnHeatBatchPrintSet: TSpeedButton
                 Left = 6
-                Top = 432
+                Top = 404
                 Width = 48
                 Height = 48
                 Hint = 'Create and print all sheets, both marshall and timekeepers.'
@@ -4691,7 +4683,7 @@ object Main: TMain
               end
               object spbtnHeatReport: TSpeedButton
                 Left = 6
-                Top = 504
+                Top = 462
                 Width = 48
                 Height = 48
                 Action = Heat_Report
@@ -4705,7 +4697,7 @@ object Main: TMain
               object ShapeHeatDot1: TShape
                 AlignWithMargins = True
                 Left = 5
-                Top = 374
+                Top = 346
                 Width = 20
                 Height = 10
                 Margins.Left = 5
@@ -4716,7 +4708,7 @@ object Main: TMain
               object ShapeHeatDot2: TShape
                 AlignWithMargins = True
                 Left = 5
-                Top = 422
+                Top = 394
                 Width = 20
                 Height = 10
                 Margins.Left = 5
@@ -4727,7 +4719,7 @@ object Main: TMain
               object ShapeHeatDot3: TShape
                 AlignWithMargins = True
                 Left = 5
-                Top = 542
+                Top = 500
                 Width = 20
                 Height = 10
                 Margins.Left = 5
@@ -4740,7 +4732,7 @@ object Main: TMain
               Left = 0
               Top = 0
               Width = 176
-              Height = 571
+              Height = 522
               Align = alLeft
               BorderStyle = bsNone
               ItemCount = 78
@@ -4800,7 +4792,7 @@ object Main: TMain
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 843
+    Top = 781
     Width = 1344
     Height = 29
     Action = SCM_StatusBar
@@ -4828,11 +4820,11 @@ object Main: TMain
     Left = 0
     Top = 25
     Width = 1344
-    Height = 81
+    Height = 64
     ControlCollection = <
       item
         Control = dbimgSwimClubLogo
-        AlignBottomWithPanel = True
+        AlignBottomWithPanel = False
         AlignHorizontalCenterWithPanel = False
         AlignLeftWithPanel = True
         AlignRightWithPanel = False
@@ -4864,8 +4856,8 @@ object Main: TMain
         AlignHorizontalCenterWithPanel = False
         AlignLeftWithPanel = False
         AlignRightWithPanel = True
-        AlignTopWithPanel = False
-        AlignVerticalCenterWithPanel = True
+        AlignTopWithPanel = True
+        AlignVerticalCenterWithPanel = False
       end
       item
         Control = sbtnMembers
@@ -4873,8 +4865,8 @@ object Main: TMain
         AlignHorizontalCenterWithPanel = False
         AlignLeftWithPanel = False
         AlignRightWithPanel = False
-        AlignTopWithPanel = False
-        AlignVerticalCenterWithPanel = True
+        AlignTopWithPanel = True
+        AlignVerticalCenterWithPanel = False
         LeftOf = sbtnRefresh
       end>
     Align = alTop
@@ -4882,17 +4874,17 @@ object Main: TMain
     TabOrder = 2
     DesignSize = (
       1344
-      81)
+      64)
     object dbimgSwimClubLogo: TDBImage
       AlignWithMargins = True
-      Left = 10
-      Top = 10
+      Left = 4
+      Top = 4
       Width = 59
-      Height = 61
-      Margins.Left = 10
-      Margins.Top = 10
-      Margins.Right = 10
-      Margins.Bottom = 10
+      Height = 59
+      Margins.Left = 4
+      Margins.Top = 4
+      Margins.Right = 4
+      Margins.Bottom = 4
       Anchors = []
       DataField = 'LogoImg'
       DataSource = SCM.dsSwimClub
@@ -4902,8 +4894,8 @@ object Main: TMain
       OnClick = Tools_PreferencesExecute
     end
     object pnlClubData: TRelativePanel
-      Left = 79
-      Top = 15
+      Left = 67
+      Top = 6
       Width = 317
       Height = 51
       ControlCollection = <
@@ -4918,12 +4910,13 @@ object Main: TMain
         end
         item
           Control = dbtxtSwimClubNickName
-          AlignBottomWithPanel = True
+          AlignBottomWithPanel = False
           AlignHorizontalCenterWithPanel = False
           AlignLeftWithPanel = True
           AlignRightWithPanel = False
           AlignTopWithPanel = False
           AlignVerticalCenterWithPanel = False
+          Below = dbtxtSwimClubCaption
         end>
       Anchors = []
       BevelOuter = bvNone
@@ -4934,7 +4927,7 @@ object Main: TMain
       object dbtxtSwimClubCaption: TDBText
         Left = 0
         Top = 0
-        Width = 161
+        Width = 170
         Height = 19
         Anchors = []
         AutoSize = True
@@ -4949,8 +4942,8 @@ object Main: TMain
       end
       object dbtxtSwimClubNickName: TDBText
         Left = 0
-        Top = 30
-        Width = 179
+        Top = 19
+        Width = 134
         Height = 21
         Anchors = []
         AutoSize = True
@@ -4960,7 +4953,7 @@ object Main: TMain
     end
     object pnlDebugInfo: TPanel
       Left = 314
-      Top = 19
+      Top = 10
       Width = 716
       Height = 43
       Anchors = []
@@ -5120,7 +5113,7 @@ object Main: TMain
     end
     object sbtnRefresh: TSpeedButton
       Left = 1296
-      Top = 16
+      Top = 0
       Width = 48
       Height = 48
       Action = SCM_Refresh
@@ -5132,7 +5125,7 @@ object Main: TMain
     end
     object sbtnMembers: TSpeedButton
       Left = 1248
-      Top = 16
+      Top = 0
       Width = 48
       Height = 48
       Action = SCM_ManageMembers
@@ -5167,46 +5160,6 @@ object Main: TMain
     ActionBars = <
       item
         Items = <
-          item
-            Items = <
-              item
-                Action = File_ExportCarnival
-                Caption = 'E&xport CarnivalMeet...'
-                ImageIndex = 46
-                ImageName = 'Export'
-              end
-              item
-                Action = File_ImportCarnival
-                Caption = '&Import CarnivalMeet...'
-                ImageIndex = 39
-                ImageName = 'import'
-              end
-              item
-                Caption = '-'
-              end
-              item
-                Action = SwimClub_Switch
-                Caption = '&Switch Clubs ...'
-                ImageIndex = 11
-                ImageName = 'Switch'
-              end
-              item
-                Action = SwimClub_Manage
-                Caption = '&Manage Swim Clubs ...'
-                ImageIndex = 50
-                ImageName = 'folder_managed'
-              end
-              item
-                Caption = '-'
-              end
-              item
-                Action = File_Exit
-                Caption = '&Exit'
-                ImageIndex = 38
-                ImageName = 'Exit'
-              end>
-            Caption = '&File'
-          end
           item
             Items = <
               item
@@ -5276,6 +5229,52 @@ object Main: TMain
                 ImageName = 'Sync'
               end>
             Caption = '&Session'
+          end
+          item
+            Items = <
+              item
+                Action = File_ExportSession
+                Caption = 'Ex&port Session...'
+                ImageIndex = 46
+                ImageName = 'Export'
+              end
+              item
+                Action = File_ExportCarnival
+                Caption = 'E&xport CarnivalMeet...'
+                ImageIndex = 46
+                ImageName = 'Export'
+              end
+              item
+                Action = File_ImportCarnival
+                Caption = '&Import CarnivalMeet...'
+                ImageIndex = 39
+                ImageName = 'import'
+              end
+              item
+                Caption = '-'
+              end
+              item
+                Action = SwimClub_Switch
+                Caption = '&Switch Clubs ...'
+                ImageIndex = 11
+                ImageName = 'Switch'
+              end
+              item
+                Action = SwimClub_Manage
+                Caption = '&Manage Swim Clubs ...'
+                ImageIndex = 50
+                ImageName = 'folder_managed'
+              end
+              item
+                Caption = '-'
+              end
+              item
+                Action = File_Exit
+                Caption = '&Exit'
+                ImageIndex = 38
+                ImageName = 'Exit'
+              end>
+            Caption = '&File'
           end
           item
             Items = <
@@ -5626,6 +5625,14 @@ object Main: TMain
       ImageIndex = 43
       ImageName = 'info'
       OnExecute = Help_AboutExecute
+    end
+    object File_ExportSession: TAction
+      Category = 'File'
+      Caption = 'Export Session...'
+      Hint = 'Save to file your members racetime for this session.'
+      ImageIndex = 46
+      ImageName = 'Export'
+      OnExecute = File_ExportSessionExecute
     end
     object File_ExportCarnival: TAction
       Category = 'File'

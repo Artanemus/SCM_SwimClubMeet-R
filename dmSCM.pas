@@ -399,6 +399,14 @@ type
     // CURRENT EVENT TYPE -
     function GetCurrEventType(): scmEventType;
 
+    // Disqualification Code
+    // IsScratched/IsDisqualified alias DCode.
+    function GetIsScratchedDCode(): integer;
+    function GetIsDisqualifiedDCode(): integer;
+    function GetDCodeTypeSCM(): integer;
+    function UpdateDCodes(): boolean;
+
+
   published
     property CheckNomination: integer read prefCheckUnNomination
       write prefCheckUnNomination;
@@ -530,6 +538,7 @@ begin
         'not all essential tables opened successfully!', mtWarning, [mbOK], 0);
   end;
 end;
+
 
 function TSCM.ClearLane(aIndvTeamID: integer; aEventType: scmEventType): integer;
 var
@@ -1394,6 +1403,55 @@ begin
       2: result := etTEAM;
     end;
   end;
+end;
+
+function TSCM.GetIsDisqualifiedDCode: integer;
+var
+s: string;
+v: variant;
+begin
+  {-- SCM Special
+    [DisqualifyCodeID], [Caption], [ABREV], [DisqualifyTypeID]
+    (54, N'Unspecified disqualification. (Simplified method.)',N'ScmB',7)}
+  result := 0;
+  if not fSCMActive then exit;
+  s := 'SELECT [DisqualifyCodeID] FROM [dbo].[DisqualifyCode] ' +
+    'WHERE [ABREV] = N''ScmB'' ';
+  v := SCM.scmConnection.ExecSQLScalar(s);
+  if not VarIsNull(v) and not VarIsEmpty(v) then result := v;
+end;
+
+
+function TSCM.GetDCodeTypeSCM(): integer;
+var
+  s: string;
+  v: variant;
+begin
+  { -- SCM Special
+    [DisqualifyCodeID], [Caption], [ABREV], [DisqualifyTypeID]
+    (53, N'Swimmer didn''t show for event. Scratched',N'ScmA',7) }
+  result := 0;
+  if not fSCMActive then exit;
+  s := ' SELECT [DisqualifyTypeID] FROM [dbo].[DisqualifyType] ' +
+    'WHERE [Caption] = N''SCM'' ';
+  v := SCM.scmConnection.ExecSQLScalar(s);
+  if not VarIsNull(v) and not VarIsEmpty(v) then result := v;
+end;
+
+function TSCM.GetIsScratchedDCode: integer;
+var
+  s: string;
+  v: variant;
+begin
+  { -- SCM Special
+    [DisqualifyCodeID], [Caption], [ABREV], [DisqualifyTypeID]
+    (53, N'Swimmer didn''t show for event. Scratched',N'ScmA',7) }
+  result := 0;
+  if not fSCMActive then exit;
+  s := ' SELECT [DisqualifyCodeID] FROM [dbo].[DisqualifyCode] ' +
+    'WHERE [ABREV] = N''ScmA'' ';
+  v := SCM.scmConnection.ExecSQLScalar(s);
+  if not VarIsNull(v) and not VarIsEmpty(v) then result := v;
 end;
 
 function TSCM.HeatStatusID(aIndvTeamID: integer;
@@ -3601,6 +3659,84 @@ begin
       if Assigned(fld) then fld.Visible := false;
     end;
     EnableControls;
+  end;
+end;
+
+function TSCM.UpdateDCodes: boolean;
+var
+s: string;
+v: variant;
+i: integer;
+begin
+  result := false;
+  if not fSCMActive then exit;
+
+  {TEST for DCODE TYPE 8}
+  i := GetDCodeTypeSCM(); // Missing SCM SPECIAL DCODE. Record Number 8.
+  if (i = 0) then
+  begin
+    s :=
+      'SET IDENTITY_INSERT  [dbo].[DisqualifyType] ON;' +
+      'INSERT INTO DisqualifyType ' +
+      '( [DisqualifyTypeID], [Caption], [StrokeID]  ) ' +
+      'VALUES ' +
+      '(8, N''SCM'',NULL); ' +
+      'SET IDENTITY_INSERT  [dbo].[DisqualifyType] OFF; ';
+    v := SCM.scmConnection.ExecSQL(s);
+
+    result := true;
+  end;
+  if (i = 0) then   // ASSERT STROKE ID's. DEFAULT SYSTEM RECORDS.
+  begin
+    s := // Freestyle
+      'UPDATE [dbo].[DisqualifyType] SET ' +
+      '[StrokeID] = 1 ' +
+      'WHERE [DisqualifyTypeID] = 2 ';
+    v := SCM.scmConnection.ExecSQL(s);
+    s := // BackStroke
+      'UPDATE [dbo].[DisqualifyType] SET ' +
+      '[StrokeID] = 2 ' +
+      'WHERE [DisqualifyTypeID] = 3 ';
+    v := SCM.scmConnection.ExecSQL(s);
+    s := // BreastStroke
+      'UPDATE [dbo].[DisqualifyType] SET ' +
+      '[StrokeID] = 3 ' +
+      'WHERE [DisqualifyTypeID] = 4 ';
+    v := SCM.scmConnection.ExecSQL(s);
+    s := // INDV Butterfly
+      'UPDATE [dbo].[DisqualifyType] SET ' +
+      '[StrokeID] = 4 ' +
+      'WHERE [DisqualifyTypeID] = 5 ';
+    v := SCM.scmConnection.ExecSQL(s);
+    s := // INDV medley
+      'UPDATE [dbo].[DisqualifyType] SET ' +
+      '[StrokeID] = 5 ' +
+      'WHERE [DisqualifyTypeID] = 6 ';
+    v := SCM.scmConnection.ExecSQL(s);
+  end;
+
+  { TEST for DCODES ... ScmA}
+  i := GetIsScratchedDCode();
+  if (i = 0) then // didn't find DCODE.
+  begin
+    s :=
+      'INSERT INTO DisqualifyCode ' +
+      '( [Caption], [ABREV], [DisqualifyTypeID] ) ' +
+      'VALUES ' +
+      '(N''Swimmer did not show for event. Scratched'', N''ScmA'', 8);';
+    v := SCM.scmConnection.ExecSQL(s);
+    result := true;
+  end;
+  i := GetIsDisqualifiedDCode();
+  if (i = 0) then // didn't find DCODE.
+  begin
+    s :=
+      'INSERT INTO DisqualifyCode ' +
+      '( [Caption], [ABREV], [DisqualifyTypeID] ) ' +
+      'VALUES ' +
+      '(N''Unspecified disqualification.. (Simplified method.)'', N''ScmB'', 8);';
+    v := SCM.scmConnection.ExecSQL(s);
+    result := true;
   end;
 end;
 

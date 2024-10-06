@@ -41,6 +41,10 @@ type
     fEntrantID: integer;
     fTeamID: integer;
     fDoINDV: boolean;
+    fIsScratchedDCode: integer;
+    fIsDisqualifiedDCode: integer;
+    function AssertConnection: boolean;
+
   public
     { Public declarations }
     constructor CreateWithConnection(AOwner: TComponent;
@@ -116,8 +120,8 @@ begin
     // disqualification code ID
     CodeID := StrToIntDef(lvItem.SubItems[1], 0);
     // "Simplified Disqualification Schema"
-    // SCMa - Swimmer didn't show for event. Scratched
-    if CodeID = 53 then
+    // SCMa - Swimmer didn't show for event. Scratched.
+    if (CodeID = fIsScratchedDCode) then
     begin
       IsScratched := true;
       IsDisqualified := false;
@@ -155,6 +159,17 @@ begin
     ModalResult := mrCancel;
 end;
 
+
+function TDCodePicker.AssertConnection: boolean;
+begin
+  result := false;
+  if Assigned(SCM) then
+  begin
+    // IsActive if TFDConnection::scmConnection && FireDAC tables are active
+    if SCM.SCMActive then result := true;
+  end;
+end;
+
 procedure TDCodePicker.FormShow(Sender: TObject);
 var
   lv: TListItem;
@@ -180,6 +195,16 @@ begin
   end;
 
   j := 0;
+
+  fIsScratchedDCode := 0;
+  fIsDisqualifiedDCode := 0;
+  if AssertConnection then
+  begin
+    { Find the DCode 'alias' for the simplified disqualification.
+      Returns zero if missing }
+    fIsScratchedDCode := SCM.GetIsScratchedDCode;
+    fIsDisqualifiedDCode := SCM.GetIsDisqualifiedDCode;
+  end;
 
   if fDoINDV then
   begin

@@ -727,7 +727,7 @@ object Preferences: TPreferences
       object prefHideTitlePanel: TCheckBox
         Left = 27
         Top = 92
-        Width = 350
+        Width = 374
         Height = 26
         Caption = 'Hide header panel (add more  screen real estate).'
         TabOrder = 3

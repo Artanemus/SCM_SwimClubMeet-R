@@ -51,12 +51,15 @@ type
     fEnableSplitTimes: boolean;
     fTeamActiveGrid: Integer;
 
+
     // ASSERT CONNECTION TO MSSQL DATABASE
     function AssertConnection(): boolean;
     function TeamEntrantPadSlots(aTeamID: Integer): Integer;
     function TeamEntrantSumTTB(aTeamID: Integer): Integer;
     function UpdateTeamTTB(aTeamID, milliseconds: Integer): Integer;
   public
+    fIsScratchedDCode: integer;
+    fIsDisqualifiedDCode: integer;
     procedure AfterConstruction; override;
     function ClearLane(): Integer;
     function ClearSlot(): Integer;
@@ -128,6 +131,10 @@ begin
   GridEntrant.Options := GridEntrant.Options - [dgAlwaysShowEditor];
   GridEntrant.Options := GridEntrant.Options + [dgEditing];
 
+  fIsScratchedDCode := 0;
+  fIsDisqualifiedDCode := 0;
+
+
 end;
 
 function TframeTEAM.AssertConnection: boolean;
@@ -173,19 +180,31 @@ begin
   // --------------------------------------------------------------------
   if (Column.Field.DataType = ftBoolean) then
   begin
+
+
     Grid.BeginUpdate;
     Column.Grid.DataSource.DataSet.Edit;
+    { toggle DB BIT state}
     Column.Field.value := not Column.Field.AsBoolean;
-    if Column.Field.AsBoolean = false then
-        Column.Grid.DataSource.DataSet.FieldByName('DisqualifyCodeID').Clear
-    else
+    { NULL DCODE}
+    Column.Grid.DataSource.DataSet.FieldByName('DisqualifyCodeID').Clear;
+    { Assign a 'special scm DCODE ' : if registered. }
+    if (Column.Field.AsBoolean = true) then
     begin
+      // scratched.
       if Column.FieldName = 'IsScratched' then
+      begin
+        if (fIsScratchedDCode <> 0) then
           Column.Grid.DataSource.DataSet.FieldByName('DisqualifyCodeID')
-          .AsInteger := 53
-      else if Column.FieldName = 'IsDisqualified' then
+            .AsInteger := fIsScratchedDCode;
+      end;
+      // Disqualified.
+      if Column.FieldName = 'IsDisqualified' then
+      begin
+        if (fIsDisqualifiedDCode <> 0) then
           Column.Grid.DataSource.DataSet.FieldByName('DisqualifyCodeID')
-          .AsInteger := 54;
+            .AsInteger := fIsDisqualifiedDCode;
+      end;
     end;
     Column.Grid.DataSource.DataSet.Post;
     Grid.EndUpdate;

@@ -33,8 +33,6 @@ object DisqualificationCodes: TDisqualificationCodes
     FindFmVisible = False
     UseReportHints = True
     HideScrolls = False
-    ExplicitWidth = 842
-    ExplicitHeight = 830
   end
   object Panel1: TPanel
     Left = 0
@@ -48,27 +46,34 @@ object DisqualificationCodes: TDisqualificationCodes
       838
       62)
     object btnPrintPDF: TButton
-      Left = 627
+      Left = 604
       Top = 16
-      Width = 80
-      Height = 29
+      Width = 103
+      Height = 38
       Anchors = [akTop, akRight]
       Caption = 'Print PDF'
       TabOrder = 0
       OnClick = btnPrintPDFClick
-      ExplicitLeft = 631
     end
     object btnClose: TButton
       Left = 713
       Top = 16
-      Width = 80
-      Height = 29
+      Width = 103
+      Height = 38
       Anchors = [akTop, akRight]
       Caption = 'Close'
       Default = True
       TabOrder = 1
       OnClick = btnCloseClick
-      ExplicitLeft = 717
+    end
+    object btnCheckDCodes: TButton
+      Left = 0
+      Top = 16
+      Width = 150
+      Height = 38
+      Caption = 'Check DCodes'
+      TabOrder = 2
+      OnClick = btnCheckDCodesClick
     end
   end
   object frxReport1: TfrxReport
@@ -119,7 +124,7 @@ object DisqualificationCodes: TDisqualificationCodes
         FillType = ftBrush
         Frame.Typ = []
         Height = 38.677180000000000000
-        Top = 18.897650000000000000
+        Top = 18.897649990000000000
         Width = 718.110700000000000000
         object Gradient2: TfrxGradientView
           AllowVectorExport = True

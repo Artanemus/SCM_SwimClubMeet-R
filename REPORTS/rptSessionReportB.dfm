@@ -121,7 +121,7 @@ object SessionReportB: TSessionReportB
       object GroupHeader2: TfrxGroupHeader
         FillType = ftBrush
         Frame.Typ = []
-        Top = 245.669450000000000000
+        Top = 241.889920000000000000
         Width = 718.110700000000000000
         Condition = 'frxDS."EventID"'
         KeepTogether = True
@@ -129,8 +129,8 @@ object SessionReportB: TSessionReportB
       object MasterData1: TfrxMasterData
         FillType = ftBrush
         Frame.Typ = []
-        Height = 22.677180000000000000
-        Top = 268.346630000000000000
+        Height = 18.897650000000000000
+        Top = 264.567100000000000000
         Width = 718.110700000000000000
         DataSet = frxDSReport
         DataSetName = 'frxDS'
@@ -139,7 +139,6 @@ object SessionReportB: TSessionReportB
         object frxDScEventDetails: TfrxMemoView
           AllowVectorExport = True
           Left = 147.622140000000000000
-          Top = 0.779530000000000000
           Width = 196.535560000000000000
           Height = 15.118120000000000000
           DataField = 'cEventDetails'
@@ -239,7 +238,7 @@ object SessionReportB: TSessionReportB
         object frxDSDIFF: TfrxMemoView
           AllowVectorExport = True
           Left = 619.386210000000000000
-          Width = 94.488250000000000000
+          Width = 60.988250000000000000
           Height = 18.897650000000000000
           DataSet = frxDSReport
           DataSetName = 'frxDS'
@@ -249,10 +248,10 @@ object SessionReportB: TSessionReportB
           Font.Name = 'Arial'
           Font.Style = []
           Frame.Typ = []
-          HAlign = haCenter
+          HAlign = haRight
           HideZeros = True
           Memo.UTF8W = (
-            '[IIF(<frxDS."DIFF"> = 0,0,<frxDS."DIFF">) #n%3.2f]')
+            '[frxDS."DIFF"]')
           ParentFont = False
         end
         object frxDSPersonalBest: TfrxMemoView
@@ -280,12 +279,30 @@ object SessionReportB: TSessionReportB
         FillType = ftBrush
         Frame.Typ = []
         Height = 22.677180000000000000
-        Top = 389.291590000000000000
+        Top = 370.393940000000000000
         Width = 718.110700000000000000
+        object Date: TfrxMemoView
+          AllowVectorExport = True
+          Left = 473.332870000000000000
+          Top = 0.389765000000000000
+          Width = 243.444960000000000000
+          Height = 18.897650000000000000
+          AutoWidth = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = []
+          HAlign = haRight
+          Memo.UTF8W = (
+            'Printed On: [Date]')
+          ParentFont = False
+        end
         object TotalPages: TfrxMemoView
           AllowVectorExport = True
-          Left = 266.456865000000000000
-          Top = 1.889765000000010000
+          Left = 2.956865000000000000
+          Top = 0.389765000000000000
           Width = 185.196970000000000000
           Height = 18.897650000000000000
           AutoWidth = True
@@ -304,20 +321,11 @@ object SessionReportB: TSessionReportB
             item
             end>
         end
-        object Date: TfrxMemoView
-          AllowVectorExport = True
-          Top = 3.779530000000020000
-          Width = 120.944960000000000000
-          Height = 18.897650000000000000
-          Frame.Typ = []
-          Memo.UTF8W = (
-            'Printed On: [Date]')
-        end
       end
       object GroupHeader4: TfrxGroupHeader
         FillType = ftBrush
         Frame.Typ = []
-        Height = 34.015770000000000000
+        Height = 31.515770000000000000
         Top = 188.976500000000000000
         Width = 718.110700000000000000
         Condition = 'frxDS."MemberID"'
@@ -444,14 +452,15 @@ object SessionReportB: TSessionReportB
       object GroupFooter1: TfrxGroupFooter
         FillType = ftBrush
         Frame.Typ = []
-        Height = 15.118120000000000000
-        Top = 313.700990000000000000
+        Height = 4.118120000000000000
+        Top = 306.141930000000000000
         Width = 718.110700000000000000
       end
     end
   end
   object qryReport: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'SessionID'
     Connection = SCM.scmConnection
     SQL.Strings = (
@@ -467,7 +476,7 @@ object SessionReportB: TSessionReportB
       
         #9',dbo.SwimTimeToString([Entrant].[PersonalBest]) AS PersonalBest' +
         'Str'
-      #9',CASE '
+      '/*'#9',CASE '
       #9#9'WHEN dbo.SwimTimeToMilliseconds([Entrant].[PersonalBest]) = 0'
       #9#9#9'THEN NULL'
       #9#9'WHEN dbo.SwimTimeToMilliseconds([Entrant].[RaceTime]) = 0'
@@ -475,8 +484,16 @@ object SessionReportB: TSessionReportB
       
         #9#9'ELSE DATEDIFF(millisecond, Entrant.RaceTime, Entrant.PersonalB' +
         'est) / 1000.0'
-      #9#9'END AS DIFF'#9
-      ''
+      #9#9'END AS DIFF'
+      '*/                '#9
+      '        ,CASE '
+      
+        '        WHEN dbo.RaceTimeDIFF(Entrant.RaceTime, Entrant.Personal' +
+        'Best) = 0 THEN '#39#39
+      
+        '        ELSE FORMAT(dbo.RaceTimeDIFF(Entrant.RaceTime, Entrant.P' +
+        'ersonalBest), '#39'N2'#39')'
+      '        END AS DIFF '
       #9',Session.SessionStart'
       #9',Session.SessionID'
       #9',CONCAT ('
@@ -586,6 +603,29 @@ object SessionReportB: TSessionReportB
   object frxDSReport: TfrxDBDataset
     UserName = 'frxDS'
     CloseDataSource = False
+    FieldAliases.Strings = (
+      'MemberID=MemberID'
+      'RaceTimeStr=RaceTimeStr'
+      'TimeToBeatStr=TimeToBeatStr'
+      'PersonalBestStr=PersonalBestStr'
+      'DIFF=DIFF'
+      'SessionStart=SessionStart'
+      'SessionID=SessionID'
+      'FNAME=FNAME'
+      'EventID=EventID'
+      'EventNum=EventNum'
+      'cEventDetails=cEventDetails'
+      'HeatNum=HeatNum'
+      'cStroke=cStroke'
+      'cDistance=cDistance'
+      'Lane=Lane'
+      'IsDisqualified=IsDisqualified'
+      'IsScratched=IsScratched'
+      'NickName=NickName'
+      'cSwimClub=cSwimClub'
+      'RaceTime=RaceTime'
+      'PersonalBest=PersonalBest'
+      'TimeToBeat=TimeToBeat')
     DataSet = qryReport
     BCDToCurrency = False
     Left = 64

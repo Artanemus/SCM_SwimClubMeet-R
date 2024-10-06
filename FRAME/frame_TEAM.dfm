@@ -111,19 +111,17 @@ object frameTEAM: TframeTEAM
     ParentColor = True
     ShowCaption = False
     TabOrder = 1
-    ExplicitTop = 311
-    ExplicitHeight = 178
     object rpnlTeamEntrantTools: TRelativePanel
       Left = 653
       Top = 0
-      Width = 88
+      Width = 100
       Height = 298
       ControlCollection = <
         item
           Control = spbtnMoveUpSlot
           AlignBottomWithPanel = False
-          AlignHorizontalCenterWithPanel = True
-          AlignLeftWithPanel = False
+          AlignHorizontalCenterWithPanel = False
+          AlignLeftWithPanel = True
           AlignRightWithPanel = False
           AlignTopWithPanel = True
           AlignVerticalCenterWithPanel = False
@@ -131,8 +129,8 @@ object frameTEAM: TframeTEAM
         item
           Control = spbtnMoveDownSlot
           AlignBottomWithPanel = False
-          AlignHorizontalCenterWithPanel = True
-          AlignLeftWithPanel = False
+          AlignHorizontalCenterWithPanel = False
+          AlignLeftWithPanel = True
           AlignRightWithPanel = False
           AlignTopWithPanel = False
           AlignVerticalCenterWithPanel = False
@@ -141,8 +139,8 @@ object frameTEAM: TframeTEAM
         item
           Control = spbtnTeamEntrantClear
           AlignBottomWithPanel = False
-          AlignHorizontalCenterWithPanel = True
-          AlignLeftWithPanel = False
+          AlignHorizontalCenterWithPanel = False
+          AlignLeftWithPanel = True
           AlignRightWithPanel = False
           AlignTopWithPanel = False
           AlignVerticalCenterWithPanel = False
@@ -151,8 +149,8 @@ object frameTEAM: TframeTEAM
         item
           Control = spbtnTeamEntrantStrike
           AlignBottomWithPanel = False
-          AlignHorizontalCenterWithPanel = True
-          AlignLeftWithPanel = False
+          AlignHorizontalCenterWithPanel = False
+          AlignLeftWithPanel = True
           AlignRightWithPanel = False
           AlignTopWithPanel = False
           AlignVerticalCenterWithPanel = False
@@ -161,19 +159,18 @@ object frameTEAM: TframeTEAM
         item
           Control = spbtnAddSlot
           AlignBottomWithPanel = False
-          AlignHorizontalCenterWithPanel = True
+          AlignHorizontalCenterWithPanel = False
           AlignLeftWithPanel = False
-          AlignRightWithPanel = False
-          AlignTopWithPanel = False
+          AlignRightWithPanel = True
+          AlignTopWithPanel = True
           AlignVerticalCenterWithPanel = False
-          Below = spbtnTeamEntrantStrike
         end
         item
           Control = spbtnRemoveSlot
           AlignBottomWithPanel = False
-          AlignHorizontalCenterWithPanel = True
+          AlignHorizontalCenterWithPanel = False
           AlignLeftWithPanel = False
-          AlignRightWithPanel = False
+          AlignRightWithPanel = True
           AlignTopWithPanel = False
           AlignVerticalCenterWithPanel = False
           Below = spbtnAddSlot
@@ -182,12 +179,11 @@ object frameTEAM: TframeTEAM
       BevelOuter = bvNone
       ParentColor = True
       TabOrder = 0
-      ExplicitHeight = 178
       DesignSize = (
-        88
+        100
         298)
       object spbtnMoveUpSlot: TSpeedButton
-        Left = 20
+        Left = 0
         Top = 0
         Width = 48
         Height = 48
@@ -203,7 +199,7 @@ object frameTEAM: TframeTEAM
         ShowHint = True
       end
       object spbtnMoveDownSlot: TSpeedButton
-        Left = 20
+        Left = 0
         Top = 48
         Width = 48
         Height = 48
@@ -219,7 +215,7 @@ object frameTEAM: TframeTEAM
         ShowHint = True
       end
       object spbtnTeamEntrantClear: TSpeedButton
-        Left = 20
+        Left = 0
         Top = 96
         Width = 48
         Height = 48
@@ -236,7 +232,7 @@ object frameTEAM: TframeTEAM
         OnClick = spbtnTeamEntrantClearClick
       end
       object spbtnTeamEntrantStrike: TSpeedButton
-        Left = 20
+        Left = 0
         Top = 144
         Width = 48
         Height = 48
@@ -255,8 +251,8 @@ object frameTEAM: TframeTEAM
         OnClick = spbtnTeamEntrantStrikeClick
       end
       object spbtnAddSlot: TSpeedButton
-        Left = 20
-        Top = 192
+        Left = 52
+        Top = 0
         Width = 48
         Height = 48
         Hint = 'Add a new swimmer slot for this team.'
@@ -272,8 +268,8 @@ object frameTEAM: TframeTEAM
         OnClick = spbtnAddSlotClick
       end
       object spbtnRemoveSlot: TSpeedButton
-        Left = 20
-        Top = 240
+        Left = 52
+        Top = 48
         Width = 48
         Height = 48
         Hint = 'Remove the slot (must be empty of swimmer).'
@@ -300,7 +296,6 @@ object frameTEAM: TframeTEAM
       BevelOuter = bvNone
       BevelWidth = 2
       TabOrder = 1
-      ExplicitHeight = 178
       object GridEntrant: TDBGrid
         AlignWithMargins = True
         Left = 2
