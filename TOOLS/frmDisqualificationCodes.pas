@@ -23,6 +23,8 @@ type
     Panel1: TPanel;
     btnPrintPDF: TButton;
     btnClose: TButton;
+    btnCheckDCodes: TButton;
+    procedure btnCheckDCodesClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure btnCloseClick(Sender: TObject);
     procedure btnPrintPDFClick(Sender: TObject);
@@ -32,6 +34,8 @@ type
     { Private declarations }
   public
     { Public declarations }
+    fDCodesUpdated: boolean;
+
     constructor CreateWithConnection(AOwner: TComponent;
       AConnection: TFDConnection);
   end;
@@ -60,10 +64,33 @@ constructor TDisqualificationCodes.CreateWithConnection(AOwner: TComponent;
   AConnection: TFDConnection);
 begin
   inherited Create(AOwner);
+  fDCodesUpdated := false;
   qryDisqualifyCode.Connection := AConnection;
   qryDisqualifyCode.Open;
   if qryDisqualifyCode.Active then
     frxReport1.ShowReport;
+end;
+
+procedure TDisqualificationCodes.btnCheckDCodesClick(Sender: TObject);
+var
+b: boolean;
+begin
+  b := SCM.UpdateDCodes();
+  if b then
+  begin
+    MessageBox(0,
+    PChar('Additional disqualification codes where found and have been added.'),
+    PChar('Check Disqualification Codes.'), MB_ICONINFORMATION or MB_OK);
+    frxReport1.PrepareReport;
+    frxReport1.ShowReport;
+    fDCodesUpdated := true;
+  end
+  else
+  begin
+    MessageBox(0,
+    PChar('Check completed successfully. No new DCodes found.'),
+    PChar('Check Disqualification Codes.'), MB_ICONINFORMATION or MB_OK);
+  end;
 end;
 
 procedure TDisqualificationCodes.FormClose(Sender: TObject;

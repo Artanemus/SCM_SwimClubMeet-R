@@ -1397,6 +1397,7 @@ object SCM: TSCM
   end
   object qrySwimClub: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'SwimClubID'
     Connection = scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..SwimClub'

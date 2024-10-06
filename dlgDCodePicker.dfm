@@ -25,8 +25,6 @@ object DCodePicker: TDCodePicker
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 714
-    ExplicitWidth = 530
     object btnOk: TButton
       Left = 348
       Top = 18
@@ -127,10 +125,6 @@ object DCodePicker: TDCodePicker
     TabOrder = 1
     ViewStyle = vsReport
     OnDblClick = lvCodesDblClick
-    ExplicitLeft = 8
-    ExplicitTop = 0
-    ExplicitWidth = 517
-    ExplicitHeight = 708
   end
   object qryDisqualifyCode: TFDQuery
     ActiveStoredUsage = [auDesignTime]

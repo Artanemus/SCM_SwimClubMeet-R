@@ -312,6 +312,7 @@ type
     VirtualImageListMenu: TVirtualImageList;
     SwimClub_Switch: TAction;
     SwimClub_Manage: TAction;
+    File_ExportSession: TAction;
     procedure ActionManager1Update(Action: TBasicAction; var Handled: boolean);
     procedure actnAddSlotExecute(Sender: TObject);
     procedure actnClearSlotExecute(Sender: TObject);
@@ -347,6 +348,7 @@ type
     procedure Event_ToggleGridViewExecute(Sender: TObject);
     procedure Event_ToggleGridViewUpdate(Sender: TObject);
     procedure File_ExitExecute(Sender: TObject);
+    procedure File_ExportSessionExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormMouseWheel(Sender: TObject; Shift: TShiftState;
@@ -566,7 +568,7 @@ uses
   dlgDBVerInfo, rptHeatReportA, rptHeatReportB, frmDisqualificationCodes,
   dlgAutoSchedule, dlgDCodePicker, dmSCMHelper, rptMarshallReportC,
   dlgSplitTimeTEAM, dlgSplitTimeINDV, dlgSwimClubSwitch, dlgSwimClubManage,
-  dlgABRelay, uABRelayExec;
+  dlgABRelay, uABRelayExec, dlgExportSessionJSON;
 
 procedure TMain.Heat_AutoBuildRelayExecute(Sender: TObject);
 var
@@ -1492,6 +1494,16 @@ begin
   Close;
 end;
 
+procedure TMain.File_ExportSessionExecute(Sender: TObject);
+var
+dlg : TExportSessionJSON;
+begin
+  // EXPORT THE RACETIME OF MEMBERS in THE CURRENT SELECTED SESSION.
+  dlg := TExportSessionJSON.Create(self);
+  dlg.ShowModal;
+  dlg.Free;
+end;
+
 procedure TMain.FormCreate(Sender: TObject);
 var
   str: string;
@@ -1860,6 +1872,12 @@ begin
   INDV.Visible := true;
   TEAM.Align := alClient;
   TEAM.Visible := false;
+
+  { Find the FINA DCode 'alias' for the simplified disqualification. DO ONCE.}
+  INDV.fIsScratchedDCode := SCM.GetIsScratchedDCode;
+  INDV.fIsDisqualifiedDCode := SCM.GetIsDisqualifiedDCode;
+  TEAM.fIsScratchedDCode := SCM.GetIsScratchedDCode;
+  TEAM.fIsDisqualifiedDCode := SCM.GetIsDisqualifiedDCode;
 
 end;
 
@@ -4772,6 +4790,14 @@ var
 begin
   dlg := TDisqualificationCodes.CreateWithConnection(self, SCM.scmConnection);
   dlg.ShowModal;
+  if dlg.fDCodesUpdated then
+  begin
+    { Find the FINA DCode 'alias' for the simplified disqualification.}
+    INDV.fIsScratchedDCode := SCM.GetIsScratchedDCode;
+    INDV.fIsDisqualifiedDCode := SCM.GetIsDisqualifiedDCode;
+    TEAM.fIsScratchedDCode := SCM.GetIsScratchedDCode;
+    TEAM.fIsDisqualifiedDCode := SCM.GetIsDisqualifiedDCode;
+  end;
   dlg.Free;
 end;
 

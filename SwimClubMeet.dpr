@@ -85,7 +85,10 @@ uses
   dmMemberHouse in 'MEMBERS\dmMemberHouse.pas' {MemberHouse: TDataModule},
   uABRelayExec in 'AUTOBUILD\uABRelayExec.pas',
   dmABRelayData in 'AUTOBUILD\dmABRelayData.pas' {ABRelayData: TDataModule},
-  dlgABRelay in 'AUTOBUILD\dlgABRelay.pas' {ABRelay};
+  dlgABRelay in 'AUTOBUILD\dlgABRelay.pas' {ABRelay},
+  dlgExportSessionJSON in 'EXPORT\dlgExportSessionJSON.pas' {ExportSessionJSON},
+  XSuperJSON in '..\x-superobject\XSuperJSON.pas',
+  XSuperObject in '..\x-superobject\XSuperObject.pas';
 
 {$R *.res}
 

@@ -20,6 +20,7 @@ object frameINDV: TframeINDV
     Anchors = []
     DataSource = SCM.dsEntrant
     DefaultDrawing = False
+    GradientEndColor = 14079702
     TabOrder = 0
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText

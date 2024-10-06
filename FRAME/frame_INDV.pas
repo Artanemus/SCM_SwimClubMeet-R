@@ -32,6 +32,9 @@ type
   public
     { Public declarations }
     fDoStatusBarUpdate: boolean; // FLAG ACTION - SCM_StatusBar.Enabled
+    fIsScratchedDCode: integer;
+    fIsDisqualifiedDCode: integer;
+
     procedure AfterConstruction; override;
     procedure Enable_GridEllipse();
     // TActionManager:  Sender: TAction
@@ -99,6 +102,10 @@ begin
   col := Grid.ColumnByName('luStroke');
   if Assigned(col) then
     col.DropDownRows := 6;
+
+  fIsScratchedDCode := 0;
+  fIsDisqualifiedDCode := 0;
+
 end;
 
 function TframeINDV.AssertConnection: boolean;
@@ -154,24 +161,35 @@ begin
   // --------------------------------------------------------------------
   if (Column.Field.DataType = ftBoolean) then
   begin
+
+
     Grid.BeginUpdate;
     Column.Grid.DataSource.DataSet.Edit;
+    { toggle DB BIT state}
     Column.Field.value := not Column.Field.AsBoolean;
-    if Column.Field.AsBoolean = false then
-      Column.Grid.DataSource.DataSet.FieldByName('DisqualifyCodeID').Clear
-    else
+    { NULL DCODE}
+    Column.Grid.DataSource.DataSet.FieldByName('DisqualifyCodeID').Clear;
+    { Assign a 'special scm DCODE ' : if registered. }
+    if (Column.Field.AsBoolean = true) then
     begin
+      // Scratched.
       if Column.FieldName = 'IsScratched' then
-        Column.Grid.DataSource.DataSet.FieldByName('DisqualifyCodeID')
-          .AsInteger := 53
-      else if Column.FieldName = 'IsDisqualified' then
-        Column.Grid.DataSource.DataSet.FieldByName('DisqualifyCodeID')
-          .AsInteger := 54;
+      begin
+        if (fIsScratchedDCode <> 0) then
+          Column.Grid.DataSource.DataSet.FieldByName('DisqualifyCodeID')
+            .AsInteger := fIsScratchedDCode;
+      end;
+      // Disqualified.
+      if Column.FieldName = 'IsDisqualified' then
+      begin
+        if (fIsDisqualifiedDCode <> 0) then
+          Column.Grid.DataSource.DataSet.FieldByName('DisqualifyCodeID')
+            .AsInteger := fIsDisqualifiedDCode;
+      end;
     end;
     Column.Grid.DataSource.DataSet.Post;
     Grid.EndUpdate;
   end;
-
 end;
 
 procedure TframeINDV.GridColEnter(Sender: TObject);

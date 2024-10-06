@@ -362,8 +362,27 @@ object SessionReportA: TSessionReportA
       #9',dbo.SwimmerGenderToString(Member.MemberID) AS GENDER'
       #9',dbo.SwimmerAge(@SessionDate, DOB) AS Age'
       
-        #9',dbo.RaceTimeDIFF(Entrant.RaceTime, Entrant.PersonalBest) AS DI' +
-        'FF   '
+        '--'#9',dbo.RaceTimeDIFF(Entrant.RaceTime, Entrant.PersonalBest) AS ' +
+        'DIFF  '
+      '        ,CASE '
+      
+        '        WHEN dbo.RaceTimeDIFF(Entrant.RaceTime, Entrant.Personal' +
+        'Best) = 0 THEN '#39#39
+      
+        '        ELSE FORMAT(dbo.RaceTimeDIFF(Entrant.RaceTime, Entrant.P' +
+        'ersonalBest), '#39'N2'#39')'
+      '        END AS DIFF         '
+      ' /*'
+      ' '#9',CASE '
+      #9#9'WHEN dbo.SwimTimeToMilliseconds([Entrant].[PersonalBest]) = 0'
+      #9#9#9'THEN NULL'
+      #9#9'WHEN dbo.SwimTimeToMilliseconds([Entrant].[RaceTime]) = 0'
+      #9#9#9'THEN NULL'
+      
+        #9#9'ELSE DATEDIFF(millisecond, Entrant.RaceTime, Entrant.PersonalB' +
+        'est) / 1000.0'
+      #9#9'END AS DIFF'
+      '*/    '
       #9',CONCAT ('
       #9#9'Member.FirstName'
       #9#9','#39' '#39
@@ -423,14 +442,14 @@ object SessionReportA: TSessionReportA
     PrintOptions.Printer = 'Default'
     PrintOptions.PrintOnSheet = 0
     ReportOptions.CreateDate = 45291.435444351900000000
-    ReportOptions.LastChange = 45291.435444351900000000
+    ReportOptions.LastChange = 45570.530835092600000000
     ScriptLanguage = 'PascalScript'
     ScriptText.Strings = (
       'begin'
       ''
       'end.')
-    Left = 792
-    Top = 416
+    Left = 808
+    Top = 72
     Datasets = <
       item
         DataSet = frxClubInfo
@@ -662,7 +681,7 @@ object SessionReportA: TSessionReportA
       object DataBand41: TfrxDataBand4
         FillType = ftBrush
         Frame.Typ = []
-        Height = 20.397650000000000000
+        Height = 20.417130000000000000
         Top = 317.480520000000000000
         Width = 718.110700000000000000
         DataSet = frxdsEntrant
@@ -732,20 +751,6 @@ object SessionReportA: TSessionReportA
           Memo.UTF8W = (
             '[frxdsEntrant."FNAME"]')
         end
-        object frxdsEntrantDIFF: TfrxMemoView
-          IndexTag = 1
-          AllowVectorExport = True
-          Left = 548.500000000000000000
-          Top = 1.500000000000000000
-          Width = 75.000000000000000000
-          Height = 18.897650000000000000
-          DataField = 'DIFF'
-          DataSet = frxdsEntrant
-          DataSetName = 'frxdsEntrant'
-          Frame.Typ = []
-          Memo.UTF8W = (
-            '[frxdsEntrant."DIFF"]')
-        end
         object frxdsEntrantGENDER: TfrxMemoView
           IndexTag = 1
           AllowVectorExport = True
@@ -786,6 +791,27 @@ object SessionReportA: TSessionReportA
           HAlign = haCenter
           Memo.UTF8W = (
             '[frxdsEntrant."Age"]')
+          ParentFont = False
+        end
+        object frxdsEntrantDIFF: TfrxMemoView
+          IndexTag = 1
+          AllowVectorExport = True
+          Left = 548.500000000000000000
+          Top = 1.417130000000000000
+          Width = 54.130180000000000000
+          Height = 18.897650000000000000
+          DataField = 'DIFF'
+          DataSet = frxdsEntrant
+          DataSetName = 'frxdsEntrant'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = []
+          HAlign = haRight
+          Memo.UTF8W = (
+            '[frxdsEntrant."DIFF"]')
           ParentFont = False
         end
       end
@@ -861,7 +887,7 @@ object SessionReportA: TSessionReportA
       object DataBand51: TfrxDataBand5
         FillType = ftBrush
         Frame.Typ = []
-        Height = 20.677180000000000000
+        Height = 19.735930000000000000
         Top = 487.559370000000000000
         Width = 718.110700000000000000
         DataSet = frxdsTeamEntrant
@@ -924,12 +950,12 @@ object SessionReportA: TSessionReportA
           Top = 0.783240000000000000
           Width = 77.500000000000000000
           Height = 18.897650000000000000
-          DataField = 'RaceTime'
+          DataField = 'DIFF'
           DataSet = frxdsTeamEntrant
           DataSetName = 'frxdsTeamEntrant'
           Frame.Typ = []
           Memo.UTF8W = (
-            '[frxdsTeamEntrant."RaceTime"]')
+            '[frxdsTeamEntrant."DIFF"]')
         end
         object frxdsTeamEntrantPersonalBest: TfrxMemoView
           IndexTag = 1
@@ -944,20 +970,6 @@ object SessionReportA: TSessionReportA
           Frame.Typ = []
           Memo.UTF8W = (
             '[frxdsTeamEntrant."PersonalBest"]')
-        end
-        object frxdsTeamEntrantDIFF: TfrxMemoView
-          IndexTag = 1
-          AllowVectorExport = True
-          Left = 548.500000000000000000
-          Top = 0.440630000000000000
-          Width = 75.000000000000000000
-          Height = 18.897650000000000000
-          DataField = 'DIFF'
-          DataSet = frxdsTeamEntrant
-          DataSetName = 'frxdsTeamEntrant'
-          Frame.Typ = []
-          Memo.UTF8W = (
-            '[frxdsTeamEntrant."DIFF"]')
         end
         object frxdsTeamEntrantAge: TfrxMemoView
           IndexTag = 1
@@ -993,6 +1005,27 @@ object SessionReportA: TSessionReportA
           Frame.Typ = []
           Memo.UTF8W = (
             '[frxdsTeamEntrant."GENDER"]')
+        end
+        object frxdsTeamEntrantDIFF: TfrxMemoView
+          IndexTag = 1
+          AllowVectorExport = True
+          Left = 548.500000000000000000
+          Top = 0.838280000000000000
+          Width = 54.630180000000000000
+          Height = 18.897650000000000000
+          DataField = 'DIFF'
+          DataSet = frxdsTeamEntrant
+          DataSetName = 'frxdsTeamEntrant'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = []
+          HAlign = haRight
+          Memo.UTF8W = (
+            '[frxdsTeamEntrant."DIFF"]')
+          ParentFont = False
         end
       end
       object Header1: TfrxHeader
@@ -1257,22 +1290,23 @@ object SessionReportA: TSessionReportA
         FillType = ftBrush
         Frame.Typ = []
         Height = 5.677180000000000000
-        Top = 532.913730000000000000
+        Top = 529.134200000000000000
         Width = 718.110700000000000000
       end
       object PageFooter1: TfrxPageFooter
         FillType = ftBrush
         Frame.Typ = []
-        Height = 22.677180000000000000
-        Top = 600.945270000000000000
+        Height = 19.897650000000000000
+        Top = 597.165740000000000000
         Width = 718.110700000000000000
         object Page: TfrxMemoView
           IndexTag = 1
           AllowVectorExport = True
           Left = 14.000000000000000000
-          Top = 1.952380000000000000
-          Width = 175.370130000000000000
+          Top = 1.000000000000000000
+          Width = 217.370130000000000000
           Height = 18.897650000000000000
+          AutoWidth = True
           Frame.Typ = []
           Memo.UTF8W = (
             'Page [Page#] of [TotalPages#]')
@@ -1282,13 +1316,12 @@ object SessionReportA: TSessionReportA
             item
             end>
         end
-        object Date1: TfrxMemoView
-          IndexTag = 1
+        object Memo19: TfrxMemoView
           AllowVectorExport = True
-          Left = 555.000000000000000000
-          Top = 2.054730000000000000
-          Width = 79.370130000000000000
+          Left = 462.555040000000000000
+          Width = 243.444960000000000000
           Height = 18.897650000000000000
+          AutoWidth = True
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
           Font.Height = -13
@@ -1297,19 +1330,8 @@ object SessionReportA: TSessionReportA
           Frame.Typ = []
           HAlign = haRight
           Memo.UTF8W = (
-            '[Date]')
+            'Printed On: [Date]')
           ParentFont = False
-        end
-        object Date: TfrxMemoView
-          IndexTag = 1
-          AllowVectorExport = True
-          Left = 635.500000000000000000
-          Top = 2.054730000000000000
-          Width = 70.500000000000000000
-          Height = 18.897650000000000000
-          Frame.Typ = []
-          Memo.UTF8W = (
-            '[Time]')
         end
       end
     end
@@ -1409,8 +1431,16 @@ object SessionReportA: TSessionReportA
       #9',dbo.SwimmerGenderToString(Member.MemberID) AS GENDER'
       #9',dbo.SwimmerAge(@SessionDate, DOB) AS Age'
       
-        #9',dbo.RaceTimeDIFF(TeamEntrant.RaceTime, TeamEntrant.PersonalBes' +
-        't) AS DIFF   '
+        #9'--,dbo.RaceTimeDIFF(TeamEntrant.RaceTime, TeamEntrant.PersonalB' +
+        'est) AS DIFF '
+      '        ,CASE '
+      
+        '        WHEN dbo.RaceTimeDIFF(TeamEntrant.RaceTime, TeamEntrant.' +
+        'PersonalBest) = 0 THEN '#39#39
+      
+        '        ELSE FORMAT(dbo.RaceTimeDIFF(TeamEntrant.RaceTime, TeamE' +
+        'ntrant.PersonalBest), '#39'N2'#39')'
+      '        END AS DIFF            '
       ''
       ',TeamEntrant.StrokeID'
       ',Stroke.Caption AS StrokeStr'
