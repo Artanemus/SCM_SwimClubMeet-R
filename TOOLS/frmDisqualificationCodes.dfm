@@ -3,7 +3,7 @@ object DisqualificationCodes: TDisqualificationCodes
   Top = 0
   BorderStyle = bsDialog
   Caption = 'FINA Disqualification Codes'
-  ClientHeight = 891
+  ClientHeight = 801
   ClientWidth = 838
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -21,7 +21,7 @@ object DisqualificationCodes: TDisqualificationCodes
     Left = 0
     Top = 0
     Width = 838
-    Height = 829
+    Height = 739
     Align = alClient
     ActiveFrameColor = clNone
     BevelInner = bvNone
@@ -33,15 +33,17 @@ object DisqualificationCodes: TDisqualificationCodes
     FindFmVisible = False
     UseReportHints = True
     HideScrolls = False
+    ExplicitHeight = 829
   end
   object Panel1: TPanel
     Left = 0
-    Top = 829
+    Top = 739
     Width = 838
     Height = 62
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitTop = 829
     DesignSize = (
       838
       62)

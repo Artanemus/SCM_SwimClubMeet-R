@@ -2,8 +2,8 @@ object LeaderBoard: TLeaderBoard
   Left = 0
   Top = 0
   Caption = 'LeaderBoard'
-  ClientHeight = 970
-  ClientWidth = 1468
+  ClientHeight = 801
+  ClientWidth = 1334
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,13 +19,13 @@ object LeaderBoard: TLeaderBoard
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 1468
-    Height = 936
+    Width = 1334
+    Height = 767
     ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 1464
-    ExplicitHeight = 935
+    ExplicitWidth = 1468
+    ExplicitHeight = 936
     object TabSheet5: TTabSheet
       Caption = 'Setup'
       ImageIndex = 4
@@ -269,7 +269,7 @@ object LeaderBoard: TLeaderBoard
       object RelativePanel1: TRelativePanel
         Left = 0
         Top = 0
-        Width = 1460
+        Width = 1326
         Height = 57
         ControlCollection = <
           item
@@ -352,10 +352,10 @@ object LeaderBoard: TLeaderBoard
         BevelOuter = bvNone
         TabOrder = 0
         DesignSize = (
-          1460
+          1326
           57)
         object DBtxtSwimClubCaption: TDBText
-          Left = 640
+          Left = 573
           Top = 5
           Width = 180
           Height = 21
@@ -371,7 +371,7 @@ object LeaderBoard: TLeaderBoard
           ParentFont = False
         end
         object DBtxtSwimClubNickName: TDBText
-          Left = 657
+          Left = 590
           Top = 28
           Width = 146
           Height = 17
@@ -396,7 +396,7 @@ object LeaderBoard: TLeaderBoard
           OnClick = spbGenericSPBtnClick
         end
         object spbExportPDF: TSpeedButton
-          Left = 1316
+          Left = 1182
           Top = 4
           Width = 48
           Height = 48
@@ -438,7 +438,7 @@ object LeaderBoard: TLeaderBoard
           OnClick = spbGenericSPBtnClick
         end
         object spbPrintReport: TSpeedButton
-          Left = 1364
+          Left = 1230
           Top = 4
           Width = 48
           Height = 48
@@ -450,7 +450,7 @@ object LeaderBoard: TLeaderBoard
           Flat = True
         end
         object sbtnRefresh: TSpeedButton
-          Left = 1412
+          Left = 1278
           Top = 4
           Width = 48
           Height = 48
@@ -465,8 +465,8 @@ object LeaderBoard: TLeaderBoard
       object frxPreview1: TfrxPreview
         Left = 0
         Top = 57
-        Width = 1460
-        Height = 847
+        Width = 1326
+        Height = 678
         Align = alClient
         BevelEdges = []
         BevelInner = bvNone
@@ -525,8 +525,8 @@ object LeaderBoard: TLeaderBoard
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 936
-    Width = 1468
+    Top = 767
+    Width = 1334
     Height = 34
     Panels = <
       item
@@ -534,8 +534,8 @@ object LeaderBoard: TLeaderBoard
         Text = 'Status and error messages are displayed here.'
         Width = 400
       end>
-    ExplicitTop = 935
-    ExplicitWidth = 1464
+    ExplicitTop = 936
+    ExplicitWidth = 1468
   end
   object ImageCollection1: TImageCollection
     Images = <
@@ -779,7 +779,7 @@ object LeaderBoard: TLeaderBoard
               9D467A0000000049454E44AE426082}
           end>
       end>
-    Left = 736
+    Left = 56
     Top = 192
   end
   object VirtualImageList1: TVirtualImageList
@@ -807,7 +807,7 @@ object LeaderBoard: TLeaderBoard
     ImageCollection = ImageCollection1
     Width = 48
     Height = 48
-    Left = 824
+    Left = 144
     Top = 192
   end
   object VirtualImageList2: TVirtualImageList
@@ -840,11 +840,11 @@ object LeaderBoard: TLeaderBoard
     ImageCollection = ImageCollection1
     Width = 48
     Height = 48
-    Left = 824
+    Left = 144
     Top = 256
   end
   object ActionManager1: TActionManager
-    Left = 928
+    Left = 248
     Top = 192
     StyleName = 'Platform Default'
     object actnRefresh: TAction
@@ -890,7 +890,7 @@ object LeaderBoard: TLeaderBoard
       ''
       'FROM [SwimClubMeet].[dbo].[SwimClub]'
       'WHERE SwimClubID = @SwimClubID; ')
-    Left = 824
+    Left = 144
     Top = 320
     ParamData = <
       item
@@ -903,7 +903,7 @@ object LeaderBoard: TLeaderBoard
   object dsLBHeader: TDataSource
     AutoEdit = False
     DataSet = qryLBHeader
-    Left = 927
+    Left = 247
     Top = 320
   end
   object qrySession: TFDQuery
@@ -923,7 +923,7 @@ object LeaderBoard: TLeaderBoard
       '     , [SessionStatusID]'
       'FROM [SwimClubMeet].[dbo].[Session]'
       'WHERE [Session].[SwimClubID] = @swimclubid;')
-    Left = 824
+    Left = 144
     Top = 384
     ParamData = <
       item
@@ -935,11 +935,11 @@ object LeaderBoard: TLeaderBoard
   end
   object dsSession: TDataSource
     DataSet = qrySession
-    Left = 928
+    Left = 248
     Top = 384
   end
   object PrinterSetupDialog1: TPrinterSetupDialog
-    Left = 928
+    Left = 248
     Top = 256
   end
 end
