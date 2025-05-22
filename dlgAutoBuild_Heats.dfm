@@ -2688,13 +2688,12 @@ object AutoBuild_Heats: TAutoBuild_Heats
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 504
     object Label1: TLabel
       Left = 86
       Top = 20
-      Width = 302
+      Width = 326
       Height = 16
-      Caption = 'Do want to perform an Auto-Build and create heats ?'
+      Caption = 'Do you want to perform an Auto-Build and create heats ?'
     end
     object Image1: TImage
       Left = 22
@@ -2806,8 +2805,6 @@ object AutoBuild_Heats: TAutoBuild_Heats
     BevelKind = bkFlat
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 431
-    ExplicitWidth = 504
     object btnCancel: TButton
       Left = 257
       Top = 6
@@ -2837,8 +2834,6 @@ object AutoBuild_Heats: TAutoBuild_Heats
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitWidth = 504
-    ExplicitHeight = 370
     object Label7: TLabel
       Left = 22
       Top = 130
