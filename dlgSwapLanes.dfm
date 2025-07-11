@@ -24,9 +24,6 @@ object SwapLanes: TSwapLanes
     Height = 109
     Align = alClient
     TabOrder = 0
-    ExplicitTop = 8
-    ExplicitWidth = 705
-    ExplicitHeight = 110
     object Label1: TLabel
       Left = 19
       Top = 23
@@ -229,8 +226,6 @@ object SwapLanes: TSwapLanes
     Height = 47
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 110
-    ExplicitWidth = 705
     DesignSize = (
       660
       47)
@@ -245,7 +240,6 @@ object SwapLanes: TSwapLanes
       ModalResult = 2
       TabOrder = 0
       OnClick = btnCancelClick
-      ExplicitLeft = 444
     end
     object btnSwapLanes: TButton
       Left = 492
@@ -258,7 +252,6 @@ object SwapLanes: TSwapLanes
       ModalResult = 1
       TabOrder = 1
       OnClick = btnSwapLanesClick
-      ExplicitLeft = 500
     end
   end
   object tblEntrantA: TFDTable
@@ -303,9 +296,9 @@ object SwapLanes: TSwapLanes
     UpdateOptions.EnableDelete = False
     UpdateOptions.EnableInsert = False
     UpdateOptions.EnableUpdate = False
-    UpdateOptions.UpdateTableName = 'SwimClubMeet..HeatIndividual'
+    UpdateOptions.UpdateTableName = 'SwimClubMeet..Heat'
     UpdateOptions.KeyFields = 'HeatID'
-    TableName = 'SwimClubMeet..HeatIndividual'
+    TableName = 'SwimClubMeet..Heat'
     Left = 160
     Top = 8
   end
@@ -319,9 +312,9 @@ object SwapLanes: TSwapLanes
     UpdateOptions.EnableDelete = False
     UpdateOptions.EnableInsert = False
     UpdateOptions.EnableUpdate = False
-    UpdateOptions.UpdateTableName = 'SwimClubMeet..HeatIndividual'
+    UpdateOptions.UpdateTableName = 'SwimClubMeet..Heat'
     UpdateOptions.KeyFields = 'HeatID'
-    TableName = 'SwimClubMeet..HeatIndividual'
+    TableName = 'SwimClubMeet..Heat'
     Left = 160
     Top = 56
   end

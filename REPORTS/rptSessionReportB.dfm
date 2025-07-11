@@ -507,7 +507,7 @@ object SessionReportB: TSessionReportB
       #9',Event.EventID'
       #9',Event.EventNum'
       '        ,Event.Caption AS cEventDetails'
-      #9',HeatIndividual.HeatNum'
+      #9',Heat.HeatNum'
       #9',Stroke.Caption AS cStroke'
       #9',Distance.Caption AS cDistance'
       #9',Entrant.Lane'
@@ -521,9 +521,9 @@ object SessionReportB: TSessionReportB
       'FROM Member'
       'INNER JOIN Entrant ON Entrant.MemberID = Member.MemberID'
       
-        'INNER JOIN HeatIndividual ON Entrant.HeatID = HeatIndividual.Hea' +
+        'INNER JOIN Heat ON Entrant.HeatID = Heat.Hea' +
         'tID'
-      'INNER JOIN Event ON HeatIndividual.EventID = Event.EventID'
+      'INNER JOIN Event ON Heat.EventID = Event.EventID'
       'INNER JOIN Session ON Event.SessionID = Session.SessionID'
       'INNER JOIN SwimClub ON Session.SwimClubID = SwimClub.SwimClubID'
       'INNER JOIN Stroke ON Event.StrokeID = Stroke.StrokeID'

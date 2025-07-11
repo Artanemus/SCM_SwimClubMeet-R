@@ -605,7 +605,7 @@ object HeatReportA: THeatReportA
       #9',Event.Caption AS cEvent'
       #9',Distance.Caption AS cDistance'
       #9',Stroke.Caption AS cStroke'
-      #9',HeatIndividual.HeatNum'
+      #9',Heat.HeatNum'
       #9',HeatStatus.Caption AS cStatus'
       #9',Entrant.Lane'
       #9',CONCAT ('
@@ -634,19 +634,19 @@ object HeatReportA: THeatReportA
         'AS PersonalBest,'
       #9'Entrant.IsDisqualified'
       #9',Entrant.IsScratched'
-      'FROM HeatIndividual'
+      'FROM Heat'
       
-        'INNER JOIN HeatStatus ON HeatIndividual.HeatStatusID = HeatStatu' +
+        'INNER JOIN HeatStatus ON Heat.HeatStatusID = HeatStatu' +
         's.HeatStatusID'
-      'INNER JOIN Event ON HeatIndividual.EventID = Event.EventID'
+      'INNER JOIN Event ON Heat.EventID = Event.EventID'
       'INNER JOIN Distance ON Event.DistanceID = Distance.DistanceID'
       'INNER JOIN Stroke ON Event.StrokeID = Stroke.StrokeID'
-      'LEFT JOIN Entrant ON Entrant.HeatID = HeatIndividual.HeatID'
+      'LEFT JOIN Entrant ON Entrant.HeatID = Heat.HeatID'
       'INNER JOIN Member ON Entrant.MemberID = Member.MemberID'
       'INNER JOIN Session ON Event.SessionID = Session.SessionID'
       'INNER JOIN SwimClub ON Session.SwimClubID = SwimClub.SwimClubID'
-      'WHERE HeatIndividual.HeatID = :HEATID'
-      'ORDER BY HeatIndividual.HeatNum'
+      'WHERE Heat.HeatID = :HEATID'
+      'ORDER BY Heat.HeatNum'
       #9',Entrant.Lane')
     Left = 144
     Top = 88

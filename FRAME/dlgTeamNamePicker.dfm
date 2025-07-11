@@ -52,7 +52,6 @@ object TeamNamePicker: TTeamNamePicker
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitWidth = 214
     object btnOk: TButton
       Left = 32
       Top = 5
@@ -65,7 +64,6 @@ object TeamNamePicker: TTeamNamePicker
   end
   object qryTeamNames: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'TeamNameID'
     Connection = SCM.scmConnection
     UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
@@ -88,12 +86,8 @@ object TeamNamePicker: TTeamNamePicker
       ' '
       '    FROM TeamName AS tbl2'
       '    INNER JOIN Team ON TeamName.TeamNameID = Team.TeamNameID'
-      
-        '    INNER JOIN HeatIndividual ON Team.HeatID = HeatIndividual.He' +
-        'atID'
-      
-        '    INNER JOIN [Event] ON HeatIndividual.EventID = [Event].Event' +
-        'ID'
+      '    INNER JOIN Heat ON Team.HeatID = Heat.HeatID'
+      '    INNER JOIN [Event] ON Heat.EventID = [Event].EventID'
       
         '    WHERE [Event].EventID = @EventID AND TeamName.TeamNameID = t' +
         'bl2.TeamNameID'
@@ -122,7 +116,6 @@ object TeamNamePicker: TTeamNamePicker
     object qryTeamNamesTeamNameID: TFDAutoIncField
       FieldName = 'TeamNameID'
       Origin = 'TeamNameID'
-      ReadOnly = True
       Visible = False
     end
     object qryTeamNamesstrTeamName: TWideStringField

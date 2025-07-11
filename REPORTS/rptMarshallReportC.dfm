@@ -19,8 +19,8 @@ object MarshallReportC: TMarshallReportC
       'SET @EventID = :EVENTID;  -- 65 TEAM 62 INDV'
       ''
       ''
-      '    SELECT HeatIndividual.HeatID'
-      '         , HeatIndividual.HeatNum'
+      '    SELECT Heat.HeatID'
+      '         , Heat.HeatNum'
       
         '         , CONCAT(Distance.Caption, '#39' '#39', Stroke.Caption) AS cDis' +
         'tanceStroke'
@@ -29,16 +29,16 @@ object MarshallReportC: TMarshallReportC
       '         , Event.Caption AS cEvent'
       '         , '#39#39' AS TeamName'
       '         , 0 AS TeamNameID'
-      '         , HeatIndividual.EventID'
-      '    FROM HeatIndividual'
+      '         , Heat.EventID'
+      '    FROM Heat'
       '        INNER JOIN Event'
-      '            ON HeatIndividual.EventID = Event.EventID'
+      '            ON Heat.EventID = Event.EventID'
       '        INNER JOIN Distance'
       '            ON Event.DistanceID = Distance.DistanceID'
       '        INNER JOIN Stroke'
       '            ON Event.StrokeID = Stroke.StrokeID'
-      '    WHERE HeatIndividual.EventID = @EventID'
-      '    ORDER BY HeatIndividual.HeatNum')
+      '    WHERE Heat.EventID = @EventID'
+      '    ORDER BY Heat.HeatNum')
     Left = 48
     Top = 232
     ParamData = <

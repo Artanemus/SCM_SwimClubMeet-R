@@ -22,9 +22,9 @@ object SCMNom: TSCMNom
       'SELECT Entrant.EntrantID'
       'FROM Entrant'
       
-        'INNER JOIN HeatIndividual ON Entrant.HeatID = HeatIndividual.Hea' +
+        'INNER JOIN Heat ON Entrant.HeatID = Heat.Hea' +
         'tID'
-      'INNER JOIN Event ON HeatIndividual.EventID = Event.EventID'
+      'INNER JOIN Event ON Heat.EventID = Event.EventID'
       'WHERE Entrant.MemberID = @MemberID AND Event.EventID = @EventID')
     Left = 248
     Top = 112
@@ -162,12 +162,12 @@ object SCMNom: TSCMNom
       'SET @MemberID = :MEMBERID;'
       'SET @EventID = :EVENTID;'
       ''
-      'SELECT HeatIndividual.HeatID, HeatIndividual.HeatStatusID'
+      'SELECT Heat.HeatID, Heat.HeatStatusID'
       'FROM [Event]'
       
-        'INNER JOIN HeatIndividual ON [Event].EventID = HeatIndividual.Ev' +
+        'INNER JOIN Heat ON [Event].EventID = Heat.Ev' +
         'entID'
-      'INNER JOIN Entrant ON HeatIndividual.HeatID = Entrant.HeatID'
+      'INNER JOIN Entrant ON Heat.HeatID = Entrant.HeatID'
       'WHERE [Event].EventID = @EventID'
       #9'AND (Entrant.MemberID = @MemberID)')
     Left = 96
@@ -267,13 +267,13 @@ object SCMNom: TSCMNom
       '      ,[IsDisqualified]'
       '      ,[IsScratched]'
       '      ,Entrant.[HeatID]'
-      ',HeatIndividual.EventID'
-      ',HeatIndividual.HeatStatusID'
-      ',HeatIndividual.HeatNum'
+      ',Heat.EventID'
+      ',Heat.HeatStatusID'
+      ',Heat.HeatNum'
       ''
       '  FROM [dbo].[Entrant]'
       
-        'INNER JOIN HeatIndividual on Entrant.HeatID = HeatIndividual.Hea' +
+        'INNER JOIN Heat on Entrant.HeatID = Heat.Hea' +
         'tID'
       'WHERE Entrant.EntrantID = @EntrantID')
     Left = 96
@@ -306,13 +306,13 @@ object SCMNom: TSCMNom
       'SET @MemberID = :MEMBERID;'
       ''
       'SELECT Entrant.EntrantID'
-      '--,HeatIndividual.EventID'
-      '--,HeatIndividual.HeatID '
+      '--,Heat.EventID'
+      '--,Heat.HeatID '
       'FROM Event '
       
-        'INNER JOIN HeatIndividual ON Event.EventID = HeatIndividual.Even' +
+        'INNER JOIN Heat ON Event.EventID = Heat.Even' +
         'tID'
-      'INNER JOIN Entrant ON HeatIndividual.HeatID = Entrant.HeatID'
+      'INNER JOIN Entrant ON Heat.HeatID = Entrant.HeatID'
       'WHERE Event.EventID = @EventID AND Entrant.MemberID = @MemberID;')
     Left = 248
     Top = 224

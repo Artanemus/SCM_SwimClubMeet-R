@@ -795,11 +795,11 @@ begin
   for j := Low(Heats) to High(Heats) do
   Begin
 
-    // Insert into dbo.HeatIndividual
+    // Insert into dbo.Heat
     // HeatTypeID - Heat, HeatStatus - open, HeatNum - (1 ... )
     qry1.Close;
     s := '''
-    INSERT INTO HeatIndividual (EventID, HeatNum, OpenDT, HeatTypeID, HeatStatusID)
+    INSERT INTO Heat (EventID, HeatNum, OpenDT, HeatTypeID, HeatStatusID)
     VALUES (:EVENTID, :HEATNUM, GETDATE(), 1, 1);
     ''';
     qry1.SQL.Text := s;

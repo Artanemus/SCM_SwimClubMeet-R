@@ -177,9 +177,9 @@ object DCodePicker: TDCodePicker
       ''
       'SELECT [Event].StrokeID, [Stroke].Caption FROM dbo.Entrant'
       
-        'INNER JOIN HeatIndividual ON  Entrant.HeatID = HeatIndividual.He' +
+        'INNER JOIN Heat ON  Entrant.HeatID = Heat.He' +
         'atID'
-      'INNER JOIN [Event] ON HeatIndividual.EventID = [Event].EventID'
+      'INNER JOIN [Event] ON Heat.EventID = [Event].EventID'
       'INNER JOIN [Stroke] ON [Event].StrokeID = [Stroke].StrokeID'
       'WHERE Entrant.EntrantID = @EntrantID;')
     Left = 376

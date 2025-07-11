@@ -408,8 +408,8 @@ object MarshallReportA: TMarshallReportA
       'IF @EventTypeID = 1     '
       '    BEGIN'
       '        SELECT'
-      '        HeatIndividual.HeatID,'
-      '        HeatIndividual.HeatNum,'
+      '        Heat.HeatID,'
+      '        Heat.HeatNum,'
       
         '        Concat (Distance.Caption, '#39' '#39', Stroke.Caption) AS cDista' +
         'nceStroke,'
@@ -422,31 +422,31 @@ object MarshallReportA: TMarshallReportA
         ' FNAME,'
       '        '#39#39' AS TeamName,'
       '        0 AS TeamNameID,'
-      '        HeatIndividual.EventID'
+      '        Heat.EventID'
       '        FROM'
-      '        HeatIndividual'
+      '        Heat'
       
-        '        INNER JOIN Event ON HeatIndividual.EventID = Event.Event' +
+        '        INNER JOIN Event ON Heat.EventID = Event.Event' +
         'ID'
       
         '        INNER JOIN Distance ON Event.DistanceID = Distance.Dista' +
         'nceID'
       '        INNER JOIN Stroke ON Event.StrokeID = Stroke.StrokeID'
       
-        '        INNER JOIN Entrant ON Entrant.HeatID = HeatIndividual.He' +
+        '        INNER JOIN Entrant ON Entrant.HeatID = Heat.He' +
         'atID'
       '        LEFT JOIN Member ON Entrant.MemberID = Member.MemberID'
       '        WHERE'
-      '        HeatIndividual.EventID = @EventID'
+      '        Heat.EventID = @EventID'
       '        ORDER BY'
-      '        HeatIndividual.HeatNum,'
+      '        Heat.HeatNum,'
       '        Entrant.Lane;'
       '    END'
       'ELSE '
       '    BEGIN'
       '        SELECT'
-      '        HeatIndividual.HeatID,'
-      '        HeatIndividual.HeatNum,'
+      '        Heat.HeatID,'
+      '        Heat.HeatNum,'
       
         '        Concat (Distance.Caption, '#39' RELAY '#39', Stroke.Caption) AS ' +
         'cDistanceStroke,'
@@ -459,17 +459,17 @@ object MarshallReportA: TMarshallReportA
         'pper(Member.LastName)) AS FNAME,'
       '        TeamName.Caption AS TeamName,'
       '        TeamName.TeamNameID,'
-      '        HeatIndividual.EventID'
+      '        Heat.EventID'
       '        FROM'
-      '        HeatIndividual'
+      '        Heat'
       
-        '        INNER JOIN Event ON HeatIndividual.EventID = Event.Event' +
+        '        INNER JOIN Event ON Heat.EventID = Event.Event' +
         'ID'
       
         '        INNER JOIN Distance ON Event.DistanceID = Distance.Dista' +
         'nceID'
       '        INNER JOIN Stroke ON Event.StrokeID = Stroke.StrokeID'
-      '        INNER JOIN Team ON HeatIndividual.HeatID = Team.HeatID'
+      '        INNER JOIN Team ON Heat.HeatID = Team.HeatID'
       
         '        INNER JOIN TeamEntrant ON Team.TeamID = TeamEntrant.Team' +
         'ID'
@@ -481,10 +481,10 @@ object MarshallReportA: TMarshallReportA
         'ID'
       '        WHERE'
       
-        '        HeatIndividual.EventID = @EventID AND Team.TeamNameID IS' +
+        '        Heat.EventID = @EventID AND Team.TeamNameID IS' +
         ' NOT NULL AND TeamEntrant.MemberID IS NOT NULL'
       '        ORDER BY'
-      '        HeatIndividual.HeatNum,'
+      '        Heat.HeatNum,'
       '        Team.Lane,'
       '        TeamEntrant.Lane;'
       '    END'

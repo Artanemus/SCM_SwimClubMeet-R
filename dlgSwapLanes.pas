@@ -8,7 +8,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.Client,
-  Data.DB, FireDAC.Comp.DataSet, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.ExtCtrls, dmSCM;
+  Data.DB, FireDAC.Comp.DataSet, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.ExtCtrls, dmSCM,
+  Vcl.Buttons;
 
 type
   TSwapLanes = class(TForm)
@@ -98,7 +99,7 @@ begin
 
     // enable all datasets
     tblEvent.Open;
-    tblHeatA.Open;
+		tblHeatA.Open;
     tblHeatB.Open;
     tblEntrantA.Open;
     tblEntrantB.Open;

@@ -119,7 +119,7 @@ object ExportSessionJSON: TExportSessionJSON
       '          [Event].DistanceID,'
       '          [Event].StrokeID,'
       '          [Entrant].[HEATID],'
-      '          [HeatIndividual].HeatNum,'
+      '          [Heat].HeatNum,'
       '          [Entrant].Lane, '
       '          [Entrant].MemberID,'
       '          [Member].FirstName,'
@@ -147,10 +147,10 @@ object ExportSessionJSON: TExportSessionJSON
         '          LEFT JOIN [Distance] ON [Event].DistanceID = Distance.' +
         'DistanceID'
       
-        '          LEFT JOIN [HeatIndividual] ON [HeatIndividual].[EventI' +
+        '          LEFT JOIN [Heat] ON [Heat].[EventI' +
         'D] = [Event].EventID'
       
-        '          LEFT JOIN [Entrant] ON [HeatIndividual].[HeatID] = [En' +
+        '          LEFT JOIN [Entrant] ON [Heat].[HeatID] = [En' +
         'trant].[HEATID]'
       
         '          LEFT JOIN [Member] ON [Entrant].[MemberID] = [Member].' +

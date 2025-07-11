@@ -600,7 +600,7 @@ object HeatReportB: THeatReportB
       '  Event.Caption AS cEvent,'
       '  Distance.Caption AS cDistance,'
       '  Stroke.Caption AS cStroke,'
-      '  HeatIndividual.HeatNum,'
+      '  Heat.HeatNum,'
       '  HeatStatus.Caption AS cStatus,'
       '  Entrant.Lane,'
       
@@ -630,23 +630,23 @@ object HeatReportB: THeatReportB
       ''
       ''
       'FROM'
-      '  HeatIndividual'
+      '  Heat'
       
-        '  INNER JOIN HeatStatus ON HeatIndividual.HeatStatusID = HeatSta' +
+        '  INNER JOIN HeatStatus ON Heat.HeatStatusID = HeatSta' +
         'tus.HeatStatusID'
-      '  INNER JOIN Event ON HeatIndividual.EventID = Event.EventID'
+      '  INNER JOIN Event ON Heat.EventID = Event.EventID'
       '  INNER JOIN Distance ON Event.DistanceID = Distance.DistanceID'
       '  INNER JOIN Stroke ON Event.StrokeID = Stroke.StrokeID'
-      '  LEFT JOIN Entrant ON Entrant.HeatID = HeatIndividual.HeatID'
+      '  LEFT JOIN Entrant ON Entrant.HeatID = Heat.HeatID'
       '  INNER JOIN Member ON Entrant.MemberID = Member.MemberID'
       '  INNER JOIN Session ON Event.SessionID = Session.SessionID'
       
         '  INNER JOIN SwimClub ON Session.SwimClubID = SwimClub.SwimClubI' +
         'D'
       'WHERE'
-      '  HeatIndividual.EventID = :EVENTID'
+      '  Heat.EventID = :EVENTID'
       'ORDER BY'
-      '  HeatIndividual.HeatNum,'
+      '  Heat.HeatNum,'
       '  Entrant.Lane')
     Left = 160
     Top = 272

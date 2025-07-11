@@ -207,7 +207,7 @@ object MarshallReportA_ALT: TMarshallReportA_ALT
       #9#9',[CloseDT]'
       #9#9',[HeatTypeID]'
       #9#9',[HeatStatusID]'
-      'FROM [SwimClubMeet].[dbo].[HeatIndividual] '
+      'FROM [SwimClubMeet].[dbo].[Heat] '
       ';'
       ''
       ''

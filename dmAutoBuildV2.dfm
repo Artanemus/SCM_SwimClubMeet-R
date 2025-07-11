@@ -10,7 +10,7 @@ object AutoBuildV2: TAutoBuildV2
     UpdateOptions.EnableDelete = False
     UpdateOptions.EnableInsert = False
     UpdateOptions.EnableUpdate = False
-    UpdateOptions.UpdateTableName = 'SwimClubMeet..HeatIndividual'
+    UpdateOptions.UpdateTableName = 'SwimClubMeet..Heat'
     UpdateOptions.KeyFields = 'HeatID'
     SQL.Strings = (
       'USE SwimClubMeet;'
@@ -18,11 +18,11 @@ object AutoBuildV2: TAutoBuildV2
       'DECLARE @EventID AS INT'
       'SET @EventID = :EVENTID;'
       ''
-      'SELECT HeatIndividual.HeatID'
-      ',HeatIndividual.HeatStatusID'
-      'FROM HeatIndividual'
-      'WHERE HeatIndividual.EventID = @EventID'
-      'AND HeatIndividual.HeatStatusID = 1;')
+      'SELECT Heat.HeatID'
+      ',Heat.HeatStatusID'
+      'FROM Heat'
+      'WHERE Heat.EventID = @EventID'
+      'AND Heat.HeatStatusID = 1;')
     Left = 88
     Top = 24
     ParamData = <
@@ -106,13 +106,13 @@ object AutoBuildV2: TAutoBuildV2
       '     , Entrant.MemberID'
       'INTO #MembersInClosedHeats'
       'FROM [SwimClubMeet].[dbo].[Event]'
-      '    INNER JOIN HeatIndividual'
-      '        ON Event.EventID = HeatIndividual.EventID'
+      '    INNER JOIN Heat'
+      '        ON Event.EventID = Heat.EventID'
       '    INNER JOIN Entrant'
-      '        ON HeatIndividual.HeatID = Entrant.HeatID'
+      '        ON Heat.HeatID = Entrant.HeatID'
       'WHERE ('
-      '          HeatIndividual.HeatStatusID = 2'
-      '          OR HeatIndividual.HeatStatusID = 3'
+      '          Heat.HeatStatusID = 2'
+      '          OR Heat.HeatStatusID = 3'
       '      )'
       '      AND (Entrant.MemberID IS NOT NULL);'
       ''
@@ -283,7 +283,7 @@ object AutoBuildV2: TAutoBuildV2
     IndexesActive = False
     IndexFieldNames = 'HeatID'
     Connection = SCM.scmConnection
-    UpdateOptions.UpdateTableName = 'SwimClubMeet..HeatIndividual'
+    UpdateOptions.UpdateTableName = 'SwimClubMeet..Heat'
     UpdateOptions.KeyFields = 'HeatID'
     SQL.Strings = (
       'USE SwimClubMeet;'
@@ -291,17 +291,17 @@ object AutoBuildV2: TAutoBuildV2
       'DECLARE @EventID AS INT'
       'SET @EventID = :EVENTID;'
       ''
-      'SELECT HeatIndividual.HeatID'
-      ',HeatIndividual.HeatNum'
-      'FROM HeatIndividual'
-      'WHERE HeatIndividual.EventID = @EventID'
+      'SELECT Heat.HeatID'
+      ',Heat.HeatNum'
+      'FROM Heat'
+      'WHERE Heat.EventID = @EventID'
       '-- NULL LAST'
       
         'ORDER BY (CASE WHEN HeatNum IS NULL THEN 1 ELSE 0 END), HeatNum ' +
         'ASC;'
       ''
       '-- DEPRECIATED 15/03/2022'
-      '-- ORDER BY HeatIndividual.HeatID ASC;')
+      '-- ORDER BY Heat.HeatID ASC;')
     Left = 184
     Top = 24
     ParamData = <
@@ -346,13 +346,13 @@ object AutoBuildV2: TAutoBuildV2
       '     , Entrant.MemberID'
       'INTO #MembersInClosedHeats'
       'FROM [SwimClubMeet].[dbo].[Event]'
-      '    INNER JOIN HeatIndividual'
-      '        ON Event.EventID = HeatIndividual.EventID'
+      '    INNER JOIN Heat'
+      '        ON Event.EventID = Heat.EventID'
       '    INNER JOIN Entrant'
-      '        ON HeatIndividual.HeatID = Entrant.HeatID'
+      '        ON Heat.HeatID = Entrant.HeatID'
       'WHERE ('
-      '          HeatIndividual.HeatStatusID = 2'
-      '          OR HeatIndividual.HeatStatusID = 3'
+      '          Heat.HeatStatusID = 2'
+      '          OR Heat.HeatStatusID = 3'
       '      )'
       '      AND (Entrant.MemberID IS NOT NULL);'
       ''
@@ -447,13 +447,13 @@ object AutoBuildV2: TAutoBuildV2
       '     , Entrant.MemberID'
       'INTO #MembersInClosedHeats'
       'FROM [SwimClubMeet].[dbo].[Event]'
-      '    INNER JOIN HeatIndividual'
-      '        ON Event.EventID = HeatIndividual.EventID'
+      '    INNER JOIN Heat'
+      '        ON Event.EventID = Heat.EventID'
       '    INNER JOIN Entrant'
-      '        ON HeatIndividual.HeatID = Entrant.HeatID'
+      '        ON Heat.HeatID = Entrant.HeatID'
       'WHERE ('
-      '          HeatIndividual.HeatStatusID = 2'
-      '          OR HeatIndividual.HeatStatusID = 3'
+      '          Heat.HeatStatusID = 2'
+      '          OR Heat.HeatStatusID = 3'
       '      )'
       '      AND (Entrant.MemberID IS NOT NULL);'
       ''
@@ -521,13 +521,13 @@ object AutoBuildV2: TAutoBuildV2
       '     , Entrant.MemberID'
       'INTO #MembersInClosedHeats'
       'FROM [SwimClubMeet].[dbo].[Event]'
-      '    INNER JOIN HeatIndividual'
-      '        ON Event.EventID = HeatIndividual.EventID'
+      '    INNER JOIN Heat'
+      '        ON Event.EventID = Heat.EventID'
       '    INNER JOIN Entrant'
-      '        ON HeatIndividual.HeatID = Entrant.HeatID'
+      '        ON Heat.HeatID = Entrant.HeatID'
       'WHERE ('
-      '          HeatIndividual.HeatStatusID = 2'
-      '          OR HeatIndividual.HeatStatusID = 3'
+      '          Heat.HeatStatusID = 2'
+      '          OR Heat.HeatStatusID = 3'
       '      )'
       '      AND (Entrant.MemberID IS NOT NULL);'
       ''
@@ -618,13 +618,13 @@ object AutoBuildV2: TAutoBuildV2
       '     , Entrant.MemberID'
       'INTO #MembersInClosedHeats'
       'FROM [SwimClubMeet].[dbo].[Event]'
-      '    INNER JOIN HeatIndividual'
-      '        ON Event.EventID = HeatIndividual.EventID'
+      '    INNER JOIN Heat'
+      '        ON Event.EventID = Heat.EventID'
       '    INNER JOIN Entrant'
-      '        ON HeatIndividual.HeatID = Entrant.HeatID'
+      '        ON Heat.HeatID = Entrant.HeatID'
       'WHERE ('
-      '          HeatIndividual.HeatStatusID = 2'
-      '          OR HeatIndividual.HeatStatusID = 3'
+      '          Heat.HeatStatusID = 2'
+      '          OR Heat.HeatStatusID = 3'
       '      )'
       '      AND (Entrant.MemberID IS NOT NULL);'
       ''
@@ -718,13 +718,13 @@ object AutoBuildV2: TAutoBuildV2
       '     , Entrant.MemberID'
       'INTO #MembersInClosedHeats'
       'FROM [SwimClubMeet].[dbo].[Event]'
-      '    INNER JOIN HeatIndividual'
-      '        ON Event.EventID = HeatIndividual.EventID'
+      '    INNER JOIN Heat'
+      '        ON Event.EventID = Heat.EventID'
       '    INNER JOIN Entrant'
-      '        ON HeatIndividual.HeatID = Entrant.HeatID'
+      '        ON Heat.HeatID = Entrant.HeatID'
       'WHERE ('
-      '          HeatIndividual.HeatStatusID = 2'
-      '          OR HeatIndividual.HeatStatusID = 3'
+      '          Heat.HeatStatusID = 2'
+      '          OR Heat.HeatStatusID = 3'
       '      )'
       '      AND (Entrant.MemberID IS NOT NULL);'
       ''
@@ -814,13 +814,13 @@ object AutoBuildV2: TAutoBuildV2
       '     , Entrant.MemberID'
       'INTO #MembersInClosedHeats'
       'FROM [SwimClubMeet].[dbo].[Event]'
-      '    INNER JOIN HeatIndividual'
-      '        ON Event.EventID = HeatIndividual.EventID'
+      '    INNER JOIN Heat'
+      '        ON Event.EventID = Heat.EventID'
       '    INNER JOIN Entrant'
-      '        ON HeatIndividual.HeatID = Entrant.HeatID'
+      '        ON Heat.HeatID = Entrant.HeatID'
       'WHERE ('
-      '          HeatIndividual.HeatStatusID = 2'
-      '          OR HeatIndividual.HeatStatusID = 3'
+      '          Heat.HeatStatusID = 2'
+      '          OR Heat.HeatStatusID = 3'
       '      )'
       '      AND (Entrant.MemberID IS NOT NULL);'
       '     '
@@ -859,8 +859,8 @@ object AutoBuildV2: TAutoBuildV2
       'SET @EventID = :EVENTID; -- 135'
       ''
       
-        'SELECT MAX(HeatNum) AS HeatMaxSeedNumber FROM HeatIndividual WHE' +
-        'RE HeatIndividual.EventID = @EventID ;')
+        'SELECT MAX(HeatNum) AS HeatMaxSeedNumber FROM Heat WHE' +
+        'RE Heat.EventID = @EventID ;')
     Left = 144
     Top = 88
     ParamData = <
@@ -875,9 +875,9 @@ object AutoBuildV2: TAutoBuildV2
     ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'HeatID'
     Connection = SCM.scmConnection
-    UpdateOptions.UpdateTableName = 'SwimClubMeet..HeatIndividual'
+    UpdateOptions.UpdateTableName = 'SwimClubMeet..Heat'
     UpdateOptions.KeyFields = 'HeatID'
-    TableName = 'SwimClubMeet..HeatIndividual'
+    TableName = 'SwimClubMeet..Heat'
     Left = 104
     Top = 184
   end
@@ -923,9 +923,9 @@ object AutoBuildV2: TAutoBuildV2
         'D'
       '--INNER JOIN Stroke ON [Event].StrokeID = Stroke.StrokeID'
       
-        'INNER JOIN HeatIndividual ON [Event].EventID = HeatIndividual.Ev' +
+        'INNER JOIN Heat ON [Event].EventID = Heat.Ev' +
         'entID'
-      'LEFT JOIN Entrant ON HeatIndividual.HeatID = Entrant.HeatID'
+      'LEFT JOIN Entrant ON Heat.HeatID = Entrant.HeatID'
       'LEFT JOIN Member ON Entrant.MemberID = Member.MemberID'
       'WHERE [Event].EventID = @EventID'
       '    AND Entrant.MemberID IS NOT NULL'
@@ -968,10 +968,10 @@ object AutoBuildV2: TAutoBuildV2
       '    SELECT [Event].EventID'
       '        , Entrant.MemberID'
       '    FROM Event'
-      '    INNER JOIN HeatIndividual'
-      '        ON [Event].EventID = HeatIndividual.EventID'
+      '    INNER JOIN Heat'
+      '        ON [Event].EventID = Heat.EventID'
       '    INNER JOIN Entrant'
-      '        ON HeatIndividual.HeatID = Entrant.HeatID'
+      '        ON Heat.HeatID = Entrant.HeatID'
       '    WHERE ('
       '            Entrant.MemberID IS NOT NULL'
       '            AND (Entrant.RaceTime IS NOT NULL)'
@@ -1064,12 +1064,12 @@ object AutoBuildV2: TAutoBuildV2
       '    SELECT Entrant.MemberID'
       '        , GenderID'
       '        , RaceTime'
-      '    FROM HeatIndividual'
+      '    FROM Heat'
       '    LEFT JOIN Entrant'
-      '        ON HeatIndividual.HeatID = Entrant.HeatID'
+      '        ON Heat.HeatID = Entrant.HeatID'
       '    LEFT JOIN Member'
       '        ON Entrant.MemberID = Member.MemberID'
-      '    WHERE HeatIndividual.EventID = @srcEventID'
+      '    WHERE Heat.EventID = @srcEventID'
       '        AND Entrant.MemberID IS NOT NULL'
       '        AND (Entrant.RaceTime IS NOT NULL)'
       '        AND (Entrant.IsDisqualified <> 1)'

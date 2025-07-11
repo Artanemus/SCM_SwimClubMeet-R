@@ -91,8 +91,8 @@ begin
     fTeamID := aTeamID;
     // find the event ID for the team....
     SQL := 'SELECT [Event].EventID FROM SwimClubMeet.dbo.Team ' +
-    'INNER JOIN HeatIndividual ON Team.HeatID = HeatIndividual.HeatID  ' +
-    'INNER JOIN [Event] ON HeatIndividual.EventID = [Event].EventID ' +
+    'INNER JOIN Heat ON Team.HeatID = Heat.HeatID  ' +
+    'INNER JOIN [Event] ON Heat.EventID = [Event].EventID ' +
     'WHERE Team.TeamID = :ID';
     v := fConnection.ExecSQLScalar(SQL, [aTeamID]);
     if VarIsNull(v) or VarIsEmpty(v) or (v=0)  then exit;

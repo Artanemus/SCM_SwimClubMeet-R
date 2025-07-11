@@ -799,9 +799,9 @@ object ManageMemberData: TManageMemberData
       'INNER JOIN Stroke ON Event.StrokeID = Stroke.StrokeID'
       'INNER JOIN Distance ON Event.DistanceID = Distance.DistanceID'
       
-        'INNER JOIN HeatIndividual ON Event.EventID = HeatIndividual.Even' +
+        'INNER JOIN Heat ON Event.EventID = Heat.Even' +
         'tID'
-      'INNER JOIN Entrant ON HeatIndividual.HeatID = Entrant.HeatID'
+      'INNER JOIN Entrant ON Heat.HeatID = Entrant.HeatID'
       'INNER JOIN Member ON Entrant.MemberID = Member.MemberID'
       'WHERE RaceTime IS NOT NULL'
       
@@ -892,9 +892,9 @@ object ManageMemberData: TManageMemberData
       'INTO #charttemp'
       'FROM Entrant'
       
-        'INNER JOIN HeatIndividual ON Entrant.HeatID = HeatIndividual.Hea' +
+        'INNER JOIN Heat ON Entrant.HeatID = Heat.Hea' +
         'tID'
-      'INNER JOIN Event ON HeatIndividual.EventID = Event.EventID'
+      'INNER JOIN Event ON Heat.EventID = Event.EventID'
       'INNER JOIN Session ON Event.SessionID = Session.SessionID'
       'INNER JOIN SwimClub ON Session.SwimClubID = SwimClub.SwimClubID'
       'INNER JOIN Stroke ON Event.StrokeID = Stroke.StrokeID'

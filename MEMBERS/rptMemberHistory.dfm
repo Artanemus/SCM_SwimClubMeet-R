@@ -353,9 +353,9 @@ object MemberHistory: TMemberHistory
       'FROM Member'
       'INNER JOIN Entrant ON Member.MemberID = Entrant.MemberID'
       
-        'INNER JOIN HeatIndividual ON Entrant.HeatID = HeatIndividual.Hea' +
+        'INNER JOIN Heat ON Entrant.HeatID = Heat.Hea' +
         'tID'
-      'INNER JOIN Event ON HeatIndividual.EventID = Event.EventID'
+      'INNER JOIN Event ON Heat.EventID = Event.EventID'
       'INNER JOIN Distance ON Event.DistanceID = Distance.DistanceID'
       'INNER JOIN Stroke ON Event.StrokeID = Stroke.StrokeID'
       'INNER JOIN Session ON Event.SessionID = Session.SessionID'

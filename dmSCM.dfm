@@ -256,10 +256,10 @@ object SCM: TSCM
       'FROM Entrant'
       '    LEFT OUTER JOIN Member'
       '        ON Entrant.MemberID = Member.MemberID'
-      '    INNER JOIN HeatIndividual'
-      '        ON Entrant.HeatID = HeatIndividual.HeatID'
+      '    INNER JOIN Heat'
+      '        ON Entrant.HeatID = Heat.HeatID'
       '    INNER JOIN Event'
-      '        ON HeatIndividual.EventID = Event.EventID'
+      '        ON Heat.EventID = Event.EventID'
       '    INNER JOIN Session'
       '        ON Event.SessionID = Session.SessionID'
       '    LEFT OUTER JOIN DisqualifyCode'
@@ -557,23 +557,23 @@ object SCM: TSCM
       'INTO #TempTable'
       'FROM'
       '('
-      '    SELECT HeatIndividual.EventID'
+      '    SELECT Heat.EventID'
       '         , COUNT(Entrant.EntrantID) AS Count'
       '    FROM Entrant'
-      '        INNER JOIN HeatIndividual'
-      '            ON Entrant.HeatID = HeatIndividual.HeatID'
+      '        INNER JOIN Heat'
+      '            ON Entrant.HeatID = Heat.HeatID'
       '    WHERE MemberID IS NOT NULL            '
-      '    GROUP BY HeatIndividual.EventID'
+      '    GROUP BY Heat.EventID'
       '    UNION ALL'
-      '    SELECT HeatIndividual.EventID'
+      '    SELECT Heat.EventID'
       '         , COUNT(TeamEntrant.TeamEntrantID) AS Count'
       '    FROM TeamEntrant'
       '        INNER JOIN Team'
       '            ON TeamEntrant.TeamID = Team.TeamID'
-      '        INNER JOIN HeatIndividual'
-      '            ON Team.HeatID = HeatIndividual.HeatID'
+      '        INNER JOIN Heat'
+      '            ON Team.HeatID = Heat.HeatID'
       '    WHERE MemberID IS NOT NULL'
-      '    GROUP BY HeatIndividual.EventID'
+      '    GROUP BY Heat.EventID'
       ') AS Counts'
       'GROUP BY EventID;'
       ''
@@ -852,7 +852,7 @@ object SCM: TSCM
       'SET @EventID = :EVENTID'
       ''
       'SELECT        COUNT(HeatStatusID) AS CountStatus'
-      'FROM            HeatIndividual'
+      'FROM            Heat'
       'WHERE        (EventID = @EventID ) AND (HeatStatusID < 3)')
     Left = 1152
     Top = 64
@@ -1178,25 +1178,25 @@ object SCM: TSCM
     Connection = scmConnection
     UpdateOptions.AssignedValues = [uvCheckRequired]
     UpdateOptions.CheckRequired = False
-    UpdateOptions.UpdateTableName = 'SwimClubMeet..HeatIndividual'
+    UpdateOptions.UpdateTableName = 'SwimClubMeet..Heat'
     UpdateOptions.KeyFields = 'HeatID'
     SQL.Strings = (
       'SELECT'
-      '  HeatIndividual.HeatID,'
-      '  HeatIndividual.HeatNum,'
-      '  HeatIndividual.EventID,'
-      '  HeatIndividual.HeatTypeID,'
-      '  HeatIndividual.HeatStatusID,'
-      '  HeatIndividual.CloseDT,'
+      '  Heat.HeatID,'
+      '  Heat.HeatNum,'
+      '  Heat.EventID,'
+      '  Heat.HeatTypeID,'
+      '  Heat.HeatStatusID,'
+      '  Heat.CloseDT,'
       '  HeatStatus.Caption AS cStatus'
       ''
       'FROM'
-      '  HeatIndividual'
+      '  Heat'
       
-        '  INNER JOIN HeatStatus ON HeatIndividual.HeatStatusID = HeatSta' +
-        'tus.HeatStatusID'
+        '  INNER JOIN HeatStatus ON Heat.HeatStatusID = HeatStatus.HeatSt' +
+        'atusID'
       'ORDER BY'
-      '  HeatIndividual.HeatNum')
+      '  Heat.HeatNum')
     Left = 48
     Top = 312
     object qryHeatHeatID: TFDAutoIncField
@@ -1272,9 +1272,9 @@ object SCM: TSCM
       ',EntrantID'
       'FROM Entrant'
       
-        'INNER JOIN HeatIndividual ON Entrant.HeatID = HeatIndividual.Hea' +
+        'INNER JOIN Heat ON Entrant.HeatID = Heat.Hea' +
         'tID'
-      'INNER JOIN Event ON HeatIndividual.EventID = Event.EventID'
+      'INNER JOIN Event ON Heat.EventID = Event.EventID'
       'INNER JOIN Qualify ON Event.DistanceID = Qualify.TrialDistID'
       #9'AND Event.StrokeID = Qualify.StrokeID'
       'WHERE (Entrant.IsDisqualified = 0)'
@@ -1326,7 +1326,7 @@ object SCM: TSCM
     Connection = scmConnection
     FormatOptions.AssignedValues = [fvFmtDisplayTime]
     FormatOptions.FmtDisplayTime = 'nn:ss.zzz'
-    UpdateOptions.UpdateTableName = 'SwimClubMeet..HeatIndividual'
+    UpdateOptions.UpdateTableName = 'SwimClubMeet..Heat'
     UpdateOptions.KeyFields = 'aID'
     SQL.Strings = (
       'USE SwimClubMeet;'
@@ -1337,9 +1337,9 @@ object SCM: TSCM
       ''
       'SET @HeatID = :HEATID;'
       
-        'SET @EventTypeID = (SELECT TOP 1 EventTypeID FROM HeatIndividual' +
+        'SET @EventTypeID = (SELECT TOP 1 EventTypeID FROM Heat' +
         ' '
-      #9'INNER JOIN [Event] ON HeatIndividual.EventID = [Event].EventID'
+      #9'INNER JOIN [Event] ON Heat.EventID = [Event].EventID'
       
         #9'INNER JOIN [Distance] ON [Event].DistanceID = [Distance].Distan' +
         'ceID'
@@ -1374,7 +1374,7 @@ object SCM: TSCM
       'SET @EventID = :EVENTID;'
       ''
       
-        'SELECT HeatID, HeatNum FROM HeatIndividual WHERE EventID = @Even' +
+        'SELECT HeatID, HeatNum FROM Heat WHERE EventID = @Even' +
         'tID'
       ''
       
@@ -1397,7 +1397,6 @@ object SCM: TSCM
   end
   object qrySwimClub: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'SwimClubID'
     Connection = scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..SwimClub'
@@ -1686,14 +1685,14 @@ object SCM: TSCM
         'ID'#39' in schema '#39'dbo'#39' in database '#39'SwimClubMeet'#39
       'SELECT HeatID, HeatNum, EventID'
       'INTO #tmpheat'
-      'FROM [SwimClubMeet].[dbo].[HeatIndividual]'
+      'FROM [SwimClubMeet].[dbo].[Heat]'
       'WHERE [HeatID] = @HeatID;'
       ''
-      'SELECT [HeatIndividual].[HeatID] '
+      'SELECT [Heat].[HeatID] '
       
-        'FROM [HeatIndividual] INNER JOIN #tmpheat on [HeatIndividual].[E' +
+        'FROM [Heat] INNER JOIN #tmpheat on [Heat].[E' +
         'ventID] = #tmpheat.[EventID]'
-      'WHERE [HeatIndividual].[HeatNum] = #tmpheat.HeatNum + 1;')
+      'WHERE [Heat].[HeatNum] = #tmpheat.HeatNum + 1;')
     Left = 1064
     Top = 456
     ParamData = <
@@ -1726,14 +1725,14 @@ object SCM: TSCM
         'ID'#39' in schema '#39'dbo'#39' in database '#39'SwimClubMeet'#39
       'SELECT HeatID, HeatNum, EventID'
       'INTO #tmpheat'
-      'FROM [SwimClubMeet].[dbo].[HeatIndividual]'
+      'FROM [SwimClubMeet].[dbo].[Heat]'
       'WHERE [HeatID] = @HeatID;'
       ''
-      'SELECT [HeatIndividual].[HeatID] '
+      'SELECT [Heat].[HeatID] '
       
-        'FROM [HeatIndividual] INNER JOIN #tmpheat on [HeatIndividual].[E' +
+        'FROM [Heat] INNER JOIN #tmpheat on [Heat].[E' +
         'ventID] = #tmpheat.[EventID]'
-      'WHERE [HeatIndividual].[HeatNum] = #tmpheat.HeatNum - 1;')
+      'WHERE [Heat].[HeatNum] = #tmpheat.HeatNum - 1;')
     Left = 1160
     Top = 456
     ParamData = <
@@ -2103,10 +2102,10 @@ object SCM: TSCM
       '        ON TeamEntrant.MemberID = Member.MemberID'
       '    INNER JOIN Team'
       '        ON TeamEntrant.TeamID = Team.TeamID'
-      '    INNER JOIN HeatIndividual'
-      '        ON Team.HeatID = HeatIndividual.HeatID'
+      '    INNER JOIN Heat'
+      '        ON Team.HeatID = Heat.HeatID'
       '    INNER JOIN Event'
-      '        ON HeatIndividual.EventID = Event.EventID'
+      '        ON Heat.EventID = Event.EventID'
       '    INNER JOIN Session'
       '        ON Event.SessionID = Session.SessionID'
       'ORDER BY TeamEntrant.Lane'
@@ -2479,13 +2478,13 @@ object SCM: TSCM
       '-- HEAT IS NOT OPEN'
       '    INSERT INTO #tmpA'
       '    SELECT TeamEntrant.MemberID'
-      '    FROM [SwimClubMeet].[dbo].[HeatIndividual]'
+      '    FROM [SwimClubMeet].[dbo].[Heat]'
       '        INNER JOIN Team'
-      '            ON HeatIndividual.HeatID = Team.HeatID'
+      '            ON Heat.HeatID = Team.HeatID'
       '        INNER JOIN TeamEntrant'
       '            ON Team.TeamID = TeamEntrant.TeamID'
-      '    WHERE HeatIndividual.EventID = @EventID '
-      '    AND HeatIndividual.HeatStatusID <> 1;'
+      '    WHERE Heat.EventID = @EventID '
+      '    AND Heat.HeatStatusID <> 1;'
       ''
       'SELECT Count(NomineeID) AS CountNominees'
       'FROM Nominee'
@@ -2544,11 +2543,11 @@ object SCM: TSCM
       '-- HEAT IS NOT OPEN'
       '    INSERT INTO #tmpA'
       '    SELECT Entrant.MemberID'
-      '    FROM [SwimClubMeet].[dbo].[HeatIndividual]'
+      '    FROM [SwimClubMeet].[dbo].[Heat]'
       '        INNER JOIN Entrant'
-      '            ON Entrant.HeatID = HeatIndividual.HeatID'
-      '    WHERE HeatIndividual.EventID = @EventID'
-      '    AND HeatIndividual.HeatStatusID <> 1;'
+      '            ON Entrant.HeatID = Heat.HeatID'
+      '    WHERE Heat.EventID = @EventID'
+      '    AND Heat.HeatStatusID <> 1;'
       ''
       'SELECT Count(NomineeID) AS CountNominees'
       'FROM Nominee'

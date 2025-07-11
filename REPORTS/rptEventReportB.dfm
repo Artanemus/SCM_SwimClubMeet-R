@@ -701,16 +701,16 @@ object EventReportB: TEventReportB
       ',dbo.SwimTimeToString(Entrant.RaceTime) AS RaceTime'
       #9',SUBSTRING(Distance.Caption, 0, 8) AS cDistance'
       #9',SUBSTRING(Stroke.Caption, 0, 12) AS cStroke'
-      #9',HeatIndividual.HeatNum'
+      #9',Heat.HeatNum'
       #9',Entrant.Lane'
       #9',SwimClub.NickName'
       #9',SwimClub.Caption AS cSwimClub'
       #9',Event.Caption AS cEvent'
       'FROM Event'
       
-        'INNER JOIN HeatIndividual ON Event.EventID = HeatIndividual.Even' +
+        'INNER JOIN Heat ON Event.EventID = Heat.Even' +
         'tID'
-      'INNER JOIN Entrant ON HeatIndividual.HeatID = Entrant.HeatID'
+      'INNER JOIN Entrant ON Heat.HeatID = Entrant.HeatID'
       'INNER JOIN Member ON Entrant.MemberID = Member.MemberID'
       'INNER JOIN Distance ON Event.DistanceID = Distance.DistanceID'
       'INNER JOIN Stroke ON Event.StrokeID = Stroke.StrokeID'
@@ -719,7 +719,7 @@ object EventReportB: TEventReportB
       'LEFT JOIN ('
       #9'SELECT EventID'
       #9#9',Count(HeatID) AS HeatCount'
-      #9'FROM HeatIndividual'
+      #9'FROM Heat'
       #9'GROUP BY EventID'
       #9') AS qryHeatCount ON qryHeatCount.EventID = Event.EventID'
       'WHERE Event.EventID = @EventID'

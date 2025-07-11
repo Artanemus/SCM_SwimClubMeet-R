@@ -40,10 +40,10 @@ object QTMemberReportA: TQTMemberReportA
       'INNER JOIN Qualify'
       'INNER JOIN Entrant'
       
-        'INNER JOIN HeatIndividual ON Entrant.HeatID = HeatIndividual.Hea' +
+        'INNER JOIN Heat ON Entrant.HeatID = Heat.Hea' +
         'tID'
       
-        'INNER JOIN Event ON HeatIndividual.EventID = Event.EventID ON Qu' +
+        'INNER JOIN Event ON Heat.EventID = Event.EventID ON Qu' +
         'alify.TrialDistID = Event.DistanceID'
       #9'AND Qualify.StrokeID = Event.StrokeID'
       #9'AND Qualify.TrialTime <= Entrant.RaceTime'

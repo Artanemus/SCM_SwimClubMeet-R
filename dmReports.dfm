@@ -47,17 +47,17 @@ object RPTS: TRPTS
         'erID)'
       '           WHEN 0 THEN'
       
-        '               dbo.ABSHeatPlace([HeatIndividual].[HeatID], Entra' +
-        'nt.MemberID)'
+        '               dbo.ABSHeatPlace([Heat].[HeatID], Entrant.MemberI' +
+        'D)'
       '           ELSE'
       '               0'
       '       END AS Place'
       'INTO #tmp1'
       'FROM Entrant'
-      '    INNER JOIN HeatIndividual'
-      '        ON Entrant.HeatID = HeatIndividual.HeatID'
+      '    INNER JOIN Heat'
+      '        ON Entrant.HeatID = Heat.HeatID'
       '    INNER JOIN [Event]'
-      '        ON HeatIndividual.EventID = [Event].EventID'
+      '        ON Heat.EventID = [Event].EventID'
       '    INNER JOIN [Session]'
       '        ON [Event].SessionID = Session.SessionID'
       'WHERE [Session].SessionStart >= @SDate'
@@ -203,17 +203,17 @@ object RPTS: TRPTS
         'erID)'
       '           WHEN 0 THEN'
       
-        '               dbo.ABSHeatPlace([HeatIndividual].[HeatID], Entra' +
-        'nt.MemberID)'
+        '               dbo.ABSHeatPlace([Heat].[HeatID], Entrant.MemberI' +
+        'D)'
       '           ELSE'
       '               0'
       '       END AS Place'
       'INTO #tmp1'
       'FROM Entrant'
-      '    INNER JOIN HeatIndividual'
-      '        ON Entrant.HeatID = HeatIndividual.HeatID'
+      '    INNER JOIN Heat'
+      '        ON Entrant.HeatID = Heat.HeatID'
       '    INNER JOIN Event'
-      '        ON HeatIndividual.EventID = Event.EventID'
+      '        ON Heat.EventID = Event.EventID'
       '    INNER JOIN [Session]'
       '        ON Event.SessionID = [Session].SessionID'
       'WHERE [Session].SessionStart >= @SDate'
@@ -1230,8 +1230,8 @@ object RPTS: TRPTS
         'erID, #tmp4.ScoreDivisionID, @SeedDate)'
       '           WHEN 0 THEN'
       
-        '               dbo.RELHeatPlace([HeatIndividual].[HeatID], Entra' +
-        'nt.MemberID, ScoreDivisionID, @SeedDate)'
+        '               dbo.RELHeatPlace([Heat].[HeatID], Entrant.MemberI' +
+        'D, ScoreDivisionID, @SeedDate)'
       '           ELSE'
       '               0'
       '       END AS Place'
@@ -1239,10 +1239,10 @@ object RPTS: TRPTS
       'FROM #tmp4'
       '    INNER JOIN Entrant'
       '        ON #tmp4.MemberID = Entrant.MemberID'
-      '    INNER JOIN HeatIndividual'
-      '        ON Entrant.HeatID = HeatIndividual.HeatID'
+      '    INNER JOIN Heat'
+      '        ON Entrant.HeatID = Heat.HeatID'
       '    INNER JOIN Event'
-      '        ON HeatIndividual.EventID = [Event].EventID'
+      '        ON Heat.EventID = [Event].EventID'
       '    INNER JOIN Session'
       '        ON Event.SessionID = Session.SessionID'
       'WHERE Session.SessionStart >= @SDate'
@@ -1861,8 +1861,8 @@ object RPTS: TRPTS
         'erID, #tmp4.ScoreDivisionID, @SeedDate)'
       '           WHEN 0 THEN'
       
-        '               dbo.RELHeatPlace([HeatIndividual].[HeatID], Entra' +
-        'nt.MemberID, ScoreDivisionID, @SeedDate)'
+        '               dbo.RELHeatPlace([Heat].[HeatID], Entrant.MemberI' +
+        'D, ScoreDivisionID, @SeedDate)'
       '           ELSE'
       '               0'
       '       END AS Place'
@@ -1870,10 +1870,10 @@ object RPTS: TRPTS
       'FROM #tmp4'
       '    INNER JOIN Entrant'
       '        ON #tmp4.MemberID = Entrant.MemberID'
-      '    INNER JOIN HeatIndividual'
-      '        ON Entrant.HeatID = HeatIndividual.HeatID'
+      '    INNER JOIN Heat'
+      '        ON Entrant.HeatID = Heat.HeatID'
       '    INNER JOIN [Event]'
-      '        ON HeatIndividual.EventID = [Event].EventID'
+      '        ON Heat.EventID = [Event].EventID'
       '    INNER JOIN [Session]'
       '        ON [Event].SessionID = [Session].SessionID'
       ''
@@ -2404,10 +2404,10 @@ object RPTS: TRPTS
         ' Place'
       'INTO #tmp1'
       'FROM Entrant'
-      '    INNER JOIN HeatIndividual'
-      '        ON Entrant.HeatID = HeatIndividual.HeatID'
+      '    INNER JOIN Heat'
+      '        ON Entrant.HeatID = Heat.HeatID'
       '    INNER JOIN Event'
-      '        ON HeatIndividual.EventID = Event.EventID'
+      '        ON Heat.EventID = Event.EventID'
       '    INNER JOIN Session'
       '        ON Event.SessionID = Session.SessionID'
       'WHERE Session.SessionStart >= @SDate'
@@ -3709,10 +3709,10 @@ object RPTS: TRPTS
       'FROM #tmp4'
       '    INNER JOIN Entrant'
       '        ON #tmp4.MemberID = Entrant.MemberID'
-      '    INNER JOIN HeatIndividual'
-      '        ON Entrant.HeatID = HeatIndividual.HeatID'
+      '    INNER JOIN Heat'
+      '        ON Entrant.HeatID = Heat.HeatID'
       '    INNER JOIN Event'
-      '        ON HeatIndividual.EventID = [Event].EventID'
+      '        ON Heat.EventID = [Event].EventID'
       '    INNER JOIN Session'
       '        ON Event.SessionID = Session.SessionID'
       'WHERE Session.SessionStart >= @SDate'
@@ -3881,16 +3881,16 @@ object RPTS: TRPTS
         'erID)'
       '               WHEN 0 THEN'
       
-        '               dbo.ABSHeatPlace([HeatIndividual].[HeatID], Entra' +
-        'nt.MemberID)'
+        '               dbo.ABSHeatPlace([Heat].[HeatID], Entrant.MemberI' +
+        'D)'
       '           ELSE 0'
       '       END AS Place'
       'INTO #tmp1'
       'FROM Entrant'
-      '    INNER JOIN HeatIndividual'
-      '        ON Entrant.HeatID = HeatIndividual.HeatID'
+      '    INNER JOIN Heat'
+      '        ON Entrant.HeatID = Heat.HeatID'
       '    INNER JOIN [Event]'
-      '        ON HeatIndividual.EventID = [Event].EventID'
+      '        ON Heat.EventID = [Event].EventID'
       '    INNER JOIN [Session]'
       '        ON [Event].SessionID = [Session].SessionID'
       'WHERE [Session].SessionStart >= @SDate'
@@ -4897,18 +4897,18 @@ object RPTS: TRPTS
         'oreDivisionID, @SeedDate)'
       '       WHEN 0 THEN'
       
-        '       dbo.RELHeatPlace([HeatIndividual].[HeatID], Entrant.Membe' +
-        'rID, ScoreDivisionID, @SeedDate)'
+        '       dbo.RELHeatPlace([Heat].[HeatID], Entrant.MemberID, Score' +
+        'DivisionID, @SeedDate)'
       '       ELSE 0'
       '       END AS Place'
       'INTO #tmp1'
       'FROM #tmp4'
       '    INNER JOIN Entrant'
       '        ON #tmp4.MemberID = Entrant.MemberID'
-      '    INNER JOIN HeatIndividual'
-      '        ON Entrant.HeatID = HeatIndividual.HeatID'
+      '    INNER JOIN Heat'
+      '        ON Entrant.HeatID = Heat.HeatID'
       '    INNER JOIN [Event]'
-      '        ON HeatIndividual.EventID = [Event].EventID'
+      '        ON Heat.EventID = [Event].EventID'
       '    INNER JOIN [Session]'
       '        ON Event.SessionID = [Session].SessionID'
       'WHERE [Session].SessionStart >= @SDate'
@@ -5562,17 +5562,17 @@ object RPTS: TRPTS
         'erID)'
       '           WHEN 0 THEN'
       
-        '               dbo.ABSHeatPlace([HeatIndividual].[HeatID], Entra' +
-        'nt.MemberID)'
+        '               dbo.ABSHeatPlace([Heat].[HeatID], Entrant.MemberI' +
+        'D)'
       '           ELSE'
       '               0'
       '       END AS Place'
       'INTO #tmp1'
       'FROM Entrant'
-      '    INNER JOIN HeatIndividual'
-      '        ON Entrant.HeatID = HeatIndividual.HeatID'
+      '    INNER JOIN Heat'
+      '        ON Entrant.HeatID = Heat.HeatID'
       '    INNER JOIN [Event]'
-      '        ON HeatIndividual.EventID = [Event].EventID'
+      '        ON Heat.EventID = [Event].EventID'
       '    INNER JOIN [Session]'
       '        ON [Event].SessionID = [Session].SessionID'
       'WHERE [Session].SessionStart >= @SDate'
@@ -6222,8 +6222,8 @@ object RPTS: TRPTS
         'erID, #tmp4.ScoreDivisionID, @SeedDate)'
       '           WHEN 0 THEN'
       
-        '               dbo.RELHeatPlace([HeatIndividual].[HeatID], Entra' +
-        'nt.MemberID, ScoreDivisionID, @SeedDate)'
+        '               dbo.RELHeatPlace([Heat].[HeatID], Entrant.MemberI' +
+        'D, ScoreDivisionID, @SeedDate)'
       '           ELSE'
       '               0'
       '       END AS Place'
@@ -6231,10 +6231,10 @@ object RPTS: TRPTS
       'FROM #tmp4'
       '    INNER JOIN Entrant'
       '        ON #tmp4.MemberID = Entrant.MemberID'
-      '    INNER JOIN HeatIndividual'
-      '        ON Entrant.HeatID = HeatIndividual.HeatID'
+      '    INNER JOIN Heat'
+      '        ON Entrant.HeatID = Heat.HeatID'
       '    INNER JOIN [Event]'
-      '        ON HeatIndividual.EventID = [Event].EventID'
+      '        ON Heat.EventID = [Event].EventID'
       '    INNER JOIN [Session]'
       '        ON [Event].SessionID = [Session].SessionID'
       'WHERE [Session].SessionStart >= @SDate'
@@ -6498,19 +6498,17 @@ object RPTS: TRPTS
       'SELECT'
       ' [Event].EventID '
       '  ,Entrant.MemberID '
-      ' ,HeatIndividual.HeatID'
+      ' ,Heat.HeatID'
       
         ', dbo.ABSEventPlace([Event].EventID, Entrant.MemberID) AS ABSEve' +
         'ntPlace'
       
-        ', dbo.ABSHeatPlace(HeatIndividual.HeatID, Entrant.MemberID) AS A' +
-        'BSHeatPlace'
+        ', dbo.ABSHeatPlace(Heat.HeatID, Entrant.MemberID) AS ABSHeatPlac' +
+        'e'
       'INTO #tempTblA'
       'FROM [Event] '
-      
-        'INNER JOIN HeatIndividual ON [Event].EventID = HeatIndividual.Ev' +
-        'entID'
-      'LEFT JOIN Entrant ON HeatIndividual.HeatID = Entrant.HeatID'
+      'INNER JOIN Heat ON [Event].EventID = Heat.EventID'
+      'LEFT JOIN Entrant ON Heat.HeatID = Entrant.HeatID'
       'WHERE [Event].SessionID = @SessionID'
       '    -- AND [Event].EventStatusID = 2'
       '    AND Entrant.MemberID IS NOT NULL'
@@ -8045,19 +8043,17 @@ object RPTS: TRPTS
       'SELECT'
       ' [Event].EventID '
       '  ,Entrant.MemberID '
-      ' ,HeatIndividual.HeatID'
+      ' ,Heat.HeatID'
       
         ', dbo.ABSEventPlace([Event].EventID, Entrant.MemberID) AS ABSEve' +
         'ntPlace'
       
-        ', dbo.ABSHeatPlace(HeatIndividual.HeatID, Entrant.MemberID) AS A' +
-        'BSHeatPlace'
+        ', dbo.ABSHeatPlace(Heat.HeatID, Entrant.MemberID) AS ABSHeatPlac' +
+        'e'
       'INTO #tempTblA'
       'FROM [Event] '
-      
-        'INNER JOIN HeatIndividual ON [Event].EventID = HeatIndividual.Ev' +
-        'entID'
-      'LEFT JOIN Entrant ON HeatIndividual.HeatID = Entrant.HeatID'
+      'INNER JOIN Heat ON [Event].EventID = Heat.EventID'
+      'LEFT JOIN Entrant ON Heat.HeatID = Entrant.HeatID'
       'WHERE [Event].SessionID = @SessionID'
       '    -- AND [Event].EventStatusID = 2'
       '    AND Entrant.MemberID IS NOT NULL'

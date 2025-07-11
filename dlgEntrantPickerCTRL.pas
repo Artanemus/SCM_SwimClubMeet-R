@@ -311,14 +311,14 @@ begin
   fEventType := aEventType;
 
   if aEventType = etINDV then
-      SQL := 'SELECT [HeatIndividual].[EventID] FROM [SwimClubMeet].[dbo].[Entrant] '
-      + 'INNER JOIN HeatIndividual ON [Entrant].[HeatID] = [HeatIndividual].[HeatID] '
+      SQL := 'SELECT [Heat].[EventID] FROM [SwimClubMeet].[dbo].[Entrant] '
+      + 'INNER JOIN Heat ON [Entrant].[HeatID] = [Heat].[HeatID] '
       + 'WHERE [Entrant].[EntrantID] = :ID';
 
   if aEventType = etTEAM then
-      SQL := 'SELECT [HeatIndividual].[EventID] FROM [SwimClubMeet].[dbo].[TeamEntrant] '
+      SQL := 'SELECT [Heat].[EventID] FROM [SwimClubMeet].[dbo].[TeamEntrant] '
       + 'INNER JOIN Team ON [TeamEntrant].[TeamID] = [Team].[teamID] ' +
-      'INNER JOIN HeatIndividual ON [Team].[HeatID] = [HeatIndividual].[HeatID] '
+      'INNER JOIN Heat ON [Team].[HeatID] = [Heat].[HeatID] '
       + 'WHERE [TeamEntrant].[TeamEntrantID] = :ID';
 
   rtnstr := AConnection.ExecSQLScalar(SQL, [AEntrantID]);

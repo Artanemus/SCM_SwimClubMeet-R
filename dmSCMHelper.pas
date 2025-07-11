@@ -176,7 +176,7 @@ begin
   if Event_SessionIsLocked(aEventID) then exit;
   qry := TFDQuery.Create(self);
   qry.Connection := scmConnection;
-  qry.SQL.Text := 'SELECT HeatID FROM [SwimClubMeet].[dbo].[HeatIndividual] ' +
+  qry.SQL.Text := 'SELECT HeatID FROM [SwimClubMeet].[dbo].[Heat] ' +
     'WHERE EventID = ' + IntToStr(aEventID);
   qry.IndexFieldNames := 'HeatID';
   qry.Open;
@@ -298,16 +298,16 @@ begin
   if not SCMActive then exit;
   if (aEventType = etINDV) then
   begin
-    SQL := 'SELECT HeatStatusID FROM [SwimClubMeet].[dbo].[HeatIndividual] ' +
-      'INNER JOIN Entrant ON [HeatIndividual].[HeatID] = Entrant.HeatID ' +
+    SQL := 'SELECT HeatStatusID FROM [SwimClubMeet].[dbo].[Heat] ' +
+      'INNER JOIN Entrant ON [Heat].[HeatID] = Entrant.HeatID ' +
       'WHERE [Entrant].[EntrantID] = :ID;';
     v := scmConnection.ExecSQLScalar(SQL, [aIndvTeamID]);
     if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
   end;
   if (aEventType = etTEAM) then
   begin
-    SQL := 'SELECT HeatStatusID FROM [SwimClubMeet].[dbo].[HeatIndividual] ' +
-      'INNER JOIN Team ON [HeatIndividual].[HeatID] = Team.HeatID ' +
+    SQL := 'SELECT HeatStatusID FROM [SwimClubMeet].[dbo].[Heat] ' +
+      'INNER JOIN Team ON [Heat].[HeatID] = Team.HeatID ' +
       'INNER JOIN TeamEntrant ON [Team].[TeamID] = [TeamEntrant].[TeamID] ' +
       'WHERE [TeamEntrant].[TeamEntrantID] = :ID;';
     v := scmConnection.ExecSQLScalar(SQL, [aIndvTeamID]);
@@ -589,10 +589,10 @@ begin
   aEventType := GetEventType(aEventID);
   if (aEventType = etINDV) then
   begin
-    SQL := 'SELECT [HeatIndividual].[HeatStatusID] FROM [SwimClubMeet].[dbo].[Nominee] '
+    SQL := 'SELECT [Heat].[HeatStatusID] FROM [SwimClubMeet].[dbo].[Nominee] '
       + 'INNER JOIN Event ON [Nominee].EventID = Event.EventID ' +
-      'INNER JOIN HeatIndividual ON [Event].EventID = HeatIndividual.EventID ' +
-      'INNER JOIN Entrant ON [HeatIndividual].HeatID = Entrant.HeatID ' +
+      'INNER JOIN Heat ON [Event].EventID = Heat.EventID ' +
+      'INNER JOIN Entrant ON [Heat].HeatID = Entrant.HeatID ' +
       'WHERE Entrant.MemberID = :ID1 AND [Event].EventID = :ID2';
     v := scmConnection.ExecSQLScalar(SQL, [aMemberID]);
     if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
@@ -602,10 +602,10 @@ begin
   end
   else if (aEventType = etTEAM) then
   begin
-    SQL := 'SELECT [HeatIndividual].[HeatStatusID] FROM [SwimClubMeet].[dbo].[Nominee] '
+    SQL := 'SELECT [Heat].[HeatStatusID] FROM [SwimClubMeet].[dbo].[Nominee] '
       + 'INNER JOIN Event ON [Nominee].EventID = Event.EventID ' +
-      'INNER JOIN HeatIndividual ON [Event].EventID = HeatIndividual.EventID ' +
-      'INNER JOIN Team ON HeatIndividual.HeatID = Team.HeatID ' +
+      'INNER JOIN Heat ON [Event].EventID = Heat.EventID ' +
+      'INNER JOIN Team ON Heat.HeatID = Team.HeatID ' +
       'INNER JOIN TeamEntrant ON [Team].TeamID = TeamEntrant.TeamID ' +
       'WHERE TeamEntrant.MemberID = :ID1 AND [Event].EventID = :ID2';
     v := scmConnection.ExecSQLScalar(SQL, [aMemberID, aEventID]);
@@ -626,8 +626,8 @@ begin
   if (aEventType = etINDV) then
   begin
     SQL := 'SELECT TOP 1 Entrant.EntrantID FROM [SwimClubMeet].[dbo].[Event] ' +
-      'INNER JOIN HeatIndividual ON [Event].EventID = HeatIndividual.EventID ' +
-      'INNER JOIN Entrant ON HeatIndividual.HeatID = Entrant.HeatID ' +
+      'INNER JOIN Heat ON [Event].EventID = Heat.EventID ' +
+      'INNER JOIN Entrant ON Heat.HeatID = Entrant.HeatID ' +
       'WHERE [Event].EventID = :EventID AND (Entrant.MemberID = :MemberID)';
     v := scmConnection.ExecSQLScalar(SQL, [aEventID, aMemberID]);
     if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
@@ -639,8 +639,8 @@ begin
   else if (aEventType = etTEAM) then
   begin
     SQL := 'SELECT TOP 1 TeamEntrant.TeamEntrantID FROM [SwimClubMeet].[dbo].[Event] '
-      + 'INNER JOIN HeatIndividual ON [Event].EventID = HeatIndividual.EventID '
-      + 'INNER JOIN Team ON HeatIndividual.HeatID = Team.HeatID ' +
+      + 'INNER JOIN Heat ON [Event].EventID = Heat.EventID '
+      + 'INNER JOIN Team ON Heat.HeatID = Team.HeatID ' +
       'INNER JOIN TeamEntrant ON Team.TeamID = TeamEntrant.TeamID ' +
       'WHERE [Event].EventID = :EventID AND (TeamEntrant.MemberID = :MemberID)';
     v := scmConnection.ExecSQLScalar(SQL, [aEventID, aMemberID]);
@@ -685,8 +685,8 @@ begin
   begin
     SQL := 'SELECT EntrantID FROM [SwimClubMeet].[dbo].[Nominee] ' +
       'INNER JOIN [Event] ON [Event].EventID = Nominee.EventID ' +
-      'INNER JOIN HeatIndividual ON HeatIndividual.EventID = [Event].EventID ' +
-      'INNER JOIN Entrant ON Entrant.HeatID = HeatIndividual.HeatID ' +
+      'INNER JOIN Heat ON Heat.EventID = [Event].EventID ' +
+      'INNER JOIN Entrant ON Entrant.HeatID = Heat.HeatID ' +
       'WHERE Nominee.NomineeID = :NomineeID ' +
       'AND Nominee.MemberID = Entrant.MemberID;';
   end
@@ -694,8 +694,8 @@ begin
   begin
     SQL := 'SELECT EntrantID FROM [SwimClubMeet].[dbo].[Nominee] ' +
       'INNER JOIN [Event] ON [Event].EventID = Nominee.EventID ' +
-      'INNER JOIN HeatIndividual ON HeatIndividual.EventID = [Event].EventID ' +
-      'INNER JOIN Team ON Team.HeatID = HeatIndividual.HeatID ' +
+      'INNER JOIN Heat ON Heat.EventID = [Event].EventID ' +
+      'INNER JOIN Team ON Team.HeatID = Heat.HeatID ' +
       'INNER JOIN TeamEntrant ON Team.TeamID = TeamEntrant.TeamID ' +
       'WHERE Nominee.NomineeID = :NomineeID ' +
       'AND Nominee.MemberID = Entrant.MemberID;';

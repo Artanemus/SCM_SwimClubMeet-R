@@ -8,7 +8,7 @@ uses
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, Data.DB,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, frxClass,
   frxDBSet, frxPreview, frxExportBaseDialog, frxExportPDF;
-  // dmSCM,
+	// dmSCM,
 
 type
 
@@ -527,7 +527,8 @@ var
   qry: TFDQuery;
   DoEvent: Boolean;
   iniFileName, RangeStr, ModeStr, ModeSubStr: String;
-  DTStart, DTEnd: TDateTime;
+	DTStart, DTEnd: TDateTime;
+	s: string;
 begin
   qry := nil;
   rpt := nil;
@@ -673,7 +674,7 @@ begin
     qryRptHeader.ParamByName('MODESTR').AsString := ModeStr;
     qryRptHeader.ParamByName('MODESUBSTR').AsString := ModeSubStr;
     qryRptHeader.Prepare;
-    qryRptHeader.Open;
+		qryRptHeader.Open;
 
     if not Assigned(qry.Connection) then
       qry.Connection := fConnection;
@@ -685,8 +686,9 @@ begin
     qry.ParamByName('DOLOCKEDSESSION').AsBoolean := fIncludeLockedSession;
     if fScoreMode in [smRELEvent, smRELHeat] then
       qry.ParamByName('AGESEEDDATE').AsDateTime := fAgeSeedDate;
-    qry.Prepare;
-    qry.Open;
+		qry.Prepare;
+		s := qry.SQL.Text;
+		qry.Open;
     // -----------------------------------------------------------
     // P R E V I E W   T H E   R E P O R T   . . .
     // -----------------------------------------------------------
@@ -855,19 +857,19 @@ begin
     if qryRptHeader.Active then
       fIsActive := True;
     // MEMBER
-    qryMemABS.Connection := fConnection;
-    qryMemREL.Connection := fConnection;
-    qryMemABSUno.Connection :=fConnection;
-    qryMemRELUno.Connection := fConnection;
+		qryMemABS.Connection := fConnection;
+		qryMemREL.Connection := fConnection;
+		qryMemABSUno.Connection :=fConnection;
+		qryMemRELUno.Connection := fConnection;
     // HOUSE
-    qryHouseABS.Connection := fConnection;
-    qryHouseREL.Connection := fConnection;
+		qryHouseABS.Connection := fConnection;
+		qryHouseREL.Connection := fConnection;
     // EVENT
-    qryEventABS.Connection := fConnection;
-    qryEventREL.Connection := fConnection;
+		qryEventABS.Connection := fConnection;
+		qryEventREL.Connection := fConnection;
     // CURRENT SESSION ONLY - USED BY AUTO-UPDATE
-    qrySessABS.Connection := fConnection;
-    qrySessREL.Connection := fConnection;
+		qrySessABS.Connection := fConnection;
+		qrySessREL.Connection := fConnection;
   end;
 
 end;

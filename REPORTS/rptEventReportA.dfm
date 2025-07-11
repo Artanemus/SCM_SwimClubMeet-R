@@ -464,7 +464,7 @@ object EventReportA: TEventReportA
       'LEFT JOIN ('
       #9'SELECT EventID'
       #9#9',Count(HeatID) AS HeatCount'
-      #9'FROM HeatIndividual'
+      #9'FROM Heat'
       #9'GROUP BY EventID'
       #9') AS qryHeatCount ON qryHeatCount.EventID = Event.EventID'
       'WHERE Event.SessionID = @SessionID'
