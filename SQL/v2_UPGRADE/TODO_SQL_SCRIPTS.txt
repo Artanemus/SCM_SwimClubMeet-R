@@ -1,0 +1,63 @@
+DELETE TeamNum and EventTypeID in dbo.Distance
+INSERT FK EventTypeID in dbo.event.
+INSERT NumOfSwimmersInTEAMS in dbo.SwimClub : DEFAULT VALUE = 4
+
+TeamNum to dbo.Distance - number of swimmers in team.
+EventTypeID 1 = INDV 2 = TEAM 
+CHECK Modified POST SQL in dbo.Distance
+
+
+/*
+IF NOT EXISTS(select * from syscolumns where TeamNum = N'Col1' and id = OBJECT_ID('Distance','U'))
+    ALTER TABLE Distance ADD [TeamNum] [int]
+*/
+
+
+SET IDENTITY_INSERT [dbo].[Distance] ON 
+GO
+INSERT [dbo].[Distance] ([DistanceID], [Caption], [Meters], [ABREV]) VALUES (1, N'25m', 25, N'25')
+GO
+INSERT [dbo].[Distance] ([DistanceID], [Caption], [Meters], [ABREV]) VALUES (2, N'50m', 50, N'50')
+GO
+INSERT [dbo].[Distance] ([DistanceID], [Caption], [Meters], [ABREV]) VALUES (3, N'100m', 100, N'100')
+GO
+INSERT [dbo].[Distance] ([DistanceID], [Caption], [Meters], [ABREV]) VALUES (4, N'200m', 200, N'200')
+GO
+INSERT [dbo].[Distance] ([DistanceID], [Caption], [Meters], [ABREV]) VALUES (5, N'400m', 400, N'400')
+GO
+INSERT [dbo].[Distance] ([DistanceID], [Caption], [Meters], [ABREV]) VALUES (6, N'800m', 800, N'800')
+GO
+INSERT [dbo].[Distance] ([DistanceID], [Caption], [Meters], [ABREV]) VALUES (7, N'1000m', 1000, N'1000')
+GO
+INSERT [dbo].[Distance] ([DistanceID], [Caption], [Meters], [ABREV]) VALUES (8, N'4x25m', 100, N'4x25')
+GO
+INSERT [dbo].[Distance] ([DistanceID], [Caption], [Meters], [ABREV]) VALUES (9, N'4x50m', 200, N'4x50')
+GO
+INSERT [dbo].[Distance] ([DistanceID], [Caption], [Meters], [ABREV]) VALUES (10, N'4x100m', 400, N'4x100')
+GO
+INSERT [dbo].[Distance] ([DistanceID], [Caption], [Meters], [ABREV]) VALUES (11, N'4x200m', 800, N'4x200')
+GO
+SET IDENTITY_INSERT [dbo].[Distance] OFF
+GO
+
+
+dbo.EVENT
+ADD MinAge, MaxAge, FK RoundID, FK GenderID
+
+dbo.MemberRole
+Permissions SCM_Administrator
+
+dbo.PoolType
+generate POST SQL
+
+dbo.Session
+ADD SessionEnd
+
+dbo.SwimClub
+CHECK Permissions
+
+dbo.Heat
+CHECK all FK Names (remove HeatIndividual - replace Heat)
+
+FUNCTIONS
+ADD EventGenderType
