@@ -150,7 +150,7 @@ end;
 
 procedure TPointsScored.btnPointsScoredClick(Sender: TObject);
 begin
-  // note : uses RPTS.qryRptHeader
+  // note : uses LeaderBoardData.qryRptHeader
 	if (fSwimClubID <> 0) and Assigned(fConnection) then
   begin
     WriteScores; // update DB Score table ...

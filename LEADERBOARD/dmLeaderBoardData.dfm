@@ -1,4 +1,4 @@
-object RPTS: TRPTS
+object LeaderBoardData: TLeaderBoardData
   OnCreate = DataModuleCreate
   Height = 762
   Width = 845

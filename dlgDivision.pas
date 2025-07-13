@@ -10,7 +10,7 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
   FireDAC.Comp.Client, FireDAC.Comp.DataSet,
   Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.Mask, Vcl.ExtCtrls,
-  Vcl.ComCtrls, frxPreview, frxClass, frxDBSet;
+  Vcl.ComCtrls, frxPreview, frxClass, frxDBSet, Vcl.Buttons;
 
 type
   TDivision = class(TForm)
@@ -78,7 +78,7 @@ end;
 
 procedure TDivision.btnDivMembersClick(Sender: TObject);
 begin
-  // note : uses RPTS.qryRptHeader
+	// note : uses LeaderBoardData.qryRptHeader
 	if (fStartOfSwimSeason <> 0) and Assigned(fConnection) then
   begin
     qryRptHeader.Connection := fConnection;

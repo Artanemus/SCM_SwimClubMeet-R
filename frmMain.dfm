@@ -2682,9 +2682,9 @@ object Main: TMain
   TextHeight = 21
   object pnlPageControl: TPanel
     Left = 0
-    Top = 89
+    Top = 91
     Width = 1344
-    Height = 692
+    Height = 690
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
@@ -2693,7 +2693,7 @@ object Main: TMain
       Left = 0
       Top = 4
       Width = 1344
-      Height = 688
+      Height = 686
       Margins.Left = 0
       Margins.Top = 4
       Margins.Right = 0
@@ -2710,7 +2710,7 @@ object Main: TMain
           Left = 0
           Top = 0
           Width = 729
-          Height = 649
+          Height = 647
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 0
@@ -2735,14 +2735,13 @@ object Main: TMain
             Left = 10
             Top = 20
             Width = 649
-            Height = 629
+            Height = 627
             Margins.Left = 10
             Margins.Top = 0
             Margins.Right = 10
             Margins.Bottom = 0
             Align = alClient
             DefaultDrawing = False
-            GradientEndColor = 14079702
             PopupMenu = pumSession
             TabOrder = 0
             TitleFont.Charset = DEFAULT_CHARSET
@@ -2767,7 +2766,7 @@ object Main: TMain
             Left = 669
             Top = 20
             Width = 60
-            Height = 629
+            Height = 627
             ControlCollection = <
               item
                 Control = spbtnSessionToggleVisible
@@ -2853,7 +2852,7 @@ object Main: TMain
             TabOrder = 2
             DesignSize = (
               60
-              629)
+              627)
             object spbtnSessionToggleVisible: TSpeedButton
               Left = 6
               Top = 0
@@ -2961,7 +2960,7 @@ object Main: TMain
           Left = 729
           Top = 0
           Width = 607
-          Height = 649
+          Height = 647
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
@@ -2985,7 +2984,7 @@ object Main: TMain
             Left = 0
             Top = 20
             Width = 607
-            Height = 629
+            Height = 627
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 1
@@ -2994,13 +2993,12 @@ object Main: TMain
               Left = 10
               Top = 0
               Width = 527
-              Height = 629
+              Height = 627
               Margins.Left = 10
               Margins.Top = 0
               Margins.Right = 10
               Margins.Bottom = 0
               Align = alClient
-              GradientEndColor = 14079702
               Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgTitleClick, dgTitleHotTrack]
               PopupMenu = pumEvent
               TabOrder = 0
@@ -3050,7 +3048,7 @@ object Main: TMain
               Left = 547
               Top = 0
               Width = 60
-              Height = 629
+              Height = 627
               ControlCollection = <
                 item
                   Control = ShapeBarEv1
@@ -3156,7 +3154,7 @@ object Main: TMain
               TabOrder = 1
               DesignSize = (
                 60
-                629)
+                627)
               object ShapeBarEv1: TShape
                 AlignWithMargins = True
                 Left = 6
@@ -3309,7 +3307,7 @@ object Main: TMain
           Left = 0
           Top = 0
           Width = 1336
-          Height = 649
+          Height = 647
           ControlCollection = <
             item
               Control = NominateCenteredPanel
@@ -3335,12 +3333,12 @@ object Main: TMain
           TabOrder = 0
           DesignSize = (
             1336
-            649)
+            647)
           object NominateCenteredPanel: TPanel
             Left = 198
             Top = 0
             Width = 940
-            Height = 649
+            Height = 647
             Anchors = []
             BevelOuter = bvNone
             TabOrder = 0
@@ -3349,7 +3347,7 @@ object Main: TMain
               Left = 0
               Top = 10
               Width = 352
-              Height = 629
+              Height = 627
               Margins.Left = 0
               Margins.Top = 10
               Margins.Right = 0
@@ -3396,7 +3394,7 @@ object Main: TMain
               TabOrder = 0
               DesignSize = (
                 352
-                629)
+                627)
               object Nominate_Edit: TEdit
                 AlignWithMargins = True
                 Left = 40
@@ -3428,13 +3426,12 @@ object Main: TMain
                 Left = 0
                 Top = 40
                 Width = 352
-                Height = 589
+                Height = 587
                 Margins.Left = 0
                 Margins.Top = 40
                 Margins.Right = 0
                 Margins.Bottom = 0
                 DefaultDrawing = False
-                GradientEndColor = 14079702
                 Options = [dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
                 PopupMenu = pumNominate
                 TabOrder = 1
@@ -3474,7 +3471,7 @@ object Main: TMain
               Left = 352
               Top = 48
               Width = 60
-              Height = 601
+              Height = 599
               Margins.Left = 0
               Margins.Top = 48
               Margins.Right = 0
@@ -3524,7 +3521,7 @@ object Main: TMain
               TabOrder = 1
               DesignSize = (
                 60
-                601)
+                599)
               object spbtnNominateSortMember: TSpeedButton
                 Left = 6
                 Top = 0
@@ -3580,7 +3577,7 @@ object Main: TMain
               Left = 410
               Top = 10
               Width = 530
-              Height = 629
+              Height = 627
               Margins.Left = 0
               Margins.Top = 10
               Margins.Right = 0
@@ -3608,11 +3605,12 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 2
+              ExplicitHeight = 629
               object Nominate_ControlList: TControlList
                 Left = 57
                 Top = 0
                 Width = 473
-                Height = 629
+                Height = 627
                 Margins.Left = 0
                 Margins.Top = 0
                 Margins.Right = 0
@@ -3693,7 +3691,7 @@ object Main: TMain
                 Left = 12
                 Top = 40
                 Width = 45
-                Height = 586
+                Height = 584
                 Margins.Top = 40
                 Margins.Right = 0
                 Align = alRight
@@ -3740,7 +3738,7 @@ object Main: TMain
           Left = 0
           Top = 0
           Width = 1336
-          Height = 649
+          Height = 647
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 0
@@ -3748,7 +3746,7 @@ object Main: TMain
             Left = 282
             Top = 127
             Width = 1054
-            Height = 522
+            Height = 520
             Margins.Left = 0
             Margins.Top = 10
             Margins.Right = 20
@@ -3760,7 +3758,7 @@ object Main: TMain
               Left = 966
               Top = 0
               Width = 88
-              Height = 522
+              Height = 520
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 0
@@ -3768,7 +3766,7 @@ object Main: TMain
                 Left = 0
                 Top = 0
                 Width = 88
-                Height = 522
+                Height = 520
                 ControlCollection = <
                   item
                     Control = spbtnEntrantDown
@@ -3844,7 +3842,7 @@ object Main: TMain
                 TabOrder = 0
                 DesignSize = (
                   88
-                  522)
+                  520)
                 object spbtnEntrantDown: TSpeedButton
                   Left = 20
                   Top = 48
@@ -3959,13 +3957,13 @@ object Main: TMain
               Left = 0
               Top = 0
               Width = 966
-              Height = 522
+              Height = 520
               Align = alClient
               BevelOuter = bvNone
               TabOrder = 1
               inline INDV: TframeINDV
                 Left = 0
-                Top = 386
+                Top = 384
                 Width = 966
                 Height = 136
                 Align = alBottom
@@ -4345,7 +4343,7 @@ object Main: TMain
             Left = 20
             Top = 127
             Width = 252
-            Height = 522
+            Height = 520
             Margins.Left = 20
             Margins.Top = 0
             Margins.Right = 10
@@ -4357,7 +4355,7 @@ object Main: TMain
               Left = 192
               Top = 0
               Width = 60
-              Height = 522
+              Height = 520
               Margins.Left = 0
               Margins.Top = 0
               Margins.Right = 0
@@ -4527,7 +4525,7 @@ object Main: TMain
               TabOrder = 0
               DesignSize = (
                 60
-                522)
+                520)
               object spbtnHeatUp: TSpeedButton
                 Left = 6
                 Top = 0
@@ -4732,7 +4730,7 @@ object Main: TMain
               Left = 0
               Top = 0
               Width = 176
-              Height = 522
+              Height = 520
               Align = alLeft
               BorderStyle = bsNone
               ItemCount = 78
@@ -4745,6 +4743,7 @@ object Main: TMain
               PopupMenu = pumHeat
               TabOrder = 1
               OnBeforeDrawItem = HeatControlListBeforeDrawItem
+              ExplicitHeight = 522
               object vimgHeatNum: TVirtualImage
                 Left = 16
                 Top = 11
@@ -4818,7 +4817,7 @@ object Main: TMain
   end
   object pnlTitleBar: TRelativePanel
     Left = 0
-    Top = 25
+    Top = 27
     Width = 1344
     Height = 64
     ControlCollection = <
@@ -4927,7 +4926,7 @@ object Main: TMain
       object dbtxtSwimClubCaption: TDBText
         Left = 0
         Top = 0
-        Width = 170
+        Width = 161
         Height = 19
         Anchors = []
         AutoSize = True
@@ -4943,7 +4942,7 @@ object Main: TMain
       object dbtxtSwimClubNickName: TDBText
         Left = 0
         Top = 19
-        Width = 134
+        Width = 179
         Height = 21
         Anchors = []
         AutoSize = True
@@ -5140,7 +5139,7 @@ object Main: TMain
     Left = 0
     Top = 0
     Width = 1344
-    Height = 25
+    Height = 27
     UseSystemFont = False
     ActionManager = ActionManager1
     Caption = 'ActionMainMenuBar1'

@@ -1271,9 +1271,7 @@ object SCM: TSCM
       #9',Qualify.TrialTime'
       ',EntrantID'
       'FROM Entrant'
-      
-        'INNER JOIN Heat ON Entrant.HeatID = Heat.Hea' +
-        'tID'
+      'INNER JOIN Heat ON Entrant.HeatID = Heat.HeatID'
       'INNER JOIN Event ON Heat.EventID = Event.EventID'
       'INNER JOIN Qualify ON Event.DistanceID = Qualify.TrialDistID'
       #9'AND Event.StrokeID = Qualify.StrokeID'
@@ -1336,9 +1334,7 @@ object SCM: TSCM
       'DECLARE @EventTypeID AS INTEGER;'
       ''
       'SET @HeatID = :HEATID;'
-      
-        'SET @EventTypeID = (SELECT TOP 1 EventTypeID FROM Heat' +
-        ' '
+      'SET @EventTypeID = (SELECT TOP 1 EventTypeID FROM Heat '
       #9'INNER JOIN [Event] ON Heat.EventID = [Event].EventID'
       
         #9'INNER JOIN [Distance] ON [Event].DistanceID = [Distance].Distan' +
@@ -1373,9 +1369,7 @@ object SCM: TSCM
       'DECLARE @EventID int;'
       'SET @EventID = :EVENTID;'
       ''
-      
-        'SELECT HeatID, HeatNum FROM Heat WHERE EventID = @Even' +
-        'tID'
+      'SELECT HeatID, HeatNum FROM Heat WHERE EventID = @EventID'
       ''
       
         '-- order by case when col is null then 2 else 1 end, col asc|des' +
@@ -1690,8 +1684,8 @@ object SCM: TSCM
       ''
       'SELECT [Heat].[HeatID] '
       
-        'FROM [Heat] INNER JOIN #tmpheat on [Heat].[E' +
-        'ventID] = #tmpheat.[EventID]'
+        'FROM [Heat] INNER JOIN #tmpheat on [Heat].[EventID] = #tmpheat.[' +
+        'EventID]'
       'WHERE [Heat].[HeatNum] = #tmpheat.HeatNum + 1;')
     Left = 1064
     Top = 456
@@ -1730,8 +1724,8 @@ object SCM: TSCM
       ''
       'SELECT [Heat].[HeatID] '
       
-        'FROM [Heat] INNER JOIN #tmpheat on [Heat].[E' +
-        'ventID] = #tmpheat.[EventID]'
+        'FROM [Heat] INNER JOIN #tmpheat on [Heat].[EventID] = #tmpheat.[' +
+        'EventID]'
       'WHERE [Heat].[HeatNum] = #tmpheat.HeatNum - 1;')
     Left = 1160
     Top = 456

@@ -1,4 +1,4 @@
-unit dmReports;
+unit dmLeaderBoardData;
 
 interface
 
@@ -16,7 +16,7 @@ type
   TScoreMode = (smNOTASSIGNED, smABSEvent, smABSHeat, smRELEvent, smRELHeat);
   TCalcMode = (cmNOTASSIGNED, cmStartOfSeason, cmStartOfSession, cmCustomDT);
 
-  TRPTS = class(TDataModule)
+  TLeaderBoardData = class(TDataModule)
     qryRptHeader: TFDQuery;
     frxDBDSRptHeader: TfrxDBDataset;
 
@@ -113,7 +113,7 @@ property Connection: TFDConnection read GetConnection write SetConnection;
   end;
 
 var
-  RPTS: TRPTS;
+  LeaderBoardData: TLeaderBoardData;
 
 implementation
 
@@ -145,7 +145,7 @@ begin
 
 end;
 }
-procedure TRPTS.DataModuleCreate(Sender: TObject);
+procedure TLeaderBoardData.DataModuleCreate(Sender: TObject);
 begin
   // I N I T I A L I Z E   P A R A M S  .
   fIsActive := False;
@@ -155,7 +155,7 @@ end;
 
 {$REGION '... EVENT SCORES'}
 
-function TRPTS.EventScores: TRtnError;
+function TLeaderBoardData.EventScores: TRtnError;
 var
   rpt: TfrxReport;
   qry: TFDQuery;
@@ -290,7 +290,7 @@ end;
 
 {$ENDREGION}
 
-procedure TRPTS.ExportReportToPDF(rpt: TfrxReport);
+procedure TLeaderBoardData.ExportReportToPDF(rpt: TfrxReport);
 begin
   if Assigned(rpt) then
   begin
@@ -313,7 +313,7 @@ end;
 {$ENDREGION}
 {$REGION 'frxBeforePrint - HOUSE COLORS'}
 
-procedure TRPTS.frxHouseABSBeforePrint(Sender: TfrxReportComponent);
+procedure TLeaderBoardData.frxHouseABSBeforePrint(Sender: TfrxReportComponent);
 var
   shape: TfrxShapeView;
 begin
@@ -324,7 +324,7 @@ begin
   end;
 end;
 
-procedure TRPTS.frxHouseRELBeforePrint(Sender: TfrxReportComponent);
+procedure TLeaderBoardData.frxHouseRELBeforePrint(Sender: TfrxReportComponent);
 var
   shape: TfrxShapeView;
 begin
@@ -335,18 +335,18 @@ begin
   end;
 end;
 
-procedure TRPTS.frxHouseRELHeatBeforePrint(Sender: TfrxReportComponent);
+procedure TLeaderBoardData.frxHouseRELHeatBeforePrint(Sender: TfrxReportComponent);
 begin
 end;
 
 {$ENDREGION}
 
-function TRPTS.GetConnection: TFDConnection;
+function TLeaderBoardData.GetConnection: TFDConnection;
 begin
   result := fConnection;
 end;
 
-function TRPTS.GetSessionCount(SwimClubID: integer; SDate,
+function TLeaderBoardData.GetSessionCount(SwimClubID: integer; SDate,
   EDate: TDateTime): integer;
 begin
   result := 0;
@@ -367,7 +367,7 @@ begin
   end;end;
 end;
 
-function TRPTS.GetStartOfSession(SessionID: integer): TDateTime;
+function TLeaderBoardData.GetStartOfSession(SessionID: integer): TDateTime;
 begin
   result := Date;
   qryGetStartOfSession.Connection := fConnection;
@@ -385,7 +385,7 @@ end;
 
 {$REGION '... HOUSE SCORES'}
 
-function TRPTS.HouseScores(): TRtnError;
+function TLeaderBoardData.HouseScores(): TRtnError;
 var
   rpt: TfrxReport;
   qry: TFDQuery;
@@ -521,7 +521,7 @@ end;
 {$ENDREGION}
 {$REGION '... MEMBER SCORE'}
 
-function TRPTS.MemberScores(): TRtnError;
+function TLeaderBoardData.MemberScores(): TRtnError;
 var
   rpt: TfrxReport;
   qry: TFDQuery;
@@ -706,7 +706,7 @@ end;
 
 {$ENDREGION}
 
-procedure TRPTS.PrintReport(rpt: TfrxReport);
+procedure TLeaderBoardData.PrintReport(rpt: TfrxReport);
 begin
   if Assigned(rpt) then
   begin
@@ -730,9 +730,9 @@ begin
 
 end;
 
-procedure TRPTS.ABSREL_A(SessionID: Integer);
+procedure TLeaderBoardData.ABSREL_A(SessionID: Integer);
 begin
-  // note : uses RPTS.qryRptHeader
+  // note : uses LeaderBoardData.qryRptHeader
 	if (SessionID > 0) then
   begin
     if not Assigned(qryRptHeader.Connection) then
@@ -753,9 +753,9 @@ begin
   end;
 end;
 
-procedure TRPTS.ABSREL_B(SessionID: Integer);
+procedure TLeaderBoardData.ABSREL_B(SessionID: Integer);
 begin
-  // note : uses RPTS.qryRptHeader
+	// note : uses LeaderBoardData..qryRptHeader
 	if (SessionID > 0) then
   begin
     if not Assigned(qryRptHeader.Connection) then
@@ -772,7 +772,7 @@ begin
   end;
 end;
 
-procedure TRPTS.AssignRangeValues(var DTStart: TDateTime; var DTEnd: TDateTime);
+procedure TLeaderBoardData.AssignRangeValues(var DTStart: TDateTime; var DTEnd: TDateTime);
 begin
   DTStart := 0;
   DTEnd := 0;
@@ -801,7 +801,7 @@ begin
   end;
 end;
 
-procedure TRPTS.ReadPreferences(iniFileName: string);
+procedure TLeaderBoardData.ReadPreferences(iniFileName: string);
 var
   iFile: TIniFile;
   i: integer;
@@ -846,7 +846,7 @@ begin
   iFile.Free;
 end;
 
-procedure TRPTS.SetConnection(const Value: TFDConnection);
+procedure TLeaderBoardData.SetConnection(const Value: TFDConnection);
 begin
   fConnection := Value;
   // C O N N E C T .
@@ -874,7 +874,7 @@ begin
 
 end;
 
-procedure TRPTS.setEndlessHeight(report: TfrxReport; IsEndless: Boolean);
+procedure TLeaderBoardData.setEndlessHeight(report: TfrxReport; IsEndless: Boolean);
 var
   page: TfrxReportPage;
 begin
@@ -882,7 +882,7 @@ begin
   page.EndlessHeight := IsEndless;
 end;
 
-procedure TRPTS.setPreviewCntrl(const Value: TfrxPreview);
+procedure TLeaderBoardData.setPreviewCntrl(const Value: TfrxPreview);
 begin
   fPreview := Value;
 end;

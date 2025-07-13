@@ -12,7 +12,6 @@ object PointsScored: TPointsScored
   Font.Name = 'Segoe UI'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
@@ -20,7 +19,6 @@ object PointsScored: TPointsScored
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 17
   object Panel2: TPanel
     Left = 0

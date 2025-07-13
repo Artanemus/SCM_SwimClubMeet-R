@@ -650,7 +650,7 @@ var
   rtnValue, rows: integer;
   aEventType: scmEventType;
 begin
-  aEventType := SCM.CurrEventType;
+  aEventType := SCM.GetEventType;
   if aEventType = etUnknown then exit;
   rtnValue := MessageDlg('Clear the team entrant?', mtConfirmation,
     [mbNo, mbYes], 0, mbYes);
@@ -680,7 +680,7 @@ begin
         // is the current heat closed?
         if not SCM.Heat_IsClosed then
         begin
-          aEventType := SCM.CurrEventType;
+          aEventType := SCM.GetEventType;
           if aEventType = etTEAM then
           begin
             if not SCM.dsTeam.DataSet.IsEmpty then
@@ -710,7 +710,7 @@ begin
         // is the current heat closed?
         if not SCM.Heat_IsClosed then
         begin
-          aEventType := SCM.CurrEventType;
+          aEventType := SCM.GetEventType;
           if aEventType = etTEAM then
           begin
             if not SCM.dsTeam.DataSet.IsEmpty then
@@ -1408,7 +1408,7 @@ begin
 
 
   // SYNC the enabled state of the INDVTEAM Grids
-  aEventType := SCM.CurrEventType;
+  aEventType := SCM.GetEventType;
   if aEventType = etINDV then
   begin
     if (INDV.Grid.Enabled <> EnabledState) then
@@ -1993,7 +1993,7 @@ var
   aEventType: scmEventType;
   Msg: string;
 begin
-  aEventType := SCM.CurrEventType;
+  aEventType := SCM.GetEventType;
   if aEventType = etUnknown then exit;
   if aEventType = etINDV then Msg := 'Empty the lane.?'
   else Msg := 'Clear the team and it''s swimmers.';
@@ -2028,7 +2028,7 @@ begin
         // is the current heat closed?
         if not SCM.Heat_IsClosed then
         begin
-          aEventType := SCM.CurrEventType;
+          aEventType := SCM.GetEventType;
           if aEventType = etINDV then
           begin
             if not SCM.dsEntrant.DataSet.IsEmpty then DoEnable := true;
@@ -2050,7 +2050,7 @@ procedure TMain.Grid_MoveDownExecute(Sender: TObject);
 var
   aEventType: scmEventType;
 begin
-  aEventType := SCM.CurrEventType;
+  aEventType := SCM.GetEventType;
   if aEventType = etINDV then INDV.GridMoveDown(Sender)
   else if aEventType = etTEAM then TEAM.GridMoveDown(Sender);
 end;
@@ -2069,7 +2069,7 @@ begin
         // is the current heat closed?
         if not SCM.Heat_IsClosed then
         begin
-          aEventType := SCM.CurrEventType;
+          aEventType := SCM.GetEventType;
           if aEventType = etINDV then
           begin
             // is there any entrants?
@@ -2088,7 +2088,7 @@ procedure TMain.Grid_MoveUpExecute(Sender: TObject);
 var
   aEventType: scmEventType;
 begin
-  aEventType := SCM.CurrEventType;
+  aEventType := SCM.GetEventType;
   if aEventType = etINDV then INDV.GridMoveUp(Sender)
   else if aEventType = etTEAM then TEAM.GridMoveUp(Sender);
 end;
@@ -2107,7 +2107,7 @@ begin
         // is the current heat closed?
         if not SCM.Heat_IsClosed then
         begin
-          aEventType := SCM.CurrEventType;
+          aEventType := SCM.GetEventType;
           if aEventType = etINDV then
           begin
             // is there any entrants?
@@ -2154,7 +2154,7 @@ var
   aEventType: scmEventType;
   Msg: string;
 begin
-  aEventType := SCM.CurrEventType;
+  aEventType := SCM.GetEventType;
   if aEventType = etUnknown then exit;
   rows := 0;
   if aEventType = etINDV then Msg := 'Remove nomination and empty the lane.?'
@@ -2188,7 +2188,7 @@ begin
         // is the current heat closed?
         if not SCM.Heat_IsClosed then
         begin
-          aEventType := SCM.CurrEventType;
+          aEventType := SCM.GetEventType;
           if aEventType = etINDV then
           begin
             // is there any entrants?
@@ -2213,7 +2213,7 @@ var
   dlg: TSwapLanes;
   aEventType: scmEventType;
 begin
-  aEventType := SCM.CurrEventType;
+  aEventType := SCM.GetEventType;
   if aEventType = etINDV then
   begin
     dlg := TSwapLanes.Create(self);
@@ -2370,7 +2370,7 @@ var
   EventID, rtnValue: integer;
 begin
   // A U T O - B U I L D   R E L A Y   TE A M .
-  if SCM.CurrEventType = etTEAM then
+  if SCM.GetEventType = etTEAM then
   begin
     Heat_AutoBuildRelayExecute(Sender);
     exit;
@@ -2627,7 +2627,7 @@ var
   aEventType: scmEventType;
 begin
   // actn.Update dictates if this routine is accessable.
-  aEventType := SCM.CurrEventType;
+  aEventType := SCM.GetEventType;
   mr := mrNone;
 
   // The heat is CLOSED.
@@ -3311,7 +3311,7 @@ begin
   // messaged by TSCM.qryMemberQuickPickAfterScroll
   // messaged by TSCM.qryHeatAfterScroll
   if not AssertConnection then exit;
-  aEventType := SCM.CurrEventType;
+  aEventType := SCM.GetEventType;
   if (aEventType = etINDV) and TEAM.Grid.Focused then
   begin
     // After moving row re-engage editing for selected fields.
@@ -3726,7 +3726,7 @@ begin
     if DoRenumber then
     begin
       aHeatID := SCM.Heat_ID; // curr heat
-      aEventType := SCM.CurrEventType;
+      aEventType := SCM.GetEventType;
       aIndvTeamID := SCM.IndvTeam_ID; // curr Lane in Entrant/Team
       // DoLocate - don't locate last selected.
       // DoExclude - disabled. Will renumber/repair even when session is locked.
@@ -4608,7 +4608,7 @@ begin
     end
     else
     begin
-      aEventType := SCM.CurrEventType;
+      aEventType := SCM.GetEventType;
       if aEventType = etINDV then
       begin // INDIVIDUAL EVENT
         TEAM.Visible := false;
@@ -4695,7 +4695,7 @@ end;
 
 procedure TMain.Team_Scroll(var Msg: TMessage);
 begin
-  // Messaged by TSCM.qryTeamAfterScroll  - SCM.CurrEventType = etTEAM
+	// Messaged by TSCM.qryTeamAfterScroll  - SCM.GetEventType = etTEAM
   if not AssertConnection then exit;
   if (PageControl1.ActivePageIndex = 2) then TEAM.TeamScroll;
 end;

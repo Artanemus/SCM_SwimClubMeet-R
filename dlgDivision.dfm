@@ -27,8 +27,6 @@ object Division: TDivision
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 669
-    ExplicitWidth = 733
     DesignSize = (
       737
       41)
@@ -48,7 +46,6 @@ object Division: TDivision
       Caption = 'Close'
       TabOrder = 0
       OnClick = btnCloseClick
-      ExplicitLeft = 619
     end
   end
   object PageControl1: TPageControl
@@ -59,8 +56,6 @@ object Division: TDivision
     ActivePage = TabSheet3
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 733
-    ExplicitHeight = 669
     object TabSheet3: TTabSheet
       Caption = 'Divisions'
       DesignSize = (
@@ -176,7 +171,6 @@ object Division: TDivision
       FieldName = 'ScoreDivisionID'
       Origin = 'ScoreDivisionID'
       ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
       Visible = False
     end
     object qryDivisionSwimClubID: TIntegerField

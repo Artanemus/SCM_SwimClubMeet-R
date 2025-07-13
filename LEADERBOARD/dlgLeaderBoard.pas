@@ -13,7 +13,7 @@ uses
   Vcl.ComCtrls, frxPreview, frxClass, frxDBSet, System.ImageList,
   Vcl.ImgList, Vcl.VirtualImageList, Vcl.BaseImageCollection,
   Vcl.ImageCollection, Vcl.Buttons, frxExportBaseDialog, frxExportPDF,
-  dmReports,
+  dmLeaderBoardData,
   System.Actions, Vcl.ActnList, Vcl.PlatformDefaultStyleActnCtrls, Vcl.ActnMan,
   Vcl.WinXCtrls, Vcl.WinXCalendars, Vcl.VirtualImage;
 
@@ -162,11 +162,11 @@ procedure TLeaderBoard.actnExportPDFExecute(Sender: TObject);
 var
   rpt: TfrxReport;
 begin
-  if Assigned(RPTS) AND Assigned(frxPreview1) then
+	if Assigned(LeaderBoardData) AND Assigned(frxPreview1) then
   begin
     rpt := frxPreview1.Report;
     if Assigned(rpt) then
-      RPTS.ExportReportToPDF(rpt); // export to PDF
+      LeaderBoardData.ExportReportToPDF(rpt); // export to PDF
   end;
 end;
 
@@ -182,10 +182,10 @@ procedure TLeaderBoard.actnPrintExecute(Sender: TObject);
 var
   rpt: TfrxReport;
 begin
-  if Assigned(RPTS) AND Assigned(frxPreview1) then
+  if Assigned(LeaderBoardData) AND Assigned(frxPreview1) then
   begin
     rpt := frxPreview1.Report;
-    RPTS.PrintReport(rpt);
+    LeaderBoardData.PrintReport(rpt);
   end;
 end;
 
@@ -202,7 +202,7 @@ var
   rpt: TfrxReport;
 begin
   // identify the current report being viewed, re-prepare and preview.
-  if Assigned(RPTS) AND Assigned(frxPreview1) then
+  if Assigned(LeaderBoardData) AND Assigned(frxPreview1) then
   begin
     rpt := frxPreview1.Report;
     if Assigned(rpt) then
@@ -228,18 +228,18 @@ end;
 
 procedure TLeaderBoard.btnABSREL_AClick(Sender: TObject);
 begin
-  // note : uses RPTS.qryRptHeader
+  // note : uses LeaderBoardData.qryRptHeader
   fSessionID := GetObjSessionID;
-	if Assigned(RPTS) and (fSessionID > 0) then
-    RPTS.ABSREL_A(fSessionID);
+	if Assigned(LeaderBoardData) and (fSessionID > 0) then
+    LeaderBoardData.ABSREL_A(fSessionID);
 end;
 
 procedure TLeaderBoard.btnABSREL_BClick(Sender: TObject);
 begin
-  // note : uses RPTS.qryRptHeader
+  // note : uses LeaderBoardData.qryRptHeader
   fSessionID := GetObjSessionID;
-	if Assigned(RPTS) and (fSessionID > 0) then
-    RPTS.ABSREL_B(fSessionID);
+	if Assigned(LeaderBoardData) and (fSessionID > 0) then
+    LeaderBoardData.ABSREL_B(fSessionID);
 end;
 
 {$ENDREGION}
@@ -534,13 +534,13 @@ var
   iniFileName: string;
 begin
   ERR := TRtnError.reNONE;
-  if Assigned(RPTS) then
+  if Assigned(LeaderBoardData) then
   begin
     if TSpeedButton(Sender).Down then
-    // Enable RPTS preview and display report.
+    // Enable LeaderBoardData preview and display report.
     begin
-      RPTS.Preview := frxPreview1;
-      if Assigned(fConnection) and Assigned(RPTS) then
+      LeaderBoardData.Preview := frxPreview1;
+      if Assigned(fConnection) and Assigned(LeaderBoardData) then
       begin
         // -----------------------------------------------
         // write preference - used by reports
@@ -554,11 +554,11 @@ begin
         // -----------------------------------------------
         case TSpeedButton(Sender).Tag of
           1: // MEMBER'S TOTALSCORE, Distance-Stroke.SubTotal
-            ERR := RPTS.MemberScores;
+            ERR := LeaderBoardData.MemberScores;
           2: // EVENTS
-            ERR := RPTS.EventScores;
+            ERR := LeaderBoardData.EventScores;
           3: // ACCUMALATIVE HOUSE SCORES
-            ERR := RPTS.HouseScores;
+            ERR := LeaderBoardData.HouseScores;
         end;
         case ERR of
           reNONE:
@@ -584,7 +584,7 @@ begin
         frxPreview1.Visible := true;
     end
     else
-    // Disable RPTS preview and hide.
+    // Disable LeaderBoardData preview and hide.
     begin
       frxPreview1.Visible := false;
       ClearSpeedBtnGroup2;
@@ -599,8 +599,8 @@ begin
   // ----------------------------------------------------
   // C R E A T E   D A T A M O D U L E   R P T S .
   // ----------------------------------------------------
-  RPTS := TRPTS.create(Self);
-  if not Assigned(RPTS) then
+  LeaderBoardData := TLeaderBoardData.create(Self);
+  if not Assigned(LeaderBoardData) then
   begin
     MessageDlg('The FastReport data module couldn''t be created!', mtError,
       [mbOk], 0);
@@ -614,7 +614,7 @@ begin
   fSwimClubID := 1; // Always 1
   fConnection := nil; // route to SCM.scmConnection
   fSessionID := 0; // current selected session.
-  RPTS.Preview := nil; // FastReports preview component.
+  LeaderBoardData.Preview := nil; // FastReports preview component.
   // INIT CORE PARAMS
   fScoreMode := smNOTASSIGNED;
   fCalcModeEntrantAge := cmNOTASSIGNED;
@@ -649,10 +649,10 @@ begin
   // not owned in the 'Items' TStrings param.
   ClearSessionComboBox;
 
-  // de-activate RPTS (FastReport)
-  if Assigned(RPTS) then
+  // de-activate LeaderBoardData (FastReport)
+  if Assigned(LeaderBoardData) then
   begin
-    FreeAndNil(RPTS);
+    FreeAndNil(LeaderBoardData);
   end;
 end;
 
@@ -664,7 +664,7 @@ begin
     Exit;
   end;
   // Set prop.connection + activate report tables and queries
-  RPTS.Connection := fConnection;
+  LeaderBoardData.Connection := fConnection;
   // Build a list swimming sessions
   BuildSessionComboBox(fSwimClubID);
   // ----------------------------------------------------

@@ -9,11 +9,9 @@ uses
   dlgCloneSession in 'dlgCloneSession.pas' {CloneSession},
   dlgDivision in 'dlgDivision.pas' {Division},
   dlgHouse in 'dlgHouse.pas' {House},
-  dlgLeaderBoard in 'dlgLeaderBoard.pas' {LeaderBoard},
   dlgNewSession in 'dlgNewSession.pas' {NewSession},
   dlgPointsScored in 'dlgPointsScored.pas' {PointsScored},
   dlgPreferences in 'dlgPreferences.pas' {Preferences},
-  dmReports in 'dmReports.pas' {RPTS: TDataModule},
   dmSCM in 'dmSCM.pas' {SCM: TDataModule},
   dmSCMNom in 'dmSCMNom.pas' {SCMNom: TDataModule},
   dlgAutoBuild_Heats in 'dlgAutoBuild_Heats.pas' {AutoBuild_Heats},
@@ -88,7 +86,9 @@ uses
   dlgABRelay in 'AUTOBUILD\dlgABRelay.pas' {ABRelay},
   dlgExportSessionJSON in 'EXPORT\dlgExportSessionJSON.pas' {ExportSessionJSON},
   XSuperJSON in '..\x-superobject\XSuperJSON.pas',
-  XSuperObject in '..\x-superobject\XSuperObject.pas';
+  XSuperObject in '..\x-superobject\XSuperObject.pas',
+  dlgLeaderBoard in 'LEADERBOARD\dlgLeaderBoard.pas' {LeaderBoard},
+  dmLeaderBoardData in 'LEADERBOARD\dmLeaderBoardData.pas' {LeaderBoardData: TDataModule};
 
 {$R *.res}
 

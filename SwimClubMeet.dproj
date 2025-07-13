@@ -139,10 +139,6 @@
             <Form>House</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="dlgLeaderBoard.pas">
-            <Form>LeaderBoard</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <DCCReference Include="dlgNewSession.pas">
             <Form>NewSession</Form>
             <FormType>dfm</FormType>
@@ -154,11 +150,6 @@
         <DCCReference Include="dlgPreferences.pas">
             <Form>Preferences</Form>
             <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="dmReports.pas">
-            <Form>RPTS</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="dmSCM.pas">
             <Form>SCM</Form>
@@ -460,6 +451,15 @@
         </DCCReference>
         <DCCReference Include="..\x-superobject\XSuperJSON.pas"/>
         <DCCReference Include="..\x-superobject\XSuperObject.pas"/>
+        <DCCReference Include="LEADERBOARD\dlgLeaderBoard.pas">
+            <Form>LeaderBoard</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="LEADERBOARD\dmLeaderBoardData.pas">
+            <Form>LeaderBoardData</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -491,6 +491,12 @@
             </Delphi.Personality>
             <Deployment Version="5">
                 <DeployFile LocalName="Win32\Debug\SwimClubMeet.exe" Configuration="Debug" Class="ProjectOutput"/>
+                <DeployFile LocalName="Win32\Debug\SwimClubMeet.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>SwimClubMeet.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="Win32\Release\SwimClubMeet.exe" Configuration="Release" Class="ProjectOutput"/>
                 <DeployClass Name="AdditionalDebugSymbols">
                     <Platform Name="iOSSimulator">
