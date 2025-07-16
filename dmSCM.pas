@@ -1400,6 +1400,7 @@ begin
 		begin
 			SQL := '''
 				SELECT [EventTypeID] FROM [SwimClubMeet].[dbo].[Event]
+				INNER JOIN [Distance] ON [Event].[DistanceID] = [Distance].[DistanceID]
 				WHERE EventID = :ID;
 				''';
 			v := scmConnection.ExecSQLScalar(SQL, [aEventID]);
@@ -2236,8 +2237,7 @@ begin
       // display warning message
       MessageDlg('If an Event''s distance or stroke is changed' + slinebreak +
         'then the nominees attached to that event also reflect' + slinebreak +
-        'those changes.' + slinebreak +
-        'NOTE: The caption for this event has been changed.', mtWarning, [mbOK], 0);
+				'those changes.', mtWarning, [mbOK], 0);
 
       // clear the caption ....
       DataSet.Edit;
@@ -2259,49 +2259,8 @@ begin
 				DataSet.FieldByName('Caption').AsString := prefGenerateEventDescStr;
 				DataSet.Post;
 			end;
-		end
-		else
-		begin
-			EventType := etUnknown;
-			v := qryEvent.FieldByName('EventTypeID').AsVariant;
-			if (not VarIsNull(v)) and (not VarIsEmpty(v))  then
-			case v of
-				1: EventType := etINDV;
-				2: EventType := etTEAM;
-			end;
-			if EventType <>  etUnknown then
-			begin
-			DataSet.Edit;
-				case EventType of
-					etINDV:
-						DataSet.FieldByName('Caption').AsString := 'INDV';
-					etTEAM:
-						DataSet.FieldByName('Caption').AsString := 'RELAY';
-				end;
-				DataSet.Post;
-			end;
 		end;
-  end
-  else
-  begin
-    if ((Caption = 'INDV') and (EventType = etTEAM)) or
-      ((Caption = 'TEAM') and (EventType = etINDV)) then
-    begin
-      DataSet.Edit;
-      if EventType = etTEAM then
-        DataSet.FieldByName('Caption').AsString := 'RELAY'
-      else
-        DataSet.FieldByName('Caption').AsString := 'INDV';
-      DataSet.Post;
-    end;
-  end;
-
-  // BSA FIX .... 2024.09.02 commented out this section
-  //  if Owner is TForm then
-  //  begin
-  //    PostMessage(TForm(Owner).Handle, SCM_UPDATEINDVTEAM, 0, 0);
-  //    PostMessage(TForm(Owner).Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);
-  //  end;
+	end;
 
 end;
 
@@ -2329,20 +2288,10 @@ begin
 end;
 
 procedure TSCM.qryEventBeforePost(DataSet: TDataSet);
-var
-fld: TField;
-i: integer;
 begin
-  fld := DataSet.FieldByName('Caption');
-  if fld.IsNull then exit;
-  if (Length(fld.AsString) = 0) then
-  begin
-    i :=  DataSet.FieldByName('EventTypeID').AsInteger;
-    if i = 2 then
-      DataSet.FieldByName('Caption').AsString := 'RELAY'
-    else
-      DataSet.FieldByName('Caption').AsString := 'INDV';
-  end;
+	{TODO -oBSA -cGeneral : Auto assignment on empty fields.}
+	// [dbo].[Event].[RoundID] - set to preliminary.. default Preliminary.(P)
+	// [dbo].[Event].[GenderID] - set to MIXED via dbo.GenderPrefix.(Mixed ..X)
 end;
 
 procedure TSCM.qryEventDistanceIDValidate(Sender: TField);
@@ -2356,7 +2305,7 @@ begin
 
   // INDV or TEAM
   SQL := 'SELECT EventTypeID FROM SwimClubMeet.dbo.Distance WHERE [DistanceID] = :ID';
-  v1 := scmConnection.ExecSQLScalar(SQL, [Sender.CurValue], [ftInteger]);
+	v1 := scmConnection.ExecSQLScalar(SQL, [Sender.CurValue], [ftInteger]);
   v2 := scmConnection.ExecSQLScalar(SQL, [Sender.Value], [ftInteger]);
   if v1 <> v2 then // switching event type ...
   begin

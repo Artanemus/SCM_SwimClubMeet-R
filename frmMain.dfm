@@ -2698,7 +2698,7 @@ object Main: TMain
       Margins.Top = 4
       Margins.Right = 0
       Margins.Bottom = 0
-      ActivePage = TabSheet1
+      ActivePage = TabSheet3
       Align = alClient
       Style = tsFlatButtons
       TabOrder = 0
@@ -3605,7 +3605,6 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 2
-              ExplicitHeight = 629
               object Nominate_ControlList: TControlList
                 Left = 57
                 Top = 0
@@ -3976,7 +3975,7 @@ object Main: TMain
                 ParentColor = False
                 ParentFont = False
                 TabOrder = 0
-                ExplicitTop = 386
+                ExplicitTop = 384
                 ExplicitWidth = 966
                 ExplicitHeight = 136
                 inherited Grid: TDBGrid
@@ -4743,7 +4742,6 @@ object Main: TMain
               PopupMenu = pumHeat
               TabOrder = 1
               OnBeforeDrawItem = HeatControlListBeforeDrawItem
-              ExplicitHeight = 522
               object vimgHeatNum: TVirtualImage
                 Left = 16
                 Top = 11

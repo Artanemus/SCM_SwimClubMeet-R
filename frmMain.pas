@@ -568,7 +568,7 @@ uses
   dlgDBVerInfo, rptHeatReportA, rptHeatReportB, frmDisqualificationCodes,
   dlgAutoSchedule, dlgDCodePicker, dmSCMHelper, rptMarshallReportC,
   dlgSplitTimeTEAM, dlgSplitTimeINDV, dlgSwimClubSwitch, dlgSwimClubManage,
-  dlgABRelay, uABRelayExec, dlgExportSessionJSON;
+  dlgABRelay, uABRelayExec, dlgExportSessionJSON, dlgCheck_DOB_Gender;
 
 procedure TMain.Heat_AutoBuildRelayExecute(Sender: TObject);
 var
@@ -2365,9 +2365,10 @@ end;
 procedure TMain.Heat_AutoBuildExecute(Sender: TObject);
 var
   AutoBuild: TAutoBuildV2;
-  dlg: TAutoBuild_Heats;
-  success: boolean;
-  EventID, rtnValue: integer;
+	dlg: TAutoBuild_Heats;
+	dlg2: TCheck_DOB_Gender;
+	success, IsErronous: boolean;
+	EventID, rtnValue: integer;
 begin
   // A U T O - B U I L D   R E L A Y   TE A M .
   if SCM.GetEventType = etTEAM then
@@ -2403,31 +2404,44 @@ begin
   // -------------------------------------------------------
 
   // DISABLE CONTROLS
-  SCM.dsEntrant.DataSet.DisableControls;
-  SCM.dsHeat.DataSet.DisableControls;
-  // NOTE : cfgBuildHeatsVerboseON := OFF for BATCH Auto-Build Heats
-  AutoBuild := TAutoBuildV2.Create(self);
-  // ALERT : IMPORTANT NOTE ...
-  // ***************************************************************
-  // if TMain's instance of the Heat DataSet isn't sent to Auto-Build
-  // ... unable to delete Heat record. (tbl is locked?)
-  // That is - call via  to SCM.dsDeat.DataSet ...  doesn't work!
-  // ***************************************************************
-  // Verbose OFF for BATCH Auto-Build Heats
-  success := AutoBuild.AutoBuildExecute(SCM.dsHeat.DataSet, EventID);
-  if (success) then
-  begin
-    Refresh_Heat;
-    Refresh_IndvTeam;
-    // Requery SCM.qryEvent to update entrant count.
-    PostMessage(Handle, SCM_UPDATEENTRANTCOUNT, 0, 0);
-    // Set flag for statusbar update.
-    PostMessage(Handle, SCM_UPDATESTATUSBAR, 0, 0);
-  end;
-  AutoBuild.Free;
-  // ENABLE CONTROLS
-  SCM.dsHeat.DataSet.EnableControls;
-  SCM.dsEntrant.DataSet.EnableControls;
+	SCM.dsNominee.DataSet.DisableControls;
+	SCM.dsEntrant.DataSet.DisableControls;
+	SCM.dsHeat.DataSet.DisableControls;
+	// Check for bad DOB and GENDER.
+	dlg2 := TCheck_DOB_Gender.Create(Self);
+	IsErronous := dlg2.CheckExec(SCM.scmConnection, EventID);
+	if IsErronous then dlg.ShowModal;
+	dlg2.Free;
+
+	if not IsErronous then
+	begin
+		// NOTE : cfgBuildHeatsVerboseON := OFF for BATCH Auto-Build Heats
+		AutoBuild := TAutoBuildV2.Create(self);
+		// ALERT : IMPORTANT NOTE ...
+		// ***************************************************************
+		// if TMain's instance of the Heat DataSet isn't sent to Auto-Build
+		// ... unable to delete Heat record. (tbl is locked?)
+		// That is - call via  to SCM.dsDeat.DataSet ...  doesn't work!
+		// ***************************************************************
+		// Verbose OFF for BATCH Auto-Build Heats
+		success := AutoBuild.AutoBuildExecute(SCM.dsHeat.DataSet, EventID);
+		if (success) then
+		begin
+			Refresh_Heat;
+			Refresh_IndvTeam;
+			// Requery SCM.qryEvent to update entrant count.
+			PostMessage(Handle, SCM_UPDATEENTRANTCOUNT, 0, 0);
+			// Set flag for statusbar update.
+			PostMessage(Handle, SCM_UPDATESTATUSBAR, 0, 0);
+		end;
+		AutoBuild.Free;
+	end;
+
+
+	// ENABLE CONTROLS
+	SCM.dsHeat.DataSet.EnableControls;
+	SCM.dsEntrant.DataSet.EnableControls;
+	SCM.dsNominee.DataSet.DisableControls;
 
   if HeatControlList.CanFocus then HeatControlList.SetFocus;
 end;

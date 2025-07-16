@@ -160,7 +160,7 @@ object AutoBuildV2: TAutoBuildV2
       'SELECT NomineeID'
       '    , #NomineesInEvent.MemberID'
       '    , SwimmerCategoryID'
-      '    , GenderID'
+      '    , #NomineesInEvent.GenderID'
       '    , AGE'
       '    , PB'
       '    , TTB'
@@ -187,11 +187,11 @@ object AutoBuildV2: TAutoBuildV2
       '    AND ('
       '        ('
       '            @GenderID = 0'
-      '            AND GenderID > 0'
+      '            AND #NomineesInEvent.GenderID > 0'
       '            )'
       '        OR ('
       '            @GenderID > 0'
-      '            AND GenderID = @GenderID'
+      '            AND #NomineesInEvent.GenderID = @GenderID'
       '            )'
       '        )'
       '    AND ('
@@ -859,8 +859,8 @@ object AutoBuildV2: TAutoBuildV2
       'SET @EventID = :EVENTID; -- 135'
       ''
       
-        'SELECT MAX(HeatNum) AS HeatMaxSeedNumber FROM Heat WHE' +
-        'RE Heat.EventID = @EventID ;')
+        'SELECT MAX(HeatNum) AS HeatMaxSeedNumber FROM Heat WHERE Heat.Ev' +
+        'entID = @EventID ;')
     Left = 144
     Top = 88
     ParamData = <
@@ -922,9 +922,7 @@ object AutoBuildV2: TAutoBuildV2
         '--INNER JOIN Distance ON [Event].DistanceID = Distance.DistanceI' +
         'D'
       '--INNER JOIN Stroke ON [Event].StrokeID = Stroke.StrokeID'
-      
-        'INNER JOIN Heat ON [Event].EventID = Heat.Ev' +
-        'entID'
+      'INNER JOIN Heat ON [Event].EventID = Heat.EventID'
       'LEFT JOIN Entrant ON Heat.HeatID = Entrant.HeatID'
       'LEFT JOIN Member ON Entrant.MemberID = Member.MemberID'
       'WHERE [Event].EventID = @EventID'

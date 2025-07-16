@@ -421,6 +421,8 @@ end;
 function TAutoBuildV2.AssignNominees(DataSet: TFDQuery;
   EventID, Age, GenderID, SwimmerCategoryID: integer): boolean;
 begin
+
+	result := false;
   {
     BASED ON THE GIVEN EVENTID ...
     Prepare a list of swimmer who have nominated for the
@@ -450,14 +452,23 @@ begin
   DataSet.Prepare;
   // ************************************************************
   // PULL QUALIFIED NOMINEE LIST ORDERED BY FASTEST FIRST
-  // ************************************************************
-  DataSet.Open;
-  if (DataSet.Active) then
-  begin
-    if DataSet.IsEmpty then
-      DataSet.Close;
-  end;
-  result := DataSet.Active;
+	// ************************************************************
+	try
+		begin
+			DataSet.Open;
+			if (DataSet.Active) then
+			begin
+				if DataSet.IsEmpty then
+					DataSet.Close;
+			end;
+			result := DataSet.Active;
+		end;
+	except on E: Exception do
+		begin
+			DataSet.Close;
+			result := false;
+		end;
+	end;
 end;
 
 function TAutoBuildV2.AssignNomineesExt(DataSet: TFDQuery;
