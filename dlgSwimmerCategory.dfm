@@ -4,7 +4,7 @@ object SwimmerCategory: TSwimmerCategory
   BorderStyle = bsDialog
   Caption = 'Swimmer Categories ...'
   ClientHeight = 598
-  ClientWidth = 1054
+  ClientWidth = 1038
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,37 +21,35 @@ object SwimmerCategory: TSwimmerCategory
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 1054
+    Width = 1038
     Height = 544
     ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 1050
-    ExplicitHeight = 543
+    ExplicitWidth = 1054
     object TabSheet1: TTabSheet
       Caption = 'Details'
       object Panel2: TPanel
         AlignWithMargins = True
         Left = 3
         Top = 3
-        Width = 1040
+        Width = 1024
         Height = 502
         Align = alClient
         BevelEdges = []
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitWidth = 1036
-        ExplicitHeight = 501
+        ExplicitWidth = 1040
         object Panel1: TPanel
           Left = 0
           Top = 0
-          Width = 1040
+          Width = 1024
           Height = 57
           Align = alTop
           BevelEdges = []
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitWidth = 1036
+          ExplicitWidth = 1040
           object Label4: TLabel
             Left = 57
             Top = 30
@@ -60,17 +58,8 @@ object SwimmerCategory: TSwimmerCategory
             Caption = 'Display Caption'
             WordWrap = True
           end
-          object Label5: TLabel
-            Left = 281
-            Top = 10
-            Width = 76
-            Height = 42
-            Alignment = taCenter
-            Caption = 'METADATA TAG'
-            WordWrap = True
-          end
           object Label6: TLabel
-            Left = 786
+            Left = 762
             Top = 10
             Width = 70
             Height = 42
@@ -79,15 +68,15 @@ object SwimmerCategory: TSwimmerCategory
             WordWrap = True
           end
           object Label7: TLabel
-            Left = 380
-            Top = 31
+            Left = 260
+            Top = 30
             Width = 253
             Height = 21
             Caption = 'Full description of membership type.'
             WordWrap = True
           end
           object Label8: TLabel
-            Left = 735
+            Left = 711
             Top = 10
             Width = 37
             Height = 42
@@ -96,7 +85,7 @@ object SwimmerCategory: TSwimmerCategory
             WordWrap = True
           end
           object Label3: TLabel
-            Left = 926
+            Left = 902
             Top = 31
             Width = 61
             Height = 21
@@ -105,7 +94,7 @@ object SwimmerCategory: TSwimmerCategory
             WordWrap = True
           end
           object Label9: TLabel
-            Left = 867
+            Left = 843
             Top = 31
             Width = 42
             Height = 21
@@ -117,17 +106,16 @@ object SwimmerCategory: TSwimmerCategory
         object Panel4: TPanel
           Left = 0
           Top = 57
-          Width = 1040
+          Width = 1024
           Height = 445
           Align = alClient
           Caption = 'Panel4'
           TabOrder = 1
-          ExplicitWidth = 1036
-          ExplicitHeight = 444
+          ExplicitWidth = 1040
           object DBGrid1: TDBGrid
             Left = 1
             Top = 1
-            Width = 1038
+            Width = 1022
             Height = 443
             Align = alClient
             BorderStyle = bsNone
@@ -161,16 +149,9 @@ object SwimmerCategory: TSwimmerCategory
               end
               item
                 Expanded = False
-                FieldName = 'luTAGID'
-                Title.Caption = 'CLASS'
-                Width = 120
-                Visible = True
-              end
-              item
-                Expanded = False
                 FieldName = 'LongCaption'
                 Title.Caption = 'Notes'
-                Width = 350
+                Width = 450
                 Visible = True
               end
               item
@@ -247,18 +228,17 @@ object SwimmerCategory: TSwimmerCategory
   object Panel3: TPanel
     Left = 0
     Top = 544
-    Width = 1054
+    Width = 1038
     Height = 54
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 543
-    ExplicitWidth = 1050
+    ExplicitWidth = 1054
     DesignSize = (
-      1054
+      1038
       54)
     object btnClose: TButton
-      Left = 924
+      Left = 908
       Top = 6
       Width = 75
       Height = 30
@@ -266,10 +246,10 @@ object SwimmerCategory: TSwimmerCategory
       Caption = 'Close'
       TabOrder = 0
       OnClick = btnCloseClick
-      ExplicitLeft = 920
+      ExplicitLeft = 924
     end
     object DBNavigator1: TDBNavigator
-      Left = 332
+      Left = 339
       Top = 2
       Width = 360
       Height = 47
@@ -281,6 +261,7 @@ object SwimmerCategory: TSwimmerCategory
   end
   object qrySwimmerCategory: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     BeforePost = qrySwimmerCategoryBeforePost
     IndexFieldNames = 'SwimmerCategoryID'
     Connection = SCM.scmConnection
@@ -317,7 +298,6 @@ object SwimmerCategory: TSwimmerCategory
     object qrySwimmerCategorySwimmerCategoryID: TFDAutoIncField
       FieldName = 'SwimmerCategoryID'
       ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
     end
     object qrySwimmerCategoryCaption: TWideStringField
       DisplayLabel = 'Description'
@@ -335,6 +315,7 @@ object SwimmerCategory: TSwimmerCategory
       Size = 12
     end
     object qrySwimmerCategoryLongCaption: TWideStringField
+      DisplayWidth = 160
       FieldName = 'LongCaption'
       Origin = 'LongCaption'
       Size = 128
@@ -355,49 +336,10 @@ object SwimmerCategory: TSwimmerCategory
     object qrySwimmerCategoryIsArchived: TBooleanField
       FieldName = 'IsArchived'
     end
-    object qrySwimmerCategoryluTAGID: TStringField
-      FieldKind = fkLookup
-      FieldName = 'luTAGID'
-      LookupDataSet = qryLUTAG
-      LookupKeyFields = 'MetaDataID'
-      LookupResultField = 'TAG'
-      KeyFields = 'TAGID'
-      Lookup = True
-    end
   end
   object dsSwimmerCategory: TDataSource
     DataSet = qrySwimmerCategory
     Left = 280
     Top = 296
-  end
-  object qryLUTAG: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    Connection = SCM.scmConnection
-    SQL.Strings = (
-      'USE SwimClubMeet;'
-      ''
-      'DECLARE @SwimClubID AS INTEGER;'
-      'SET @SwimClubID = :SWIMCLUBID '
-      ''
-      'SELECT '
-      'MetaData.MetaDataID'
-      ',TAG '
-      'FROM '
-      'SwimClubMetaDataLink'
-      
-        'INNER JOIN MetaData ON  SwimClubMetaDataLink.MetaDataID = MetaDa' +
-        'ta.MetaDataID '
-      'WHERE SwimClubID = @SwimClubID;'
-      ''
-      '')
-    Left = 143
-    Top = 388
-    ParamData = <
-      item
-        Name = 'SWIMCLUBID'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = 1
-      end>
   end
 end

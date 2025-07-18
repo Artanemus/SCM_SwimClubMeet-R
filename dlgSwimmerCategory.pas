@@ -11,7 +11,7 @@ uses
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.Grids,
   Vcl.DBGrids, Vcl.ExtCtrls, Vcl.ComCtrls, FireDAC.UI.Intf, FireDAC.Stan.Def,
   FireDAC.Stan.Pool, FireDAC.Phys, FireDAC.Phys.MSSQL, FireDAC.Phys.MSSQLDef,
-  FireDAC.VCLUI.Wait, dmSCM, Vcl.DBCtrls;
+  FireDAC.VCLUI.Wait, dmSCM, Vcl.DBCtrls, Vcl.Buttons;
 
 type
   TSwimmerCategory = class(TForm)
@@ -24,7 +24,6 @@ type
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
-    Label5: TLabel;
     Label6: TLabel;
     Label7: TLabel;
     Label8: TLabel;
@@ -46,9 +45,7 @@ type
     TabSheet3: TTabSheet;
     DBNavigator1: TDBNavigator;
     qrySwimmerCategoryTAG: TWideStringField;
-    qryLUTAG: TFDQuery;
-    qrySwimmerCategoryTAGID: TIntegerField;
-    qrySwimmerCategoryluTAGID: TStringField;
+		qrySwimmerCategoryTAGID: TIntegerField;
     procedure btnCloseClick(Sender: TObject);
     procedure DBGrid1CellClick(Column: TColumn);
     procedure DBGrid1ColEnter(Sender: TObject);
@@ -285,9 +282,9 @@ begin
     qrySwimmerCategory.Connection := fConnection;
     // Activate tables/queries contained in this dialogue
     qrySwimmerCategory.ParamByName('SWIMCLUBID').AsInteger := fSwimClubID;
-    qrySwimmerCategory.Prepare;
+		qrySwimmerCategory.Prepare;
     qrySwimmerCategory.Open;
-  end;
+	end;
 end;
 
 procedure TSwimmerCategory.qrySwimmerCategoryBeforePost(DataSet: TDataSet);

@@ -220,8 +220,8 @@ object SCM: TSCM
       ''
       'USE SwimClubMeet'
       ''
-      'DECLARE @SwimClubID AS INT;'
-      'SET @SwimClubID = 1;'
+      '--DECLARE @SwimClubID AS INT;'
+      '--SET @SwimClubID = 1;'
       ''
       'SELECT Entrant.EntrantID'
       '     , Entrant.HeatID'
@@ -251,8 +251,9 @@ object SCM: TSCM
       '     , DisqualifyCode.ABREV AS DCode'
       '     , Entrant.DisqualifyCodeID'
       
-        '     , dbo.MembersSwimmerCategory(Entrant.MemberID, @SwimClubID,' +
-        ' Session.SessionStart) AS CATID'
+        '     , dbo.MembersSwimmerCategory(Entrant.MemberID, Entrant.Swim' +
+        'ClubID, '
+      '         Session.SessionStart) AS CATID'
       'FROM Entrant'
       '    LEFT OUTER JOIN Member'
       '        ON Entrant.MemberID = Member.MemberID'
