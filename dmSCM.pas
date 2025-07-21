@@ -2206,7 +2206,7 @@ procedure TSCM.qryEventAfterPost(DataSet: TDataSet);
 var
   i, v: integer;
   DistanceID, StrokeID, entrantCount: integer;
-  EventType : scmEventType;
+//  EventType : scmEventType;
 	Caption: string;
 
 begin

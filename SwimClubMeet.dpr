@@ -90,7 +90,10 @@ uses
   dlgLeaderBoard in 'LEADERBOARD\dlgLeaderBoard.pas' {LeaderBoard},
   dmLeaderBoardData in 'LEADERBOARD\dmLeaderBoardData.pas' {LeaderBoardData: TDataModule},
   dmAutoBuildV2 in 'dmAutoBuildV2.pas' {AutoBuildV2: TDataModule},
-  dlgCheck_DOB_Gender in 'dlgCheck_DOB_Gender.pas' {Check_DOB_Gender};
+  dlgCheck_DOB_Gender in 'dlgCheck_DOB_Gender.pas' {Check_DOB_Gender},
+  Advgrid in '..\VCL_TMS\Advgrid.pas',
+  DBAdvGrid in '..\VCL_TMS\DBAdvGrid.pas',
+  BaseGrid in '..\VCL_TMS\BaseGrid.pas';
 
 {$R *.res}
 

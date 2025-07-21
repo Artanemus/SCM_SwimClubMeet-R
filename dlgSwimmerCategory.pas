@@ -4,21 +4,25 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, Vcl.Graphics,
+	System.Classes, Vcl.Graphics, System.UITypes,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.Grids,
   Vcl.DBGrids, Vcl.ExtCtrls, Vcl.ComCtrls, FireDAC.UI.Intf, FireDAC.Stan.Def,
   FireDAC.Stan.Pool, FireDAC.Phys, FireDAC.Phys.MSSQL, FireDAC.Phys.MSSQLDef,
-  FireDAC.VCLUI.Wait, dmSCM, Vcl.DBCtrls, Vcl.Buttons;
+  FireDAC.VCLUI.Wait, dmSCM, Vcl.DBCtrls, Vcl.Buttons, AdvUtil, AdvObj,
+  BaseGrid, AdvGrid, DBAdvGrid, Vcl.BaseImageCollection, SVGIconImageCollection,
+	System.ImageList, Vcl.ImgList, Vcl.VirtualImageList, SVGIconVirtualImageList,
+	SVGIconImage,
+
+	Vcl.Styles;
 
 type
   TSwimmerCategory = class(TForm)
     btnClose: TButton;
     btnSwimCategoryDetailed: TButton;
     btnSwimCategoryTable: TButton;
-    DBGrid1: TDBGrid;
     dsSwimmerCategory: TDataSource;
     Label1: TLabel;
     Label2: TLabel;
@@ -44,29 +48,30 @@ type
     TabSheet1: TTabSheet;
     TabSheet3: TTabSheet;
     DBNavigator1: TDBNavigator;
-    qrySwimmerCategoryTAG: TWideStringField;
-		qrySwimmerCategoryTAGID: TIntegerField;
+    gridCAT: TDBAdvGrid;
+    gridImageCollection: TSVGIconImageCollection;
+    GridImageList: TSVGIconVirtualImageList;
+    qrySwimmerCategoryNavIcon: TIntegerField;
+    Image1: TImage;
     procedure btnCloseClick(Sender: TObject);
-    procedure DBGrid1CellClick(Column: TColumn);
-    procedure DBGrid1ColEnter(Sender: TObject);
-    procedure DBGrid1ColExit(Sender: TObject);
-    procedure DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
+		procedure gridCATCustomCellBkgDraw(Sender: TObject; Canvas: TCanvas; ACol,
+				ARow: Integer; AState: TGridDrawState; ARect: TRect; Printing: Boolean);
+		procedure gridCATCustomCellDraw(Sender: TObject; Canvas: TCanvas; ACol, ARow:
+				Integer; AState: TGridDrawState; ARect: TRect; Printing: Boolean);
     procedure qrySwimmerCategoryBeforePost(DataSet: TDataSet);
   private
     fColorBgColor: TColor;
     fColorEditBoxFocused: TColor;
     fColorEditBoxNormal: TColor;
-    fConnection: TFDConnection;
-    { Private declarations }
-    fSwimClubID: Integer;
-    procedure DrawCheckBoxes(oGrid: TObject; Rect: TRect; Column: TColumn;
-      fontColor, bgColor: TColor);
-  public
+		fConnection: TFDConnection;
+		fColorFocusEffect: TColor;
+		{ Private declarations }
+		fSwimClubID: Integer;
+	public
     { Public declarations }
     property Connection: TFDConnection write fConnection;
   end;
@@ -86,175 +91,67 @@ begin
   ModalResult := mrOk;
 end;
 
-procedure TSwimmerCategory.DBGrid1CellClick(Column: TColumn);
-begin
-  if Assigned(Column.Field) and (Column.Field.DataType = ftBoolean) then
-  begin
-    Column.Grid.DataSource.DataSet.CheckBrowseMode;
-    Column.Grid.DataSource.DataSet.Edit;
-    Column.Field.AsBoolean := not Column.Field.AsBoolean;
-  end;
-end;
-
-procedure TSwimmerCategory.DBGrid1ColEnter(Sender: TObject);
-begin
-  // By default, two clicks on the same cell enacts the cell editing mode.
-  // The grid draws a TEditBox over the cell, killing the checkbox draw UI.
-  with Sender as TDBGrid do
-  begin
-    if Assigned(SelectedField) and (SelectedField.DataType = ftBoolean) then
-    begin
-      Options := Options - [dgEditing];
-    end;
-  end;
-end;
-
-procedure TSwimmerCategory.DBGrid1ColExit(Sender: TObject);
-begin
-  with Sender as TDBGrid do
-    if Assigned(SelectedField) and (SelectedField.DataType = ftBoolean) then
-      Options := Options + [dgEditing];
-end;
-
-procedure TSwimmerCategory.DBGrid1DrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
-var
-  clFont, clBg: TColor;
-begin
-  // NOTE : DEFAULT DRAWING IS DISABLED ....
-  if (Column.Field.FieldName = 'IsActive') or
-    (Column.Field.FieldName = 'IsArchived') then
-  begin
-    if gdFocused in State then
-      clFont := fColorEditBoxFocused
-    else
-      clFont := fColorEditBoxNormal;
-    clBg := fColorBgColor;
-    DrawCheckBoxes(Sender, Rect, Column, clFont, clBg);
-    // draw 'Focused' frame  (for boolean datatype only)
-    if gdFocused in State then
-      TDBGrid(Sender).Canvas.DrawFocusRect(Rect);
-  end
-  else
-  begin
-    TDBGrid(Sender).DefaultDrawColumnCell(Rect, DataCol, Column, State);
-    if gdFocused in State then
-      TDBGrid(Sender).Canvas.DrawFocusRect(Rect);
-  end;
-end;
-
-procedure TSwimmerCategory.DrawCheckBoxes(oGrid: TObject; Rect: TRect;
-  Column: TColumn; fontColor, bgColor: TColor);
-var
-  MyRect: TRect;
-  oField: TField;
-  iPos, iFactor: Integer;
-  bValue: boolean;
-  g: TDBGrid;
-  points: Array [0 .. 4] of TPoint;
-begin
-  // ---------------------------------------------------------------------------
-  // Draw a very basic checkbox (ticked) - not a nice as TCheckListBox
-  // ---------------------------------------------------------------------------
-  g := TDBGrid(oGrid);
-  // is the cell checked?
-  oField := Column.Field;
-  if (oField.value = -1) then
-    bValue := true
-  else
-    bValue := false;
-
-  g.Canvas.Pen.Color := fontColor; //
-  g.Canvas.Brush.Color := bgColor;
-  g.Canvas.Brush.Style := bsSolid;
-  g.Canvas.FillRect(Rect);
-
-  // calculate margins
-  MyRect.Top := Trunc((Rect.Bottom - Rect.Top - 17) / 2) + Rect.Top;
-  MyRect.Left := Trunc((Rect.Right - Rect.Left - 17) / 2) + Rect.Left;
-  MyRect.Bottom := MyRect.Top + 16;
-  MyRect.Right := MyRect.Left + 16;
-
-  // USES PEN - draw the box (with cell margins)
-  points[0].x := MyRect.Left;
-  points[0].y := MyRect.Top;
-  points[1].x := MyRect.Right;
-  points[1].y := MyRect.Top;
-  points[2].x := MyRect.Right;
-  points[2].y := MyRect.Bottom;
-  points[3].x := MyRect.Left;
-  points[3].y := MyRect.Bottom;
-  points[4].x := MyRect.Left;
-  points[4].y := MyRect.Top;
-
-  g.Canvas.Polyline(points);
-
-  iPos := MyRect.Left;
-  iFactor := 1;
-  // USES PEN - DRAW A TICK - Cross would be nicer?
-  if bValue then
-  begin
-    // 16x16 grid. Pen width is 1 pixel.
-    // tick falls
-    g.Canvas.MoveTo(iPos + (iFactor * 2), MyRect.Top + 8);
-    g.Canvas.LineTo(iPos + (iFactor * 2), MyRect.Top + 11);
-    g.Canvas.MoveTo(iPos + (iFactor * 3), MyRect.Top + 9);
-    g.Canvas.LineTo(iPos + (iFactor * 3), MyRect.Top + 12);
-    g.Canvas.MoveTo(iPos + (iFactor * 4), MyRect.Top + 10);
-    g.Canvas.LineTo(iPos + (iFactor * 4), MyRect.Top + 13);
-    g.Canvas.MoveTo(iPos + (iFactor * 5), MyRect.Top + 11);
-    g.Canvas.LineTo(iPos + (iFactor * 5), MyRect.Top + 14);
-    // bottom ... flattens
-    g.Canvas.MoveTo(iPos + (iFactor * 6), MyRect.Top + 12);
-    g.Canvas.LineTo(iPos + (iFactor * 6), MyRect.Top + 15);
-    g.Canvas.MoveTo(iPos + (iFactor * 7), MyRect.Top + 12);
-    g.Canvas.LineTo(iPos + (iFactor * 7), MyRect.Top + 15);
-    // tick rises
-    g.Canvas.MoveTo(iPos + (iFactor * 8), MyRect.Top + 11);
-    g.Canvas.LineTo(iPos + (iFactor * 8), MyRect.Top + 14);
-    g.Canvas.MoveTo(iPos + (iFactor * 9), MyRect.Top + 10);
-    g.Canvas.LineTo(iPos + (iFactor * 9), MyRect.Top + 13);
-    g.Canvas.MoveTo(iPos + (iFactor * 10), MyRect.Top + 9);
-    g.Canvas.LineTo(iPos + (iFactor * 10), MyRect.Top + 12);
-    g.Canvas.MoveTo(iPos + (iFactor * 11), MyRect.Top + 8);
-    g.Canvas.LineTo(iPos + (iFactor * 11), MyRect.Top + 11);
-    g.Canvas.MoveTo(iPos + (iFactor * 12), MyRect.Top + 7);
-    g.Canvas.LineTo(iPos + (iFactor * 12), MyRect.Top + 10);
-    g.Canvas.MoveTo(iPos + (iFactor * 13), MyRect.Top + 6);
-    g.Canvas.LineTo(iPos + (iFactor * 13), MyRect.Top + 9);
-    g.Canvas.MoveTo(iPos + (iFactor * 14), MyRect.Top + 5);
-    g.Canvas.LineTo(iPos + (iFactor * 14), MyRect.Top + 8);
-    g.Canvas.MoveTo(iPos + (iFactor * 15), MyRect.Top + 4);
-    g.Canvas.LineTo(iPos + (iFactor * 15), MyRect.Top + 7);
-    g.Canvas.MoveTo(iPos + (iFactor * 16), MyRect.Top + 3);
-    g.Canvas.LineTo(iPos + (iFactor * 16), MyRect.Top + 6);
-  end;
-end;
-
 procedure TSwimmerCategory.FormCreate(Sender: TObject);
 var
-  css: TCustomStyleServices;
+	css: TCustomStyleServices;
 begin
-  // i n i t   p a r a m s  .
-  // -------------------------------------
-  PageControl1.TabIndex := 0;
-  fSwimClubID := 1;
+	// i n i t   p a r a m s  .
+	// -------------------------------------
+	PageControl1.TabIndex := 0;
+	fSwimClubID := 1;
 
-  // Special color assignment - used in TDBGrid painting...
-  // -------------------------------------------
-  css := TStyleManager.Style[TStyleManager.ActiveStyle.Name];
-  if Assigned(css) then
-  begin
-    fColorEditBoxFocused := css.GetStyleFontColor(sfEditBoxTextFocused);
-    fColorEditBoxNormal := css.GetStyleFontColor(sfEditBoxTextNormal);
-    fColorBgColor := css.GetStyleColor(scGrid);
-  end
-  else
-  begin
-    fColorEditBoxFocused := clWebTomato;
-    fColorEditBoxNormal := clWindowText;
-    fColorBgColor := clAppWorkSpace;
-  end;
+	// Special color assignment - used in TDBGrid painting...
+	// -------------------------------------------
+	css := TStyleManager.Style[TStyleManager.ActiveStyle.Name];
+	if Assigned(css) then
+	begin
+		fColorEditBoxFocused := css.GetStyleFontColor(sfEditBoxTextFocused);
+		fColorEditBoxNormal := css.GetStyleFontColor(sfEditBoxTextNormal);
+		fColorBgColor := css.GetStyleColor(scGrid);
+		fColorFocusEffect := css.GetStyleColor(scButtonHot);
+	end
+	else
+	begin
+		fColorEditBoxFocused := clWebTomato;
+		fColorEditBoxNormal := clWindowText;
+		fColorBgColor := clAppWorkSpace;
+		fColorFocusEffect := clHighLight;
+	end;
+
+	 { CHECKBOX Glyphs
+	 - Enable TDBAdvGrid.ShowBooleanFields
+	 - Create CheckBox SVGs for TSVGIconImageCollection.
+	 - SET TDBAdvGrid.ControlLook.ControlStyle .. csGlyph
+	 - SET TDBAdvGrid.ControlLook.CheckSize no effect. (uses GridImageList.Size)
+	 - Assign ControlLook.CheckedGlyph, UnCheckedGlyph OnFormCreate.
+	 - During design mode I assigned a fully empty-transparent
+			(Alpha - 32 bit) BitMap. It required GIMP to do this. This correctly
+			set the tranparency and is the simpliest way to deal with the problem.
+			Writing the values 'in code' failed.
+	 }
+
+	if GridImageList.Count > 3 then //Check if index 3 exists
+	begin
+		try
+			GridImageList.GetBitmap(1, gridCAT.ControlLook.UnCheckedGlyph);
+			GridImageList.GetBitmap(2, gridCAT.ControlLook.CheckedGlyph);
+		except on E: Exception do
+			ShowMessage('Error loading Check/UnCheck Glyph bitmaps from TSVGIconVirtualList.');
+		end;
+	end;
+
+	{ OPTIONS Editing...
+	- Deals with TMS intermittent bug - can't perform editing in grid.
+	- Additionally ... gridCAT.EditMode (boolean) keyboard shorcut F2.
+	}
+	gridCAT.Options := gridCAT.Options + [goEditing];
+
+	{
+	Query is sorted on PK.
+	This makes insert of new record a little bit more manageable.
+	}
+	gridCAT.EditPostMode := epRow;
+
 end;
 
 procedure TSwimmerCategory.FormDestroy(Sender: TObject);
@@ -280,11 +177,55 @@ begin
   if Assigned(fConnection) then
   begin
     qrySwimmerCategory.Connection := fConnection;
-    // Activate tables/queries contained in this dialogue
+		// Activate tables/queries contained in this dialogue
     qrySwimmerCategory.ParamByName('SWIMCLUBID').AsInteger := fSwimClubID;
 		qrySwimmerCategory.Prepare;
     qrySwimmerCategory.Open;
 	end;
+end;
+
+procedure TSwimmerCategory.gridCATCustomCellBkgDraw(Sender: TObject; Canvas:
+		TCanvas; ACol, ARow: Integer; AState: TGridDrawState; ARect: TRect;
+		Printing: Boolean);
+begin
+	{
+	FOR RECORD INDICATOR ....
+	if the rowIndicator is assigned (+ALPHA) - this background will be painted over
+	with the FixColor.
+	if not assigned - you get to see the background color.
+
+		if ACol = 0 then
+		begin
+			if ARow = TDBAdvGrid(Sender).DataSource.DataSet.RecNo then
+			begin
+				Canvas.Brush.Color := $00CCA3B7; // fColorBgColor Set the brush color.
+				Canvas.FillRect(ARect); // Fill background first.
+			end;
+		end;
+	}
+
+end;
+
+procedure TSwimmerCategory.gridCATCustomCellDraw(Sender: TObject; Canvas:
+  TCanvas; ACol, ARow: Integer; AState: TGridDrawState; ARect: TRect;
+  Printing: Boolean);
+begin
+  { Record indicator:
+   - RowIndicator = false
+   - Toogle ParentFont if UI still shows default indicator icon.
+	 - Create SVG RowIndicator for TSVGIconImageCollection.
+	 }
+
+	if ARow = TDBAdvGrid(Sender).DataSource.DataSet.RecNo then
+  begin
+    case ACol of
+      0:
+        begin
+          GridImageList.Draw(Canvas, ARect.Left, ARect.Top + 10, 0);
+        end;
+		end;
+	end;
+
 end;
 
 procedure TSwimmerCategory.qrySwimmerCategoryBeforePost(DataSet: TDataSet);

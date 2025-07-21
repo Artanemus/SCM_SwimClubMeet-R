@@ -62,6 +62,7 @@
         <Custom_Styles>&quot;Windows10 SlateGray|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Windows10SlateGray.vsf&quot;</Custom_Styles>
         <VerInfo_Locale>3081</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <DCC_UnitSearchPath>$(TMS)\;$(TMS)\xlsAdapter;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_UsePackage>DBXSqliteDriver;RESTComponents;fmxase;DBXDb2Driver;DBXInterBaseDriver;vclactnband;fsDB27;vclFireDAC;bindcompvclsmp;emsclientfiredac;tethering;svnui;DataSnapFireDAC;FireDACADSDriver;frx27;DBXMSSQLDriver;fsTee27;DatasnapConnectorsFreePascal;FireDACMSSQLDriver;vcltouch;vcldb;bindcompfmx;svn;frxIBX27;DBXOracleDriver;inetdb;fs27;FmxTeeUI;emsedge;fmx;FireDACIBDriver;fmxdae;vcledge;vclib;FireDACDBXDriver;dbexpress;IndyCore;vclx;frxTee27;dsnap;emsclient;DataSnapCommon;FireDACCommon;RESTBackendComponents;DataSnapConnectors;VCLRESTComponents;soapserver;vclie;bindengine;DBXMySQLDriver;CloudService;FireDACOracleDriver;FireDACMySQLDriver;DBXFirebirdDriver;FireDACCommonODBC;FireDACCommonDriver;DataSnapClient;inet;IndyIPCommon;bindcompdbx;fsFD27;frxDB27;vcl;IndyIPServer;DBXSybaseASEDriver;IndySystem;FireDACDb2Driver;bindcompvclwinx;dsnapcon;FireDACMSAccDriver;fmxFireDAC;FireDACInfxDriver;vclimg;frxIntIOIndy27;TeeDB;FireDAC;fsIBX27;emshosting;frxIntIO27;frxOpenFiltersTemp27;FireDACSqliteDriver;FireDACPgDriver;ibmonitor;FireDACASADriver;frxFD27;DBXOdbcDriver;FireDACTDataDriver;FMXTee;soaprtl;DbxCommonDriver;ibxpress;Tee;DataSnapServer;xmlrtl;soapmidas;DataSnapNativeClient;fmxobj;vclwinx;FireDACDSDriver;rtl;emsserverresource;DbxClientDriver;ibxbindings;DBXSybaseASADriver;CustomIPTransport;vcldsnap;DOSCommandDR;bindcomp;appanalytics;frxADO27;DBXInformixDriver;IndyIPClient;fsADO27;bindcompvcl;frxe27;TeeUI;dbxcds;VclSmp;frxDBX27;adortl;FireDACODBCDriver;DataSnapIndy10ServerTransport;frxcs27;dsnapxml;DataSnapProviderClient;dbrtl;IndyProtocols;inetdbxpress;FireDACMongoDBDriver;DataSnapServerMidas;JclDeveloperTools;Jcl;JclVcl;JclContainers;JvCore;JvSystem;JvStdCtrls;JvAppFrm;JvBands;JvCustom;JvControls;JvDB;JvDlgs;JvDocking;JvDotNetCtrls;JvCrypt;JvGlobus;JvHMI;JvPascalInterpreter;JvJans;JvManagedThreads;JvCmp;JvMM;JvNet;JvPageComps;JvPluginSystem;JvPrintPreview;JvRuntimeDesign;JvTimeFramework;JvWizards;JvXPCtrls;$(DCC_UsePackage)</DCC_UsePackage>
@@ -469,6 +470,9 @@
             <Form>Check_DOB_Gender</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="..\VCL_TMS\Advgrid.pas"/>
+        <DCCReference Include="..\VCL_TMS\DBAdvGrid.pas"/>
+        <DCCReference Include="..\VCL_TMS\BaseGrid.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -490,6 +494,7 @@
                     <Source Name="MainSource">SwimClubMeet.dpr</Source>
                 </Source>
                 <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclemsedge290.bpl">Embarcadero RAD Server Edge Components</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\bcboffice2k290.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\bcbofficexp290.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k290.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
