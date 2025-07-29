@@ -28,7 +28,7 @@ type
     dsNominateMembers: TDataSource;
     dsNominee: TDataSource;
     dsSession: TDataSource;
-    dsSplit: TDataSource;
+    dsSplitv1: TDataSource;
     dsSwimClub: TDataSource;
     dsTeam: TDataSource;
     dsTeamEntrant: TDataSource;
@@ -48,7 +48,7 @@ type
     luHouse: TDataSource;
     luSessionStatus: TDataSource;
     luStroke: TDataSource;
-    luSwimmerCAT: TDataSource;
+    dsParaCodeLink: TDataSource;
     qryCountEventsNotClosed: TFDQuery;
     qryCountHeatsNotClosed: TFDQuery;
     qryEntrant: TFDQuery;
@@ -126,10 +126,10 @@ type
     qrySessionSessionStatusID: TIntegerField;
     qrySessionStatus: TWideStringField;
     qrySessionSwimClubID: TIntegerField;
-    qrySplit: TFDQuery;
-    qrySplitEntrantID: TIntegerField;
-    qrySplitSplitID: TFDAutoIncField;
-    qrySplitSplitTime: TTimeField;
+    qrySplitv1: TFDQuery;
+    qrySplitv1EntrantID: TIntegerField;
+    qrySplitv1SplitID: TFDAutoIncField;
+    qrySplitv1SplitTime: TTimeField;
     qrySwapEntrants: TFDQuery;
     qrySwapTeams: TFDQuery;
     qrySwimClub: TFDQuery;
@@ -161,7 +161,6 @@ type
     tblHouse: TFDTable;
     tblSessionStatus: TFDTable;
     tblStroke: TFDTable;
-    tblSwimmerCAT: TFDTable;
     TimeField1: TTimeField;
     TimeField2: TTimeField;
     TimeField3: TTimeField;
@@ -196,6 +195,17 @@ type
     dsDistance: TDataSource;
     qryCountTEAMNominee: TFDQuery;
     qryCountINDVNominee: TFDQuery;
+    tblParaCode: TFDTable;
+    dsParaCode: TDataSource;
+    tblParaCodeLink: TFDTable;
+    tblParalympicType: TFDTable;
+    dsParalympictype: TDataSource;
+    qryLane: TFDQuery;
+    dsLane: TDataSource;
+    dsSplitTime: TDataSource;
+    dsWatchTime: TDataSource;
+    qrySplitTime: TFDQuery;
+    qryWatchTime: TFDQuery;
     procedure DataModuleCreate(Sender: TObject);
     procedure qryEntrantAfterScroll(DataSet: TDataSet);
     procedure qryEntrantTIMEGetText(Sender: TField; var Text: string;
@@ -462,10 +472,13 @@ begin
     tblGender.Active := true;
     tblHeatType.Active := true;
     tblHeatStatus.Active := true;
-    tblDisqualifyCode.Active := true;
-    tblSwimmerCAT.Active := true;
+		tblDisqualifyCode.Active := true;
+		// Paralympic tables used by dbo.member and dbo.event
+		tblParaCode.Active := true;
+		tblParaCodeLink.Active := true;
+		tblParalympicType.Active := true;
 
-    qrySwimClub.Close;
+		qrySwimClub.Close;
     qrySwimClub.ParamByName('SWIMCLUBID').AsInteger := 1;
     qrySwimClub.Prepare;
     qrySwimClub.Open;
@@ -808,9 +821,14 @@ begin
   tblGender.Active := false;
   tblHeatType.Active := false;
   tblHeatStatus.Active := false;
-  tblDisqualifyCode.Active := false;
-  tblSwimmerCAT.Active := false;
-  qryFName.Active := false;
+	tblDisqualifyCode.Active := false;
+
+	// Paralympic tables used by dbo.member and dbo.event
+	tblParaCode.Active := false;
+	tblParaCodeLink.Active := false;
+	tblParalympicType.Active := false;
+
+qryFName.Active := false;
   qryFNameEllipse.Active := false;
   qryNominateEvent.Active := false;
   qryNominateMembers.Active := false;

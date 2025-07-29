@@ -69,7 +69,7 @@ object Preferences: TPreferences
     Top = 41
     Width = 728
     Height = 501
-    ActivePage = TabSheet3
+    ActivePage = tab1
     Align = alClient
     TabOrder = 2
     OnChanging = PageControl1Changing

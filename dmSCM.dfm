@@ -1,7 +1,7 @@
 object SCM: TSCM
   OnCreate = DataModuleCreate
-  Height = 748
-  Width = 1376
+  Height = 1071
+  Width = 1144
   object scmConnection: TFDConnection
     Params.Strings = (
       'ConnectionDef=MSSQL_SwimClubMeet')
@@ -159,13 +159,13 @@ object SCM: TSCM
       'JOIN Stroke ON Stroke.StrokeID = Event.StrokeID'
       'JOIN Distance ON Distance.DistanceID = Event.DistanceID'
       'ORDER BY Event.SessionID')
-    Left = 367
-    Top = 208
+    Left = 215
+    Top = 200
   end
   object dsNomateEvent: TDataSource
     DataSet = qryNominateEvent
-    Left = 447
-    Top = 208
+    Left = 319
+    Top = 200
   end
   object luHeatStatus: TDataSource
     DataSet = tblHeatStatus
@@ -271,8 +271,8 @@ object SCM: TSCM
       ''
       ''
       '')
-    Left = 48
-    Top = 376
+    Left = 80
+    Top = 848
     object qryEntrantHeatID: TIntegerField
       FieldName = 'HeatID'
       Origin = 'HeatID'
@@ -367,7 +367,6 @@ object SCM: TSCM
       DisplayWidth = 9
       FieldKind = fkLookup
       FieldName = 'luCategory'
-      LookupDataSet = tblSwimmerCAT
       LookupKeyFields = 'SwimmerCategoryID'
       LookupResultField = 'ABREV'
       KeyFields = 'CATID'
@@ -383,8 +382,8 @@ object SCM: TSCM
   end
   object dsEntrant: TDataSource
     DataSet = qryEntrant
-    Left = 112
-    Top = 376
+    Left = 144
+    Top = 848
   end
   object qrySession: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -750,7 +749,7 @@ object SCM: TSCM
       #9'AND Event.EventID = @EventID'
       'ORDER BY Member.LastName')
     Left = 744
-    Top = 584
+    Top = 544
     ParamData = <
       item
         Name = 'EVENTID'
@@ -762,7 +761,7 @@ object SCM: TSCM
   object dsFNameEllipse: TDataSource
     DataSet = qryFNameEllipse
     Left = 848
-    Top = 584
+    Top = 544
   end
   object qryNominee: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -785,20 +784,24 @@ object SCM: TSCM
       ''
       ''
       'SELECT [NomineeID]'
+      
+        '      ,[AGE] -- calculated as either StartOfSeason or SessionSta' +
+        'rt'
       '      ,[TTB]'
       '      ,[PB]'
       '      ,[SeedTime]'
       '      ,[AutoBuildFlag]'
       '      ,[EventID]'
       '      ,[MemberID]'
+      '      ,[SwimClubID]'
       '  FROM [dbo].[Nominee]')
-    Left = 368
-    Top = 264
+    Left = 352
+    Top = 256
   end
   object dsNominee: TDataSource
     DataSet = qryNominee
-    Left = 448
-    Top = 264
+    Left = 424
+    Top = 256
   end
   object qryCountHeatsNotClosed: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -816,8 +819,8 @@ object SCM: TSCM
       'SELECT        COUNT(HeatStatusID) AS CountStatus'
       'FROM            Heat'
       'WHERE        (EventID = @EventID ) AND (HeatStatusID < 3)')
-    Left = 1152
-    Top = 64
+    Left = 1000
+    Top = 168
     ParamData = <
       item
         Name = 'EVENTID'
@@ -842,8 +845,8 @@ object SCM: TSCM
       'SELECT        COUNT(EventStatusID) AS CountStatus'
       'FROM            Event'
       'WHERE        (SessionID = @SessionID ) AND (EventStatusID < 2)')
-    Left = 1152
-    Top = 128
+    Left = 1000
+    Top = 232
     ParamData = <
       item
         Name = 'SESSIONID'
@@ -854,13 +857,13 @@ object SCM: TSCM
   end
   object dsIsQualified: TDataSource
     DataSet = qryIsQualifiedALT
-    Left = 1304
-    Top = 176
+    Left = 1008
+    Top = 408
   end
   object luHouse: TDataSource
     DataSet = tblHouse
     Left = 848
-    Top = 640
+    Top = 600
   end
   object tblHouse: TFDTable
     ActiveStoredUsage = [auDesignTime]
@@ -871,7 +874,7 @@ object SCM: TSCM
     UpdateOptions.KeyFields = 'HouseID'
     TableName = 'SwimClubMeet..House'
     Left = 744
-    Top = 640
+    Top = 600
   end
   object qryNominateMembers: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -1092,8 +1095,8 @@ object SCM: TSCM
       #9'AND Qualify.StrokeID = @StrokeID'
       #9'AND Qualify.GenderID = #tblMember.GenderID'
       'AND IIF(#tblMember.TrialTimePB <= TrialTime, 1, 0) = 1')
-    Left = 1304
-    Top = 64
+    Left = 1008
+    Top = 296
     ParamData = <
       item
         Name = 'SESSIONSTART'
@@ -1246,8 +1249,8 @@ object SCM: TSCM
       #9'AND (Qualify.IsShortCourse = @IsShortCourse)'
       #9'AND (Qualify.GenderID = @GenderID)'
       'ORDER BY Entrant.RaceTime')
-    Left = 1304
-    Top = 120
+    Left = 1008
+    Top = 352
     ParamData = <
       item
         Name = 'QUALIFYDISTID'
@@ -1341,8 +1344,8 @@ object SCM: TSCM
         'ORDER BY CASE WHEN HeatNum IS NULL then 2 else 1 end, HeatNum AS' +
         'C;'
       '*/')
-    Left = 1088
-    Top = 544
+    Left = 1008
+    Top = 608
     ParamData = <
       item
         Name = 'HEATID'
@@ -1358,69 +1361,35 @@ object SCM: TSCM
     UpdateOptions.UpdateTableName = 'SwimClubMeet..SwimClub'
     UpdateOptions.KeyFields = 'SwimClubID'
     SQL.Strings = (
-      'Use SwimClubMeet;'
+      'SELECT [SwimClubID]'
+      '      ,[NickName]'
+      '      ,[Caption]'
+      '      ,[Email]'
+      '      ,[ContactNum]'
+      '      ,[WebSite]'
+      '      ,[HeatAlgorithm]'
+      '      ,[EnableTeamEvents]'
+      '      ,[EnableSwimOThon]'
+      '      ,[EnableExtHeatTypes]'
+      '      ,[EnableMembershipStr]'
+      '      ,[EnableSimpleDisqualification]'
+      '      ,[NumOfLanes]'
+      '      ,[NumOfSwimmersInTEAMS]'
+      '      ,[LenOfPool]'
+      '      ,[StartOfSwimSeason]'
+      '      ,[CreatedOn]'
+      '      ,[LogoDir]'
+      '      ,[LogoImg]'
+      '      ,[LogoType]'
+      '      ,[PoolTypeID]'
+      '      ,[SwimClubTypeID]'
+      '  FROM [dbo].[SwimClub];'
       ''
-      'DECLARE @SwimClubID AS INT;'
-      'SET @SwimClubID = :SWIMCLUBID;'
       ''
-      'DECLARE @Major AS INT;'
-      
-        'SET @Major = (SELECT Major FROM SwimClubMeet.dbo.SCMSystem WHERE' +
-        ' SCMSystemID = 1);'
-      'DECLARE @Minor AS INT;'
-      
-        'SET @Minor = (SELECT Major FROM SwimClubMeet.dbo.SCMSystem WHERE' +
-        ' SCMSystemID = 1);'
       ''
-      '-- Drop a temporary table called '#39'#TableName'#39
-      '-- Drop the table if it already exists'
-      'IF OBJECT_ID('#39'tempDB..#TempSCMSwimClub'#39', '#39'U'#39') IS NOT NULL'
-      'DROP TABLE #TempSCMSwimClub'
-      ';'
-      ''
-      '/* Get the data into a temp table */'
-      '    SELECT * INTO #TempSCMSwimClub'
-      '    FROM '
-      '    SwimClub WHERE @SwimClubID = @SwimClubID;'
-      ''
-      '/*'
-      'VERSION 1,1,5,0 AND 1,1,5,1 COMPATABILITY'
-      '*/'
-      ''
-      'IF (@Major = 5) AND ((@Minor = 0) OR (@Minor = 1))'
-      'BEGIN'
-      #9'/* Drop the columns that are not needed */'
-      #9'IF COL_LENGTH('#39'SwimClub'#39','#39'LogoDir'#39') IS NOT NULL'
-      #9'BEGIN'
-      #9'/* Column does exist */'
-      #9#9'ALTER TABLE #TempSCMSwimClub'
-      #9#9'DROP COLUMN LogoDir'
-      #9'END'
-      #9'IF COL_LENGTH('#39'SwimClub'#39','#39'LogoImg'#39') IS NOT NULL'
-      #9'BEGIN'
-      #9'/* Column does exist */'
-      #9#9'ALTER TABLE #TempSCMSwimClub'
-      #9#9'DROP COLUMN LogoImg'
-      #9'END'
-      #9'IF COL_LENGTH('#39'SwimClub'#39','#39'LogoType'#39') IS NOT NULL'
-      #9'BEGIN'
-      #9'/* Column does exist */'
-      #9#9'ALTER TABLE #TempSCMSwimClub'
-      #9#9'DROP COLUMN LogoType'
-      #9'END'
-      'END'
-      ''
-      'SELECT * from #TempSCMSwimClub;'
       '')
     Left = 48
     Top = 96
-    ParamData = <
-      item
-        Name = 'SWIMCLUBID'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = 1
-      end>
     object qrySwimClubSwimClubID: TFDAutoIncField
       FieldName = 'SwimClubID'
       Origin = 'SwimClubID'
@@ -1603,8 +1572,8 @@ object SCM: TSCM
       ''
       'SKIP:'
       '')
-    Left = 992
-    Top = 64
+    Left = 1000
+    Top = 32
     ParamData = <
       item
         Name = 'ENTRANTIDA'
@@ -1649,8 +1618,8 @@ object SCM: TSCM
         'FROM [Heat] INNER JOIN #tmpheat on [Heat].[EventID] = #tmpheat.[' +
         'EventID]'
       'WHERE [Heat].[HeatNum] = #tmpheat.HeatNum + 1;')
-    Left = 1064
-    Top = 456
+    Left = 1008
+    Top = 496
     ParamData = <
       item
         Name = 'HEATID'
@@ -1689,8 +1658,8 @@ object SCM: TSCM
         'FROM [Heat] INNER JOIN #tmpheat on [Heat].[EventID] = #tmpheat.[' +
         'EventID]'
       'WHERE [Heat].[HeatNum] = #tmpheat.HeatNum - 1;')
-    Left = 1160
-    Top = 456
+    Left = 1008
+    Top = 552
     ParamData = <
       item
         Name = 'HEATID'
@@ -1855,24 +1824,10 @@ object SCM: TSCM
     Left = 848
     Top = 472
   end
-  object tblSwimmerCAT: TFDTable
-    ActiveStoredUsage = [auDesignTime]
-    IndexFieldNames = 'SwimmerCategoryID'
-    Connection = scmConnection
-    ResourceOptions.AssignedValues = [rvEscapeExpand]
-    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
-    UpdateOptions.EnableDelete = False
-    UpdateOptions.EnableInsert = False
-    UpdateOptions.EnableUpdate = False
-    UpdateOptions.KeyFields = 'SwimmerCategoryID'
-    TableName = 'SwimClubMeet.dbo.SwimmerCategory'
-    Left = 744
-    Top = 528
-  end
-  object luSwimmerCAT: TDataSource
-    DataSet = tblSwimmerCAT
-    Left = 848
-    Top = 528
+  object dsParaCodeLink: TDataSource
+    DataSet = tblParaCodeLink
+    Left = 544
+    Top = 616
   end
   object qryTeam: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -1920,8 +1875,8 @@ object SCM: TSCM
       ''
       ''
       '')
-    Left = 272
-    Top = 376
+    Left = 304
+    Top = 848
     object qryTeamTeamID: TFDAutoIncField
       FieldName = 'TeamID'
       Origin = 'TeamID'
@@ -2003,8 +1958,8 @@ object SCM: TSCM
   end
   object dsTeam: TDataSource
     DataSet = qryTeam
-    Left = 328
-    Top = 376
+    Left = 360
+    Top = 848
   end
   object qryTeamEntrant: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -2068,8 +2023,8 @@ object SCM: TSCM
       ''
       ''
       '')
-    Left = 216
-    Top = 432
+    Left = 248
+    Top = 904
     object qryTeamEntrantTeamEntrantID: TFDAutoIncField
       FieldName = 'TeamEntrantID'
       Origin = 'TeamEntrantID'
@@ -2171,10 +2126,10 @@ object SCM: TSCM
   end
   object dsTeamEntrant: TDataSource
     DataSet = qryTeamEntrant
-    Left = 272
-    Top = 432
+    Left = 304
+    Top = 904
   end
-  object qrySplit: TFDQuery
+  object qrySplitv1: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'EntrantID'
     MasterSource = dsEntrant
@@ -2202,28 +2157,28 @@ object SCM: TSCM
       ''
       ''
       '')
-    Left = 48
-    Top = 432
-    object qrySplitSplitID: TFDAutoIncField
+    Left = 80
+    Top = 904
+    object qrySplitv1SplitID: TFDAutoIncField
       FieldName = 'SplitID'
       ProviderFlags = [pfInWhere, pfInKey]
       Visible = False
     end
-    object qrySplitEntrantID: TIntegerField
+    object qrySplitv1EntrantID: TIntegerField
       FieldName = 'EntrantID'
       Visible = False
     end
-    object qrySplitSplitTime: TTimeField
+    object qrySplitv1SplitTime: TTimeField
       Alignment = taRightJustify
       FieldName = 'SplitTime'
       DisplayFormat = 'nn:ss.zzz'
       EditMask = '!00:00.000;1;0'
     end
   end
-  object dsSplit: TDataSource
-    DataSet = qrySplit
-    Left = 112
-    Top = 432
+  object dsSplitv1: TDataSource
+    DataSet = qrySplitv1
+    Left = 144
+    Top = 904
   end
   object qrySwapTeams: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -2304,8 +2259,8 @@ object SCM: TSCM
       ''
       'SKIP:'
       '')
-    Left = 992
-    Top = 128
+    Left = 1000
+    Top = 96
     ParamData = <
       item
         Name = 'TEAMIDA'
@@ -2344,8 +2299,8 @@ object SCM: TSCM
       ''
       ''
       '')
-    Left = 328
-    Top = 432
+    Left = 360
+    Top = 904
     object qryTeamSplitTeamSplitID: TFDAutoIncField
       FieldName = 'TeamSplitID'
       Origin = 'TeamSplitID'
@@ -2365,8 +2320,8 @@ object SCM: TSCM
   end
   object dsTeamSplit: TDataSource
     DataSet = qryTeamSplit
-    Left = 384
-    Top = 432
+    Left = 416
+    Top = 904
   end
   object qryDistance: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -2388,13 +2343,13 @@ object SCM: TSCM
       #9#9',[Meters]'
       #9#9',[ABREV]'
       'FROM [dbo].[Distance] ')
-    Left = 192
-    Top = 280
+    Left = 216
+    Top = 256
   end
   object dsDistance: TDataSource
     DataSet = qryDistance
-    Left = 256
-    Top = 280
+    Left = 280
+    Top = 256
   end
   object qryCountTEAMNominee: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -2522,5 +2477,121 @@ object SCM: TSCM
         ParamType = ptInput
         Value = Null
       end>
+  end
+  object tblParaCode: TFDTable
+    IndexFieldNames = 'ParaCodeID'
+    Connection = scmConnection
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
+    UpdateOptions.UpdateTableName = 'SwimClubMeet.dbo.ParaCode'
+    UpdateOptions.KeyFields = 'ParaCodeID'
+    TableName = 'ParaCode'
+    Left = 432
+    Top = 560
+  end
+  object dsParaCode: TDataSource
+    DataSet = tblParaCode
+    Left = 544
+    Top = 560
+  end
+  object tblParaCodeLink: TFDTable
+    IndexFieldNames = 'MemberID;ParaCodeID'
+    Connection = scmConnection
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
+    UpdateOptions.UpdateTableName = 'SwimClubMeet.dbo.ParaCodeLink'
+    UpdateOptions.KeyFields = 'MemberID;ParaCodeID'
+    TableName = 'ParaCodeLink'
+    Left = 432
+    Top = 616
+  end
+  object tblParalympicType: TFDTable
+    IndexFieldNames = 'ParalympicTypeID'
+    Connection = scmConnection
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
+    UpdateOptions.UpdateTableName = 'SwimClubMeet.dbo.ParalympicType'
+    UpdateOptions.KeyFields = 'ParalympicTypeID'
+    TableName = 'ParalympicType'
+    Left = 432
+    Top = 672
+  end
+  object dsParalympictype: TDataSource
+    DataSet = tblParalympicType
+    Left = 544
+    Top = 672
+  end
+  object qryLane: TFDQuery
+    IndexFieldNames = 'HeatID'
+    MasterSource = dsHeat
+    MasterFields = 'HeatID'
+    DetailFields = 'HeatID'
+    Connection = scmConnection
+    UpdateOptions.UpdateTableName = 'SwimClubMeet.dbo.Lane'
+    UpdateOptions.KeyFields = 'LaneID'
+    SQL.Strings = (
+      'SELECT [LaneID]'
+      '      ,[LaneNum]'
+      '      ,[Lane].[RaceTime]'
+      '      ,[ClubRecord]'
+      '      ,[IsDisqualified]'
+      '      ,[IsScratched]'
+      '      ,[HeatID]'
+      '      ,[DisqualifyCodeID]'
+      '      ,[Lane].[TeamID]'
+      '      ,[Lane].[NomineeID]'
+      ''
+      '     , CASE'
+      '           WHEN [Lane].[NomineeID] IS NOT NULL THEN'
+      '               CONCAT('
+      '                        Member.FirstName'
+      '                       , '#39' '#39
+      '                       , UPPER(Member.LastName)'
+      '                     )'
+      '           WHEN [Lane].[TeamID] IS NOT NULL THEN'
+      '           Team.TeamName'
+      ''
+      '       END AS FullName'
+      '       , CASE'
+      ''
+      '           WHEN [Lane].[NomineeID] IS NOT NULL THEN'
+      '               CONCAT('
+      '                         FORMAT(Nominee.AGE, '#39'00'#39')'
+      '                       , '#39'.'#39
+      
+        '                       , dbo.SwimmerGenderToString(Nominee.Membe' +
+        'rID)'
+      '                     )'
+      '           WHEN [Lane].[TeamID] IS NOT NULL THEN'
+      '           Team.ABBREV'
+      ''
+      '       END AS Stat'
+      '       '
+      '  FROM [dbo].[Lane]'
+      '  LEFT JOIN Nominee ON Lane.NomineeID = Nominee.NomineeID'
+      '  LEFT JOIN [Member] ON Nominee.MemberID = [Member].Memberid'
+      '  LEFT JOIN [Team] ON Lane.Teamid = Team.teamid')
+    Left = 48
+    Top = 376
+  end
+  object dsLane: TDataSource
+    DataSet = qryLane
+    Left = 112
+    Top = 376
+  end
+  object dsSplitTime: TDataSource
+    Left = 216
+    Top = 376
+  end
+  object dsWatchTime: TDataSource
+    Left = 296
+    Top = 376
+  end
+  object qrySplitTime: TFDQuery
+    Connection = scmConnection
+    Left = 376
+    Top = 376
+  end
+  object qryWatchTime: TFDQuery
+    Connection = scmConnection
+    Left = 456
+    Top = 376
   end
 end
