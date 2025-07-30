@@ -88,7 +88,8 @@ uses
   dlgABRelay in 'AUTOBUILD\dlgABRelay.pas' {ABRelay},
   dlgExportSessionJSON in 'EXPORT\dlgExportSessionJSON.pas' {ExportSessionJSON},
   XSuperJSON in '..\x-superobject\XSuperJSON.pas',
-  XSuperObject in '..\x-superobject\XSuperObject.pas';
+  XSuperObject in '..\x-superobject\XSuperObject.pas',
+  dmAutoBuildV2 in 'dmAutoBuildV2.pas' {AutoBuildV2: TDataModule};
 
 {$R *.res}
 
