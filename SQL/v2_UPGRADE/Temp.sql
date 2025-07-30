@@ -1,116 +1,131 @@
 USE [SwimClubMeet]
 go
 
--- Standard Alter Table SQL
+-- Role Alter SQL
 
-ALTER TABLE dbo.Entrant
-ALTER COLUMN HeatID int NULL
+CREATE ROLE SCM_Guest AUTHORIZATION dbo
 go
-ALTER TABLE dbo.Entrant
-ALTER COLUMN MemberID int NULL
+CREATE ROLE SCM_Administrator AUTHORIZATION dbo
 go
-ALTER TABLE dbo.Entrant
-ALTER COLUMN SwimClubID int NULL
+CREATE ROLE SCM_Marshall AUTHORIZATION dbo
 go
 
--- Drop Referencing Constraint SQL
+-- Alter Procedure SQL
 
-ALTER TABLE dbo.SplitTime DROP CONSTRAINT FK_LaneSplit
+GRANT EXECUTE ON dbo.IsMemberQualified TO SCM_Administrator
 go
-ALTER TABLE dbo.WatchTime DROP CONSTRAINT FK_LaneWatchTime
+GRANT EXECUTE ON dbo.IsMemberQualified TO SCM_Guest
 go
+GRANT EXECUTE ON dbo.IsMemberQualified TO SCM_Marshall
+go
+EXEC sp_rename 'EntrantScore','EntrantSco_07302025052956000',OBJECT
+go
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 
--- Drop Constraint, Rename and Create Table SQL
-
-EXEC sp_rename 'dbo.Lane.PK_Lane','PK_Lane_07292025020116001','INDEX'
-go
-EXEC sp_rename 'dbo.FK_LaneNominee','FK_LaneNom_07292025020116002'
-go
-EXEC sp_rename 'dbo.FK_LaneHeat','FK_LaneHea_07292025020116003'
-go
-EXEC sp_rename 'dbo.FK_LaneDq','FK_LaneDq_07292025020116004'
-go
-EXEC sp_rename 'dbo.FK_LaneTeam','FK_LaneTea_07292025020116005'
-go
-EXEC sp_rename 'dbo.Lane','Lane_07292025020116000',OBJECT
-go
-CREATE TABLE dbo.Lane
+-- =============================================
+-- Author:		Ben Ambrose
+-- Create date: 28/08/2022
+-- Modified on: 30/07/2025
+-- Description:	Get the entrants score for a given place.
+-- =============================================
+CREATE FUNCTION [dbo].[EntrantScore] 
 (
-    LaneID           int      IDENTITY,
-    LaneNum          int      NULL,
-    RaceTime         time(7)  NULL,
-    ClubRecord       time(7)  NULL,
-    IsDisqualified   bit      NULL,
-    IsScratched      bit      NULL,
-    HeatID           int      NULL,
-    DisqualifyCodeID int      NULL,
-    TeamID           int      NULL,
-    NomineeID        int      NULL
+	@NomineeID int, 
+	@Place int
 )
-ON [PRIMARY]
-go
+RETURNS float
+AS
+BEGIN
+	DECLARE @Result float;
 
--- Insert Data SQL
+	WITH CTE_POINTS (NomineeID, Points) 
+	AS (
 
-SET IDENTITY_INSERT dbo.Lane ON
-go
-INSERT INTO dbo.Lane(
-                     LaneID,
-                     LaneNum,
-                     RaceTime,
-                     ClubRecord,
-                     IsDisqualified,
-                     IsScratched,
-                     HeatID,
-                     DisqualifyCodeID,
-                     TeamID,
-                     NomineeID
-                    )
-              SELECT 
-                     LaneID,
-                     LaneNum,
-                     RaceTime,
-                     ClubRecord,
-                     IsDisqualified,
-                     IsScratched,
-                     HeatID,
-                     DisqualifyCodeID,
-                     TeamID,
-                     NomineeID
-                FROM dbo.Lane_07292025020116000 
-go
-SET IDENTITY_INSERT dbo.Lane OFF
-go
+	SELECT NomineeID,
+		   CASE
+			   WHEN (RaceTime IS NULL) OR (IsDisqualified = 1) OR (IsScratched = 1) THEN 0
+			   ELSE
+				   ScorePoints.Points
+		   END AS Points
+	FROM Lane
+		INNER JOIN ScorePoints
+			ON ScorePoints.Place = @Place
+	WHERE NomineeID = @NomineeID)
 
--- Add Constraint SQL
+	SELECT @Result = (SELECT Points FROM CTE_POINTS);
 
-ALTER TABLE dbo.Lane ADD CONSTRAINT PK_Lane
-PRIMARY KEY CLUSTERED (LaneID)
-go
+	RETURN @Result
 
--- Add Referencing Foreign Keys SQL
+END
+GO
+go
+IF OBJECT_ID('dbo.EntrantScore') IS NOT NULL
+     DROP FUNCTION dbo.EntrantSco_07302025052956000
+ELSE 
+     EXEC sp_rename 'EntrantSco_07302025052956000','EntrantScore',OBJECT
+go
+GRANT EXECUTE ON dbo.EntrantScore TO SCM_Administrator
+go
+GRANT EXECUTE ON dbo.EntrantScore TO SCM_Guest
+go
+GRANT EXECUTE ON dbo.EntrantScore TO SCM_Marshall
+go
+GRANT EXECUTE ON dbo.EntrantScore TO SCM_Administrator
+go
+GRANT EXECUTE ON dbo.EntrantScore TO SCM_Guest
+go
+GRANT EXECUTE ON dbo.EntrantScore TO SCM_Marshall
+go
+SET QUOTED_IDENTIFIER OFF
+go
+SET ANSI_NULLS OFF
+go
+IF EXISTS (select * from syscomments where id = object_id('dbo.EventGenderType') and texttype & 4 = 0)
+BEGIN
+    DROP FUNCTION dbo.EventGenderType
+    IF OBJECT_ID('dbo.EventGenderType') IS NOT NULL
+        PRINT '<<< FAILED DROPPING FUNCTION dbo.EventGenderType >>>'
+    ELSE
+        PRINT '<<< DROPPED FUNCTION dbo.EventGenderType >>>'
+END
+go
+CREATE FUNCTION dbo.EventGenderType(@AEventID INT)
+RETURNS INT
+AS
+BEGIN
+    DECLARE @boysCount INT = 0;
+    DECLARE @girlsCount INT = 0;
 
-ALTER TABLE dbo.SplitTime ADD CONSTRAINT FK_LaneSplit
-FOREIGN KEY (LaneID)
-REFERENCES dbo.Lane (LaneID)
+    -- Single query to get both boys and girls count
+    SELECT
+        @boysCount = SUM(CASE WHEN M.GenderID = 1 THEN 1 ELSE 0 END),
+        @girlsCount = SUM(CASE WHEN M.GenderID = 2 THEN 1 ELSE 0 END)
+    FROM [SwimClubMeet].[dbo].[Event] E
+    INNER JOIN Heat HI ON E.EventID = HI.EventID
+    INNER JOIN Entrant En ON HI.HeatID = En.HeatID
+    INNER JOIN Member M ON En.MemberID = M.MemberID
+    WHERE E.EventID = @AEventID;
+
+    -- Determine the result based on counts
+    IF @boysCount > 0 AND @girlsCount > 0
+        RETURN 0; -- Both boys and girls event
+    ELSE IF @boysCount > 0
+        RETURN 1; -- Boys only event
+    ELSE IF @girlsCount > 0
+        RETURN -1; -- Girls only event
+    ELSE
+        RETURN 0; -- Default case, should not happen if data is consistent
+END
 go
-ALTER TABLE dbo.WatchTime ADD CONSTRAINT FK_LaneWatchTime
-FOREIGN KEY (LaneID)
-REFERENCES dbo.Lane (LaneID)
+IF OBJECT_ID('dbo.EventGenderType') IS NOT NULL
+    PRINT '<<< CREATED FUNCTION dbo.EventGenderType >>>'
+ELSE
+    PRINT '<<< FAILED CREATING FUNCTION dbo.EventGenderType >>>'
 go
-ALTER TABLE dbo.Lane ADD CONSTRAINT FK_LaneNominee
-FOREIGN KEY (NomineeID)
-REFERENCES dbo.Nominee (NomineeID)
+SET ANSI_NULLS OFF
 go
-ALTER TABLE dbo.Lane ADD CONSTRAINT FK_LaneHeat
-FOREIGN KEY (HeatID)
-REFERENCES dbo.Heat (HeatID)
-go
-ALTER TABLE dbo.Lane ADD CONSTRAINT FK_LaneDq
-FOREIGN KEY (DisqualifyCodeID)
-REFERENCES dbo.DisqualifyCode (DisqualifyCodeID)
-go
-ALTER TABLE dbo.Lane ADD CONSTRAINT FK_LaneTeam
-FOREIGN KEY (TeamID)
-REFERENCES dbo.Team (TeamID)
+SET QUOTED_IDENTIFIER OFF
 go
