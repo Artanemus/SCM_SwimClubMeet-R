@@ -972,7 +972,7 @@ begin
   qryInsertEvent.Execute();
   { TODO -oBSA -cGeneral : Check new Scalar function. }
   // How To Get Last Inserted ID On SQL Server for a specific table.
-  s := 'SELECT IDENT_CURRENT(''SwimClubMeet.dbo.Event'') AS LastID;';
+  s := 'SELECT IDENT_CURRENT(''SwimClubMeet2.dbo.Event'') AS LastID;';
   // return EventID
   result := SCM.scmConnection.ExecSQLScalar(s);
 end;

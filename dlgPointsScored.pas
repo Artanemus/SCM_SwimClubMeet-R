@@ -284,7 +284,7 @@ var
   success: boolean;
   scorePoints: double;
 begin
-  // populate visible edit boxes with data from SwimClubMeet table Score.
+  // populate visible edit boxes with data from SwimClubMeet2 table Score.
   // if data doesn't exist then skip...
   for i := 0 to fMaxEDTM do
   begin

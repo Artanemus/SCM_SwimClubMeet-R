@@ -215,7 +215,7 @@ begin
   if not Assigned(fConnection) then exit;  // no connection
   sl := TStringList.Create;
   // Legal, qryEvent has master..child relationship with dsSession.
-  sl.Add('USE [SwimClubMeet]; ');
+  sl.Add('USE [SwimClubMeet2]; ');
   sl.Add('SELECT [TeamSplitID], [LapNum] FROM [dbo].[TeamSplit] ');
   sl.Add('WHERE [TeamID] = ' + IntToStr(aTeamID));
   sl.Add(' ORDER BY [LapNum];');
@@ -224,7 +224,7 @@ begin
   qry.Connection := fConnection;
   qry.SQL := sl;
   qry.UpdateOptions.KeyFields := 'TeamSplitID';
-  qry.UpdateOptions.UpdateTableName := 'SwimClubMeet..TeamSplit';
+  qry.UpdateOptions.UpdateTableName := 'SwimClubMeet2..TeamSplit';
   qry.Open;
   if (qry.Active) then
   begin
@@ -257,7 +257,7 @@ begin
   aTeamSlitID := dsTeamSplit.DataSet.FieldByName('TeamSplitID').AsInteger;
 //  dsTeamSplit.DataSet.CheckBrowseMode;
   dsTeamSplit.DataSet.DisableControls;
-  SQL := 'DELETE FROM SwimClubMeet.dbo.TeamSplit WHERE TeamSplit.TeamSplitID = :ID';
+  SQL := 'DELETE FROM SwimClubMeet2.dbo.TeamSplit WHERE TeamSplit.TeamSplitID = :ID';
   fConnection.ExecSQL(SQL, [aTeamSlitID]);
   dsTeamSplit.DataSet.EnableControls;
   dsTeamSplit.DataSet.Refresh;

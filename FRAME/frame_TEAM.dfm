@@ -308,7 +308,6 @@ object frameTEAM: TframeTEAM
         Margins.Bottom = 2
         Align = alClient
         BorderStyle = bsNone
-        DataSource = SCM.dsTeamEntrant
         DefaultDrawing = False
         TabOrder = 0
         TitleFont.Charset = DEFAULT_CHARSET

@@ -574,22 +574,24 @@ procedure TMain.Heat_AutoBuildRelayExecute(Sender: TObject);
 var
   i, rtnValue: Integer;
   dlg: TABRelay;
-  ABRelay: TABRelayExec;
+	ABRelay: TABRelayExec;
+	s: string;
 begin
   // NOTE: actn..Update determines if this routine is accessable.
   { Count number of nominees (swimmers) for event.
     Exclude entrants (swimmers) in RACED or CLOSED heats.
-    INCLUDE nominees (swimmers) in OPEN heats.
+		INCLUDE entrants (swimmers) in OPEN heats.
     INCLUDE pooled nominees (swimmers) not assigned a lane to the event.
     }
   i := SCM.CountTEAMNominee();
   if (i = 0) then
-  begin
-    MessageDlg('''
-    No available nominees were found for this event.
-    Note: nominees (swimmers) in closed or raced heats are excluded.
-    Auto-Build TEAM-RELAYs was aborted.
-    ''', mtError, [mbOK], 0, mbOK);
+	begin
+		s := '''
+			No available nominees were found for this event.
+			Note: Closed or raced heats are always preserved and excluded from auto-builds.
+			Auto-Build relays was aborted.
+			''';
+		MessageDlg(s,	mtError, [mbOK], 0, mbOK);
     exit;
   end;
   {open the RELAY_TEAM dialogue.}
@@ -606,22 +608,14 @@ begin
   ABRelay.ExecAutoBuildRelay();
   if ABRelay.Success then
   begin
-    SCM.qryTeamEntrant.DisableControls;
-    SCM.qryTeam.DisableControls;
-    SCM.qryHeat.DisableControls;
-    SCM.qryTeamEntrant.Close;
-    SCM.qryTeam.Close;
-    SCM.qryHeat.Close;
-    SCM.qryHeat.Open;
-    SCM.qryTeam.Open;
-    SCM.qryTeamEntrant.Open;
-    SCM.qryHeat.EnableControls;
-    SCM.qryTeamEntrant.EnableControls;
-    SCM.qryTeam.EnableControls;
+		SCM.qryTeam.DisableControls;
+		SCM.qryHeat.DisableControls;
+		{TODO -oBSA -cV2 : Perform apply master in ExecAutorelay}
+		SCM.qryHeat.ApplyMaster;
+		SCM.qryTeam.ApplyMaster;
+		SCM.qryHeat.EnableControls;
+		SCM.qryTeam.EnableControls;
 
-//    Refresh_Heat;
-//    Refresh_IndvTeam;
-//
     // Requery SCM.qryEvent to update entrant count.
     PostMessage(Handle, SCM_UPDATEENTRANTCOUNT, 0, 0);
     // Set flag for statusbar update.
@@ -685,12 +679,12 @@ begin
           begin
             if not SCM.dsTeam.DataSet.IsEmpty then
             begin
-              if not SCM.dsTeamEntrant.DataSet.IsEmpty then
-                if TEAM.TeamActiveGrid = 2 then
-                  // Need a relay in a lane to be able to clear it....
-                  if not SCM.dsTeamEntrant.DataSet.FieldByName('MemberID').IsNull
-                  then DoEnable := true;
-            end;
+//              if not SCM.dsTeamEntrant.DataSet.IsEmpty then
+//                if TEAM.TeamActiveGrid = 2 then
+//                   Need a relay in a lane to be able to clear it....
+//                  if not SCM.dsTeamEntrant.DataSet.FieldByName('MemberID').IsNull
+//                  then DoEnable := true;
+						end;
           end;
         end;
   TAction(Sender).Enabled := DoEnable;
@@ -711,14 +705,14 @@ begin
         if not SCM.Heat_IsClosed then
         begin
           aEventType := SCM.GetEventType;
-          if aEventType = etTEAM then
-          begin
-            if not SCM.dsTeam.DataSet.IsEmpty then
-            begin
-              if TEAM.TeamActiveGrid = 2 then
-                if not SCM.dsTeamEntrant.DataSet.IsEmpty then DoEnable := true;
-            end;
-          end;
+					if aEventType = etTEAM then
+					begin
+						if not SCM.dsTeam.DataSet.IsEmpty then
+						begin
+//							if TEAM.TeamActiveGrid = 2 then
+//								if not SCM.dsTeamEntrant.DataSet.IsEmpty then DoEnable := true;
+						end;
+					end;
         end;
   TAction(Sender).Enabled := DoEnable;
 end;
@@ -1032,9 +1026,11 @@ begin
   HasClosedHeats := SCM.Event_HasClosedHeats(aEventID);
   HasRacedHeats := SCM.Event_HasRacedHeats(aEventID);
   if HasClosedHeats then
-  begin
-    SQL := 'Unable to delete the event ';
-    SQL := SQL + SCM.dsEvent.DataSet.FieldByName('EventStr').AsString +
+	begin
+
+		SQL := 'Unable to delete the event ';
+
+    SQL := SQL + SCM.dsEvent.DataSet.FieldByName('ShortCaption').AsString +
       sLineBreak;
     SQL := SQL + 'as the event includes ''closed'' heats.';
     MessageDlg(SQL, mtError, [mbOK], 0, mbOK);
@@ -1055,9 +1051,9 @@ begin
   end;
 
   // 2 .  C o n f i r m   d e l e t i o n .
-  // --------------------------------------------------------
+	// --------------------------------------------------------
   SQL := 'Delete event?';
-  SQL := SQL + SCM.dsEvent.DataSet.FieldByName('EventStr').AsString +
+	SQL := SQL + SCM.dsEvent.DataSet.FieldByName('ShortCaption').AsString +
     sLineBreak;
   if (HasRacedHeats) then
       SQL := SQL + 'Including all (open or raced) heats, entrant and nomination data?'
@@ -1547,7 +1543,7 @@ begin
   // to the FireDAC connection definition file
   // -----------------------------------------------------------
   aBasicLogin := TBasicLogin.Create(self);
-  aBasicLogin.DBName := 'SwimClubMeet';
+	aBasicLogin.DBName := 'SwimClubMeet2';
   aBasicLogin.DBConnection := SCM.scmConnection;
   result := aBasicLogin.ShowModal;
   aBasicLogin.Free;
@@ -1698,7 +1694,7 @@ begin
       MessageDlg('The swimming club hasn''t been defined!' + sLineBreak +
         'Run the utility, SCM_BuildMeAClub, with the supplied SQL' + sLineBreak
         + 'creation scripts to build your club.' + sLineBreak +
-        'For more information, refer to the SwimClubMeet help files.', mtError,
+        'For more information, refer to the SwimClubMeet2 help files.', mtError,
         [mbOK], 0, mbOK);
       // with the page control hidden - this message will appear
       pnlPageControl.Caption := 'ERROR: The swimming club is undefined!';
@@ -1719,23 +1715,23 @@ begin
   Session_GRid.DataSource := SCM.dsSession;
   Event_Grid.DataSource := SCM.dsEvent;
   Nominate_Grid.DataSource := SCM.dsNominateMembers;
-  INDV.Grid.DataSource := SCM.dsEntrant;
-  TEAM.Grid.DataSource := SCM.dsTeam;
-  TEAM.GridEntrant.DataSource := SCM.dsTeamEntrant;
+	INDV.Grid.DataSource := SCM.dsLane;
+	TEAM.Grid.DataSource := SCM.dsLane;
+//  TEAM.GridEntrant.DataSource := SCM.dsTeamEntrant;
 
   // L I N K   T D B T e x t
   dbtxtSwimClubCaption.DataSource := SCM.dsSwimClub;
   dbtxtSwimClubNickName.DataSource := SCM.dsSwimClub;
-  dbtxtDebugEntrant.DataSource := SCM.dsEntrant;
+	dbtxtDebugEntrant.DataSource := SCM.dsLane;
   dbtxtDebugSwimClub.DataSource := SCM.dsSwimClub;
   dbtxtDebugSession.DataSource := SCM.dsSession;
   dbtxtDebugEvent.DataSource := SCM.dsEvent;
   dbtxtDebugHeat.DataSource := SCM.dsHeat;
-  dbtxtDebugMember.DataSource := SCM.dsEntrant;
+	dbtxtDebugMember.DataSource := SCM.dsLane;
   dbtxtDebugNominee.DataSource := SCM.dsNominee;
   dbtxtDebugEventType.DataSource := SCM.dsEvent;
   dbtxtDebugTeam.DataSource := SCM.dsTeam;
-  dbtxtDebugTeamEntrant.DataSource := SCM.dsTeamEntrant;
+//  dbtxtDebugTeamEntrant.DataSource := SCM.dsTeamEntrant;
   dbtxtEventCaption.DataSource := SCM.dsEvent;
   dbtxtNominateFullName.DataSource := SCM.dsNominateMembers;
   // LINK EVENT NAVIGATOR
@@ -2027,60 +2023,39 @@ begin
       if not SCM.dsHeat.DataSet.IsEmpty then
         // is the current heat closed?
         if not SCM.Heat_IsClosed then
-        begin
-          aEventType := SCM.GetEventType;
-          if aEventType = etINDV then
-          begin
-            if not SCM.dsEntrant.DataSet.IsEmpty then DoEnable := true;
-          end
-          else if aEventType = etTEAM then
-          begin
-            if not SCM.dsTeam.DataSet.IsEmpty then
-            begin
-              // Need a relay in a lane to be able to clear it....
-              if not SCM.dsTeam.DataSet.FieldByName('TeamNameID').IsNull then
-                  DoEnable := true;
-            end;
-          end;
-        end;
-  TAction(Sender).Enabled := DoEnable;
+				begin
+					// BSA V2: do we have lanes?
+					if not SCM.dslane.DataSet.IsEmpty then DoEnable := true;
+				end;
+	TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.Grid_MoveDownExecute(Sender: TObject);
 var
-  aEventType: scmEventType;
+	aEventType: scmEventType;
 begin
-  aEventType := SCM.GetEventType;
-  if aEventType = etINDV then INDV.GridMoveDown(Sender)
-  else if aEventType = etTEAM then TEAM.GridMoveDown(Sender);
+	aEventType := SCM.GetEventType;
+	if aEventType = etINDV then INDV.GridMoveDown(Sender)
+	else if aEventType = etTEAM then TEAM.GridMoveDown(Sender);
 end;
 
 procedure TMain.Grid_MoveDownUpdate(Sender: TObject);
 var
-  DoEnable: boolean;
-  aEventType: scmEventType;
+	DoEnable: boolean;
+	aEventType: scmEventType;
 begin
-  DoEnable := false;
-  if AssertConnection then
-    // Checks if session is Empty. Then checks if locked..
-    if not SCM.Session_IsLocked then
-      // are there any heats?
-      if not SCM.dsHeat.DataSet.IsEmpty then
-        // is the current heat closed?
-        if not SCM.Heat_IsClosed then
-        begin
-          aEventType := SCM.GetEventType;
-          if aEventType = etINDV then
-          begin
-            // is there any entrants?
-            if not SCM.dsEntrant.DataSet.IsEmpty then DoEnable := true;
-          end
-          else if aEventType = etTEAM then
-          begin
-            // is there any Relays?
-            if not SCM.dsTeam.DataSet.IsEmpty then DoEnable := true;
-          end;
-        end;
+	DoEnable := false;
+	if AssertConnection then
+		// Checks if session is Empty. Then checks if locked..
+		if not SCM.Session_IsLocked then
+			// Are there any heats?
+			if not SCM.dsHeat.DataSet.IsEmpty then
+				// Is the current heat closed?
+				if not SCM.Heat_IsClosed then
+				begin
+					// BSA V2: do we have lanes?
+					if not SCM.dslane.DataSet.IsEmpty then DoEnable := true;
+				end;
   TAction(Sender).Enabled := DoEnable;
 end;
 
@@ -2107,18 +2082,9 @@ begin
         // is the current heat closed?
         if not SCM.Heat_IsClosed then
         begin
-          aEventType := SCM.GetEventType;
-          if aEventType = etINDV then
-          begin
-            // is there any entrants?
-            if not SCM.dsEntrant.DataSet.IsEmpty then DoEnable := true;
-          end
-          else if aEventType = etTEAM then
-          begin
-            // is there any Relays?
-            if not SCM.dsTeam.DataSet.IsEmpty then DoEnable := true;
-          end;
-        end;
+					// BSA V2: do we have lanes?
+					if not SCM.dslane.DataSet.IsEmpty then DoEnable := true;
+				end;
   TAction(Sender).Enabled := DoEnable;
 end;
 
@@ -2143,8 +2109,8 @@ begin
       if not SCM.dsHeat.DataSet.IsEmpty then
         // is the current heat closed?
         if not SCM.Heat_IsClosed then
-          // is there any entrants?
-          if not SCM.dsEntrant.DataSet.IsEmpty then DoEnable := true;
+          // BSA V2: are there lanes?
+					if not SCM.dsLane.DataSet.IsEmpty then DoEnable := true;
   TAction(Sender).Enabled := DoEnable;
 end;
 
@@ -2187,24 +2153,10 @@ begin
       if not SCM.dsHeat.DataSet.IsEmpty then
         // is the current heat closed?
         if not SCM.Heat_IsClosed then
-        begin
-          aEventType := SCM.GetEventType;
-          if aEventType = etINDV then
-          begin
-            // is there any entrants?
-            if not SCM.dsEntrant.DataSet.IsEmpty then DoEnable := true;
-          end
-          else if aEventType = etTEAM then
-          begin
-            // Do we have any relay teams?
-            if not SCM.dsTeam.DataSet.IsEmpty then
-            begin
-              // Need a relay in a lane to be able to strike it....
-              if not SCM.dsTeam.DataSet.FieldByName('TeamNameID').IsNull then
-                  DoEnable := true;
-            end;
-          end;
-        end;
+				begin
+					// BSA V2: are there lanes?
+					if not SCM.dsLane.DataSet.IsEmpty then DoEnable := true;
+				end;
   TAction(Sender).Enabled := DoEnable;
 end;
 
@@ -2245,9 +2197,9 @@ begin
       if not SCM.dsHeat.DataSet.IsEmpty then
         // is the current heat closed?
         if not SCM.Heat_IsClosed then
-          // is there any entrants?
-          if not SCM.dsEntrant.DataSet.IsEmpty then DoEnable := true;
-  TAction(Sender).Enabled := DoEnable;
+					// BSA V2: do we have lanes?
+					if not SCM.dslane.DataSet.IsEmpty then DoEnable := true;
+	TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.HeatControlListBeforeDrawItem(AIndex: integer; ACanvas: TCanvas;
@@ -2369,6 +2321,7 @@ var
 	dlg2: TCheck_DOB_Gender;
 	success, IsErronous: boolean;
 	EventID, rtnValue: integer;
+	s: string;
 begin
   // A U T O - B U I L D   R E L A Y   TE A M .
   if SCM.GetEventType = etTEAM then
@@ -2385,9 +2338,12 @@ begin
   // nominees placed and un-placed ... ignoring open,raced,closed heat
   // status.
   if not SCM.Event_HasNominees(EventID) then
-  begin
-    MessageDlg('No one has been nominated for this event.' + sLineBreak +
-      'Auto-Build Heats was aborted.', mtError, [mbOK], 0, mbOK);
+	begin
+		s := '''
+			No one has been nominated for this event.
+			Auto-Build Heats was aborted.
+			''';
+		MessageDlg(s, mtError, [mbOK], 0, mbOK);
     exit;
   end;
 
@@ -2405,7 +2361,7 @@ begin
 
   // DISABLE CONTROLS
 	SCM.dsNominee.DataSet.DisableControls;
-	SCM.dsEntrant.DataSet.DisableControls;
+	SCM.dsLane.DataSet.DisableControls;
 	SCM.dsHeat.DataSet.DisableControls;
 	// Check for bad DOB and GENDER.
 	dlg2 := TCheck_DOB_Gender.Create(Self);
@@ -2440,7 +2396,7 @@ begin
 
 	// ENABLE CONTROLS
 	SCM.dsHeat.DataSet.EnableControls;
-	SCM.dsEntrant.DataSet.EnableControls;
+	SCM.dsLane.DataSet.EnableControls;
 	SCM.dsNominee.DataSet.DisableControls;
 
   if HeatControlList.CanFocus then HeatControlList.SetFocus;
@@ -2472,12 +2428,12 @@ var
   dlg: TAutoBuildPref;
   dmv2: TAutoBuildV2;
   rtnValue: TModalResult;
-  aEventType: scmEventType;
+	aEventType: scmEventType;
 begin
   success := false;
   passed := false;
   errCount := 0;
-
+	{TODO -oBSA -cV2 : Moves all this into seperate unit.}
   // TActionUpdate determines access to this routine.
   // DISPLAY AUTO-BUILD CONFIGURATION DIALOGUE
   dlg := TAutoBuildPref.Create(self);
@@ -2497,71 +2453,77 @@ begin
     on E: Exception do exit;
   end;
 
-  // disable core tables
-  SCM.dsEvent.DataSet.DisableControls;
+	// disable core tables
+	SCM.dsEvent.DataSet.DisableControls;
   SCM.dsHeat.DataSet.DisableControls;
-  SCM.dsEntrant.DataSet.DisableControls;
+	SCM.dsLane.DataSet.DisableControls;
+	try
+		begin
+			SCM.dsEvent.DataSet.First;
+			while not Eof do
+			// iterate over the events ...
+			begin
+				// Is the EVENT CLOSED?
+				if (SCM.dsEvent.DataSet.FieldByName('EventStatusID').AsInteger = 2) then
+				begin
+					SCM.dsEvent.DataSet.Next;
+					continue;
+				end;
+				// Is this a TEAM EVENT?
+				// 20231008 currently Auto-Build is not available for TEAMS
+				aEventType := SCM.GetEventType(SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger);
+				if (aEventType = etTEAM) then
+				begin
+					SCM.dsEvent.DataSet.Next;
+					continue;
+				end;
+				// 2023.02.16
+				// DELETE HEATS ...  For current event. Only open heats are deleted.
+				SCM.Heat_DeleteALL(SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger, true);
+				// QUICK TEST - Do we have NOMINEES?
+				if not SCM.Event_HasNominees(SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger) then
+				begin
+					SCM.dsEvent.DataSet.Next;
+					continue;
+				end;
+				// SCM.dsHeat.DataSet must be sent to Auto-Build - else errors.
+				// ***************************************************************
+				// Verbose OFF for BATCH Auto-Build Heats
+				success := dmv2.AutoBuildExecute(SCM.dsHeat.DataSet,
+					SCM.dsEvent.DataSet.FieldByName('EventID').AsInteger, false);
+				if not success then Inc(errCount);
 
-  with SCM.dsEvent.DataSet do
-  begin
-    First;
-    while not Eof do
-    // iterate over the events ...
-    begin
-      // Is the EVENT CLOSED?
-      if (FieldByName('EventStatusID').AsInteger = 2) then
-      begin
-        Next;
-        continue;
-      end;
-      // Is this a TEAM EVENT?
-      // 20231008 currently Auto-Build is not available for TEAMS
-      aEventType := SCM.GetEventType(FieldByName('EventID').AsInteger);
-      if (aEventType = etTEAM) then
-      begin
-        Next;
-        continue;
-      end;
-      // 2023.02.16
-      // DELETE HEATS ...  For current event. Only open heats are deleted.
-      SCM.Heat_DeleteALL(FieldByName('EventID').AsInteger, true);
-      // QUICK TEST - Do we have NOMINEES?
-      if not SCM.Event_HasNominees(FieldByName('EventID').AsInteger) then
-      begin
-        Next;
-        continue;
-      end;
-      // SCM.dsHeat.DataSet must be sent to Auto-Build - else errors.
-      // ***************************************************************
-      // Verbose OFF for BATCH Auto-Build Heats
-      success := dmv2.AutoBuildExecute(SCM.dsHeat.DataSet,
-        FieldByName('EventID').AsInteger, false);
-      if not success then Inc(errCount);
+				SCM.dsEvent.DataSet.Next; // LOOP
+			end;
+		end;
+	finally
+		if (errCount = 0) then passed := true;
 
-      Next; // LOOP
-    end;
-  end;
+		// clean-up memory
+		dmv2.Free;
 
-  if (errCount = 0) then passed := true;
+		// REFRESH ...
+		// NOTE: DataSet.Refresh not used.
+		// BSA V2: Move apply master into Auto Build routine
+		SCM.qryEvent.ApplyMaster;
+		SCM.qryHeat.ApplyMaster;
+		SCM.qryLane.ApplyMaster;
 
-  // clean-up memory
-  dmv2.Free;
+	//	SCM.dsEntrant.DataSet.Close;
+	//	SCM.dsHeat.DataSet.Close;
+	//	SCM.dsEvent.DataSet.Close;
+	//	SCM.dsEvent.DataSet.Open;
+	//	SCM.dsHeat.DataSet.Open;
+	//	SCM.dsEntrant.DataSet.Open;
 
-  // REFRESH ...
-  // NOTE: DataSet.Refresh not used.
-  SCM.dsEntrant.DataSet.Close;
-  SCM.dsHeat.DataSet.Close;
-  SCM.dsEvent.DataSet.Close;
-  SCM.dsEvent.DataSet.Open;
-  SCM.dsHeat.DataSet.Open;
-  SCM.dsEntrant.DataSet.Open;
+		// Enable core tables
+		SCM.dsEvent.DataSet.EnableControls;
+		SCM.dsHeat.DataSet.EnableControls;
+		SCM.dsLane.DataSet.EnableControls;
 
-  // Enable core tables
-  SCM.dsEvent.DataSet.EnableControls;
-  SCM.dsHeat.DataSet.EnableControls;
-  SCM.dsEntrant.DataSet.EnableControls;
+	end;
 
-  if passed then
+	if passed then
   begin
     // Display success.
     if not success then
@@ -3254,7 +3216,7 @@ var
   dlg: TAbout;
 begin
   dlg := TAbout.Create(self);
-  dlg.DBName := 'SwimClubMeet'; // DEFAULT
+  dlg.DBName := 'SwimClubMeet2'; // DEFAULT
   // Note: Safe to call TAbout without connection params assigned.
   if AssertConnection then dlg.DBConnection := SCM.scmConnection;
   dlg.ShowModal;
@@ -3389,17 +3351,28 @@ end;
 procedure TMain.Nominate_GotoMemberDetailsExecute(Sender: TObject);
 var
   dlg: TManageMember;
-  MemberID: integer;
+	NomineeID: integer;
+	v: variant;
+	aSQL: string;
 begin
-  if not AssertConnection then exit;
-  dlg := TManageMember.Create(self);
-  MemberID := SCM.dsEntrant.DataSet.FieldByName('MemberID').AsInteger;
-  try
-    dlg.Prepare(SCM.scmConnection, 1, MemberID);
-    dlg.ShowModal;
-  finally
-    dlg.Free;
-  end;
+	// REDUNDANT - tested by Nominate_GotoMemberDetailsUpdate.
+	//  if not AssertConnection then exit;
+	NomineeID := SCM.dsLane.DataSet.FieldByName('NomineeID').AsInteger;
+	aSQL := '''
+		SELECT MemberID FROM SwimClubMeet2.dbo.MemberLink
+		WHERE NomineeID = :ID1
+		''';
+	v := SCM.scmConnection.ExecSQLScalar(aSQL, [NomineeID]);
+	if not VarIsClear(v)  then // NULL or EMPTY.
+	begin
+			try
+				dlg := TManageMember.Create(self);
+				dlg.Prepare(SCM.scmConnection, 1, v);
+				dlg.ShowModal;
+			finally
+				dlg.Free;
+			end;
+	end;
 end;
 
 procedure TMain.Nominate_GotoMemberDetailsUpdate(Sender: TObject);
@@ -3407,9 +3380,11 @@ var
   DoEnable: boolean;
 begin
   DoEnable := false;
-  if AssertConnection then
-    // No members listed.
-    if not SCM.dsEntrant.DataSet.IsEmpty then DoEnable := true;
+	if AssertConnection then // connected to database - tables are active.
+		if (SCM.GetEventType() = etINDV) then // individual event.
+			if not SCM.dsLane.DataSet.IsEmpty then // we have lanes.
+				if not SCM.dsLane.DataSet.FieldByName('NomineeID').IsNull then // empty lane
+					DoEnable := true;
   TAction(Sender).Enabled := DoEnable;
 end;
 
@@ -3432,9 +3407,9 @@ begin
       // Has the member been nominated to some events?
       MemberID := DataSource.DataSet.FieldByName('MemberID').AsInteger;
       SessionID := SCM.Session_ID;
-      SQL := 'SELECT Count(MemberID) FROM [SwimClubMeet].[dbo].Nominee ' +
-        sLineBreak + 'INNER JOIN [SwimClubMeet].[dbo].[Event] ON ' + sLineBreak
-        + '[SwimClubMeet].[dbo].Nominee.EventID = [SwimClubMeet].[dbo].[Event].EventID '
+      SQL := 'SELECT Count(MemberID) FROM [SwimClubMeet2].[dbo].Nominee ' +
+        sLineBreak + 'INNER JOIN [SwimClubMeet2].[dbo].[Event] ON ' + sLineBreak
+        + '[SwimClubMeet2].[dbo].Nominee.EventID = [SwimClubMeet2].[dbo].[Event].EventID '
         + sLineBreak + 'WHERE SessionID = :id1 AND MemberID = :id2;';
       // run scalar function on DB
       Count := SCM.scmConnection.ExecSQLScalar(SQL, [SessionID, MemberID],
@@ -3642,7 +3617,7 @@ begin
       end;
       2:
         begin
-          SCM.qryEntrant.CheckBrowseMode;
+          SCM.qryLane.CheckBrowseMode;
           SCM.qryTeam.CheckBrowseMode;
           SCM.qryHeat.CheckBrowseMode;
         end;
@@ -3722,31 +3697,25 @@ var
   aEventType: scmEventType;
 begin
   if not AssertConnection then exit;
-  bm := nil;
-  With SCM.dsEntrant.DataSet do
+	bm := nil;
+	// BSA V2: major modification done here
+	With SCM.dsLane.DataSet do
   begin
     DisableControls;
     if Active and not IsEmpty then bm := GetBookmark;
-    Close;
-    Open;
-    if Active then
-    begin
-      try
-        if Assigned(bm) then GotoBookmark(bm);
-      except
-        on E: Exception do
-      end;
-    end;
-    if DoRenumber then
-    begin
-      aHeatID := SCM.Heat_ID; // curr heat
-      aEventType := SCM.GetEventType;
-      aIndvTeamID := SCM.IndvTeam_ID; // curr Lane in Entrant/Team
-      // DoLocate - don't locate last selected.
-      // DoExclude - disabled. Will renumber/repair even when session is locked.
-      SCM.Lane_RenumberLanes(aHeatID, false);
-      if (aEventType = etINDV) then INDV.Grid.DataSource.DataSet.Refresh
-      else if (aEventType = etINDV) then TEAM.Grid.DataSource.DataSet.Refresh;
+		SCM.qryLane.ApplyMaster;
+		try
+			if Assigned(bm) then GotoBookmark(bm);
+		except
+			on E: Exception do
+		end;
+		if DoRenumber then
+		begin
+			SCM.Lane_RenumberLanes(aHeatID, false);
+			aHeatID := SCM.Heat_ID; // curr heat
+			aEventType := SCM.GetEventType;
+
+			aIndvTeamID := SCM.IndvTeam_ID; // returns either NomineeID or TeamID.
       SCM.IndvTeam_LocateLane(aIndvTeamID, aEventType);
     end;
     EnableControls;
@@ -4759,7 +4728,7 @@ begin
   // edit the FireDac connection string ....
   if not AssertConnection then exit;
   results := MessageDlg('Open the database connection tool?.' + sLineBreak +
-    'If you have other SwimClubMeet apps running' + sLineBreak +
+    'If you have other SwimClubMeet2 apps running' + sLineBreak +
     'on this computer then they should be closed.' + sLineBreak +
     '(Be patient, this tool is slow to load.)', mtConfirmation,
     [mbYes, mbNo], 0, mbNo);

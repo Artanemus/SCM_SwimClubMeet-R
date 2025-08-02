@@ -64,7 +64,7 @@ begin
   suffix := string(C);
   s := 'Team ' + suffix;
   // insert a teamname record
-  SQL := 'INSERT INTO SwimClubMeet.dbo.TeamName ' +
+  SQL := 'INSERT INTO SwimClubMeet2.dbo.TeamName ' +
     '([CaptionShort],[ABREV]) VALUES (:ID1, :ID2)';
   rows := fConnection.ExecSQL(SQL, [s, suffix]);
   if rows > 0 then
@@ -123,7 +123,7 @@ begin
   s1 := 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   for C in s1 do
   begin
-    SQL := 'SELECT Count(TeamNameID) FROM SwimClubMeet.dbo.TeamName WHERE [ABREV] = :ID';
+    SQL := 'SELECT Count(TeamNameID) FROM SwimClubMeet2.dbo.TeamName WHERE [ABREV] = :ID';
     v := fConnection.ExecSQLScalar(SQL, [string(C)]);
     if v = 0 then
     begin
@@ -145,7 +145,7 @@ begin
   begin
     fConnection := AConnection;
     fTeamID := ATeamID;
-    SQL := 'SELECT TeamNameID FROM SwimClubMeet.dbo.Team WHERE Team.TeamID = :ID';
+    SQL := 'SELECT TeamNameID FROM SwimClubMeet2.dbo.Team WHERE Team.TeamID = :ID';
     v := fConnection.ExecSQLScalar(SQL, [fTeamID]);
     if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
       fTeamNameID := v;

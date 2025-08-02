@@ -88,14 +88,14 @@ begin
   if fDoINDV then
   begin
     // remove disqualification code and exit
-    SQL := 'UPDATE SwimClubMeet.dbo.Entrant SET' +
+    SQL := 'UPDATE SwimClubMeet2.dbo.Entrant SET' +
       ' [DisqualifyCodeID] = NULL, [IsScratched] = 0,' +
       ' [IsDisqualified] = 0 WHERE [Entrant].EntrantID = :ID1;';
     fConnection.ExecSQL(SQL, [fEntrantID]);
   end
   else
   begin
-    SQL := 'UPDATE SwimClubMeet.dbo.Team SET' +
+    SQL := 'UPDATE SwimClubMeet2.dbo.Team SET' +
       ' [DisqualifyCodeID] = NULL, [IsScratched] = 0,' +
       ' [IsDisqualified] = 0 WHERE [Team].TeamID = :ID1;';
     fConnection.ExecSQL(SQL, [fTeamID]);
@@ -128,7 +128,7 @@ begin
     end;
     if fDoINDV then
     begin
-      SQL := 'UPDATE SwimClubMeet.dbo.Entrant SET' +
+      SQL := 'UPDATE SwimClubMeet2.dbo.Entrant SET' +
         ' [DisqualifyCodeID] = :ID1, [IsScratched] = :ID2,' +
         ' [IsDisqualified] = :ID3 WHERE [Entrant].EntrantID = :ID4;';
       fConnection.ExecSQL(SQL, [CodeID, IsScratched, IsDisqualified,
@@ -136,7 +136,7 @@ begin
     end
     else
     begin
-      SQL := 'UPDATE SwimClubMeet.dbo.Team SET' +
+      SQL := 'UPDATE SwimClubMeet2.dbo.Team SET' +
         ' [DisqualifyCodeID] = :ID1, [IsScratched] = :ID2,' +
         ' [IsDisqualified] = :ID3 WHERE [Team].TeamID = :ID4;';
       fConnection.ExecSQL(SQL, [CodeID, IsScratched, IsDisqualified, fTeamID],

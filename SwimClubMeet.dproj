@@ -473,6 +473,11 @@
         <DCCReference Include="..\VCL_TMS\Advgrid.pas"/>
         <DCCReference Include="..\VCL_TMS\DBAdvGrid.pas"/>
         <DCCReference Include="..\VCL_TMS\BaseGrid.pas"/>
+        <DCCReference Include="dmCore.pas">
+            <Form>Core</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

@@ -1,4 +1,4 @@
-program SwimClubMeet;
+program SwimClubMeet2;
 
 uses
   Vcl.Forms,
@@ -93,7 +93,8 @@ uses
   dlgCheck_DOB_Gender in 'dlgCheck_DOB_Gender.pas' {Check_DOB_Gender},
   Advgrid in '..\VCL_TMS\Advgrid.pas',
   DBAdvGrid in '..\VCL_TMS\DBAdvGrid.pas',
-  BaseGrid in '..\VCL_TMS\BaseGrid.pas';
+  BaseGrid in '..\VCL_TMS\BaseGrid.pas',
+  dmCore in 'dmCore.pas' {Core: TDataModule};
 
 {$R *.res}
 

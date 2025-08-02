@@ -246,7 +246,7 @@ begin
   result := 0;
   if Assigned(fConnection) and (ASessionID > 0) then
   begin
-    SQL := 'SELECT SessionStart FROM SwimClubMeet.dbo.Session WHERE SessionID = :ID';
+    SQL := 'SELECT SessionStart FROM SwimClubMeet2.dbo.Session WHERE SessionID = :ID';
     v := fConnection.ExecSQLScalar(SQL, [ASessionID]);
   end;
   if not VarIsNull(v) then

@@ -542,7 +542,7 @@ begin
       begin
         if IsEmpty then Lane := 1
         else Lane := SCM.TeamEntrant_LastLaneNum(aTeamID) + 1;
-        SQL := 'INSERT INTO [SwimClubMeet].[dbo].[TeamEntrant] ' +
+        SQL := 'INSERT INTO [SwimClubMeet2].[dbo].[TeamEntrant] ' +
           '( [Lane],[IsDisqualified],[IsScratched],[TeamID]) ' +
           'VALUES ( :ID1,0,0,:ID2)';
         rows := SCM.scmConnection.ExecSQL(SQL, [Lane, aTeamID]);
@@ -842,7 +842,7 @@ begin
   // add the TTB of the TeamEntrants
   result := 0;
   SQL := 'SELECT SUM(dbo.SwimTimeToMilliseconds(TimeToBeat)) ' +
-    'FROM SwimClubMeet.dbo.TeamEntrant WHERE TeamEntrant.TeamID = :ID';
+    'FROM SwimClubMeet2.dbo.TeamEntrant WHERE TeamEntrant.TeamID = :ID';
   v := SCM.scmConnection.ExecSQLScalar(SQL, [aTeamID]);
   if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
   begin

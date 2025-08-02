@@ -203,7 +203,7 @@ begin
   if not Assigned(fConnection) then exit;  // no connection
   sl := TStringList.Create;
   // Legal, qryEvent has master..child relationship with dsSession.
-  sl.Add('USE [SwimClubMeet]; ');
+  sl.Add('USE [SwimClubMeet2]; ');
   sl.Add('SELECT [SplitID], [LapNum] FROM [dbo].[Split] ');
   sl.Add('WHERE [EntrantID] = ' + IntToStr(aEntrantID));
   sl.Add(' ORDER BY [LapNum];');
@@ -212,7 +212,7 @@ begin
   qry.Connection := fConnection;
   qry.SQL := sl;
   qry.UpdateOptions.KeyFields := 'SplitID';
-  qry.UpdateOptions.UpdateTableName := 'SwimClubMeet..Split';
+  qry.UpdateOptions.UpdateTableName := 'SwimClubMeet2..Split';
   qry.Open;
   if (qry.Active) then
   begin

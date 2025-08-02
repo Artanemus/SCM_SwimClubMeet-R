@@ -88,9 +88,6 @@ Coordinates=1096,1404,66,36
 [Heat_MoveDown]
 Coordinates=848,1404,112,36
 
-[SCM.dsEntrant]
-Coordinates=0,0,102,36
-
 [oggleStatus1]
 Coordinates=640,1404,90,36
 
@@ -358,9 +355,6 @@ Coordinates=144,940,106,58
 
 [Session_Report]
 Coordinates=1365,1552,106,36
-
-[SCM.qryEntrant]
-Coordinates=1121,10,120,322
 
 [SCM_ManageMembers]
 Coordinates=2036,111,149,36
@@ -902,7 +896,7 @@ Coordinates=1781,1,152,36
 Coordinates=1017,863,55,58
 
 [SCM.]
-Coordinates=94,1212,131,36
+Coordinates=0,0,102,36
 
 [Grid_MoveUp]
 Coordinates=1781,1211,111,36

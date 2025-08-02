@@ -297,7 +297,7 @@ begin
     // frxSetHeaderVisibility(rpt, true);
     setEndlessHeight(rpt, True);
     rpt.PrepareReport();
-    rpt.ReportOptions.Author := 'SwimClubMeet (SCM)';
+    rpt.ReportOptions.Author := 'SwimClubMeet2 (SCM)';
     rpt.ReportOptions.Description.Clear;
     rpt.ReportOptions.Description.Add('LeaderBoard Data');
     rpt.ReportOptions.Name := 'SCM_LeaderBoard';

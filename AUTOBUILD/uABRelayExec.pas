@@ -262,7 +262,7 @@ begin
       No pool lanes are available. Check your swim-club preferences.
       Auto-Build ENDED.
       ''';
-      Application.MessageBox(PChar(s), 'SwimClubMeet Error', MB_ICONERROR or MB_OK)
+      Application.MessageBox(PChar(s), 'SwimClubMeet2 Error', MB_ICONERROR or MB_OK)
     end;
     exit;
   end;
@@ -317,7 +317,7 @@ begin
         Manually assign these nominees - should you wish them to participate.
       ''';
       // if fVerbose then
-      Application.MessageBox(Pchar(s), 'SwimClubMeet Warning', MB_ICONERROR or MB_OK);
+      Application.MessageBox(Pchar(s), 'SwimClubMeet2 Warning', MB_ICONERROR or MB_OK);
     end;
   end;
 
@@ -353,7 +353,7 @@ begin
         While reteving data from the SCM database an unknown error occurred.
         Auto-build ENDED.
       ''';
-      Application.MessageBox(Pchar(s), 'SwimClubMeet Error', MB_ICONERROR or MB_OK);
+      Application.MessageBox(Pchar(s), 'SwimClubMeet2 Error', MB_ICONERROR or MB_OK);
     end;
   exit;
   end;
@@ -389,7 +389,7 @@ begin
         The Genetic Algorithm option is not available for this build.
         Auto-build ENDED.
       ''';
-      Application.MessageBox(Pchar(s), 'SwimClubMeet AutoBuild', MB_ICONINFORMATION or MB_OK);
+      Application.MessageBox(Pchar(s), 'SwimClubMeet2 AutoBuild', MB_ICONINFORMATION or MB_OK);
     end;
   end;
 
@@ -764,7 +764,7 @@ begin
   result := 0;
   s := '''
   SELECT TOP 1 DistanceID
-  FROM SwimClubMeet.dbo.Distance
+  FROM SwimClubMeet2.dbo.Distance
   WHERE EventTypeID = 1  AND ABS(Meters - :SwumDistance) <= 10
   ORDER BY ABS(Meters - :SwumDistance);
   ''';
@@ -838,7 +838,7 @@ begin
 
       { L O O K U P   T E A M I D . }
       s := '''
-      SELECT TeamID FROM SwimClubMeet.dbo.Team
+      SELECT TeamID FROM SwimClubMeet2.dbo.Team
       WHERE HeatID = :HEATID AND Lane = :LANENUM;
       ''';
       v := fConnection.ExecSQLScalar(s, [AHeatID, lanenum]);

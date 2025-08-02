@@ -206,7 +206,7 @@ v: variant;
 begin
   result := 0;
   if not AssertConnection(FConnection) then exit;
-  SQL := 'SELECT [DistanceID] FROM [SwimClubMeet].[dbo].[Event] '
+  SQL := 'SELECT [DistanceID] FROM [SwimClubMeet2].[dbo].[Event] '
   + 'WHERE [Event].[EventID] = :ID';
   v := FConnection.ExecSQLScalar(SQL, [aEventID]);
   if VarIsNull(v) or VarIsEmpty(v) or (v = 0) then exit;
@@ -263,7 +263,7 @@ begin
   result := 0; // Flags - failed to normalize.
   if not Assigned(fConnection) then exit;
   tbl := TFDTable.Create(self);
-  tbl.TableName := 'SwimClubMeet..Distance';
+  tbl.TableName := 'SwimClubMeet2..Distance';
   tbl.Connection := FConnection;
   tbl.IndexFieldNames := 'DistanceID';
   tbl.UpdateOptions.ReadOnly := true;
@@ -311,12 +311,12 @@ begin
   fEventType := aEventType;
 
   if aEventType = etINDV then
-      SQL := 'SELECT [Heat].[EventID] FROM [SwimClubMeet].[dbo].[Entrant] '
+      SQL := 'SELECT [Heat].[EventID] FROM [SwimClubMeet2].[dbo].[Entrant] '
       + 'INNER JOIN Heat ON [Entrant].[HeatID] = [Heat].[HeatID] '
       + 'WHERE [Entrant].[EntrantID] = :ID';
 
   if aEventType = etTEAM then
-      SQL := 'SELECT [Heat].[EventID] FROM [SwimClubMeet].[dbo].[TeamEntrant] '
+      SQL := 'SELECT [Heat].[EventID] FROM [SwimClubMeet2].[dbo].[TeamEntrant] '
       + 'INNER JOIN Team ON [TeamEntrant].[TeamID] = [Team].[teamID] ' +
       'INNER JOIN Heat ON [Team].[HeatID] = [Heat].[HeatID] '
       + 'WHERE [TeamEntrant].[TeamEntrantID] = :ID';

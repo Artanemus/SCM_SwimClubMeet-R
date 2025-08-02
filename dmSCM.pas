@@ -16,9 +16,6 @@ uses
 
 type
   TSCM = class(TDataModule)
-    BooleanField1: TBooleanField;
-    BooleanField2: TBooleanField;
-    dsEntrant: TDataSource;
     dsEvent: TDataSource;
     dsFNameEllipse: TDataSource;
     dsHeat: TDataSource;
@@ -28,15 +25,8 @@ type
     dsNominateMembers: TDataSource;
     dsNominee: TDataSource;
     dsSession: TDataSource;
-    dsSplitv1: TDataSource;
     dsSwimClub: TDataSource;
     dsTeam: TDataSource;
-    dsTeamEntrant: TDataSource;
-    dsTeamSplit: TDataSource;
-    IntegerField1: TIntegerField;
-    IntegerField3: TIntegerField;
-    IntegerField4: TIntegerField;
-    IntegerField5: TIntegerField;
     luDisqualifyCode: TDataSource;
     luDistance: TDataSource;
     luEventStatus: TDataSource;
@@ -51,23 +41,8 @@ type
     dsParaCodeLink: TDataSource;
     qryCountEventsNotClosed: TFDQuery;
     qryCountHeatsNotClosed: TFDQuery;
-    qryEntrant: TFDQuery;
-    qryEntrantCATID: TIntegerField;
-    qryEntrantDCode: TWideStringField;
-    qryEntrantDisqualifyCodeID: TIntegerField;
-    qryEntrantEntrantID: TFDAutoIncField;
-    qryEntrantFullName: TWideStringField;
-    qryEntrantHeatID: TIntegerField;
-    qryEntrantIsDisqualified: TBooleanField;
-    qryEntrantIsScratched: TBooleanField;
-    qryEntrantLane: TIntegerField;
-    qryEntrantluSwimmerCAT: TStringField;
-    qryEntrantMemberID: TIntegerField;
-    qryEntrantPersonalBest: TTimeField;
-    qryEntrantTIME: TTimeField;
-    qryEntrantTimeToBeat: TTimeField;
     qryEvent: TFDQuery;
-    qryEventABREV: TWideStringField;
+		qryEventABREV: TWideStringField;
     qryEventCaption: TWideStringField;
     qryEventDistanceID: TIntegerField;
     qryEventEntrantCount: TIntegerField;
@@ -126,30 +101,10 @@ type
     qrySessionSessionStatusID: TIntegerField;
     qrySessionStatus: TWideStringField;
     qrySessionSwimClubID: TIntegerField;
-    qrySplitv1: TFDQuery;
-    qrySplitv1EntrantID: TIntegerField;
-    qrySplitv1SplitID: TFDAutoIncField;
-    qrySplitv1SplitTime: TTimeField;
     qrySwapEntrants: TFDQuery;
     qrySwapTeams: TFDQuery;
     qrySwimClub: TFDQuery;
     qryTeam: TFDQuery;
-    qryTeamEntrant: TFDQuery;
-    qryTeamEntrantDisqualifyCodeID: TIntegerField;
-    qryTeamEntrantIsDisqualified: TBooleanField;
-    qryTeamEntrantIsScratched: TBooleanField;
-    qryTeamEntrantluStroke: TStringField;
-    qryTeamEntrantStrokeID: TIntegerField;
-    qryTeamEntrantSwimOrder: TIntegerField;
-    qryTeamEntrantTeamEntrantID: TFDAutoIncField;
-    qryTeamEntrantTeamID: TIntegerField;
-    qryTeamSplit: TFDQuery;
-    qryTeamSplitSplitTime: TTimeField;
-    qryTeamSplitTeamID: TIntegerField;
-    qryTeamSplitTeamSplitID: TFDAutoIncField;
-    qryTeamTeamID: TFDAutoIncField;
-    qryTeamTeamName: TWideStringField;
-    qryTeamTeamNameID: TIntegerField;
     scmConnection: TFDConnection;
     tblDisqualifyCode: TFDTable;
     tblDistance: TFDTable;
@@ -161,13 +116,6 @@ type
     tblHouse: TFDTable;
     tblSessionStatus: TFDTable;
     tblStroke: TFDTable;
-    TimeField1: TTimeField;
-    TimeField2: TTimeField;
-    TimeField3: TTimeField;
-    TimeField4: TTimeField;
-    TimeField5: TTimeField;
-    WideStringField1: TWideStringField;
-    WideStringField2: TWideStringField;
     qryHeatCloseDT: TSQLTimeStampField;
     qryEventCloseDT: TSQLTimeStampField;
     qrySwimClubSwimClubID: TFDAutoIncField;
@@ -206,6 +154,10 @@ type
     dsWatchTime: TDataSource;
     qrySplitTime: TFDQuery;
     qryWatchTime: TFDQuery;
+    qryTeamMember: TFDQuery;
+    qryIndvMember: TFDQuery;
+    dsTeamMember: TDataSource;
+    dsIndvMember: TDataSource;
     procedure DataModuleCreate(Sender: TObject);
     procedure qryEntrantAfterScroll(DataSet: TDataSet);
     procedure qryEntrantTIMEGetText(Sender: TField; var Text: string;
@@ -510,12 +462,11 @@ begin
           qryHeat.Open;
           if (qryHeat.Active) and (qryNominee.Active) then
           begin
-            qryTeam.Open;
-            qryTeamEntrant.Open;
-            qryTeamSplit.Open;
-            qryEntrant.Open;
-            qrySplit.Open;
-            if (qryEntrant.Active) then
+						qryLane.Open;
+						qryTeam.Open;
+						qrySplitTime.Open;
+						qryWatchTime.Open;
+						if (qryLane.Active) then
             begin
               fSCMActive := true;
             end;
@@ -640,14 +591,14 @@ begin
   if aEventType = etINDV then
   begin
     qry.SQL.Text :=
-      'SELECT [Entrant].[EntrantID] AS aID FROM [SwimClubMeet].[dbo].[Entrant] ' +
+      'SELECT [Entrant].[EntrantID] AS aID FROM [SwimClubMeet2].[dbo].[Entrant] ' +
       'WHERE MemberID IS NOT NULL AND [Entrant].HeatID = ' +
       IntToStr(aHeatID);
   end
   else if aEventType = etTeam then
   begin
     qry.SQL.Text :=
-      'SELECT [Team].[TeamID] AS aID FROM [SwimClubMeet].[dbo].[Team] ' +
+      'SELECT [Team].[TeamID] AS aID FROM [SwimClubMeet2].[dbo].[Team] ' +
       'WHERE MemberID IS NOT NULL AND [Team].HeatID = ' + IntToStr(aHeatID);
   end;
   qry.IndexFieldNames := 'aID'; // Must use alias.
@@ -674,7 +625,7 @@ begin
   result := 0;
   if not fSCMActive then exit;
   if aTeamEntrantID = 0 then exit;
-  SQL := 'UPDATE SwimClubMeet.dbo.TeamEntrant ' +
+  SQL := 'UPDATE SwimClubMeet2.dbo.TeamEntrant ' +
   'SET MemberID = NULL, RaceTime = NULL, PersonalBest = NULL, TimeToBeat = NULL,' +
   'IsDisqualified = 0, IsScratched = 0, DisqualifyCodeID = NULL ' +
   'WHERE TeamEntrantID = :ID';
@@ -694,11 +645,11 @@ begin
   if aEventType = etUnknown then exit;
 
   if aEventType = etINDV then
-  SQL := 'SELECT COUNT(EntrantID) FROM [SwimClubMeet].[dbo].[Heat] ' +
+  SQL := 'SELECT COUNT(EntrantID) FROM [SwimClubMeet2].[dbo].[Heat] ' +
     ' INNER JOIN [Entrant] ON [Heat].HeatID = [Entrant].HeatID ' +
     ' WHERE [Heat].HeatID = :ID AND MEMBERID IS NOT NULL;'
   else
-    SQL := 'SELECT COUNT(TeamEntrantID) FROM [SwimClubMeet].[dbo].[Heat] '
+    SQL := 'SELECT COUNT(TeamEntrantID) FROM [SwimClubMeet2].[dbo].[Heat] '
     + ' INNER JOIN [Team] ON [Heat].HeatID = [Team].HeatID ' +
     ' INNER JOIN [TeamEntrant] ON [Team].TeamID = [TeamEntrant].TeamID ' +
     ' WHERE [Heat].HeatID = :ID;';
@@ -723,13 +674,13 @@ begin
   if aEventType = etINDV then
   begin
     // Count number of lanes ....
-    SQL := 'SELECT Count(EntrantID) FROM SwimClubMeet.dbo.Entrant ' +
+    SQL := 'SELECT Count(EntrantID) FROM SwimClubMeet2.dbo.Entrant ' +
       'WHERE Entrant.HeatID = :HEATID';
   end
   else if aEventType = etTEAM then
   begin
     // Count number of lanes ....
-    SQL := 'SELECT Count(TeamID) FROM SwimClubMeet.dbo.Team ' +
+    SQL := 'SELECT Count(TeamID) FROM SwimClubMeet2.dbo.Team ' +
       'WHERE Team.HeatID = :HEATID';
   end;
   v := scmConnection.ExecSQLScalar(SQL, [aHeatID]);
@@ -766,7 +717,7 @@ begin
   result := 0;
   if not fSCMActive then exit;
   if aTeamID = 0 then exit;
-  SQL := 'SELECT COUNT(TeamEntrantID) FROM [SwimClubMeet].[dbo].[Team] ' +
+  SQL := 'SELECT COUNT(TeamEntrantID) FROM [SwimClubMeet2].[dbo].[Team] ' +
       'INNER JOIN [TeamEntrant] ON [Team].TeamID = [TeamEntrant].TeamID ' +
       'WHERE TeamID = :ID;';
   v := scmConnection.ExecSQLScalar(SQL, [aTeamID]);
@@ -799,8 +750,10 @@ begin
   qryTeamSplit.Close;
   qryTeamEntrant.Close;
   qryTeam.Close;
-  qrySplit.Close;
-  qryEntrant.Close;
+	qrySplitTime.Close;
+	qryWatchTime.Close;
+	qryEntrant.Close;
+	qryLane.Close;
   qryHeat.Close;
   qryNominee.Close;
   qryDistance.Close;
@@ -845,7 +798,7 @@ begin
   if aEventID = 0 then exit;
   qry := TFDQuery.Create(self);
   qry.Connection := scmConnection;
-  qry.SQL.Text := 'SELECT HeatID FROM [SwimClubMeet].[dbo].[Heat] ' +
+  qry.SQL.Text := 'SELECT HeatID FROM [SwimClubMeet2].[dbo].[Heat] ' +
     'WHERE EventID = ' + IntToStr(aEventID);
   qry.IndexFieldNames := 'HeatID';
   qry.Open;
@@ -879,13 +832,13 @@ begin
   if aEventType = etINDV then
   begin
   qry.SQL.Text :=
-    'SELECT [Entrant].[EntrantID] AS aID FROM [SwimClubMeet].[dbo].[Entrant] ' +
+    'SELECT [Entrant].[EntrantID] AS aID FROM [SwimClubMeet2].[dbo].[Entrant] ' +
     'WHERE [Entrant].HeatID = ' + IntToStr(aHeatID);
   end
   else if aEventType = etTEAM then
   begin
   qry.SQL.Text :=
-    'SELECT [Team].[TeamID] AS aID FROM [SwimClubMeet].[dbo].[Team] ' +
+    'SELECT [Team].[TeamID] AS aID FROM [SwimClubMeet2].[dbo].[Team] ' +
     'WHERE [Team].HeatID = ' + IntToStr(aHeatID);
   end;
   qry.IndexFieldNames := 'aID';
@@ -917,7 +870,7 @@ begin
   begin
     dsSplit.DataSet.DisableControls;
     // DELETE SPLIT TIMES
-    SQL := 'DELETE FROM [SwimClubMeet].[dbo].[Split] WHERE [EntrantID] = :ID';
+    SQL := 'DELETE FROM [SwimClubMeet2].[dbo].[Split] WHERE [EntrantID] = :ID';
     result := scmConnection.ExecSQL(SQL, [aIndvTeamID]);
     dsSplit.DataSet.EnableControls;
   end
@@ -925,7 +878,7 @@ begin
   begin
     // DELETE Split records for relay team.
     dsTeamSplit.DataSet.DisableControls;
-    SQL := 'DELETE FROM [SwimClubMeet].[dbo].[TeamSplit] WHERE [TeamID] = :ID';
+    SQL := 'DELETE FROM [SwimClubMeet2].[dbo].[TeamSplit] WHERE [TeamID] = :ID';
     result := scmConnection.ExecSQL(SQL, [aIndvTeamID]);
     dsTeamSplit.DataSet.EnableControls;
   end;
@@ -938,7 +891,7 @@ begin
   result := 0;
   if not fSCMActive then exit;
   dsTeamEntrant.DataSet.DisableControls;
-  SQL := 'DELETE FROM [SwimClubMeet].[dbo].[TeamEntrant] WHERE [TeamID] = :ID';
+  SQL := 'DELETE FROM [SwimClubMeet2].[dbo].[TeamEntrant] WHERE [TeamID] = :ID';
   result := scmConnection.ExecSQL(SQL, [aTeamID]);
   dsTEamEntrant.DataSet.EnableControls;
 end;
@@ -970,7 +923,7 @@ begin
   if not fSCMActive then exit;
   DeleteAllLanes(aHeatID);
   dsHeat.DataSet.DisableControls();
-  SQL := 'DELETE FROM [SwimClubMeet].[dbo].[Heat] WHERE HeatID = :ID';
+  SQL := 'DELETE FROM [SwimClubMeet2].[dbo].[Heat] WHERE HeatID = :ID';
   result := scmConnection.ExecSQL(SQL, [aHeatID]);
   dsHeat.DataSet.EnableControls();
 end;
@@ -988,7 +941,7 @@ begin
     DeleteAllSplits(aIndvTeamID, aEventType);
     // FINALLY DELETE ENTRANT/TEAM-TEAMENTRANTS RECORDS
     dsEntrant.DataSet.DisableControls;
-    SQL := 'DELETE FROM [SwimClubMeet].[dbo].[Entrant] WHERE [EntrantID] = :ID';
+    SQL := 'DELETE FROM [SwimClubMeet2].[dbo].[Entrant] WHERE [EntrantID] = :ID';
     result := scmConnection.ExecSQL(SQL, [aIndvTeamID]);
     dsEntrant.DataSet.EnableControls;
   end
@@ -1000,7 +953,7 @@ begin
     DeleteAllSplits(aIndvTeamID, aEventType);
     // DELETE TEAM RECORD
     dsTeam.DataSet.DisableControls;
-    SQL := 'DELETE FROM [SwimClubMeet].[dbo].[Team] WHERE [TeamID] = :ID';
+    SQL := 'DELETE FROM [SwimClubMeet2].[dbo].[Team] WHERE [TeamID] = :ID';
     result := scmConnection.ExecSQL(SQL, [aIndvTeamID]);
     dsTeam.DataSet.EnableControls;
   end;
@@ -1015,7 +968,7 @@ begin
   if not SCMActive then exit;
   // FINALLY DELETE Nomination..
   dsNominee.DataSet.DisableControls;
-  SQL := 'DELETE FROM SwimClubMeet.[dbo].[Nominee] ' +
+  SQL := 'DELETE FROM SwimClubMeet2.[dbo].[Nominee] ' +
     'WHERE MemberID = :MemberID AND EventID = :EventID;';
   rows := scmConnection.ExecSQL(SQL, [aMemberID, aEventID]);
   dsNominee.DataSet.EnableControls;
@@ -1033,7 +986,7 @@ begin
   // iter over events
   qry := TFDQuery.Create(self);
   qry.Connection := scmConnection;
-  qry.SQL.Text := 'SELECT [Event].[EventID] FROM [SwimClubMeet].[dbo].[Event] '
+  qry.SQL.Text := 'SELECT [Event].[EventID] FROM [SwimClubMeet2].[dbo].[Event] '
     + 'WHERE [Event].SessionID = ' + IntToStr(aSessionID);
   qry.IndexFieldNames := 'EventID';
   qry.Open;
@@ -1051,7 +1004,7 @@ begin
   qry.Free;
   // finally delete the session
   dsSession.DataSet.DisableControls;
-  SQL := 'DELETE FROM [SwimClubMeet].[dbo].[Session] WHERE [SessionID] = :ID';
+  SQL := 'DELETE FROM [SwimClubMeet2].[dbo].[Session] WHERE [SessionID] = :ID';
   result := scmConnection.ExecSQL(SQL, [aSessionID]);
   dsSession.DataSet.EnableControls;
 end;
@@ -1106,7 +1059,7 @@ begin
   result := false;
   if not fSCMActive then exit;
   { TODO -oBSA -cGeneral : Create swap lane function }
-  SQL := 'SELECT TOP 1 [EntrantID] FROM [SwimClubMeet].[dbo].[Entrant] ' +
+  SQL := 'SELECT TOP 1 [EntrantID] FROM [SwimClubMeet2].[dbo].[Entrant] ' +
     'WHERE HeatID = :HEAT AND Lane = :LANE';
   EntrantIDA := scmConnection.ExecSQLScalar(SQL, [HeatIDA, LaneA]);
   EntrantIDB := scmConnection.ExecSQLScalar(SQL, [HeatIDB, LaneB]);
@@ -1123,7 +1076,7 @@ begin
   if not fSCMActive then exit;
   if aEventID = 0 then exit;
   if Event_GetHeatCount(aEventID) = 0 then exit;  // NO HEATS.
-  SQL := 'SELECT COUNT(HeatStatusID) FROM SwimClubMeet.dbo.Heat ' +
+  SQL := 'SELECT COUNT(HeatStatusID) FROM SwimClubMeet2.dbo.Heat ' +
     'WHERE (EventID = :ID ) AND (HeatStatusID < 3)';
   v := scmConnection.ExecSQLScalar(SQL, [aEventID]);
   if not VarIsNull(v) and not VarIsEmpty(v) then
@@ -1164,7 +1117,7 @@ begin
   if aEventID = 0 then exit;
   // scalar function to count Swimmers (inc. Entrants + TeamEntrants)
   SQL := 'SELECT dbo.EntrantCount(:ID1) ' +
-    'FROM SwimClubMeet.dbo.Event WHERE Event.EventID = :ID2';
+    'FROM SwimClubMeet2.dbo.Event WHERE Event.EventID = :ID2';
   v := scmConnection.ExecSQLScalar(SQL, [aEventID, aEventID]);
   if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
 end;
@@ -1177,7 +1130,7 @@ begin
   result := 0;
   if not fSCMActive then exit;
   if aEventID = 0 then exit;
-  SQL := 'SELECT Count(Heat.HeatID) FROM SwimClubMeet.dbo.[Event] ' +
+  SQL := 'SELECT Count(Heat.HeatID) FROM SwimClubMeet2.dbo.[Event] ' +
     'INNER JOIN Heat ON [Event].EventID = Heat.EventID ' +
     'WHERE Event.EventID = :EventID;';
   v := scmConnection.ExecSQLScalar(SQL, [aEventID]);
@@ -1193,7 +1146,7 @@ begin
   if not fSCMActive then exit;
   if aEventID = 0 then exit;
   // scalar function to count Nominees
-  SQL := 'SELECT dbo.NomineeCount(:ID1) FROM SwimClubMeet.dbo.[Event] ' +
+  SQL := 'SELECT dbo.NomineeCount(:ID1) FROM SwimClubMeet2.dbo.[Event] ' +
     'WHERE Event.EventID = :ID2';
   v := scmConnection.ExecSQLScalar(SQL, [aEventID, aEventID]);
   if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
@@ -1207,7 +1160,7 @@ begin
   result := false;
   if not fSCMActive then exit;
   // count the closed heats.
-  SQL := 'SELECT Count([Heat].[HeatID]) FROM [SwimClubMeet].[dbo].[Event] '
+  SQL := 'SELECT Count([Heat].[HeatID]) FROM [SwimClubMeet2].[dbo].[Event] '
     + 'INNER JOIN Heat ON Event.EventID = Heat.EventID ' +
     'WHERE Event.EventID = :ID AND (Heat.HeatStatusID = 3) ';
   v := scmConnection.ExecSQLScalar(SQL, [aEventID]);
@@ -1222,7 +1175,7 @@ begin
   result := false;
   if not fSCMActive then exit;
   if Event_GetHeatCount(aEventID) = 0 then exit;
-  SQL := ' SELECT Count([Heat].[HeatID]) FROM [SwimClubMeet].[dbo].[Event] '
+  SQL := ' SELECT Count([Heat].[HeatID]) FROM [SwimClubMeet2].[dbo].[Event] '
     + 'INNER JOIN Heat ON Event.EventID = Heat.EventID ' +
     'WHERE Event.EventID = :ID AND (Heat.HeatStatusID > 1) ';
   v := scmConnection.ExecSQLScalar(SQL, [aEventID]);
@@ -1251,7 +1204,7 @@ var
 begin
   result := false;
   if not fSCMActive then exit;
-  SQL := 'SELECT COUNT(NomineeID) FROM SwimClubMeet.dbo.Nominee ' +
+  SQL := 'SELECT COUNT(NomineeID) FROM SwimClubMeet2.dbo.Nominee ' +
     'WHERE Nominee.EventID = :ID AND MemberID IS NOT NULL; ';
   v := scmConnection.ExecSQLScalar(SQL, [aEventID]);
   if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := true;
@@ -1265,7 +1218,7 @@ begin
   result := false; // DEFAULT - no raced heats
   if not fSCMActive then exit;
   // count the raced heats.
-  SQL := 'SELECT Count([Heat].[HeatID]) FROM [SwimClubMeet].[dbo].[Event] '
+  SQL := 'SELECT Count([Heat].[HeatID]) FROM [SwimClubMeet2].[dbo].[Event] '
     + 'INNER JOIN Heat ON Event.EventID = Heat.EventID ' +
     'WHERE Event.EventID = :ID AND (Heat.HeatStatusID = 2) ';
   v := scmConnection.ExecSQLScalar(SQL, [aEventID]);
@@ -1311,7 +1264,7 @@ var
 begin
   result := false;
   if not fSCMActive then exit;
-  SQL := 'SELECT SessionStatusID FROM [SwimClubMeet].[dbo].[Session] ' +
+  SQL := 'SELECT SessionStatusID FROM [SwimClubMeet2].[dbo].[Session] ' +
     'INNER JOIN [Event] ON [Session].[SessionID] = [Event].[SessionID] ' +
     'WHERE [Event].[EventID] = :ID';
   v := scmConnection.ExecSQLScalar(SQL, [aEventID]);
@@ -1329,7 +1282,7 @@ begin
   if aEventID = 0 then exit;
   if Event_SessionIsLocked(aEventID) then exit;
   if (aEventStatusID <> 1) or (aEventStatusID <> 2) then exit;
-  SQL := 'UPDATE SwimClubMeet.dbo.Event SET [Event].[EventStatusID] = :ID1 ' +
+  SQL := 'UPDATE SwimClubMeet2.dbo.Event SET [Event].[EventStatusID] = :ID1 ' +
     'WHERE [Event].[EventID] = :ID2';
   v := scmConnection.ExecSQL(SQL, [aEventStatusID, aEventID]);
   if not VarIsNull(v) and not VarIsEmpty(v) then
@@ -1347,10 +1300,10 @@ begin
   if aHeatID = 0 then exit;
   aEventType := Heat_EventType(aHeatID);
   if aEventType = etINDV then
-      SQL := 'SELECT MIN(Lane) FROM SwimClubMeet.dbo.Entrant ' +
+      SQL := 'SELECT MIN(Lane) FROM SwimClubMeet2.dbo.Entrant ' +
       'Entrant.HeatID = :ID'
   else if aEventType = etTEAM then
-      SQL := 'SELECT MIN(Lane) FROM SwimClubMeet.dbo.Team ' +
+      SQL := 'SELECT MIN(Lane) FROM SwimClubMeet2.dbo.Team ' +
       'Team.HeatID = :ID'
   else exit;
   v := scmConnection.ExecSQLScalar(SQL, [aHeatID]);
@@ -1417,7 +1370,7 @@ begin
 		if not dsEvent.DataSet.IsEmpty then
 		begin
 			SQL := '''
-				SELECT [EventTypeID] FROM [SwimClubMeet].[dbo].[Event]
+				SELECT [EventTypeID] FROM [SwimClubMeet2].[dbo].[Event]
 				INNER JOIN [Distance] ON [Event].[DistanceID] = [Distance].[DistanceID]
 				WHERE EventID = :ID;
 				''';
@@ -1492,13 +1445,13 @@ begin
   if aEventType = etUnknown then exit;
   if aEventType = etINDV then
   begin
-    SQL := 'SELECT HeatStatusID FROM [SwimClubMeet].[dbo].[Heat] ' +
+    SQL := 'SELECT HeatStatusID FROM [SwimClubMeet2].[dbo].[Heat] ' +
       'INNER JOIN Entrant ON [Heat].[HeatID] = Entrant.HeatID ' +
       'WHERE [Entrant].[EntrantID] = :ID;';
   end
   else
   begin
-    SQL := 'SELECT HeatStatusID FROM [SwimClubMeet].[dbo].[Heat] ' +
+    SQL := 'SELECT HeatStatusID FROM [SwimClubMeet2].[dbo].[Heat] ' +
       'INNER JOIN Team ON [Heat].[HeatID] = Team.HeatID ' +
       'WHERE [Team].[TeamID] = :ID;';
   end;
@@ -1514,7 +1467,7 @@ begin
   result := 0;
   if not fSCMActive then exit;
   if aHeatID = 0 then exit;
-  SQL := 'SELECT EventID FROM SwimClubMeet.dbo.Heat ' +
+  SQL := 'SELECT EventID FROM SwimClubMeet2.dbo.Heat ' +
     'WHERE HeatID = :ID';
   v := scmConnection.ExecSQLScalar(SQL, [aHeatID]);
   if not VarIsNull(v) or not VarIsEmpty(v) then result := v;
@@ -1537,7 +1490,7 @@ var
 begin
   result := 0;
   if not fSCMActive then exit;
-  SQL := 'SELECT EventTypeID FROM  [SwimClubMeet].[dbo].[Heat] ' +
+  SQL := 'SELECT EventTypeID FROM  [SwimClubMeet2].[dbo].[Heat] ' +
     'INNER JOIN [Event] ON [Heat].[EventID] = [Event].[EventID] ' +
     'INNER JOIN [Distance] ON [Event].[DistanceID] = [Distance].[DistanceID] ' +
     'WHERE [Heat].HeatID = :ID';
@@ -1552,7 +1505,7 @@ var
 begin
   result := 0;
   if not fSCMActive then exit;
-  SQL := 'SELECT [HeatStatusID] FROM [SwimClubMeet].[dbo].[Heat] ' +
+  SQL := 'SELECT [HeatStatusID] FROM [SwimClubMeet2].[dbo].[Heat] ' +
     ' WHERE [Heat].HeatID = :ID;';
   v := scmConnection.ExecSQLScalar(SQL, [aHeatID]);
   if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
@@ -1650,7 +1603,7 @@ var
 begin
   result := false;
   if not fSCMActive then exit;
-  SQL := 'SELECT SessionStatusID FROM [SwimClubMeet].[dbo].[Session] ' +
+  SQL := 'SELECT SessionStatusID FROM [SwimClubMeet2].[dbo].[Session] ' +
     'INNER JOIN [Event] ON [Session].[SessionID] = [Event].[SessionID] ' +
     'INNER JOIN [Heat] ON [Event].[EventID] = [Heat].[EventID] '
     + 'WHERE [Heat].[HeatID] = :ID';
@@ -1828,10 +1781,10 @@ begin
   if aHeatID = 0 then exit;
   aEventType := Heat_EventType(aHeatID);
   if aEventType = etINDV then
-      SQL := 'SELECT MAX(Lane) FROM SwimClubMeet.dbo.Entrant ' +
+      SQL := 'SELECT MAX(Lane) FROM SwimClubMeet2.dbo.Entrant ' +
       'WHERE Entrant.HeatID = :ID'
   else if aEventType = etTEAM then
-      SQL := 'SELECT MAX(Lane) FROM SwimClubMeet.dbo.Team ' +
+      SQL := 'SELECT MAX(Lane) FROM SwimClubMeet2.dbo.Team ' +
       'WHERE Team.HeatID = :ID'
   else exit;
   v := scmConnection.ExecSQLScalar(SQL, [aHeatID]);
@@ -2322,13 +2275,13 @@ begin
   if VarIsNull(Sender.CurValue) or VarIsEmpty(Sender.CurValue) then exit;
 
   // INDV or TEAM
-  SQL := 'SELECT EventTypeID FROM SwimClubMeet.dbo.Distance WHERE [DistanceID] = :ID';
+  SQL := 'SELECT EventTypeID FROM SwimClubMeet2.dbo.Distance WHERE [DistanceID] = :ID';
 	v1 := scmConnection.ExecSQLScalar(SQL, [Sender.CurValue], [ftInteger]);
   v2 := scmConnection.ExecSQLScalar(SQL, [Sender.Value], [ftInteger]);
   if v1 <> v2 then // switching event type ...
   begin
     // test for Heats
-    SQL := 'SELECT Count(HeatID) FROM SwimClubMeet.dbo.Heat WHERE [EventID] = :ID';
+    SQL := 'SELECT Count(HeatID) FROM SwimClubMeet2.dbo.Heat WHERE [EventID] = :ID';
     i := Event_ID;
     v3 := scmConnection.ExecSQLScalar(SQL, [i]);
     if (v3 <> 0) then
@@ -2663,7 +2616,7 @@ begin
   ds.DisableControls;
   sl := TStringList.Create;
   // Legal, qryEvent has master..child relationship with dsSession.
-  sl.Add('USE [SwimClubMeet] ');
+  sl.Add('USE [SwimClubMeet2] ');
   sl.Add('SELECT [EventID], [EventNum] FROM [dbo].[Event] ');
   sl.Add('WHERE [SessionID] = ' + IntToStr(Session_ID()));
   sl.Add(' ORDER BY [EventNum]');
@@ -2672,7 +2625,7 @@ begin
   qry.Connection := scmConnection;
   qry.SQL := sl;
   qry.UpdateOptions.KeyFields := 'EventID';
-  qry.UpdateOptions.UpdateTableName := 'SwimClubMeet..Event';
+  qry.UpdateOptions.UpdateTableName := 'SwimClubMeet2..Event';
   qry.Open;
   if (qry.Active) then
   begin
@@ -2721,7 +2674,7 @@ begin
   qry.Connection := scmConnection;
   qry.SQL.Text := s;
   qry.UpdateOptions.KeyFields := 'HeatID';
-  qry.UpdateOptions.UpdateTableName := 'SwimClubMeet..Heat';
+  qry.UpdateOptions.UpdateTableName := 'SwimClubMeet2..Heat';
   qry.ParamByName('EVENTID').AsInteger := aEventID;
   qry.IndexFieldNames := 'HeatNum';
   qry.Prepare;
@@ -2784,7 +2737,7 @@ begin
       'ORDER BY mySort, TimeToBeat ';
       qry.SQL.Text := SQL;
       qry.UpdateOptions.KeyFields := 'EntrantID';
-      qry.UpdateOptions.UpdateTableName := 'SwimClubMeet..Entrant';
+      qry.UpdateOptions.UpdateTableName := 'SwimClubMeet2..Entrant';
   end
   else
   begin
@@ -2796,7 +2749,7 @@ begin
       'ORDER BY mySort, TimeToBeat ';
       qry.SQL.Text := SQL;
       qry.UpdateOptions.KeyFields := 'TeamID';
-      qry.UpdateOptions.UpdateTableName := 'SwimClubMeet..Team';
+      qry.UpdateOptions.UpdateTableName := 'SwimClubMeet2..Team';
   end;
 
   NumOfPoolLanes := SwimClub_NumberOfLanes;
@@ -2867,7 +2820,7 @@ begin
       'ORDER BY mySort, TimeToBeat ';
       qry.SQL.Text := SQL;
       qry.UpdateOptions.KeyFields := 'EntrantID';
-      qry.UpdateOptions.UpdateTableName := 'SwimClubMeet..Entrant';
+      qry.UpdateOptions.UpdateTableName := 'SwimClubMeet2..Entrant';
   end
   else
   begin
@@ -2879,7 +2832,7 @@ begin
       'ORDER BY mySort, TimeToBeat ';
       qry.SQL.Text := SQL;
       qry.UpdateOptions.KeyFields := 'TeamID';
-      qry.UpdateOptions.UpdateTableName := 'SwimClubMeet..Entrant';
+      qry.UpdateOptions.UpdateTableName := 'SwimClubMeet2..Entrant';
   end;
 
   NumOfPoolLanes := SwimClub_NumberOfLanes;
@@ -2962,7 +2915,7 @@ begin
 
   if aEventType = etINDV then
   begin
-    SQL := 'SELECT SessionStatusID FROM [SwimClubMeet].[dbo].[Session] ' +
+    SQL := 'SELECT SessionStatusID FROM [SwimClubMeet2].[dbo].[Session] ' +
       'INNER JOIN [Event] ON [Session].[SessionID] = [Event].[SessionID] ' +
       'INNER JOIN [Heat] ON [Event].[EventID] = [Heat].[EventID] '
       + 'INNER JOIN [Entrant] ON [Heat].[HeatID] = [Entrant].[HeatID] '
@@ -2970,7 +2923,7 @@ begin
   end
   else
   begin
-    SQL := 'SELECT SessionStatusID FROM [SwimClubMeet].[dbo].[Session] ' +
+    SQL := 'SELECT SessionStatusID FROM [SwimClubMeet2].[dbo].[Session] ' +
       'INNER JOIN [Event] ON [Session].[SessionID] = [Event].[SessionID] ' +
       'INNER JOIN [Heat] ON [Event].[EventID] = [Heat].[EventID] '
       + 'INNER JOIN [Team] ON [Heat].[HeatID] = [Team].[HeatID] ' +
@@ -3007,7 +2960,7 @@ begin
   if not fSCMActive then exit;
   if aSessionID = 0 then exit;
   SQL := 'SELECT dbo.SessionEntrantCount(:ID1) ' +
-    'FROM SwimClubMeet.dbo.Session WHERE Session.SessionID = :ID2';
+    'FROM SwimClubMeet2.dbo.Session WHERE Session.SessionID = :ID2';
   v := scmConnection.ExecSQLScalar(SQL, [aSessionID, aSessionID]);
   if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
 end;
@@ -3019,7 +2972,7 @@ var
 begin
   result := 0;
   if not fSCMActive then exit;
-  SQL := 'SELECT COUNT(EventID) FROM [SwimClubMeet].[dbo].[Session] ' +
+  SQL := 'SELECT COUNT(EventID) FROM [SwimClubMeet2].[dbo].[Session] ' +
     ' INNER JOIN [Event] ON [Session].SessionID = [Event].SessionID ' +
     ' WHERE [Session].SessionID = :ID;';
   v := scmConnection.ExecSQLScalar(SQL, [aSessionID]);
@@ -3035,7 +2988,7 @@ begin
   if not fSCMActive then exit;
   if aSessionID = 0 then exit;
   SQL := 'SELECT dbo.SessionNomineeCount(:ID1) ' +
-        'FROM SwimClubMeet.dbo.Session WHERE Session.SessionID = :ID2';
+        'FROM SwimClubMeet2.dbo.Session WHERE Session.SessionID = :ID2';
   v := scmConnection.ExecSQLScalar(SQL, [aSessionID, aSessionID]);
   if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
 end;
@@ -3048,7 +3001,7 @@ begin
   result := false;
   if not fSCMActive then exit;
   if aSessionID = 0 then exit;
-  SQL := 'SELECT Count(HeatID) FROM  [SwimClubMeet].[dbo].[Session] ' +
+  SQL := 'SELECT Count(HeatID) FROM  [SwimClubMeet2].[dbo].[Session] ' +
     'INNER JOIN [Event] ON [Session].SessionID = [Event].SessionID ' +
     'INNER JOIN [Heat] ON [Event].EventID = [Heat].EventID '
     + 'WHERE [Heat].HeatStatusID > 1 AND [Session].SessionID = :ID';
@@ -3112,7 +3065,7 @@ begin
   result := true;
   if not fSCMActive then exit;
   if (aSessionID = 0) then exit;
-  SQL := 'SELECT SessionStatusID FROM SwimClubMeet.dbo.Session ' +
+  SQL := 'SELECT SessionStatusID FROM SwimClubMeet2.dbo.Session ' +
          'WHERE SessionID = :aID';
   v := scmConnection.ExecSQLScalar(SQL, [aSessionID]);
   if not VarIsNull(v) and not VarIsEmpty(v) and (v <> 2) then result := false;
@@ -3126,7 +3079,7 @@ begin
   result := false;
   if not fSCMActive then exit;
   if (aSessionID = 0) then exit;
-  SQL := 'SELECT SessionStatusID FROM SwimClubMeet.dbo.Session ' +
+  SQL := 'SELECT SessionStatusID FROM SwimClubMeet2.dbo.Session ' +
          'WHERE SessionID = :aID';
   v := scmConnection.ExecSQLScalar(SQL, [aSessionID]);
   if not VarIsNull(v) and not VarIsEmpty(v) and (v <> 2) then result := true;
@@ -3192,7 +3145,7 @@ begin
   result := Date;
   if not fSCMActive then exit;
   if SessionID = 0 then exit;
-  SQL := 'SELECT SessionStart FROM SwimClubMeet.dbo.Session ' +
+  SQL := 'SELECT SessionStart FROM SwimClubMeet2.dbo.Session ' +
          'WHERE SessionID = :aID';
   v := scmConnection.ExecSQLScalar(SQL, [SessionID]);
   if not VarIsNull(v) and not VarIsEmpty(v) and not (v = 0) then result := v;
@@ -3227,7 +3180,7 @@ begin
   if not fSCMActive then exit;
   if aSplitID > 0 then
   begin
-    SQL := 'SELECT HeatStatusID FROM [SwimClubMeet].[dbo].[Heat] ' +
+    SQL := 'SELECT HeatStatusID FROM [SwimClubMeet2].[dbo].[Heat] ' +
       'INNER JOIN Entrant ON [Heat].[HeatID] = Entrant.HeatID ' +
       'INNER JOIN Split ON [Entrant].[EntrantID] = [Split].[EntrantID] ' +
       'WHERE [Split].[SplitID] = :ID;';
@@ -3243,7 +3196,7 @@ var
 begin
   result := false;
   if not fSCMActive then exit;
-  SQL := 'SELECT SessionStatusID FROM [SwimClubMeet].[dbo].[Session] ' +
+  SQL := 'SELECT SessionStatusID FROM [SwimClubMeet2].[dbo].[Session] ' +
     'INNER JOIN [Event] ON [Session].[SessionID] = [Event].[SessionID] ' +
     'INNER JOIN [Heat] ON [Event].[EventID] = [Heat].[EventID] '
     + 'INNER JOIN [Entrant] ON [Heat].[HeatID] = [Entrant].[HeatID] '
@@ -3263,14 +3216,14 @@ begin
   if not fSCMActive then exit;
   if aTeamEntrantID = 0 then exit;
   // FIND the MemberID
-  SQL := 'SELECT MemberID FROM SwimClubMeet.dbo.TeamEntrant ' +
+  SQL := 'SELECT MemberID FROM SwimClubMeet2.dbo.TeamEntrant ' +
   'WHERE TeamEntrantID = :ID';
   v := scmConnection.ExecSQLscalar(SQL, [aTeamEntrantID]);
   if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
   begin
     aMemberID := v;
     // FIND the EventID
-    SQL := 'SELECT [Heat].EventID FROM SwimClubMeet.dbo.TeamEntrant ' +
+    SQL := 'SELECT [Heat].EventID FROM SwimClubMeet2.dbo.TeamEntrant ' +
     'INNER JOIN Team ON TeamEntrant.TeamID = Team.TeamID ' +
     'INNER JOIN Heat ON Team.HeatID = Heat.HeatID ' +
     'WHERE TeamEntrantID = :ID';
@@ -3323,10 +3276,10 @@ begin
   aEventTypeID := Heat_EventTypeID(HeatIDA);
   { TODO -oBSA -cGeneral : Create swap lane function }
   if aEventTypeID = 1 then // INDV
-      SQL := 'SELECT TOP 1 [EntrantID] FROM [SwimClubMeet].[dbo].[Entrant] ' +
+      SQL := 'SELECT TOP 1 [EntrantID] FROM [SwimClubMeet2].[dbo].[Entrant] ' +
       ' WHERE HeatID = :HEAT AND Lane = :LANE'
   else if aEventTypeID = 2 then
-      SQL := 'SELECT TOP 1 [TeamID] FROM [SwimClubMeet].[dbo].[Team] ' +
+      SQL := 'SELECT TOP 1 [TeamID] FROM [SwimClubMeet2].[dbo].[Team] ' +
       ' WHERE HeatID = :HEAT AND Lane = :LANE'
   else exit;
   IDA := scmConnection.ExecSQLScalar(SQL, [HeatIDA, LaneA]);
@@ -3469,7 +3422,7 @@ begin
   if not SCM.SCMActive then exit;
   if aTeamID = 0 then exit;
   Lane := SCM.TeamEntrant_LastLaneNum(aTeamID) + 1;
-  SQL := 'INSERT INTO [SwimClubMeet].[dbo].[TeamEntrant] ' +
+  SQL := 'INSERT INTO [SwimClubMeet2].[dbo].[TeamEntrant] ' +
           '( [Lane],[IsDisqualified],[IsScratched],[TeamID]) ' +
           'VALUES ( :ID1,0,0,:ID2)';
   result := SCM.scmConnection.ExecSQL(SQL, [Lane, aTeamID]);
@@ -3484,7 +3437,7 @@ begin
   if not fSCMActive then exit;
   if aTeamEntrantID > 0 then
   begin
-    SQL := 'SELECT HeatStatusID FROM [SwimClubMeet].[dbo].[Heat] ' +
+    SQL := 'SELECT HeatStatusID FROM [SwimClubMeet2].[dbo].[Heat] ' +
       'INNER JOIN Team ON [Heat].[HeatID] = Team.HeatID ' +
       'INNER JOIN TeamEntrant ON [Team].[TeamID] = [TeamEntrant].[TeamID] ' +
       'WHERE [TeamEntrant].[TeamEntrantID] = :ID;';
@@ -3501,7 +3454,7 @@ begin
   result := 0;
   if not fSCMActive then exit;
   if aTeamID = 0 then exit;
-  SQL := 'SELECT MAX(Lane) FROM SwimClubMeet.dbo.TeamEntrant ' +
+  SQL := 'SELECT MAX(Lane) FROM SwimClubMeet2.dbo.TeamEntrant ' +
   'WHERE TeamEntrant.TeamID = :ID';
   v := scmConnection.ExecSQLScalar(SQL, [aTeamID]);
   if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
@@ -3537,7 +3490,7 @@ begin
   result := 0;
   if not fSCMActive then exit;
   if aTeamEntrant = 0 then exit;
-  SQL := 'DELETE FROM SwimClubMeet.dbo.TeamEntrant ' +
+  SQL := 'DELETE FROM SwimClubMeet2.dbo.TeamEntrant ' +
           'WHERE TeamEntrantID = :ID';
   result := SCM.scmConnection.ExecSQL(SQL, [aTeamEntrant]);
 end;
@@ -3549,7 +3502,7 @@ var
 begin
   result := false;
   if not fSCMActive then exit;
-  SQL := 'SELECT SessionStatusID FROM [SwimClubMeet].[dbo].[Session] ' +
+  SQL := 'SELECT SessionStatusID FROM [SwimClubMeet2].[dbo].[Session] ' +
     'INNER JOIN [Event] ON [Session].[SessionID] = [Event].[SessionID] ' +
     'INNER JOIN [Heat] ON [Event].[EventID] = [Heat].[EventID] '
     + 'INNER JOIN [Team] ON [Heat].[HeatID] = [Team].[HeatID] ' +
@@ -3568,7 +3521,7 @@ begin
   if not fSCMActive then exit;
   if aSplitID > 0 then
   begin
-    SQL := 'SELECT HeatStatusID FROM [SwimClubMeet].[dbo].[Heat] ' +
+    SQL := 'SELECT HeatStatusID FROM [SwimClubMeet2].[dbo].[Heat] ' +
       'INNER JOIN Team ON [Heat].[HeatID] = Team.HeatID ' +
       'INNER JOIN TeamSplit ON [Team].[TeamID] = [TeamSplit].[TeamID] ' +
       'WHERE [TeamSplit].[TeamSplitID] = :ID;';
@@ -3584,7 +3537,7 @@ var
 begin
   result := false;
   if not fSCMActive then exit;
-  SQL := 'SELECT SessionStatusID FROM [SwimClubMeet].[dbo].[Session] ' +
+  SQL := 'SELECT SessionStatusID FROM [SwimClubMeet2].[dbo].[Session] ' +
     'INNER JOIN [Event] ON [Session].[SessionID] = [Event].[SessionID] ' +
     'INNER JOIN [Heat] ON [Event].[EventID] = [Heat].[EventID] '
     + 'INNER JOIN [Team] ON [Heat].[HeatID] = [Team].[HeatID] ' +

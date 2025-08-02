@@ -10,7 +10,7 @@ GO
 -- Modified on: 05/09/2023
 --
 -- Description:	Count the number of swimmers for the session.
--- Determines if the event is INDV or TEAM.
+-- 
 -- =============================================
 ALTER FUNCTION [dbo].[SessionEntrantCount] (
 	-- Add the parameters for the function here

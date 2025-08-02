@@ -49,7 +49,7 @@ begin
   // Assign TeamNameID to table Team with ID TeamID
   if Assigned(FConnection) and qryTeamNames.Active then
   begin
-    SQL := 'UPDATE SwimClubMeet.dbo.Team SET Team.TeamNameID = :ID1 ' +
+    SQL := 'UPDATE SwimClubMeet2.dbo.Team SET Team.TeamNameID = :ID1 ' +
       'WHERE Team.TeamID = :ID2';
     aTeamNameID := Grid.DataSource.DataSet.FieldByName('TeamNameID').AsInteger;
     if (aTeamNameID > 0) then
@@ -90,7 +90,7 @@ begin
     fConnection := AConnection;
     fTeamID := aTeamID;
     // find the event ID for the team....
-    SQL := 'SELECT [Event].EventID FROM SwimClubMeet.dbo.Team ' +
+    SQL := 'SELECT [Event].EventID FROM SwimClubMeet2.dbo.Team ' +
     'INNER JOIN Heat ON Team.HeatID = Heat.HeatID  ' +
     'INNER JOIN [Event] ON Heat.EventID = [Event].EventID ' +
     'WHERE Team.TeamID = :ID';

@@ -529,16 +529,16 @@ begin
     end;
 
     // remove all C O N T A C T N U Mbers for this member.
-    SQL := 'DELETE FROM [SwimClubMeet].[dbo].[ContactNum] WHERE MemberID = ' +
+    SQL := 'DELETE FROM [SwimClubMeet2].[dbo].[ContactNum] WHERE MemberID = ' +
       IntToStr(MemberID) + ';';
     FConnection.ExecSQL(SQL);
     // remove all R O L E S assigned to this member held in linked-list.
-    SQL := 'DELETE FROM [SwimClubMeet].[dbo].[MemberRoleLink] WHERE MemberID = '
+    SQL := 'DELETE FROM [SwimClubMeet2].[dbo].[MemberRoleLink] WHERE MemberID = '
       + IntToStr(MemberID) + ';';
     FConnection.ExecSQL(SQL);
 
     // remove all split data for indv events
-    SQL := 'SELECT EntrantID FROM [SwimClubMeet].[dbo].Entrant WHERE MemberID = ' +
+    SQL := 'SELECT EntrantID FROM [SwimClubMeet2].[dbo].Entrant WHERE MemberID = ' +
       IntToStr(MemberID) + ';';
     tmpQry := TFDQuery.Create(self);
     tmpQry.Connection := FConnection;
@@ -549,7 +549,7 @@ begin
     begin
       while not tmpQry.Eof do
       begin
-        SQL := 'DELETE FROM [SwimClubMeet].[dbo].[Split] WHERE EntrantID = ' +
+        SQL := 'DELETE FROM [SwimClubMeet2].[dbo].[Split] WHERE EntrantID = ' +
           IntToStr(tmpQry.FieldByName('EntrantID').AsInteger) + ';';
         FConnection.ExecSQL(SQL);
         tmpQry.Next;
@@ -563,26 +563,26 @@ begin
     // Split data is linked to dbo.Team.
 
     // ENTRANTS
-    SQL := 'UPDATE [SwimClubMeet].[dbo].[Entrant] SET [MemberID] = NULL, ' +
+    SQL := 'UPDATE [SwimClubMeet2].[dbo].[Entrant] SET [MemberID] = NULL, ' +
       '[RaceTime] = NULL, [TimeToBeat] = NULL, [PersonalBest] = NULL, ' +
       '[IsDisqualified] = 0,[IsScratched] = 0, DisqualifyCodeID = NULL WHERE MemberID = ' +
       IntToStr(MemberID) + ';';
     FConnection.ExecSQL(SQL);
     // TEAM ENTRANTS
-    SQL := 'UPDATE [SwimClubMeet].[dbo].[TeamEntrant] SET [MemberID] = NULL, ' +
+    SQL := 'UPDATE [SwimClubMeet2].[dbo].[TeamEntrant] SET [MemberID] = NULL, ' +
       '[RaceTime] = NULL, [TimeToBeat] = NULL, [PersonalBest] = NULL, ' +
       '[IsDisqualified] = 0,[IsScratched] = 0, DisqualifyCodeID = NULL WHERE MemberID = ' +
       IntToStr(MemberID) + ';';
     FConnection.ExecSQL(SQL);
 
     // DELETE MEMBERS NOMINATIONS TO EVENTS
-    SQL := 'DELETE FROM [SwimClubMeet].[dbo].[Nominee] WHERE MemberID = ' +
+    SQL := 'DELETE FROM [SwimClubMeet2].[dbo].[Nominee] WHERE MemberID = ' +
       IntToStr(MemberID) + ';';
     FConnection.ExecSQL(SQL);
 
     { TODO -oBen -cGeneral : Version 1.5.5.4 uses a linked list to SwimClub ... }
     (*
-      SQL := 'DELETE FROM [SwimClubMeet].[dbo].[lnkSwimClubMember] WHERE MemberID = '
+      SQL := 'DELETE FROM [SwimClubMeet2].[dbo].[lnkSwimClubMember] WHERE MemberID = '
       + IntToStr(MemberID) + ' AND SwimClubID = ' +
       IntToStr(qrySwimClub.FieldByName('SwimClubID').AsInteger) + ';';
       FConnection.ExecSQL(SQL);

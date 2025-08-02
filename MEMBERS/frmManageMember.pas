@@ -914,7 +914,7 @@ begin
     FName := ManageMemberData.dsMember.DataSet.FieldByName('FName').AsString;
     s := IntToStr(ManageMemberData.GetMemberID);
     dlg.lblTitle.Caption := 'Delete (ID: ' + s + ') ' + FName +
-      ' from the SwimClubMeet database ?';
+      ' from the SwimClubMeet2 database ?';
     // display the confirm delete dlg
     if IsPositiveResult(dlg.ShowModal) then
       fDoDelete := true;
@@ -1049,7 +1049,7 @@ begin
       exit;
     dt := FieldByName('DOB').AsDateTime;
     SQL := 'SELECT dbo.SwimmerAge(GETDATE(), :ID1) AS SwimmerAge FROM ' +
-      '[SwimClubMeet].[dbo].[Member] WHERE MemberID = :ID2';
+      '[SwimClubMeet2].[dbo].[Member] WHERE MemberID = :ID2';
     v := FConnection.ExecSQLScalar(SQL, [dt, aMemberID],
       [ftDateTime, ftInteger]);
     if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then

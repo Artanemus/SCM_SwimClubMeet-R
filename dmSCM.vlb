@@ -1,10 +1,4 @@
-﻿[dsEntrant]
-Coordinates=189,717,62,33
-
-[qryEntrantIsScratched]
-Coordinates=877,281,124,33
-
-[qryEventEventID]
+﻿[qryEventEventID]
 Coordinates=721,755,96,33
 
 [tblHeatStatus]
@@ -37,9 +31,6 @@ Coordinates=499,553,99,51
 [dsSwimClub]
 Coordinates=577,561,76,33
 
-[qryEntrantTimeToBeat]
-Coordinates=930,385,125,33
-
 [luFName]
 Coordinates=482,1,57,33
 
@@ -60,9 +51,6 @@ Coordinates=938,10,79,87
 
 [qrySessionSessionID]
 Coordinates=930,489,119,33
-
-[qryEntrantPersonalBest]
-Coordinates=930,541,132,33
 
 [qryRenumberHeats]
 Coordinates=744,395,109,51
@@ -88,9 +76,6 @@ Coordinates=165,614,73,51
 [qryEventNomineeCount]
 Coordinates=930,645,131,33
 
-[qryEntrantHeatID]
-Coordinates=721,1015,99,33
-
 [dsNominateMembers]
 Coordinates=721,1,118,33
 
@@ -109,9 +94,6 @@ Coordinates=930,749,132,33
 [dsSession]
 Coordinates=0,0,65,33
 
-[qryEntrantFullName]
-Coordinates=493,1022,112,33
-
 [tblEventStatus]
 Coordinates=842,10,86,87
 
@@ -126,9 +108,6 @@ Coordinates=275,1022,108,33
 
 [dsEvent]
 Coordinates=298,483,54,33
-
-[qryEntrantEntrantID]
-Coordinates=156,1022,112,33
 
 [qryHeatHeatNum]
 Coordinates=57,1022,97,33
@@ -151,9 +130,6 @@ Coordinates=930,905,100,33
 [qryHeatEventID]
 Coordinates=930,957,91,33
 
-[qryEntrantIsDisqualified]
-Coordinates=930,1009,133,33
-
 [luEventStatus]
 Coordinates=482,701,83,33
 
@@ -168,9 +144,6 @@ Coordinates=1060,105,168,33
 
 [qryFName]
 Coordinates=248,614,64,51
-
-[qryEntrantLane]
-Coordinates=930,1061,90,33
 
 [qryEventluStroke]
 Coordinates=821,1093,99,33
@@ -188,9 +161,6 @@ Coordinates=702,1093,109,33
 [tblStroke]
 Coordinates=10,395,58,87
 
-[scmConnection]
-Coordinates=603,1093,91,33
-
 [luStroke]
 Coordinates=482,771,55,33
 
@@ -206,9 +176,6 @@ Coordinates=13,196,48,33
 [qryHeatHeatTypeID]
 Coordinates=286,1093,109,33
 
-[qryEntrantTIME]
-Coordinates=187,1093,91,33
-
 [qrySession]
 Coordinates=539,10,82,177
 
@@ -221,9 +188,6 @@ LayerNames=Heat
 
 [qryEventEntrantCount]
 Coordinates=1124,209,124,33
-
-[qryEntrantMemberID]
-Coordinates=1124,261,116,33
 
 [tblSessionStatus]
 Coordinates=102,492,97,51
@@ -251,9 +215,6 @@ Coordinates=10,614,145,51
 
 [qryIsQualifiedALT]
 Coordinates=844,492,103,51
-
-[qryEntrant]
-Coordinates=95,10,100,267
 
 [tblHouse]
 Coordinates=431,553,58,51
@@ -330,5 +291,8 @@ EditingLayerName=Heat
 ActiveLayerNames=
 
 []
-Coordinates=721,911,106,33
+Coordinates=189,717,62,33
+
+[scmConnection]
+Coordinates=603,1093,91,33
 
