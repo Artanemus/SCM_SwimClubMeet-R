@@ -1,11 +1,5 @@
-﻿[qryEventEventID]
-Coordinates=721,755,96,33
-
-[tblHeatStatus]
+﻿[tblHeatStatus]
 Coordinates=372,395,80,51
-
-[tblDistance]
-Coordinates=763,10,69,105
 
 [qryGetNextHeat]
 Coordinates=78,395,92,51
@@ -19,17 +13,11 @@ Coordinates=82,196,59,33
 [qryCountHeatsNotClosed]
 Coordinates=282,553,139,51
 
-[qrySessionStatus]
-Coordinates=721,807,101,33
-
 [qryNominateMembersMemberID]
 Coordinates=720,859,172,33
 
 [qrySwapEntrants]
 Coordinates=499,553,99,51
-
-[dsSwimClub]
-Coordinates=577,561,76,33
 
 [luFName]
 Coordinates=482,1,57,33
@@ -37,20 +25,8 @@ Coordinates=482,1,57,33
 [dsNomateEvent]
 Coordinates=389,860,92,33
 
-[qryHeatHeatID]
-Coordinates=612,981,85,33
-
-[qrySessionSessionStatusID]
-Coordinates=930,437,151,33
-
-[luDistance]
-Coordinates=320,860,66,33
-
 [tblEventType]
 Coordinates=938,10,79,87
-
-[qrySessionSessionID]
-Coordinates=930,489,119,33
 
 [qryRenumberHeats]
 Coordinates=744,395,109,51
@@ -58,41 +34,17 @@ Coordinates=744,395,109,51
 [dsIsQualified]
 Coordinates=482,351,79,33
 
-[qryNominee]
-Coordinates=645,492,73,51
-
 [qryFNameEllipse]
 Coordinates=862,553,97,51
-
-[dsNominee]
-Coordinates=577,1,69,33
-
-[qryEventDistanceID]
-Coordinates=721,963,111,33
 
 [tblHeatType]
 Coordinates=165,614,73,51
 
-[qryEventNomineeCount]
-Coordinates=930,645,131,33
-
 [dsNominateMembers]
 Coordinates=721,1,118,33
 
-[qryEventStrokeID]
-Coordinates=612,1022,100,33
-
 [luEventType]
 Coordinates=577,421,75,33
-
-[qrySessionSwimClubID]
-Coordinates=930,697,129,33
-
-[qrySessionSessionStart]
-Coordinates=930,749,132,33
-
-[dsSession]
-Coordinates=0,0,65,33
 
 [tblEventStatus]
 Coordinates=842,10,86,87
@@ -100,23 +52,8 @@ Coordinates=842,10,86,87
 [tblGender]
 Coordinates=462,395,62,51
 
-[qrySessionCaption]
-Coordinates=384,1022,108,33
-
-[qryEventSessionID]
-Coordinates=275,1022,108,33
-
-[dsEvent]
-Coordinates=298,483,54,33
-
-[qryHeatHeatNum]
-Coordinates=57,1022,97,33
-
 [luHeatStatus]
 Coordinates=721,125,77,33
-
-[qryEventEventStatusID]
-Coordinates=930,801,128,33
 
 [qryNominateMembersFName]
 Coordinates=930,853,156,33
@@ -124,20 +61,11 @@ Coordinates=930,853,156,33
 [qryIsQualified]
 Coordinates=957,492,83,51
 
-[qryEventEventStr]
-Coordinates=930,905,100,33
-
-[qryHeatEventID]
-Coordinates=930,957,91,33
-
 [luEventStatus]
 Coordinates=482,701,83,33
 
 [qryNominateMembers]
 Coordinates=631,10,122,123
-
-[qryEventluEventStatus]
-Coordinates=1124,53,127,33
 
 [qryNominateMembersGenderID]
 Coordinates=1060,105,168,33
@@ -145,64 +73,14 @@ Coordinates=1060,105,168,33
 [qryFName]
 Coordinates=248,614,64,51
 
-[qryEventluStroke]
-Coordinates=821,1093,99,33
-
 [dsFNameEllipse]
 Coordinates=577,351,93,33
-
-[qryEvent]
-Coordinates=10,10,75,375
-LayerNames=Event
-
-[qryEventEventNum]
-Coordinates=702,1093,109,33
-
-[tblStroke]
-Coordinates=10,395,58,87
-
-[luStroke]
-Coordinates=482,771,55,33
-
-[qryHeatcStatus]
-Coordinates=504,1093,89,33
-
-[qryEventCaption]
-Coordinates=405,1093,96,33
-
-[dsHeat]
-Coordinates=13,196,48,33
-
-[qryHeatHeatTypeID]
-Coordinates=286,1093,109,33
-
-[qrySession]
-Coordinates=539,10,82,177
-
-[qryHeatHeatStatusID]
-Coordinates=1124,157,116,33
-
-[qryHeat]
-Coordinates=462,10,67,177
-LayerNames=Heat
-
-[qryEventEntrantCount]
-Coordinates=1124,209,124,33
 
 [tblSessionStatus]
 Coordinates=102,492,97,51
 
-[qrySwimClub]
-Coordinates=180,395,80,51
-
-[qrySessionClosedDT]
-Coordinates=1124,313,117,33
-
 [qryNominateEvent]
 Coordinates=347,10,105,231
-
-[qryEventluDistance]
-Coordinates=1124,365,110,33
 
 [luHeatType]
 Coordinates=721,685,69,33
@@ -282,16 +160,14 @@ Coordinates=756,551,170,33
 [qryNominateControlListSessionID]
 Coordinates=746,628,182,33
 
-[qryEventMeters]
-Coordinates=104,296,91,33
-
 [Module Settings]
 ModelLayerNames=SwimClub;Session;Event;Heat;Entrant;Nominate
 EditingLayerName=Heat
 ActiveLayerNames=
 
 []
-Coordinates=189,717,62,33
+Coordinates=320,860,66,33
+LayerNames=Heat
 
 [scmConnection]
 Coordinates=603,1093,91,33

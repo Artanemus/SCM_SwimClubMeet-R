@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{A03CB032-9F3A-4338-82CF-A46F91013423}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="SwimClubMeet.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\SCM_TimeDrops\SCM_TimeDrops.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="SwimClubMeet">
+        <MSBuild Projects="SwimClubMeet.dproj"/>
+    </Target>
+    <Target Name="SwimClubMeet:Clean">
+        <MSBuild Projects="SwimClubMeet.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="SwimClubMeet:Make">
+        <MSBuild Projects="SwimClubMeet.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="SCM_TimeDrops">
+        <MSBuild Projects="..\SCM_TimeDrops\SCM_TimeDrops.dproj"/>
+    </Target>
+    <Target Name="SCM_TimeDrops:Clean">
+        <MSBuild Projects="..\SCM_TimeDrops\SCM_TimeDrops.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="SCM_TimeDrops:Make">
+        <MSBuild Projects="..\SCM_TimeDrops\SCM_TimeDrops.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="SwimClubMeet;SCM_TimeDrops"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="SwimClubMeet:Clean;SCM_TimeDrops:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="SwimClubMeet:Make;SCM_TimeDrops:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

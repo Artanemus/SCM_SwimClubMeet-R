@@ -31,7 +31,6 @@ type
     DBText1: TDBText;
     dsSwimClub: TDataSource;
     dtpStartOfSwimSeason: TDateTimePicker;
-    Label1: TLabel;
     Label10: TLabel;
     Label11: TLabel;
     Label12: TLabel;
@@ -40,7 +39,6 @@ type
     Label15: TLabel;
     Label16: TLabel;
     Label17: TLabel;
-    Label18: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
@@ -58,15 +56,8 @@ type
     Panel1: TPanel;
     Panel2: TPanel;
     prefCheckUnNomination: TCheckBox;
-    prefDisplayDivisions: TCheckBox;
-    prefDisplaySwimmerCAT: TCheckBox;
     prefEnableDCodes: TCheckBox;
-    prefEnableSplitTimesForINDV: TCheckBox;
-    prefEnableSplitTimesForTEAM: TCheckBox;
-    prefEnableTeamEvents: TCheckBox;
     prefExcludeOutsideLanes: TCheckBox;
-    prefGenerateEventDescription: TCheckBox;
-    prefGenerateEventDescStr: TEdit;
     prefGroupBy: TRadioGroup;
     prefHeatAlgorithm: TRadioGroup;
     prefImportSeedTime: TRadioGroup;
@@ -448,41 +439,19 @@ enumeration to its corresponding integer value in Delphi.
   prefGroupBy.ItemIndex := iFile.ReadInteger('Preferences', 'GroupBy', 0);
   rgpSeedMethod.ItemIndex := iFile.ReadInteger('Preferences', 'SeedMethod', 0);
 
-  // Generate event descriptions
-  i := iFile.ReadInteger('Preferences', 'GenerateEventDescription', iUnChecked);
-  prefGenerateEventDescription.State := TCheckBoxState(i);
-  prefGenerateEventDescStr.Text := iFile.ReadString('Preferences',
-    'GenerateEventDescStr', ' - Individual, all genders, all ages.');
 
-  // Generate event descriptions (TEAM)
-//  i := iFile.ReadInteger('Preferences', 'GenerateTEAMDescription', iUnChecked);
-//  prefGenerateTEAMDescription.State := TCheckBoxState(i);
-//  prefGenerateTEAMDescStr.Text := iFile.ReadString('Preferences',
-//    'GenerateEventTeamDescStr', ' - RELAY.');
+	rgpSeedMethod.ItemIndex := iFile.ReadInteger('Preferences', 'SeedMethod', 0);
 
-  rgpSeedMethod.ItemIndex := iFile.ReadInteger('Preferences', 'SeedMethod', 0);
+	{ /* 2020-11-01 auto-build v2 seed method */ }
+	rgpSeedMethod.ItemIndex := iFile.ReadInteger('Preferences', 'SeedMethod', 0);
+	{ /* 2020-11-01 auto-build v2 seed depth for Circle Seed */ }
+	spnSeedDepth.Value := (iFile.ReadInteger('Preferences', 'SeedDepth', 3));
 
-  { /* 2020-11-01 auto-build v2 seed method */ }
-  rgpSeedMethod.ItemIndex := iFile.ReadInteger('Preferences', 'SeedMethod', 0);
-  { /* 2020-11-01 auto-build v2 seed depth for Circle Seed */ }
-  spnSeedDepth.Value := (iFile.ReadInteger('Preferences', 'SeedDepth', 3));
+	// 2023.06.26
+	prefEnableDCodes.Checked := iFile.ReadBool('Preferences',
+		'EnableDCodes', false);
 
-  // 2023.06.26
-  prefEnableTeamEvents.Checked := iFile.ReadBool('Preferences',
-    'EnableTeamEvents', true);
-  prefEnableDCodes.Checked := iFile.ReadBool('Preferences',
-    'EnableDCodes', false);
-  prefDisplaySwimmerCAT.Checked := iFile.ReadBool('Preferences',
-    'DisplaySwimmerCAT', false);
-  prefDisplayDivisions.Checked := iFile.ReadBool('Preferences',
-    'DisplayDivisions', false);
-  //2024/1/1
-  prefEnableSplitTimesForINDV.Checked := iFile.ReadBool('Preferences',
-    'EnableSplitTimesForINDV', false);
-  prefEnableSplitTimesForTeam.Checked := iFile.ReadBool('Preferences',
-    'EnableSplitTimesForTEAM', false);
-
-  // 2024/03/19 Value used by TFDQuery qryChart to select TOP ###
+	// 2024/03/19 Value used by TFDQuery qryChart to select TOP ###
   i := iFile.ReadInteger('ManageMemberData', 'MemberChartDataPoints', 26);
   edtMemberChartDataPoints.Text := IntToStr(i);
 
@@ -521,36 +490,14 @@ begin
     integer(prefSeperateGender.State));
   iFile.WriteInteger('Preferences', 'GroupBy', prefGroupBy.ItemIndex);
 
-  // generate event description
-  iFile.WriteInteger('Preferences', 'GenerateEventDescription',
-    integer(prefGenerateEventDescription.State));
-  iFile.WriteString('Preferences', 'GenerateEventDescStr',
-    prefGenerateEventDescStr.Text);
 
-  // generate event description (TEAM)
-//  iFile.WriteInteger('Preferences', 'GenerateTEAMDescription',
-//    integer(prefGenerateTEAMDescription.State));
-//  iFile.WriteString('Preferences', 'GenerateTEAMDescStr',
-//    prefGenerateTEAMDescStr.Text);
+	{ 2020-11-01 auto-build v2 seed method }
+	iFile.WriteInteger('Preferences', 'SeedMethod', rgpSeedMethod.ItemIndex);
+	{ 2020-11-01 auto-build v2 seed depth for Circle Seed }
+	iFile.WriteInteger('Preferences', 'SeedDepth', (spnSeedDepth.Value));
 
-  { 2020-11-01 auto-build v2 seed method }
-  iFile.WriteInteger('Preferences', 'SeedMethod', rgpSeedMethod.ItemIndex);
-  { 2020-11-01 auto-build v2 seed depth for Circle Seed }
-  iFile.WriteInteger('Preferences', 'SeedDepth', (spnSeedDepth.Value));
-
-  // 2023.06.26
-  iFile.WriteBool('Preferences', 'EnableTeamEvents',
-    prefEnableTeamEvents.Checked);
-  iFile.WriteBool('Preferences', 'EnableDCodes',
-    prefEnableDCodes.Checked);
-  iFile.WriteBool('Preferences', 'DisplaySwimmerCAT', prefDisplaySwimmerCAT.Checked);
-  iFile.WriteBool('Preferences', 'DisplayDivision',   prefDisplayDivisions.Checked);
-
-  //2024/1/1
-  iFile.WriteBool('Preferences', 'EnableSplitTimesForINDV',
-    prefEnableSplitTimesForINDV.Checked);
-  iFile.WriteBool('Preferences', 'EnableSplitTimesForTEAM',
-    prefEnableSplitTimesForTEAM.Checked);
+	// 2023.06.26
+	iFile.WriteBool('Preferences', 'EnableDCodes',prefEnableDCodes.Checked);
 
   // 2024/03/19 Value used by TFDQuery qryChart to select TOP ###
   try

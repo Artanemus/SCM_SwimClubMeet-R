@@ -4884,7 +4884,6 @@ object Main: TMain
       Margins.Bottom = 4
       Anchors = []
       DataField = 'LogoImg'
-      DataSource = SCM.dsSwimClub
       Proportional = True
       Stretch = True
       TabOrder = 0
@@ -4929,7 +4928,6 @@ object Main: TMain
         Anchors = []
         AutoSize = True
         DataField = 'Caption'
-        DataSource = SCM.dsSwimClub
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -16
@@ -4945,7 +4943,6 @@ object Main: TMain
         Anchors = []
         AutoSize = True
         DataField = 'NickName'
-        DataSource = SCM.dsSwimClub
       end
     end
     object pnlDebugInfo: TPanel
@@ -4971,7 +4968,6 @@ object Main: TMain
         Height = 20
         Alignment = taCenter
         DataField = 'SwimClubID'
-        DataSource = SCM.dsSwimClub
       end
       object dbtxtDebugSession: TDBText
         Left = 83

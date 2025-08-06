@@ -10,17 +10,11 @@ Coordinates=1304,496,81,36
 [Tools_House]
 Coordinates=1304,606,90,36
 
-[SCM.dsSession]
-Coordinates=216,866,106,36
-
 [spbtnEntrantScratchLane]
 Coordinates=685,1076,160,36
 
 [Heat_ToggleStatus]
 Coordinates=1304,771,125,36
-
-[SCM.luStroke]
-Coordinates=1098,1233,94,36
 
 [Label12]
 Coordinates=1400,863,60,58
@@ -37,17 +31,11 @@ Coordinates=1304,936,136,36
 [pnlSessClientTop]
 Coordinates=1211,632,116,58
 
-[SCM.qryIsQualified]
-Coordinates=10,940,126,58
-
 [dbtxtDebugSwimClub]
 Coordinates=550,709,138,58
 
 [pnlDebugInfo]
 Coordinates=290,709,91,58
-
-[SCM.tblSessionStatus]
-Coordinates=1062,632,143,58
 
 [Tools_Preferences]
 Coordinates=1304,991,122,36
@@ -72,12 +60,6 @@ Coordinates=1677,1017,93,36
 
 [lblSessionCaption]
 Coordinates=364,863,118,58
-
-[SCM.dsSwimClub]
-Coordinates=748,1212,118,36
-
-[SCM.luGender]
-Coordinates=867,848,99,36
 
 [Session_ToggleLock]
 Coordinates=1165,1404,134,36
@@ -106,14 +88,8 @@ Coordinates=260,940,126,58
 [Session_Delete]
 Coordinates=194,1404,105,36
 
-[SCM.qryNominateMembers]
-Coordinates=131,429,172,146
-
 [Filter1]
 Coordinates=26,1404,51,36
-
-[SCM.dsFNameEllipse]
-Coordinates=1098,78,140,36
 
 [ShapeBarEv1]
 Coordinates=701,1017,93,36
@@ -127,9 +103,6 @@ Coordinates=1534,221,85,36
 [MoveUp2]
 Coordinates=1534,276,69,36
 
-[SCM.dsEvent]
-Coordinates=40,418,93,36
-
 [ShapeSessBar1]
 Coordinates=1559,1017,107,36
 
@@ -141,15 +114,6 @@ Coordinates=569,632,131,58
 
 [Event_MoveUp]
 Coordinates=1534,496,102,36
-
-[SCM.luHeatStatus]
-Coordinates=867,463,120,36
-
-[SCM.luEventType]
-Coordinates=867,386,118,36
-
-[SCM.qryFNameEllipse]
-Coordinates=1090,863,144,58
 
 [Heat_PrintSet]
 Coordinates=1534,551,95,36
@@ -168,9 +132,6 @@ Coordinates=360,632,60,58
 
 [Event_MoveDown]
 Coordinates=1534,771,118,36
-
-[SCM.qrySession]
-Coordinates=10,429,110,212
 
 [MoveDown2]
 Coordinates=1534,936,85,36
@@ -202,17 +163,11 @@ Coordinates=876,429,140,58
 [Heat_TimeKeeperReport]
 Coordinates=1781,56,157,36
 
-[SCM.luEventStatus]
-Coordinates=450,606,126,36
-
 [Sort2]
 Coordinates=1534,1431,45,36
 
 [ShapeSessBar2]
 Coordinates=1500,1076,107,36
-
-[SCM.tblEventType]
-Coordinates=426,429,122,102
 
 [pnlSessLeftTop]
 Coordinates=1768,863,104,58
@@ -229,14 +184,8 @@ Coordinates=1149,1478,84,36
 [Label24]
 Coordinates=494,863,60,58
 
-[SCM.luHeatType]
-Coordinates=712,1308,112,36
-
 [spbtnHeatUp]
 Coordinates=481,1017,89,36
-
-[SCM.tblHeatType]
-Coordinates=884,709,116,58
 
 [ActionManager1]
 Coordinates=407,1478,108,36
@@ -247,10 +196,6 @@ Coordinates=1479,940,154,36
 [dbtxtDebugHeat]
 Coordinates=1301,709,107,58
 
-[SCM.qryEvent]
-Coordinates=10,10,97,36
-Visible=False
-
 [EmptyLane1]
 Coordinates=318,1478,86,36
 
@@ -259,15 +204,6 @@ Coordinates=190,1478,74,36
 
 [EventWidgets]
 Coordinates=1034,786,94,58
-
-[SCM.qrySwapEntrants]
-Coordinates=504,786,144,58
-
-[SCM.tblGender]
-Coordinates=697,709,103,58
-
-[SCM.dsNominee]
-Coordinates=629,1212,111,36
 
 [Tools_LeaderBoard]
 Coordinates=1781,276,127,36
@@ -298,9 +234,6 @@ Coordinates=1783,1017,152,36
 
 [Event_BuildQuarterFinals]
 Coordinates=1781,716,161,36
-
-[SCM.tblStroke]
-Coordinates=556,429,97,102
 
 [StrikeEntrant1]
 Coordinates=1781,936,96,36
@@ -349,9 +282,6 @@ Coordinates=1583,1552,114,36
 
 [spbtnEventNew]
 Coordinates=459,1076,104,36
-
-[SCM.qryFName]
-Coordinates=144,940,106,58
 
 [Session_Report]
 Coordinates=1365,1552,106,36
@@ -404,20 +334,11 @@ Coordinates=1478,863,159,58
 [NewRecord1]
 Coordinates=39,1552,88,36
 
-[SCM.luDistance]
-Coordinates=1098,463,107,36
-
 [ShapeHeatBar2]
 Coordinates=585,1017,106,36
 
-[SCM.qryNominee]
-Coordinates=1643,863,116,58
-
 [MoveUp3]
 Coordinates=2036,551,69,36
-
-[SCM.tblHouse]
-Coordinates=1142,786,97,58
 
 [ShapeNomDot1]
 Coordinates=10,1076,105,36
@@ -448,9 +369,6 @@ Coordinates=2036,1101,87,36
 
 [Label14]
 Coordinates=397,940,60,58
-
-[SCM.dsNominateMembers]
-Coordinates=448,78,168,36
 
 [Help_About]
 Coordinates=2036,1156,82,36
@@ -497,9 +415,6 @@ Coordinates=1326,1076,169,36
 [ShapeHeatDot3]
 Coordinates=324,1135,106,36
 
-[SCM.qryCountHeatsNotClosed]
-Coordinates=475,940,192,58
-
 [MoveDown1]
 Coordinates=1729,1653,85,36
 
@@ -527,9 +442,6 @@ Coordinates=799,940,130,36
 [pumEntrant]
 Coordinates=917,1653,81,36
 
-[SCM.qryGetNextHeat]
-Coordinates=1852,632,138,58
-
 [Heat_Delete]
 Coordinates=828,1653,86,36
 
@@ -545,13 +457,6 @@ Coordinates=463,1653,40,36
 [Nominate_SortMembers]
 Coordinates=1370,1615,153,36
 
-[SCM.qryHeat]
-Coordinates=1340,250,91,36
-Visible=False
-
-[SCM.tblDistance]
-Coordinates=305,429,110,124
-
 [spbtnHeatAutoBuild]
 Coordinates=1640,940,128,36
 
@@ -560,9 +465,6 @@ Coordinates=1938,786,113,58
 
 [Event_Report]
 Coordinates=235,1653,93,36
-
-[SCM.qrySwimClub]
-Coordinates=438,632,122,58
 
 [spbtnHeatMarshall]
 Coordinates=578,1135,122,36
@@ -574,47 +476,20 @@ Coordinates=1091,1135,106,36
 Coordinates=386,1017,79,36
 Visible=True
 
-[SCM.dsHeat]
-Coordinates=325,573,87,36
-
-[SCM.qryIsQualifiedALT]
-Coordinates=1555,632,149,58
-
 [spbtnSessionDelete]
 Coordinates=440,1135,129,36
-
-[SCM.qryGetPrevHeat]
-Coordinates=147,709,138,58
 
 [spbtnNominateReport]
 Coordinates=943,1135,139,36
 
-[SCM.luSessionStatus]
-Coordinates=1098,1,139,36
-
-[SCM.luHouse]
-Coordinates=1304,309,94,36
-
-[SCM.dsNomateEvent]
-Coordinates=654,1068,138,36
-
 [Session_Export]
 Coordinates=2272,441,105,36
-
-[SCM.qryCountEventsNotClosed]
-Coordinates=307,786,198,58
 
 [Tools_Divisions]
 Coordinates=2272,496,105,36
 
-[SCM.luFName]
-Coordinates=128,1308,98,36
-
 [DeleteHeat1]
 Coordinates=2272,551,86,36
-
-[SCM.qryNominateEvent]
-Coordinates=1247,10,152,278
 
 [spbtnEventMoveDown]
 Coordinates=236,1017,143,36
@@ -652,20 +527,11 @@ Coordinates=851,1076,93,36
 [ShapeHeatBar3]
 Coordinates=1828,1135,106,36
 
-[SCM.tblEventStatus]
-Coordinates=666,429,130,102
-
-[SCM.dsIsQualified]
-Coordinates=450,837,121,36
-
 [spbtnHeatNew]
 Coordinates=10,1194,99,36
 
 [pumNominate]
 Coordinates=2272,1321,94,36
-
-[SCM.tblHeatStatus]
-Coordinates=1311,429,124,58
 
 [vimage]
 Coordinates=710,1135,56,36
@@ -698,15 +564,8 @@ Coordinates=97,1653,87,36
 [dbtxtNominateFullName]
 Coordinates=1009,709,152,58
 
-[SCM.dsNominateControlList]
-Coordinates=256,318,177,36
-
 [SCMNom.qryEntrant]
 Coordinates=779,78,115,51
-
-[SCM.qryNominateControlList]
-Coordinates=903,277,181,36
-Visible=False
 
 [SCMNom.qryIsMemberInEvent]
 Coordinates=903,994,164,51
@@ -850,9 +709,6 @@ Coordinates=126,1,77,58
 [File_ExportCarnival]
 Coordinates=471,243,127,36
 
-[SCM.qrySCMSystem]
-Coordinates=98,341,135,58
-
 [dbimgSwimClubLogo]
 Coordinates=471,369,136,36
 
@@ -896,7 +752,8 @@ Coordinates=1781,1,152,36
 Coordinates=1017,863,55,58
 
 [SCM.]
-Coordinates=0,0,102,36
+Coordinates=1098,463,107,36
+Visible=False
 
 [Grid_MoveUp]
 Coordinates=1781,1211,111,36

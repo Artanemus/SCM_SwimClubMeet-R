@@ -10,25 +10,18 @@ uses
   FireDAC.Phys.MSSQLDef, FireDAC.VCLUI.Wait, FireDAC.Stan.Param, FireDAC.DatS,
   FireDAC.DApt.Intf, FireDAC.DApt, Data.DB, FireDAC.Comp.Client,
   FireDAC.Comp.DataSet, Windows, Winapi.Messages,
-  SCMDefines;
+  SCMDefines, FireDAC.VCLUI.Error, FireDAC.Comp.UI, dmSCMCore;
 
 
 
 type
   TSCM = class(TDataModule)
-    dsEvent: TDataSource;
     dsFNameEllipse: TDataSource;
-    dsHeat: TDataSource;
     dsIsQualified: TDataSource;
     dsNomateEvent: TDataSource;
     dsNominateControlList: TDataSource;
     dsNominateMembers: TDataSource;
-    dsNominee: TDataSource;
-    dsSession: TDataSource;
-    dsSwimClub: TDataSource;
-    dsTeam: TDataSource;
     luDisqualifyCode: TDataSource;
-    luDistance: TDataSource;
     luEventStatus: TDataSource;
     luEventType: TDataSource;
     luFName: TDataSource;
@@ -37,39 +30,12 @@ type
     luHeatType: TDataSource;
     luHouse: TDataSource;
     luSessionStatus: TDataSource;
-    luStroke: TDataSource;
-    dsParaCodeLink: TDataSource;
     qryCountEventsNotClosed: TFDQuery;
     qryCountHeatsNotClosed: TFDQuery;
-    qryEvent: TFDQuery;
-		qryEventABREV: TWideStringField;
-    qryEventCaption: TWideStringField;
-    qryEventDistanceID: TIntegerField;
-    qryEventEntrantCount: TIntegerField;
-    qryEventEventID: TFDAutoIncField;
-    qryEventEventNum: TIntegerField;
-    qryEventEventStatusID: TIntegerField;
-    qryEventEventStr: TWideStringField;
-    qryEventEventTypeID: TIntegerField;
-    qryEventluDistance: TStringField;
-    qryEventluEventStatus: TStringField;
-    qryEventluStroke: TStringField;
-    qryEventMeters: TIntegerField;
-    qryEventNomineeCount: TIntegerField;
-    qryEventScheduleDT: TTimeField;
-    qryEventSessionID: TIntegerField;
-    qryEventStrokeID: TIntegerField;
     qryFName: TFDQuery;
     qryFNameEllipse: TFDQuery;
     qryGetNextHeat: TFDQuery;
     qryGetPrevHeat: TFDQuery;
-    qryHeat: TFDQuery;
-    qryHeatcStatus: TWideStringField;
-    qryHeatEventID: TIntegerField;
-    qryHeatHeatID: TFDAutoIncField;
-    qryHeatHeatNum: TIntegerField;
-    qryHeatHeatStatusID: TIntegerField;
-    qryHeatHeatTypeID: TIntegerField;
     qryIsQualified: TFDQuery;
     qryIsQualifiedALT: TFDQuery;
     qryNominateControlList: TFDQuery;
@@ -90,113 +56,35 @@ type
     qryNominateMembersFullName: TWideStringField;
     qryNominateMembersGenderID: TIntegerField;
     qryNominateMembersMemberID: TFDAutoIncField;
-    qryNominee: TFDQuery;
     qryRenumberLanes: TFDQuery;
     qrySCMSystem: TFDQuery;
-    qrySession: TFDQuery;
-    qrySessionCaption: TWideStringField;
-    qrySessionClosedDT: TSQLTimeStampField;
-    qrySessionSessionID: TFDAutoIncField;
-    qrySessionSessionStart: TSQLTimeStampField;
-    qrySessionSessionStatusID: TIntegerField;
-    qrySessionStatus: TWideStringField;
-    qrySessionSwimClubID: TIntegerField;
     qrySwapEntrants: TFDQuery;
     qrySwapTeams: TFDQuery;
-    qrySwimClub: TFDQuery;
-    qryTeam: TFDQuery;
     scmConnection: TFDConnection;
     tblDisqualifyCode: TFDTable;
-    tblDistance: TFDTable;
     tblEventStatus: TFDTable;
     tblEventType: TFDTable;
     tblGender: TFDTable;
     tblHeatStatus: TFDTable;
     tblHeatType: TFDTable;
-    tblHouse: TFDTable;
+		tblHouse: TFDTable;
     tblSessionStatus: TFDTable;
-    tblStroke: TFDTable;
-    qryHeatCloseDT: TSQLTimeStampField;
-    qryEventCloseDT: TSQLTimeStampField;
-    qrySwimClubSwimClubID: TFDAutoIncField;
-    qrySwimClubNickName: TWideStringField;
-    qrySwimClubCaption: TWideStringField;
-    qrySwimClubEmail: TWideStringField;
-    qrySwimClubContactNum: TWideStringField;
-    qrySwimClubWebSite: TWideStringField;
-    qrySwimClubHeatAlgorithm: TIntegerField;
-    qrySwimClubEnableTeamEvents: TBooleanField;
-    qrySwimClubEnableSwimOThon: TBooleanField;
-    qrySwimClubEnableExtHeatTypes: TBooleanField;
-    qrySwimClubEnableMembershipStr: TBooleanField;
-    qrySwimClubEnableSimpleDisqualification: TBooleanField;
-    qrySwimClubNumOfLanes: TIntegerField;
-    qrySwimClubLenOfPool: TIntegerField;
-    qrySwimClubStartOfSwimSeason: TSQLTimeStampField;
-    qrySwimClubCreatedOn: TSQLTimeStampField;
-    qrySwimClubLogoDir: TMemoField;
-    qrySwimClubLogoImg: TBlobField;
-    qrySwimClubLogoType: TWideStringField;
-    qrySwimClubPoolTypeID: TIntegerField;
-    qrySwimClubSwimClubTypeID: TIntegerField;
-    qryDistance: TFDQuery;
-    dsDistance: TDataSource;
     qryCountTEAMNominee: TFDQuery;
     qryCountINDVNominee: TFDQuery;
-    tblParaCode: TFDTable;
-    dsParaCode: TDataSource;
-    tblParaCodeLink: TFDTable;
-    tblParalympicType: TFDTable;
-    dsParalympictype: TDataSource;
-    qryLane: TFDQuery;
-    dsLane: TDataSource;
-    dsSplitTime: TDataSource;
-    dsWatchTime: TDataSource;
-    qrySplitTime: TFDQuery;
-    qryWatchTime: TFDQuery;
-    qryTeamMember: TFDQuery;
-    qryIndvMember: TFDQuery;
-    dsTeamMember: TDataSource;
-    dsIndvMember: TDataSource;
-    procedure DataModuleCreate(Sender: TObject);
-    procedure qryEntrantAfterScroll(DataSet: TDataSet);
-    procedure qryEntrantTIMEGetText(Sender: TField; var Text: string;
+    FDErrorDialog: TFDGUIxErrorDialog;
+		scmFDManager: TFDManager;
+		procedure DataModuleCreate(Sender: TObject);
+    procedure qryLaneAfterScroll(DataSet: TDataSet);
+    procedure qryLaneTIMEGetText(Sender: TField; var Text: string;
       DisplayText: Boolean);
-    procedure qryEntrantTIMESetText(Sender: TField; const Text: string);
-    procedure qryEventAfterDelete(DataSet: TDataSet);
-    procedure qryEventAfterInsert(DataSet: TDataSet);
-    procedure qryEventAfterPost(DataSet: TDataSet);
-    procedure qryEventAfterScroll(DataSet: TDataSet);
-    procedure qryEventBeforeEdit(DataSet: TDataSet);
-    procedure qryEventBeforeInsert(DataSet: TDataSet);
-    procedure qryEventBeforePost(DataSet: TDataSet);
-    procedure qryEventDistanceIDValidate(Sender: TField);
-    procedure qryEventEventStatusIDGetText(Sender: TField; var Text: string;
-      DisplayText: Boolean);
-    procedure qryEventNewRecord(DataSet: TDataSet);
-    procedure qryEventScheduleDTGetText(Sender: TField; var Text: string;
-      DisplayText: Boolean);
-    procedure qryEventScheduleDTSetText(Sender: TField; const Text: string);
-    procedure qryEvTypeBeforeInsert(DataSet: TDataSet);
-    procedure qryHeatAfterDelete(DataSet: TDataSet);
-    procedure qryHeatAfterInsert(DataSet: TDataSet);
-    procedure qryHeatAfterPost(DataSet: TDataSet);
-    procedure qryHeatAfterScroll(DataSet: TDataSet);
-    procedure qryHeatNewRecord(DataSet: TDataSet);
-    procedure qryMemberQuickPickAfterScroll(DataSet: TDataSet);
-    procedure qryNominateMembersAfterScroll(DataSet: TDataSet);
-    procedure qrySessionAfterDelete(DataSet: TDataSet);
-    procedure qrySessionAfterPost(DataSet: TDataSet);
-    procedure qrySessionAfterScroll(DataSet: TDataSet);
-    procedure qrySessionBeforePost(DataSet: TDataSet);
-    procedure qrySessionNewRecord(DataSet: TDataSet);
-    procedure qrySessionSessionStartGetText(Sender: TField; var Text: string;
-      DisplayText: Boolean);
-    procedure qrySessionSessionStartSetText(Sender: TField; const Text: string);
-    procedure qryTeamAfterScroll(DataSet: TDataSet);
-    procedure qryTeamEntrantAfterScroll(DataSet: TDataSet);
-    procedure scmConnectionAfterDisconnect(Sender: TObject);
-  private
+    procedure qryLaneTIMESetText(Sender: TField; const Text: string);
+		procedure qryEvTypeBeforeInsert(DataSet: TDataSet);
+		procedure qryMemberQuickPickAfterScroll(DataSet: TDataSet);
+		procedure qryNominateMembersAfterScroll(DataSet: TDataSet);
+		procedure qryTeamAfterScroll(DataSet: TDataSet);
+		procedure qryTeamLinkAfterScroll(DataSet: TDataSet);
+		procedure scmConnectionAfterDisconnect(Sender: TObject);
+	private
     fIsNewRecord: boolean;
     fLastDistanceID: integer;
     fLastStrokeID: integer;
@@ -204,7 +92,11 @@ type
     { Private declarations }
     prefCheckUnNomination: integer;
     prefGenerateEventDescription: Boolean;
-    prefGenerateEventDescStr: string;
+		prefGenerateEventDescStr: string;
+		fDBModel: integer;
+		fDBVersion: integer;
+		fDBMajor: integer;
+		fDBMinor: integer;
 
   protected
     // Swimmers have MemberID's. Empty lanes excluded from TOT.
@@ -216,17 +108,16 @@ type
     function CountTeamSwimmers(aTeamID: integer): integer;
     function DeleteAllHeats(aEventID: integer): integer;
     function DeleteAllLanes(aHeatID: integer): integer;
-    function DeleteAllSplits(aIndvTeamID: integer; aEventType: scmEventType): integer;
+		function DeleteAllSplits(aLaneID: integer): integer;
     function DeleteAllTeamEntrants(aTeamID: integer): integer;
     function DeleteEvent(aEventID: integer): integer;
     function DeleteHeat(aHeatID: integer): integer;
-    function DeleteLane(aIndvTeamID: integer; aEventType: scmEventType): integer;
+		function DeleteLane(aLaneID: integer): integer;
     function DeleteNomination(aMemberID, aEventID: integer): integer;
     function DeleteSession(aSessionID: integer): integer;
-    function DeleteSplit(aSplitID: integer; aEventType: scmEventType): integer;
+		function DeleteSplit(aLaneID: integer): integer;
     function FirstLaneNum(aHeatID: integer): integer;
-    function HeatStatusID(aIndvTeamID: integer; aEventType: scmEventType): integer;
-    function InsertEmptyLane(aHeatID: integer): integer;
+		function InsertEmptyLane(aHeatID: integer): integer;
     function InsertEmptyLanes(aHeatID: integer): integer;
     function LastLaneNum(aHeatID: integer): integer;
     function LocateLane(aIndvTeamID: integer; aEventType: scmEventType): boolean;
@@ -234,56 +125,26 @@ type
     function RenumberHeats(aEventID: integer; DoLocate: Boolean = true): integer;
     function RenumberLanes(aHeatID: integer): integer;
     function RepairLanes(aHeatID: integer): integer;
-    function SessionIsLocked(aIndvTeamID: integer; aEventType: scmEventType): Boolean;
-    procedure WndProc(var wndMsg: TMessage); virtual;
-  public
+		procedure WndProc(var wndMsg: TMessage); virtual;
+	public
+
+		// BSA NEW - used by scmLogin...
+		procedure ReadConnectionDef(const ConnectionName, ParamName: string; out ParamValue: string);
+		procedure WriteConnectionDef(const ConnectionName, ParamName, ParamValue: string);
+		function  GetDBVerInfo(): string;
+
 
     function PadLanes(aHeatID: integer): integer; // Made public 2024.08.28.
 
-    { Public declarations }
+		{ Public declarations }
     procedure ActivateTable();
     procedure DeActivateTable();
     function Entrant_SwapLanes(EntrantIDA, EntrantIDB: integer)
       : Boolean; overload;
     function Entrant_SwapLanes(HeatIDA, LaneA, HeatIDB, LaneB: integer)
       : Boolean; overload;
-    // EVENTS
-    function Event_AllHeatsAreClosed(aEventID: integer): Boolean;
-    procedure Event_FNameEllipse();
-    function Event_GetEntrantCount(aEventID: integer): integer;
-    function Event_GetHeatCount(aEventID: integer): integer;
-    function Event_GetNomineeCount(aEventID: integer): integer;
-    function Event_HasClosedHeats(aEventID: integer): Boolean;
-    function Event_HasClosedOrRacedHeats(aEventID: integer): Boolean;
-    function Event_HasNominee(EventID, MemberID: integer): Boolean;
-		function Event_HasNominees(aEventID: integer): Boolean;
-    function Event_HasRacedHeats(aEventID: integer): Boolean;
-    function Event_ID(): integer; // current event
-    function Event_Locate(aEventID: integer): Boolean; overload;
-    function Event_Locate(aDistanceID, aStrokeID: integer): Boolean; overload;
-    function Event_SessionIsLocked(aEventID: integer): Boolean;
-		function Event_SetEventStatusID(aEventID, aEventStatusID: integer): Boolean;
 
-		// EVENT TYPE...
-		function GetEventType(): scmEventType;overload; // CURRENT EVENT
-		function GetEventType(aEventID: integer): scmEventType;overload;
-		function SetEventType(): scmEventType; // etUnknown,etINDV,etTEAM
-
-		{        H E A T S .       }
-    function Heat_EventID(aHeatID: integer): integer;
-    function Heat_EventType(aHeatID: integer): scmEventType;
-    function Heat_EventTypeID(aHeatID: integer): integer;
-    function Heat_HeatStatusID(aHeatID: integer): integer;
-    function Heat_ID(): integer; // current heat
-    function Heat_IsClosed(): Boolean; // current heat
-    function Heat_IsRaced(): Boolean; // current heat
-    function Heat_Locate(aHeatID: integer): Boolean;
-    procedure Heat_NewRecord();
-    function Heat_NextID(aHeatID: integer): integer; // uses HeatNum
-    function Heat_PrevID(aHeatID: integer): integer; // uses HeatNum
-    function Heat_SessionIsLocked(aHeatID: integer): Boolean;
-    procedure Heat_ToggleStatus(); // current heat
-    // UTILITY
+		// UTILITY
     function IsFirstRecord(ADataSet: TDataSet): Boolean;
     function IsLastRecord(ADataSet: TDataSet): Boolean;
     // MEMBER
@@ -304,23 +165,7 @@ type
     procedure ReadPreferences(IniFileName: string);
     // SWIMCLUBMEET SYSTEM
     function SCM_VerInfoMajor(): integer;
-    // SESSION
-    function Session_AllEventsAreClosed(aSessionID: integer): Boolean;
-    function Session_GetEntrantCount(aSessionID: integer): integer;
-    function Session_GetEventCount(aSessionID: integer): integer;
-    function Session_GetNomineeCount(aSessionID: integer): integer;
-    function Session_HasClosedOrRacedHeats(aSessionID: integer): Boolean;
-    function Session_HasEvents(aSessionID: integer): Boolean;
-    procedure Session_HideLocked(IsChecked: Boolean);
-    function Session_ID(): integer; // current session
-    function Session_IsLocked: Boolean; overload;// current session
-    function Session_IsLocked(aSessionID: integer): Boolean; overload;
-		function Session_Locate(SessionID: integer): Boolean;
-    function Session_Start(): TDateTime; overload;
-    function Session_Start(SessionID: integer): TDateTime; overload;
-    procedure Session_ToggleLockState();
-    procedure Session_SetSortIndex(idx: integer);
-    // SPLIT
+		// SPLIT
     function Split_HeatStatusID(aSplitID: integer): integer;
     function Split_SessionIsLocked(aSplitID: integer): Boolean;
     // SLOT
@@ -329,30 +174,9 @@ type
     function SwapLanes(IDA, IDB, aEventTypeID: integer): Boolean; overload;
     function SwapLanes(HeatIDA, LaneA, HeatIDB, LaneB: integer)
       : Boolean; overload;
-    // SWIMCLUB
-    function SwimClub_ClubName(): string; // current club
-    function SwimClub_ID(): integer; // current club
-    function SwimClub_IsShortCourse(): Boolean; // current club
-    procedure SwimClub_Locate(SwimClubID: integer);
-    function SwimClub_NickName: string; // current club
-    function SwimClub_NumberOfLanes(): integer; // current club
-    function SwimClub_SessionCount(SwimClubID: integer;
-      SDate, EDate: TDateTime): integer;
-    function SwimClub_StartOfSwimSeason(): TDateTime; overload;
-    function SwimClub_StartOfSwimSeason(SwimClubID: integer)
-      : TDateTime; overload;
-    function TeamEntrant_AddSlot(aTeamID: integer): integer;
-    // TEAM ENTRANT
-    function TeamEntrant_HeatStatusID(aTeamEntrantID: integer): integer;
-    function TeamEntrant_LastLaneNum(aTeamID: integer): integer;
-    function TeamEntrant_Locate(aTeamEntrantID: integer): Boolean;
-    function TeamEntrant_MoveDownSlot(ADataSet: TDataSet): Boolean;
-    function TeamEntrant_MoveUpSlot(ADataSet: TDataSet): Boolean;
-    function TeamEntrant_RemoveSlot(aTeamEntrant: integer): integer;
-    function TeamEntrant_SessionIsLocked(aTeamEntrantID: integer): Boolean;
 
     // TEAM SPLIT
-    function TeamSplit_HeatStatusID(aSplitID: integer): integer;
+		function TeamSplit_HeatStatusID(aSplitID: integer): integer;
     function TeamSplit_SessionIsLocked(aTeamSplitID: integer): Boolean;
     // TEAM
     function Team_Locate(aTeamID: integer): Boolean;
@@ -372,7 +196,7 @@ type
   end;
 
 const
-  CUSTOMINIFILE = 'SwimClubMeetPref.ini';
+	CUSTOMINIFILE = 'SwimClubMeetPref.ini';
   USEDEFAULTINIFILE = true; // NOTE: Always true. 26/09/2022
   SCMCONFIGFILENAME = 'SCMConfig.ini';
 
@@ -389,6 +213,72 @@ uses
   System.Variants, System.StrUtils, System.Types, System.Math,
   vcl.Forms, vcl.StdCtrls, System.UITypes;
 
+procedure TSCM.ReadConnectionDef(const ConnectionName, ParamName: string;
+  out ParamValue: string);
+var
+  ConnectionDef: IFDStanConnectionDef;
+begin
+  // Check if the connection definition exists
+  ConnectionDef := SCM.scmFDManager.ConnectionDefs.ConnectionDefByName(ConnectionName);
+  if Assigned(ConnectionDef) then
+  begin
+    // Read the parameter value
+    ParamValue := ConnectionDef.Params.Values[ParamName];
+  end
+  else
+    raise Exception.CreateFmt('Connection definition "%s" not found.', [ConnectionName]);
+end;
+
+(*
+You do not need to make the TFDManager inactive before updating its
+ConnectionDefs. The TFDManager allows you to modify connection definitions
+dynamically at runtime without deactivating it.
+*)
+
+procedure TSCM.WriteConnectionDef(const ConnectionName, ParamName,
+  ParamValue: string);
+var
+  ConnectionDef: IFDStanConnectionDef;
+begin
+	// Get the connection definition by name
+  ConnectionDef := SCM.scmFDManager.ConnectionDefs.ConnectionDefByName(ConnectionName);
+
+  if Assigned(ConnectionDef) then
+  begin
+    // Update the parameter
+    ConnectionDef.Params.Values[ParamName] := ParamValue;
+
+    // Save the changes to the FDConnectionDefs.ini file
+    SCM.scmFDManager.ConnectionDefs.Save;
+  end
+  else
+    raise Exception.CreateFmt('Connection definition "%s" not found.', [ConnectionName]);
+end;
+
+function TSCM.GetDBVerInfo: string;
+begin
+  result := '';
+  if scmConnection.Connected then
+  begin
+    with qrySCMSystem do
+    begin
+      Connection := scmConnection;
+      Open;
+      if Active then
+      begin
+        fDBModel := FieldByName('SCMSystemID').AsInteger;
+        fDBVersion := FieldByName('DBVersion').AsInteger;
+        fDBMajor := FieldByName('Major').AsInteger;
+        fDBMinor := FieldByName('Minor').AsInteger;
+        result := IntToStr(fDBModel) + '.' + IntToStr(fDBVersion) + '.' +
+          IntToStr(fDBMajor) + '.' + IntToStr(fDBMinor);
+      end;
+      Close;
+    end;
+  end;
+end;
+
+
 
 procedure TSCM.ActivateTable;
 begin
@@ -400,99 +290,24 @@ begin
   // Lookup Tables
   // --------------------------------------------
   //
-  if (scmConnection.Connected = false) then
-  begin
-    try
-      scmConnection.Open();
-    except
-      on E: Exception do
-      begin
-        MessageDlg(E.Message, TMsgDlgType.mtError, [mbOK], 0);
-        exit;
-      end;
-    end;
-  end;
+	if (scmConnection.Connected = false) then
+	begin
+		try
+			scmConnection.Open();
+		except
+			on E: Exception do
+			begin
+				MessageDlg(E.Message, TMsgDlgType.mtError, [mbOK], 0);
+				exit;
+			end;
+		end;
+	end;
 
-  if (scmConnection.Connected = true) then
-  begin
-    tblHouse.Active := true;
-    tblSessionStatus.Active := true;
-    tblStroke.Active := true;
-    tblDistance.Active := true;
-    tblEventType.Active := true;
-    tblEventStatus.Active := true;
-    tblGender.Active := true;
-    tblHeatType.Active := true;
-    tblHeatStatus.Active := true;
-		tblDisqualifyCode.Active := true;
-		// Paralympic tables used by dbo.member and dbo.event
-		tblParaCode.Active := true;
-		tblParaCodeLink.Active := true;
-		tblParalympicType.Active := true;
+	if (scmConnection.Connected = true) then
+	begin
+		qrySCMSystem.Open;
 
-		qrySwimClub.Close;
-    qrySwimClub.ParamByName('SWIMCLUBID').AsInteger := 1;
-    qrySwimClub.Prepare;
-    qrySwimClub.Open;
-    if (qrySwimClub.Active) then
-    begin
-
-    qrySession.Close;
-    qrySession.ParamByName('TOGGLE').AsBoolean := false;
-    qrySession.Prepare;
-    qrySession.Open;
-
-//      qrySession.Open;
-      if (qrySession.Active) then
-      begin
-        (*
-          if (GetVerInfoMajor < 6) and (GetVerInfoMinor < 2) then
-          begin
-          // need to remove field-name ScheduleDT
-          fld := qryEvent.Fields.FindField('ScheduleDT');
-          if Assigned(fld) then qryEvent.Fields.Remove(fld);
-          end;
-        *)
-        qryEvent.Open; // EVENT
-        if (qryEvent.Active) then
-        begin
-          // DEPENDANTS OF EVENT
-          qryDistance.Open;
-          qryNominee.Open;
-          qryHeat.Open;
-          if (qryHeat.Active) and (qryNominee.Active) then
-          begin
-						qryLane.Open;
-						qryTeam.Open;
-						qrySplitTime.Open;
-						qryWatchTime.Open;
-						if (qryLane.Active) then
-            begin
-              fSCMActive := true;
-            end;
-          end;
-        end;
-      end;
-    end;
-
-    { qryMember.Open;
-      if (qryMember.Active) then
-      begin
-      // contact numbers - non critical
-      qryContactNum.Open;
-      end
-    }
-
-    qryNominateEvent.Active := true;
-    qryNominateMembers.Active := true;
-    qryFName.Active := true;
-    qryFNameEllipse.Active := true;
-    qryNominateMembers.Active := true;
-    qryNominateControlList.Active := true;
-    // ---------------------------------------------
-    // NOMINATE
-    // ---------------------------------------------
-    if (fSCMActive = false) then
+		if (fSCMActive = false) then
         MessageDlg('During activation of the database module' + slinebreak +
         'not all essential tables opened successfully!', mtWarning, [mbOK], 0);
   end;
@@ -512,7 +327,7 @@ begin
 
   if aEventType = etINDV then
   begin
-    dsEntrant.DataSet.DisableControls;
+		SCMcore.dsLane.DataSet.DisableControls;
     tbl := TFDTable.Create(self);
     tbl.Connection := scmConnection;
     tbl.TableName := 'Entrant';
@@ -525,7 +340,7 @@ begin
       if (success) then
       begin
         { TODO -oBSA -cGeneral : TEST - CLEAR SPLIT TIMES }
-        DeleteAllSplits(aIndvTeamID, aEventType);
+				DeleteAllSplits(aIndvTeamID);
         tbl.Edit;
         tbl.FieldByName('MemberID').Clear;
         tbl.FieldByName('DisqualifyCodeID').Clear;
@@ -537,14 +352,14 @@ begin
         tbl.Post;
         result := 1;
       end;
-    end;
+		end;
     tbl.Close;
     tbl.Free;
-    dsEntrant.DataSet.EnableControls;
+    SCMcore.dsLane.DataSet.EnableControls;
   end
   else if aEventType = etTEAM then
   begin
-    dsTeam.DataSet.DisableControls;
+		SCMcore.dsTeam.DataSet.DisableControls;
     tbl := TFDTable.Create(self);
     tbl.Connection := scmConnection;
     tbl.TableName := 'Team';
@@ -557,8 +372,8 @@ begin
       if (success) then // found record
       begin
         DeleteAllTeamEntrants(aIndvTeamID); // remove Team Entrants.
-        DeleteAllSplits(aIndvTeamID, aEventType); // remove Split times.
-        tbl.Edit;
+				DeleteAllSplits(aIndvTeamID); // remove Split times.
+				tbl.Edit;
         tbl.FieldByName('TeamNameID').Clear;
         tbl.FieldByName('DisqualifyCodeID').Clear;
         tbl.FieldByName('RaceTime').Clear;
@@ -571,7 +386,7 @@ begin
     end;
     tbl.Close;
     tbl.Free;
-    dsTeam.DataSet.EnableControls;
+    SCMcore.dsTeam.DataSet.EnableControls;
   end
 end;
 
@@ -591,7 +406,7 @@ begin
   if aEventType = etINDV then
   begin
     qry.SQL.Text :=
-      'SELECT [Entrant].[EntrantID] AS aID FROM [SwimClubMeet2].[dbo].[Entrant] ' +
+			'SELECT [Entrant].[EntrantID] AS aID FROM [SwimClubMeet2].[dbo].[Entrant] ' +
       'WHERE MemberID IS NOT NULL AND [Entrant].HeatID = ' +
       IntToStr(aHeatID);
   end
@@ -747,29 +562,29 @@ procedure TSCM.DeActivateTable;
 begin
   fSCMActive := false;
   // CORE PARENT..CHILD TABLES
-  qryTeamSplit.Close;
-  qryTeamEntrant.Close;
-  qryTeam.Close;
-	qrySplitTime.Close;
-	qryWatchTime.Close;
-	qryEntrant.Close;
-	qryLane.Close;
-  qryHeat.Close;
-  qryNominee.Close;
-  qryDistance.Close;
-  qryEvent.Close;
-  qrySession.Close;
+	SCMcore.qrySplitTime.Close;
+  SCMcore.qryTeamLink.Close;
+	SCMcore.qryTeam.Close;
+	SCMcore.qrySplitTime.Close;
+	SCMcore.qryWatchTime.Close;
+	SCMcore.qryLane.Close;
+	SCMcore.qryLane.Close;
+	SCMcore.qryHeat.Close;
+	SCMcore.qryNominee.Close;
+//	SCMcore.qryDistance.Close;
+	SCMcore.qryEvent.Close;
+	SCMcore.qrySession.Close;
 
 //  qryContactNum.Close;
 //  qryMember.Close;
 
-  qrySwimClub.Close;
+	SCMcore.qrySwimClub.Close;
   // SUPPORT-LOOKUP TABLES
   tblHouse.Active := false;
   tblSessionStatus.Active := false;
-  tblStroke.Active := false;
-  tblDistance.Active := false;
-  tblEventType.Active := false;
+//  tblStroke.Active := false;
+//  tblDistance.Active := false;
+	tblEventType.Active := false;
   tblEventStatus.Active := false;
   tblGender.Active := false;
   tblHeatType.Active := false;
@@ -777,9 +592,9 @@ begin
 	tblDisqualifyCode.Active := false;
 
 	// Paralympic tables used by dbo.member and dbo.event
-	tblParaCode.Active := false;
-	tblParaCodeLink.Active := false;
-	tblParalympicType.Active := false;
+//	tblParaCode.Active := false;
+//	tblParaCodeLink.Active := false;
+//	tblParalympicType.Active := false;
 
 qryFName.Active := false;
   qryFNameEllipse.Active := false;
@@ -849,7 +664,7 @@ begin
     while not qry.Eof do
     begin
       aIndvTeamID := qry.FieldByName('aID').AsInteger;
-      rows := rows + DeleteLane(aIndvTeamID, aEventType);
+			rows := rows + DeleteLane(aIndvTeamID);
       qry.Next;
     end;
     if rows > 0 then result := rows;
@@ -858,30 +673,17 @@ begin
   qry.Free;
 end;
 
-function TSCM.DeleteAllSplits(aIndvTeamID: integer;
-  aEventType: scmEventType): integer;
+function TSCM.DeleteAllSplits(aLaneID: integer): integer;
 var
   SQL: string;
 begin
   result := 0;
-  if not fSCMActive then exit;
-  if aEventType = etUnknown then exit;
-  if aEventType = etINDV then
-  begin
-    dsSplit.DataSet.DisableControls;
-    // DELETE SPLIT TIMES
-    SQL := 'DELETE FROM [SwimClubMeet2].[dbo].[Split] WHERE [EntrantID] = :ID';
-    result := scmConnection.ExecSQL(SQL, [aIndvTeamID]);
-    dsSplit.DataSet.EnableControls;
-  end
-  else
-  begin
-    // DELETE Split records for relay team.
-    dsTeamSplit.DataSet.DisableControls;
-    SQL := 'DELETE FROM [SwimClubMeet2].[dbo].[TeamSplit] WHERE [TeamID] = :ID';
-    result := scmConnection.ExecSQL(SQL, [aIndvTeamID]);
-    dsTeamSplit.DataSet.EnableControls;
-  end;
+	if not fSCMActive then exit;
+	SCMcore.dsSplitTime.DataSet.DisableControls;
+	// DELETE SPLIT TIMES
+	SQL := 'DELETE FROM [SwimClubMeet2].[dbo].[SplitTime] WHERE [LaneID] = :ID';
+	result := scmConnection.ExecSQL(SQL, [aLaneID]);
+	SCMcore.dsSplitTime.DataSet.EnableControls;
 end;
 
 function TSCM.DeleteAllTeamEntrants(aTeamID: integer): integer;
@@ -890,10 +692,10 @@ var
 begin
   result := 0;
   if not fSCMActive then exit;
-  dsTeamEntrant.DataSet.DisableControls;
-  SQL := 'DELETE FROM [SwimClubMeet2].[dbo].[TeamEntrant] WHERE [TeamID] = :ID';
+	SCMcore.dsTeamLink.DataSet.DisableControls;
+	SQL := 'DELETE FROM [SwimClubMeet2].[dbo].[TeamLink] WHERE [TeamID] = :ID';
   result := scmConnection.ExecSQL(SQL, [aTeamID]);
-  dsTEamEntrant.DataSet.EnableControls;
+	SCMcore.dsTeamLink.DataSet.EnableControls;
 end;
 
 function TSCM.DeleteEvent(aEventID: integer): integer;
@@ -909,10 +711,10 @@ begin
   SQL := 'DELETE FROM dbo.Nominee WHERE Nominee.EventID = :ID';
   scmConnection.ExecSQL(SQL, [aEventID]);
   // FINALLY DELETE EVENT
-  dsEvent.DataSet.DisableControls;
+	SCMcore.dsEvent.DataSet.DisableControls;
   SQL := 'DELETE FROM dbo.Event WHERE Event.EventID = :ID';
   result := scmConnection.ExecSQL(SQL, [aEventID]);
-  dsEvent.DataSet.EnableControls;
+	SCMcore.dsEvent.DataSet.EnableControls;
 end;
 
 function TSCM.DeleteHeat(aHeatID: integer): integer;
@@ -922,41 +724,38 @@ begin
   result := 0;
   if not fSCMActive then exit;
   DeleteAllLanes(aHeatID);
-  dsHeat.DataSet.DisableControls();
+	SCMcore.dsHeat.DataSet.DisableControls();
   SQL := 'DELETE FROM [SwimClubMeet2].[dbo].[Heat] WHERE HeatID = :ID';
   result := scmConnection.ExecSQL(SQL, [aHeatID]);
-  dsHeat.DataSet.EnableControls();
+	SCMcore.dsHeat.DataSet.EnableControls();
 end;
 
-function TSCM.DeleteLane(aIndvTeamID: integer; aEventType: scmEventType): integer;
+function TSCM.DeleteLane(aLaneID: integer): integer;
 var
   SQL: string;
 begin
   result := 0;
   if not fSCMActive then exit;
-  if aEventType = etUnknown then exit;
-  if aEventType = etINDV then
-  begin
-    // DELETE SPLIT TIMES
-    DeleteAllSplits(aIndvTeamID, aEventType);
-    // FINALLY DELETE ENTRANT/TEAM-TEAMENTRANTS RECORDS
-    dsEntrant.DataSet.DisableControls;
-    SQL := 'DELETE FROM [SwimClubMeet2].[dbo].[Entrant] WHERE [EntrantID] = :ID';
-    result := scmConnection.ExecSQL(SQL, [aIndvTeamID]);
-    dsEntrant.DataSet.EnableControls;
-  end
-  else if aEventType = etTEAM then
-  begin
-    // DELETE TEAM-ENTRANTS FROM RELAY
-    DeleteAllTeamEntrants(aIndvTeamID);  // param: TeamID
-    // DELETE Split records for relay team.
-    DeleteAllSplits(aIndvTeamID, aEventType);
-    // DELETE TEAM RECORD
-    dsTeam.DataSet.DisableControls;
-    SQL := 'DELETE FROM [SwimClubMeet2].[dbo].[Team] WHERE [TeamID] = :ID';
-    result := scmConnection.ExecSQL(SQL, [aIndvTeamID]);
-    dsTeam.DataSet.EnableControls;
-  end;
+	begin
+		// DELETE SPLIT TIMES.
+		DeleteAllSplits(aLaneID);
+		// DELETE WATCH TIMES.
+		// DeleteAllWatchTimes(aLaneID);
+		// DELETE TEAM MEMBERS
+		// DeleteAllTeamMembers(aLaneID);
+		// DELETE TEAM.
+		SCMcore.dsTeam.DataSet.DisableControls;
+		SQL := 'DELETE FROM [SwimClubMeet2].[dbo].[Team] WHERE [TeamID] = :ID';
+		result := scmConnection.ExecSQL(SQL, [aLaneID]);
+		SCMcore.dsTeam.DataSet.EnableControls;
+		// FINALLY DELETE LANE.
+		SCMcore.dsLane.DataSet.DisableControls;
+		SQL := 'DELETE FROM [SwimClubMeet2].[dbo].[Lane] WHERE [LaneID] = :ID';
+		result := scmConnection.ExecSQL(SQL, [aLaneID]);
+		SCMcore.dsLane.DataSet.EnableControls;
+
+
+	end;
 end;
 
 function TSCM.DeleteNomination(aMemberID, aEventID: integer): integer;
@@ -967,11 +766,11 @@ begin
   result := 0;
   if not SCMActive then exit;
   // FINALLY DELETE Nomination..
-  dsNominee.DataSet.DisableControls;
+	SCMcore.dsNominee.DataSet.DisableControls;
   SQL := 'DELETE FROM SwimClubMeet2.[dbo].[Nominee] ' +
     'WHERE MemberID = :MemberID AND EventID = :EventID;';
   rows := scmConnection.ExecSQL(SQL, [aMemberID, aEventID]);
-  dsNominee.DataSet.EnableControls;
+	SCMcore.dsNominee.DataSet.EnableControls;
   if (rows > 0) then result := rows;
 end;
 
@@ -1003,38 +802,25 @@ begin
   qry.Close;
   qry.Free;
   // finally delete the session
-  dsSession.DataSet.DisableControls;
+	SCMcore.dsSession.DataSet.DisableControls;
   SQL := 'DELETE FROM [SwimClubMeet2].[dbo].[Session] WHERE [SessionID] = :ID';
   result := scmConnection.ExecSQL(SQL, [aSessionID]);
-  dsSession.DataSet.EnableControls;
+	SCMcore.dsSession.DataSet.EnableControls;
 end;
 
-function TSCM.DeleteSplit(aSplitID: integer; aEventType: scmEventType): integer;
+function TSCM.DeleteSplit(aLaneID: integer): integer;
 var
-  SQL: string;
-  v: variant;
+	SQL: string;
+	v: variant;
 begin
-  result := 0;
-  if not fSCMActive then exit;
-  if aEventType = etUnknown then exit;
-  if aEventType = etINDV then
-  begin
-    dsSplit.DataSet.DisableControls;
-    SQL := 'DELETE FROM dbo.Split WHERE Split.SplitID = :ID';
-    v := scmConnection.ExecSQL(SQL, [aSplitID]);
-    dsSplit.DataSet.EnableControls;
-  end
-  else
-  begin
-    dsTeamSplit.DataSet.DisableControls;
-    SQL := 'DELETE FROM dbo.TeamSplit WHERE TeamSplit.TeamSplitID = :ID';
-    v := scmConnection.ExecSQL(SQL, [aSplitID]);
-    dsTeamSplit.DataSet.EnableControls;
-  end;
-    if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
+	result := 0;
+	if not fSCMActive then exit;
+	SCMcore.dsSplitTime.DataSet.DisableControls;
+	SQL := 'DELETE FROM dbo.SplitTime WHERE Split.LaneID = :ID';
+	v := scmConnection.ExecSQL(SQL, [aLaneID]);
+	SCMcore.dsSplitTime.DataSet.EnableControls;
+	if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
 end;
-
-
 
 function TSCM.Entrant_SwapLanes(EntrantIDA, EntrantIDB: integer): Boolean;
 begin
@@ -1067,227 +853,6 @@ begin
   result := true;
 end;
 
-function TSCM.Event_AllHeatsAreClosed(aEventID: integer): Boolean;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := false;
-  if not fSCMActive then exit;
-  if aEventID = 0 then exit;
-  if Event_GetHeatCount(aEventID) = 0 then exit;  // NO HEATS.
-  SQL := 'SELECT COUNT(HeatStatusID) FROM SwimClubMeet2.dbo.Heat ' +
-    'WHERE (EventID = :ID ) AND (HeatStatusID < 3)';
-  v := scmConnection.ExecSQLScalar(SQL, [aEventID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) then
-    if v = 0 then result := true;
-end;
-
-{
-function TSCM.Event_EventTypeID(aEventID: integer): integer;
-begin
-  result := 0;
-end;
-}
-
-procedure TSCM.Event_FNameEllipse;
-var
-  ds: TFDQuery;
-begin
-  ds := (dsFNameEllipse.DataSet as TFDQuery);
-  // re-assign parameters ...
-  // TODO: reassigning params without close or prepare?
-  ds.ParamByName('SESSIONID').AsInteger := Session_ID();
-  ds.ParamByName('EVENTID').AsInteger := dsEvent.DataSet.FieldByName('EventID')
-    .AsInteger;
-  ds.ParamByName('DISTANCEID').AsInteger := dsEvent.DataSet.FieldByName
-    ('DistanceID').AsInteger;
-  ds.ParamByName('STROKEID').AsInteger := dsEvent.DataSet.FieldByName
-    ('StrokeID').AsInteger;
-  if (ds.Active) then ds.Refresh();
-end;
-
-function TSCM.Event_GetEntrantCount(aEventID: integer): integer;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := 0;
-  if not fSCMActive then exit;
-  if aEventID = 0 then exit;
-  // scalar function to count Swimmers (inc. Entrants + TeamEntrants)
-  SQL := 'SELECT dbo.EntrantCount(:ID1) ' +
-    'FROM SwimClubMeet2.dbo.Event WHERE Event.EventID = :ID2';
-  v := scmConnection.ExecSQLScalar(SQL, [aEventID, aEventID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
-end;
-
-function TSCM.Event_GetHeatCount(aEventID: integer): integer;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := 0;
-  if not fSCMActive then exit;
-  if aEventID = 0 then exit;
-  SQL := 'SELECT Count(Heat.HeatID) FROM SwimClubMeet2.dbo.[Event] ' +
-    'INNER JOIN Heat ON [Event].EventID = Heat.EventID ' +
-    'WHERE Event.EventID = :EventID;';
-  v := scmConnection.ExecSQLScalar(SQL, [aEventID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
-end;
-
-function TSCM.Event_GetNomineeCount(aEventID: integer): integer;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := 0;
-  if not fSCMActive then exit;
-  if aEventID = 0 then exit;
-  // scalar function to count Nominees
-  SQL := 'SELECT dbo.NomineeCount(:ID1) FROM SwimClubMeet2.dbo.[Event] ' +
-    'WHERE Event.EventID = :ID2';
-  v := scmConnection.ExecSQLScalar(SQL, [aEventID, aEventID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
-end;
-
-function TSCM.Event_HasClosedHeats(aEventID: integer): Boolean;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := false;
-  if not fSCMActive then exit;
-  // count the closed heats.
-  SQL := 'SELECT Count([Heat].[HeatID]) FROM [SwimClubMeet2].[dbo].[Event] '
-    + 'INNER JOIN Heat ON Event.EventID = Heat.EventID ' +
-    'WHERE Event.EventID = :ID AND (Heat.HeatStatusID = 3) ';
-  v := scmConnection.ExecSQLScalar(SQL, [aEventID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := true;
-end;
-
-function TSCM.Event_HasClosedOrRacedHeats(aEventID: integer): Boolean;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := false;
-  if not fSCMActive then exit;
-  if Event_GetHeatCount(aEventID) = 0 then exit;
-  SQL := ' SELECT Count([Heat].[HeatID]) FROM [SwimClubMeet2].[dbo].[Event] '
-    + 'INNER JOIN Heat ON Event.EventID = Heat.EventID ' +
-    'WHERE Event.EventID = :ID AND (Heat.HeatStatusID > 1) ';
-  v := scmConnection.ExecSQLScalar(SQL, [aEventID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := true;
-end;
-
-function TSCM.Event_HasNominee(EventID, MemberID: integer): Boolean;
-var
-  qry: TFDQuery;
-begin
-  result := false;
-  qry := TFDQuery.Create(self);
-  qry.Connection := scmConnection;
-  qry.SQL.Text := 'SELECT * FROM Nominee WHERE [MemberID] = ' +
-    IntToStr(MemberID) + ' AND [EventID] = ' + IntToStr(EventID);
-  qry.Open;
-  if qry.Active then
-    if (qry.RecordCount > 0) then result := true;
-  qry.Close;
-end;
-
-function TSCM.Event_HasNominees(aEventID: integer): Boolean;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := false;
-  if not fSCMActive then exit;
-  SQL := 'SELECT COUNT(NomineeID) FROM SwimClubMeet2.dbo.Nominee ' +
-    'WHERE Nominee.EventID = :ID AND MemberID IS NOT NULL; ';
-  v := scmConnection.ExecSQLScalar(SQL, [aEventID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := true;
-end;
-
-function TSCM.Event_HasRacedHeats(aEventID: integer): Boolean;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := false; // DEFAULT - no raced heats
-  if not fSCMActive then exit;
-  // count the raced heats.
-  SQL := 'SELECT Count([Heat].[HeatID]) FROM [SwimClubMeet2].[dbo].[Event] '
-    + 'INNER JOIN Heat ON Event.EventID = Heat.EventID ' +
-    'WHERE Event.EventID = :ID AND (Heat.HeatStatusID = 2) ';
-  v := scmConnection.ExecSQLScalar(SQL, [aEventID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := true;
-end;
-
-function TSCM.Event_ID: integer;
-begin
-  result := 0;
-  if fSCMActive and dsEvent.DataSet.Active then
-    if not dsEvent.DataSet.IsEmpty then
-        result := dsEvent.DataSet.FieldByName('EventID').AsInteger;
-end;
-
-function TSCM.Event_Locate(aEventID: integer): Boolean;
-var
-  SearchOptions: TLocateOptions;
-begin
-  result := false;
-  if not fSCMActive then exit;
-  if (aEventID = 0) then exit;
-  SearchOptions := [];
-  if dsEvent.DataSet.Active then
-      result := dsEvent.DataSet.Locate('EventID', aEventID, SearchOptions);
-end;
-
-function TSCM.Event_Locate(aDistanceID, aStrokeID: integer): Boolean;
-var
-  SearchOptions: TLocateOptions;
-begin
-  result := false;
-  if not fSCMActive then exit;
-  SearchOptions := [];
-  if dsEvent.DataSet.Active then
-      result := dsEvent.DataSet.Locate('DistanceID;StrokeID',
-      VarArrayOf([aDistanceID, aStrokeID]), SearchOptions);
-end;
-
-function TSCM.Event_SessionIsLocked(aEventID: integer): Boolean;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := false;
-  if not fSCMActive then exit;
-  SQL := 'SELECT SessionStatusID FROM [SwimClubMeet2].[dbo].[Session] ' +
-    'INNER JOIN [Event] ON [Session].[SessionID] = [Event].[SessionID] ' +
-    'WHERE [Event].[EventID] = :ID';
-  v := scmConnection.ExecSQLScalar(SQL, [aEventID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v = 2) then result := true;
-end;
-
-function TSCM.Event_SetEventStatusID(aEventID, aEventStatusID: integer)
-  : Boolean;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := false;
-  if not fSCMActive then exit;
-  if aEventID = 0 then exit;
-  if Event_SessionIsLocked(aEventID) then exit;
-  if (aEventStatusID <> 1) or (aEventStatusID <> 2) then exit;
-  SQL := 'UPDATE SwimClubMeet2.dbo.Event SET [Event].[EventStatusID] = :ID1 ' +
-    'WHERE [Event].[EventID] = :ID2';
-  v := scmConnection.ExecSQL(SQL, [aEventStatusID, aEventID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) then
-    if (v > 0) then result := true;
-end;
 
 function TSCM.FirstLaneNum(aHeatID: integer): integer;
 var
@@ -1299,7 +864,7 @@ begin
   if not fSCMActive then exit;
   if aHeatID = 0 then exit;
   aEventType := Heat_EventType(aHeatID);
-  if aEventType = etINDV then
+	if aEventType = etINDV then
       SQL := 'SELECT MIN(Lane) FROM SwimClubMeet2.dbo.Entrant ' +
       'Entrant.HeatID = :ID'
   else if aEventType = etTEAM then
@@ -1308,80 +873,6 @@ begin
   else exit;
   v := scmConnection.ExecSQLScalar(SQL, [aHeatID]);
   if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
-end;
-
-function TSCM.GetEventType(): scmEventType;
-var
-	v: variant;
-begin
-	result := scmEventType.etUnknown; // Default.
-	if qryEvent.IsEmpty then exit;  // Table is empty.
-	v := qryEvent.FieldByName('EventTypeID').AsVariant;
-	if VarIsNull(v) or VarIsEmpty(v) or (v = 0) then exit;  // illegal.
-	case v of
-		1: result := scmEventType.etINDV;
-		2: result := scmEventType.etTEAM;
-	end;
-end;
-
-function TSCM.SetEventType(): scmEventType;
-var
-  s: string;
-begin
-  result := etUnknown;
-	if fSCMActive and qryEvent.Active and (not qryEvent.IsEmpty) then
-	begin
-		if (not qryEvent.FieldByName('DistanceID').IsNull) then
-		begin
-			S := qryDistance.FieldByName('Caption').AsString; // master-detail.
-			if not s.IsEmpty then
-			begin // eg. '4x50m', '4X500m', '4x50m RELAY', '4x50m R'
-				if S.Contains('x') or S.Contains('X') or S.Contains('R') then
-					result := etTEAM
-				else
-					result := etINDV;
-			end;
-		end;
-	end;
-	try
-		qryEvent.Edit;
-		case result of
-			etUnknown:
-				qryEvent.FieldByName('EventTypeID').Clear;
-			etINDV:
-				qryEvent.FieldByName('EventTypeID').AsInteger := 1;
-			etTEAM:
-				qryEvent.FieldByName('EventTypeID').AsInteger := 2;
-		end;
-		qryEvent.Post;
-	except on E: Exception do
-			qryEvent.Cancel;
-	end;
-end;
-
-function TSCM.GetEventType(aEventID: integer): scmEventType;
-var
-	v: variant;
-	SQL: string;
-begin
-	result := etUnknown;
-	if fSCMActive and dsEvent.DataSet.Active then
-	begin
-		if not dsEvent.DataSet.IsEmpty then
-		begin
-			SQL := '''
-				SELECT [EventTypeID] FROM [SwimClubMeet2].[dbo].[Event]
-				INNER JOIN [Distance] ON [Event].[DistanceID] = [Distance].[DistanceID]
-				WHERE EventID = :ID;
-				''';
-			v := scmConnection.ExecSQLScalar(SQL, [aEventID]);
-			if VarIsNull(v) or VarIsEmpty(v) or (v = 0) then exit;
-		end;
-		case v of
-			1: result := etINDV;
-			2: result := etTEAM;
-		end;
-	end;
 end;
 
 function TSCM.GetIsDisqualifiedDCode: integer;
@@ -1433,223 +924,6 @@ begin
   if not VarIsNull(v) and not VarIsEmpty(v) then result := v;
 end;
 
-function TSCM.HeatStatusID(aIndvTeamID: integer;
-  aEventType: scmEventType): integer;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := 0;
-  if not fSCMActive then exit;
-  if aIndvTeamID = 0 then exit;
-  if aEventType = etUnknown then exit;
-  if aEventType = etINDV then
-  begin
-    SQL := 'SELECT HeatStatusID FROM [SwimClubMeet2].[dbo].[Heat] ' +
-      'INNER JOIN Entrant ON [Heat].[HeatID] = Entrant.HeatID ' +
-      'WHERE [Entrant].[EntrantID] = :ID;';
-  end
-  else
-  begin
-    SQL := 'SELECT HeatStatusID FROM [SwimClubMeet2].[dbo].[Heat] ' +
-      'INNER JOIN Team ON [Heat].[HeatID] = Team.HeatID ' +
-      'WHERE [Team].[TeamID] = :ID;';
-  end;
-  v := scmConnection.ExecSQLScalar(SQL, [aIndvTeamID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
-end;
-
-function TSCM.Heat_EventID(aHeatID: integer): integer;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := 0;
-  if not fSCMActive then exit;
-  if aHeatID = 0 then exit;
-  SQL := 'SELECT EventID FROM SwimClubMeet2.dbo.Heat ' +
-    'WHERE HeatID = :ID';
-  v := scmConnection.ExecSQLScalar(SQL, [aHeatID]);
-  if not VarIsNull(v) or not VarIsEmpty(v) then result := v;
-
-end;
-
-function TSCM.Heat_EventType(aHeatID: integer): scmEventType;
-begin
-  case Heat_EventTypeID(aHeatID) of
-    1: result := etINDV;
-    2: result := etTEAM;
-  else result := etUnknown;
-  end;
-end;
-
-function TSCM.Heat_EventTypeID(aHeatID: integer): integer;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := 0;
-  if not fSCMActive then exit;
-  SQL := 'SELECT EventTypeID FROM  [SwimClubMeet2].[dbo].[Heat] ' +
-    'INNER JOIN [Event] ON [Heat].[EventID] = [Event].[EventID] ' +
-    'INNER JOIN [Distance] ON [Event].[DistanceID] = [Distance].[DistanceID] ' +
-    'WHERE [Heat].HeatID = :ID';
-  v := scmConnection.ExecSQLScalar(SQL, [aHeatID]);
-  if not VarIsNull(v) or not VarIsEmpty(v) or (v > 0) then result := v;
-end;
-
-function TSCM.Heat_HeatStatusID(aHeatID: integer): integer;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := 0;
-  if not fSCMActive then exit;
-  SQL := 'SELECT [HeatStatusID] FROM [SwimClubMeet2].[dbo].[Heat] ' +
-    ' WHERE [Heat].HeatID = :ID;';
-  v := scmConnection.ExecSQLScalar(SQL, [aHeatID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
-end;
-
-function TSCM.Heat_ID: integer;
-begin
-  result := 0;
-  if fSCMActive and dsHeat.DataSet.Active then
-    if not dsHeat.DataSet.IsEmpty then
-        result := dsHeat.DataSet.FieldByName('HeatID').AsInteger;
-end;
-
-function TSCM.Heat_IsClosed: Boolean;
-var
-  HeatStatusID: integer;
-begin
-  result := false;
-  HeatStatusID := dsHeat.DataSet.FieldByName('HeatStatusID').AsInteger;
-  if (HeatStatusID = 3) or (HeatStatusID = 0) then result := true;
-end;
-
-function TSCM.Heat_IsRaced: Boolean;
-var
-  HeatStatusID: integer;
-begin
-  result := false;
-  HeatStatusID := dsHeat.DataSet.FieldByName('HeatStatusID').AsInteger;
-  if (HeatStatusID = 2) then result := true;
-end;
-
-function TSCM.Heat_Locate(aHeatID: integer): Boolean;
-var
-  SearchOptions: TLocateOptions;
-begin
-  result := false;
-  if not fSCMActive then exit;
-  if (aHeatID = 0) then exit;
-  SearchOptions := [];
-  if dsHeat.DataSet.Active then
-      result := dsHeat.DataSet.Locate('HeatID', aHeatID, SearchOptions);
-end;
-
-procedure TSCM.Heat_NewRecord;
-var
-  fld: TField;
-begin
-  if not fSCMActive then exit;
-  if dsEvent.DataSet.IsEmpty then exit;
-  // 3.10.2020
-  with dsHeat.DataSet do
-  begin
-    DisableControls();
-    fld := qryHeat.FindField('HeatNum');
-    if Assigned(fld) then fld.ReadOnly := false;
-    // creating a heat results in empty lanes being spawned
-    // and HeatNum calculated, HeatType initialized, etc
-    Insert;
-    Post;
-    // 3.10.2020
-    if Assigned(fld) then fld.ReadOnly := true;
-    EnableControls();
-    // Then in qryHeatNewRecord TMessage SCM_RENUMBERHEATS
-  end;
-end;
-
-function TSCM.Heat_NextID(aHeatID: integer): integer;
-begin
-  result := 0;
-  // get the next heat in the event  (uses HeatNum)
-  qryGetNextHeat.Connection := scmConnection;
-  qryGetNextHeat.ParamByName('HEATID').AsInteger := aHeatID;
-  qryGetNextHeat.Prepare;
-  qryGetNextHeat.Open;
-  if qryGetNextHeat.Active and (qryGetNextHeat.RecordCount > 0) then
-      result := qryGetNextHeat.FieldByName('HeatID').AsInteger;
-end;
-
-function TSCM.Heat_PrevID(aHeatID: integer): integer;
-begin
-  result := 0;
-  // get the previuos heat in the event  (uses HeatNum)
-  qryGetPrevHeat.Connection := scmConnection;
-  qryGetPrevHeat.ParamByName('HEATID').AsInteger := aHeatID;
-  qryGetPrevHeat.Prepare;
-  qryGetPrevHeat.Open;
-  if qryGetPrevHeat.Active and (qryGetPrevHeat.RecordCount > 0) then
-      result := qryGetPrevHeat.FieldByName('HeatID').AsInteger;
-end;
-
-function TSCM.Heat_SessionIsLocked(aHeatID: integer): Boolean;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := false;
-  if not fSCMActive then exit;
-  SQL := 'SELECT SessionStatusID FROM [SwimClubMeet2].[dbo].[Session] ' +
-    'INNER JOIN [Event] ON [Session].[SessionID] = [Event].[SessionID] ' +
-    'INNER JOIN [Heat] ON [Event].[EventID] = [Heat].[EventID] '
-    + 'WHERE [Heat].[HeatID] = :ID';
-  v := scmConnection.ExecSQLScalar(SQL, [aHeatID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v = 2) then result := true;
-end;
-
-procedure TSCM.Heat_ToggleStatus;
-var
-//  bm: TBookMark;
-  i, aHeatID: integer;
-begin
-  with dsHeat.DataSet do
-  begin
-    DisableControls;
-    CheckBrowseMode;
-    aHeatID := Heat_ID;
-//    bm := GetBookmark;
-    i := FieldByName('HeatStatusID').AsInteger;
-    Edit;
-    case i of
-      1:
-        // toggle to RACED ...
-        FieldByName('HeatStatusID').AsInteger := 2;
-      2:
-        begin
-          // toggle to CLOSED ...
-          FieldByName('HeatStatusID').AsInteger := 3;
-          // 22.09.2020 TimeStamp
-          FieldByName('CloseDT').AsDateTime := Now;
-        end;
-    else
-      // toggle to OPEN ...
-      FieldByName('HeatStatusID').AsInteger := 1;
-    end;
-    Post;
-    Refresh;
-    try
-      Heat_Locate(aHeatID);
-//      GotoBookmark(bm);
-    finally
-      EnableControls;
-    end;
-  end;
-end;
-
 function TSCM.InsertEmptyLane(aHeatID: integer): integer;
 var
   aLaneNum: integer;
@@ -1661,8 +935,9 @@ begin
     if aHeatID = 0 then exit;
 
     aEventType := Heat_EventType(aHeatID);
-    if (aEventType = etUnknown) then exit;
-    if (CountLanes(aHeatID) >= SwimClub_NumberOfLanes()) then exit;
+		if (aEventType = etUnknown) then exit;
+
+		if (CountLanes(aHeatID) >= SCMCore.qrySwimClub.FieldByName('NumOfLanes').AsInteger) then exit;
 
     aLaneNum := LastLaneNum(aHeatID) + 1;
     tbl := TFDTable.Create(self);
@@ -1681,8 +956,8 @@ begin
     tbl.Open;
     if (tbl.Active) then
     begin
-      if aEventType = etINDV then dsEntrant.DataSet.DisableControls
-      else dsTeam.DataSet.DisableControls;
+      if aEventType = etINDV then SCMcore.dsLane.DataSet.DisableControls
+      else SCMcore.dsTeam.DataSet.DisableControls;
 
       tbl.Insert;
       tbl.FieldByName('HeatID').AsInteger := aHeatID;
@@ -1691,8 +966,8 @@ begin
       tbl.FieldByName('IsScratched').AsBoolean := false;
       tbl.Post;
       result := 1;
-      if aEventType = etINDV then dsEntrant.DataSet.EnableControls
-      else dsTeam.DataSet.EnableControls;
+      if aEventType = etINDV then SCMcore.dsLane.DataSet.EnableControls
+      else SCMcore.dsTeam.DataSet.EnableControls;
     end;
     tbl.Close;
     tbl.Free;
@@ -1803,14 +1078,14 @@ begin
   SearchOptions := [];
   if aEventType = etINDV then
   begin
-    if dsEntrant.DataSet.Active and not dsEntrant.DataSet.IsEmpty then
-        result := dsEntrant.DataSet.Locate('EntrantID', aIndvTeamID,
+    if SCMcore.dsLane.DataSet.Active and not SCMcore.dsLane.DataSet.IsEmpty then
+        result := SCMcore.dsLane.DataSet.Locate('EntrantID', aIndvTeamID,
         SearchOptions);
   end
   else
   begin
-    if dsTeam.DataSet.Active and not dsTeam.DataSet.IsEmpty then
-        result := dsTeam.DataSet.Locate('TeamID', aIndvTeamID, SearchOptions);
+    if SCMcore.dsTeam.DataSet.Active and not SCMcore.dsTeam.DataSet.IsEmpty then
+        result := SCMcore.dsTeam.DataSet.Locate('TeamID', aIndvTeamID, SearchOptions);
   end;
 end;
 
@@ -2093,13 +1368,13 @@ begin
     result := InsertEmptyLanes(aHeatID);
 end;
 
-procedure TSCM.qryEntrantAfterScroll(DataSet: TDataSet);
+procedure TSCM.qryLaneAfterScroll(DataSet: TDataSet);
 begin
   if Owner is TForm then
       PostMessage(TForm(Owner).Handle, SCM_ENTRANTSCROLL, 0, 0);
 end;
 
-procedure TSCM.qryEntrantTIMEGetText(Sender: TField; var Text: string;
+procedure TSCM.qryLaneTIMEGetText(Sender: TField; var Text: string;
   DisplayText: Boolean);
 var
   Hour, Min, Sec, MSec: word;
@@ -2121,7 +1396,7 @@ begin
   else Text := Format('%0:2.2u:%1:2.2u.%2:3.3u', [Min, Sec, MSec]);
 end;
 
-procedure TSCM.qryEntrantTIMESetText(Sender: TField; const Text: string);
+procedure TSCM.qryLaneTIMESetText(Sender: TField; const Text: string);
 var
   Min, Sec, MSec: word;
   s: string;
@@ -2157,238 +1432,11 @@ begin
 
 end;
 
-procedure TSCM.qryEventAfterDelete(DataSet: TDataSet);
-begin
-  if Owner is TForm then
-  begin
-      PostMessage(TForm(Owner).Handle, SCM_RENUMBEREVENTS, 0, 0);
-  end;
-end;
-
-procedure TSCM.qryEventAfterInsert(DataSet: TDataSet);
-var
-fld: TField;
-begin
-  fld := DataSet.FieldByName('EventStatusID');
-  fld.ReadOnly := true;
-end;
-
-procedure TSCM.qryEventAfterPost(DataSet: TDataSet);
-var
-  i, v: integer;
-  DistanceID, StrokeID, entrantCount: integer;
-//  EventType : scmEventType;
-	Caption: string;
-
-begin
-  // NOTE: DataSet.State := dsBrowse
-	v := DataSet.FieldByName('EventNum').AsVariant;
-	if VarIsNull(v) or VarIsEmpty(v) or (v = 0) then
-  begin
-    i := DataSet.RecordCount;
-    DataSet.FieldByName('EventNum').ReadOnly := false;
-    DataSet.Edit;
-    DataSet.FieldByName('EventNum').AsInteger := i;
-    DataSet.Post;
-    if Owner is TForm then
-        PostMessage(TForm(Owner).Handle, SCM_RENUMBEREVENTS, 0, 0);
-  end;
-  // Don’t need to put the dataset into edit mode to change readmode
-  if (DataSet.FieldByName('EventNum').ReadOnly = false) then
-    DataSet.FieldByName('EventNum').ReadOnly := true;
-
-	DistanceID := DataSet.FieldByName('DistanceID').AsInteger;
-  StrokeID := DataSet.FieldByName('StrokeID').AsInteger;
-	if ((DistanceID <> fLastDistanceID) or (StrokeID <> fLastStrokeID)) then
-  begin
-    i := DataSet.FieldByName('EventID').AsInteger;
-    entrantCount := Event_GetEntrantCount(i);
-    if (entrantCount > 0) then
-    begin
-      // display warning message
-      MessageDlg('If an Event''s distance or stroke is changed' + slinebreak +
-        'then the nominees attached to that event also reflect' + slinebreak +
-				'those changes.', mtWarning, [mbOK], 0);
-
-      // clear the caption ....
-      DataSet.Edit;
-      DataSet.FieldByName('Caption').Clear;
-      DataSet.Post;
-
-		end;
-	end;
-
-	Caption := DataSet.FieldByName('Caption').AsString;
-
-	if Caption.IsEmpty then  // ADD A DEFAULT CAPTION
-	begin
-		if (prefGenerateEventDescription) then
-		begin
-			if not prefGenerateEventDescStr.IsEmpty then
-			begin
-				DataSet.Edit;
-				DataSet.FieldByName('Caption').AsString := prefGenerateEventDescStr;
-				DataSet.Post;
-			end;
-		end;
-	end;
-
-end;
-
-procedure TSCM.qryEventAfterScroll(DataSet: TDataSet);
-begin
-  if Owner is TForm then
-      PostMessage(TForm(Owner).Handle, SCM_EVENTSCROLL, 0, 0);
-end;
-
-procedure TSCM.qryEventBeforeEdit(DataSet: TDataSet);
-begin
-  // This is used later in the qryEvent BeforePost to determine if
-  // a warning message is displayed. wit: 'Nominees will be swimming a
-  // different stroke/distance'.
-  fLastDistanceID := DataSet.FieldByName('DistanceID').AsInteger;
-  fLastStrokeID := DataSet.FieldByName('StrokeID').AsInteger;;
-end;
-
-procedure TSCM.qryEventBeforeInsert(DataSet: TDataSet);
-var
-fld: TField;
-begin
-  fld := DataSet.FieldByName('EventStatusID');
-  fld.ReadOnly := false;
-end;
-
-procedure TSCM.qryEventBeforePost(DataSet: TDataSet);
-begin
-	{TODO -oBSA -cGeneral : Auto assignment on empty fields.}
-	// [dbo].[Event].[RoundID] - set to preliminary.. default Preliminary.(P)
-	// [dbo].[Event].[GenderID] - set to MIXED via dbo.GenderPrefix.(Mixed ..X)
-end;
-
-procedure TSCM.qryEventDistanceIDValidate(Sender: TField);
-var
-  v1, v2, v3: variant;
-  i: integer;
-  SQL: string;
-begin
-  // Check unknown (typically occurs on 'new event')
-  if VarIsNull(Sender.CurValue) or VarIsEmpty(Sender.CurValue) then exit;
-
-  // INDV or TEAM
-  SQL := 'SELECT EventTypeID FROM SwimClubMeet2.dbo.Distance WHERE [DistanceID] = :ID';
-	v1 := scmConnection.ExecSQLScalar(SQL, [Sender.CurValue], [ftInteger]);
-  v2 := scmConnection.ExecSQLScalar(SQL, [Sender.Value], [ftInteger]);
-  if v1 <> v2 then // switching event type ...
-  begin
-    // test for Heats
-    SQL := 'SELECT Count(HeatID) FROM SwimClubMeet2.dbo.Heat WHERE [EventID] = :ID';
-    i := Event_ID;
-    v3 := scmConnection.ExecSQLScalar(SQL, [i]);
-    if (v3 <> 0) then
-    begin
-      Raise Exception.Create
-        ('When an event has heats it cannot be switched between INDV and RELAY');
-    end;
-  end;
-end;
-
-procedure TSCM.qryEventEventStatusIDGetText(Sender: TField; var Text: string;
-  DisplayText: Boolean);
-begin
-  // column should only show a tick ...
-  // TODO: disable selection of the column.
-  Text := '';
-end;
-
-procedure TSCM.qryEventNewRecord(DataSet: TDataSet);
-begin
-	DataSet.FieldByName('EventStatusID').AsInteger := 1;
-	DataSet.FieldByName('DistanceID').AsInteger := 1;
-  DataSet.FieldByName('StrokeID').AsInteger := 1;
-  DataSet.FieldByName('EventStatusID').AsInteger := 1;
-end;
-
-procedure TSCM.qryEventScheduleDTGetText(Sender: TField; var Text: string;
-  DisplayText: Boolean);
-begin
-  if Sender.IsNull then Text := ''
-  else Text := FormatDateTime('hh:nn', Sender.AsDateTime);
-end;
-
-procedure TSCM.qryEventScheduleDTSetText(Sender: TField; const Text: string);
-var
-  dt: TDateTime;
-  fs: TFormatSettings;
-  s: string;
-begin
-  if Length(Text) = 0 then
-  begin
-    Sender.Clear;
-    exit;
-  end;
-
-  s := ReplaceText(Text, ' ', '0'); // tidy-up : replace editmask spaces
-  fs := TFormatSettings.Create; // class record - free not required.
-  if TryStrToTime(s, dt, fs) then
-  begin
-    Sender.AsDateTime := dt; // NOTE: Only time portion is used by DB.
-  end;
-
-end;
-
 procedure TSCM.qryEvTypeBeforeInsert(DataSet: TDataSet);
 begin
   // lanes are created when new heat is called
   // .. user cannnot enter new lanes from here...
   Abort();
-end;
-
-procedure TSCM.qryHeatAfterDelete(DataSet: TDataSet);
-begin
-  if Owner is TForm then // Heat_Renumber();
-      PostMessage(TForm(Owner).Handle, SCM_RENUMBERHEATS, 0, 0);
-end;
-
-procedure TSCM.qryHeatAfterInsert(DataSet: TDataSet);
-begin
-  fIsNewRecord := true;
-end;
-
-procedure TSCM.qryHeatAfterPost(DataSet: TDataSet);
-var
-aHeatID: integer;
-begin
-  if fIsNewRecord then
-    begin
-      fIsNewRecord := false;
-      aHeatID := DataSet.FieldByName('HeatID').AsInteger;
-      PadLanes(aHeatID);
-      qryEntrant.Refresh;
-      qryTeam.Refresh;
-    end;
-
-//  if Owner is TForm then // Heat_Renumber();
-//      PostMessage(TForm(Owner).Handle, SCM_RENUMBERHEATS, 0, 0);
-
-  // lblMsgTab3.Caption 'Heat Raced' 'Heat Closed'
-  //
-//  if Owner is TForm then
-//      PostMessage(TForm(Owner).Handle, SCM_TABSHEETDISPLAYSTATE, 3, 0);
-end;
-
-procedure TSCM.qryHeatAfterScroll(DataSet: TDataSet);
-begin
-  // REQUIRED 30/7/2023
-  // This is needed to update the entrant grid's 'enabled' state.
-  PostMessage(TForm(Owner).Handle, SCM_HEATSCROLL, 0, 0);
-end;
-
-procedure TSCM.qryHeatNewRecord(DataSet: TDataSet);
-begin
-  DataSet.FieldByName('HeatStatusID').AsInteger := 1; // Open
-  DataSet.FieldByName('HeatNum').AsInteger := DataSet.RecordCount + 1;
-  // By default HeatType = 'Heat' (not quarter, semi or final')
-  DataSet.FieldByName('HeatTypeID').AsInteger := 1;
 end;
 
 procedure TSCM.qryMemberQuickPickAfterScroll(DataSet: TDataSet);
@@ -2403,170 +1451,19 @@ begin
       PostMessage(TForm(Owner).Handle, SCM_NOMINATESCROLL, 0, 0);
 end;
 
-procedure TSCM.qrySessionAfterDelete(DataSet: TDataSet);
-begin
-  if Owner is TForm then
-      PostMessage(TForm(Owner).Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);
-
-end;
-
-procedure TSCM.qrySessionAfterPost(DataSet: TDataSet);
-begin
-  // if the session table is empty ... then the events GUI is invisible
-  // after any post (or insert) assert that events is visible
-  //
-  if Owner is TForm then
-      PostMessage(TForm(Owner).Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);
-end;
-
-procedure TSCM.qrySessionAfterScroll(DataSet: TDataSet);
-begin
-  { TODO -oBSA -cGeneral : WIN API Messaging }
-  if Owner is TForm then
-      PostMessage(TForm(Owner).Handle, SCM_SESSIONSCROLL, 0, 0);
-end;
-
-procedure TSCM.qrySessionBeforePost(DataSet: TDataSet);
-begin
-  if (DataSet.FieldByName('SessionStatusID').IsNull) then
-      DataSet.FieldByName('SessionStatusID').AsInteger := 1;
-end;
-
-procedure TSCM.qrySessionNewRecord(DataSet: TDataSet);
-begin
-  (*
-    The main difference between AfterInsert and NewRecord is that all changes
-    you do in NewRecord don't set the modified flag for the dataset, so you can
-    set your default values and before posting the record you can still check
-    for the modified property to see if the user has actually changed the data.
-  *)
-  DataSet.FieldByName('SessionStart').AsDateTime := Now;
-  DataSet.FieldByName('SessionStatusID').AsInteger := 1;
-end;
-
-procedure TSCM.qrySessionSessionStartGetText(Sender: TField; var Text: string;
-  DisplayText: Boolean);
-var
-  fs: TFormatSettings;
-  s: string;
-  i, i2: integer;
-  MonthPreceeds: Boolean;
-begin
-  // Furnish the locale format settings record
-  fs := TFormatSettings.Create();
-  s := fs.ShortDateFormat;
-  // AMERICAN or WORLD month-day order ...
-  i := Pos('D', UpperCase(s));
-  i2 := Pos('M', UpperCase(s));
-  MonthPreceeds := false;
-  if (i2 < i) then MonthPreceeds := true;
-  // DisplayText is true if the field's value is to be used for display only;
-  // false if the string is to be used for editing the field's value.
-  if (DisplayText) then
-    // The format as set by the LOCALE
-    // Numerous display possibilities YY/MM/DD hh:mm ttt or mm/dd/yyyy etc ....
-      Text := FormatDateTime(fs.ShortDateFormat + ' ' + fs.ShortTimeFormat,
-      Sender.AsDateTime, fs)
-  else
-    // FORMAT 'STRICT' - USED WHEN EDITING .....
-    // Using FS ensures correct values are pulled ....
-    if (MonthPreceeds) then
-        Text := FormatDateTime('MM/dd/yy HH:nn', Sender.AsDateTime, fs)
-    else Text := FormatDateTime('dd/MM/yy HH:nn', Sender.AsDateTime, fs);
-end;
-
-procedure TSCM.qrySessionSessionStartSetText(Sender: TField;
-  const Text: string);
-var
-  year, month, day, Hour, Min, txt: string;
-  sa: TStringDynArray;
-  dt: TDateTime;
-  i, i2: integer;
-  MonthPreceeds: Boolean;
-  fs: TFormatSettings;
-
-begin
-  MonthPreceeds := false;
-  fs := fs.Create();
-  i := Pos('D', UpperCase(fs.ShortDateFormat));
-  i2 := Pos('M', UpperCase(fs.ShortDateFormat));
-  if (i2 < i) then MonthPreceeds := true;
-
-  // Text excludes literal character used in editmask!
-  txt := Text;
-  // Insert missing literal characters - required to get SlitString running
-  if (Length(txt) = 14) then
-  begin
-    if (txt[1] = ' ') then txt[1] := '0';
-    if (txt[2] = ' ') then txt[2] := '0';
-    if (txt[4] = ' ') then txt[4] := '0';
-    if (txt[5] = ' ') then txt[5] := '0';
-    if (txt[7] = ' ') then txt[7] := '0';
-    if (txt[8] = ' ') then txt[8] := '0';
-    if (txt[9] = ' ') then txt[9] := '_';
-    if (txt[10] = ' ') then txt[10] := '0';
-    if (txt[11] = ' ') then txt[11] := '0';
-    if (txt[13] = ' ') then txt[13] := '0';
-    if (txt[14] = ' ') then txt[14] := '0';
-  end
-  // Error trap - probably unnessary - hence no error message
-  else exit;
-  // may not be required ...
-  txt := txt.Trim;
-  // strips out datetime elements ready for encoding
-  sa := SplitString(txt, '/_:');
-  if (High(sa) = 4) then
-  begin
-    // AMERICAN "mm/dd/yy"
-    if (MonthPreceeds) then
-    begin
-      month := sa[0];
-      day := sa[1];
-    end
-    // WORLD "dd/mm/yy"
-    else
-    begin
-      day := sa[0];
-      month := sa[1];
-    end;
-    year := sa[2];
-    Hour := sa[3];
-    Min := sa[4];
-  end
-  // Another error trap - most probably unnessary
-  else exit;
-
-  // encoding two digit years may be illegal
-  if (StrToIntDef(year, 0) = 0) then
-    // fixes users input of '00'
-      year := IntToStr(YearOf(Today()))
-  else year := '20' + year;
-
-  try
-    begin
-      dt := EncodeDateTime(StrToIntDef(year, 0), StrToIntDef(month, 0),
-        StrToIntDef(day, 0), StrToIntDef(Hour, 0), StrToIntDef(Min, 0), 0, 0);
-      Sender.AsDateTime := dt;
-    end
-  except
-    on E: Exception do
-        MessageDlg('Illegal session date.', mtError, [mbOK], 0, mbOK);
-  end;
-
-end;
-
 procedure TSCM.qryTeamAfterScroll(DataSet: TDataSet);
 begin
   // Update DISPLAY state of the main form's TEAM frame
   if Owner is TForm then PostMessage(TForm(Owner).Handle, SCM_TEAMSCROLL, 0, 0);
 end;
 
-procedure TSCM.qryTeamEntrantAfterScroll(DataSet: TDataSet);
+procedure TSCM.qryTeamLinkAfterScroll(DataSet: TDataSet);
 begin
-  // Update DISPLAY state of the main form's TEAM ENTRANT frame
-  if Owner is TForm then
+	// Update DISPLAY state of the main form's TEAM ENTRANT frame
+	if Owner is TForm then
       PostMessage(TForm(Owner).Handle, SCM_TEAMENTRANTSCROLL, 0, 0);
 end;
+
 
 procedure TSCM.ReadPreferences(IniFileName: string);
 var
@@ -2598,109 +1495,7 @@ begin
   iFile.Free;
 end;
 
-function TSCM.RenumberEvents(aSessionID: integer; DoLocate: Boolean = true): integer;
-var
-  qry: TFDQuery;
-  i, aEventID: integer;
-  sl: TStringList;
-  ds: TDataSet;
-begin
-  aEventID := 0;
-  Result := 0;
-  if not fSCMActive then exit;
-  if dsEvent.DataSet.IsEmpty then exit;
 
-  ds := dsEvent.DataSet;
-  if DoLocate then aEventID := ds.FieldByName('EventID').AsInteger;
-
-  ds.DisableControls;
-  sl := TStringList.Create;
-  // Legal, qryEvent has master..child relationship with dsSession.
-  sl.Add('USE [SwimClubMeet2] ');
-  sl.Add('SELECT [EventID], [EventNum] FROM [dbo].[Event] ');
-  sl.Add('WHERE [SessionID] = ' + IntToStr(Session_ID()));
-  sl.Add(' ORDER BY [EventNum]');
-  // Find valid EventNum
-  qry := TFDQuery.Create(self);
-  qry.Connection := scmConnection;
-  qry.SQL := sl;
-  qry.UpdateOptions.KeyFields := 'EventID';
-  qry.UpdateOptions.UpdateTableName := 'SwimClubMeet2..Event';
-  qry.Open;
-  if (qry.Active) then
-  begin
-    i := 1;
-    // Clean up list after each new record - renumber event number
-    while not qry.Eof do
-    begin
-      qry.Edit;
-      qry.FieldByName('EventNum').AsInteger := i;
-      qry.Post;
-      i := i + 1;
-      qry.Next;
-    end;
-    if (i>1) then result := i-1;
-  end;
-  qry.Close;
-  qry.Free;
-  sl.Free;
-  // REQUERY : RELOAD DATA
-  ds.Refresh();
-  // REQUEUE
-  if (DoLocate) then Event_Locate(aEventID);
-  ds.EnableControls();
-end;
-
-function TSCM.RenumberHeats(aEventID: integer; DoLocate: Boolean = true): integer;
-// RENUMBER HEAT NUMBER HeatNum
-// ..................................................
-var
-  qry: TFDQuery;
-  i, aHeatID: integer;
-  s: String;
-begin
-  result := 0;
-  if not fSCMActive then exit;
-  if dsHeat.DataSet.IsEmpty then exit;
-  result := 0;
-  aHeatID := 0;
-  dsHeat.DataSet.DisableControls;
-  // used later to cue-to-heat after renumber
-  if (DoLocate) then aHeatID := dsHeat.DataSet.FieldByName('HeatID').AsInteger;
-  // gather all the heats in the current event
-  s := 'SELECT [HeatID], [HeatNum] FROM [dbo].[Heat] ';
-  s := s + 'WHERE EventID = :EVENTID ORDER BY [HeatNum]';
-  qry := TFDQuery.Create(self);
-  qry.Connection := scmConnection;
-  qry.SQL.Text := s;
-  qry.UpdateOptions.KeyFields := 'HeatID';
-  qry.UpdateOptions.UpdateTableName := 'SwimClubMeet2..Heat';
-  qry.ParamByName('EVENTID').AsInteger := aEventID;
-  qry.IndexFieldNames := 'HeatNum';
-  qry.Prepare;
-  qry.Open;
-  if qry.Active then
-  begin
-    i := 1;
-    // Clean up list after each new record - renumber event number
-    while not qry.Eof do
-    begin
-      qry.Edit;
-      qry.FieldByName('HeatNum').AsInteger := i;
-      qry.Post;
-      i := i + 1;
-      qry.Next;
-    end;
-    if (i > 1) then result := i - 1;
-  end;
-  qry.Close;
-  qry.Free;
-  // RE-QUERY :: RELOAD DATA.
-  dsHeat.DataSet.Refresh;
-  // Queue to original selected entrant ...
-  if (DoLocate) then Heat_Locate(aHeatID);
-  dsHeat.DataSet.EnableControls;
-end;
 
 function TSCM.RenumberLanes(aHeatID: integer): integer;
 var
@@ -2754,8 +1549,8 @@ begin
 
   NumOfPoolLanes := SwimClub_NumberOfLanes;
 
-  if (aEventType = etINDV) then dsEntrant.DataSet.DisableControls
-  else dsTeam.DataSet.DisableControls;
+  if (aEventType = etINDV) then SCMcore.dsLane.DataSet.DisableControls
+  else SCMcore.dsTeam.DataSet.DisableControls;
 
   qry.IndexFieldNames := 'mySort;TimeToBeat';
   qry.ParamByName('HEATID').AsInteger := aHeatID;
@@ -2777,8 +1572,8 @@ begin
   qry.Close;
   qry.Free;
 
-  if (aEventType = etINDV) then dsEntrant.DataSet.EnableControls
-  else dsTeam.DataSet.EnableControls;
+  if (aEventType = etINDV) then SCMcore.dsLane.DataSet.EnableControls
+  else SCMcore.dsTeam.DataSet.EnableControls;
   result := i;
 end;
 
@@ -2840,8 +1635,8 @@ begin
   { Do a lane count and pad if needed. }
   PadLanes(aHeatID);
 
-  if (aEventType = etINDV) then dsEntrant.DataSet.DisableControls
-  else dsTeam.DataSet.DisableControls;
+  if (aEventType = etINDV) then SCMcore.dsLane.DataSet.DisableControls
+  else SCMcore.dsTeam.DataSet.DisableControls;
 
   qry.IndexFieldNames := 'mySort;TimeToBeat';
   qry.ParamByName('HEATID').AsInteger := aHeatID;
@@ -2870,17 +1665,17 @@ begin
           Remove erronous lane. Session must not be locked.
           Removes entrant\team splits and TeamEntrants (if found).
         }
-        DeleteLane(aIndvTeamID, aEventType);
+				DeleteLane(aLaneID);
       end;
       i := i + 1;
       qry.Next;
     end;
-  end;
+	end;
   qry.Close;
   qry.Free;
 
-  if (aEventType = etINDV) then dsEntrant.DataSet.EnableControls
-  else dsTeam.DataSet.EnableControls;
+  if (aEventType = etINDV) then SCMcore.dsLane.DataSet.EnableControls
+  else SCMcore.dsTeam.DataSet.EnableControls;
   result := i;
 end;
 
@@ -2899,275 +1694,6 @@ begin
     if qrySCMSystem.Active then
         result := qrySCMSystem.FieldByName('Major').AsInteger;
     qrySCMSystem.Close;
-  end;
-end;
-
-function TSCM.SessionIsLocked(aIndvTeamID: integer;
-  aEventType: scmEventType): Boolean;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := false;
-  if not fSCMActive then exit;
-  if aIndvTeamID = 0 then exit;
-  if aEventType = etUnknown then exit;
-
-  if aEventType = etINDV then
-  begin
-    SQL := 'SELECT SessionStatusID FROM [SwimClubMeet2].[dbo].[Session] ' +
-      'INNER JOIN [Event] ON [Session].[SessionID] = [Event].[SessionID] ' +
-      'INNER JOIN [Heat] ON [Event].[EventID] = [Heat].[EventID] '
-      + 'INNER JOIN [Entrant] ON [Heat].[HeatID] = [Entrant].[HeatID] '
-      + 'WHERE [Entrant].[EntrantID] = :ID';
-  end
-  else
-  begin
-    SQL := 'SELECT SessionStatusID FROM [SwimClubMeet2].[dbo].[Session] ' +
-      'INNER JOIN [Event] ON [Session].[SessionID] = [Event].[SessionID] ' +
-      'INNER JOIN [Heat] ON [Event].[EventID] = [Heat].[EventID] '
-      + 'INNER JOIN [Team] ON [Heat].[HeatID] = [Team].[HeatID] ' +
-      'WHERE [Team].[TeamID] = :ID';
-  end;
-  v := scmConnection.ExecSQLScalar(SQL, [aIndvTeamID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v = 2) then result := true;
-end;
-
-function TSCM.Session_AllEventsAreClosed(aSessionID: integer): Boolean;
-var
-  i: integer;
-begin
-  result := false;
-  if not fSCMActive then exit;
-  qryCountEventsNotClosed.Close;
-  qryCountEventsNotClosed.ParamByName('SESSIONID').AsInteger := aSessionID;
-  qryCountEventsNotClosed.Prepare;
-  qryCountHeatsNotClosed.Open;
-  if (qryCountEventsNotClosed.Active) then
-  begin
-    i := qryCountEventsNotClosed.FieldByName('CountStatus').AsInteger;
-    if (i = 0) then result := true;
-  end;
-  qryCountEventsNotClosed.Close;
-end;
-
-function TSCM.Session_GetEntrantCount(aSessionID: integer): integer;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := 0;
-  if not fSCMActive then exit;
-  if aSessionID = 0 then exit;
-  SQL := 'SELECT dbo.SessionEntrantCount(:ID1) ' +
-    'FROM SwimClubMeet2.dbo.Session WHERE Session.SessionID = :ID2';
-  v := scmConnection.ExecSQLScalar(SQL, [aSessionID, aSessionID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
-end;
-
-function TSCM.Session_GetEventCount(aSessionID: integer): integer;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := 0;
-  if not fSCMActive then exit;
-  SQL := 'SELECT COUNT(EventID) FROM [SwimClubMeet2].[dbo].[Session] ' +
-    ' INNER JOIN [Event] ON [Session].SessionID = [Event].SessionID ' +
-    ' WHERE [Session].SessionID = :ID;';
-  v := scmConnection.ExecSQLScalar(SQL, [aSessionID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
-end;
-
-function TSCM.Session_GetNomineeCount(aSessionID: integer): integer;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := 0;
-  if not fSCMActive then exit;
-  if aSessionID = 0 then exit;
-  SQL := 'SELECT dbo.SessionNomineeCount(:ID1) ' +
-        'FROM SwimClubMeet2.dbo.Session WHERE Session.SessionID = :ID2';
-  v := scmConnection.ExecSQLScalar(SQL, [aSessionID, aSessionID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
-end;
-
-function TSCM.Session_HasClosedOrRacedHeats(aSessionID: integer): Boolean;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := false;
-  if not fSCMActive then exit;
-  if aSessionID = 0 then exit;
-  SQL := 'SELECT Count(HeatID) FROM  [SwimClubMeet2].[dbo].[Session] ' +
-    'INNER JOIN [Event] ON [Session].SessionID = [Event].SessionID ' +
-    'INNER JOIN [Heat] ON [Event].EventID = [Heat].EventID '
-    + 'WHERE [Heat].HeatStatusID > 1 AND [Session].SessionID = :ID';
-  v := scmConnection.ExecSQLScalar(SQL, [aSessionID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := true;
-end;
-
-function TSCM.Session_HasEvents(aSessionID: integer): Boolean;
-var
-  i: integer;
-begin
-  result := false;
-  i := Session_GetEventCount(aSessionID);
-  if (i > 0) then result := true;
-end;
-
-procedure TSCM.Session_HideLocked(IsChecked: Boolean);
-begin
-  if (fSCMActive) then
-  begin
-    qryEntrant.DisableControls;
-    qryHeat.DisableControls;
-    qryNominee.DisableControls;
-    qryEvent.DisableControls;
-    qrySession.DisableControls;
-    qrySession.Close;
-    qrySession.ParamByName('TOGGLE').AsBoolean := IsChecked;
-    qrySession.Prepare;
-    qrySession.Open;
-    qrySession.EnableControls;
-    qryEvent.EnableControls;
-    qryNominee.EnableControls;
-    qryHeat.EnableControls;
-    qryEntrant.EnableControls;
-  end;
-end;
-
-function TSCM.Session_ID: integer;
-begin
-  result := 0;
-  if fSCMActive and dsSession.DataSet.Active then
-    if not dsSession.DataSet.IsEmpty then
-        result := dsSession.DataSet.FieldByName('SessionID').AsInteger;
-end;
-
-function TSCM.Session_IsLocked: Boolean;
-begin
-  result := true;
-  if not fSCMActive then exit;
-  if dsSession.DataSet.Active then
-    if not dsSession.DataSet.IsEmpty then
-      if (dsSession.DataSet.FieldByName('SessionStatusID').AsInteger <> 2) then
-          result := false;
-end;
-
-function TSCM.Session_IsLocked(aSessionID: integer): Boolean;
-var
-SQL: string;
-v: variant;
-begin
-  result := true;
-  if not fSCMActive then exit;
-  if (aSessionID = 0) then exit;
-  SQL := 'SELECT SessionStatusID FROM SwimClubMeet2.dbo.Session ' +
-         'WHERE SessionID = :aID';
-  v := scmConnection.ExecSQLScalar(SQL, [aSessionID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v <> 2) then result := false;
-end;
-{
-function TSCM.Session_IsUnLocked(aSessionID: integer): Boolean;
-var
-SQL: string;
-v: variant;
-begin
-  result := false;
-  if not fSCMActive then exit;
-  if (aSessionID = 0) then exit;
-  SQL := 'SELECT SessionStatusID FROM SwimClubMeet2.dbo.Session ' +
-         'WHERE SessionID = :aID';
-  v := scmConnection.ExecSQLScalar(SQL, [aSessionID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v <> 2) then result := true;
-end;
-
-function TSCM.Session_IsUnLocked: Boolean;
-begin
-  result := false;
-  if fSCMActive then // we are connected
-    if dsSession.DataSet.Active then // table is active
-      if not dsSession.DataSet.IsEmpty then // we have sessions
-        if (dsSession.DataSet.FieldByName('SessionStatusID').AsInteger <> 2)
-        then result := true; // explicient not locked
-end;
-}
-function TSCM.Session_Locate(SessionID: integer): Boolean;
-var
-  SearchOptions: TLocateOptions;
-begin
-  result := false;
-  if not fSCMActive then exit;
-  if (SessionID = 0) then exit;
-  SearchOptions := [];
-  if dsSession.DataSet.Active then
-      result := dsSession.DataSet.Locate('SessionID', SessionID, SearchOptions);
-end;
-
-function TSCM.Session_Start: TDateTime;
-begin
-  result := 0;
-  if fSCMActive and dsSession.DataSet.Active then
-    if not dsSession.DataSet.IsEmpty then
-        result := dsSession.DataSet.FieldByName('SessionStart').AsDateTime;
-end;
-
-procedure TSCM.Session_SetSortIndex(idx: integer);
-begin
-//  qrySession.Index
-  qrySession.IndexesActive := false;
-  case idx of
-  1:
-  begin
-  qrySession.IndexesActive := true;
-  qrySession.IndexName := 'idxStartDateDESC';
-  end;
-  2:
-  begin
-  qrySession.IndexesActive := true;
-  qrySession.IndexName := 'idxStartDateASC';
-  end
-  else
-    begin
-      qrySession.IndexFieldNames := 'SwimClubID';
-    end;
-  end;
-end;
-
-function TSCM.Session_Start(SessionID: integer): TDateTime;
-var
-SQL: string;
-v: variant;
-begin
-  result := Date;
-  if not fSCMActive then exit;
-  if SessionID = 0 then exit;
-  SQL := 'SELECT SessionStart FROM SwimClubMeet2.dbo.Session ' +
-         'WHERE SessionID = :aID';
-  v := scmConnection.ExecSQLScalar(SQL, [SessionID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and not (v = 0) then result := v;
-end;
-
-procedure TSCM.Session_ToggleLockState;
-var
-  i: integer;
-begin
-  if not fSCMActive then exit;
-  with dsSession.DataSet do
-  begin
-    DisableControls;
-    i := FieldByName('SessionStatusID').AsInteger;
-    // TOGGLE STATUS
-    if i = 1 then i := 2
-    else i := 1;
-    Edit;
-    FieldByName('SessionStatusID').AsInteger := i;
-    Post;
-    Refresh;
-    EnableControls;
   end;
 end;
 
@@ -3288,229 +1814,6 @@ begin
   result := true;
 end;
 
-function TSCM.SwimClub_ClubName: string;
-begin
-  result := '';
-  if dsSwimClub.DataSet.Active then
-    if not dsSwimClub.DataSet.IsEmpty then
-        result := dsSwimClub.DataSet.FieldByName('Caption').AsString;
-end;
-
-function TSCM.SwimClub_ID: integer;
-begin
-  result := 0;
-  if fSCMActive and dsSwimClub.DataSet.Active then
-    if not dsSwimClub.DataSet.IsEmpty then
-        result := dsSwimClub.DataSet.FieldByName('SwimClubID').AsInteger;
-end;
-
-function TSCM.SwimClub_IsShortCourse: Boolean;
-var
-  i: integer;
-begin
-  result := true;
-  if dsSwimClub.DataSet.Active then
-  begin
-    if not dsSwimClub.DataSet.IsEmpty then
-    begin
-      i := dsSwimClub.DataSet.FieldByName('LenOfPool').AsInteger;
-      if (i >= 50) then result := false;
-    end;
-  end;
-end;
-
-procedure TSCM.SwimClub_Locate(SwimClubID: integer);
-begin
-  if not fSCMActive then exit;
-  qrySwimClub.DisableControls;
-  qrySwimClub.Close;
-  if SwimClubID <> 0 then
-  begin
-    qrySwimClub.ParamByName('SWIMCLUBID').AsInteger := SwimClubID;
-    qrySwimClub.Prepare;
-    qrySwimClub.Open;
-  end;
-  qrySwimClub.EnableControls;
-end;
-
-function TSCM.SwimClub_NickName: string;
-begin
-  result := '';
-  if dsSwimClub.DataSet.Active then
-    if not dsSwimClub.DataSet.IsEmpty then
-        result := dsSwimClub.DataSet.FieldByName('NickName').AsString;
-end;
-
-function TSCM.SwimClub_NumberOfLanes: integer;
-var
-  i: integer;
-begin
-  // how many lanes in the swim club's pool?
-  result := 0;
-  if (fSCMActive) then
-  begin
-    i := dsSwimClub.DataSet.FieldByName('NumOfLanes').AsInteger;
-    if (i = 0) or (i > 99) then
-    begin
-      MessageDlg('Unkown number of swimming lanes. (Expected 1..99).' +
-        slinebreak + 'Check your ''Preferences'' setup.', TMsgDlgType.mtError,
-        [mbOK], 0);
-    end
-    else result := i;
-  end;
-end;
-
-function TSCM.SwimClub_SessionCount(SwimClubID: integer;
-  SDate, EDate: TDateTime): integer;
-begin
-  result := 0;
-  // if qryGetSessionCount.Active then
-  // qryGetSessionCount.Close;
-  // qryGetSessionCount.ParamByName('SWIMCLUBID').AsInteger := SwimClubID;
-  // qryGetSessionCount.ParamByName('SDATE').AsDateTime := SDate;
-  // qryGetSessionCount.ParamByName('EDATE').AsDateTime := EDate;
-  // qryGetSessionCount.Prepare;
-  // qryGetSessionCount.Open;
-  // if qryGetSessionCount.Active then
-  // begin
-  // if not qryGetSessionCount.IsEmpty then
-  // begin
-  // result := qryGetSessionCount.FieldByName('SessionCount').AsInteger;
-  // end;
-  // end;
-end;
-
-function TSCM.SwimClub_StartOfSwimSeason: TDateTime;
-begin
-  result := 0;
-  if fSCMActive and dsSwimClub.DataSet.Active then
-    if not dsSwimClub.DataSet.IsEmpty then
-        result := dsSwimClub.DataSet.FieldByName('StartOfSwimSeason')
-        .AsDateTime;
-end;
-
-function TSCM.SwimClub_StartOfSwimSeason(SwimClubID: integer): TDateTime;
-var
-  dt: TDateTime;
-begin
-  result := Date();
-  if SwimClubID > 0 then
-  begin
-    if qrySwimClub.Active then qrySwimClub.Close;
-    qrySwimClub.ParamByName('SWIMCLUBID').AsInteger := SwimClubID;
-    qrySwimClub.Prepare;
-    qrySwimClub.Open;
-    if qrySwimClub.Active then
-    begin
-      if not qrySwimClub.IsEmpty then
-      begin
-        dt := qrySwimClub.FieldByName('StartOfSwimSeason').AsDateTime;
-        // If ANow and AThen are two and a half years apart,
-        // calling WithinPastYears with AYears set to 2 returns True.
-        if WithinPastYears(result, dt, 1) then result := dt;
-      end;
-    end;
-  end;
-end;
-
-function TSCM.TeamEntrant_AddSlot(aTeamID: integer): integer;
-var
-lane: integer;
-SQL: string;
-begin
-  result := 0;
-  if not SCM.SCMActive then exit;
-  if aTeamID = 0 then exit;
-  Lane := SCM.TeamEntrant_LastLaneNum(aTeamID) + 1;
-  SQL := 'INSERT INTO [SwimClubMeet2].[dbo].[TeamEntrant] ' +
-          '( [Lane],[IsDisqualified],[IsScratched],[TeamID]) ' +
-          'VALUES ( :ID1,0,0,:ID2)';
-  result := SCM.scmConnection.ExecSQL(SQL, [Lane, aTeamID]);
-end;
-
-function TSCM.TeamEntrant_HeatStatusID(aTeamEntrantID: integer): integer;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := 0;
-  if not fSCMActive then exit;
-  if aTeamEntrantID > 0 then
-  begin
-    SQL := 'SELECT HeatStatusID FROM [SwimClubMeet2].[dbo].[Heat] ' +
-      'INNER JOIN Team ON [Heat].[HeatID] = Team.HeatID ' +
-      'INNER JOIN TeamEntrant ON [Team].[TeamID] = [TeamEntrant].[TeamID] ' +
-      'WHERE [TeamEntrant].[TeamEntrantID] = :ID;';
-    v := scmConnection.ExecSQLScalar(SQL, [aTeamEntrantID]);
-    if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
-  end;
-end;
-
-function TSCM.TeamEntrant_LastLaneNum(aTeamID: integer): integer;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := 0;
-  if not fSCMActive then exit;
-  if aTeamID = 0 then exit;
-  SQL := 'SELECT MAX(Lane) FROM SwimClubMeet2.dbo.TeamEntrant ' +
-  'WHERE TeamEntrant.TeamID = :ID';
-  v := scmConnection.ExecSQLScalar(SQL, [aTeamID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
-end;
-
-function TSCM.TeamEntrant_Locate(aTeamEntrantID: integer): Boolean;
-var
-  SearchOptions: TLocateOptions;
-begin
-  result := false;
-  if not fSCMActive then exit;
-  if aTeamEntrantID = 0 then exit;
-  SearchOptions := [];
-  if dsEntrant.DataSet.Active then
-  result := dsTeamEntrant.DataSet.Locate('TeamEntrantID', aTeamEntrantID,
-  SearchOptions);
-end;
-
-function TSCM.TeamEntrant_MoveDownSlot(ADataSet: TDataSet): Boolean;
-begin
-  result := MoveDownLane(ADataSet);
-end;
-
-function TSCM.TeamEntrant_MoveUpSlot(ADataSet: TDataSet): Boolean;
-begin
-  result := MoveUpLane(ADataSet);
-end;
-
-function TSCM.TeamEntrant_RemoveSlot(aTeamEntrant: integer): integer;
-var
-SQL: string;
-begin
-  result := 0;
-  if not fSCMActive then exit;
-  if aTeamEntrant = 0 then exit;
-  SQL := 'DELETE FROM SwimClubMeet2.dbo.TeamEntrant ' +
-          'WHERE TeamEntrantID = :ID';
-  result := SCM.scmConnection.ExecSQL(SQL, [aTeamEntrant]);
-end;
-
-function TSCM.TeamEntrant_SessionIsLocked(aTeamEntrantID: integer): Boolean;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := false;
-  if not fSCMActive then exit;
-  SQL := 'SELECT SessionStatusID FROM [SwimClubMeet2].[dbo].[Session] ' +
-    'INNER JOIN [Event] ON [Session].[SessionID] = [Event].[SessionID] ' +
-    'INNER JOIN [Heat] ON [Event].[EventID] = [Heat].[EventID] '
-    + 'INNER JOIN [Team] ON [Heat].[HeatID] = [Team].[HeatID] ' +
-    'INNER JOIN [TeamEntrant] ON [Team].[TeamID] = [Team].[TeamID] ' +
-    'WHERE [TeamEntrant].[TeamEntrantID] = :ID';
-  v := scmConnection.ExecSQLScalar(SQL, [aTeamEntrantID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v = 2) then result := true;
-end;
 
 function TSCM.TeamSplit_HeatStatusID(aSplitID: integer): integer;
 var
@@ -3555,8 +1858,8 @@ begin
   if not fSCMActive then exit;
   if (aTeamID = 0) then exit;
   SearchOptions := [];
-  if dsTeam.DataSet.Active then
-      result := dsTeam.DataSet.Locate('TeamID', aTeamID, SearchOptions);
+  if SCMcore.dsTeam.DataSet.Active then
+			result := SCMcore.dsTeam.DataSet.Locate('TeamID', aTeamID, SearchOptions);
 end;
 
 procedure TSCM.ToggleDCode(ADataSet: TDataSet; DoEnable: Boolean);

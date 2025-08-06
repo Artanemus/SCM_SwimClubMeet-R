@@ -69,7 +69,7 @@ object Preferences: TPreferences
     Top = 41
     Width = 728
     Height = 501
-    ActivePage = tab1
+    ActivePage = TabSheet6
     Align = alClient
     TabOrder = 2
     OnChanging = PageControl1Changing
@@ -538,43 +538,6 @@ object Preferences: TPreferences
     object TabSheet6: TTabSheet
       Caption = 'Switches'
       ImageIndex = 6
-      object Label1: TLabel
-        Left = 32
-        Top = 156
-        Width = 60
-        Height = 17
-        Caption = 'Event Grid'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Segoe UI'
-        Font.Style = [fsUnderline]
-        ParentFont = False
-      end
-      object Label18: TLabel
-        Left = 32
-        Top = 256
-        Width = 70
-        Height = 17
-        Caption = 'Entrant Grid'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Segoe UI'
-        Font.Style = [fsUnderline]
-        ParentFont = False
-      end
-      object prefEnableTeamEvents: TCheckBox
-        Left = 32
-        Top = 388
-        Width = 241
-        Height = 19
-        Caption = 'Enable Team Events.'
-        Checked = True
-        State = cbChecked
-        TabOrder = 1
-        Visible = False
-      end
       object prefEnableDCodes: TCheckBox
         Left = 32
         Top = 11
@@ -582,54 +545,6 @@ object Preferences: TPreferences
         Height = 20
         Caption = 'Enable FINA disqualification codes.'
         TabOrder = 0
-      end
-      object prefDisplaySwimmerCAT: TCheckBox
-        Left = 32
-        Top = 279
-        Width = 369
-        Height = 22
-        Caption = 'Display Swimmer Category in the entrant'#39's grid.'
-        TabOrder = 6
-      end
-      object prefDisplayDivisions: TCheckBox
-        Left = 32
-        Top = 307
-        Width = 313
-        Height = 22
-        Caption = 'Display Divisions in the entrant'#39's grid.'
-        TabOrder = 7
-      end
-      object prefEnableSplitTimesForINDV: TCheckBox
-        Left = 32
-        Top = 46
-        Width = 337
-        Height = 22
-        Caption = 'Enable split-time entry in individual events.'
-        TabOrder = 2
-      end
-      object prefEnableSplitTimesForTEAM: TCheckBox
-        Left = 32
-        Top = 80
-        Width = 297
-        Height = 22
-        Caption = 'Enable split-time entry in team events.'
-        TabOrder = 3
-      end
-      object prefGenerateEventDescription: TCheckBox
-        Left = 32
-        Top = 179
-        Width = 422
-        Height = 17
-        Caption = 'Generate an event description for new events.'
-        TabOrder = 4
-      end
-      object prefGenerateEventDescStr: TEdit
-        Left = 53
-        Top = 202
-        Width = 488
-        Height = 29
-        TabOrder = 5
-        Text = 'Boy and girls, all ages.'
       end
     end
     object TabSheet3: TTabSheet

@@ -473,11 +473,26 @@
         <DCCReference Include="..\VCL_TMS\Advgrid.pas"/>
         <DCCReference Include="..\VCL_TMS\DBAdvGrid.pas"/>
         <DCCReference Include="..\VCL_TMS\BaseGrid.pas"/>
-        <DCCReference Include="dmCore.pas">
-            <Form>Core</Form>
+        <DCCReference Include="dmSCMcore.pas">
+            <Form>SCMcore</Form>
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
+        <DCCReference Include="dmIMG.pas">
+            <Form>IMG</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="scmSetting.pas"/>
+        <DCCReference Include="scmLogin.pas">
+            <Form>Login</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="uSwimClub.pas"/>
+        <DCCReference Include="uSession.pas"/>
+        <DCCReference Include="uEvent.pas"/>
+        <DCCReference Include="uHeat.pas"/>
+        <DCCReference Include="uLane.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

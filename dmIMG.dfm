@@ -1,804 +1,67 @@
-object Core: TCore
-  Height = 874
-  Width = 1135
-  object dsSwimClub: TDataSource
-    DataSet = qrySwimClub
-    Left = 112
-    Top = 40
-  end
-  object dsSession: TDataSource
-    DataSet = qrySession
-    Left = 240
-    Top = 72
-  end
-  object dsEvent: TDataSource
-    DataSet = qryEvent
-    Left = 240
-    Top = 128
-  end
-  object dsHeat: TDataSource
-    DataSet = qryHeat
-    Left = 368
-    Top = 216
-  end
-  object qrySession: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    Indexes = <
-      item
-        Name = 'idxSortDESC'
-        Fields = 'SwimClubID;SessionStart'
-        DescFields = 'SessionStart'
-        Options = [soDescNullLast]
-      end
-      item
-        Name = 'idxSortASC'
-        Fields = 'SwimClubID;SessionStart'
-      end>
-    IndexFieldNames = 'SwimClubID'
-    MasterSource = dsSwimClub
-    MasterFields = 'SwimClubID'
-    DetailFields = 'SwimClubID'
-    Connection = SCM.scmConnection
-    UpdateOptions.AssignedValues = [uvEInsert]
-    UpdateOptions.UpdateTableName = 'SwimClubMeet2..Session'
-    UpdateOptions.KeyFields = 'SessionID'
-    SQL.Strings = (
-      'USE SwimClubMeet2;'
-      ''
-      'DECLARE @Toggle AS BIT'
-      'SET @Toggle = :TOGGLE'
-      ''
-      'if @Toggle = 0'
-      ''
-      'SELECT Session.SessionID, '
-      'Session.SessionStart, '
-      'Session.SwimClubID, '
-      'Session.SessionStatusID, '
-      'Session.ClosedDT, '
-      'SessionStatus.Caption AS Status, '
-      'Session.Caption'
-      'FROM [dbo].[Session] '
-      
-        'LEFT OUTER JOIN SessionStatus ON Session.SessionStatusID = Sessi' +
-        'onStatus.SessionStatusID'
-      'ORDER BY Session.SessionStart DESC'
-      ''
-      'else'
-      ''
-      'SELECT Session.SessionID, '
-      'Session.SessionStart, '
-      'Session.SwimClubID, '
-      'Session.SessionStatusID,  '
-      'Session.ClosedDT, '
-      'SessionStatus.Caption AS Status, '
-      'Session.Caption'
-      'FROM [dbo].[Session] '
-      
-        'LEFT OUTER JOIN SessionStatus ON Session.SessionStatusID = Sessi' +
-        'onStatus.SessionStatusID'
-      'WHERE Session.SessionStatusID = 1'
-      'ORDER BY Session.SessionStart DESC'
-      '')
-    Left = 176
-    Top = 72
-    ParamData = <
-      item
-        Name = 'TOGGLE'
-        DataType = ftBoolean
-        ParamType = ptInput
-        Value = False
-      end>
-    object qrySessionSessionID: TFDAutoIncField
-      FieldName = 'SessionID'
-      Origin = 'SessionID'
-      ProviderFlags = [pfInWhere, pfInKey]
-      Visible = False
-    end
-    object qrySessionSwimClubID: TIntegerField
-      FieldName = 'SwimClubID'
-      Origin = 'SwimClubID'
-      Visible = False
-    end
-    object qrySessionSessionStatusID: TIntegerField
-      FieldName = 'SessionStatusID'
-      Origin = 'SessionStatusID'
-      Visible = False
-    end
-    object qrySessionSessionStart: TSQLTimeStampField
-      DisplayLabel = 'Session Date'
-      DisplayWidth = 17
-      FieldName = 'SessionStart'
-      Origin = 'SessionStart'
-      DisplayFormat = 'dd/mm/YY HH:nn'
-      EditMask = '!90/00/00 90:00;1;0'
-    end
-    object qrySessionStatus: TWideStringField
-      DisplayWidth = 9
-      FieldName = 'Status'
-      Origin = 'Status'
-      Visible = False
-      Size = 32
-    end
-    object qrySessionCaption: TWideStringField
-      DisplayLabel = 'Description'
-      DisplayWidth = 46
-      FieldName = 'Caption'
-      Origin = 'Caption'
-      Size = 128
-    end
-    object qrySessionClosedDT: TSQLTimeStampField
-      FieldName = 'ClosedDT'
-      Origin = 'ClosedDT'
-      Visible = False
-    end
-  end
-  object qryEvent: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    IndexFieldNames = 'SessionID'
-    MasterSource = dsSession
-    MasterFields = 'SessionID'
-    DetailFields = 'SessionID'
-    Connection = SCM.scmConnection
-    FormatOptions.AssignedValues = [fvFmtDisplayTime]
-    FormatOptions.FmtDisplayTime = 'hh:nn'
-    UpdateOptions.UpdateTableName = 'SwimClubMeet2..Event'
-    UpdateOptions.KeyFields = 'EventID'
-    SQL.Strings = (
-      'USE SwimClubMeet2;'
-      ''
-      'SELECT [Event].[EventID]'
-      '     , [Event].[EventNum]'
-      '     , [Event].[Caption]'
-      '     , [Event].[ScheduleDT]'
-      '      ,[Event].[RallyOpenDT]'
-      '      ,[Event].[RallyCloseDT]'
-      '      ,[Event].[OpenDT]'
-      '     , [Event].[CloseDT]'
-      '     , [Event].[SessionID]'
-      '     , [Event].[StrokeID]'
-      '     , [Event].[DistanceID]'
-      '     , [Event].[EventStatusID]'
-      '     , [Event].[RoundID]'
-      '     , [Event].[GenderID]'
-      '     , [Event].[EventCategoryID]'
-      '     , [Event].[ParalympicTypeID]'
-      '     , dbo.NomineeCount([Event].[EventID]) AS NomineeCount'
-      '     , dbo.EntrantCount([Event].[EventID]) AS EntrantCount'
-      
-        '     , CONCAT('#39'#'#39', Event.EventNum, '#39' - '#39', Distance.Caption, '#39' '#39',' +
-        ' Stroke.Caption) AS ShortCaption'
-      '--     , Distance.Meters'
-      '--     , Distance.ABREV'
-      '     , Distance.EventTypeID'
-      'FROM dbo.[Event]'
-      '    LEFT OUTER JOIN Stroke'
-      '        ON Stroke.StrokeID = Event.StrokeID'
-      '    LEFT OUTER JOIN Distance'
-      '        ON Distance.DistanceID = Event.DistanceID'
-      'ORDER BY Event.EventNum;'
-      ''
-      '')
-    Left = 176
-    Top = 128
-    object qryEventEventID: TFDAutoIncField
-      FieldName = 'EventID'
-      Origin = 'EventID'
-      ProviderFlags = [pfInWhere, pfInKey]
-    end
-    object qryEventEventNum: TIntegerField
-      DisplayLabel = ' Ev#'
-      DisplayWidth = 5
-      FieldName = 'EventNum'
-      Origin = 'EventNum'
-    end
-    object qryEventCaption: TWideStringField
-      DisplayLabel = 'Event Description'
-      DisplayWidth = 60
-      FieldName = 'Caption'
-      Origin = 'Caption'
-      Size = 128
-    end
-    object qryEventShortCaption: TWideStringField
-      FieldName = 'ShortCaption'
-      Origin = 'ShortCaption'
-      ReadOnly = True
-      Required = True
-      Size = 273
-    end
-    object qryEventScheduleDT: TTimeField
-      DisplayLabel = 'SCHED'
-      DisplayWidth = 12
-      FieldName = 'ScheduleDT'
-      Origin = 'ScheduleDT'
-      DisplayFormat = 'hh:nn'
-    end
-    object qryEventRallyOpenDT: TSQLTimeStampField
-      DisplayLabel = 'Rally Begin'
-      DisplayWidth = 12
-      FieldName = 'RallyOpenDT'
-      Origin = 'RallyOpenDT'
-      DisplayFormat = 'hh:nn'
-    end
-    object qryEventRallyCloseDT: TSQLTimeStampField
-      DisplayLabel = 'Rally End'
-      DisplayWidth = 12
-      FieldName = 'RallyCloseDT'
-      Origin = 'RallyCloseDT'
-      DisplayFormat = 'hh:nn'
-    end
-    object qryEventOpenDT: TSQLTimeStampField
-      DisplayLabel = 'Open'
-      DisplayWidth = 12
-      FieldName = 'OpenDT'
-      Origin = 'OpenDT'
-      DisplayFormat = 'hh:nn'
-    end
-    object qryEventCloseDT: TSQLTimeStampField
-      DisplayLabel = 'Close'
-      DisplayWidth = 12
-      FieldName = 'CloseDT'
-      Origin = 'CloseDT'
-      DisplayFormat = 'hh:nn'
-    end
-    object qryEventSessionID: TIntegerField
-      FieldName = 'SessionID'
-      Origin = 'SessionID'
-    end
-    object qryEventStrokeID: TIntegerField
-      FieldName = 'StrokeID'
-      Origin = 'StrokeID'
-    end
-    object qryEventDistanceID: TIntegerField
-      FieldName = 'DistanceID'
-      Origin = 'DistanceID'
-    end
-    object qryEventEventStatusID: TIntegerField
-      FieldName = 'EventStatusID'
-      Origin = 'EventStatusID'
-    end
-    object qryEventRoundID: TIntegerField
-      FieldName = 'RoundID'
-      Origin = 'RoundID'
-    end
-    object qryEventGenderID: TIntegerField
-      FieldName = 'GenderID'
-      Origin = 'GenderID'
-    end
-    object qryEventParalympicTypeID: TIntegerField
-      FieldName = 'ParalympicTypeID'
-      Origin = 'ParalympicTypeID'
-    end
-    object qryEventEventTypeID: TIntegerField
-      FieldName = 'EventTypeID'
-      Origin = 'EventTypeID'
-    end
-    object qryEventNomineeCount: TIntegerField
-      FieldName = 'NomineeCount'
-      Origin = 'NomineeCount'
-      ReadOnly = True
-    end
-    object qryEventEntrantCount: TIntegerField
-      FieldName = 'EntrantCount'
-      Origin = 'EntrantCount'
-      ReadOnly = True
-    end
-    object LookUpStroke: TStringField
-      DisplayLabel = 'Stroke'
-      DisplayWidth = 14
-      FieldKind = fkLookup
-      FieldName = 'luStroke'
-      LookupDataSet = tblStroke
-      LookupKeyFields = 'StrokeID'
-      LookupResultField = 'Caption'
-      KeyFields = 'StrokeID'
-      LookupCache = True
-      Lookup = True
-    end
-    object LookUpDistance: TStringField
-      DisplayLabel = 'Distance'
-      DisplayWidth = 12
-      FieldKind = fkLookup
-      FieldName = 'luDistance'
-      LookupDataSet = tblDistance
-      LookupKeyFields = 'DistanceID'
-      LookupResultField = 'Caption'
-      KeyFields = 'DistanceID'
-      LookupCache = True
-      Lookup = True
-    end
-  end
-  object qryHeat: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    IndexFieldNames = 'EventID'
-    MasterSource = dsEvent
-    MasterFields = 'EventID'
-    DetailFields = 'EventID'
-    Connection = SCM.scmConnection
-    UpdateOptions.AssignedValues = [uvCheckRequired]
-    UpdateOptions.CheckRequired = False
-    UpdateOptions.UpdateTableName = 'SwimClubMeet2..Heat'
-    UpdateOptions.KeyFields = 'HeatID'
-    SQL.Strings = (
-      'USE SwimClubMeet2;'
-      ''
-      'SELECT [Heat].[HeatID]'
-      '      ,[Heat].[HeatNum]'
-      '      ,[Heat].[Caption]'
-      '      ,[Heat].[ScheduleDT]'
-      '      ,[Heat].[RallyOpenDT]'
-      '      ,[Heat].[RallyCloseDT]'
-      '      ,[Heat].[OpenDT]'
-      '      ,[Heat].[CloseDT]'
-      '      ,[Heat].[EventID]'
-      '      ,[Heat].[HeatTypeID]'
-      '      ,[Heat].[HeatStatusID]'
-      '  ,[HeatStatus].[Caption] AS cStatus'
-      ''
-      'FROM'
-      '  [SwimClubMeet2].[dbo].[Heat]'
-      
-        '  INNER JOIN HeatStatus ON Heat.HeatStatusID = HeatStatus.HeatSt' +
-        'atusID'
-      'ORDER BY'
-      '  Heat.HeatNum'
-      '    ')
-    Left = 296
-    Top = 216
-    object qryHeatHeatID: TFDAutoIncField
-      FieldName = 'HeatID'
-      Origin = 'HeatID'
-      ProviderFlags = [pfInWhere, pfInKey]
-      Visible = False
-    end
-    object qryHeatEventID: TIntegerField
-      FieldName = 'EventID'
-      Origin = 'EventID'
-      Visible = False
-    end
-    object qryHeatHeatTypeID: TIntegerField
-      FieldName = 'HeatTypeID'
-      Origin = 'HeatTypeID'
-      Visible = False
-    end
-    object qryHeatHeatStatusID: TIntegerField
-      FieldName = 'HeatStatusID'
-      Origin = 'HeatStatusID'
-      Visible = False
-    end
-    object qryHeatHeatNum: TIntegerField
-      Alignment = taCenter
-      DisplayLabel = 'Heat#'
-      DisplayWidth = 6
-      FieldName = 'HeatNum'
-      Origin = 'HeatNum'
-      ReadOnly = True
-    end
-    object qryHeatcStatus: TWideStringField
-      DisplayLabel = 'Status'
-      DisplayWidth = 12
-      FieldName = 'cStatus'
-      Origin = 'cStatus'
-      ReadOnly = True
-      Size = 60
-    end
-    object qryHeatCloseDT: TSQLTimeStampField
-      FieldName = 'CloseDT'
-      Origin = 'CloseDT'
-      Visible = False
-    end
-  end
-  object qrySwimClub: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    Active = True
-    IndexFieldNames = 'SwimClubID'
-    Connection = SCM.scmConnection
-    UpdateOptions.UpdateTableName = 'SwimClubMeet2..SwimClub'
-    UpdateOptions.KeyFields = 'SwimClubID'
-    SQL.Strings = (
-      'USE SwimClubMeet2;'
-      ''
-      'SELECT [SwimClubID]'
-      '      ,[NickName]'
-      '      ,[Caption]'
-      '      ,[Email]'
-      '      ,[ContactNum]'
-      '      ,[WebSite]'
-      '      ,[HeatAlgorithm]'
-      '      ,[EnableTeamEvents]'
-      '      ,[EnableSwimOThon]'
-      '      ,[EnableExtHeatTypes]'
-      '      ,[EnableMembershipStr]'
-      '      ,[EnableSimpleDisqualification]'
-      '      ,[NumOfLanes]'
-      '      ,[NumOfSwimmersInTEAMS]'
-      '      ,[LenOfPool]'
-      '      ,[StartOfSwimSeason]'
-      '      ,[CreatedOn]'
-      '      ,[LogoDir]'
-      '      ,[LogoImg]'
-      '      ,[LogoType]'
-      '      ,[PoolTypeID]'
-      '      ,[SwimClubTypeID]'
-      '  FROM [dbo].[SwimClub];'
-      ''
-      ''
-      ''
-      '')
-    Left = 48
-    Top = 40
-    object qrySwimClubSwimClubID: TFDAutoIncField
-      FieldName = 'SwimClubID'
-      Origin = 'SwimClubID'
-      ProviderFlags = [pfInWhere, pfInKey]
-    end
-    object qrySwimClubNickName: TWideStringField
-      FieldName = 'NickName'
-      Origin = 'NickName'
-      Size = 128
-    end
-    object qrySwimClubCaption: TWideStringField
-      FieldName = 'Caption'
-      Origin = 'Caption'
-      Size = 128
-    end
-    object qrySwimClubEmail: TWideStringField
-      FieldName = 'Email'
-      Origin = 'Email'
-      Size = 128
-    end
-    object qrySwimClubContactNum: TWideStringField
-      FieldName = 'ContactNum'
-      Origin = 'ContactNum'
-      Size = 30
-    end
-    object qrySwimClubWebSite: TWideStringField
-      FieldName = 'WebSite'
-      Origin = 'WebSite'
-      Size = 256
-    end
-    object qrySwimClubHeatAlgorithm: TIntegerField
-      FieldName = 'HeatAlgorithm'
-      Origin = 'HeatAlgorithm'
-    end
-    object qrySwimClubEnableTeamEvents: TBooleanField
-      FieldName = 'EnableTeamEvents'
-      Origin = 'EnableTeamEvents'
-      Required = True
-    end
-    object qrySwimClubEnableSwimOThon: TBooleanField
-      FieldName = 'EnableSwimOThon'
-      Origin = 'EnableSwimOThon'
-      Required = True
-    end
-    object qrySwimClubEnableExtHeatTypes: TBooleanField
-      FieldName = 'EnableExtHeatTypes'
-      Origin = 'EnableExtHeatTypes'
-      Required = True
-    end
-    object qrySwimClubEnableMembershipStr: TBooleanField
-      FieldName = 'EnableMembershipStr'
-      Origin = 'EnableMembershipStr'
-      Required = True
-    end
-    object qrySwimClubEnableSimpleDisqualification: TBooleanField
-      FieldName = 'EnableSimpleDisqualification'
-      Origin = 'EnableSimpleDisqualification'
-      Required = True
-    end
-    object qrySwimClubNumOfLanes: TIntegerField
-      FieldName = 'NumOfLanes'
-      Origin = 'NumOfLanes'
-    end
-    object qrySwimClubNumOfSwimmersInTEAMS: TIntegerField
-      FieldName = 'NumOfSwimmersInTEAMS'
-      Origin = 'NumOfSwimmersInTEAMS'
-    end
-    object qrySwimClubLenOfPool: TIntegerField
-      FieldName = 'LenOfPool'
-      Origin = 'LenOfPool'
-    end
-    object qrySwimClubStartOfSwimSeason: TSQLTimeStampField
-      FieldName = 'StartOfSwimSeason'
-      Origin = 'StartOfSwimSeason'
-    end
-    object qrySwimClubCreatedOn: TSQLTimeStampField
-      FieldName = 'CreatedOn'
-      Origin = 'CreatedOn'
-    end
-    object qrySwimClubLogoDir: TMemoField
-      FieldName = 'LogoDir'
-      Origin = 'LogoDir'
-      BlobType = ftMemo
-      Size = 2147483647
-    end
-    object qrySwimClubLogoImg: TBlobField
-      FieldName = 'LogoImg'
-      Origin = 'LogoImg'
-    end
-    object qrySwimClubLogoType: TWideStringField
-      FieldName = 'LogoType'
-      Origin = 'LogoType'
-      Size = 5
-    end
-    object qrySwimClubPoolTypeID: TIntegerField
-      FieldName = 'PoolTypeID'
-      Origin = 'PoolTypeID'
-    end
-    object qrySwimClubSwimClubTypeID: TIntegerField
-      FieldName = 'SwimClubTypeID'
-      Origin = 'SwimClubTypeID'
-    end
-  end
-  object qryLane: TFDQuery
-    IndexFieldNames = 'HeatID'
-    MasterSource = dsHeat
-    MasterFields = 'HeatID'
-    DetailFields = 'HeatID'
-    Connection = SCM.scmConnection
-    UpdateOptions.UpdateTableName = 'SwimClubMeet2.dbo.Lane'
-    UpdateOptions.KeyFields = 'LaneID'
-    SQL.Strings = (
-      'SELECT [LaneID]'
-      '      ,[LaneNum]'
-      '      ,[Lane].[RaceTime]'
-      '      ,[ClubRecord]'
-      '      ,[IsDisqualified]'
-      '      ,[IsScratched]'
-      '      ,[HeatID]'
-      '      ,[DisqualifyCodeID]'
-      '      ,[Lane].[TeamID]'
-      '      ,[Lane].[NomineeID]'
-      ''
-      '     , CASE'
-      '           WHEN [Lane].[NomineeID] IS NOT NULL THEN'
-      '               CONCAT('
-      '                        Member.FirstName'
-      '                       , '#39' '#39
-      '                       , UPPER(Member.LastName)'
-      '                     )'
-      '           WHEN [Lane].[TeamID] IS NOT NULL THEN'
-      '           Team.TeamName'
-      ''
-      '       END AS FullName'
-      '       , CASE'
-      ''
-      '           WHEN [Lane].[NomineeID] IS NOT NULL THEN'
-      '               CONCAT('
-      '                         FORMAT(Nominee.AGE, '#39'00'#39')'
-      '                       , '#39'.'#39
-      
-        '                       , dbo.SwimmerGenderToString(Nominee.Membe' +
-        'rID)'
-      '                     )'
-      '           WHEN [Lane].[TeamID] IS NOT NULL THEN'
-      '           Team.ABBREV'
-      ''
-      '       END AS Stat'
-      '       '
-      '  FROM [dbo].[Lane]'
-      '  LEFT JOIN Nominee ON Lane.NomineeID = Nominee.NomineeID'
-      '  LEFT JOIN [Member] ON Nominee.MemberID = [Member].Memberid'
-      '  LEFT JOIN [Team] ON Lane.Teamid = Team.teamid')
-    Left = 416
-    Top = 248
-  end
-  object dsLane: TDataSource
-    DataSet = qryLane
-    Left = 480
-    Top = 248
-  end
-  object qryNominee: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    Indexes = <
-      item
-        Active = True
-        Selected = True
-        Name = 'mcEvent_Nominee'
-        Fields = 'EventID'
-        DescFields = 'EventID'
-      end>
-    IndexName = 'mcEvent_Nominee'
-    MasterSource = dsEvent
-    MasterFields = 'EventID'
-    Connection = SCM.scmConnection
-    UpdateOptions.UpdateTableName = 'SwimClubMeet2..Nominee'
-    UpdateOptions.KeyFields = 'NomineeID'
-    SQL.Strings = (
-      'USE [SwimClubMeet2];'
-      ''
-      'SELECT [NomineeID]'
-      '      ,[AGE]'
-      '      ,[TTB]'
-      '      ,[PB]'
-      '      ,[IsEntrant]'
-      '      ,[SeedTime]'
-      '      ,[AutoBuildFlag]'
-      '      ,[EventID]'
-      '      ,[MemberID]'
-      '      ,[SwimClubID]'
-      '  FROM [SwimClubMeet2].[dbo].[Nominee]'
-      '')
-    Left = 296
-    Top = 160
-  end
-  object dsNominee: TDataSource
-    DataSet = qryNominee
-    Left = 368
-    Top = 160
-  end
-  object qryTeam: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    IndexFieldNames = 'TeamID'
-    MasterSource = dsLane
-    MasterFields = 'TeamID'
-    DetailFields = 'TeamID'
-    Connection = SCM.scmConnection
-    FormatOptions.AssignedValues = [fvFmtDisplayDateTime, fvFmtDisplayTime]
-    FormatOptions.FmtDisplayTime = 'nn:ss.zzz'
-    UpdateOptions.AssignedValues = [uvEInsert, uvCheckRequired]
-    UpdateOptions.EnableInsert = False
-    UpdateOptions.CheckRequired = False
-    UpdateOptions.UpdateTableName = 'SwimClubMeet2.dbo.Team'
-    UpdateOptions.KeyFields = 'TeamID'
-    SQL.Strings = (
-      '-- Format of TTime occurs in OnGetText() '#39'nn:ss.zzz'#39
-      ''
-      'USE SwimClubMeet2'
-      ''
-      'SELECT Team.TeamID'
-      '     , Team.Caption'
-      '     , Team.TeamName'
-      '     , Team.ABBREV'
-      '     , Team.TimeToBeat'
-      'FROM Team'
-      '    LEFT OUTER JOIN TeamName'
-      '        ON Team.TeamNameID = TeamName.TeamNameID'
-      'ORDER BY Team.Lane'
-      ''
-      ''
-      '')
-    Left = 528
-    Top = 392
-  end
-  object dsTeam: TDataSource
-    DataSet = qryTeam
-    Left = 616
-    Top = 392
-  end
-  object dsSplitTime: TDataSource
-    Left = 616
-    Top = 336
-  end
-  object dsWatchTime: TDataSource
-    Left = 616
-    Top = 280
-  end
-  object qrySplitTime: TFDQuery
-    Connection = SCM.scmConnection
-    Left = 528
-    Top = 336
-  end
-  object qryWatchTime: TFDQuery
-    Connection = SCM.scmConnection
-    Left = 528
-    Top = 280
-  end
-  object qryTeamLink: TFDQuery
-    IndexFieldNames = 'TeamID'
-    MasterSource = dsTeam
-    MasterFields = 'TeamID'
-    DetailFields = 'TeamID'
-    Connection = SCM.scmConnection
-    Left = 680
-    Top = 424
-  end
-  object dsTeamLink: TDataSource
-    DataSet = qryTeamLink
-    Left = 768
-    Top = 424
-  end
-  object tblStroke: TFDTable
-    ActiveStoredUsage = [auDesignTime]
-    Active = True
-    IndexFieldNames = 'StrokeID'
-    Connection = SCM.scmConnection
-    ResourceOptions.AssignedValues = [rvEscapeExpand]
-    UpdateOptions.UpdateTableName = 'SwimClubMeet2..Stroke'
-    UpdateOptions.KeyFields = 'StrokeID'
-    TableName = 'SwimClubMeet2..Stroke'
-    Left = 88
-    Top = 592
-  end
-  object tblDistance: TFDTable
-    ActiveStoredUsage = [auDesignTime]
-    Active = True
-    IndexFieldNames = 'DistanceID'
-    Connection = SCM.scmConnection
-    ResourceOptions.AssignedValues = [rvEscapeExpand]
-    UpdateOptions.UpdateTableName = 'SwimClubMeet2..Distance'
-    UpdateOptions.KeyFields = 'DistanceID'
-    TableName = 'SwimClubMeet2..Distance'
-    Left = 88
-    Top = 640
-  end
-  object luStroke: TDataSource
-    DataSet = tblStroke
-    Left = 192
-    Top = 592
-  end
-  object luDistance: TDataSource
-    DataSet = tblDistance
-    Left = 192
-    Top = 640
-  end
-  object SVGEvStatusList: TSVGIconVirtualImageList
+object IMG: TIMG
+  Height = 480
+  Width = 640
+  object SVGEventStatus: TSVGIconVirtualImageList
     Images = <
       item
         CollectionIndex = 0
-        CollectionName = 'TabSheetHeatsImages_HeatClosed'
+        CollectionName = 'TabSheetHeatsImages_EmptyFrame'
         Name = 'TabSheetHeatsImages_HeatClosed'
       end
       item
         CollectionIndex = 1
         CollectionName = 'TabSheetHeatsImages_HeatOpen'
         Name = 'TabSheetHeatsImages_HeatOpen'
+      end
+      item
+        CollectionIndex = 3
+        CollectionName = 'TabSheetHeatsImages_HeatClosed'
+        Name = 'TabSheetHeatsImages_HeatClosed'
       end>
     ImageCollection = SVGCoreCollection
-    Left = 512
-    Top = 624
+    Width = 24
+    Height = 24
+    Size = 24
+    Left = 272
+    Top = 56
   end
   object SVGCoreCollection: TSVGIconImageCollection
     SVGIconItems = <
       item
-        IconName = 'TabSheetHeatsImages_HeatClosed'
+        IconName = 'TabSheetHeatsImages_EmptyFrame'
         SVGText = 
           '<?xml version="1.0" encoding="UTF-8" standalone="no"?>'#10'<svg'#10'   h' +
           'eight="48"'#10'   width="48"'#10'   version="1.1"'#10'   id="svg4"'#10'   sodipo' +
-          'di:docname="TabSheetHeatsImages.svg"'#10'   xml:space="preserve"'#10'   ' +
-          'inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"'#10'   inkscape:expo' +
-          'rt-batch-path="..\SVG_UI_Collection"'#10'   inkscape:export-batch-na' +
-          'me="TabSheetHeatsImages"'#10'   xmlns:inkscape="http://www.inkscape.' +
-          'org/namespaces/inkscape"'#10'   xmlns:sodipodi="http://sodipodi.sour' +
-          'ceforge.net/DTD/sodipodi-0.dtd"'#10'   xmlns="http://www.w3.org/2000' +
-          '/svg"'#10'   xmlns:svg="http://www.w3.org/2000/svg"><defs'#10'     id="d' +
-          'efs8" /><sodipodi:namedview'#10'     id="namedview6"'#10'     pagecolor=' +
-          '"#ffffff"'#10'     bordercolor="#666666"'#10'     borderopacity="1.0"'#10'  ' +
-          '   inkscape:showpageshadow="2"'#10'     inkscape:pageopacity="0.0"'#10' ' +
-          '    inkscape:pagecheckerboard="0"'#10'     inkscape:deskcolor="#d1d1' +
-          'd1"'#10'     showgrid="false"'#10'     inkscape:zoom="4"'#10'     inkscape:c' +
-          'x="587.875"'#10'     inkscape:cy="92.125001"'#10'     inkscape:window-wi' +
-          'dth="2560"'#10'     inkscape:window-height="1377"'#10'     inkscape:wind' +
-          'ow-x="-8"'#10'     inkscape:window-y="-8"'#10'     inkscape:window-maxim' +
-          'ized="1"'#10'     inkscape:current-layer="layer36"'#10'     showguides="' +
-          'true"><inkscape:page'#10'       x="0"'#10'       y="0"'#10'       width="48"' +
-          #10'       height="48"'#10'       id="page783"'#10'       inkscape:label="H' +
-          'eatClosed"'#10'       inkscape:export-filename="..\HeatNavigator\Hea' +
-          'tClosed.png"'#10'       inkscape:export-xdpi="96"'#10'       inkscape:ex' +
-          'port-ydpi="96"'#10'       margin="0"'#10'       bleed="0" /></sodipodi:n' +
-          'amedview><g'#10'     inkscape:groupmode="layer"'#10'     id="layer25"'#10'  ' +
-          '   inkscape:label="HeatStatusCollection"'#10'     style="display:inl' +
-          'ine"'#10'     transform="translate(-2030)"><g'#10'       inkscape:groupm' +
-          'ode="layer"'#10'       id="layer28"'#10'       inkscape:label="OpenRaced' +
-          'Closed"><path'#10'         d="m 2054,47.04049 q -4.7369,0 -8.9538,-1' +
-          '.814438 -4.217,-1.814439 -7.3652,-4.953706 -3.1483,-3.139267 -4.' +
-          '968,-7.344156 -1.8196,-4.204889 -1.8196,-8.92819 0,-4.780902 1.8' +
-          '196,-8.985791 1.8197,-4.20489 4.968,-7.3153553 3.1483,-3.110466 ' +
-          '7.3652,-4.9249054 4.2169,-1.814438 8.9538,-1.814438 4.7946,0 9.0' +
-          '116,1.814438 4.217,1.8144394 7.3363,4.9249054 3.1194,3.1104653 4' +
-          '.9391,7.3153553 1.8196,4.204889 1.8196,8.985791 0,4.723301 -1.81' +
-          '96,8.92819 -1.8197,4.204889 -4.9391,7.344156 -3.1194,3.139267 -7' +
-          '.3363,4.953706 -4.2169,1.814438 -9.0116,1.814438 z m 0,-3.456073' +
-          ' q 8.2028,0 13.9218,-5.731322 5.7189,-5.731321 5.7189,-13.853094' +
-          ' 0,-8.179374 -5.7189,-13.881895 -5.719,-5.7025223 -13.9218,-5.70' +
-          '25223 -8.145,0 -13.8929,5.7025223 -5.7476,5.702521 -5.7476,13.88' +
-          '1895 0,8.121773 5.7476,13.853094 5.7479,5.731322 13.8929,5.73132' +
-          '2 z M 2054,24 Z"'#10'         id="path2-3-0-5"'#10'         style="displ' +
-          'ay:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1' +
-          '.15368;stroke-opacity:1" /><ellipse'#10'         style="display:inli' +
-          'ne;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.7;stro' +
-          'ke-dashoffset:0.8406;stroke-opacity:1;stop-color:#000000"'#10'      ' +
-          '   id="path1571"'#10'         cx="2054"'#10'         cy="24"'#10'         rx' +
-          '="19.775764"'#10'         ry="19.719078" /></g></g></svg>'#10
+          'di:docname="SCMGridIcons.svg"'#10'   xml:space="preserve"'#10'   inkscap' +
+          'e:version="1.4 (86a8ad7, 2024-10-11)"'#10'   inkscape:export-batch-p' +
+          'ath="Export"'#10'   inkscape:export-batch-name="TabSheetHeatsImages"' +
+          #10'   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"' +
+          #10'   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi' +
+          '-0.dtd"'#10'   xmlns="http://www.w3.org/2000/svg"'#10'   xmlns:svg="http' +
+          '://www.w3.org/2000/svg"><defs'#10'     id="defs8" /><sodipodi:namedv' +
+          'iew'#10'     id="namedview6"'#10'     pagecolor="#ffffff"'#10'     bordercol' +
+          'or="#666666"'#10'     borderopacity="1.0"'#10'     inkscape:showpageshad' +
+          'ow="2"'#10'     inkscape:pageopacity="0.0"'#10'     inkscape:pagechecker' +
+          'board="0"'#10'     inkscape:deskcolor="#d1d1d1"'#10'     showgrid="false' +
+          '"'#10'     inkscape:zoom="2.8284271"'#10'     inkscape:cx="268.34702"'#10'  ' +
+          '   inkscape:cy="39.951533"'#10'     inkscape:window-width="2560"'#10'   ' +
+          '  inkscape:window-height="1377"'#10'     inkscape:window-x="-8"'#10'    ' +
+          ' inkscape:window-y="-8"'#10'     inkscape:window-maximized="1"'#10'     ' +
+          'inkscape:current-layer="layer1"'#10'     showguides="true"><inkscape' +
+          ':page'#10'       x="0"'#10'       y="0"'#10'       width="48"'#10'       height=' +
+          '"48"'#10'       id="page535"'#10'       inkscape:label="EmptyFrame"'#10'    ' +
+          '   inkscape:export-filename="..\HeatNavigator\EmptyFrame.png"'#10'  ' +
+          '     inkscape:export-xdpi="96"'#10'       inkscape:export-ydpi="96"'#10 +
+          '       margin="0"'#10'       bleed="0" /></sodipodi:namedview><g'#10'   ' +
+          '  inkscape:groupmode="layer"'#10'     id="layer11"'#10'     inkscape:lab' +
+          'el="EvBu"'#10'     transform="translate(-1160)"><path'#10'       d="m 11' +
+          '65.261,47.04049 q -1.4991,0 -2.6234,-1.152024 -1.1244,-1.152024 ' +
+          '-1.1244,-2.688058 V 4.7995914 q 0,-1.5360326 1.1244,-2.6880571 1' +
+          '.1243,-1.15202462 2.6234,-1.15202462 h 37.4781 q 1.4991,0 2.6235' +
+          ',1.15202462 1.1243,1.1520245 1.1243,2.6880571 V 43.200408 q 0,1.' +
+          '536034 -1.1243,2.688058 -1.1244,1.152024 -2.6235,1.152024 z m 0,' +
+          '-3.840082 h 37.4781 V 4.7995914 h -37.4781 z"'#10'       id="path167' +
+          '7-1-6"'#10'       style="stroke-width:1.26455" /></g></svg>'#10
       end
       item
         IconName = 'TabSheetHeatsImages_HeatOpen'
@@ -897,6 +160,57 @@ object Core: TCore
           '9.6405,-19.584417 C 1976.3595,3.3223126 1996,4.4155829 1996,4.41' +
           '55829"'#10'         id="path865"'#10'         sodipodi:nodetypes="ccsc" ' +
           '/></g></g></svg>'#10
+      end
+      item
+        IconName = 'TabSheetHeatsImages_HeatClosed'
+        SVGText = 
+          '<?xml version="1.0" encoding="UTF-8" standalone="no"?>'#10'<svg'#10'   h' +
+          'eight="48"'#10'   width="48"'#10'   version="1.1"'#10'   id="svg4"'#10'   sodipo' +
+          'di:docname="TabSheetHeatsImages.svg"'#10'   xml:space="preserve"'#10'   ' +
+          'inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"'#10'   inkscape:expo' +
+          'rt-batch-path="..\SVG_UI_Collection"'#10'   inkscape:export-batch-na' +
+          'me="TabSheetHeatsImages"'#10'   xmlns:inkscape="http://www.inkscape.' +
+          'org/namespaces/inkscape"'#10'   xmlns:sodipodi="http://sodipodi.sour' +
+          'ceforge.net/DTD/sodipodi-0.dtd"'#10'   xmlns="http://www.w3.org/2000' +
+          '/svg"'#10'   xmlns:svg="http://www.w3.org/2000/svg"><defs'#10'     id="d' +
+          'efs8" /><sodipodi:namedview'#10'     id="namedview6"'#10'     pagecolor=' +
+          '"#ffffff"'#10'     bordercolor="#666666"'#10'     borderopacity="1.0"'#10'  ' +
+          '   inkscape:showpageshadow="2"'#10'     inkscape:pageopacity="0.0"'#10' ' +
+          '    inkscape:pagecheckerboard="0"'#10'     inkscape:deskcolor="#d1d1' +
+          'd1"'#10'     showgrid="false"'#10'     inkscape:zoom="4"'#10'     inkscape:c' +
+          'x="587.875"'#10'     inkscape:cy="92.125001"'#10'     inkscape:window-wi' +
+          'dth="2560"'#10'     inkscape:window-height="1377"'#10'     inkscape:wind' +
+          'ow-x="-8"'#10'     inkscape:window-y="-8"'#10'     inkscape:window-maxim' +
+          'ized="1"'#10'     inkscape:current-layer="layer36"'#10'     showguides="' +
+          'true"><inkscape:page'#10'       x="0"'#10'       y="0"'#10'       width="48"' +
+          #10'       height="48"'#10'       id="page783"'#10'       inkscape:label="H' +
+          'eatClosed"'#10'       inkscape:export-filename="..\HeatNavigator\Hea' +
+          'tClosed.png"'#10'       inkscape:export-xdpi="96"'#10'       inkscape:ex' +
+          'port-ydpi="96"'#10'       margin="0"'#10'       bleed="0" /></sodipodi:n' +
+          'amedview><g'#10'     inkscape:groupmode="layer"'#10'     id="layer25"'#10'  ' +
+          '   inkscape:label="HeatStatusCollection"'#10'     style="display:inl' +
+          'ine"'#10'     transform="translate(-2030)"><g'#10'       inkscape:groupm' +
+          'ode="layer"'#10'       id="layer28"'#10'       inkscape:label="OpenRaced' +
+          'Closed"><path'#10'         d="m 2054,47.04049 q -4.7369,0 -8.9538,-1' +
+          '.814438 -4.217,-1.814439 -7.3652,-4.953706 -3.1483,-3.139267 -4.' +
+          '968,-7.344156 -1.8196,-4.204889 -1.8196,-8.92819 0,-4.780902 1.8' +
+          '196,-8.985791 1.8197,-4.20489 4.968,-7.3153553 3.1483,-3.110466 ' +
+          '7.3652,-4.9249054 4.2169,-1.814438 8.9538,-1.814438 4.7946,0 9.0' +
+          '116,1.814438 4.217,1.8144394 7.3363,4.9249054 3.1194,3.1104653 4' +
+          '.9391,7.3153553 1.8196,4.204889 1.8196,8.985791 0,4.723301 -1.81' +
+          '96,8.92819 -1.8197,4.204889 -4.9391,7.344156 -3.1194,3.139267 -7' +
+          '.3363,4.953706 -4.2169,1.814438 -9.0116,1.814438 z m 0,-3.456073' +
+          ' q 8.2028,0 13.9218,-5.731322 5.7189,-5.731321 5.7189,-13.853094' +
+          ' 0,-8.179374 -5.7189,-13.881895 -5.719,-5.7025223 -13.9218,-5.70' +
+          '25223 -8.145,0 -13.8929,5.7025223 -5.7476,5.702521 -5.7476,13.88' +
+          '1895 0,8.121773 5.7476,13.853094 5.7479,5.731322 13.8929,5.73132' +
+          '2 z M 2054,24 Z"'#10'         id="path2-3-0-5"'#10'         style="displ' +
+          'ay:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1' +
+          '.15368;stroke-opacity:1" /><ellipse'#10'         style="display:inli' +
+          'ne;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.7;stro' +
+          'ke-dashoffset:0.8406;stroke-opacity:1;stop-color:#000000"'#10'      ' +
+          '   id="path1571"'#10'         cx="2054"'#10'         cy="24"'#10'         rx' +
+          '="19.775764"'#10'         ry="19.719078" /></g></g></svg>'#10
       end
       item
         IconName = 'TabSheetHeatsImages_StrokeFS'
@@ -1558,28 +872,53 @@ object Core: TCore
         IconName = 'TabSheetHeatsImages_RELAY_DOT'
         SVGText = 
           '<?xml version="1.0" encoding="UTF-8" standalone="no"?>'#10'<svg'#10'   h' +
-          'eight="48"'#10'   width="48"'#10'   version="1.1"'#10'   id="svg4"'#10'   xml:sp' +
-          'ace="preserve"'#10'   xmlns="http://www.w3.org/2000/svg"'#10'   xmlns:sv' +
-          'g="http://www.w3.org/2000/svg"><defs'#10'     id="defs8" /><g'#10'     i' +
-          'd="layer36"'#10'     transform="translate(-701.65186,-107.37794)"><c' +
-          'ircle'#10'       style="display:inline;opacity:0.585502;fill:#ff7f2a' +
-          ';stroke-width:8.65996;stroke-miterlimit:0;stroke-dashoffset:0.84' +
-          '06;paint-order:markers stroke fill"'#10'       id="path6-89"'#10'       ' +
-          'cx="725.65179"'#10'       cy="131.37793"'#10'       r="24" /><text'#10'     ' +
-          '  xml:space="preserve"'#10'       style="font-style:normal;font-vari' +
-          'ant:normal;font-weight:bold;font-stretch:normal;font-size:50.035' +
-          '5px;line-height:1.25;font-family:'#39'Segoe UI'#39';-inkscape-font-speci' +
-          'fication:'#39'Segoe UI Bold'#39';fill:#5c1c06;fill-opacity:1;stroke-widt' +
-          'h:0.938167"'#10'       x="723.53979"'#10'       y="146.19522"'#10'       id=' +
-          '"text6"'#10'       transform="scale(0.98084826,1.0195257)"><tspan'#10'  ' +
-          '       id="tspan6"'#10'         x="723.53979"'#10'         y="146.19522"' +
-          #10'         style="font-style:normal;font-variant:normal;font-weig' +
-          'ht:bold;font-stretch:normal;font-size:50.0355px;font-family:'#39'Seg' +
-          'oe UI'#39';-inkscape-font-specification:'#39'Segoe UI Bold'#39';fill:#5c1c06' +
-          ';fill-opacity:1;stroke-width:0.938167">R</tspan></text></g></svg' +
-          '>'#10
+          'eight="48"'#10'   width="48"'#10'   version="1.1"'#10'   id="svg4"'#10'   sodipo' +
+          'di:docname="SCMGridIcons.svg"'#10'   xml:space="preserve"'#10'   inkscap' +
+          'e:version="1.4 (86a8ad7, 2024-10-11)"'#10'   inkscape:export-batch-p' +
+          'ath="Export"'#10'   inkscape:export-batch-name="TabSheetHeatsImages"' +
+          #10'   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"' +
+          #10'   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi' +
+          '-0.dtd"'#10'   xmlns="http://www.w3.org/2000/svg"'#10'   xmlns:svg="http' +
+          '://www.w3.org/2000/svg"><defs'#10'     id="defs8" /><sodipodi:namedv' +
+          'iew'#10'     id="namedview6"'#10'     pagecolor="#ffffff"'#10'     bordercol' +
+          'or="#666666"'#10'     borderopacity="1.0"'#10'     inkscape:showpageshad' +
+          'ow="2"'#10'     inkscape:pageopacity="0.0"'#10'     inkscape:pagechecker' +
+          'board="0"'#10'     inkscape:deskcolor="#d1d1d1"'#10'     showgrid="false' +
+          '"'#10'     inkscape:zoom="2.8284271"'#10'     inkscape:cx="268.34702"'#10'  ' +
+          '   inkscape:cy="39.951533"'#10'     inkscape:window-width="2560"'#10'   ' +
+          '  inkscape:window-height="1377"'#10'     inkscape:window-x="-8"'#10'    ' +
+          ' inkscape:window-y="-8"'#10'     inkscape:window-maximized="1"'#10'     ' +
+          'inkscape:current-layer="layer1"'#10'     showguides="true"><inkscape' +
+          ':page'#10'       x="0"'#10'       y="0"'#10'       width="48"'#10'       height=' +
+          '"48"'#10'       id="page6"'#10'       margin="0"'#10'       bleed="0"'#10'      ' +
+          ' inkscape:label="RELAY_DOT"'#10'       inkscape:export-filename="Str' +
+          'okeIMRelay.png"'#10'       inkscape:export-xdpi="96"'#10'       inkscape' +
+          ':export-ydpi="96" /></sodipodi:namedview><g'#10'     inkscape:groupm' +
+          'ode="layer"'#10'     id="layer36"'#10'     inkscape:label="STROKES UPDAT' +
+          'ED 1"'#10'     transform="translate(-701.65186,-107.37794)"><circle'#10 +
+          '       style="display:inline;opacity:0.6;fill:#ff7f2a;fill-opaci' +
+          'ty:1;stroke-width:8.65996;stroke-miterlimit:0;stroke-dashoffset:' +
+          '0.8406;paint-order:markers stroke fill"'#10'       id="path6-89"'#10'   ' +
+          '    cx="725.65179"'#10'       cy="131.37793"'#10'       r="24"'#10'       in' +
+          'kscape:label="Circle-RELAY" /><path'#10'       d="m 756.93751,146.19' +
+          '522 h -9.06404 l -5.44821,-9.01518 q -0.61078,-1.02612 -1.1727,-' +
+          '1.83236 -0.56192,-0.80624 -1.14828,-1.36816 -0.56192,-0.58635 -1' +
+          '.19714,-0.87953 -0.61078,-0.31761 -1.34372,-0.31761 h -2.12554 v' +
+          ' 13.41284 h -7.89134 V 111.1606 h 12.50888 q 12.75319,0 12.75319' +
+          ',9.52824 0,1.83236 -0.56192,3.39597 -0.56193,1.53918 -1.58805,2.' +
+          '78518 -1.02611,1.246 -2.492,2.14996 -1.44145,0.90396 -3.22494,1.' +
+          '41702 v 0.0977 q 0.7818,0.24431 1.51474,0.80623 0.73295,0.53749 ' +
+          '1.41703,1.27043 0.68407,0.73295 1.29486,1.58805 0.63522,0.83066 ' +
+          '1.14828,1.6369 z M 735.43788,117.073 v 9.74812 h 3.4204 q 2.5408' +
+          '7,0 4.08004,-1.46588 1.56361,-1.49032 1.56361,-3.68914 0,-4.5931' +
+          ' -5.49706,-4.5931 z"'#10'       id="text6"'#10'       style="font-weight' +
+          ':bold;font-size:50.0355px;line-height:1.25;font-family:'#39'Segoe UI' +
+          #39';-inkscape-font-specification:'#39'Segoe UI Bold'#39';fill:#5c1c06;stro' +
+          'ke-width:0.938167"'#10'       transform="scale(0.98084826,1.0195257)' +
+          '"'#10'       aria-label="R"'#10'       inkscape:label="LetterR" /></g></' +
+          'svg>'#10
       end>
-    Left = 512
-    Top = 568
+    Left = 144
+    Top = 56
   end
 end

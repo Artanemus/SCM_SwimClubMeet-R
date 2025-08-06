@@ -94,7 +94,15 @@ uses
   Advgrid in '..\VCL_TMS\Advgrid.pas',
   DBAdvGrid in '..\VCL_TMS\DBAdvGrid.pas',
   BaseGrid in '..\VCL_TMS\BaseGrid.pas',
-  dmCore in 'dmCore.pas' {Core: TDataModule};
+  dmSCMcore in 'dmSCMcore.pas' {SCMcore: TDataModule},
+  dmIMG in 'dmIMG.pas' {IMG: TDataModule},
+  scmSetting in 'scmSetting.pas',
+  scmLogin in 'scmLogin.pas' {Login},
+  uSwimClub in 'uSwimClub.pas',
+  uSession in 'uSession.pas',
+  uEvent in 'uEvent.pas',
+  uHeat in 'uHeat.pas',
+  uLane in 'uLane.pas';
 
 {$R *.res}
 
