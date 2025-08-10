@@ -11,9 +11,11 @@ uses
 	FireDAC.Comp.Client;
 
   function Assert(): boolean;
+  function ClearLane(DoExclude: Boolean = true): integer;
+  function DeleteRecord(DoExclude: Boolean = true): boolean;
   function GetLaneID(): integer; // SAFE.
-  function InsertLane: integer;
   function HeatStatusID(LaneID: integer): integer;
+  function InsertLane: integer;
   function LastLaneNum: integer;
   function Locate(LaneID: Integer): Boolean;
   function PK(): integer; // NO CHECKS. RTNS: Primary key.
@@ -21,13 +23,11 @@ uses
   function MoveUpLane(ADataSet: TDataSet): Boolean;
   function RemoveLane(LaneID: integer): integer;
   function SessionIsLocked(LaneID: integer): Boolean;
-  function DeleteRecord(DoExclude: Boolean = true): boolean;
+  function TeamPK: integer;
 		{
 			I n d v T e a m .  (Determines either dbo.Entrant OR dbo.TEAM tables.)
 		}
-    function ClearLane(DoExclude: Boolean = true): integer;
-    function TeamPK: integer;
-		function IndvTeam_HeatID(aIndvTeamID: integer;	aEventType: scmEventType): integer;
+		function LocateNominee(aNomineeID: integer): integer;
 		function IndvTeam_HeatStatusID(aIndvTeamID: integer; aEventType: scmEventType;
 			DoExclude: Boolean = true): integer;
 		function IndvTeam_StrikeLane(aIndvTeamID: integer; aEventType: scmEventType;
@@ -231,26 +231,6 @@ begin
   aHeatStatusID := Split_HeatStatusID(aSplitID);
   if not(aHeatStatusID > 1) or (DoExclude = false) then
     result := DeleteSplit(aSplitID, aEventType);
-end;
-
-function TSCMHelper.IndvTeam_HeatID(aIndvTeamID: integer;
-			aEventType: scmEventType): integer;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := 0;
-  if not SCM.IsActive then exit;
-  if (aEventType = etUnknown) then exit;
-
-  if (aEventType = etINDV) then
-    SQL := 'SELECT HeatID FROM [SwimClubMeet2].[dbo].Entrant ' +
-      'WHERE [Entrant].[EntrantID] = :ID;'
-  else
-    SQL := 'SELECT HeatID FROM [SwimClubMeet2].[dbo].Team ' +
-      'WHERE [Team].[TeamID] = :ID;';
-  v := scmConnection.ExecSQLScalar(SQL, [aIndvTeamID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
 end;
 
 
@@ -476,15 +456,78 @@ begin
   if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
 end;
 
-function Locate(LaneID: Integer): Boolean;
+function Locate(aLaneID: Integer): Boolean;
 var
   SearchOptions: TLocateOptions;
 begin
   result := false;
   SearchOptions := [];
   if Assigned(CORE) and CORE.dsLane.DataSet.Active then
-    result := CORE.qryLane.Locate('LaneID', LaneID, SearchOptions);
+  begin
+    CORE.qryWatchTime.DisableControls;
+    CORE.qrySplitTime.DisableControls;
+    CORE.qryLane.DisableControls;
+    try
+      result := CORE.qryLane.Locate('LaneID', LaneID, SearchOptions);
+      if result then 
+      begin
+        CORE.qryWatchTime.ApplyMaster;
+        CORE.qrySplitTime.ApplyMaster;
+      end;
+    finally
+      CORE.qryLane.EnableControls;
+      CORE.qrySplitTime.EnableControls;
+      CORE.qryWatchTime.EnableControls;
+    end;   
+  end;
 end;
+
+function LocateNominee(aNomineeID: integer): integer;
+var
+  SearchOptions: TLocateOptions;
+  found: boolean;
+  SQL: string;
+  v: variant;
+begin
+  result := false;
+  SearchOptions := [];
+  if Assigned(CORE) and CORE.dsLane.DataSet.Active then
+  begin
+    CORE.qryWatchTime.DisableControls;
+    CORE.qrySplitTime.DisableControls;
+    CORE.qryLane.DisableControls;
+    try
+      if uEvent.EventType = etINDV then
+        result := CORE.qryLane.Locate('NomineeID', aNomineeID, SearchOptions);
+      else if uEvent.EventType = etTEAM then
+      begin
+        // search for nominee in teamlink where nominee.eventID and lane.HeatID match.
+        SQL := '''
+          SELECT Lane.LaneID FROM SwimClubMeet2.dbo.TeamLink
+          INNER JOIN SwimClubMeet2.dbo.Lane ON TeamLink.TeamID = Lane.TeamID
+          INNER JOIN SwimClubMeet2.dbo.Nominee ON TeamLink.NomineeID = Nominee.NomineeID
+          WHERE TeamLink.NomineeID = :ID1 AND Lane.HeatID = :ID2 AND Nominee.EventID = :ID3;
+          ''';
+        v := SCM.scmConnection.ExecSQLScalar(SQL, [aNomineeID, uHeat.PK(), uEvent.PK()]);
+        if not VarIsClear(v) and (v <> 0) then 
+          result := CORE.qryLane.Locate('LaneID', v, SearchOptions);
+
+      end;
+
+      if result then 
+      begin
+        CORE.qryWatchTime.ApplyMaster;
+        CORE.qrySplitTime.ApplyMaster;
+      end;
+    finally
+      CORE.qryLane.EnableControls;
+      CORE.qrySplitTime.EnableControls;
+      CORE.qryWatchTime.EnableControls;
+    end;   
+  end;
+end;
+
+
 
 function PK(): integer;
 begin // NO CHECKS. quick and dirty - primary key result.
