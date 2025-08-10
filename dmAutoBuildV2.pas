@@ -116,7 +116,7 @@ function TAutoBuildV2.AssertConnection: boolean;
 begin
   result := false;
   if Assigned(SCM) then
-    if SCM.SCMActive then
+    if SCM.IsActive then
       result := true;
 end;
 

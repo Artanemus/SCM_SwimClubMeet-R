@@ -1,4 +1,4 @@
-unit dmSCMcore;
+unit dmCORE;
 
 interface
 
@@ -11,7 +11,7 @@ uses
 	SVGIconVirtualImageList, FireDAC.UI.Intf, FireDAC.VCLUI.Error, FireDAC.Comp.UI;
 
 type
-  TSCMcore = class(TDataModule)
+  TCORE = class(TDataModule)
 		dsEvent: TDataSource;
 		dsHeat: TDataSource;
 		dsLane: TDataSource;
@@ -66,42 +66,21 @@ type
 		qrySessionSwimClubID: TIntegerField;
 		qrySplitTime: TFDQuery;
 		qrySwimClub: TFDQuery;
-		qrySwimClubCaption: TWideStringField;
-		qrySwimClubContactNum: TWideStringField;
-		qrySwimClubCreatedOn: TSQLTimeStampField;
-		qrySwimClubEmail: TWideStringField;
-		qrySwimClubEnableExtHeatTypes: TBooleanField;
-		qrySwimClubEnableMembershipStr: TBooleanField;
-		qrySwimClubEnableSimpleDisqualification: TBooleanField;
-		qrySwimClubEnableSwimOThon: TBooleanField;
-		qrySwimClubEnableTeamEvents: TBooleanField;
-		qrySwimClubHeatAlgorithm: TIntegerField;
-		qrySwimClubLenOfPool: TIntegerField;
-		qrySwimClubLogoDir: TMemoField;
-		qrySwimClubLogoImg: TBlobField;
-		qrySwimClubLogoType: TWideStringField;
-		qrySwimClubNickName: TWideStringField;
-		qrySwimClubNumOfLanes: TIntegerField;
-		qrySwimClubNumOfSwimmersInTEAMS: TIntegerField;
-		qrySwimClubPoolTypeID: TIntegerField;
-		qrySwimClubStartOfSwimSeason: TSQLTimeStampField;
-		qrySwimClubSwimClubID: TFDAutoIncField;
-		qrySwimClubSwimClubTypeID: TIntegerField;
-		qrySwimClubWebSite: TWideStringField;
 		qryTeam: TFDQuery;
 		qryTeamLink: TFDQuery;
 		qryWatchTime: TFDQuery;
 		tblDistance: TFDTable;
 		tblStroke: TFDTable;
     LookUpEventTypeID: TIntegerField;
+    qryHeatStrokeID: TIntegerField;
 		procedure DataModuleCreate(Sender: TObject);
 		procedure DataModuleDestroy(Sender: TObject);
 	private
-		fCoreActive: boolean;
+    FIsActive: boolean;
 	public
 		function ActivateCore(): boolean;
 		function DeActivateCore(): boolean;
-		property CoreActive: boolean read FCoreActive write FCoreActive;
+    property IsActive: boolean read FIsActive write FIsActive;
 	end;
 
 
@@ -342,7 +321,7 @@ end;
 
 
 var
-  SCMcore: TSCMcore;
+  CORE: TCORE;
 
 implementation
 
@@ -352,9 +331,9 @@ uses dmSCM;
 
 {$R *.dfm}
 
-function TSCMcore.ActivateCore: boolean;
+function TCORE.ActivateCore: boolean;
 begin
-	fCoreActive := false;
+	FIsActive := false;
 	if not Assigned(SCM) or not SCM.scmConnection.Connected then exit;
 	try
 		// lookup tables.
@@ -379,28 +358,28 @@ begin
 		qrySplitTime.open;
 		qryTeam.Open;
 		qryTeamLink.Open;
-		fCoreActive := true;
+		FIsActive := true;
 	except
 		on E: EFDDBEngineException do begin
 			raise;
 		end;
 	end;
-	fCoreActive := false;
+	FIsActive := false;
 end;
 
-procedure TSCMcore.DataModuleCreate(Sender: TObject);
+procedure TCORE.DataModuleCreate(Sender: TObject);
 begin
-	fCoreActive := false;
+	FIsActive := false;
 end;
 
-procedure TSCMcore.DataModuleDestroy(Sender: TObject);
+procedure TCORE.DataModuleDestroy(Sender: TObject);
 begin
 	// cleanup ...
 end;
 
-function TSCMcore.DeActivateCore: boolean;
+function TCORE.DeActivateCore: boolean;
 begin
-	fCoreActive := false;
+	FIsActive := false;
 	// lookup tables.
 	tblStroke.Close;
 	tblDistance.Close;
@@ -597,8 +576,8 @@ begin
       fIsNewRecord := false;
       aHeatID := DataSet.FieldByName('HeatID').AsInteger;
       PadLanes(aHeatID);
-			SCMcore.qryLane.Refresh;
-      SCMcore.qryTeam.Refresh;
+			CORE.qryLane.Refresh;
+      CORE.qryTeam.Refresh;
     end;
 
 //  if Owner is TForm then // Heat_Renumber();

@@ -54,9 +54,7 @@ uses
   rptHeatReportB in 'REPORTS\rptHeatReportB.pas' {HeatReportB: TDataModule},
   SCMDefines in '..\SCM_SHARED\SCMDefines.pas',
   exeinfo in '..\SCM_SHARED\exeinfo.pas',
-  SCMSimpleConnect in '..\SCM_SHARED\SCMSimpleConnect.pas',
   SCMUtility in '..\SCM_SHARED\SCMUtility.pas',
-  dlgBasicLogin in '..\SCM_SHARED\dlgBasicLogin.pas' {BasicLogin},
   UEnvVars in '..\SCM_SHARED\UEnvVars.pas',
   Vcl.PlatformVclStylesActnCtrls in '..\SCM_SHARED\Vcl.PlatformVclStylesActnCtrls.pas',
   dlgAbout in '..\SCM_SHARED\dlgAbout.pas' {About},
@@ -94,7 +92,7 @@ uses
   Advgrid in '..\VCL_TMS\Advgrid.pas',
   DBAdvGrid in '..\VCL_TMS\DBAdvGrid.pas',
   BaseGrid in '..\VCL_TMS\BaseGrid.pas',
-  dmSCMcore in 'dmSCMcore.pas' {SCMcore: TDataModule},
+  dmCORE in 'dmCORE.pas' {CORE: TDataModule},
   dmIMG in 'dmIMG.pas' {IMG: TDataModule},
   scmSetting in 'scmSetting.pas',
   scmLogin in 'scmLogin.pas' {Login},
@@ -102,7 +100,8 @@ uses
   uSession in 'uSession.pas',
   uEvent in 'uEvent.pas',
   uHeat in 'uHeat.pas',
-  uLane in 'uLane.pas';
+  uLane in 'uLane.pas',
+  uFrameHeat in 'uFrameHeat.pas' {FrameHeat: TFrame};
 
 {$R *.res}
 

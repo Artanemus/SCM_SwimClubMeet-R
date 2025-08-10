@@ -143,7 +143,7 @@ begin
   if Assigned(SCM) then
   begin
     // IsActive if TFDConnection::scmConnection && FireDAC tables are active
-    if SCM.SCMActive then result := true;
+    if SCM.IsActive then result := true;
   end;
 end;
 
@@ -687,7 +687,7 @@ procedure TframeTEAM.spbtnAddSlotClick(Sender: TObject);
 var
   aTeamID, TOT: Integer;
 begin
-  if not SCM.SCMActive then exit;
+  if not SCM.IsActive then exit;
   if Grid.DataSource.DataSet.IsEmpty or Grid.DataSource.DataSet.FieldByName
     ('TeamNameID').IsNull then exit;
 
@@ -706,7 +706,7 @@ procedure TframeTEAM.spbtnRemoveSlotClick(Sender: TObject);
 var
   aTeamEntrantID, aTeamID, TOT: Integer;
 begin
-  if not SCM.SCMActive then exit;
+  if not SCM.IsActive then exit;
   // must have lanes and the active lane must have a team name assigned.
   if Grid.DataSource.DataSet.IsEmpty or Grid.DataSource.DataSet.FieldByName
     ('TeamNameID').IsNull then exit;
@@ -736,7 +736,7 @@ procedure TframeTEAM.spbtnTeamEntrantClearClick(Sender: TObject);
 var
   aTeamEntrantID, aTeamID, TOT: Integer;
 begin
-  if not SCM.SCMActive then exit;
+  if not SCM.IsActive then exit;
   if Grid.DataSource.DataSet.IsEmpty or Grid.DataSource.DataSet.FieldByName
     ('TeamNameID').IsNull then exit;
 
@@ -761,7 +761,7 @@ var
   rtnValue: Integer;
   Msg: string;
 begin
-  if not SCM.SCMActive then exit;
+  if not SCM.IsActive then exit;
   if Grid.DataSource.DataSet.IsEmpty or Grid.DataSource.DataSet.FieldByName
     ('TeamNameID').IsNull then exit;
 
@@ -820,7 +820,7 @@ var
   i, missingSlots, rows: Integer;
 begin
   result := 0;
-  if not SCM.SCMActive then exit;
+  if not SCM.IsActive then exit;
   if aTeamID = 0 then exit;
   // STANDARD: 4 entrant slots per relay team
   missingSlots := 4 - GridEntrant.DataSource.DataSet.RecordCount;

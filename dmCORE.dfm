@@ -1,4 +1,4 @@
-object SCMcore: TSCMcore
+object CORE: TCORE
   OnCreate = DataModuleCreate
   OnDestroy = DataModuleDestroy
   Height = 874
@@ -47,7 +47,6 @@ object SCMcore: TSCMcore
     MasterSource = dsSwimClub
     MasterFields = 'SwimClubID'
     DetailFields = 'SwimClubID'
-    Connection = SCM.scmConnection
     UpdateOptions.AssignedValues = [uvEInsert]
     UpdateOptions.UpdateTableName = 'SwimClubMeet2..Session'
     UpdateOptions.KeyFields = 'SessionID'
@@ -155,7 +154,6 @@ object SCMcore: TSCMcore
     MasterSource = dsSession
     MasterFields = 'SessionID'
     DetailFields = 'SessionID'
-    Connection = SCM.scmConnection
     FormatOptions.AssignedValues = [fvFmtDisplayTime]
     FormatOptions.FmtDisplayTime = 'hh:nn'
     UpdateOptions.UpdateTableName = 'SwimClubMeet2..Event'
@@ -179,8 +177,12 @@ object SCMcore: TSCMcore
       '     , [Event].[GenderID]'
       '     , [Event].[EventCategoryID]'
       '     , [Event].[ParalympicTypeID]'
-      '     , dbo.NomineeCount([Event].[EventID]) AS NomineeCount'
-      '     , dbo.EntrantCount([Event].[EventID]) AS EntrantCount'
+      
+        '     , NomineeCount --, dbo.NomineeCount([Event].[EventID]) AS N' +
+        'omineeCount'
+      
+        '     , EntrantCount --, dbo.EntrantCount([Event].[EventID]) AS E' +
+        'ntrantCount'
       '     , SUBSTRING('
       
         '       CONCAT('#39'#'#39', Event.EventNum, '#39' - '#39', Distance.Caption, '#39' '#39',' +
@@ -344,10 +346,8 @@ object SCMcore: TSCMcore
         DescFields = 'EventID'
       end>
     IndexName = 'mcEvent_DESC'
-    MasterSource = dsEvent
     MasterFields = 'EventID'
     DetailFields = 'EventID'
-    Connection = SCM.scmConnection
     UpdateOptions.AssignedValues = [uvCheckRequired]
     UpdateOptions.CheckRequired = False
     UpdateOptions.UpdateTableName = 'SwimClubMeet2..Heat'
@@ -366,13 +366,21 @@ object SCMcore: TSCMcore
       '      ,[Heat].[EventID]'
       '      ,[Heat].[HeatTypeID]'
       '      ,[Heat].[HeatStatusID]'
-      '  ,[HeatStatus].[Caption] AS cStatus'
+      '  ,[HeatStatus].[Caption] AS cStatus -- redundant?'
+      
+        '  ,[Event].[StrokeID] -- need to paint coloured circle in gridHe' +
+        'at.'
       ''
       'FROM'
       '  [SwimClubMeet2].[dbo].[Heat]'
       
-        '  INNER JOIN HeatStatus ON Heat.HeatStatusID = HeatStatus.HeatSt' +
-        'atusID'
+        '  LEFT JOIN HeatStatus ON Heat.HeatStatusID = HeatStatus.HeatSta' +
+        'tusID'
+      
+        '  INNER JOIN [dbo].[Event] ON [Heat].[EventID] = [Event].[EventI' +
+        'D]'
+      '  WHERE [Heat].[EventID] = 1672'
+      '  '
       'ORDER BY'
       '  Heat.HeatNum'
       '    ')
@@ -420,11 +428,14 @@ object SCMcore: TSCMcore
       Origin = 'CloseDT'
       Visible = False
     end
+    object qryHeatStrokeID: TIntegerField
+      FieldName = 'StrokeID'
+      Origin = 'StrokeID'
+    end
   end
   object qrySwimClub: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'SwimClubID'
-    Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet2..SwimClub'
     UpdateOptions.KeyFields = 'SwimClubID'
     SQL.Strings = (
@@ -437,13 +448,9 @@ object SCMcore: TSCMcore
       '      ,[ContactNum]'
       '      ,[WebSite]'
       '      ,[HeatAlgorithm]'
-      '      ,[EnableTeamEvents]'
-      '      ,[EnableSwimOThon]'
-      '      ,[EnableExtHeatTypes]'
-      '      ,[EnableMembershipStr]'
       '      ,[EnableSimpleDisqualification]'
       '      ,[NumOfLanes]'
-      '      ,[NumOfSwimmersInTEAMS]'
+      '      ,[DefTeamSize]'
       '      ,[LenOfPool]'
       '      ,[StartOfSwimSeason]'
       '      ,[CreatedOn]'
@@ -459,108 +466,6 @@ object SCMcore: TSCMcore
       '')
     Left = 48
     Top = 40
-    object qrySwimClubSwimClubID: TFDAutoIncField
-      FieldName = 'SwimClubID'
-      Origin = 'SwimClubID'
-      ProviderFlags = [pfInWhere, pfInKey]
-    end
-    object qrySwimClubNickName: TWideStringField
-      FieldName = 'NickName'
-      Origin = 'NickName'
-      Size = 128
-    end
-    object qrySwimClubCaption: TWideStringField
-      FieldName = 'Caption'
-      Origin = 'Caption'
-      Size = 128
-    end
-    object qrySwimClubEmail: TWideStringField
-      FieldName = 'Email'
-      Origin = 'Email'
-      Size = 128
-    end
-    object qrySwimClubContactNum: TWideStringField
-      FieldName = 'ContactNum'
-      Origin = 'ContactNum'
-      Size = 30
-    end
-    object qrySwimClubWebSite: TWideStringField
-      FieldName = 'WebSite'
-      Origin = 'WebSite'
-      Size = 256
-    end
-    object qrySwimClubHeatAlgorithm: TIntegerField
-      FieldName = 'HeatAlgorithm'
-      Origin = 'HeatAlgorithm'
-    end
-    object qrySwimClubEnableTeamEvents: TBooleanField
-      FieldName = 'EnableTeamEvents'
-      Origin = 'EnableTeamEvents'
-      Required = True
-    end
-    object qrySwimClubEnableSwimOThon: TBooleanField
-      FieldName = 'EnableSwimOThon'
-      Origin = 'EnableSwimOThon'
-      Required = True
-    end
-    object qrySwimClubEnableExtHeatTypes: TBooleanField
-      FieldName = 'EnableExtHeatTypes'
-      Origin = 'EnableExtHeatTypes'
-      Required = True
-    end
-    object qrySwimClubEnableMembershipStr: TBooleanField
-      FieldName = 'EnableMembershipStr'
-      Origin = 'EnableMembershipStr'
-      Required = True
-    end
-    object qrySwimClubEnableSimpleDisqualification: TBooleanField
-      FieldName = 'EnableSimpleDisqualification'
-      Origin = 'EnableSimpleDisqualification'
-      Required = True
-    end
-    object qrySwimClubNumOfLanes: TIntegerField
-      FieldName = 'NumOfLanes'
-      Origin = 'NumOfLanes'
-    end
-    object qrySwimClubNumOfSwimmersInTEAMS: TIntegerField
-      FieldName = 'NumOfSwimmersInTEAMS'
-      Origin = 'NumOfSwimmersInTEAMS'
-    end
-    object qrySwimClubLenOfPool: TIntegerField
-      FieldName = 'LenOfPool'
-      Origin = 'LenOfPool'
-    end
-    object qrySwimClubStartOfSwimSeason: TSQLTimeStampField
-      FieldName = 'StartOfSwimSeason'
-      Origin = 'StartOfSwimSeason'
-    end
-    object qrySwimClubCreatedOn: TSQLTimeStampField
-      FieldName = 'CreatedOn'
-      Origin = 'CreatedOn'
-    end
-    object qrySwimClubLogoDir: TMemoField
-      FieldName = 'LogoDir'
-      Origin = 'LogoDir'
-      BlobType = ftMemo
-      Size = 2147483647
-    end
-    object qrySwimClubLogoImg: TBlobField
-      FieldName = 'LogoImg'
-      Origin = 'LogoImg'
-    end
-    object qrySwimClubLogoType: TWideStringField
-      FieldName = 'LogoType'
-      Origin = 'LogoType'
-      Size = 5
-    end
-    object qrySwimClubPoolTypeID: TIntegerField
-      FieldName = 'PoolTypeID'
-      Origin = 'PoolTypeID'
-    end
-    object qrySwimClubSwimClubTypeID: TIntegerField
-      FieldName = 'SwimClubTypeID'
-      Origin = 'SwimClubTypeID'
-    end
   end
   object qryLane: TFDQuery
     Indexes = <
@@ -575,7 +480,6 @@ object SCMcore: TSCMcore
     MasterSource = dsHeat
     MasterFields = 'HeatID'
     DetailFields = 'HeatID'
-    Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet2.dbo.Lane'
     UpdateOptions.KeyFields = 'LaneID'
     SQL.Strings = (
@@ -642,7 +546,6 @@ object SCMcore: TSCMcore
     MasterSource = dsEvent
     MasterFields = 'EventID'
     DetailFields = 'EventID'
-    Connection = SCM.scmConnection
     FormatOptions.AssignedValues = [fvFmtDisplayTime]
     FormatOptions.FmtDisplayTime = 'nn.ss.zzz'
     UpdateOptions.UpdateTableName = 'SwimClubMeet2..Nominee'
@@ -692,7 +595,6 @@ object SCMcore: TSCMcore
     MasterSource = dsLane
     MasterFields = 'LaneID'
     DetailFields = 'LaneID'
-    Connection = SCM.scmConnection
     FormatOptions.AssignedValues = [fvFmtDisplayDateTime, fvFmtDisplayTime]
     FormatOptions.FmtDisplayTime = 'nn:ss.zzz'
     UpdateOptions.AssignedValues = [uvEInsert, uvCheckRequired]
@@ -711,9 +613,6 @@ object SCMcore: TSCMcore
       '     , Team.ABBREV'
       '     , Team.TimeToBeat'
       'FROM Team'
-      '    LEFT OUTER JOIN TeamName'
-      '        ON Team.TeamNameID = TeamName.TeamNameID'
-      'ORDER BY Team.Lane'
       ''
       ''
       '')
@@ -746,7 +645,17 @@ object SCMcore: TSCMcore
     MasterSource = dsLane
     MasterFields = 'LaneID'
     DetailFields = 'LaneID'
-    Connection = SCM.scmConnection
+    SQL.Strings = (
+      'SELECT [SplitTimeID]'
+      '      ,[WatchNum]'
+      '      ,[Caption]'
+      '      ,[Time]'
+      '      ,[LaneID]'
+      '  FROM [dbo].[SplitTime]'
+      ''
+      'GO'
+      ''
+      '')
     Left = 528
     Top = 336
   end
@@ -763,7 +672,19 @@ object SCMcore: TSCMcore
     MasterSource = dsLane
     MasterFields = 'LaneID'
     DetailFields = 'LaneID'
-    Connection = SCM.scmConnection
+    SQL.Strings = (
+      ''
+      ''
+      'SELECT [WatchTimeID]'
+      '      ,[WatchNum]'
+      '      ,[Caption]'
+      '      ,[Time]'
+      '      ,[LaneID]'
+      '  FROM [dbo].[WatchTime]'
+      ''
+      'GO'
+      ''
+      '')
     Left = 528
     Top = 280
   end
@@ -780,7 +701,6 @@ object SCMcore: TSCMcore
     MasterSource = dsTeam
     MasterFields = 'TeamID'
     DetailFields = 'TeamID'
-    Connection = SCM.scmConnection
     Left = 680
     Top = 424
   end
@@ -792,7 +712,6 @@ object SCMcore: TSCMcore
   object tblStroke: TFDTable
     ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'StrokeID'
-    Connection = SCM.scmConnection
     ResourceOptions.AssignedValues = [rvEscapeExpand]
     UpdateOptions.UpdateTableName = 'SwimClubMeet2..Stroke'
     UpdateOptions.KeyFields = 'StrokeID'
@@ -803,7 +722,6 @@ object SCMcore: TSCMcore
   object tblDistance: TFDTable
     ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'DistanceID'
-    Connection = SCM.scmConnection
     ResourceOptions.AssignedValues = [rvEscapeExpand]
     UpdateOptions.UpdateTableName = 'SwimClubMeet2..Distance'
     UpdateOptions.KeyFields = 'DistanceID'

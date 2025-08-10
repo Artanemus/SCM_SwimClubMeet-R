@@ -338,12 +338,7 @@
         </DCCReference>
         <DCCReference Include="..\SCM_SHARED\SCMDefines.pas"/>
         <DCCReference Include="..\SCM_SHARED\exeinfo.pas"/>
-        <DCCReference Include="..\SCM_SHARED\SCMSimpleConnect.pas"/>
         <DCCReference Include="..\SCM_SHARED\SCMUtility.pas"/>
-        <DCCReference Include="..\SCM_SHARED\dlgBasicLogin.pas">
-            <Form>BasicLogin</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <DCCReference Include="..\SCM_SHARED\UEnvVars.pas"/>
         <DCCReference Include="..\SCM_SHARED\Vcl.PlatformVclStylesActnCtrls.pas"/>
         <DCCReference Include="..\SCM_SHARED\dlgAbout.pas">
@@ -473,8 +468,8 @@
         <DCCReference Include="..\VCL_TMS\Advgrid.pas"/>
         <DCCReference Include="..\VCL_TMS\DBAdvGrid.pas"/>
         <DCCReference Include="..\VCL_TMS\BaseGrid.pas"/>
-        <DCCReference Include="dmSCMcore.pas">
-            <Form>SCMcore</Form>
+        <DCCReference Include="dmCORE.pas">
+            <Form>CORE</Form>
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
@@ -493,6 +488,11 @@
         <DCCReference Include="uEvent.pas"/>
         <DCCReference Include="uHeat.pas"/>
         <DCCReference Include="uLane.pas"/>
+        <DCCReference Include="uFrameHeat.pas">
+            <Form>FrameHeat</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

@@ -166,7 +166,7 @@ begin
   if Assigned(SCM) then
   begin
     // IsActive if TFDConnection::scmConnection && FireDAC tables are active
-    if SCM.SCMActive then result := true;
+    if SCM.IsActive then result := true;
   end;
 end;
 

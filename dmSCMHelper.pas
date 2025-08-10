@@ -7,10 +7,10 @@ uses
   System.IniFiles, System.Variants, System.UITypes, Vcl.StdCtrls, Vcl.Dialogs,
   Vcl.Forms, FireDAC.Comp.Client, FireDAC.Stan.Param,
   Winapi.Windows, SCMUtility, SCMDefines,
-	Data.DB, dmSCMcore;
+	Data.DB, dmCORE;
 
 type
-	TSCMHelper = class helper for TSCMcore
+	TSCMHelper = class helper for TCORE
 		{
        N O M I N A T I O N S .
        Alternative to dmSCMNom class functions.

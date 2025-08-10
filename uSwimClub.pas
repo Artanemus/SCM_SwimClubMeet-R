@@ -4,19 +4,20 @@ interface
 
 uses
   System.SysUtils, System.Classes, System.DateUtils,
+  System.Variants, Data.DB,
   vcl.Dialogs,
-  dmSCMcore, dmSCM;
+  dmCORE, dmSCM;
 
-function ClubName(): string; // current club
-function GetSwimClubID: integer;
-function IsShortCourse(): Boolean; // current club
-procedure Locate(SwimClubID: integer);
+function Assert(): boolean;
+function ClubName(): string;
+function GetSwimClubID: integer; // asserts table state.
+function IsShortCourse(): Boolean;
+function Locate(SwimClubID: integer): boolean;
 function PK(): integer; // NO CHECKS. RTNS: Primary key.
-function NickName: string; // current club
-function NumberOfLanes(): integer; // current club
-function SessionCount(SwimClubID: integer; SDate, EDate: TDateTime): integer;
+function NickName: string;
+function NumberOfLanes(): integer;
+function SessionCount(SDate, EDate: TDateTime): integer;
 function StartOfSwimSeason(): TDateTime; overload;
-function StartOfSwimSeason(SwimClubID: integer): TDateTime; overload;
 
 type
 
@@ -32,8 +33,7 @@ var
 implementation
 
 uses
-	uSession, uEvent, uHeat, uLane;
-
+  uSession, uEvent, uHeat, uLane;
 
 constructor T_SwimClub.Create;
 begin
@@ -41,11 +41,11 @@ begin
 
   if not Assigned(SCM) then
     raise Exception.Create('Data module SCM not assigned.');
-  if not SCM.SCMActive then
+  if not SCM.IsActive then
     raise Exception.Create('Data module SCM tables are offline.');
-  if not Assigned(SCMCore) then
+  if not Assigned(CORE) then
     raise Exception.Create('Core data module not assigned.');
-  if not SCMCore.CoreActive then
+  if not CORE.IsActive then
     raise Exception.Create('Core data module tables are offline.');
 
 end;
@@ -56,20 +56,26 @@ begin
   inherited;
 end;
 
+function Assert(): boolean;
+begin
+  result := false;
+  if CORE.qrySwimClub.Active then
+    if not CORE.qrySwimClub.IsEmpty then
+      result := true;
+end;
+
 function ClubName: string;
 begin
   result := '';
-  if SCMcore.dsSwimClub.DataSet.Active then
-    if not SCMCore.dsSwimClub.DataSet.IsEmpty then
-      result := SCMCore.dsSwimClub.DataSet.FieldByName('Caption').AsString;
+  if uSwimClub.Assert then
+    result := CORE.dsSwimClub.DataSet.FieldByName('Caption').AsString;
 end;
 
 function GetSwimClubID: integer;
 begin
   result := 0;
-  if SCM.SCMActive and SCMcore.dsSwimClub.DataSet.Active then
-    if not SCMcore.dsSwimClub.DataSet.IsEmpty then
-      result := SCMcore.dsSwimClub.DataSet.FieldByName('SwimClubID').AsInteger;
+  if uSwimClub.Assert then
+    result := CORE.dsSwimClub.DataSet.FieldByName('SwimClubID').AsInteger;
 end;
 
 function IsShortCourse: Boolean;
@@ -77,41 +83,36 @@ var
   i: integer;
 begin
   result := true;
-  if SCMcore.dsSwimClub.DataSet.Active then
+  if uSwimClub.Assert then
   begin
-    if not SCMcore.dsSwimClub.DataSet.IsEmpty then
-    begin
-      i := SCMcore.dsSwimClub.DataSet.FieldByName('LenOfPool').AsInteger;
-      if (i >= 50) then result := false;
-    end;
+    i := CORE.dsSwimClub.DataSet.FieldByName('LenOfPool').AsInteger;
+    if (i >= 50) then result := false;
   end;
 end;
 
-procedure Locate(SwimClubID: integer);
+function Locate(SwimClubID: integer): boolean;
+var
+  SearchOptions: TLocateOptions;
 begin
-  if not SCM.SCMActive then exit;
-  SCMcore.qrySwimClub.DisableControls;
-  SCMcore.qrySwimClub.Close;
-  if SwimClubID <> 0 then
+  result := false;
+  if uSwimClub.Assert then
   begin
-    SCMcore.qrySwimClub.ParamByName('SWIMCLUBID').AsInteger := SwimClubID;
-    SCMcore.qrySwimClub.Prepare;
-    SCMcore.qrySwimClub.Open;
+    SearchOptions := [];
+    result := CORE.qrySwimClub.Locate('SwimClubID', SwimClubID,
+      SearchOptions);
   end;
-  SCMcore.qrySwimClub.EnableControls;
 end;
 
 function PK(): integer;
 begin // NO CHECKS. quick and dirty - primary key result.
-  result := SCMcore.qrySwimClub.FieldByName('SwimClubID').AsInteger;
+  result := CORE.qrySwimClub.FieldByName('SwimClubID').AsInteger;
 end;
 
 function NickName: string;
 begin
   result := '';
-  if SCMcore.dsSwimClub.DataSet.Active then
-    if not SCMcore.dsSwimClub.DataSet.IsEmpty then
-      result := SCMcore.dsSwimClub.DataSet.FieldByName('NickName').AsString;
+  if uSwimClub.Assert then
+    result := CORE.dsSwimClub.DataSet.FieldByName('NickName').AsString;
 end;
 
 function NumberOfLanes: integer;
@@ -120,71 +121,37 @@ var
 begin
   // how many lanes in the swim club's pool?
   result := 0;
-  if (SCM.SCMActive) then
+  if uSwimClub.Assert then
   begin
-    i := SCMcore.dsSwimClub.DataSet.FieldByName('NumOfLanes').AsInteger;
-    if (i = 0) or (i > 99) then
-    begin
-      MessageDlg('Unkown number of swimming lanes. (Expected 1..99).' +
-        slinebreak + 'Check your ''Preferences'' setup.', TMsgDlgType.mtError,
-        [mbOK], 0);
-    end
-    else
-      result := i;
+    i := CORE.dsSwimClub.DataSet.FieldByName('NumOfLanes').AsInteger;
+    if (i > 0) then result := i;
   end;
 end;
 
-function SessionCount(SwimClubID: integer;
-  SDate, EDate: TDateTime): integer;
+function SessionCount(SDate, EDate: TDateTime): integer;
+var
+  SQL: string;
+  v: variant;
 begin
   result := 0;
-  // if qryGetSessionCount.Active then
-  // qryGetSessionCount.Close;
-  // qryGetSessionCount.ParamByName('SWIMCLUBID').AsInteger := SwimClubID;
-  // qryGetSessionCount.ParamByName('SDATE').AsDateTime := SDate;
-  // qryGetSessionCount.ParamByName('EDATE').AsDateTime := EDate;
-  // qryGetSessionCount.Prepare;
-  // qryGetSessionCount.Open;
-  // if qryGetSessionCount.Active then
-  // begin
-  // if not qryGetSessionCount.IsEmpty then
-  // begin
-  // result := qryGetSessionCount.FieldByName('SessionCount').AsInteger;
-  // end;
-  // end;
+  if uSwimClub.Assert then
+  begin
+    SQL := '''
+    SELECT Count(SessionID)
+    FROM SwimClubMeet2.dbo.Session
+    WHERE Session.SwimClubID = :ID1 AND StartDT >= :ID2 AND EndDT <= :ID3;
+    ''';
+    v := SCM.scmConnection.ExecSQLScalar(SQL, [uSwimClub.PK, SDate, EDate]);
+    if not VarIsClear(v) then result := v;
+  end;
 end;
 
 function StartOfSwimSeason: TDateTime;
 begin
   result := 0;
-  if SCM.SCMActive and SCMcore.dsSwimClub.DataSet.Active then
-    if not SCMcore.dsSwimClub.DataSet.IsEmpty then
-      result := SCMcore.dsSwimClub.DataSet.FieldByName('StartOfSwimSeason')
-      .AsDateTime;
-end;
-
-function StartOfSwimSeason(SwimClubID: integer): TDateTime;
-var
-  dt: TDateTime;
-begin
-  result := Date();
-  if SwimClubID > 0 then
-  begin
-    if SCMcore.qrySwimClub.Active then SCMcore.qrySwimClub.Close;
-    SCMcore.qrySwimClub.ParamByName('SWIMCLUBID').AsInteger := SwimClubID;
-    SCMcore.qrySwimClub.Prepare;
-    SCMcore.qrySwimClub.Open;
-    if SCMcore.qrySwimClub.Active then
-    begin
-      if not SCMcore.qrySwimClub.IsEmpty then
-      begin
-        dt := SCMcore.qrySwimClub.FieldByName('StartOfSwimSeason').AsDateTime;
-        // If ANow and AThen are two and a half years apart,
-        // calling WithinPastYears with AYears set to 2 returns True.
-        if WithinPastYears(result, dt, 1) then result := dt;
-      end;
-    end;
-  end;
+  if uSwimClub.Assert then
+    result :=
+      CORE.dsSwimClub.DataSet.FieldByName('StartOfSwimSeason').AsDateTime;
 end;
 
 end.

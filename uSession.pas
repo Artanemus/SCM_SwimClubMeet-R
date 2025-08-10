@@ -7,36 +7,32 @@ uses
   System.Variants, System.VarUtils,
   System.StrUtils,
   vcl.Dialogs, Data.DB,
-  dmSCMcore, dmSCM, SCMdefines,
-	FireDAC.Comp.Client;
+  dmCORE, dmSCM, SCMdefines,
+  FireDAC.Comp.Client;
 
 { S E S S I O N .    }
-
-function DeleteSession(aSessionID: integer;  DoExclude: Boolean = true): integer;
-
-function AllEventsAreClosed(aSessionID: integer): Boolean;
-function GetEntrantCount(): integer; overload;
-function GetEntrantCount(aSessionID: integer): integer; overload;
-function GetEventCount(aSessionID: integer): integer;
-function GetNomineeCount(): integer; overload;
-function GetNomineeCount(aSessionID: integer): integer; overload;
-function GetSessionID: integer;
-function HasClosedOrRacedHeats(aSessionID: integer): Boolean;
-function HasEvents(aSessionID: integer): Boolean;
-function IsEmptyLocked(): Boolean; overload;
-function IsEmptyLocked(SessionID: integer): Boolean; overload;
-function IsLocked(aSessionID: integer): Boolean; overload;
-function IsLocked: Boolean; overload; // current session
+function AllEventsAreClosed: Boolean;
+function Assert: Boolean;
+function CalcEntrantCount: integer;
+function CalcNomineeCount(): integer;
+function DeleteRecord(DoExclude: Boolean = true): boolean;
+function GetEntrantCount(): integer;
+function GetEventCount(): integer;
+function GetNomineeCount(): integer;
+function GetSessionID: integer; // SAFE.
+function HasClosedOrRacedHeats: Boolean;
+function HasEvents: Boolean;
+function IsEmptyOrLocked: Boolean;
+function IsLocked: Boolean;
 function Locate(SessionID: integer): Boolean;
 function PK(): integer; // NO CHECKS. RTNS: Primary key.
-function Start(): TDateTime; overload;
-function Start(SessionID: integer): TDateTime; overload;
+function RenumberEvents(DoLocate: Boolean = true;  DoExclude: Boolean = true): integer;
+function StartDT: TDateTime;
 procedure HideLocked(IsChecked: Boolean);
-procedure SetSortIndex(idx: integer);
-procedure ToggleLockState();
 procedure SetEntrantCount();
 procedure SetNomineeCount();
-
+procedure SetSortIndex(idx: integer);
+procedure ToggleLockState();
 
 type
   T_Session = class
@@ -51,18 +47,18 @@ var
 implementation
 
 uses
-	uEvent, uHeat, uLane;
+  uEvent, uHeat, uLane;
 
 constructor T_Session.Create;
 begin
   inherited;
   if not Assigned(SCM) then
     raise Exception.Create('Data module SCM not assigned.');
-  if not SCM.SCMActive then
+  if not SCM.IsActive then
     raise Exception.Create('Data module SCM tables are offline.');
-  if not Assigned(SCMCore) then
+  if not Assigned(CORE) then
     raise Exception.Create('Core data module not assigned.');
-  if not SCMCore.CoreActive then
+  if not CORE.IsActive then
     raise Exception.Create('Core data module tables are offline.');
 end;
 
@@ -72,276 +68,352 @@ begin
   inherited;
 end;
 
+function Assert: Boolean;
+begin
+  result := false;
+  if Assigned(CORE) then
+    if CORE.qrySession.Active then
+      if not CORE.qrySession.IsEmpty then
+        result := true;
+end;
 
+function RenumberEvents(DoLocate: Boolean = true;
+  DoExclude: Boolean = true): integer;
+var
+  qry: TFDQuery;
+  i, aEventID: integer;
+  sl: TStringList;
+  ds: TDataSet;
+begin
+  aEventID := 0;
+  Result := 0;
+  (*
+  if CORE.dsEvent.DataSet.IsEmpty then exit;
 
-function DeleteSession(aSessionID: integer; DoExclude: Boolean): integer;
+  ds := CORE.dsEvent.DataSet;
+  if DoLocate then aEventID := ds.FieldByName('EventID').AsInteger;
+
+   ds.DisableControls;
+   sl := TStringList.Create;
+   // Legal, qryEvent has master..child relationship with dsSession.
+   sl.Add('USE [SwimClubMeet2] ');
+   sl.Add('SELECT [EventID], [EventNum] FROM [dbo].[Event] ');
+   sl.Add('WHERE [SessionID] = ' + IntToStr(aSessionID));
+   sl.Add(' ORDER BY [EventNum]');
+   // Find valid EventNum
+ //  qry := TFDQuery.Create(self);
+   qry.Connection := SCM.scmConnection;
+   qry.SQL := sl;
+   qry.UpdateOptions.KeyFields := 'EventID';
+   qry.UpdateOptions.UpdateTableName := 'SwimClubMeet2..Event';
+   qry.Open;
+   if (qry.Active) then
+   begin
+     i := 1;
+     // Clean up list after each new record - renumber event number
+     while not qry.Eof do
+     begin
+       qry.Edit;
+       qry.FieldByName('EventNum').AsInteger := i;
+       qry.Post;
+       i := i + 1;
+       qry.Next;
+     end;
+     if (i>1) then result := i-1;
+   end;
+   qry.Close;
+   qry.Free;
+   sl.Free;
+   // REQUERY : RELOAD DATA
+   ds.Refresh();
+   // REQUEUE
+   if (DoLocate) then uEvent.Locate(aEventID);
+   ds.EnableControls();
+   *)
+end;
+
+function DeleteRecord(DoExclude: Boolean = true): boolean;
 var
   SQL: string;
   qry: TFDQuery;
   aEventID, rows: integer;
-begin
-  // No locked session is ever deleted.
-  result := 0;
-  if uSession.IsLocked then exit;
-  SCMcore.qryEvent.DisableControls;
-  SCMcore.qrySession.DisableControls;
-  SCMcore.qryEvent.DisableControls;
-  SCMcore.qryNominee.DisableControls;
-  SCMcore.qryHeat.DisableControls;
-  SCMcore.qryLane.DisableControls;
-  SCMcore.qryTeam.DisableControls;
-  SCMcore.qryTeamLink.DisableControls;
-  try
-    SCMcore.qryEvent.First;
-    while not SCMcore.qryEvent.Eof do
-    begin
-      { executes :
-             Disables controls for detailed tables.
-        Deletes detailed tables ... including ...
-         delete nominees, delete heats, delete lanes,
-         delete teams, delete teamlinks.
-        Nulls FK in clears scheduledEvent.
-             Enables controls for detailed tables.
-         }
-      uEvent.DeleteDependants(SCMcore.qryEvent.FieldByName('EventID').AsInteger,
-        DoExclude);
-      SCMcore.qryEvent.delete;
-    end;
-    if not SCMcore.qryEvent.IsEmpty then SCMcore.qrySession.Delete;
-
-  finally
-    SCMcore.qrySession.ApplyMaster;
-    SCMcore.qryEvent.ApplyMaster;
-    SCMcore.qryNominee.ApplyMaster;
-    SCMcore.qryHeat.ApplyMaster;
-    SCMcore.qryLane.ApplyMaster;
-    SCMcore.qryTeam.ApplyMaster;
-    SCMcore.qryTeamLink.ApplyMaster;
-    SCMcore.qryTeamLink.EnableControls;
-    SCMcore.qryTeam.EnableControls;
-    SCMcore.qryLane.EnableControls;
-    SCMcore.qryHeat.EnableControls;
-    SCMcore.qryNominee.EnableControls;
-    SCMcore.qryEvent.EnableControls;
-    SCMcore.qrySession.EnableControls;
-    SCMcore.qryEvent.EnableControls;
-  end;
-end;
-
-
-function RenumberEvents(aSessionID: integer; DoLocate,	DoExclude: Boolean): integer;
-begin
-	result := 0;
-	if aSessionID = 0 then exit;
-	if uSession.IsLocked(aSessionID) then exit;
-	result := SCM.RenumberEvents(aSessionID, DoLocate);
-end;
-
-
-
-function AllEventsAreClosed(aSessionID: integer): Boolean;
-var
-  i: integer;
+  done, doRenumber: boolean;
 begin
   result := false;
-  if not SCM.SCMActive then exit;
-  SCM.qryCountEventsNotClosed.Close;
-  SCM.qryCountEventsNotClosed.ParamByName('SESSIONID').AsInteger := aSessionID;
-  SCM.qryCountEventsNotClosed.Prepare;
-  SCM.qryCountHeatsNotClosed.Open;
-  if (SCM.qryCountEventsNotClosed.Active) then
-  begin
-    i := SCM.qryCountEventsNotClosed.FieldByName('CountStatus').AsInteger;
-    if (i = 0) then result := true;
+  doRenumber := false;
+  if not uSession.Assert then exit;
+  if uSession.IsLocked then exit; // No locked session is ever deleted.
+
+  CORE.qrySession.DisableControls;
+  CORE.qryEvent.DisableControls;
+  CORE.qryNominee.DisableControls;
+  CORE.qryHeat.DisableControls;
+  CORE.qryLane.DisableControls;
+  CORE.qryTeam.DisableControls;
+  CORE.qryTeamLink.DisableControls;
+
+  try
+    CORE.qryEvent.ApplyMaster; // assert sync to master.
+    if CORE.qryEvent.IsEmpty then exit;
+
+    CORE.qryEvent.First;
+    while not CORE.qryEvent.Eof do
+    begin
+      {
+      Disables controls for detailed tables.
+      Deletes detailed tables ... including ...
+          nominees, heats, lanes, teams, teamlinks.
+      Nulls FK in clears scheduledEvent.
+      Enables controls for detailed tables.
+      }
+      done := uEvent.DeleteRecord(DoExclude); // DeleteRecord current Event + Dependants
+      if done then
+      begin
+        doRenumber := true;
+        continue;
+      end
+      else
+        CORE.qryEvent.next;
+    end;
+
+    // ASSERT that all events have been removed within Master-Detail relationship.
+    // Can't delete remaining dependants if eventsare retained.
+    if CORE.qryEvent.IsEmpty then
+    begin
+          // Clear Scheduled Sessions.
+      SQL := 'UPDATE SwimClubMeet.dbo.ScheduleSession SET SessionID = NULL WHERE SessionID = :ID';
+      SCM.scmConnection.ExecSQL(SQL, [uSession.PK]);
+      // F I N A L L Y  Delete THE SESSION.
+      CORE.qrySession.Delete;
+    end
+    else
+    begin
+      if doRenumber then // caller handles renumbering of events.
+        uSession.RenumberEvents(false, false);
+    end;
+
+  finally
+
+    // ASSERT MASTER-DETAIL STATE.
+    CORE.qrySession.ApplyMaster;
+    CORE.qryEvent.ApplyMaster;
+    CORE.qryNominee.ApplyMaster;
+    CORE.qryHeat.ApplyMaster;
+    CORE.qryLane.ApplyMaster;
+    CORE.qryTeam.ApplyMaster;
+    CORE.qryTeamLink.ApplyMaster;
+
+    // Enable all controls.
+    CORE.qryTeamLink.EnableControls;
+    CORE.qryTeam.EnableControls;
+    CORE.qryLane.EnableControls;
+    CORE.qryHeat.EnableControls;
+    CORE.qryNominee.EnableControls;
+    CORE.qryEvent.EnableControls;
+    CORE.qrySession.EnableControls;
+    CORE.qryEvent.EnableControls;
   end;
-  SCM.qryCountEventsNotClosed.Close;
+end;
+
+function AllEventsAreClosed: Boolean;
+var
+  i: integer;
+  SQL: string;
+  v: variant;
+begin
+  result := false;
+  if not Assigned(SCM) or not SCM.scmConnection.Connected then exit;
+  SQL := '''
+    SELECT COUNT(EventID)
+    FROM [SwimClubMeet2].[dbo].[Event]
+    WHERE [Event].EventStatusID IN [0,1,2] AND [Event].SessionID = :ID;
+    ''';
+  v := SCM.scmConnection.ExecSQLScalar(SQL, [uSession.PK]);
+  if VarIsClear(v) and (v = 0) then result := true;
 end;
 
 function GetEntrantCount(): integer;
 begin
-	result := SCMcore.qrySession.FieldByName('EntrantCount').AsInteger;
+  result := 0;
+  if uSession.Assert then
+    result := CORE.qrySession.FieldByName('EntrantCount').AsInteger;
 end;
 
-procedure SetEntrantCount();
-var
-	SQL: string;
-	v: variant;
-	PK: integer;
-begin
-	PK := SCMcore.qrySession.FieldByName('SessionID').AsInteger;
-	SQL := 'SELECT SwimClubMeet.dbo.SessionEntrantCount(:ID);';
-	v := SCM.scmConnection.ExecSQLScalar(SQL, [PK]);
-	if VarIsClear(v) or (v > 0) then v := 0;
-	try
-	SCMcore.qrySession.DisableControls;
-		try
-			SCMcore.qrySession.Edit;
-			SCMcore.qrySession.FieldByName('EntrantCount').AsInteger := v;
-			SCMcore.qrySession.Post;
-		except on E: Exception do
-			SCMcore.qrySession.Cancel;
-		end;
-	finally
-		SCMcore.qrySession.EnableControls;
-	end;
-end;
-
-function GetEntrantCount(aSessionID: integer): integer;
-var
-	SQL: string;
-	v: variant;
-begin
-	result := 0;
-	if not SCM.SCMActive then exit;
-	if aSessionID = 0 then exit;
-	SQL := '''
-		SELECT EntrantCount
-		FROM SwimClubMeet2.dbo.Session
-		WHERE Session.SessionID = :ID;
-		''';
-	v := SCM.scmConnection.ExecSQLScalar(SQL, [aSessionID]);
-	if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
-end;
-
-function GetEventCount(aSessionID: integer): integer;
+function CalcEntrantCount(): integer;
 var
   SQL: string;
   v: variant;
 begin
   result := 0;
-  if not SCM.SCMActive then exit;
-	SQL := '''
+  if not Assigned(SCM) or not SCM.scmConnection.Connected then exit;
+  SQL := 'SELECT SwimClubMeet.dbo.SessionEntrantCount(:ID);';
+  v := SCM.scmConnection.ExecSQLScalar(SQL, [uSession.PK]);
+  if not VarIsClear(v) and (v > 0) then
+    result := v;
+end;
+
+procedure SetEntrantCount;
+begin
+  if uSession.Assert then
+  begin
+    var i := CalcEntrantCount;
+    try
+      CORE.qrySession.DisableControls;
+      if CORE.qrySession.FieldByName('EntrantCount').AsInteger <> i then
+      begin
+        try
+          CORE.qrySession.Edit;
+          CORE.qrySession.FieldByName('EntrantCount').AsInteger := i;
+          CORE.qrySession.Post;
+        except on E: Exception do
+            CORE.qrySession.Cancel;
+        end;
+      end;
+    finally
+      CORE.qrySession.EnableControls;
+    end;
+  end;
+end;
+
+function GetEventCount: integer;
+var
+  SQL: string;
+  v: variant;
+begin
+  result := 0;
+  if not Assigned(SCM) or not SCM.scmConnection.Connected then exit;
+  SQL := '''
 		SELECT COUNT(EventID) FROM [SwimClubMeet2].[dbo].[Session]
 		INNER JOIN [Event] ON [Session].SessionID = [Event].SessionID
 		WHERE [Session].SessionID = :ID;
 		''';
-  v := SCM.scmConnection.ExecSQLScalar(SQL, [aSessionID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
+  v := SCM.scmConnection.ExecSQLScalar(SQL, [uSession.PK]);
+  if not VarIsClear(v) and (v > 0) then result := v;
+end;
+
+function CalcNomineeCount(): integer;
+var
+  SQL: string;
+  v: variant;
+begin
+  result := 0;
+  if not Assigned(SCM) or not SCM.scmConnection.Connected then exit;
+  SQL := 'SELECT SwimClubMeet.dbo.SessionNomineeCount(:ID1);';
+  v := SCM.scmConnection.ExecSQLScalar(SQL, [uSession.PK]);
+  if not VarIsClear(v) and (v > 0) then result := v;
 end;
 
 procedure SetNomineeCount();
-var
-	SQL: string;
-	v: variant;
-	PK: integer;
 begin
-	PK := SCMcore.qrySession.FieldByName('SessionID').AsInteger;
-	SQL := 'SELECT SwimClubMeet.dbo.SessionNomineeCount(:ID1);';
-	v := SCM.scmConnection.ExecSQLScalar(SQL, [PK]);
-	if VarIsClear(v) or (v > 0) then v := 0;
-	try
-	SCMcore.qrySession.DisableControls;
-		try
-			SCMcore.qrySession.Edit;
-			SCMcore.qrySession.FieldByName('NomineeCount').AsInteger := v;
-			SCMcore.qrySession.Post;
-		except on E: Exception do
-			SCMcore.qrySession.Cancel;
-		end;
-	finally
-		SCMcore.qrySession.EnableControls;
-	end;
+  if uSession.Assert then
+  begin
+    var i := uSession.CalcNomineeCount;
+    try
+      CORE.qrySession.DisableControls;
+      try
+        CORE.qrySession.Edit;
+        CORE.qrySession.FieldByName('NomineeCount').AsInteger := i;
+        CORE.qrySession.Post;
+      except on E: Exception do
+          CORE.qrySession.Cancel;
+      end;
+    finally
+      CORE.qrySession.EnableControls;
+    end;
+  end;
 end;
 
 function GetNomineeCount(): integer;
 begin
-	result := SCMcore.qrySession.FieldByName('NomineeCount').AsInteger;
-end;
-
-function GetNomineeCount(aSessionID: integer): integer;
-var
-	SQL: string;
-  v: variant;
-begin
   result := 0;
-  if not SCM.SCMActive then exit;
-  if aSessionID = 0 then exit;
-	SQL := '''
-		SELECT NomineeCount
-		FROM SwimClubMeet2.dbo.Session
-		WHERE Session.SessionID = :ID1;
-		''';
-	v := SCM.scmConnection.ExecSQLScalar(SQL, [aSessionID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
+  if uSession.Assert then
+    result := CORE.qrySession.FieldByName('NomineeCount').AsInteger;
 end;
 
 function GetSessionID: integer;
 begin
   result := 0;
-  if SCM.SCMActive and SCMcore.dsSession.DataSet.Active then
-    if not SCMcore.dsSession.DataSet.IsEmpty then
-      result := SCMcore.dsSession.DataSet.FieldByName('SessionID').AsInteger;
+  if uSession.Assert then
+    result := CORE.qrySession.FieldByName('SessionID').AsInteger;
 end;
 
-function HasClosedOrRacedHeats(aSessionID: integer): Boolean;
+function HasClosedOrRacedHeats: Boolean;
 var
   SQL: string;
   v: variant;
 begin
   result := false;
-  if not SCM.SCMActive then exit;
-  if aSessionID = 0 then exit;
+  if not Assigned(SCM) or not SCM.scmConnection.Connected then exit;
   SQL := 'SELECT Count(HeatID) FROM  [SwimClubMeet2].[dbo].[Session] ' +
   'INNER JOIN [Event] ON [Session].SessionID = [Event].SessionID ' +
   'INNER JOIN [Heat] ON [Event].EventID = [Heat].EventID '
   + 'WHERE [Heat].HeatStatusID > 1 AND [Session].SessionID = :GetSessionID';
-  v := SCM.scmConnection.ExecSQLScalar(SQL, [aSessionID]);
+  v := SCM.scmConnection.ExecSQLScalar(SQL, [uSession.PK]);
   if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := true;
 end;
 
-function HasEvents(aSessionID: integer): Boolean;
-var
-  i: integer;
+function HasEvents: Boolean;
 begin
   result := false;
-  i := GetEventCount(aSessionID);
-  if (i > 0) then result := true;
+  if uSession.Assert then
+  begin
+    var i := GetEventCount();
+    if (i > 0) then result := true;
+  end;
 end;
 
 procedure HideLocked(IsChecked: Boolean);
+var
+ID: integer;
+found: boolean;
 begin
-  if (SCM.SCMActive) then
+  if (SCM.IsActive) then
   begin
-    SCMcore.qryLane.DisableControls;
-    SCMcore.qryHeat.DisableControls;
-    SCMcore.qryNominee.DisableControls;
-    SCMcore.qryEvent.DisableControls;
-    SCMcore.qrySession.DisableControls;
-    SCMcore.qrySession.Close;
-    SCMcore.qrySession.ParamByName('TOGGLE').AsBoolean := IsChecked;
-    SCMcore.qrySession.Prepare;
-    SCMcore.qrySession.Open;
-    SCMcore.qrySession.EnableControls;
-    SCMcore.qryEvent.EnableControls;
-    SCMcore.qryNominee.EnableControls;
-    SCMcore.qryHeat.EnableControls;
-    SCMcore.qryLane.EnableControls;
+    CORE.qryTeamLink.DisableControls;
+    CORE.qryTeam.DisableControls;
+    CORE.qryLane.DisableControls;
+    CORE.qryHeat.DisableControls;
+    CORE.qryNominee.DisableControls;
+    CORE.qryEvent.DisableControls;
+    CORE.qrySession.DisableControls;
+    try
+      ID := uSession.PK;
+      CORE.qrySession.Close;
+      CORE.qrySession.ParamByName('TOGGLE').AsBoolean := IsChecked;
+      CORE.qrySession.Prepare;
+      CORE.qrySession.Open;
+
+      found := uSession.Locate(ID);
+
+      // ASSERT MASTER-DETAIL STATE.
+      CORE.qryEvent.ApplyMaster;
+      if found then ; // locate to event?.
+
+      CORE.qryNominee.ApplyMaster;
+      CORE.qryHeat.ApplyMaster;
+      CORE.qryLane.ApplyMaster;
+      CORE.qryTeam.ApplyMaster;
+      CORE.qryTeamLink.ApplyMaster;
+    finally
+      CORE.qrySession.EnableControls;
+      CORE.qryEvent.EnableControls;
+      CORE.qryNominee.EnableControls;
+      CORE.qryHeat.EnableControls;
+      CORE.qryLane.EnableControls;
+      CORE.qryTeam.EnableControls;
+      CORE.qryTeamLink.EnableControls;
+    end;
   end;
 end;
 
 function IsLocked: Boolean;
 begin
   result := true;
-  if not SCM.SCMActive then exit;
-  if SCMcore.dsSession.DataSet.Active then
-    if not SCMcore.dsSession.DataSet.IsEmpty then
-      if (SCMcore.dsSession.DataSet.FieldByName('SessionStatusID').AsInteger <>
-        2) then
-        result := false;
-end;
-
-function IsLocked(aSessionID: integer): Boolean;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := true;
-  if not SCM.SCMActive then exit;
-  if (aSessionID = 0) then exit;
-  SQL := 'SELECT SessionStatusID FROM SwimClubMeet2.dbo.Session ' +
-  'WHERE SessionID = :aID';
-  v := SCM.scmConnection.ExecSQLScalar(SQL, [aSessionID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and (v <> 2) then result := false;
+  if uSession.Assert then
+  begin
+    if (CORE.qrySession.FieldByName('SessionStatusID').AsInteger <> 2)
+      then result := false;
+  end;
 end;
 
 function Locate(SessionID: integer): Boolean;
@@ -349,114 +421,81 @@ var
   SearchOptions: TLocateOptions;
 begin
   result := false;
-  if not SCM.SCMActive then exit;
-  if (SessionID = 0) then exit;
-  SearchOptions := [];
-  if SCMcore.dsSession.DataSet.Active then
-    result := SCMcore.dsSession.DataSet.Locate('SessionID', SessionID,
+  if uSession.Assert then
+  begin
+    SearchOptions := [];
+    result := CORE.qrySession.Locate('SessionID', SessionID,
       SearchOptions);
+  end;
 end;
 
 function PK(): integer;
 begin // NO CHECKS. quick and dirty - primary key result.
-  result := SCMcore.qrySession.FieldByName('SessionID').AsInteger;
+  result := CORE.qrySession.FieldByName('SessionID').AsInteger;
 end;
 
-function IsEmptyLocked(): Boolean;
+function IsEmptyOrLocked: Boolean;
 var
-  b: boolean;
+  i: integer;
 begin
   result := true;
-  b := false;
-  try
-    if SCMcore.qrySession.IsEmpty then b := true;
-    if SCMcore.qrySession.FieldByName('SessionStatusID').AsInteger = 2 then
-      b := true;
-  finally
-    result := b;
+  if uSession.Assert then
+  begin
+    i := CORE.qrySession.FieldByName('SessionStatusID').AsInteger;
+    if (i <> 2) then result := false;
   end;
-end;
-
-function IsEmptyLocked(SessionID: integer): Boolean;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := false;
-  if SessionID = 0 then exit;
-  SQL := '''
-		SELECT SessionStatusID
-		FROM [SwimClubMeet2].[dbo].[Session]
-		WHERE [SessionID] = :ID';
-		''';
-  v := SCM.scmConnection.ExecSQLScalar(SQL, [SessionID]);
-  if not VarIsClear(v) and (v = 2) then result := true;
 end;
 
 procedure SetSortIndex(idx: integer);
 begin
   //  qrySession.Index
-  SCMcore.qrySession.IndexesActive := false;
+  CORE.qrySession.IndexesActive := false;
   case idx of
     1:
       begin
-        SCMcore.qrySession.IndexesActive := true;
-        SCMcore.qrySession.IndexName := 'idxStartDateDESC';
+        CORE.qrySession.IndexesActive := true;
+        CORE.qrySession.IndexName := 'idxStartDateDESC';
       end;
     2:
       begin
-        SCMcore.qrySession.IndexesActive := true;
-        SCMcore.qrySession.IndexName := 'idxStartDateASC';
+        CORE.qrySession.IndexesActive := true;
+        CORE.qrySession.IndexName := 'idxStartDateASC';
       end
   else
     begin
-      SCMcore.qrySession.IndexFieldNames := 'SwimClubID';
+      CORE.qrySession.IndexFieldNames := 'SwimClubID';
     end;
   end;
 end;
 
-function Start: TDateTime;
+function StartDT: TDateTime;
 begin
   result := 0;
-  if SCM.SCMActive and SCMcore.dsSession.DataSet.Active then
-    if not SCMcore.dsSession.DataSet.IsEmpty then
-      result :=
-        SCMcore.dsSession.DataSet.FieldByName('SessionStart').AsDateTime;
-end;
-
-function Start(SessionID: integer): TDateTime;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := Date;
-  if not SCM.SCMActive then exit;
-  if SessionID = 0 then exit;
-  SQL := 'SELECT SessionStart FROM SwimClubMeet2.dbo.Session ' +
-  'WHERE SessionID = :aID';
-  v := SCM.scmConnection.ExecSQLScalar(SQL, [SessionID]);
-  if not VarIsNull(v) and not VarIsEmpty(v) and not (v = 0) then result := v;
+  if uSession.Assert then
+    result := CORE.qrySession.FieldByName('StartDT').AsDateTime;
 end;
 
 procedure ToggleLockState;
 var
   i: integer;
 begin
-  if not SCM.SCMActive then exit;
-  with SCMcore.dsSession.DataSet do
+  if not uSession.Assert then exit;
+  with CORE.qrySession do
   begin
-    DisableControls;
-    i := FieldByName('SessionStatusID').AsInteger;
-    // TOGGLE STATUS
-    if i = 1 then
-      i := 2
-    else
-      i := 1;
-    Edit;
-    FieldByName('SessionStatusID').AsInteger := i;
-    Post;
-    Refresh;
-    EnableControls;
+    CORE.qrySession.DisableControls;
+    try
+      i := FieldByName('SessionStatusID').AsInteger;
+      if i = 1 then i := 2 else i := 1; // TOGGLE STATUS
+      try
+        Edit;
+        FieldByName('SessionStatusID').AsInteger := i;
+        Post;
+      except on E: Exception do
+          Cancel;
+      end;
+    finally
+      CORE.qrySession.EnableControls;
+    end;
   end;
 end;
 
