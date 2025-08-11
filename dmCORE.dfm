@@ -689,6 +689,7 @@ object CORE: TCORE
     Top = 280
   end
   object qryTeamLink: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
     Indexes = <
       item
         Active = True
@@ -698,16 +699,28 @@ object CORE: TCORE
         DescFields = 'TeamID'
       end>
     IndexName = 'mcTeam_DESC'
-    MasterSource = dsTeam
-    MasterFields = 'TeamID'
-    DetailFields = 'TeamID'
-    Left = 680
-    Top = 424
-  end
-  object dsTeamLink: TDataSource
-    DataSet = qryTeamLink
-    Left = 768
-    Top = 424
+    Connection = SCM.scmConnection
+    SQL.Strings = (
+      'DECLARE @TeamID AS INTEGER;'
+      'SET @TeamID = :TEAMID;'
+      ''
+      ''
+      'SELECT'
+      'TeamID, '
+      'NomineeID, '
+      'SwimOrder'
+      ''
+      'FROM TeamLink'
+      'WHERE TeamID = @TeamID;')
+    Left = 352
+    Top = 592
+    ParamData = <
+      item
+        Name = 'TEAMID'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = Null
+      end>
   end
   object tblStroke: TFDTable
     ActiveStoredUsage = [auDesignTime]
@@ -738,5 +751,10 @@ object CORE: TCORE
     DataSet = tblDistance
     Left = 192
     Top = 640
+  end
+  object dsTeamLink: TDataSource
+    DataSet = qryTeamLink
+    Left = 440
+    Top = 592
   end
 end

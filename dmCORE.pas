@@ -20,7 +20,6 @@ type
 		dsSplitTime: TDataSource;
 		dsSwimClub: TDataSource;
 		dsTeam: TDataSource;
-		dsTeamLink: TDataSource;
 		dsWatchTime: TDataSource;
 		LookUpDistance: TStringField;
 		LookUpStroke: TStringField;
@@ -73,6 +72,7 @@ type
 		tblStroke: TFDTable;
     LookUpEventTypeID: TIntegerField;
     qryHeatStrokeID: TIntegerField;
+    dsTeamLink: TDataSource;
 		procedure DataModuleCreate(Sender: TObject);
 		procedure DataModuleDestroy(Sender: TObject);
 	private

@@ -37,7 +37,7 @@ var
 
 implementation
 
-const JSONFILENAME = 'SwimClubMeet.json';
+const JSONFILENAME = 'SwimClubMeet2.json';
 const SUBFOLDER = 'Artanemus\SCM\SwimClubMeet';
 
 constructor TPrgSetting.Create();

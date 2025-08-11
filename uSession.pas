@@ -181,7 +181,7 @@ begin
     if CORE.qryEvent.IsEmpty then
     begin
           // Clear Scheduled Sessions.
-      SQL := 'UPDATE SwimClubMeet.dbo.ScheduleSession SET SessionID = NULL WHERE SessionID = :ID';
+      SQL := 'UPDATE SwimClubMeet2.dbo.ScheduleSession SET SessionID = NULL WHERE SessionID = :ID';
       SCM.scmConnection.ExecSQL(SQL, [uSession.PK]);
       // F I N A L L Y  Delete THE SESSION.
       CORE.qrySession.Delete;
@@ -246,7 +246,7 @@ var
 begin
   result := 0;
   if not Assigned(SCM) or not SCM.scmConnection.Connected then exit;
-  SQL := 'SELECT SwimClubMeet.dbo.SessionEntrantCount(:ID);';
+  SQL := 'SELECT SwimClubMeet2.dbo.SessionEntrantCount(:ID);';
   v := SCM.scmConnection.ExecSQLScalar(SQL, [uSession.PK]);
   if not VarIsClear(v) and (v > 0) then
     result := v;
@@ -298,7 +298,7 @@ var
 begin
   result := 0;
   if not Assigned(SCM) or not SCM.scmConnection.Connected then exit;
-  SQL := 'SELECT SwimClubMeet.dbo.SessionNomineeCount(:ID1);';
+  SQL := 'SELECT SwimClubMeet2.dbo.SessionNomineeCount(:ID1);';
   v := SCM.scmConnection.ExecSQLScalar(SQL, [uSession.PK]);
   if not VarIsClear(v) and (v > 0) then result := v;
 end;

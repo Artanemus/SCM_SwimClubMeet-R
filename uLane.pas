@@ -11,53 +11,23 @@ uses
 	FireDAC.Comp.Client;
 
   function Assert(): boolean;
-  function ClearLane(DoExclude: Boolean = true): integer;
+  function ClearLane(DoExclude: Boolean = true): boolean;
+	function StrikeLane(DoExclude: Boolean = true): boolean;
   function DeleteRecord(DoExclude: Boolean = true): boolean;
   function GetLaneID(): integer; // SAFE.
-  function HeatStatusID(LaneID: integer): integer;
-  function InsertLane: integer;
+  function NewRecord: integer;
   function LastLaneNum: integer;
-  function Locate(LaneID: Integer): Boolean;
+  function Locate(aLaneID: integer): Boolean;
+	function LocateNominee(aNomineeID: integer): boolean;
+	function LocateTeam(aTeamID: integer): boolean;
   function PK(): integer; // NO CHECKS. RTNS: Primary key.
   function MoveDownLane(ADataSet: TDataSet): Boolean;
   function MoveUpLane(ADataSet: TDataSet): Boolean;
-  function RemoveLane(LaneID: integer): integer;
-  function SessionIsLocked(LaneID: integer): Boolean;
-  function TeamPK: integer;
-		{
-			I n d v T e a m .  (Determines either dbo.Entrant OR dbo.TEAM tables.)
-		}
-		function LocateNominee(aNomineeID: integer): integer;
-		function IndvTeam_HeatStatusID(aIndvTeamID: integer; aEventType: scmEventType;
-			DoExclude: Boolean = true): integer;
-		function IndvTeam_StrikeLane(aIndvTeamID: integer; aEventType: scmEventType;
-			DoExclude: Boolean = true): integer;
-		function IndvTeam_DeleteLane(aIndvTeamID: integer; aEventType: scmEventType;
-			DoExclude: Boolean = true): integer;
-		function IndvTeam_DeleteSplit(aSplitID: integer; aEventType: scmEventType;
-			DoExclude: Boolean = true): integer;
-    function DeleteAllSplits(DoExclude: Boolean = true): integer;
-		function IndvTeam_LocateLane(aIndvTeamID: integer;
-			aEventType: scmEventType): Boolean;
-		{ L A N E S .  05.09.2023     }
-		function Lane_ClearGutters(aHeatID: integer;
-			DoExclude: Boolean = true): integer;
-		function Lane_InsertLane(aHeatID: integer;
-			DoExclude: Boolean = true): integer;
-		function Lane_PadLanes(aHeatID: integer; DoExclude: Boolean = true)
-			: integer;
-		function Lane_RenumberLanes(aHeatID: integer;
-			DoExclude: Boolean = true): integer;
-		function Lane_SortLanes(aHeatID: integer;
-			DoExclude: Boolean = true): integer;
-		function Lane_TrimLanes(aHeatID: integer;
-			DoExclude: Boolean = true): integer;
 
-		{ T E A M E N T R A N T . }
-    function ClearTeamLink(aNomineeID: Integer; DoExclude: Boolean = true): boolean;
-    function StrikeTeamLink(aNomineeID: Integer; DoExclude: Boolean = true):
-        integer;
-
+  function DeleteSplit(aSplitTimeID: integer; DoExclude: Boolean = true): integer;
+  function DeleteAllSplits(DoExclude: Boolean = true): integer;
+  function DeleteWatch(aSplitTimeID: integer; DoExclude: Boolean = true): integer;
+  function DeleteAllWatches(DoExclude: Boolean = true): integer;
 
 
 type
@@ -73,7 +43,7 @@ var
 implementation
 
 uses
- uSwimClub, uSession, uEvent, uHeat;
+ uSwimClub, uSession, uEvent, uHeat, uTeam;
 
 constructor T_Lane.Create;
 begin
@@ -104,6 +74,59 @@ begin
         result := true;
 end;
 
+function DeleteRecord(DoExclude: Boolean = true): boolean;
+var
+  SQL: string;
+  done, doRenumber: boolean;
+begin
+  result := false;
+  doRenumber := false;
+  // Not permitted to DeleteRecord events if session is locked.
+  if uSession.IsLocked() then exit;
+  // Can't delete this lane if it's be raced or closed.
+  if (uHeat.HeatStatusID() = 1) or (DoExclude = false) then
+  begin
+    CORE.qryLane.DisableControls;
+    try
+      // D E L E T E   WATCH-TIMES...............................
+      CORE.qryWatchTime.DisableControls;
+      CORE.qryWatchTime.ApplyMaster; // ASSERT MASTER-DETAILED.
+      try
+        // Only DeleteRecord nominations if no heats exist.
+        SQL :=
+          'Delete FROM SwimClubMeet2.dbo.WatchTime WHERE WatchTime.LaneID = :ID';
+        SCM.scmConnection.ExecSQL(SQL, [uLane.PK]);
+        CORE.qryWatchTime.ApplyMaster; // ASSERT MASTER-DETAILED.
+      finally
+        CORE.qryWatchTime.EnableControls;
+      end;
+      // D E L E T E   SPLIT-TIMES...............................
+      CORE.qrySplitTime.DisableControls;
+      CORE.qrySplitTime.ApplyMaster; // ASSERT MASTER-DETAILED.
+      try
+        // Only DeleteRecord nominations if no heats exist.
+        SQL :=
+          'Delete FROM SwimClubMeet2.dbo.SplitTime WHERE SplitTime.LaneID = :ID';
+        SCM.scmConnection.ExecSQL(SQL, [uLane.PK]);
+        CORE.qrySplitTime.ApplyMaster; // ASSERT MASTER-DETAILED.
+      finally
+        CORE.qrySplitTime.EnableControls;
+      end;
+      // F I N A L L Y   D E L E T E   L A N E .
+      try
+        CORE.qryLane.Delete;
+        result := true;
+      except on E: Exception do
+          // handle error
+      end;
+    finally
+      // if required, renumbering of heats is handled by caller.
+      CORE.qryLane.EnableControls;
+    end;
+  end;
+end;
+
+
 function GetLaneID(): integer;
 begin
   result := 0;
@@ -111,51 +134,9 @@ begin
       result := CORE.qryLane.FieldByName('LaneID').AsInteger;
 end;
 
-
-function ClearTeamLink(aNomineeID: Integer; DoExclude: Boolean = true): boolean;
-var
-  found: boolean;
-  SearchOptions: TLocateOptions;
+function ClearLane(DoExclude: Boolean = true): boolean;
 begin
   result := false;
-  SearchOptions := [];
-  if uSession.IsLocked() then exit;
-  if (uHeat.HeatStatusID() = 1) or (DoExclude = false) then
-  begin
-    found := CORE.qryTeamLink.Locate('TeamID;NomineeID', VarArrayOf([uLane.PK(), aNomineeID]), SearchOptions);
-    if found  then
-    begin
-      CORE.qryTeamLink.Delete;// remove teamlink..
-      result := true;
-    end;
-  end;
-end;
-
-function StrikeTeamLink(aNomineeID: Integer; DoExclude: Boolean = true):
-    integer;
-var
-  found: boolean;
-  SearchOptions: TLocateOptions;
-begin
-  result := 0;
-  SearchOptions := [];
-  if uSession.IsLocked() then exit;
-  if (uHeat.HeatStatusID() = 1) or (DoExclude = false) then
-  begin
-    if ClearTeamLink(aNomineeID, true) then
-    begin
-      if CORE.qryNominee.Locate('NomineeID', aNomineeID, SearchOptions) then
-      begin
-        CORE.qryNominee.Delete; // remove nominee.
-      end;
-    end;
-  end;
-end;
-
-
-function ClearLane(DoExclude: Boolean = true): integer;
-begin
-  result := 0;
   if uSession.IsLocked() then exit;
   if (uHeat.HeatStatusID() = 1) or (DoExclude = false) then
   begin
@@ -166,12 +147,40 @@ begin
         CORE.qryLane.FieldByName('TeamID').Clear;
         CORE.qryLane.FieldByName('NomineeID').Clear;
         CORE.qryLane.Post;
-      except on E: Exception do CORE.qryLane.Cancel;
+        result := true;
+      except on E: Exception do
+        CORE.qryLane.Cancel;
       end;
-
     finally
       CORE.qryLane.EnableControls;
     end;
+  end;
+end;
+
+function StrikeLane(DoExclude: Boolean = true): boolean;
+var
+  SQL: string;
+  recCount, aTeamID, aNomineeID: integer;
+begin
+  result := false;
+  if uSession.IsLocked() then exit;
+  if (uHeat.HeatStatusID() = 1) or (DoExclude = false) then
+  begin
+    // dbo.Lane.TeamID must be cleared before the teamlink can be removed.
+    // dbo.Lane.NomineeID must be cleared before nominee can be removed.
+    aTeamID := CORE.qryLane.FieldByName('TeamID').AsInteger; // store param
+    aNomineeID := CORE.qryLane.FieldByName('NomineeID').AsInteger; // store param
+    uLane.ClearLane(DoExclude); // NULL fields TeamID and NomineeID.
+    if aNomineeID <> 0 then
+    begin // delete nomination record.
+      SQL := '''
+        DELETE FROM SwimClubMeet2.dbo.Nominee
+        WHERE NomineeID = :ID1 AND EventID = :ID2';
+        ''';
+      recCount := SCM.scmConnection.ExecSQL( SQL,[aNomineeID, uEvent.PK()] );
+    end;
+    if aTeamID <> 0 then // Deletes dbo.teamlink and removes nominee from dbo.Nominee.
+      uTeam.StrikeTeam(aTeamID, DoExclude);
   end;
 end;
 
@@ -200,218 +209,32 @@ begin
   end;
 end;
 
-function IndvTeam_DeleteLane(aIndvTeamID: integer;
-	aEventType: scmEventType; DoExclude: Boolean): integer;
+function DeleteSplit(aSplitTimeID: integer; DoExclude: Boolean = true): integer;
 var
-  aHeatID, aHeatStatusID: integer;
+SQL: string;
 begin
   result := 0;
-  if uSession.IsLocked() then exit;
-  if (uHeat.HeatStatusID = 1) or (DoExclude = false) then
+  if Assigned(SCM) and SCM.scmConnection.Connected then
   begin
-    // Delete Lane
-  end;
-end;
-
-function IndvTeam_DeleteSplit(aSplitID: integer;
-	aEventType: scmEventType; DoExclude: Boolean = true): integer;
-var
-  aHeatStatusID: integer;
-begin
-  result := 0;
-  if not SCM.IsActive then exit;
-  if aSplitID = 0 then exit;
-  if (aEventType = etUnknown) then exit;
-
-  if (aEventType = etINDV) then
-    if Split_SessionIsLocked(aSplitID) then exit;
-  if (aEventType = etTEAM) then
-    if TeamSplit_SessionIsLocked(aSplitID) then exit;
-
-  aHeatStatusID := Split_HeatStatusID(aSplitID);
-  if not(aHeatStatusID > 1) or (DoExclude = false) then
-    result := DeleteSplit(aSplitID, aEventType);
-end;
-
-
-
-function TeamPK: integer;
-begin
-  result := CORE.qryLane.FieldByName('TeamID').AsInteger;
-end;
-
-
-function TSCMHelper.IndvTeam_StrikeLane(aIndvTeamID: integer; aEventType: scmEventType;
-	DoExclude: Boolean = true): integer;
-var
-  aHeatID, aHeatStatusID, aEventID, aMemberID, aTeamEntrantID, rows: integer;
-  SQL: string;
-  v: variant;
-  qry: TFDQuery;
-begin
-  result := 0;
-  rows := 0;
-  if not SCM.IsActive then exit;
-  if aIndvTeamID = 0 then exit;
-  aHeatID := IndvTeam_HeatID(aIndvTeamID, aEventType);
-  if (aHeatID=0) then exit;
-  if Heat_SessionIsLocked(aHeatID) then exit;
-  aHeatStatusID := Heat_HeatStatusID(aHeatID);
-  if (aHeatStatusID = 1) or (DoExclude = false) then
-  begin
-    { Clear NOMINEES...   }
-    aEventID := Heat_EventID(aHeatID);
-    if aEventType = etINDV then
+    if uSession.IsLocked() then exit;
+    if (uHeat.HeatStatusID() = 1) or (DoExclude = false) then
     begin
-      SQL := 'SELECT MemberID FROM SwimClubMeet2.dbo.Entrant ' +
-        'WHERE Entrant.HeatID = :ID1 AND Entrant.EntrantID = :ID2';
-      v := scmConnection.ExecSQLScalar(SQL, [aHeatID, aIndvTeamID]);
-      if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
-      begin
-        {  CLEAR LANE (+entrant)   EntrantID ALIAS aIndvTeamID  }
-        ClearLane(aIndvTeamID, etIndv);
-        {  CLEAR Nominee  }
-        result := Self.DeleteNomination(v, aEventID);
-      end;
-    end
-    else if aEventType = etTEAM then
-    begin
-      {  collate entrant's records for the given team  }
-      SQL := 'SELECT MemberID, TeamEntrantID FROM SwimClubMeet2.dbo.Team ' +
-        'INNER JOIN TeamEntrant ON Team.TeamID = TeamEntrant.TeamID ' +
-        'WHERE Team.HeatID = :ID1 AND Team.TeamID = :ID2';
-      // iterate on team-entrant.
-      qry := TFDQuery.Create(self);
-      qry.Connection := scmConnection;
-      qry.SQL.Text := SQL;
-      qry.IndexFieldNames := 'MemberID';
-      qry.ParamByName('ID1').AsInteger := aHeatID;
-      qry.ParamByName('ID2').AsInteger := aIndvTeamID;
-      qry.Prepare;
-      qry.Open;
-      if qry.Active then
-      begin
-        while not qry.Eof do
-        begin
-          {  DELETE TEAM ENTRANT }
-           aTeamEntrantID := qry.FieldByName('TeamEntrantID').AsInteger;
-           Self.ClearSlot(aTeamEntrantID);
-          {  DELETE the members NOMINATION (if a member's ID exists) }
-          if not qry.FieldByName('MemberID').IsNull then
-          begin
-            aMemberID := qry.FieldByName('MemberID').AsInteger;
-            rows := rows + Self.DeleteNomination(aMemberID, aEventID);
-          end;
-          qry.Next;
-        end;
-        {  CLEAR LANE (+Team) TeamID ALIAS aIndvTeamID }
-        Self.ClearLane(aIndvTeamID, aEventType);
-        if rows > 0 then result := rows;
-      end;
-      qry.Close;
-      qry.Free;
-    end
-    else exit;
-  end;
-end;
-
-function Lane_ClearGutters(aHeatID: integer;
-	DoExclude: Boolean = true): integer;
-begin
-  result := 0;
-  { Lane_ClearGutters
-    Only clears gutters if enabled in preferences.
-  }
-  {TODO -oBSA -cGeneral : CLEAR GUTTERS}
-end;
-
-function Lane_InsertLane(aHeatID: integer;
-	DoExclude: Boolean = true): integer;
-var
-  aHeatStatusID: integer;
-begin
-  result := 0;
-  if not SCM.IsActive then exit;
-  if aHeatID = 0 then exit;
-  if Heat_SessionIsLocked(aHeatID) then exit;
-  aHeatStatusID := Heat_HeatStatusID(aHeatID);
-  if (aHeatStatusID = 1) or (DoExclude = false) then
-  begin
-    result := InsertEmptyLane(aHeatID);
-  end;
-end;
-
-function Lane_PadLanes(aHeatID: integer;
-	DoExclude: Boolean = true): integer;
-var
-  aHeatStatusID: integer;
-begin
-  // NOTE: if renumbering is needed, this must be done by caller.
-  result := 0;
-  if not Assigned(CORE) or not CORE.IsActive then exit;
-  if uSession.IsLocked() then exit;
-  if (uHeat.HeatStatusID = 1) or (DoExclude = false) then
-  begin // Add required lanes.
-  end;
-end;
-
-function Lane_TrimLanes(aHeatID: integer;
-  DoExclude: Boolean = true): integer;
-var
-  NumOfLanes, Lanes, i, aHeatStatusID: integer;
-begin
-  // NOTE: if renumbering is needed, this must be done by caller.
-  result := 0;
-  if not Assigned(CORE) or not CORE.IsActive then exit;
-  if uSession.IsLocked() then exit;
-  if (uHeat.HeatStatusID = 1) or (DoExclude = false) then
-  begin // Remove excess lanes.
-    NumOfLanes := uSwimClub.NumberOfLanes; // number of lanes in club pool.
-    Lanes := CountLanes();
-    if Lanes > NumOfLanes then
-    begin
-      CORE.qryLane.DisableControls;
-
+      CORE.qrySplitTime.ApplyMaster;
       try
-        CORE.qryLane.First;
-        // pass 1: look for empty swimming lanes.
-        while not CORE.qryLane.eof do
-        begin
-          if CORE.qryLane.FieldByName('TeamID').IsNull and
-          CORE.qryLane.FieldByName('NomineeID').IsNull then
-          begin
-            if uLane.DeleteRecord(true) then // candidate for delete.
-            begin
-              Dec(Lanes);
-              if Lanes <= NumOfLanes then
-                break
-              else
-                continue;
-            end
-            else
-              CORE.qryLane.next;
-          end
-          else
-            CORE.qryLane.next;
-        end;
-
-        if Lanes > NumOfLanes then
-        begin
-          // pass 2: trim from end...
-        end;
-
-
+        CORE.qrySplitTime.DisableControls;
+        SQL := '''
+          DELETE FROM SwimClubMeet2.dbo.SplitTimes
+          WHERE [SplitTimes].[SplitTimeID] = :ID AND [SplitTimes].[LaneID] = :ID;
+          ''';
+        result := SCM.scmConnection.ExecSQL(SQL, VarArrayOf([aSplitTimeID, uLane.PK()]));
       finally
-        CORE.qryLane.EnableControls;
+        CORE.qrySplitTime.EnableControls;
       end;
-
-
     end;
   end;
 end;
 
-
-function InsertLane: integer;
+function NewRecord: integer;
 var
   aLaneNum: integer;
   SQL: string;
@@ -442,7 +265,6 @@ begin
   end;
 end;
 
-
 function LastLaneNum: integer;
 var
   SQL: string;
@@ -456,7 +278,7 @@ begin
   if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
 end;
 
-function Locate(aLaneID: Integer): Boolean;
+function Locate(aLaneID: integer): Boolean;
 var
   SearchOptions: TLocateOptions;
 begin
@@ -468,7 +290,7 @@ begin
     CORE.qrySplitTime.DisableControls;
     CORE.qryLane.DisableControls;
     try
-      result := CORE.qryLane.Locate('LaneID', LaneID, SearchOptions);
+      result := CORE.qryLane.Locate('LaneID', aLaneID, SearchOptions);
       if result then 
       begin
         CORE.qryWatchTime.ApplyMaster;
@@ -482,7 +304,7 @@ begin
   end;
 end;
 
-function LocateNominee(aNomineeID: integer): integer;
+function LocateNominee(aNomineeID: integer): boolean;
 var
   SearchOptions: TLocateOptions;
   found: boolean;
@@ -497,24 +319,8 @@ begin
     CORE.qrySplitTime.DisableControls;
     CORE.qryLane.DisableControls;
     try
-      if uEvent.EventType = etINDV then
-        result := CORE.qryLane.Locate('NomineeID', aNomineeID, SearchOptions);
-      else if uEvent.EventType = etTEAM then
-      begin
-        // search for nominee in teamlink where nominee.eventID and lane.HeatID match.
-        SQL := '''
-          SELECT Lane.LaneID FROM SwimClubMeet2.dbo.TeamLink
-          INNER JOIN SwimClubMeet2.dbo.Lane ON TeamLink.TeamID = Lane.TeamID
-          INNER JOIN SwimClubMeet2.dbo.Nominee ON TeamLink.NomineeID = Nominee.NomineeID
-          WHERE TeamLink.NomineeID = :ID1 AND Lane.HeatID = :ID2 AND Nominee.EventID = :ID3;
-          ''';
-        v := SCM.scmConnection.ExecSQLScalar(SQL, [aNomineeID, uHeat.PK(), uEvent.PK()]);
-        if not VarIsClear(v) and (v <> 0) then 
-          result := CORE.qryLane.Locate('LaneID', v, SearchOptions);
-
-      end;
-
-      if result then 
+      result := CORE.qryLane.Locate('NomineeID', aNomineeID, SearchOptions);
+      if result then
       begin
         CORE.qryWatchTime.ApplyMaster;
         CORE.qrySplitTime.ApplyMaster;
@@ -523,11 +329,38 @@ begin
       CORE.qryLane.EnableControls;
       CORE.qrySplitTime.EnableControls;
       CORE.qryWatchTime.EnableControls;
-    end;   
+    end;
   end;
 end;
 
-
+function LocateTeam(aTeamID: integer): boolean;
+var
+  SearchOptions: TLocateOptions;
+  found: boolean;
+  SQL: string;
+  v: variant;
+begin
+  result := false;
+  SearchOptions := [];
+  if Assigned(CORE) and CORE.dsLane.DataSet.Active then
+  begin
+    CORE.qryWatchTime.DisableControls;
+    CORE.qrySplitTime.DisableControls;
+    CORE.qryLane.DisableControls;
+    try
+      result := CORE.qryLane.Locate('TeamID', aTeamID, SearchOptions);
+      if result then
+      begin
+        CORE.qryWatchTime.ApplyMaster;
+        CORE.qrySplitTime.ApplyMaster;
+      end;
+    finally
+      CORE.qryLane.EnableControls;
+      CORE.qrySplitTime.EnableControls;
+      CORE.qryWatchTime.EnableControls;
+    end;
+  end;
+end;
 
 function PK(): integer;
 begin // NO CHECKS. quick and dirty - primary key result.

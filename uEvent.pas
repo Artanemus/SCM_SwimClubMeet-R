@@ -23,13 +23,9 @@ function AllHeatsAreClosed: Boolean;
 procedure FNameEllipse(); // move out of uEvent to frame.
 function GetEntrantCount(): integer; overload; // swimmers entered into lanes.
 function GetEventID: integer; // SAFE.
-// EVENT TYPE...
-// Current event - uses lookup field : luEventTypeID .
-function GetEventType(): SCMDefines.scmEventType; overload;
+function GetEventType(): SCMDefines.scmEventType; overload; // = luEventTypeID.
 function GetHeatCount: integer;
-// COUNT... using MSSQL Scalar functions.
-function GetNomineeCount(): integer; overload;
-  // members who nominated for event..
+function GetNomineeCount(): integer; overload; // members wanting to enter event.
 function HasClosedHeats: Boolean;
 function HasClosedOrRacedHeats: Boolean;
 function HasNominee(MemberID: integer): Boolean;
@@ -172,7 +168,7 @@ begin
     if (CORE.qryHeat.IsEmpty) then
     begin
       // Clear Scheduled Events.
-      SQL := 'UPDATE SwimClubMeet.dbo.ScheduleEvent SET EventID = NULL WHERE EventID = :ID';
+      SQL := 'UPDATE SwimClubMeet2.dbo.ScheduleEvent SET EventID = NULL WHERE EventID = :ID';
       SCM.scmConnection.ExecSQL(SQL, [uEvent.PK]);
 
       // D E L E T E   N O M I N A T I O N S .
@@ -180,7 +176,7 @@ begin
       CORE.qryNominee.ApplyMaster; // ASSERT MASTER-DETAILED.
       try
         // Only DeleteRecord nominations if no heats exist.
-        SQL := 'Delete FROM SwimClubMeet.dbo.Nominee WHERE Nominee.EventID = :ID';
+        SQL := 'Delete FROM SwimClubMeet2.dbo.Nominee WHERE Nominee.EventID = :ID';
         SCM.scmConnection.ExecSQL(SQL, [uEvent.PK]);
         CORE.qryNominee.ApplyMaster;  // ASSERT MASTER-DETAILED.
       finally

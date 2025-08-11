@@ -24,6 +24,12 @@ function NextID(aHeatID: integer): integer; // uses HeatNum
 function PK(): integer; // NO CHECKS. RTNS: Primary key.
 function PrevID(aHeatID: integer): integer; // uses HeatNum
 function RenumberLanes(DoExclude: Boolean = true): integer;
+function ScatterLanes(DoExclude: Boolean = true): integer;
+function PadLanes(DoExclude: Boolean = true)	: integer;
+function TrimLanes(DoExclude: Boolean = true): integer;
+function ClearGutters(DoExclude: Boolean = true): integer;
+
+
 procedure NewRecord();
 procedure ToggleStatus(); // current heat
 
@@ -125,30 +131,7 @@ begin
       CORE.qryLane.First;
       while not eof do
       begin
-        // D E L E T E   WATCH-TIMES...............................
-        CORE.qryWatchTime.DisableControls;
-        CORE.qryWatchTime.ApplyMaster; // ASSERT MASTER-DETAILED.
-        try
-          // Only DeleteRecord nominations if no heats exist.
-          SQL := 'Delete FROM SwimClubMeet2.dbo.WatchTime WHERE WatchTime.LaneID = :ID';
-          SCM.scmConnection.ExecSQL(SQL, [uLane.PK]);
-          CORE.qryWatchTime.ApplyMaster;  // ASSERT MASTER-DETAILED.
-        finally
-          CORE.qryWatchTime.EnableControls;
-        end;
-        // D E L E T E   SPLIT-TIMES...............................
-        CORE.qrySplitTime.DisableControls;
-        CORE.qrySplitTime.ApplyMaster; // ASSERT MASTER-DETAILED.
-        try
-          // Only DeleteRecord nominations if no heats exist.
-          SQL := 'Delete FROM SwimClubMeet2.dbo.SplitTime WHERE SplitTime.LaneID = :ID';
-          SCM.scmConnection.ExecSQL(SQL, [uLane.PK]);
-          CORE.qrySplitTime.ApplyMaster;  // ASSERT MASTER-DETAILED.
-        finally
-          CORE.qrySplitTime.EnableControls;
-        end;
-
-        // F I N A L L Y   D E L E T E   L A N E .
+        // deletes lane and watch-times and split-times.
         done := uLane.DeleteRecord(true);
         if done then
         begin
@@ -393,6 +376,60 @@ begin
     end;
   end;
 end;
+
+function TrimLanes(DoExclude: Boolean = true): integer;
+var
+  NumOfLanes, Lanes, i, aHeatStatusID: integer;
+begin
+  // NOTE: if renumbering is needed, this must be done by caller.
+  result := 0;
+  if not Assigned(CORE) or not CORE.IsActive then exit;
+  if uSession.IsLocked() then exit;
+  if (uHeat.HeatStatusID = 1) or (DoExclude = false) then
+  begin // Remove excess lanes.
+    NumOfLanes := uSwimClub.NumberOfLanes; // number of lanes in club pool.
+    Lanes := CountLanes();
+    if Lanes > NumOfLanes then
+    begin
+      CORE.qryLane.DisableControls;
+
+      try
+        CORE.qryLane.First;
+        // pass 1: look for empty swimming lanes.
+        while not CORE.qryLane.eof do
+        begin
+          if CORE.qryLane.FieldByName('TeamID').IsNull and
+          CORE.qryLane.FieldByName('NomineeID').IsNull then
+          begin
+            if uLane.DeleteRecord(true) then // candidate for delete.
+            begin
+              Dec(Lanes);
+              if Lanes <= NumOfLanes then
+                break
+              else
+                continue;
+            end
+            else
+              CORE.qryLane.next;
+          end
+          else
+            CORE.qryLane.next;
+        end;
+
+        if Lanes > NumOfLanes then
+        begin
+          // pass 2: trim from end...
+        end;
+
+
+      finally
+        CORE.qryLane.EnableControls;
+      end;
+    end;
+  end;
+end;
+
+
 
 end.
 

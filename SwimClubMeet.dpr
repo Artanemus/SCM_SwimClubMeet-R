@@ -101,7 +101,8 @@ uses
   uEvent in 'uEvent.pas',
   uHeat in 'uHeat.pas',
   uLane in 'uLane.pas',
-  uFrameHeat in 'uFrameHeat.pas' {FrameHeat: TFrame};
+  uFrameHeat in 'uFrameHeat.pas' {FrameHeat: TFrame},
+  uTeam in 'uTeam.pas';
 
 {$R *.res}
 
