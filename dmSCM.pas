@@ -73,6 +73,9 @@ type
     qryCountINDVNominee: TFDQuery;
     FDErrorDialog: TFDGUIxErrorDialog;
 		scmFDManager: TFDManager;
+    procRenumberHeats: TFDStoredProc;
+    procRenumberEvents: TFDStoredProc;
+    procRenumberLanes: TFDStoredProc;
 		procedure DataModuleCreate(Sender: TObject);
     procedure qryLaneAfterScroll(DataSet: TDataSet);
     procedure qryLaneTIMEGetText(Sender: TField; var Text: string;
@@ -402,7 +405,7 @@ begin
   if not FIsActive then exit;
   if aHeatID = 0 then exit;
 
-  aEventType := uEvent.GetEventType;
+  aEventType := uEvent.EventType;
   if aEventType = etUnknown then exit;
 
   qry := TFDQuery.Create(self);
@@ -459,7 +462,7 @@ var
 begin
   result := 0;
   if not FIsActive then exit;
-  aEventType := uEvent.GetEventType;
+  aEventType := uEvent.EventType;
   if aEventType = etUnknown then exit;
 
   if aEventType = etINDV then
@@ -615,7 +618,7 @@ begin
   result := 0;
   rows := 0;
   if not FIsActive then exit;
-  aEventType := uEvent.GetEventType;
+  aEventType := uEvent.EventType;
   if aEventType = etUnknown then exit;
 
   qry := TFDQuery.Create(self);
@@ -839,7 +842,7 @@ begin
   result := 0;
   if not FIsActive then exit;
   if aHeatID = 0 then exit;
-  aEventType := uEvent.GetEventType;
+  aEventType := uEvent.EventType;
 	if aEventType = etINDV then
       SQL := 'SELECT MIN(Lane) FROM SwimClubMeet2.dbo.Entrant ' +
       'Entrant.HeatID = :ID'
@@ -910,7 +913,7 @@ begin
     if not FIsActive then exit;
     if aHeatID = 0 then exit;
 
-    aEventType := uEvent.GetEventType;
+    aEventType := uEvent.EventType;
 		if (aEventType = etUnknown) then exit;
 
 		if (CountLanes(aHeatID) >= CORE.qrySwimClub.FieldByName('NumOfLanes').AsInteger) then exit;
@@ -1030,7 +1033,7 @@ begin
   result := 0;
   if not FIsActive then exit;
   if aHeatID = 0 then exit;
-  aEventType := uEvent.GetEventType;
+  aEventType := uEvent.EventType;
   if aEventType = etINDV then
       SQL := 'SELECT MAX(Lane) FROM SwimClubMeet2.dbo.Entrant ' +
       'WHERE Entrant.HeatID = :ID'
@@ -1486,7 +1489,7 @@ begin
   if aHeatID = 0 then exit;
 
   { Scatter non-null IndvTeamID records. (ie. swimmers or relays }
-  aEventType := uEvent.GetEventType;
+  aEventType := uEvent.EventType;
   if (aEventType = etUnknown) then exit;
 
   { Sort order is fastest to slowest.
@@ -1696,7 +1699,7 @@ var
 begin
   result := false;
   if not FIsActive then exit;
-  EventType := uEvent.GetEventType;
+  EventType := uEvent.EventType;
   { TODO -oBSA -cGeneral : Create swap lane function }
   if EventType =  scmEventType.etINDV then // INDV
       SQL := 'SELECT TOP 1 [EntrantID] FROM [SwimClubMeet2].[dbo].[Entrant] ' +

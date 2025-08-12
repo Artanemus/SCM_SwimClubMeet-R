@@ -15,6 +15,7 @@ function Assert: boolean;
 function ClearLanes(DoExclude: Boolean = true): integer;
 function CountLanes: integer;
 function DeleteRecord(DoExclude: Boolean = true): boolean;
+function DeleteLanes: boolean;
 function GetHeatID: integer; // SAFE.
 function HeatStatusID: integer;
 function IsClosed(): Boolean; // current heat
@@ -23,7 +24,7 @@ function Locate(aHeatID: integer): Boolean;
 function NextID(aHeatID: integer): integer; // uses HeatNum
 function PK(): integer; // NO CHECKS. RTNS: Primary key.
 function PrevID(aHeatID: integer): integer; // uses HeatNum
-function RenumberLanes(DoExclude: Boolean = true): integer;
+function RenumberLanes(DoLocate: Boolean = true): integer;
 function ScatterLanes(DoExclude: Boolean = true): integer;
 function PadLanes(DoExclude: Boolean = true)	: integer;
 function TrimLanes(DoExclude: Boolean = true): integer;
@@ -105,58 +106,69 @@ begin
   if not VarIsNull(v) or not VarIsEmpty(v) then result := v;
 end;
 
+function DeleteLanes: boolean;
+var
+  SQL: string;
+  done: boolean;
+begin
+  result := false;
+  // Not permitted to delete anything if session is locked.
+  if uSession.IsLocked() then exit;
+  CORE.qryLane.DisableControls;
+  try
+    // D E L E T E   L A N E S .
+    CORE.qryLane.ApplyMaster; // ASSERT MASTER-DETAILED.
+    CORE.qryLane.First;
+    while not eof do
+    begin
+      // deletes watch-times and split-times and finally the lane.
+      done := uLane.DeleteRecord();
+      if done then
+      begin
+        result := true;
+        continue;
+      end
+      else
+        CORE.qryLane.Next;
+    end;
+  finally
+    // Renumbering handled by caller.
+    CORE.qryLane.EnableControls;
+  end;
+end;
+
 function DeleteRecord(DoExclude: Boolean = true): boolean;
 var
   SQL: string;
-  done, doRenumber: boolean;
+  doRenumber: boolean;
 begin
   result := false;
   doRenumber := false;
   // Not permitted to DeleteRecord events if session is locked.
   if uSession.IsLocked() then exit;
-
-  // Can't delete this heat if it's be raced or closed.
-  // UNLESS DoExclude is false... (default value is true).
-
-  //  if (uHeat.HeatStatusID() in [2,3]) or (DoExclude) then exit;
-
+  // Can't delete heat if 'raced' or 'closed', UNLESS DoExclude = false.
   if (uHeat.HeatStatusID() = 1) or (DoExclude = false) then
   begin
-
     //if (uHeat.HeatStatusID() = 1) or (DoExclude = false) then
     CORE.qryLane.DisableControls;
     try
-      // D E L E T E   L A N E S .
-      CORE.qryLane.ApplyMaster;  // ASSERT MASTER-DETAILED.
-      CORE.qryLane.First;
-      while not eof do
-      begin
-        // deletes lane and watch-times and split-times.
-        done := uLane.DeleteRecord(true);
-        if done then
-        begin
-          doRenumber := true;
-          continue;
-        end
-        else CORE.qryLane.Next;
-      end;
-
+      doRenumber := uHeat.DeleteLanes();
       // ASSERT that all heats have been removed within Master-Detail relationship.
       // Can't delete remaining dependants if heats are retained.
       if (CORE.qryLane.IsEmpty) then
       begin
-        // F I N A L L Y   DELETE THE HEAT..
-        CORE.qryHeat.Delete;
-        result := true;
+        try
+          CORE.qryHeat.Delete; // Finally.. delete heat.
+          doRenumber := true;
+          result := true;
+        except on E: Exception do
+          // If the dataset is inactive, Delete raises an exception.
+        end;
       end
-      else
-      begin
-        if doRenumber then // caller handles renumbering of lanes.
-          uHeat.RenumberLanes(false);
-      end;
-
     finally
-      // if required, renumbering of heats is handled by caller.
+      if doRenumber then
+        uHeat.RenumberLanes(false); // don't relocate
+      CORE.qryLane.ApplyMaster;
       CORE.qryLane.EnableControls;
     end;
   end;
@@ -234,13 +246,30 @@ begin
     result := SCM.qryGetNextHeat.FieldByName('HeatID').AsInteger;
 end;
 
-function RenumberLanes(DoExclude: Boolean = true): integer;
+function RenumberLanes(DoLocate: Boolean = true): integer;
 var
-  SQL: string;
-  qry: TFDQuery;
-  aEventType: scmEventType;
-  i, lane, NumOfPoolLanes: integer;
+  aLaneID: integer;
 begin
+  if not Assigned(SCM) or not SCM.IsActive then exit;
+  if CORE.dsHeat.DataSet.IsEmpty then exit;
+  result := 0;
+  CORE.qryLane.DisableControls;
+  CORE.qryHeat.DisableControls;
+  try
+    if DoLocate then
+      aLaneID := uHeat.PK;
+    SCM.procRenumberLanes.Params[1].Value := uHeat.PK;
+    SCM.procRenumberLanes.Prepare;
+    SCM.procRenumberLanes.ExecProc;
+  finally
+    CORE.qryHeat.ApplyMaster;
+    if DoLocate then
+      uHeat.Locate(aLaneID);
+    CORE.qryHeat.EnableControls;
+    CORE.qryLane.EnableControls;
+  end;
+end;
+
 (*
   result := 0;
   i := 0;
@@ -313,8 +342,6 @@ begin
   if (aEventType = etINDV) then CORE.dsLane.DataSet.EnableControls
   else CORE.dsTeam.DataSet.EnableControls;
 *)
-  result := i;
-end;
 
 procedure NewRecord;
 var

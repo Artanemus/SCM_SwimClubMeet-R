@@ -13,7 +13,7 @@ uses
   function Assert(): boolean;
   function ClearLane(DoExclude: Boolean = true): boolean;
 	function StrikeLane(DoExclude: Boolean = true): boolean;
-  function DeleteRecord(DoExclude: Boolean = true): boolean;
+  function DeleteRecord: boolean;
   function GetLaneID(): integer; // SAFE.
   function NewRecord: integer;
   function LastLaneNum: integer;
@@ -24,9 +24,9 @@ uses
   function MoveDownLane(ADataSet: TDataSet): Boolean;
   function MoveUpLane(ADataSet: TDataSet): Boolean;
 
-  function DeleteSplit(aSplitTimeID: integer; DoExclude: Boolean = true): integer;
+  function DeleteSplit(aSplitTimeID: integer): integer;
   function DeleteAllSplits(DoExclude: Boolean = true): integer;
-  function DeleteWatch(aSplitTimeID: integer; DoExclude: Boolean = true): integer;
+  function DeleteWatch(aWatchTimeID: integer): integer;
   function DeleteAllWatches(DoExclude: Boolean = true): integer;
 
 
@@ -74,7 +74,7 @@ begin
         result := true;
 end;
 
-function DeleteRecord(DoExclude: Boolean = true): boolean;
+function DeleteRecord: boolean;
 var
   SQL: string;
   done, doRenumber: boolean;
@@ -84,45 +84,39 @@ begin
   // Not permitted to DeleteRecord events if session is locked.
   if uSession.IsLocked() then exit;
   // Can't delete this lane if it's be raced or closed.
-  if (uHeat.HeatStatusID() = 1) or (DoExclude = false) then
-  begin
-    CORE.qryLane.DisableControls;
+  CORE.qryLane.DisableControls;
+  CORE.qryWatchTime.DisableControls;
+  CORE.qrySplitTime.DisableControls;
+  try
+    // D E L E T E   WATCH-TIMES...............................
     try
-      // D E L E T E   WATCH-TIMES...............................
-      CORE.qryWatchTime.DisableControls;
-      CORE.qryWatchTime.ApplyMaster; // ASSERT MASTER-DETAILED.
-      try
-        // Only DeleteRecord nominations if no heats exist.
-        SQL :=
-          'Delete FROM SwimClubMeet2.dbo.WatchTime WHERE WatchTime.LaneID = :ID';
-        SCM.scmConnection.ExecSQL(SQL, [uLane.PK]);
-        CORE.qryWatchTime.ApplyMaster; // ASSERT MASTER-DETAILED.
-      finally
-        CORE.qryWatchTime.EnableControls;
-      end;
-      // D E L E T E   SPLIT-TIMES...............................
-      CORE.qrySplitTime.DisableControls;
-      CORE.qrySplitTime.ApplyMaster; // ASSERT MASTER-DETAILED.
-      try
-        // Only DeleteRecord nominations if no heats exist.
-        SQL :=
-          'Delete FROM SwimClubMeet2.dbo.SplitTime WHERE SplitTime.LaneID = :ID';
-        SCM.scmConnection.ExecSQL(SQL, [uLane.PK]);
-        CORE.qrySplitTime.ApplyMaster; // ASSERT MASTER-DETAILED.
-      finally
-        CORE.qrySplitTime.EnableControls;
-      end;
-      // F I N A L L Y   D E L E T E   L A N E .
-      try
-        CORE.qryLane.Delete;
-        result := true;
-      except on E: Exception do
-          // handle error
-      end;
+      // Only DeleteRecord nominations if no heats exist.
+      SQL :=
+      'Delete FROM SwimClubMeet2.dbo.WatchTime WHERE WatchTime.LaneID = :ID';
+      SCM.scmConnection.ExecSQL(SQL, [uLane.PK]);
     finally
-      // if required, renumbering of heats is handled by caller.
-      CORE.qryLane.EnableControls;
     end;
+    // D E L E T E   SPLIT-TIMES...............................
+    try
+      // Only DeleteRecord nominations if no heats exist.
+      SQL :=
+      'Delete FROM SwimClubMeet2.dbo.SplitTime WHERE SplitTime.LaneID = :ID';
+      SCM.scmConnection.ExecSQL(SQL, [uLane.PK]);
+    finally
+    end;
+    // F I N A L L Y   D E L E T E   L A N E .
+    try
+      CORE.qryLane.Delete;
+      result := true;
+    except on E: Exception do
+        // handle error
+    end;
+  finally
+    CORE.qryWatchTime.ApplyMaster; // ASSERT MASTER-DETAILED.
+    CORE.qrySplitTime.ApplyMaster; // ASSERT MASTER-DETAILED.
+    CORE.qryLane.EnableControls;
+    CORE.qryWatchTime.EnableControls;
+    CORE.qrySplitTime.EnableControls;
   end;
 end;
 
@@ -184,6 +178,53 @@ begin
   end;
 end;
 
+function DeleteAllWatches(DoExclude: Boolean = true): integer;
+var
+SQL: string;
+begin
+  result := 0;
+  if Assigned(SCM) and SCM.scmConnection.Connected then
+  begin
+    if uSession.IsLocked() then exit;
+    if (uHeat.HeatStatusID() = 1) or (DoExclude = false) then
+    begin
+      CORE.qryLane.ApplyMaster;
+      try
+        CORE.qryLane.DisableControls;
+        SQL := '''
+          DELETE FROM SwimClubMeet2.dbo.WatchTimes
+          WHERE [WatchTimes].[LaneID] = :ID;
+          ''';
+        SCM.scmConnection.ExecSQL(SQL, [uLane.PK()]);
+      finally
+        CORE.qryLane.EnableControls;
+      end;
+    end;
+  end;
+end;
+
+function DeleteWatch(aWatchTimeID: integer ): integer;
+var
+SQL: string;
+begin
+  result := 0;
+  if Assigned(SCM) and SCM.scmConnection.Connected then
+  begin
+  if uSession.IsLocked() then exit;
+    CORE.qrySplitTime.ApplyMaster;
+    try
+      CORE.qrySplitTime.DisableControls;
+      SQL := '''
+        DELETE FROM SwimClubMeet2.dbo.WatchTimes
+        WHERE [WatchTimes].[SplitTimeID] = :ID AND [WatchTimes].[LaneID] = :ID;
+        ''';
+      result := SCM.scmConnection.ExecSQL(SQL, VarArrayOf([aWatchTimeID, uLane.PK()]));
+    finally
+      CORE.qrySplitTime.EnableControls;
+    end;
+  end;
+end;
+
 function DeleteAllSplits(DoExclude: Boolean = true): integer;
 var
 SQL: string;
@@ -209,27 +250,24 @@ begin
   end;
 end;
 
-function DeleteSplit(aSplitTimeID: integer; DoExclude: Boolean = true): integer;
+function DeleteSplit(aSplitTimeID: integer ): integer;
 var
 SQL: string;
 begin
   result := 0;
   if Assigned(SCM) and SCM.scmConnection.Connected then
   begin
-    if uSession.IsLocked() then exit;
-    if (uHeat.HeatStatusID() = 1) or (DoExclude = false) then
-    begin
-      CORE.qrySplitTime.ApplyMaster;
-      try
-        CORE.qrySplitTime.DisableControls;
-        SQL := '''
-          DELETE FROM SwimClubMeet2.dbo.SplitTimes
-          WHERE [SplitTimes].[SplitTimeID] = :ID AND [SplitTimes].[LaneID] = :ID;
-          ''';
-        result := SCM.scmConnection.ExecSQL(SQL, VarArrayOf([aSplitTimeID, uLane.PK()]));
-      finally
-        CORE.qrySplitTime.EnableControls;
-      end;
+  if uSession.IsLocked() then exit;
+    CORE.qrySplitTime.ApplyMaster;
+    try
+      CORE.qrySplitTime.DisableControls;
+      SQL := '''
+        DELETE FROM SwimClubMeet2.dbo.SplitTimes
+        WHERE [SplitTimes].[SplitTimeID] = :ID AND [SplitTimes].[LaneID] = :ID;
+        ''';
+      result := SCM.scmConnection.ExecSQL(SQL, VarArrayOf([aSplitTimeID, uLane.PK()]));
+    finally
+      CORE.qrySplitTime.EnableControls;
     end;
   end;
 end;

@@ -344,6 +344,11 @@ object CORE: TCORE
         Name = 'mcEvent_DESC'
         Fields = 'EventID'
         DescFields = 'EventID'
+      end
+      item
+        Name = 'indxRenumberHeats'
+        Fields = 'EventID;HeatID;HeatNum'
+        Options = [soDescNullLast]
       end>
     IndexName = 'mcEvent_DESC'
     MasterFields = 'EventID'

@@ -630,7 +630,7 @@ var
   rtnValue, rows: integer;
 	aEventType: scmEventType;
 begin
-	aEventType := uEvent.GetEventType;
+	aEventType := uEvent.EventType;
 	if aEventType = etUnknown then exit;
   rtnValue := MessageDlg('Clear the team entrant?', mtConfirmation,
     [mbNo, mbYes], 0, mbYes);
@@ -659,7 +659,7 @@ begin
         // is the current heat closed?
 				if not uHeat.IsClosed then
         begin
-          aEventType := uEvent.GetEventType;
+          aEventType := uEvent.EventType;
           if aEventType = etTEAM then
           begin
 						if not CORE.dsLane.DataSet.IsEmpty then
@@ -743,7 +743,7 @@ begin
         // is the current heat closed?
 				if not uHeat.IsClosed then
         begin
-          aEventType := uEvent.GetEventType;
+          aEventType := uEvent.EventType;
 					if aEventType = etTEAM then
 					begin
 						if not CORE.dsLane.DataSet.IsEmpty then
@@ -1416,7 +1416,7 @@ begin
 
 
   // SYNC the enabled state of the INDVTEAM Grids
-  aEventType := uEvent.GetEventType;
+  aEventType := uEvent.EventType;
   if aEventType = etINDV then
   begin
     if (INDV.Grid.Enabled <> EnabledState) then
@@ -2021,7 +2021,7 @@ var
   aEventType: scmEventType;
   Msg: string;
 begin
-  aEventType := uEvent.GetEventType;
+  aEventType := uEvent.EventType;
   if aEventType = etUnknown then exit;
   if aEventType = etINDV then Msg := 'Empty the lane.?'
   else Msg := 'Clear the team and it''s swimmers.';
@@ -2066,7 +2066,7 @@ procedure TMain.Grid_MoveDownExecute(Sender: TObject);
 var
 	aEventType: scmEventType;
 begin
-	aEventType := uEvent.GetEventType;
+	aEventType := uEvent.EventType;
 	if aEventType = etINDV then INDV.GridMoveDown(Sender)
 	else if aEventType = etTEAM then TEAM.GridMoveDown(Sender);
 end;
@@ -2095,7 +2095,7 @@ procedure TMain.Grid_MoveUpExecute(Sender: TObject);
 var
   aEventType: scmEventType;
 begin
-  aEventType := uEvent.GetEventType;
+  aEventType := uEvent.EventType;
   if aEventType = etINDV then INDV.GridMoveUp(Sender)
   else if aEventType = etTEAM then TEAM.GridMoveUp(Sender);
 end;
@@ -2152,7 +2152,7 @@ var
   aEventType: scmEventType;
   Msg: string;
 begin
-  aEventType := uEvent.GetEventType;
+  aEventType := uEvent.EventType;
   if aEventType = etUnknown then exit;
   rows := 0;
   if aEventType = etINDV then Msg := 'Remove nomination and empty the lane.?'
@@ -2197,7 +2197,7 @@ var
   dlg: TSwapLanes;
   aEventType: scmEventType;
 begin
-  aEventType := uEvent.GetEventType;
+  aEventType := uEvent.EventType;
   if aEventType = etINDV then
   begin
     dlg := TSwapLanes.Create(self);
@@ -2360,7 +2360,7 @@ var
 	s: string;
 begin
   // A U T O - B U I L D   R E L A Y   TE A M .
-  if uEvent.GetEventType = etTEAM then
+  if uEvent.EventType = etTEAM then
   begin
     Heat_AutoBuildRelayExecute(Sender);
     exit;
@@ -2416,7 +2416,7 @@ begin
 		// That is - call via  to CORE.dsDeat.DataSet ...  doesn't work!
 		// ***************************************************************
 		// Verbose OFF for BATCH Auto-Build Heats
-		success := AutoBuild.AutoBuildExecute(CORE.dsHeat.DataSet, EventID);
+		success := AutoBuild.AutoBuildExecute();
 		if (success) then
 		begin
 			Refresh_Heat;
@@ -2507,7 +2507,7 @@ begin
 				end;
 				// Is this a TEAM EVENT?
 				// 20231008 currently Auto-Build is not available for TEAMS
-				aEventType := uEvent.GetEventType();
+				aEventType := uEvent.EventType();
 				if (aEventType = etTEAM) then
 				begin
 					CORE.dsEvent.DataSet.Next;
@@ -2525,8 +2525,7 @@ begin
 				// CORE.dsHeat.DataSet must be sent to Auto-Build - else errors.
 				// ***************************************************************
 				// Verbose OFF for BATCH Auto-Build Heats
-				success := dmv2.AutoBuildExecute(CORE.dsHeat.DataSet,
-					CORE.dsEvent.DataSet.FieldByName('EventID').AsInteger, false);
+				success := dmv2.AutoBuildExecute(false);
 				if not success then Inc(errCount);
 
 				CORE.dsEvent.DataSet.Next; // LOOP
@@ -2640,7 +2639,7 @@ var
   success: Boolean;
 begin
   // actn.Update dictates if this routine is accessable.
-  aEventType := uEvent.GetEventType;
+  aEventType := uEvent.EventType;
   mr := mrNone;
 
   // The heat is CLOSED.
@@ -3320,7 +3319,7 @@ begin
   // messaged by TCORE.qryMemberQuickPickAfterScroll
   // messaged by TCORE.qryHeatAfterScroll
   if not AssertConnection then exit;
-  aEventType := uEvent.GetEventType;
+  aEventType := uEvent.EventType;
   if (aEventType = etINDV) and TEAM.Grid.Focused then
   begin
     // After moving row re-engage editing for selected fields.
@@ -3416,7 +3415,7 @@ var
 begin
   DoEnable := false;
 	if AssertConnection then // connected to database - tables are active.
-		if (uEvent.GetEventType() = etINDV) then // individual event.
+		if (uEvent.EventType() = etINDV) then // individual event.
 			if not CORE.dsLane.DataSet.IsEmpty then // we have lanes.
 				if not CORE.dsLane.DataSet.FieldByName('NomineeID').IsNull then // empty lane
 					DoEnable := true;
@@ -3718,7 +3717,7 @@ begin
 		begin
 			uHeat.RenumberLanes(false);
 			aHeatID := uHeat.PK; // curr heat
-			aEventType := uEvent.GetEventType;
+			aEventType := uEvent.EventType;
 
 			aLaneID := uLane.PK; // returns either NomineeID or TeamID.
       uLane.Locate(aLaneID);
@@ -4590,7 +4589,7 @@ begin
     end
     else
     begin
-      aEventType := uEvent.GetEventType;
+      aEventType := uEvent.EventType;
       if aEventType = etINDV then
       begin // INDIVIDUAL EVENT
         TEAM.Visible := false;
@@ -4677,7 +4676,7 @@ end;
 
 procedure TMain.Team_Scroll(var Msg: TMessage);
 begin
-	// Messaged by TCORE.qryTeamAfterScroll  - uEvent.GetEventType = etTEAM
+	// Messaged by TCORE.qryTeamAfterScroll  - uEvent.EventType = etTEAM
   if not AssertConnection then exit;
   if (PageControl1.ActivePageIndex = 2) then TEAM.TeamScroll;
 end;

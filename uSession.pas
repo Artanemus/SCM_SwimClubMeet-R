@@ -26,7 +26,7 @@ function IsEmptyOrLocked: Boolean;
 function IsLocked: Boolean;
 function Locate(SessionID: integer): Boolean;
 function PK(): integer; // NO CHECKS. RTNS: Primary key.
-function RenumberEvents(DoLocate: Boolean = true;  DoExclude: Boolean = true): integer;
+function RenumberEvents(DoLocate: Boolean = true): integer;
 function StartDT: TDateTime;
 procedure HideLocked(IsChecked: Boolean);
 procedure SetEntrantCount();
@@ -77,16 +77,31 @@ begin
         result := true;
 end;
 
-function RenumberEvents(DoLocate: Boolean = true;
-  DoExclude: Boolean = true): integer;
+function RenumberEvents(DoLocate: Boolean = true): integer;
 var
-  qry: TFDQuery;
-  i, aEventID: integer;
-  sl: TStringList;
-  ds: TDataSet;
+  aEvent: integer;
 begin
-  aEventID := 0;
-  Result := 0;
+  if not Assigned(SCM) or not SCM.IsActive then exit;
+  if CORE.dsHeat.DataSet.IsEmpty then exit;
+  result := 0;
+  CORE.qryLane.DisableControls;
+  CORE.qryHeat.DisableControls;
+  try
+    if DoLocate then
+      aEvent := uHeat.PK;
+    SCM.procRenumberEvents.Params[1].Value := uSession.PK;
+    SCM.procRenumberEvents.Prepare;
+    SCM.procRenumberEvents.ExecProc;
+  finally
+    CORE.qryHeat.ApplyMaster;
+    if DoLocate then
+      uHeat.Locate(aEvent);
+    CORE.qryHeat.EnableControls;
+    CORE.qryLane.EnableControls;
+  end;
+end;
+
+
   (*
   if CORE.dsEvent.DataSet.IsEmpty then exit;
 
@@ -130,7 +145,7 @@ begin
    if (DoLocate) then uEvent.Locate(aEventID);
    ds.EnableControls();
    *)
-end;
+
 
 function DeleteRecord(DoExclude: Boolean = true): boolean;
 var
@@ -185,15 +200,11 @@ begin
       SCM.scmConnection.ExecSQL(SQL, [uSession.PK]);
       // F I N A L L Y  Delete THE SESSION.
       CORE.qrySession.Delete;
-    end
-    else
-    begin
-      if doRenumber then // caller handles renumbering of events.
-        uSession.RenumberEvents(false, false);
     end;
 
   finally
-
+    if doRenumber then
+      uSession.RenumberEvents(false); // don't relocate
     // ASSERT MASTER-DETAIL STATE.
     CORE.qrySession.ApplyMaster;
     CORE.qryEvent.ApplyMaster;

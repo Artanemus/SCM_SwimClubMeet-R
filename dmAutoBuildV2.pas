@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.Client,
-  Data.DB, FireDAC.Comp.DataSet, SCMDefines, dmSCM;
+  Data.DB, FireDAC.Comp.DataSet, SCMDefines, dmSCM, dmCORE;
 
 type
 
@@ -89,8 +89,7 @@ type
     // IMPORTANT NOTE:
     // if TMain's instance of Heat DataSet isn't sent to Auto-Build
     // ... unable to delete Heat record. (locked)  !!!!!!!!!!!!
-    function AutoBuildExecute(DatasetHeat: TDataSet; EventID: integer;
-      Verbose: boolean = true): boolean;
+    function AutoBuildExecute(Verbose: boolean = true): boolean;
     // Auto build FINALS ... ENTRY POINT (also SEMI and QUARTER finals)
     function AutoBuildExecuteExt(SourceEventID: integer;
       TypeOfFinals: scmEventFinalsType = ftFinals): boolean;
@@ -104,7 +103,8 @@ implementation
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
 uses SCMUtility, System.Math, vcl.Dialogs, System.Variants, dmSCMNom, IniFiles,
-  vcl.StdCtrls, System.UITypes, dmSCMHelper;
+  vcl.StdCtrls, System.UITypes, dmSCMHelper,
+  uSwimClub, uSession, uEvent, uHeat;
 
 {$R *.dfm}
 
@@ -198,7 +198,7 @@ begin
     if Assigned(Param) then
     begin
       if (GroupBy = 1) then // Group by AGE
-        Param.AsDateTime := SCM.Session_Start
+        Param.AsDateTime := uSession.StartDT
       else
         Param.Clear; // SESSIONSTART = <null>;
     end;
@@ -392,7 +392,7 @@ begin
   entrantsAssigned := 0;
   // The total number of pool lanes must be passed to scatter
   // (ignore: preExcludeOutsideLanes)
-  NumOfPoolLanes := SCM.SwimClub_NumberOfLanes;
+  NumOfPoolLanes := uSwimClub.NumberOfLanes;
   for i := 0 to numOfNomineesInHeat - 1 do
   begin
     if DataSet.Eof then
@@ -444,7 +444,7 @@ begin
   if (prefImportSeedTime > 0) then
     DataSet.ParamByName('SESSIONSTART').AsDateTime := Now
   else
-    DataSet.ParamByName('SESSIONSTART').AsDateTime := SCM.Session_Start;
+    DataSet.ParamByName('SESSIONSTART').AsDateTime := uSession.StartDT;
 
   DataSet.ParamByName('ALGORITHM').AsInteger := prefHeatAlgorithm;
   DataSet.ParamByName('CALCDEFAULT').AsInteger := integer(prefUseDefRaceTime);
@@ -494,8 +494,7 @@ begin
   result := i;
 end;
 
-function TAutoBuildV2.AutoBuildExecute(DatasetHeat: TDataSet; EventID: integer;
-  Verbose: boolean): boolean;
+function TAutoBuildV2.AutoBuildExecute(Verbose: boolean): boolean;
 // ***********************************************************************
 // A U T O B U I L D . . .  ENTRY POINT
 // SPECIAL NOTES:
@@ -506,9 +505,6 @@ function TAutoBuildV2.AutoBuildExecute(DatasetHeat: TDataSet; EventID: integer;
 // ***********************************************************************
 // IMPORTANT NOTE:
 // TMain's instance of the Heat DataSet must be sent to AutoBuildExecute(...)
-// Normally a call SCM.dsHeat.DataSet.Delete would be use but this
-// doesn't work!... (tbl is locked?)
-//
 //
 // EventID - CURRENT EVENT  in SCM.dsEvent.DataSet
 // dataHeat - ptr to SCM.dsHeat.DataSet
@@ -531,7 +527,7 @@ begin
     exit;
   end;
 
-  if (EventID = 0) then
+  if (uEvent.PK = 0) then
   begin
     if (Verbose) then
       MessageDlg('The event ID was invalid.' + sLineBreak +
@@ -592,12 +588,12 @@ begin
   result := true;
   // *******************************************************
 
-  // CLEAN UP HEATS - make readyfor auto build
-  if not DatasetHeat.IsEmpty then
+  // CLEAN UP HEATS - make readyfor auto build.
+  {TODO -oBSA -cUrgent : DatasetHeat should read CORE.qryevent.IsEmpty, etc}
+  if not CORE.qryEvent.IsEmpty then
   begin
-    // EXCLUDE RACED OR CLOSED HEATS
-    SCM.Heat_DeleteAll(EventID, true); // also renumbers heats.
-    // RenumberHeats(EventID);
+    uEvent.DeleteHeats;
+    uEvent.RenumberHeats(false); // renumber any remaining heats.
   end;
 
   {
@@ -607,7 +603,7 @@ begin
   }
 
   qryUnplaced.Close;
-  qryUnplaced.Params.ParamByName('EVENTID').AsInteger := EventID;
+  qryUnplaced.Params.ParamByName('EVENTID').AsInteger := uEvent.PK;
   qryUnplaced.Prepare;
   qryUnplaced.Open;
   if (qryUnplaced.Active) then
@@ -650,7 +646,7 @@ begin
 
   // ***************************************************
   // GOTO SECTION A. - HEAT ASSIGNMENT
-  numberOfHeats := AssignHeats(EventID, numOfSwimmingLanes, prefGroupBy,
+  numberOfHeats := AssignHeats(uEvent.PK, numOfSwimmingLanes, prefGroupBy,
     Unplaced, prefSeperateGender);
 
   // no heats were constructed!
@@ -713,7 +709,7 @@ begin
       end;
   end;
 
-  SCM.dsEvent.DataSet.DisableControls();
+  CORE.qryEvent.DisableControls();
 
   qrySourceEvent.Close;
   qrySourceEvent.ParamByName('EVENTID').AsInteger := SourceEventID;
@@ -770,8 +766,7 @@ begin
         qryNomineesExt.Close;
         qryNomineesExt.ParamByName('SRCEVENTID').AsInteger := SourceEventID;
         qryNomineesExt.ParamByName('DESTEVENTID').AsInteger := destEventID;
-        qryNomineesExt.ParamByName('SESSIONSTART').AsDateTime :=
-          SCM.Session_Start;
+        qryNomineesExt.ParamByName('SESSIONSTART').AsDateTime := uSession.StartDT;
         qryNomineesExt.ParamByName('GENDERID').AsInteger :=
           SCM.luGender.DataSet.FieldByName('GenderID').AsInteger;
         qryNomineesExt.Prepare;
@@ -798,8 +793,7 @@ begin
       // Nominees for the destination event have been fully populated
       qryNomineesExt.ParamByName('DESTEVENTID').AsInteger := destEventID;
       // for PersonalBest PB
-      qryNomineesExt.ParamByName('SESSIONSTART').AsDateTime :=
-        SCM.Session_Start;
+      qryNomineesExt.ParamByName('SESSIONSTART').AsDateTime := uSession.StartDT;
       // display all genders ....
       qryNomineesExt.ParamByName('GENDERID').AsInteger := 0;
       qryNomineesExt.Prepare;
@@ -815,7 +809,7 @@ begin
   SetLength(NomineesInHeat, 0);
   SetLength(HeatIDs, 0);
 
-  SCM.dsEvent.DataSet.EnableControls;
+  CORE.qryEvent.EnableControls;
   result := true;
 
 end;
@@ -837,7 +831,7 @@ begin
   // ********************************
   // The total number of pool lanes must be passed to scatter
   // (the routine ignores preExcludeOutsideLanes)
-  NumOfPoolLanes := SCM.SwimClub_NumberOfLanes;
+  NumOfPoolLanes := uSwimClub.NumberOfLanes;
   // seedDepth is BASE 1 - brackets needed!
   lowBounds := (High(HeatIDs) - (seedDepth - 1)); // must have brackets!
   if (lowBounds < Low(HeatIDs)) then
@@ -902,7 +896,7 @@ begin
   SearchOptions := [];
 
   // GET a lane count for ALL pool lanes. (ignore prefExcludeOutsideLanes)
-  NumberOfLanes := SCM.SwimClub_NumberOfLanes;
+  NumberOfLanes := uSwimClub.NumberOfLanes;
   // find the next heat number **tblEvent.tbl_ABHeat.MAX(HeatNum)+1**
   // if no heats in event or error ... returns 0
   NextHeatNum := GetHeatMaxSeedNumber(EventID) + 1;
@@ -967,7 +961,7 @@ begin
     SourceEvent.FieldByName('DistanceID').AsInteger;;
   qryInsertEvent.ParamByName('STROKEID').AsInteger :=
     SourceEvent.FieldByName('StrokeID').AsInteger;;
-  qryInsertEvent.ParamByName('SESSIONID').AsInteger := SCM.Session_ID();
+  qryInsertEvent.ParamByName('SESSIONID').AsInteger := uSession.PK();
   qryInsertEvent.Prepare();
   qryInsertEvent.Execute();
   { TODO -oBSA -cGeneral : Check new Scalar function. }
@@ -1046,7 +1040,7 @@ begin
   result := 0;
   if AssertConnection then
   begin
-    NumOfPoolLanes := SCM.SwimClub_NumberOfLanes;
+    NumOfPoolLanes := uSwimClub.NumberOfLanes;
     result := NumOfPoolLanes;
     if (DoExcludeOutsideLanes) then
       result := result - 2;

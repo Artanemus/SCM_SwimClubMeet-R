@@ -1259,4 +1259,61 @@ object SCM: TSCM
     Left = 76
     Top = 236
   end
+  object procRenumberHeats: TFDStoredProc
+    Connection = scmConnection
+    StoredProcName = 'SwimClubMeet2.dbo.RenumberHeats'
+    Left = 80
+    Top = 488
+    ParamData = <
+      item
+        Position = 1
+        Name = '@RETURN_VALUE'
+        DataType = ftInteger
+        ParamType = ptResult
+      end
+      item
+        Position = 2
+        Name = '@EventID'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
+  end
+  object procRenumberEvents: TFDStoredProc
+    Connection = scmConnection
+    StoredProcName = 'SwimClubMeet2.dbo.RenumberEvents'
+    Left = 80
+    Top = 424
+    ParamData = <
+      item
+        Position = 1
+        Name = '@RETURN_VALUE'
+        DataType = ftInteger
+        ParamType = ptResult
+      end
+      item
+        Position = 2
+        Name = '@SessionID'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
+  end
+  object procRenumberLanes: TFDStoredProc
+    Connection = scmConnection
+    StoredProcName = 'SwimClubMeet2.dbo.RenumberLanes'
+    Left = 80
+    Top = 552
+    ParamData = <
+      item
+        Position = 1
+        Name = '@RETURN_VALUE'
+        DataType = ftInteger
+        ParamType = ptResult
+      end
+      item
+        Position = 2
+        Name = '@HeatID'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
+  end
 end

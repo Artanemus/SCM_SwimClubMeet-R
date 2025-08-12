@@ -10,20 +10,14 @@ uses
   vcl.Dialogs, Data.DB,
 	dmCORE, dmSCM, SCMdefines;
 
-
-
-
 function DeleteRecord(DoExclude: Boolean = true): boolean;
-function RenumberHeats(DoLocate: Boolean = true; DoExclude: Boolean = true):
-    integer;
-
-
+function DeleteHeats(DoExclude: Boolean = true): boolean;
+function RenumberHeats(DoLocate: Boolean = true): integer;
 function Assert(): boolean;
 function AllHeatsAreClosed: Boolean;
-procedure FNameEllipse(); // move out of uEvent to frame.
+function EventType: SCMDefines.scmEventType; overload;
 function GetEntrantCount(): integer; overload; // swimmers entered into lanes.
 function GetEventID: integer; // SAFE.
-function GetEventType(): SCMDefines.scmEventType; overload; // = luEventTypeID.
 function GetHeatCount: integer;
 function GetNomineeCount(): integer; overload; // members wanting to enter event.
 function HasClosedHeats: Boolean;
@@ -35,6 +29,9 @@ function Locate(aEventID: integer): Boolean; overload;
 function Locate(aDistanceID, aStrokeID: integer): Boolean; overload;
 function PK(): integer; // NO CHECKS. RTNS: Primary key.
 function SetEventStatusID(aEventStatusID: integer): Boolean;
+
+procedure FNameEllipse(); // todo: move out of uEvent to frame.
+
 
 type
   T_Event = class
@@ -81,59 +78,162 @@ begin
         result := true;
 end;
 
-function RenumberHeats(DoLocate: Boolean = true; DoExclude: Boolean = true):
-    integer;
-// RENUMBER HEAT NUMBER HeatNum
-// ..................................................
+function RenumberHeats(DoLocate: Boolean = true):     integer;
 var
-  qry: TFDQuery;
-  i, aHeatID: integer;
-  s: String;
+  aHeatID: integer;
 begin
-(*
-  result := 0;
-  if not SCM.IsActive then exit;
+  if not Assigned(SCM) or not SCM.IsActive then exit;
   if CORE.dsHeat.DataSet.IsEmpty then exit;
   result := 0;
-  aHeatID := 0;
-  CORE.dsHeat.DataSet.DisableControls;
-  // used later to cue-to-heat after renumber
-  if (DoLocate) then aHeatID := CORE.dsHeat.DataSet.FieldByName('HeatID').AsInteger;
-  // gather all the heats in the current event
-  s := 'SELECT [HeatID], [HeatNum] FROM [dbo].[Heat] ';
-  s := s + 'WHERE EventID = :EVENTID ORDER BY [HeatNum]';
-  qry := TFDQuery.Create(self);
-  qry.Connection := scmConnection;
-  qry.SQL.Text := s;
-  qry.UpdateOptions.KeyFields := 'HeatID';
-  qry.UpdateOptions.UpdateTableName := 'SwimClubMeet2..Heat';
-  qry.ParamByName('EVENTID').AsInteger := aEventID;
-  qry.IndexFieldNames := 'HeatNum';
-  qry.Prepare;
-  qry.Open;
-  if qry.Active then
-  begin
-    i := 1;
-    // Clean up list after each new record - renumber event number
-    while not qry.Eof do
-    begin
-      qry.Edit;
-      qry.FieldByName('HeatNum').AsInteger := i;
-      qry.Post;
-      i := i + 1;
-      qry.Next;
-    end;
-    if (i > 1) then result := i - 1;
+  CORE.qryLane.DisableControls;
+  CORE.qryHeat.DisableControls;
+  try
+    if DoLocate then
+      aHeatID := uHeat.PK;
+    SCM.procRenumberHeats.Params[1].Value := uEvent.PK;
+    SCM.procRenumberHeats.Prepare;
+    SCM.procRenumberHeats.ExecProc;
+  finally
+    CORE.qryHeat.ApplyMaster;
+    if DoLocate then
+      uHeat.Locate(aHeatID);
+    CORE.qryHeat.EnableControls;
+    CORE.qryLane.EnableControls;
   end;
-  qry.Close;
-  qry.Free;
-  // RE-QUERY :: RELOAD DATA.
-  CORE.dsHeat.DataSet.Refresh;
-  // Queue to original selected entrant ...
-  if (DoLocate) then Heat_Locate(aHeatID);
-	CORE.dsHeat.DataSet.EnableControls;
+end;
+
+
+(*
+  // R E N U M B E R  - - -  H  E  A  T  S  .
+
+  result := 0;
+  if CORE.dsHeat.DataSet.IsEmpty then exit;
+  CORE.qryLane.DisableControls;
+  CORE.qryHeat.DisableControls;
+  try
+    if DoLocate then
+      aHeatID := uHeat.PK;
+    CORE.qryHeat.ApplyMaster;
+    fld := CORE.qryHeat.Fields.FieldByName('HeatNum');
+    readstate := fld.ReadOnly;
+    fld.ReadOnly := false;
+
+    CORE.qryHeat.Indexes.IndexByName('indxRenumberHeats').Active := true;
+    i := 1;
+    try
+      while not CORE.qryHeat.eof do
+      begin
+        CORE.qryHeat.edit;
+        CORE.qryHeat.FieldByName('HeatNum').AsInteger := i;
+        CORE.qryHeat.post;
+        Inc(i);
+        CORE.qryHeat.next;
+      end;
+    finally
+      fld.ReadOnly := readstate;
+      if (i > 1) then result := i - 1;
+    end;
+  finally
+    CORE.qryHeat.Indexes.IndexByName('mcEvent_DESC').Active := true;
+    CORE.qryHeat.ApplyMaster;
+    if DoLocate then
+      uHeat.Locate(aHeatID);
+    CORE.qryHeat.EnableControls;
+    CORE.qryLane.EnableControls;
+  end;
+
+  *)
+
+  // Using TFDQuery and avoiding using indexes
+
+ (*
+  if not Assigned(SCM) or not SCM.IsActive then exit;
+  if CORE.dsHeat.DataSet.IsEmpty then exit;
+  result := 0;
+  CORE.qryLane.DisableControls;
+  CORE.qryHeat.DisableControls;
+  try
+    if DoLocate then
+      aHeatID := uHeat.PK;
+    CORE.qryHeat.ApplyMaster;
+    fld := CORE.qryHeat.Fields.FieldByName('HeatNum');
+    readstate := fld.ReadOnly;
+    fld.ReadOnly := false;
+    SQL := '''
+      SELECT Heat.HeatID, Heat.HeatNum
+      FROM SwimClubMeeet2.dbo.Heat
+      WHERE Heat.EventID = :ID
+      ORDER BY (CASE WHEN HeatNum IS NULL THEN 1 ELSE 0 END), HeatNum ASC;
+      ''';
+    qry := TFDQuery.Create(dmCore.CORE);
+    qry.Connection := SCM.scmConnection;
+    qry.SQL.Text := SQL;
+    qry.UpdateOptions.KeyFields := 'HeatID';
+    qry.UpdateOptions.UpdateTableName := 'SwimClubMeet2..Heat';
+    qry.ParamByName(':ID').AsInteger := uEvent.PK;
+    qry.IndexFieldNames := 'EventID;HeatID;HeatNum';
+    qry.Prepare;
+    qry.Open;
+
+    if qry.Active then
+    begin
+      i := 1;
+      try
+        while not qry.Eof do
+        begin
+          qry.Edit;
+          qry.FieldByName('HeatNum').AsInteger := i;
+          qry.Post;
+          Inc(i);
+          qry.Next;
+        end;
+      finally
+        fld.ReadOnly := readstate;
+        if (i > 1) then result := i - 1;
+
+      end;
+    end;
+    qry.Close;
+    qry.Free;
+
+  finally
+    CORE.qryHeat.ApplyMaster;
+    if DoLocate then
+      uHeat.Locate(aHeatID);
+    CORE.qryHeat.EnableControls;
+    CORE.qryLane.EnableControls;
+  end;
 *)
-  result := 1;
+
+
+function DeleteHeats(DoExclude: Boolean = true): boolean;
+var
+  SQL: string;
+  done: boolean;
+begin
+  result := false;
+  // Not permitted to delete anything if session is locked.
+  if uSession.IsLocked() then exit;
+  CORE.qryHeat.DisableControls;
+  try
+    CORE.qryHeat.ApplyMaster; // ASSERT MASTER-DETAILED.
+    CORE.qryHeat.First;
+    while not eof do
+    begin
+      // Deletes watch-times and split-times and finally the lane.
+      done := uHeat.DeleteRecord(true); // retain raced or closed heats.
+      if done then
+      begin
+        result := true;
+        continue;
+      end
+      else
+        CORE.qryHeat.Next;
+    end;
+  finally
+    // if required, renumbering of heats is handled by caller.
+    CORE.qryHeat.EnableControls;
+  end;
 end;
 
 function DeleteRecord(DoExclude: Boolean = true): boolean;
@@ -149,21 +249,7 @@ begin
   CORE.qryHeat.DisableControls;
   try
     // D E L E T E   H E A T S
-    CORE.qryHeat.ApplyMaster;  // ASSERT MASTER-DETAILED.
-    CORE.qryHeat.First;
-    while not eof do
-    begin
-      // Delete current heat and dependants.
-      done := uHeat.DeleteRecord(true);
-      if done then
-      begin
-        doRenumber := true;
-        continue;
-      end
-        else CORE.qryHeat.Next;
-    end;
-
-    // ASSERT that all heats have been removed within Master-Detail relationship.
+    doRenumber := uEvent.DeleteHeats(true); // exclude raced or closed heats
     // Can't delete remaining dependants if heats are retained.
     if (CORE.qryHeat.IsEmpty) then
     begin
@@ -185,15 +271,12 @@ begin
       // F I N A L L Y   DELETE THE EVENT..
       CORE.qryEvent.Delete;
       result := true;
-    end
-    else
-    begin
-      if doRenumber then // caller handles renumbering of heats.
-        uEvent.RenumberHeats(false, false);
     end;
 
   finally
-    // if required, renumbering of events is handled by caller.
+    if doRenumber then
+      uEvent.RenumberHeats(false); // don't relocate
+    // Renumbering of EVENTS is handled by caller.
     CORE.qryHeat.EnableControls;
   end;
 end;
@@ -246,22 +329,6 @@ begin
   if not VarIsClear(v) then result := v;
 end;
 
-(*
-  function GetEntrantCount(aEventID: integer): integer;
-  var
-    SQL: string;
-    v: variant;
-  begin
-    result := 0;
-    if aEventID = 0 then exit;
-    // scalar function to count Swimmers (inc. Entrants + TeamEntrants)
-    SQL := 'SELECT dbo.EntrantCount(:ID1) ' +
-    'FROM SwimClubMeet2.dbo.Event WHERE Event.EventID = :ID2';
-    v := SCM.scmConnection.ExecSQLScalar(SQL, [aEventID, aEventID]);
-    if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
-  end;
-*)
-
 function GetEventID: integer;
 begin
   result := 0;
@@ -269,7 +336,7 @@ begin
     result := CORE.qryLane.FieldByName('EventID').AsInteger;
 end;
 
-function GetEventType(): SCMDefines.scmEventType;
+function EventType: SCMDefines.scmEventType;
 var
   v: variant;
 begin
@@ -282,33 +349,6 @@ begin
     2: result := SCMDefines.scmEventType.etTEAM;
   end;
 end;
-
-(*
-  function GetEventType(aEventID: integer): SCMDefines.scmEventType;
-  var
-    v: variant;
-    SQL: string;
-  begin
-    result := SCMDefines.etUnknown;
-    if SCM.IsActive and CORE.qryEvent.Active then
-    begin
-      if not CORE.qryEvent.IsEmpty then
-      begin
-        SQL := '''
-  				SELECT [Distance].[EventTypeID] FROM [SwimClubMeet2].[dbo].[Event]
-  				INNER JOIN [Distance] ON [Event].[DistanceID] = [Distance].[DistanceID]
-  				WHERE EventID = :GetEventID;
-  				''';
-        v := SCM.scmConnection.ExecSQLScalar(SQL, [aEventID]);
-        if VarIsNull(v) or VarIsEmpty(v) or (v = 0) then exit;
-      end;
-      case v of
-        1: result := SCMDefines.etINDV;
-        2: result := SCMDefines.etTEAM;
-      end;
-    end;
-  end;
-*)
 
 function GetHeatCount: integer;
 var
@@ -337,23 +377,6 @@ begin
   v := SCM.scmConnection.ExecSQLScalar(SQL, [EventID]);
   if not VarIsClear(v) then result := v;
 end;
-
-(*
-  function GetNomineeCount(aEventID: integer): integer;
-  var
-    SQL: string;
-    v: variant;
-  begin
-    result := 0;
-    if not SCM.IsActive then exit;
-    if aEventID = 0 then exit;
-    // scalar function to count Nominees
-    SQL := 'SELECT dbo.NomineeCount(:ID1) FROM SwimClubMeet2.dbo.[Event] ' +
-    'WHERE Event.EventID = :ID2';
-    v := SCM.scmConnection.ExecSQLScalar(SQL, [aEventID, aEventID]);
-    if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
-  end;
-*)
 
 function HasClosedHeats: Boolean;
 var
