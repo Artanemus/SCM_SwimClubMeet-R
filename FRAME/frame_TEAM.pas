@@ -315,7 +315,7 @@ begin
         MyRect.Left := Rect.Left + Round((Rect.Width - Size.Width) / 2)
       // right align
     else if (Column.Field.FieldName = 'RaceTime') or
-      (Column.Field.FieldName = 'TimeToBeat') or
+      (Column.Field.FieldName = 'TTB') or
       (Column.Field.FieldName = 'PersonalBest') then
         MyRect.Left := Rect.Left + (Rect.Width - Size.Width - 3)
     else
@@ -472,7 +472,7 @@ begin
     MyRect.Top := Rect.Top + YMargin;
     // Right align
     if (Column.Field.FieldName = 'RaceTime') or
-      (Column.Field.FieldName = 'TimeToBeat') or
+      (Column.Field.FieldName = 'TTB') or
       (Column.Field.FieldName = 'PersonalBest') then
         MyRect.Left := Rect.Left + (Rect.Width - Size.Width - 3)
     else
@@ -841,7 +841,7 @@ var
 begin
   // add the TTB of the TeamEntrants
   result := 0;
-  SQL := 'SELECT SUM(dbo.SwimTimeToMilliseconds(TimeToBeat)) ' +
+  SQL := 'SELECT SUM(dbo.SwimTimeToMilliseconds(TTB)) ' +
     'FROM SwimClubMeet2.dbo.TeamEntrant WHERE TeamEntrant.TeamID = :ID';
   v := SCM.scmConnection.ExecSQLScalar(SQL, [aTeamID]);
   if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
@@ -918,14 +918,14 @@ begin
   SCM.Team_Locate(aTeamID);
   with SCM.dsTeam.DataSet do
   begin
-    fld := fields.FindField('TimeToBeat');
+    fld := fields.FindField('TTB');
     if Assigned(fld) and (fld.readonly = true) then fld.readonly := false;
     Edit;
-    if milliseconds = 0 then FieldByName('TimeToBeat').Clear
+    if milliseconds = 0 then FieldByName('TTB').Clear
     else
     begin
       dt := milliseconds / (24 * 60 * 60 * 1000);
-      FieldByName('TimeToBeat').AsDateTime := dt;
+      FieldByName('TTB').AsDateTime := dt;
     end;
     Post;
     if Assigned(fld) then fld.readonly := false;

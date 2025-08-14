@@ -354,11 +354,11 @@ begin
       (*
         NOTE:
         The dataset is either qryNominees or qryNomineesExt.
-        The default is to send the TimeToBeat to field 'TTB'.
+        The default is to send the TTB to field 'TTB'.
         When a finals, semi and quarter is seeded then the TFDQuery dataset
         re-directs the RACETIME time value to 'TTB' ...
       *)
-      tbl_ABEntrant.FieldByName('TimeToBeat').AsDateTime :=
+      tbl_ABEntrant.FieldByName('TTB').AsDateTime :=
         DataSet.FieldByName('TTB').AsDateTime;
       tbl_ABEntrant.FieldByName('PersonalBest').AsDateTime :=
         DataSet.FieldByName('PB').AsDateTime;
@@ -426,7 +426,7 @@ begin
   {
     BASED ON THE GIVEN EVENTID ...
     Prepare a list of swimmer who have nominated for the
-    event - they will be sorted by TimeToBeat
+    event - they will be sorted by TTB
     (this excluding nominees in closed or raced heats)
     Default assignment - age, GenderID, SwimmerCategoryID , DivisionID = 0
     The MSSQL is written - such that CASE statements...

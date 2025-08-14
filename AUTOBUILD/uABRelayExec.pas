@@ -870,7 +870,7 @@ begin
         qry2.Close;
         s := '''
         INSERT INTO dbo.TeamEntrant
-        (MemberID, Lane, TeamID, PersonalBest, TimeToBeat, StrokeID, IsDisqualified, IsScratched)
+        (MemberID, Lane, TeamID, PersonalBest, TTB, StrokeID, IsDisqualified, IsScratched)
         VALUES
         (:MEMBERID, :LANE, :TEAMID, :PB, :TTB, :STROKEID, :ISDISQUALIFIED, :ISSCRATCHED);
         ''';
@@ -902,7 +902,7 @@ begin
       // Had to make a new var 's2' else ExecSQL uses cached 's'  ...!
       s2 := '''
       UPDATE dbo.Team
-      SET TimeToBeat = :ATEAMTTB
+      SET TTB = :ATEAMTTB
       WHERE TeamID = :ATEAMID
       ''';
       // Explicently assign ATyes.
@@ -1046,7 +1046,7 @@ var
 begin
   {
   Retrieve Swimmer Data: Fetch swimmers’ data from the Nominee table,
-  focusing on their MemberID TTB (TimeToBeat) and PB (Personal Best) times.
+  focusing on their MemberID TTB (TTB) and PB (Personal Best) times.
   }
   result := false;
   with ABRelayData.qryRNominee do

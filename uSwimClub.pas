@@ -10,10 +10,10 @@ uses
 
 function Assert(): boolean;
 function ClubName(): string;
-function GetSwimClubID: integer; // asserts table state.
+function GetSwimClubID: integer; // Assert made here.
 function IsShortCourse(): Boolean;
 function Locate(SwimClubID: integer): boolean;
-function PK(): integer; // NO CHECKS. RTNS: Primary key.
+function PK(): integer; // RTNS: Primary key.
 function NickName: string;
 function NumberOfLanes(): integer;
 function SessionCount(SDate, EDate: TDateTime): integer;
@@ -66,9 +66,7 @@ end;
 
 function ClubName: string;
 begin
-  result := '';
-  if uSwimClub.Assert then
-    result := CORE.dsSwimClub.DataSet.FieldByName('Caption').AsString;
+  result := CORE.dsSwimClub.DataSet.FieldByName('Caption').AsString;
 end;
 
 function GetSwimClubID: integer;
@@ -83,11 +81,8 @@ var
   i: integer;
 begin
   result := true;
-  if uSwimClub.Assert then
-  begin
-    i := CORE.dsSwimClub.DataSet.FieldByName('LenOfPool').AsInteger;
-    if (i >= 50) then result := false;
-  end;
+  i := CORE.dsSwimClub.DataSet.FieldByName('LenOfPool').AsInteger;
+  if (i >= 50) then result := false;
 end;
 
 function Locate(SwimClubID: integer): boolean;
@@ -95,12 +90,8 @@ var
   SearchOptions: TLocateOptions;
 begin
   result := false;
-  if uSwimClub.Assert then
-  begin
-    SearchOptions := [];
-    result := CORE.qrySwimClub.Locate('SwimClubID', SwimClubID,
-      SearchOptions);
-  end;
+  SearchOptions := [];
+  result := CORE.qrySwimClub.Locate('SwimClubID', SwimClubID,  SearchOptions);
 end;
 
 function PK(): integer;
@@ -110,22 +101,14 @@ end;
 
 function NickName: string;
 begin
-  result := '';
-  if uSwimClub.Assert then
-    result := CORE.dsSwimClub.DataSet.FieldByName('NickName').AsString;
+  result := CORE.dsSwimClub.DataSet.FieldByName('NickName').AsString;
 end;
 
 function NumberOfLanes: integer;
 var
   i: integer;
-begin
-  // how many lanes in the swim club's pool?
-  result := 0;
-  if uSwimClub.Assert then
-  begin
-    i := CORE.dsSwimClub.DataSet.FieldByName('NumOfLanes').AsInteger;
-    if (i > 0) then result := i;
-  end;
+begin // how many lanes in the swim club's pool?
+  result := CORE.dsSwimClub.DataSet.FieldByName('NumOfLanes').AsInteger;
 end;
 
 function SessionCount(SDate, EDate: TDateTime): integer;
@@ -134,7 +117,7 @@ var
   v: variant;
 begin
   result := 0;
-  if uSwimClub.Assert then
+  if Assigned(SCM) and SCM.IsActive then
   begin
     SQL := '''
     SELECT Count(SessionID)
@@ -148,10 +131,7 @@ end;
 
 function StartOfSwimSeason: TDateTime;
 begin
-  result := 0;
-  if uSwimClub.Assert then
-    result :=
-      CORE.dsSwimClub.DataSet.FieldByName('StartOfSwimSeason').AsDateTime;
+  result := CORE.dsSwimClub.DataSet.FieldByName('StartOfSwimSeason').AsDateTime;
 end;
 
 end.

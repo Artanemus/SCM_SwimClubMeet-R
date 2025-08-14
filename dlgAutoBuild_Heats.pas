@@ -53,7 +53,7 @@ uses SCMUtility, IniFiles;
  Only members nominated for the current event are considered. Nominees held
  in 'closed' or 'raced' heats are excluded from the 'Entrant Pool'.
 
- Entrants are given lane placements based on 'TimeToBeat'. This algorithm is
+ Entrants are given lane placements based on 'TTB'. This algorithm is
  calculated each time an auto-build is executed.
 
  The fastest heat is always the last heat. Fastest lanes are the two center

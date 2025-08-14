@@ -10,28 +10,28 @@ uses
   vcl.Dialogs, Data.DB,
 	dmCORE, dmSCM, SCMdefines;
 
-function DeleteRecord(DoExclude: Boolean = true): boolean;
-function DeleteHeats(DoExclude: Boolean = true): boolean;
-function RenumberHeats(DoLocate: Boolean = true): integer;
-function Assert(): boolean;
 function AllHeatsAreClosed: Boolean;
-function EventType: SCMDefines.scmEventType; overload;
-function GetEntrantCount(): integer; overload; // swimmers entered into lanes.
-function GetEventID: integer; // SAFE.
-function GetHeatCount: integer;
-function GetNomineeCount(): integer; overload; // members wanting to enter event.
+function Assert(): boolean;
+function CountEntrants: integer;
+function CountHeats: integer;
+function CountNominees: integer;
+function DeleteEvent(DoExclude: Boolean = true): boolean;
+function DeleteHeats(DoExclude: Boolean = true): boolean;
+function EventType: SCMDefines.scmEventType;
+function GetEventID: integer; // Assert - SAFE.
 function HasClosedHeats: Boolean;
 function HasClosedOrRacedHeats: Boolean;
 function HasNominee(MemberID: integer): Boolean;
 function HasNominees: Boolean;
 function HasRacedHeats: Boolean;
-function Locate(aEventID: integer): Boolean; overload;
+function LastEventNum: integer;
 function Locate(aDistanceID, aStrokeID: integer): Boolean; overload;
+function Locate(aEventID: integer): Boolean; overload;
 function PK(): integer; // NO CHECKS. RTNS: Primary key.
+function RenumberHeats(DoLocate: Boolean = true): integer;
 function SetEventStatusID(aEventStatusID: integer): Boolean;
-
 procedure FNameEllipse(); // todo: move out of uEvent to frame.
-
+procedure NewEvent();
 
 type
   T_Event = class
@@ -221,7 +221,7 @@ begin
     while not eof do
     begin
       // Deletes watch-times and split-times and finally the lane.
-      done := uHeat.DeleteRecord(true); // retain raced or closed heats.
+      done := uHeat.DeleteEvent(true); // retain raced or closed heats.
       if done then
       begin
         result := true;
@@ -236,7 +236,7 @@ begin
   end;
 end;
 
-function DeleteRecord(DoExclude: Boolean = true): boolean;
+function DeleteEvent(DoExclude: Boolean = true): boolean;
 var
   SQL: string;
   done, doRenumber: boolean;
@@ -261,7 +261,7 @@ begin
       CORE.qryNominee.DisableControls;
       CORE.qryNominee.ApplyMaster; // ASSERT MASTER-DETAILED.
       try
-        // Only DeleteRecord nominations if no heats exist.
+        // Only DeleteEvent nominations if no heats exist.
         SQL := 'Delete FROM SwimClubMeet2.dbo.Nominee WHERE Nominee.EventID = :ID';
         SCM.scmConnection.ExecSQL(SQL, [uEvent.PK]);
         CORE.qryNominee.ApplyMaster;  // ASSERT MASTER-DETAILED.
@@ -288,7 +288,7 @@ var
   v: variant;
 begin
   result := false;
-  if uEvent.GetHeatCount() = 0 then exit; // NO HEATS.
+  if uEvent.CountHeats() = 0 then exit; // NO HEATS.
   SQL := 'SELECT COUNT(HeatStatusID) FROM SwimClubMeet2.dbo.Heat ' +
   'WHERE (EventID = :GetEventID ) AND (HeatStatusID < 3)';
   v := SCM.scmConnection.ExecSQLScalar(SQL, [uEvent.PK]);
@@ -314,7 +314,7 @@ begin
   if (ds.Active) then ds.Refresh();
 end;
 
-function GetEntrantCount: integer;
+function CountEntrants: integer;
 var
   v: variant;
   SQL: string;
@@ -324,7 +324,7 @@ begin
   if CORE.qryEvent.IsEmpty then exit;
   EventID := CORE.qryEvent.FieldByName('EventID').AsInteger;
   if EventID = 0 then exit;
-  SQL := 'SELECT SwimClubMeet2.dbo.EntrantCount(:GetEventID);';
+  SQL := 'SELECT SwimClubMeet2.dbo.EntrantCount(:ID);';
   v := SCM.scmConnection.ExecSQLScalar(SQL, [EventID]);
   if not VarIsClear(v) then result := v;
 end;
@@ -350,7 +350,7 @@ begin
   end;
 end;
 
-function GetHeatCount: integer;
+function CountHeats: integer;
 var
   SQL: string;
   v: variant;
@@ -363,7 +363,7 @@ begin
   if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
 end;
 
-function GetNomineeCount: integer;
+function CountNominees: integer;
 var
   v: variant;
   SQL: string;
@@ -411,7 +411,6 @@ var
   v: variant;
 begin
   result := false;
-
   SQL := '''
 		SELECT COUNT(Nominee.NomineeID) FROM SwimClubMeet2.dbo.Nominee
 		WHERE [MemberID] = :ID1 AND [EventID] = :ID2
@@ -447,6 +446,19 @@ begin
   if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := true;
 end;
 
+function LastEventNum: integer;
+var
+  SQL: string;
+  v: variant;
+begin
+  result := 0;
+  if not Assigned(SCM) and SCM.IsActive then exit;
+  SQL := 'SELECT MAX(EventNum) FROM SwimClubMeet2.dbo.Event ' +
+  'WHERE Event.SessionID = :ID';
+  v := SCM.scmConnection.ExecSQLScalar(SQL, [uSession.PK()]);
+  if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
+end;
+
 function Locate(aEventID: integer): Boolean;
 var
   SearchOptions: TLocateOptions;
@@ -457,6 +469,46 @@ begin
   if Assigned(CORE) and CORE.qryEvent.Active then
     result := CORE.qryEvent.Locate('EventID', aEventID,
       SearchOptions);
+end;
+
+procedure NewEvent();
+var
+  fld: TField;
+  aEventNum: integer;
+begin
+  if CORE.qrySession.IsEmpty then exit;
+  try
+    aEventNum := uEvent.LastEventNum();
+    Inc(aEventNum);
+    CORE.qrySplitTime.DisableControls;
+    CORE.qryWatchTime.DisableControls;
+    CORE.qryLane.DisableControls();
+    CORE.qryHeat.DisableControls();
+    CORE.qryEvent.DisableControls();
+    fld := CORE.qryEvent.FindField('EventNum');
+    if Assigned(fld) then fld.ReadOnly := false;
+    try
+      CORE.qryEvent.Insert;
+      CORE.qryEvent.FieldByName('EventID').AsInteger := uEvent.PK;
+      CORE.qryEvent.FieldByName('HeatNum').AsInteger := aEventNum;
+      CORE.qryEvent.FieldByName('HeatTypeID').AsInteger := 1; // Preliminary.
+      CORE.qryEvent.FieldByName('HeatStatusID').AsInteger := 1; // Open.
+      CORE.qryEvent.Post;
+    except on E: Exception do
+        CORE.qryHeat.Cancel;
+    end;
+  finally
+    if Assigned(fld) then fld.ReadOnly := true;
+    CORE.qryEvent.EnableControls();
+    CORE.qryHeat.ApplyMaster;
+    CORE.qryHeat.EnableControls();
+    CORE.qryLane.ApplyMaster;
+    CORE.qryLane.EnableControls();
+    CORE.qrySplitTime.ApplyMaster;
+    CORE.qryWatchTime.ApplyMaster;
+    CORE.qrySplitTime.EnableControls;
+    CORE.qryWatchTime.EnableControls;
+  end;
 end;
 
 function Locate(aDistanceID, aStrokeID: integer): Boolean;

@@ -15,13 +15,13 @@ function AllEventsAreClosed: Boolean;
 function Assert: Boolean;
 function CalcEntrantCount: integer;
 function CalcNomineeCount(): integer;
-function DeleteRecord(DoExclude: Boolean = true): boolean;
-function GetEntrantCount(): integer;
-function GetEventCount(): integer;
-function GetNomineeCount(): integer;
-function GetSessionID: integer; // SAFE.
-function HasClosedOrRacedHeats: Boolean;
-function HasEvents: Boolean;
+function DeleteSession(DoExclude: Boolean = true): boolean;
+function CountEntrants: integer;
+function CountEvents: integer;
+function CountNominees: integer;
+function GetSessionID: integer; // Assert - SAFE.
+//function HasClosedOrRacedHeats: Boolean; deprecated;
+function HasEvents: Boolean;  deprecated;
 function IsEmptyOrLocked: Boolean;
 function IsLocked: Boolean;
 function Locate(SessionID: integer): Boolean;
@@ -147,7 +147,7 @@ end;
    *)
 
 
-function DeleteRecord(DoExclude: Boolean = true): boolean;
+function DeleteSession(DoExclude: Boolean = true): boolean;
 var
   SQL: string;
   qry: TFDQuery;
@@ -181,7 +181,7 @@ begin
       Nulls FK in clears scheduledEvent.
       Enables controls for detailed tables.
       }
-      done := uEvent.DeleteRecord(DoExclude); // DeleteRecord current Event + Dependants
+      done := uEvent.DeleteEvent(DoExclude); // DeleteSession current Event + Dependants
       if done then
       begin
         doRenumber := true;
@@ -243,11 +243,9 @@ begin
   if VarIsClear(v) and (v = 0) then result := true;
 end;
 
-function GetEntrantCount(): integer;
+function CountEntrants: integer;
 begin
-  result := 0;
-  if uSession.Assert then
-    result := CORE.qrySession.FieldByName('EntrantCount').AsInteger;
+  result := CORE.qrySession.FieldByName('EntrantCount').AsInteger;
 end;
 
 function CalcEntrantCount(): integer;
@@ -265,28 +263,25 @@ end;
 
 procedure SetEntrantCount;
 begin
-  if uSession.Assert then
-  begin
-    var i := CalcEntrantCount;
-    try
-      CORE.qrySession.DisableControls;
-      if CORE.qrySession.FieldByName('EntrantCount').AsInteger <> i then
-      begin
-        try
-          CORE.qrySession.Edit;
-          CORE.qrySession.FieldByName('EntrantCount').AsInteger := i;
-          CORE.qrySession.Post;
-        except on E: Exception do
-            CORE.qrySession.Cancel;
-        end;
+  var i := CalcEntrantCount;
+  try
+    CORE.qrySession.DisableControls;
+    if CORE.qrySession.FieldByName('EntrantCount').AsInteger <> i then
+    begin
+      try
+        CORE.qrySession.Edit;
+        CORE.qrySession.FieldByName('EntrantCount').AsInteger := i;
+        CORE.qrySession.Post;
+      except on E: Exception do
+          CORE.qrySession.Cancel;
       end;
-    finally
-      CORE.qrySession.EnableControls;
     end;
+  finally
+    CORE.qrySession.EnableControls;
   end;
 end;
 
-function GetEventCount: integer;
+function CountEvents: integer;
 var
   SQL: string;
   v: variant;
@@ -316,38 +311,32 @@ end;
 
 procedure SetNomineeCount();
 begin
-  if uSession.Assert then
-  begin
-    var i := uSession.CalcNomineeCount;
+  var i := uSession.CalcNomineeCount;
+  try
+    CORE.qrySession.DisableControls;
     try
-      CORE.qrySession.DisableControls;
-      try
-        CORE.qrySession.Edit;
-        CORE.qrySession.FieldByName('NomineeCount').AsInteger := i;
-        CORE.qrySession.Post;
-      except on E: Exception do
-          CORE.qrySession.Cancel;
-      end;
-    finally
-      CORE.qrySession.EnableControls;
+      CORE.qrySession.Edit;
+      CORE.qrySession.FieldByName('NomineeCount').AsInteger := i;
+      CORE.qrySession.Post;
+    except on E: Exception do
+        CORE.qrySession.Cancel;
     end;
+  finally
+    CORE.qrySession.EnableControls;
   end;
 end;
 
-function GetNomineeCount(): integer;
+function CountNominees: integer;
 begin
-  result := 0;
-  if uSession.Assert then
-    result := CORE.qrySession.FieldByName('NomineeCount').AsInteger;
+  result := CORE.qrySession.FieldByName('NomineeCount').AsInteger;
 end;
 
 function GetSessionID: integer;
 begin
-  result := 0;
-  if uSession.Assert then
-    result := CORE.qrySession.FieldByName('SessionID').AsInteger;
+  result := CORE.qrySession.FieldByName('SessionID').AsInteger;
 end;
 
+(*
 function HasClosedOrRacedHeats: Boolean;
 var
   SQL: string;
@@ -362,15 +351,11 @@ begin
   v := SCM.scmConnection.ExecSQLScalar(SQL, [uSession.PK]);
   if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := true;
 end;
+*)
 
-function HasEvents: Boolean;
+function HasEvents: Boolean; deprecated;
 begin
-  result := false;
-  if uSession.Assert then
-  begin
-    var i := GetEventCount();
-    if (i > 0) then result := true;
-  end;
+  result := not CORE.qryEvent.IsEmpty;
 end;
 
 procedure HideLocked(IsChecked: Boolean);
@@ -378,66 +363,56 @@ var
 ID: integer;
 found: boolean;
 begin
-  if (SCM.IsActive) then
-  begin
-    CORE.qryTeamLink.DisableControls;
-    CORE.qryTeam.DisableControls;
-    CORE.qryLane.DisableControls;
-    CORE.qryHeat.DisableControls;
-    CORE.qryNominee.DisableControls;
-    CORE.qryEvent.DisableControls;
-    CORE.qrySession.DisableControls;
-    try
-      ID := uSession.PK;
-      CORE.qrySession.Close;
-      CORE.qrySession.ParamByName('TOGGLE').AsBoolean := IsChecked;
-      CORE.qrySession.Prepare;
-      CORE.qrySession.Open;
+  CORE.qryTeamLink.DisableControls;
+  CORE.qryTeam.DisableControls;
+  CORE.qryLane.DisableControls;
+  CORE.qryHeat.DisableControls;
+  CORE.qryNominee.DisableControls;
+  CORE.qryEvent.DisableControls;
+  CORE.qrySession.DisableControls;
+  try
+    ID := uSession.PK;
+    CORE.qrySession.Close;
+    CORE.qrySession.ParamByName('TOGGLE').AsBoolean := IsChecked;
+    CORE.qrySession.Prepare;
+    CORE.qrySession.Open;
 
-      found := uSession.Locate(ID);
+    found := uSession.Locate(ID);
 
-      // ASSERT MASTER-DETAIL STATE.
-      CORE.qryEvent.ApplyMaster;
-      if found then ; // locate to event?.
+    // ASSERT MASTER-DETAIL STATE.
+    CORE.qryEvent.ApplyMaster;
+    if found then ; // locate to event?.
 
-      CORE.qryNominee.ApplyMaster;
-      CORE.qryHeat.ApplyMaster;
-      CORE.qryLane.ApplyMaster;
-      CORE.qryTeam.ApplyMaster;
-      CORE.qryTeamLink.ApplyMaster;
-    finally
-      CORE.qrySession.EnableControls;
-      CORE.qryEvent.EnableControls;
-      CORE.qryNominee.EnableControls;
-      CORE.qryHeat.EnableControls;
-      CORE.qryLane.EnableControls;
-      CORE.qryTeam.EnableControls;
-      CORE.qryTeamLink.EnableControls;
-    end;
+    CORE.qryNominee.ApplyMaster;
+    CORE.qryHeat.ApplyMaster;
+    CORE.qryLane.ApplyMaster;
+    CORE.qryTeam.ApplyMaster;
+    CORE.qryTeamLink.ApplyMaster;
+  finally
+    CORE.qrySession.EnableControls;
+    CORE.qryEvent.EnableControls;
+    CORE.qryNominee.EnableControls;
+    CORE.qryHeat.EnableControls;
+    CORE.qryLane.EnableControls;
+    CORE.qryTeam.EnableControls;
+    CORE.qryTeamLink.EnableControls;
   end;
 end;
 
 function IsLocked: Boolean;
 begin
   result := true;
-  if uSession.Assert then
-  begin
-    if (CORE.qrySession.FieldByName('SessionStatusID').AsInteger <> 2)
-      then result := false;
-  end;
+  if (CORE.qrySession.FieldByName('SessionStatusID').AsInteger <> 2)
+    then result := false;
 end;
 
 function Locate(SessionID: integer): Boolean;
 var
   SearchOptions: TLocateOptions;
 begin
-  result := false;
-  if uSession.Assert then
-  begin
-    SearchOptions := [];
-    result := CORE.qrySession.Locate('SessionID', SessionID,
-      SearchOptions);
-  end;
+  SearchOptions := [];
+  result := CORE.qrySession.Locate('SessionID', SessionID,
+    SearchOptions);
 end;
 
 function PK(): integer;
@@ -450,11 +425,8 @@ var
   i: integer;
 begin
   result := true;
-  if uSession.Assert then
-  begin
-    i := CORE.qrySession.FieldByName('SessionStatusID').AsInteger;
-    if (i <> 2) then result := false;
-  end;
+  i := CORE.qrySession.FieldByName('SessionStatusID').AsInteger;
+  if (i <> 2) then result := false;
 end;
 
 procedure SetSortIndex(idx: integer);
@@ -481,16 +453,13 @@ end;
 
 function StartDT: TDateTime;
 begin
-  result := 0;
-  if uSession.Assert then
-    result := CORE.qrySession.FieldByName('StartDT').AsDateTime;
+  result := CORE.qrySession.FieldByName('StartDT').AsDateTime;
 end;
 
 procedure ToggleLockState;
 var
   i: integer;
 begin
-  if not uSession.Assert then exit;
   with CORE.qrySession do
   begin
     CORE.qrySession.DisableControls;

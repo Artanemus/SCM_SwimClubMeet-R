@@ -12,9 +12,6 @@ uses
   function ClearTeam(aTeamID: Integer; DoExclude: Boolean = true): boolean;
   function StrikeTeam(aTeamID: Integer; DoExclude: Boolean = true): boolean;
 
-
-
-
 implementation
 uses
  uSwimClub, uSession, uEvent, uHeat, uLane;

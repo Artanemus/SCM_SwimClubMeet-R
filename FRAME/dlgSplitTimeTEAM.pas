@@ -367,7 +367,7 @@ procedure TSplitTimeTEAM.TimeFieldGetText(Sender: TField; var Text: string;
 var
   Hour, Min, Sec, MSec: word;
 begin
-  // CALLED BY TimeToBeat AND PersonalBest (Read Only fields)
+  // CALLED BY TTB AND PersonalBest (Read Only fields)
   // this FIXES display format issues.
   DecodeTime(Sender.AsDateTime, Hour, Min, Sec, MSec);
   // DisplayText is true if the field's value is to be used for display only;

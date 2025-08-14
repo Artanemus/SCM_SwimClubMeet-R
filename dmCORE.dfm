@@ -616,7 +616,7 @@ object CORE: TCORE
       '     , Team.Caption'
       '     , Team.TeamName'
       '     , Team.ABBREV'
-      '     , Team.TimeToBeat'
+      '     , Team.TTB'
       'FROM Team'
       ''
       ''

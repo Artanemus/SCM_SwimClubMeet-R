@@ -564,13 +564,13 @@ begin
 
     // ENTRANTS
     SQL := 'UPDATE [SwimClubMeet2].[dbo].[Entrant] SET [MemberID] = NULL, ' +
-      '[RaceTime] = NULL, [TimeToBeat] = NULL, [PersonalBest] = NULL, ' +
+      '[RaceTime] = NULL, [TTB] = NULL, [PersonalBest] = NULL, ' +
       '[IsDisqualified] = 0,[IsScratched] = 0, DisqualifyCodeID = NULL WHERE MemberID = ' +
       IntToStr(MemberID) + ';';
     FConnection.ExecSQL(SQL);
     // TEAM ENTRANTS
     SQL := 'UPDATE [SwimClubMeet2].[dbo].[TeamEntrant] SET [MemberID] = NULL, ' +
-      '[RaceTime] = NULL, [TimeToBeat] = NULL, [PersonalBest] = NULL, ' +
+      '[RaceTime] = NULL, [TTB] = NULL, [PersonalBest] = NULL, ' +
       '[IsDisqualified] = 0,[IsScratched] = 0, DisqualifyCodeID = NULL WHERE MemberID = ' +
       IntToStr(MemberID) + ';';
     FConnection.ExecSQL(SQL);

@@ -13,9 +13,8 @@ uses
   function Assert(): boolean;
   function ClearLane(DoExclude: Boolean = true): boolean;
 	function StrikeLane(DoExclude: Boolean = true): boolean;
-  function DeleteRecord: boolean;
-  function GetLaneID(): integer; // SAFE.
-  function NewRecord: integer;
+  function DeleteLane: boolean;
+  function GetLaneID(): integer; // Assert - SAFE.
   function LastLaneNum: integer;
   function Locate(aLaneID: integer): Boolean;
 	function LocateNominee(aNomineeID: integer): boolean;
@@ -23,12 +22,11 @@ uses
   function PK(): integer; // NO CHECKS. RTNS: Primary key.
   function MoveDownLane(ADataSet: TDataSet): Boolean;
   function MoveUpLane(ADataSet: TDataSet): Boolean;
-
   function DeleteSplit(aSplitTimeID: integer): integer;
   function DeleteAllSplits(DoExclude: Boolean = true): integer;
   function DeleteWatch(aWatchTimeID: integer): integer;
   function DeleteAllWatches(DoExclude: Boolean = true): integer;
-
+  procedure NewLane();
 
 type
   T_Lane = class
@@ -74,14 +72,14 @@ begin
         result := true;
 end;
 
-function DeleteRecord: boolean;
+function DeleteLane: boolean;
 var
   SQL: string;
   done, doRenumber: boolean;
 begin
   result := false;
   doRenumber := false;
-  // Not permitted to DeleteRecord events if session is locked.
+  // Not permitted to DeleteLane events if session is locked.
   if uSession.IsLocked() then exit;
   // Can't delete this lane if it's be raced or closed.
   CORE.qryLane.DisableControls;
@@ -90,7 +88,7 @@ begin
   try
     // D E L E T E   WATCH-TIMES...............................
     try
-      // Only DeleteRecord nominations if no heats exist.
+      // Only DeleteLane nominations if no heats exist.
       SQL :=
       'Delete FROM SwimClubMeet2.dbo.WatchTime WHERE WatchTime.LaneID = :ID';
       SCM.scmConnection.ExecSQL(SQL, [uLane.PK]);
@@ -98,7 +96,7 @@ begin
     end;
     // D E L E T E   SPLIT-TIMES...............................
     try
-      // Only DeleteRecord nominations if no heats exist.
+      // Only DeleteLane nominations if no heats exist.
       SQL :=
       'Delete FROM SwimClubMeet2.dbo.SplitTime WHERE SplitTime.LaneID = :ID';
       SCM.scmConnection.ExecSQL(SQL, [uLane.PK]);
@@ -124,7 +122,7 @@ end;
 function GetLaneID(): integer;
 begin
   result := 0;
-  if uLane.Assert then
+  if uLane.Assert then // Assert.
       result := CORE.qryLane.FieldByName('LaneID').AsInteger;
 end;
 
@@ -272,18 +270,20 @@ begin
   end;
 end;
 
-function NewRecord: integer;
+procedure NewLane;
 var
   aLaneNum: integer;
   SQL: string;
 begin
-  // NOTE: if renumbering is needed, this must be done by caller.
-  result := 0;
+  if CORE.qryHeat.IsEmpty then exit;
+  // NOTE: renumbering must be done by caller.
   aLaneNum := LastLaneNum();
   if aLaneNum < uSwimClub.NumberOfLanes then
   begin
     Inc(aLaneNum);
     try
+      CORE.qrySplitTime.DisableControls;
+      CORE.qryWatchTime.DisableControls;
       CORE.qryLane.DisableControls;
       try
         CORE.qryLane.Insert;
@@ -299,6 +299,10 @@ begin
       end;
     finally
       CORE.qryLane.EnableControls;
+      CORE.qrySplitTime.ApplyMaster;
+      CORE.qryWatchTime.ApplyMaster;
+      CORE.qrySplitTime.EnableControls;
+      CORE.qryWatchTime.EnableControls;
     end;
   end;
 end;
@@ -310,9 +314,9 @@ var
 begin
   result := 0;
   if not Assigned(SCM) and SCM.IsActive then exit;
-  SQL := 'SELECT MAX(Lane) FROM SwimClubMeet2.dbo.Lane ' +
-  'WHERE Lane.LaneID = :ID';
-  v := SCM.scmConnection.ExecSQLScalar(SQL, [uLane.PK()]);
+  SQL := 'SELECT MAX(LaneNum) FROM SwimClubMeet2.dbo.Lane ' +
+  'WHERE Lane.HeatID = :ID';
+  v := SCM.scmConnection.ExecSQLScalar(SQL, [uHeat.PK()]);
   if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
 end;
 

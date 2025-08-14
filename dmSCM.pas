@@ -350,7 +350,7 @@ begin
         tbl.FieldByName('MemberID').Clear;
         tbl.FieldByName('DisqualifyCodeID').Clear;
         tbl.FieldByName('RaceTime').Clear;
-        tbl.FieldByName('TimeToBeat').Clear;
+        tbl.FieldByName('TTB').Clear;
         tbl.FieldByName('PersonalBest').Clear;
         tbl.FieldByName('IsDisqualified').AsBoolean := false;
         tbl.FieldByName('IsScratched').AsBoolean := false;
@@ -382,7 +382,7 @@ begin
         tbl.FieldByName('TeamNameID').Clear;
         tbl.FieldByName('DisqualifyCodeID').Clear;
         tbl.FieldByName('RaceTime').Clear;
-        tbl.FieldByName('TimeToBeat').Clear;
+        tbl.FieldByName('TTB').Clear;
         tbl.FieldByName('IsDisqualified').AsBoolean := false;
         tbl.FieldByName('IsScratched').AsBoolean := false;
         tbl.Post;
@@ -447,7 +447,7 @@ begin
   if not FIsActive then exit;
   if aTeamEntrantID = 0 then exit;
   SQL := 'UPDATE SwimClubMeet2.dbo.TeamEntrant ' +
-  'SET MemberID = NULL, RaceTime = NULL, PersonalBest = NULL, TimeToBeat = NULL,' +
+  'SET MemberID = NULL, RaceTime = NULL, PersonalBest = NULL, TTB = NULL,' +
   'IsDisqualified = 0, IsScratched = 0, DisqualifyCodeID = NULL ' +
   'WHERE TeamEntrantID = :ID';
   v := scmConnection.ExecSQL(SQL, [aTeamEntrantID]);
@@ -916,7 +916,7 @@ begin
     aEventType := uEvent.EventType;
 		if (aEventType = etUnknown) then exit;
 
-		if (CountLanes(aHeatID) >= CORE.qrySwimClub.FieldByName('NumOfLanes').AsInteger) then exit;
+		if (CountLanes() >= CORE.qrySwimClub.FieldByName('NumOfLanes').AsInteger) then exit;
 
     aLaneNum := LastLaneNum(aHeatID) + 1;
     tbl := TFDTable.Create(self);
@@ -959,7 +959,7 @@ begin
   result := 0;
   if not FIsActive then exit;
   if aHeatID = 0 then exit;
-  Lanes := CountLanes(aHeatID);
+  Lanes := CountLanes();
   NumOfLanes := uSwimClub.NumberOfLanes;
   if ( Lanes < NumOfLanes) then
   begin
@@ -1340,7 +1340,7 @@ begin
   result := 0;
   if not FIsActive then exit;
   if aHeatID = 0 then exit;
-  Lanes := CountLanes(aHeatID);
+  Lanes := CountLanes();
   // number of lanes in club pool.
   NumOfLanes := uSwimClub.NumberOfLanes;
   if Lanes < NumOfLanes then // need more lanes
@@ -1358,7 +1358,7 @@ procedure TSCM.qryLaneTIMEGetText(Sender: TField; var Text: string;
 var
   Hour, Min, Sec, MSec: word;
 begin
-  // CALLED BY TimeToBeat AND PersonalBest (Read Only fields)
+  // CALLED BY TTB AND PersonalBest (Read Only fields)
   // this FIXES display format issues.
   DecodeTime(Sender.AsDateTime, Hour, Min, Sec, MSec);
   // DisplayText is true if the field's value is to be used for display only;
@@ -1506,24 +1506,24 @@ begin
     Note: Sort order is ASC. Wit: INDV/TEAM with times
   }
   begin
-    SQL := 'SELECT Entrant.TimeToBeat, CASE ' +
+    SQL := 'SELECT Entrant.TTB, CASE ' +
       'WHEN (Entrant.MemberID IS NULL) THEN 2 ' +
-      'WHEN (CAST(CAST(Entrant.TimeToBeat AS DATETIME) AS FLOAT) = 0) THEN 1 ' +
+      'WHEN (CAST(CAST(Entrant.TTB AS DATETIME) AS FLOAT) = 0) THEN 1 ' +
       'ELSE 0 END AS mySort, Entrant.Lane, Entrant.EntrantID ' +
       'FROM Entrant WHERE Entrant.HeatID = :HEATID ' +
-      'ORDER BY mySort, TimeToBeat ';
+      'ORDER BY mySort, TTB ';
       qry.SQL.Text := SQL;
       qry.UpdateOptions.KeyFields := 'EntrantID';
       qry.UpdateOptions.UpdateTableName := 'SwimClubMeet2..Entrant';
   end
   else
   begin
-    SQL := 'SELECT Team.TimeToBeat, CASE ' +
+    SQL := 'SELECT Team.TTB, CASE ' +
       'WHEN (Team.TeamNameID IS NULL) THEN 2 ' +
-      'WHEN (CAST(CAST(Team.TimeToBeat AS DATETIME) AS FLOAT) = 0) THEN 1 ' +
+      'WHEN (CAST(CAST(Team.TTB AS DATETIME) AS FLOAT) = 0) THEN 1 ' +
       'ELSE 0 END AS mySort, Team.Lane, Team.TeamID ' +
       'FROM Team WHERE Team.HeatID = :HEATID ' +
-      'ORDER BY mySort, TimeToBeat ';
+      'ORDER BY mySort, TTB ';
       qry.SQL.Text := SQL;
       qry.UpdateOptions.KeyFields := 'TeamID';
       qry.UpdateOptions.UpdateTableName := 'SwimClubMeet2..Entrant';
@@ -1537,7 +1537,7 @@ begin
   if (aEventType = etINDV) then CORE.dsLane.DataSet.DisableControls
   else CORE.dsTeam.DataSet.DisableControls;
 
-  qry.IndexFieldNames := 'mySort;TimeToBeat';
+  qry.IndexFieldNames := 'mySort;TTB';
   qry.ParamByName('HEATID').AsInteger := aHeatID;
   qry.Prepare;
   qry.Open;

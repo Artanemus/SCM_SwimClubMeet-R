@@ -1337,7 +1337,7 @@ end;
 
 procedure TMain.Event_RenumberExecute(Sender: TObject);
 begin
-  if AssertConnection then uSession.RenumberEvents(true, true);
+  if AssertConnection then uSession.RenumberEvents(true);// relocate.
 end;
 
 procedure TMain.Event_RenumberUpdate(Sender: TObject);
@@ -3649,7 +3649,7 @@ begin
     begin
       if DoRenumber then
       begin
-				uSession.RenumberEvents(false, false);
+				uSession.RenumberEvents(false); // don't relocate
         Refresh;
 			end;
       if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
@@ -3686,7 +3686,7 @@ begin
       aHeatID := uHeat.PK;
       // DoLocate - don't locate last selected.
       // DoExclude - disabled. Will renumber/repair even when session is locked.
-      uEvent.RenumberHeats(false, false);
+      uEvent.RenumberHeats(false); // don't relocate.
       uHeat.Locate(aHeatID);
     end;
     EnableControls;
@@ -3789,7 +3789,7 @@ begin
   aEventID := CORE.dsEvent.DataSet.FieldByName('EventID').AsInteger;
   aHeatID := CORE.dsHeat.DataSet.FieldByName('HeatID').AsInteger;
 	uHeat.RenumberLanes(true);
-	uEvent.RenumberHeats(true, true);
+	uEvent.RenumberHeats(true); // relocate.
 end;
 
 procedure TMain.SCM_ManageMembersExecute(Sender: TObject);
@@ -4274,7 +4274,7 @@ end;
 
 procedure TMain.Session_RenumberEvents(var Msg: TMessage);
 begin
-  uSession.RenumberEvents(true, true);
+  uSession.RenumberEvents(true); // relocate.
 end;
 
 procedure TMain.Session_ReportExecute(Sender: TObject);

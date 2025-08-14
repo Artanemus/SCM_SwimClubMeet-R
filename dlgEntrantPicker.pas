@@ -321,7 +321,7 @@ var
   s: string;
 begin
   DBGrid1.Columns[0].Title.Caption := 'Nominees';
-  DBGrid1.Columns[1].Title.Caption := 'TimeToBeat';
+  DBGrid1.Columns[1].Title.Caption := 'TTB';
   DBGrid1.Columns[2].Title.Caption := 'Personal Best';
   DBGrid1.Columns[3].Title.Caption := 'AGE';
   DBGrid1.Columns[4].Title.Caption := 'Gender';

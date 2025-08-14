@@ -297,7 +297,7 @@ begin
         MyRect.Left := Rect.Left + Round((Rect.Width - Size.Width) / 2)
       // right align
     else if (Column.Field.FieldName = 'RaceTime') or
-      (Column.Field.FieldName = 'TimeToBeat') or
+      (Column.Field.FieldName = 'TTB') or
       (Column.Field.FieldName = 'PersonalBest') then
         MyRect.Left := Rect.Left + (Rect.Width - Size.Width - 3)
     else
