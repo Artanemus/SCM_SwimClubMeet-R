@@ -1096,7 +1096,7 @@ begin
 
   if (rtnValue = mrYes) then
   begin
-		uEvent.DeleteRecord();
+		uEvent.DeleteEvent();
 		CORE.qryEvent.EnableControls;
     PostMessage(Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);
   end;
@@ -2515,7 +2515,7 @@ begin
 				end;
 				// 2023.02.16
 				// DELETE HEATS ...  For current event. Only open heats are deleted.
-				uEvent.DeleteRecord();
+				uEvent.DeleteEvent();
 				// QUICK TEST - Do we have NOMINEES?
 				if not uEvent.HasNominees() then
 				begin
@@ -2688,7 +2688,7 @@ begin
   if (mr = mrYes) then
   begin
     aHeatID := CORE.dsHeat.DataSet.FieldByName('HeatID').AsInteger;
-    success := uHeat.DeleteRecord(false);
+    success := uHeat.DeleteHeat(false);
     if success then
     begin
       // Requery CORE.qryEvent to update entrant count.
@@ -2905,7 +2905,7 @@ begin
     CORE.dsEvent.DataSet.FieldByName('StrokeID').IsNull then
       raise Exception.Create
       ('Error: The event has not been assigned a distance.');
-  uHeat.NewRecord; // + IndvTeam TDataSet refresh
+  uHeat.NewHeat; // + IndvTeam TDataSet refresh
   PostMessage(Handle, SCM_TABSHEETDISPLAYSTATE, 3, 0);
 end;
 
@@ -3927,7 +3927,7 @@ begin
           // NOMINEES ...
           aSessionID := CORE.dsSession.DataSet.FieldByName('SessionID')
             .AsInteger;
-          s := IntToStr(uSession.GetNomineeCount());
+          s := IntToStr(uSession.NomineeCount());
           Main.StatusBar1.Panels.Items[i].Text := 'Nominees: ' + s;
         end;
       2:
@@ -3935,7 +3935,7 @@ begin
           // ENTRANTS ...
           aSessionID := CORE.dsSession.DataSet.FieldByName('SessionID')
             .AsInteger;
-          s := IntToStr(uSession.GetEntrantCount);
+          s := IntToStr(uSession.EntrantCount);
           Main.StatusBar1.Panels.Items[i].Text := 'Entrants: ' + s;
         end;
     end;
@@ -4161,7 +4161,7 @@ begin
     if (rtnValue <> mrYes) then exit;
   end;
   { D E L E T E  S E S S I O N   D O   N O T   E X C L U D E ! }
-  uSession.DeleteRecord(false);
+  uSession.DeleteSession(false);
   // update the grid views
   SCM_RefreshExecute(self);
   PostMessage(Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);

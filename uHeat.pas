@@ -18,8 +18,8 @@ function DeleteHeat(DoExclude: Boolean = true): boolean;
 function DeleteLanes: boolean;
 function GetHeatID: integer; // Assert - SAFE.
 function HeatStatusID: integer;
-function IsClosed(): Boolean; // current heat
-function IsRaced(): Boolean; // current heat
+function IsClosed(): Boolean;
+function IsRaced(): Boolean;
 function LastHeatNum: integer;
 function Locate(aHeatID: integer): Boolean;
 function NextID(aHeatID: integer): integer; // uses HeatNum
@@ -305,7 +305,7 @@ begin
   end;
 end;
 
-function RenumberLanes(DoLocate: Boolean = true): integer;
+function RenumberLanes(DoLocate: Boolean = true): integer; deprecated;
 var
   aLaneID: integer;
 begin
@@ -370,7 +370,7 @@ begin
     qry := TFDQuery.Create(CORE);
     qry.Connection := SCM.scmConnection;
     {
-      SwimClubMeet.dbo.Nominee joined on SwimClubMeet.dbo.Lane.NomineeID (FK).
+      SwimClubMeet2.dbo.Nominee joined on SwimClubMeet.dbo.Lane.NomineeID (FK).
       If Lane.NomineeID is null then the lane is empty.
       If the Lane.NomineeID is not null then a swimmer has been assigned to lane.
       NOTE: Assumed: TTBs have been calculated.
@@ -457,7 +457,7 @@ begin
     qry := TFDQuery.Create(CORE);
     qry.Connection := SCM.scmConnection;
     {
-      SwimClubMeet.dbo.Nominee joined on SwimClubMeet.dbo.Lane.NomineeID (FK).
+      SwimClubMeet2.dbo.Nominee joined on SwimClubMeet.dbo.Lane.NomineeID (FK).
       If Lane.NomineeID is null then the lane is empty.
       If the Lane.NomineeID is not null then a swimmer has been assigned to lane.
       NOTE: Assumed: TTBs have been calculated.

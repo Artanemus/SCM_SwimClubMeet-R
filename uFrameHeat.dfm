@@ -17,7 +17,7 @@ object FrameHeat: TFrameHeat
     DefaultRowHeight = 52
     DrawingStyle = gdsClassic
     FixedColor = clWhite
-    RowCount = 4
+    RowCount = 2
     FixedRows = 1
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clBlack
@@ -375,8 +375,6 @@ object FrameHeat: TFrameHeat
       80)
     RowHeights = (
       0
-      52
-      52
       52)
   end
   object rpnlHeatBtns: TRelativePanel
@@ -534,16 +532,13 @@ object FrameHeat: TFrameHeat
       end>
     Align = alClient
     TabOrder = 1
-    ExplicitTop = 1
-    ExplicitWidth = 413
-    ExplicitHeight = 658
     DesignSize = (
       73
       660)
     object ShapeHeatBar1: TShape
       AlignWithMargins = True
       Left = 11
-      Top = 243
+      Top = 270
       Width = 48
       Height = 4
       Margins.Left = 0
@@ -554,7 +549,7 @@ object FrameHeat: TFrameHeat
     object ShapeHeatBar2: TShape
       AlignWithMargins = True
       Left = 11
-      Top = 301
+      Top = 334
       Width = 48
       Height = 4
       Margins.Left = 0
@@ -565,7 +560,7 @@ object FrameHeat: TFrameHeat
     object ShapeHeatBar3: TShape
       AlignWithMargins = True
       Left = 11
-      Top = 455
+      Top = 506
       Width = 48
       Height = 4
       Margins.Left = 0
@@ -576,7 +571,7 @@ object FrameHeat: TFrameHeat
     object ShapeHeatDot1: TShape
       AlignWithMargins = True
       Left = 11
-      Top = 346
+      Top = 382
       Width = 20
       Height = 10
       Margins.Left = 5
@@ -587,7 +582,7 @@ object FrameHeat: TFrameHeat
     object ShapeHeatDot2: TShape
       AlignWithMargins = True
       Left = 11
-      Top = 394
+      Top = 436
       Width = 20
       Height = 10
       Margins.Left = 5
@@ -598,7 +593,7 @@ object FrameHeat: TFrameHeat
     object ShapeHeatDot3: TShape
       AlignWithMargins = True
       Left = 11
-      Top = 500
+      Top = 554
       Width = 20
       Height = 10
       Margins.Left = 5
@@ -608,7 +603,7 @@ object FrameHeat: TFrameHeat
     end
     object spbtnHeatAutoBuild: TSpeedButton
       Left = 11
-      Top = 250
+      Top = 280
       Width = 48
       Height = 48
       Hint = 
@@ -625,7 +620,7 @@ object FrameHeat: TFrameHeat
     end
     object spbtnHeatBatchPrintSet: TSpeedButton
       Left = 11
-      Top = 404
+      Top = 452
       Width = 48
       Height = 48
       Hint = 'Create and print all sheets, both marshall and timekeepers.'
@@ -640,7 +635,7 @@ object FrameHeat: TFrameHeat
     end
     object spbtnHeatDelete: TSpeedButton
       Left = 11
-      Top = 192
+      Top = 216
       Width = 48
       Height = 48
       Hint = 'Delete the selected heat.'
@@ -655,7 +650,7 @@ object FrameHeat: TFrameHeat
     end
     object spbtnHeatDown: TSpeedButton
       Left = 11
-      Top = 48
+      Top = 54
       Width = 48
       Height = 48
       Hint = 'Move the heat down the stack.'
@@ -670,7 +665,7 @@ object FrameHeat: TFrameHeat
     end
     object spbtnHeatMarshall: TSpeedButton
       Left = 11
-      Top = 308
+      Top = 344
       Width = 48
       Height = 48
       Hint = 'Create a marshall'#39's sheet for the heats in this event.'
@@ -685,7 +680,7 @@ object FrameHeat: TFrameHeat
     end
     object spbtnHeatNew: TSpeedButton
       Left = 11
-      Top = 138
+      Top = 162
       Width = 48
       Height = 48
       Hint = 'Create a new heat.'
@@ -700,7 +695,7 @@ object FrameHeat: TFrameHeat
     end
     object spbtnHeatReport: TSpeedButton
       Left = 11
-      Top = 462
+      Top = 516
       Width = 48
       Height = 48
       Hint = 'Display a heat report.'
@@ -715,7 +710,7 @@ object FrameHeat: TFrameHeat
     end
     object spbtnHeatTimeKeeper: TSpeedButton
       Left = 11
-      Top = 356
+      Top = 398
       Width = 48
       Height = 48
       Hint = 'Create a timekeeper'#39's sheet for the selected heat.'
@@ -730,7 +725,7 @@ object FrameHeat: TFrameHeat
     end
     object spbtnHeatToggleStatus: TSpeedButton
       Left = 11
-      Top = 96
+      Top = 108
       Width = 48
       Height = 48
       Hint = 'Toogle the heat status.'
@@ -766,17 +761,23 @@ object FrameHeat: TFrameHeat
     Top = 320
     object actnHeat_MoveUp: TAction
       Category = 'Heat'
-      OnExecute = actnHeat_MoveUpExecute
-      OnUpdate = actnHeat_MoveUpUpdate
+      OnExecute = actnHeat_MoveUpDownExecute
+      OnUpdate = actnHeat_DefaultUpdate
     end
-    object actn_HeatMoveDown: TAction
+    object actnHeat_MoveDown: TAction
       Category = 'Heat'
+      OnExecute = actnHeat_MoveUpDownExecute
+      OnUpdate = actnHeat_DefaultUpdate
     end
     object actnHeat_ToogleStatus: TAction
       Category = 'Heat'
+      OnExecute = actnHeat_ToogleStatusExecute
+      OnUpdate = actnHeat_DefaultUpdate
     end
     object actnHeat_New: TAction
       Category = 'Heat'
+      OnExecute = actnHeat_NewExecute
+      OnUpdate = actnHeat_DefaultUpdate
     end
     object actnHeat_Delete: TAction
       Category = 'Heat'

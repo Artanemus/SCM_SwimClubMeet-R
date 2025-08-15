@@ -25,16 +25,20 @@ object CORE: TCORE
   end
   object qrySession: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     Indexes = <
       item
-        Name = 'idxSortDESC'
+        Name = 'idxSortDESCHideLocked'
         Fields = 'SwimClubID;SessionStart'
         DescFields = 'SessionStart'
         Options = [soDescNullLast]
+        Filter = 'SessionStatusID > 1'
       end
       item
-        Name = 'idxSortASC'
+        Name = 'idxSortDESCShowLocked'
         Fields = 'SwimClubID;SessionStart'
+        DescFields = 'SessionStart'
+        Options = [soDescNullLast]
       end
       item
         Active = True
@@ -47,12 +51,26 @@ object CORE: TCORE
     MasterSource = dsSwimClub
     MasterFields = 'SwimClubID'
     DetailFields = 'SwimClubID'
+    Connection = SCM.scmConnection
     UpdateOptions.AssignedValues = [uvEInsert]
     UpdateOptions.UpdateTableName = 'SwimClubMeet2..Session'
     UpdateOptions.KeyFields = 'SessionID'
     SQL.Strings = (
       'USE SwimClubMeet2;'
       ''
+      'SELECT [SessionID]'
+      '      ,[Caption]'
+      '      ,[StartDT]'
+      '      ,[EndDT]'
+      '      ,[CreatedOn]'
+      '      ,[ModifiedOn]'
+      '      ,[NomineeCount]'
+      '      ,[EntrantCount]'
+      '      ,[SwimClubID]'
+      '      ,[SessionStatusID]'
+      '  FROM [SwimClubMeet2].[dbo].[Session]'
+      ''
+      '/*'
       'DECLARE @Toggle AS BIT'
       'SET @Toggle = :TOGGLE'
       ''
@@ -86,58 +104,40 @@ object CORE: TCORE
         'onStatus.SessionStatusID'
       'WHERE Session.SessionStatusID = 1'
       'ORDER BY Session.SessionStart DESC'
-      '')
+      '*/')
     Left = 176
     Top = 72
-    ParamData = <
-      item
-        Name = 'TOGGLE'
-        DataType = ftBoolean
-        ParamType = ptInput
-        Value = False
-      end>
     object qrySessionSessionID: TFDAutoIncField
       FieldName = 'SessionID'
-      Origin = 'SessionID'
       ProviderFlags = [pfInWhere, pfInKey]
-      Visible = False
+    end
+    object qrySessionCaption: TWideStringField
+      FieldName = 'Caption'
+      Size = 128
+    end
+    object qrySessionStartDT: TSQLTimeStampField
+      FieldName = 'StartDT'
+    end
+    object qrySessionEndDT: TSQLTimeStampField
+      FieldName = 'EndDT'
+    end
+    object qrySessionCreatedOn: TSQLTimeStampField
+      FieldName = 'CreatedOn'
+    end
+    object qrySessionModifiedOn: TSQLTimeStampField
+      FieldName = 'ModifiedOn'
+    end
+    object qrySessionNomineeCount: TIntegerField
+      FieldName = 'NomineeCount'
+    end
+    object qrySessionEntrantCount: TIntegerField
+      FieldName = 'EntrantCount'
     end
     object qrySessionSwimClubID: TIntegerField
       FieldName = 'SwimClubID'
-      Origin = 'SwimClubID'
-      Visible = False
     end
     object qrySessionSessionStatusID: TIntegerField
       FieldName = 'SessionStatusID'
-      Origin = 'SessionStatusID'
-      Visible = False
-    end
-    object qrySessionSessionStart: TSQLTimeStampField
-      DisplayLabel = 'Session Date'
-      DisplayWidth = 17
-      FieldName = 'SessionStart'
-      Origin = 'SessionStart'
-      DisplayFormat = 'dd/mm/YY HH:nn'
-      EditMask = '!90/00/00 90:00;1;0'
-    end
-    object qrySessionStatus: TWideStringField
-      DisplayWidth = 9
-      FieldName = 'Status'
-      Origin = 'Status'
-      Visible = False
-      Size = 32
-    end
-    object qrySessionCaption: TWideStringField
-      DisplayLabel = 'Description'
-      DisplayWidth = 46
-      FieldName = 'Caption'
-      Origin = 'Caption'
-      Size = 128
-    end
-    object qrySessionClosedDT: TSQLTimeStampField
-      FieldName = 'ClosedDT'
-      Origin = 'ClosedDT'
-      Visible = False
     end
   end
   object qryEvent: TFDQuery
@@ -440,7 +440,9 @@ object CORE: TCORE
   end
   object qrySwimClub: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'SwimClubID'
+    Connection = SCM.scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet2..SwimClub'
     UpdateOptions.KeyFields = 'SwimClubID'
     SQL.Strings = (

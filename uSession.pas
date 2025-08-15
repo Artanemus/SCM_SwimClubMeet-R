@@ -10,17 +10,22 @@ uses
   dmCORE, dmSCM, SCMdefines,
   FireDAC.Comp.Client;
 
-{ S E S S I O N .    }
+/// <summary>
+///  Only SCM state is asserted.
+///  Only call here if CORE is assigned and IsActive.
+///  ...
+/// </summary>
+///
 function AllEventsAreClosed: Boolean;
 function Assert: Boolean;
 function CalcEntrantCount: integer;
 function CalcNomineeCount(): integer;
+function CalcEventCount: integer;
 function DeleteSession(DoExclude: Boolean = true): boolean;
-function CountEntrants: integer;
-function CountEvents: integer;
-function CountNominees: integer;
+function EntrantCount: integer;
+function NomineeCount: integer;
 function GetSessionID: integer; // Assert - SAFE.
-//function HasClosedOrRacedHeats: Boolean; deprecated;
+function HasClosedOrRacedHeats: Boolean; deprecated;
 function HasEvents: Boolean;  deprecated;
 function IsEmptyOrLocked: Boolean;
 function IsLocked: Boolean;
@@ -28,11 +33,13 @@ function Locate(SessionID: integer): Boolean;
 function PK(): integer; // NO CHECKS. RTNS: Primary key.
 function RenumberEvents(DoLocate: Boolean = true): integer;
 function StartDT: TDateTime;
+
 procedure HideLocked(IsChecked: Boolean);
 procedure SetEntrantCount();
 procedure SetNomineeCount();
 procedure SetSortIndex(idx: integer);
 procedure ToggleLockState();
+procedure NewSession();
 
 type
   T_Session = class
@@ -47,7 +54,7 @@ var
 implementation
 
 uses
-  uEvent, uHeat, uLane;
+  uSwimClub, uEvent, uHeat, uLane;
 
 constructor T_Session.Create;
 begin
@@ -100,52 +107,6 @@ begin
     CORE.qryLane.EnableControls;
   end;
 end;
-
-
-  (*
-  if CORE.dsEvent.DataSet.IsEmpty then exit;
-
-  ds := CORE.dsEvent.DataSet;
-  if DoLocate then aEventID := ds.FieldByName('EventID').AsInteger;
-
-   ds.DisableControls;
-   sl := TStringList.Create;
-   // Legal, qryEvent has master..child relationship with dsSession.
-   sl.Add('USE [SwimClubMeet2] ');
-   sl.Add('SELECT [EventID], [EventNum] FROM [dbo].[Event] ');
-   sl.Add('WHERE [SessionID] = ' + IntToStr(aSessionID));
-   sl.Add(' ORDER BY [EventNum]');
-   // Find valid EventNum
- //  qry := TFDQuery.Create(self);
-   qry.Connection := SCM.scmConnection;
-   qry.SQL := sl;
-   qry.UpdateOptions.KeyFields := 'EventID';
-   qry.UpdateOptions.UpdateTableName := 'SwimClubMeet2..Event';
-   qry.Open;
-   if (qry.Active) then
-   begin
-     i := 1;
-     // Clean up list after each new record - renumber event number
-     while not qry.Eof do
-     begin
-       qry.Edit;
-       qry.FieldByName('EventNum').AsInteger := i;
-       qry.Post;
-       i := i + 1;
-       qry.Next;
-     end;
-     if (i>1) then result := i-1;
-   end;
-   qry.Close;
-   qry.Free;
-   sl.Free;
-   // REQUERY : RELOAD DATA
-   ds.Refresh();
-   // REQUEUE
-   if (DoLocate) then uEvent.Locate(aEventID);
-   ds.EnableControls();
-   *)
-
 
 function DeleteSession(DoExclude: Boolean = true): boolean;
 var
@@ -243,7 +204,7 @@ begin
   if VarIsClear(v) and (v = 0) then result := true;
 end;
 
-function CountEntrants: integer;
+function EntrantCount: integer;
 begin
   result := CORE.qrySession.FieldByName('EntrantCount').AsInteger;
 end;
@@ -263,7 +224,7 @@ end;
 
 procedure SetEntrantCount;
 begin
-  var i := CalcEntrantCount;
+  var i := uSession.CalcEntrantCount;
   try
     CORE.qrySession.DisableControls;
     if CORE.qrySession.FieldByName('EntrantCount').AsInteger <> i then
@@ -281,7 +242,7 @@ begin
   end;
 end;
 
-function CountEvents: integer;
+function CalcEventCount: integer;
 var
   SQL: string;
   v: variant;
@@ -326,7 +287,7 @@ begin
   end;
 end;
 
-function CountNominees: integer;
+function NomineeCount: integer;
 begin
   result := CORE.qrySession.FieldByName('NomineeCount').AsInteger;
 end;
@@ -336,22 +297,22 @@ begin
   result := CORE.qrySession.FieldByName('SessionID').AsInteger;
 end;
 
-(*
-function HasClosedOrRacedHeats: Boolean;
+function HasClosedOrRacedHeats: Boolean; deprecated;
 var
   SQL: string;
   v: variant;
 begin
   result := false;
   if not Assigned(SCM) or not SCM.scmConnection.Connected then exit;
-  SQL := 'SELECT Count(HeatID) FROM  [SwimClubMeet2].[dbo].[Session] ' +
-  'INNER JOIN [Event] ON [Session].SessionID = [Event].SessionID ' +
-  'INNER JOIN [Heat] ON [Event].EventID = [Heat].EventID '
-  + 'WHERE [Heat].HeatStatusID > 1 AND [Session].SessionID = :GetSessionID';
+  SQL := '''
+    SELECT Count(HeatID) FROM  [SwimClubMeet2].[dbo].[Session]
+    INNER JOIN [Event] ON [Session].SessionID = [Event].SessionID
+    INNER JOIN [Heat] ON [Event].EventID = [Heat].EventID
+    WHERE [Heat].HeatStatusID > 1 AND [Session].SessionID = :ID'
+    ''';
   v := SCM.scmConnection.ExecSQLScalar(SQL, [uSession.PK]);
   if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := true;
 end;
-*)
 
 function HasEvents: Boolean; deprecated;
 begin
@@ -359,6 +320,10 @@ begin
 end;
 
 procedure HideLocked(IsChecked: Boolean);
+/// <param name="IsChecked">
+///  If true - filters out locked sessions in CORE.qrySession.
+///  If true - changes indexFieldName to hide locked sessions.
+/// </param>
 var
 ID: integer;
 found: boolean;
@@ -413,6 +378,50 @@ begin
   SearchOptions := [];
   result := CORE.qrySession.Locate('SessionID', SessionID,
     SearchOptions);
+end;
+
+procedure NewSession();
+/// <remarks>
+/// Sorting of session grid handled by caller.
+/// </remarks>
+var
+  fld: TField;
+  aSessionNum: integer;
+begin
+  if CORE.qrySession.IsEmpty then exit;
+  try
+    CORE.qrySplitTime.DisableControls;
+    CORE.qryWatchTime.DisableControls;
+    CORE.qryLane.DisableControls();
+    CORE.qryHeat.DisableControls();
+    CORE.qryEvent.DisableControls();
+    CORE.qrySession.DisableControls();
+//    fld := CORE.qrySession.FindField('SessionStatusID');
+//    if Assigned(fld) then fld.ReadOnly := false;
+    try
+      CORE.qrySession.Insert;
+      CORE.qrySession.FieldByName('SwimClubID').AsInteger := uSwimClub.PK;
+      CORE.qrySession.FieldByName('StartDT').AsDateTime := Now();
+      CORE.qrySession.FieldByName('CreatedOn').AsDateTime := Now();
+      CORE.qrySession.FieldByName('SessionStatusID').AsInteger := 1; // Open.
+      CORE.qrySession.Post;
+    except on E: Exception do
+        CORE.qryHeat.Cancel;
+    end;
+  finally
+//    if Assigned(fld) then fld.ReadOnly := true;
+    CORE.qrySession.EnableControls();
+    CORE.qryEvent.ApplyMaster;
+    CORE.qryEvent.EnableControls();
+    CORE.qryHeat.ApplyMaster;
+    CORE.qryHeat.EnableControls();
+    CORE.qryLane.ApplyMaster;
+    CORE.qryLane.EnableControls();
+    CORE.qrySplitTime.ApplyMaster;
+    CORE.qryWatchTime.ApplyMaster;
+    CORE.qrySplitTime.EnableControls;
+    CORE.qryWatchTime.EnableControls;
+  end;
 end;
 
 function PK(): integer;

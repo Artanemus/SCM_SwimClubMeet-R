@@ -56,13 +56,6 @@ type
 		qryLane: TFDQuery;
 		qryNominee: TFDQuery;
 		qrySession: TFDQuery;
-		qrySessionCaption: TWideStringField;
-		qrySessionClosedDT: TSQLTimeStampField;
-		qrySessionSessionID: TFDAutoIncField;
-		qrySessionSessionStart: TSQLTimeStampField;
-		qrySessionSessionStatusID: TIntegerField;
-		qrySessionStatus: TWideStringField;
-		qrySessionSwimClubID: TIntegerField;
 		qrySplitTime: TFDQuery;
 		qrySwimClub: TFDQuery;
 		qryTeam: TFDQuery;
@@ -73,6 +66,16 @@ type
     LookUpEventTypeID: TIntegerField;
     qryHeatStrokeID: TIntegerField;
     dsTeamLink: TDataSource;
+    qrySessionSessionID: TFDAutoIncField;
+    qrySessionCaption: TWideStringField;
+    qrySessionStartDT: TSQLTimeStampField;
+    qrySessionEndDT: TSQLTimeStampField;
+    qrySessionCreatedOn: TSQLTimeStampField;
+    qrySessionModifiedOn: TSQLTimeStampField;
+    qrySessionNomineeCount: TIntegerField;
+    qrySessionEntrantCount: TIntegerField;
+    qrySessionSwimClubID: TIntegerField;
+    qrySessionSessionStatusID: TIntegerField;
 		procedure DataModuleCreate(Sender: TObject);
 		procedure DataModuleDestroy(Sender: TObject);
 	private

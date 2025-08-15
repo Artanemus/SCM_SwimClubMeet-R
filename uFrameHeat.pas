@@ -5,9 +5,12 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, AdvUtil, Vcl.Grids,
-  AdvObj, BaseGrid, AdvGrid, DBAdvGrid,
-  dmCORE, dmIMG, Vcl.ExtCtrls, Vcl.Buttons, Vcl.WinXCtrls, System.Actions,
-  Vcl.ActnList, dmSCM, uSwimClub, uSession, uEvent, uHeat, uLane;
+  AdvObj, BaseGrid, AdvGrid, DBAdvGrid, Data.DB,
+  Vcl.ExtCtrls, Vcl.Buttons, Vcl.WinXCtrls, System.Actions,
+  Vcl.ActnList,
+  uSwimClub, uSession, uEvent, uHeat, uLane,
+  dmSCM,dmCORE, dmIMG
+  ;
 
 type
   TFrameHeat = class(TFrame)
@@ -31,7 +34,7 @@ type
     spbtnHeatUp: TSpeedButton;
     actnHeatList: TActionList;
     actnHeat_MoveUp: TAction;
-    actn_HeatMoveDown: TAction;
+    actnHeat_MoveDown: TAction;
     actnHeat_ToogleStatus: TAction;
     actnHeat_New: TAction;
     actnHeat_Delete: TAction;
@@ -40,89 +43,172 @@ type
     actnHeat_TimeKeeperSheet: TAction;
     actnHeat_PrintSheets: TAction;
     actnHeat_Report: TAction;
-    procedure actnHeat_MoveUpExecute(Sender: TObject);
-    procedure actnHeat_MoveUpUpdate(Sender: TObject);
+    procedure actnHeat_MoveUpDownExecute(Sender: TObject);
+    procedure actnHeat_DefaultUpdate(Sender: TObject);
+    procedure actnHeat_NewExecute(Sender: TObject);
+    procedure actnHeat_ToogleStatusExecute(Sender: TObject);
     procedure gridHeatGetDisplText(Sender: TObject; ACol, ARow: Integer; var Value:
         string);
   private
     { Private declarations }
+    function AssertSCM(): boolean;
+    function AssertCORE(): boolean;
   public
     { Public declarations }
   end;
 
 implementation
+uses
+  SCMUtility;
 
 {$R *.dfm}
 
-procedure TFrameHeat.actnHeat_MoveUpExecute(Sender: TObject);
+procedure TFrameHeat.actnHeat_MoveUpDownExecute(Sender: TObject);
 var
-  bm: TBookmark;
-  enA, enB: integer;
+  aHeatID, recA, recB: integer;
   fld: TField;
+  recPos: TRecordPos;
 begin
-  // TActionUpdate determines if this routine can be called
-  // m o v e   e v e n t   u  p  .
-  if not AssertConnection then exit;
-  With CORE.dsHeat.DataSet do
+  if not AssertCORE then exit;
+  recPos := SCMUtility.GetRecordPosition(CORE.qryHeat);
+  if recPos = rpMiddle then
   begin
-    if not SCM.IsFirstRecord(CORE.dsHeat.DataSet) then
-    begin
-      DisableControls();
+    gridHeat.BeginUpdate;
+    CORE.qryHeat.DisableControls();
+    CORE.qryHeat.CheckBrowseMode;
+    fld := CORE.qryHeat.FindField('HeatNum');
+    if Assigned(fld) and fld.ReadOnly then fld.ReadOnly := false;
+    try
+      aHeatID := uHeat.PK;
+      recA := CORE.qryHeat.FieldByName('HeatNum').AsInteger;
+      recB := 0;
       try
+        if TAction.UnitName.Contains('Down') then
+          CORE.qryHeat.Next()
+        else if TAction.UnitName.Contains('Up')  then
+          CORE.qryHeat.Prior()
+        else exit;
+
+        recB := CORE.qryHeat.FieldByName('HeatNum').AsInteger;
+        CORE.qryHeat.Edit();
+        CORE.qryHeat.FieldByName('HeatNum').AsInteger := recA;
+        CORE.qryHeat.Post();
+        recA := 0;
+        if uHeat.Locate(aHeatID) then
         begin
-          bm := Bookmark;
-          enA := FieldByName('HeatNum').AsInteger;
-          enB := 0;
-          fld := CORE.qryHeat.FindField('HeatNum');
-          try
-            begin
-              // 3.10.2020 ensure field is writable
-              if Assigned(fld) then fld.ReadOnly := false;
-              Prior();
-              enB := FieldByName('HeatNum').AsInteger;
-              Edit();
-              FieldByName('HeatNum').AsInteger := enA;
-              Post();
-            end;
-          finally
-            Bookmark := bm;
-            Edit();
-            FieldByName('HeatNum').AsInteger := enB;
-            Post();
-            // 3.10.2020
-            if Assigned(fld) then fld.ReadOnly := true;
-          end;
+          CORE.qryHeat.Edit();
+          CORE.qryHeat.FieldByName('HeatNum').AsInteger := recB;
+          CORE.qryHeat.Post();
         end;
-      finally
-        // RE-ORDER and RE-CUE ...
-        Refresh();
-        EnableControls();
+      except on E: Exception do
+        begin
+          CORE.qryHeat.Cancel;
+          { if recA = 0 then  uHeat.RenumberLanes(true); }
+          exit;
+        end;
       end;
+    finally
+      if Assigned(fld) then fld.ReadOnly := true;
+      CORE.qryHeat.EnableControls();
+      gridHeat.EndUpdate;
     end;
   end;
 end;
 
-procedure TFrameHeat.actnHeat_MoveUpUpdate(Sender: TObject);
+procedure TFrameHeat.actnHeat_DefaultUpdate(Sender: TObject);
 var
   DoEnable: boolean;
 begin
   DoEnable := false;
-  if Assigned(SCM) and SCM.IsActive then
+  if AssertCORE then
     if not uSession.IsEmptyOrLocked then
-      if not dmCore.qryHeat.Empty then DoEnable := true;
+      if not CORE.qryHeat.IsEmpty then DoEnable := true;
   TAction(Sender).Enabled := DoEnable;
+end;
+
+procedure TFrameHeat.actnHeat_NewExecute(Sender: TObject);
+begin
+  gridHeat.BeginUpdate;
+  CORE.qryHeat.DisableControls();
+  CORE.qryHeat.CheckBrowseMode;
+  try
+    {
+    // The event must have Distance and stroke Assigned!!!
+    if CORE.dsEvent.DataSet.FieldByName('DistanceID').IsNull or
+      CORE.dsEvent.DataSet.FieldByName('StrokeID').IsNull then
+        raise Exception.Create
+        ('Error: The event has not been assigned a distance and stroke.');
+    }
+    uHeat.NewHeat;
+    {uHeat.RenumberLanesAdv(true);}
+  finally
+    CORE.qryHeat.EnableControls();
+    gridHeat.EndUpdate;
+  end;
+end;
+
+procedure TFrameHeat.actnHeat_ToogleStatusExecute(Sender: TObject);
+var
+  status: integer;
+begin
+  gridHeat.BeginUpdate;
+  CORE.qryHeat.DisableControls();
+  CORE.qryHeat.CheckBrowseMode;
+  try
+    status := uHeat.HeatStatusID;
+    case status of
+      1: Inc(status);
+      2: Inc(status);
+      3: status := 1;
+    else
+      status := 1; // default.
+    end;
+        try
+      CORE.qryHeat.CheckBrowseMode;
+      CORE.qryHeat.Edit;
+      CORE.qryHeat.FieldByName('HeatStatusID').AsInteger := status;
+      CORE.qryHeat.Post;
+    except on E: Exception do
+      begin
+        CORE.qryHeat.Cancel;
+        exit;
+      end;
+    end;
+  finally
+    CORE.qryHeat.EnableControls();
+    gridHeat.EndUpdate;
+  end;
+end;
+
+function TFrameHeat.AssertCORE: boolean;
+begin
+  result := false;
+  if Assigned(CORE) and CORE.IsActive then
+    result := true;
+end;
+
+function TFrameHeat.AssertSCM: boolean;
+begin
+  result := false;
+  if Assigned(SCM) and SCM.IsActive then
+    result := true;
 end;
 
 procedure TFrameHeat.gridHeatGetDisplText(Sender: TObject; ACol, ARow: Integer;
     var Value: string);
 begin
+/// <remarks>
+///  The TDBAdvGrid is set to display a SVG image in the cell.
+///  Calling here 'additionally' display a heat number.
+///  The cell's font must be increased and the contents centered aligned.
+/// </remarks>
   if (ACol = 1) and (ARow > 0) then
-  begin
-    Value := IntToStr(CORE.qryHeat.FieldByName('HeatNum').Asinteger);
-  end
+    Value := IntToStr(CORE.qryHeat.FieldByName('HeatNum').Asinteger)
   else
     Value := '';
-
 end;
+
+
+
 
 end.
