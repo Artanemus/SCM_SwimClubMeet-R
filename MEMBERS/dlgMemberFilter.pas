@@ -8,7 +8,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.ImageList, Vcl.ImgList,
   Vcl.VirtualImageList, Vcl.BaseImageCollection, Vcl.ImageCollection,
   Vcl.StdCtrls, Vcl.ButtonGroup, System.Actions, Vcl.ActnList,
-  Vcl.PlatformDefaultStyleActnCtrls, Vcl.ActnMan, SCMUtility, SCMDefines;
+  Vcl.PlatformDefaultStyleActnCtrls, Vcl.ActnMan, SCMUtility, uDefines;
 
 type
   PFilterState = ^TFilterState;

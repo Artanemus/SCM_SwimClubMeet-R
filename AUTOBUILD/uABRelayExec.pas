@@ -6,7 +6,7 @@ uses
 Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
 System.Classes, dmSCM, dmSCMHelper,
 FireDAC.Comp.Client, FireDAC.Stan.Param,
-Vcl.Forms, SCMDefines, Data.DB;
+Vcl.Forms, uDefines, Data.DB;
 
 
 

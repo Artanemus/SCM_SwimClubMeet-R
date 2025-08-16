@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Data.DB,
-  Vcl.Grids, Vcl.DBGrids, Vcl.Themes, dmSCM, SCMHelpers, SCMDefines,
+  Vcl.Grids, Vcl.DBGrids, Vcl.Themes, dmSCM, SCMHelpers, uDefines,
   Vcl.BaseImageCollection, Vcl.ImageCollection, Vcl.StdCtrls, System.ImageList,
   Vcl.ImgList, Vcl.VirtualImageList, Vcl.WinXCtrls, Vcl.Buttons;
 

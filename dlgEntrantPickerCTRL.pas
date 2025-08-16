@@ -11,7 +11,7 @@ uses
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
-  SCMDefines, Vcl.BaseImageCollection, Vcl.ImageCollection, Vcl.VirtualImage,
+  uDefines, Vcl.BaseImageCollection, Vcl.ImageCollection, Vcl.VirtualImage,
   Vcl.ExtCtrls, vcl.Themes;
 
 type

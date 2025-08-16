@@ -11,7 +11,7 @@ uses
   System.Actions, Vcl.ActnList, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
   Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls, Vcl.VirtualImage,
   Vcl.BaseImageCollection, Vcl.ImageCollection, System.ImageList, Vcl.ImgList,
-  Vcl.VirtualImageList, SCMDefines;
+  Vcl.VirtualImageList, uDefines;
 
 type
   TEntrantPicker = class(TForm)

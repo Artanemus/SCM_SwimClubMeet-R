@@ -7,7 +7,7 @@ uses
   System.Variants, System.VarUtils,
   System.StrUtils,
   vcl.Dialogs, Data.DB,
-  dmCORE, dmSCM, SCMdefines,
+  dmCORE, dmSCM, uDefines,
 	FireDAC.Comp.Client;
 
   function Assert(): boolean;

@@ -337,6 +337,7 @@ object CORE: TCORE
   end
   object qryHeat: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     Indexes = <
       item
         Active = True
@@ -353,6 +354,7 @@ object CORE: TCORE
     IndexName = 'mcEvent_DESC'
     MasterFields = 'EventID'
     DetailFields = 'EventID'
+    Connection = SCM.scmConnection
     UpdateOptions.AssignedValues = [uvCheckRequired]
     UpdateOptions.CheckRequired = False
     UpdateOptions.UpdateTableName = 'SwimClubMeet2..Heat'

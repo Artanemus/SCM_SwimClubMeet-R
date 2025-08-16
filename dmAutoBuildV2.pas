@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.Client,
-  Data.DB, FireDAC.Comp.DataSet, SCMDefines, dmSCM, dmCORE;
+  Data.DB, FireDAC.Comp.DataSet, uDefines, dmSCM, dmCORE;
 
 type
 
@@ -38,7 +38,7 @@ type
     prefUseDefRaceTime: boolean;
     prefExcludeOutsideLanes: boolean;
     prefSeperateGender: boolean;
-    prefSeedMethod: seedMethod; // enum defined in SCMDefines
+    prefSeedMethod: seedMethod; // enum defined in uDefines
     prefSeedDepth: integer;
     // SEEDTIME IS USED TO INJECT DATA INTO THE ENTRANT TABLE
     // use the preference dialog to enable and set options.

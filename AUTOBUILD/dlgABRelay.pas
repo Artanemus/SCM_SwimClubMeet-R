@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, dmSCM,
-  dmSCMHelper, SCMDefines, Vcl.Imaging.jpeg, Vcl.Samples.Spin,
+  dmSCMHelper, uDefines, Vcl.Imaging.jpeg, Vcl.Samples.Spin,
   Vcl.BaseImageCollection, Vcl.ImageCollection, Vcl.VirtualImage,
   System.ImageList, Vcl.ImgList, Vcl.VirtualImageList;
 

@@ -8,7 +8,7 @@ uses
   System.StrUtils,
   FireDAC.Comp.Client,
   vcl.Dialogs, Data.DB,
-	dmCORE, dmSCM, SCMdefines;
+	dmCORE, dmSCM, uDefines;
 
 function AllHeatsAreClosed: Boolean;
 function Assert(): boolean;
@@ -19,7 +19,7 @@ function NomineeCount: integer;
 function HeatCount: integer;
 function DeleteEvent(DoExclude: Boolean = true): boolean;
 function DeleteHeats(DoExclude: Boolean = true): boolean;
-function EventType: SCMDefines.scmEventType;
+function EventType: uDefines.scmEventType;
 function GetEventID: integer; // Assert - make SAFE.
 function HasClosedHeats: Boolean;
 function HasClosedOrRacedHeats: Boolean;
@@ -293,17 +293,17 @@ begin
     result := CORE.qryLane.FieldByName('EventID').AsInteger;
 end;
 
-function EventType: SCMDefines.scmEventType;
+function EventType: uDefines.scmEventType;
 var
   v: variant;
 begin
-  result := SCMDefines.scmEventType.etUnknown; // Default.
+  result := uDefines.scmEventType.etUnknown; // Default.
   if CORE.qryEvent.IsEmpty then exit; // Table is empty.
   v := CORE.qryEvent.FieldByName('luEventTypeID').AsVariant;
   if VarIsNull(v) or VarIsEmpty(v) or (v = 0) then exit;
   case v of
-    1: result := SCMDefines.scmEventType.etINDV;
-    2: result := SCMDefines.scmEventType.etTEAM;
+    1: result := uDefines.scmEventType.etINDV;
+    2: result := uDefines.scmEventType.etTEAM;
   end;
 end;
 

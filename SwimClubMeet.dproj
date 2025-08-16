@@ -336,7 +336,7 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="..\SCM_SHARED\SCMDefines.pas"/>
+        <DCCReference Include="..\SCM_SHARED\uDefines.pas"/>
         <DCCReference Include="..\SCM_SHARED\exeinfo.pas"/>
         <DCCReference Include="..\SCM_SHARED\SCMUtility.pas"/>
         <DCCReference Include="..\SCM_SHARED\UEnvVars.pas"/>
@@ -494,6 +494,7 @@
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="uTeam.pas"/>
+        <DCCReference Include="uDefines.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

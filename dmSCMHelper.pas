@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Classes, System.DateUtils, System.Math,
   System.IniFiles, System.Variants, System.UITypes, Vcl.StdCtrls, Vcl.Dialogs,
   Vcl.Forms, FireDAC.Comp.Client, FireDAC.Stan.Param,
-  Winapi.Windows, SCMUtility, SCMDefines,
+  Winapi.Windows, SCMUtility, uDefines,
 	Data.DB, dmCORE;
 
 type

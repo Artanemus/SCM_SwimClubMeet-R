@@ -8,7 +8,7 @@ uses
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.VCLUI.Wait,
   Data.DB, FireDAC.Comp.Client, FireDAC.Stan.Param, FireDAC.DatS,
   FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Phys.MSSQL,
-  FireDAC.Phys.MSSQLDef, dmSCM, Windows, Winapi.Messages, SCMDefines
+  FireDAC.Phys.MSSQLDef, dmSCM, Windows, Winapi.Messages, uDefines
   ;
 
 type

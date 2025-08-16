@@ -7,7 +7,7 @@ uses
   System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.StdCtrls,
   Vcl.ExtCtrls,
-  SCMDefines, FireDAC.Comp.Client, dmSCM, frxExportPDF,
+  uDefines, FireDAC.Comp.Client, dmSCM, frxExportPDF,
   FireDAC.Stan.Param;
 
 type

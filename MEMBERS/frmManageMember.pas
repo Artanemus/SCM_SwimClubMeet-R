@@ -12,7 +12,7 @@ uses
   FireDAC.Comp.Client, FireDAC.Comp.DataSet, Vcl.StdCtrls, VclTee.TeEngine,
   VclTee.TeeSpline, VclTee.Series, VclTee.TeeProcs, VclTee.Chart,
   VclTee.DBChart, Vcl.ComCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.DBCtrls, Vcl.Mask,
-  Vcl.ExtCtrls, Vcl.Menus, Vcl.WinXCalendars, dmManageMemberData, SCMDefines,
+  Vcl.ExtCtrls, Vcl.Menus, Vcl.WinXCalendars, dmManageMemberData, uDefines,
   Vcl.VirtualImageList, Vcl.BaseImageCollection, Vcl.ImageCollection,
   System.Actions, Vcl.ActnList, Vcl.PlatformDefaultStyleActnCtrls, Vcl.ActnMan,
   Vcl.ToolWin, Vcl.ActnCtrls, Vcl.ActnMenus, Data.Bind.EngExt,
