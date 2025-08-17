@@ -78,6 +78,7 @@ type
     qrySessionSessionStatusID: TIntegerField;
 		procedure DataModuleCreate(Sender: TObject);
 		procedure DataModuleDestroy(Sender: TObject);
+    procedure qrySessionNewRecord(DataSet: TDataSet);
 	private
     FIsActive: boolean;
 	public
@@ -396,6 +397,15 @@ begin
 	qrySplitTime.Close;
 	qryTeam.Close;
 	qryTeamLink.Close;
+end;
+
+procedure TCORE.qrySessionNewRecord(DataSet: TDataSet);
+begin
+  DataSet.FieldByName('SwimClubID').AsInteger :=
+    qrySwimClub.FieldByName('SwimClubID').AsInteger; // Master-Detail
+  DataSet.FieldByName('StartDT').AsDateTime := Now();
+  DataSet.FieldByName('CreatedOn').AsDateTime := Now();
+  DataSet.FieldByName('SessionStatusID').AsInteger := 1; // Open.
 end;
 
 

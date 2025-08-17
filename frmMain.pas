@@ -4409,7 +4409,7 @@ end;
 procedure TMain.Session_ToggleLockExecute(Sender: TObject);
 begin
   // TAction ...Update determines if this routine is accessable
-  uSession.ToggleLockState;
+//  uSession.ToggleLockState;
   // Announce status change and enabled/disable grid access.
 //  PostMessage(Main.Handle, SCM_SESSIONSCROLL, 0, 0);
 end;

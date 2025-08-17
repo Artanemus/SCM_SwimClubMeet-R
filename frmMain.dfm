@@ -2688,7 +2688,6 @@ object Main: TMain
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitHeight = 690
     object PageControl1: TPageControl
       AlignWithMargins = True
       Left = 0
@@ -2699,13 +2698,12 @@ object Main: TMain
       Margins.Top = 4
       Margins.Right = 0
       Margins.Bottom = 0
-      ActivePage = TabSheet3
+      ActivePage = TabSheet1
       Align = alClient
       Style = tsFlatButtons
       TabOrder = 0
       OnChange = PageControl1Change
       OnChanging = PageControl1Changing
-      ExplicitHeight = 686
       object TabSheet1: TTabSheet
         Caption = 'Session'
         object pnlSessionLeft: TPanel
@@ -2716,7 +2714,6 @@ object Main: TMain
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitHeight = 647
           object pnlSessLeftTop: TPanel
             Left = 0
             Top = 0
@@ -2853,7 +2850,6 @@ object Main: TMain
             Align = alRight
             BevelOuter = bvNone
             TabOrder = 2
-            ExplicitHeight = 627
             DesignSize = (
               60
               717)
@@ -3618,7 +3614,6 @@ object Main: TMain
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
-          ExplicitHeight = 647
           object pnlSessClientTop: TPanel
             Left = 0
             Top = 0
@@ -3643,7 +3638,6 @@ object Main: TMain
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 1
-            ExplicitHeight = 627
             object Event_Grid: TDBGrid
               AlignWithMargins = True
               Left = 10
@@ -3808,7 +3802,6 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 1
-              ExplicitHeight = 627
               DesignSize = (
                 60
                 717)
@@ -4768,7 +4761,6 @@ object Main: TMain
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitHeight = 647
           DesignSize = (
             1336
             737)
@@ -4830,7 +4822,6 @@ object Main: TMain
               Align = alLeft
               BevelOuter = bvNone
               TabOrder = 0
-              ExplicitHeight = 627
               DesignSize = (
                 352
                 717)
@@ -4956,7 +4947,6 @@ object Main: TMain
               Align = alLeft
               BevelOuter = bvNone
               TabOrder = 1
-              ExplicitHeight = 599
               DesignSize = (
                 60
                 689)
@@ -5303,7 +5293,6 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 2
-              ExplicitHeight = 627
               object Nominate_ControlList: TControlList
                 Left = 57
                 Top = 0
@@ -5438,7 +5427,6 @@ object Main: TMain
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitHeight = 647
           object HeatRightPanel: TPanel
             Left = 282
             Top = 127
@@ -5451,7 +5439,6 @@ object Main: TMain
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 1
-            ExplicitHeight = 520
             object pnlRight: TPanel
               Left = 966
               Top = 0
@@ -5460,7 +5447,6 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 0
-              ExplicitHeight = 520
               object EntrantWidgets: TRelativePanel
                 Left = 0
                 Top = 0
@@ -5539,7 +5525,6 @@ object Main: TMain
                 Align = alClient
                 BevelOuter = bvNone
                 TabOrder = 0
-                ExplicitHeight = 520
                 DesignSize = (
                   88
                   610)
@@ -6310,7 +6295,6 @@ object Main: TMain
               Align = alClient
               BevelOuter = bvNone
               TabOrder = 1
-              ExplicitHeight = 520
               inline INDV: TframeINDV
                 Left = 0
                 Top = 474
@@ -6326,7 +6310,7 @@ object Main: TMain
                 ParentColor = False
                 ParentFont = False
                 TabOrder = 0
-                ExplicitTop = 384
+                ExplicitTop = 474
                 ExplicitWidth = 966
                 ExplicitHeight = 136
                 inherited Grid: TDBGrid
@@ -7484,7 +7468,6 @@ object Main: TMain
             Align = alLeft
             BevelOuter = bvNone
             TabOrder = 0
-            ExplicitHeight = 520
             object HeatWidgets: TRelativePanel
               Left = 192
               Top = 0
@@ -7657,7 +7640,6 @@ object Main: TMain
               Align = alRight
               BevelOuter = bvNone
               TabOrder = 0
-              ExplicitHeight = 520
               DesignSize = (
                 60
                 610)
@@ -9048,7 +9030,6 @@ object Main: TMain
               PopupMenu = pumHeat
               TabOrder = 1
               OnBeforeDrawItem = HeatControlListBeforeDrawItem
-              ExplicitHeight = 520
               object vimgHeatNum: TVirtualImage
                 Left = 16
                 Top = 11
@@ -9117,7 +9098,6 @@ object Main: TMain
       end>
     ParentFont = True
     UseSystemFont = False
-    ExplicitTop = 781
   end
   object pnlTitleBar: TRelativePanel
     Left = 0
@@ -9700,6 +9680,7 @@ object Main: TMain
     Top = 0
     Width = 1344
     Height = 27
+    UseSystemFont = False
     ActionManager = ActionManager1
     Caption = 'ActionMainMenuBar1'
     Color = clMenuBar
@@ -9708,7 +9689,7 @@ object Main: TMain
     ColorMap.BtnSelectedFont = clBlack
     ColorMap.UnusedColor = clWhite
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
+    Font.Color = clBlack
     Font.Height = -13
     Font.Name = 'Segoe UI'
     Font.Style = []
@@ -10001,13 +9982,13 @@ object Main: TMain
               end
               item
                 Action = Heat_MarshallReport
-                Caption = 'Ma&rshall sheet*'
+                Caption = 'Ma&rshal sheet*'
                 ImageIndex = 4
                 ImageName = 'Marshall'
               end
               item
                 Action = Heat_TimeKeeperReport
-                Caption = 'T&ime Keeper sheet*'
+                Caption = 'T&imekeeper sheet*'
                 ImageIndex = 5
                 ImageName = 'TimeKeeper'
               end
@@ -10034,13 +10015,13 @@ object Main: TMain
               end
               item
                 Action = Heat_BatchMarshallReport
-                Caption = 'Print A&LL Marshall Reports...'
+                Caption = 'Print A&LL marshal reports...'
                 ImageIndex = 6
                 ImageName = 'AutoBuild'
               end
               item
                 Action = Heat_BatchTimeKeeperReport
-                Caption = 'Print ALL Tim&ekeeper Reports...'
+                Caption = 'Print ALL tim&ekeeper reports...'
                 ImageIndex = 6
                 ImageName = 'AutoBuild'
               end
@@ -10507,8 +10488,8 @@ object Main: TMain
     end
     object Heat_MarshallReport: TAction
       Category = 'Heats'
-      Caption = 'Marshall sheet*'
-      Hint = 'Display a marshall'#39's sheet for all heats.'
+      Caption = 'Marshal sheet*'
+      Hint = 'Display a marshal'#39's sheet for all heats.'
       ImageIndex = 4
       ImageName = 'Marshall'
       OnExecute = Heat_MarshallReportExecute
@@ -10516,7 +10497,7 @@ object Main: TMain
     end
     object Heat_TimeKeeperReport: TAction
       Category = 'Heats'
-      Caption = 'Time Keeper sheet*'
+      Caption = 'Timekeeper sheet*'
       Hint = 'Display a timekeeper'#39's sheet for the selected heat.'
       ImageIndex = 5
       ImageName = 'TimeKeeper'
@@ -10617,7 +10598,7 @@ object Main: TMain
     end
     object Heat_BatchMarshallReport: TAction
       Category = 'Heats'
-      Caption = 'Print ALL Marshall Reports...'
+      Caption = 'Print ALL marshal reports...'
       ImageIndex = 6
       ImageName = 'AutoBuild'
       OnExecute = Heat_BatchMarshallReportExecute
@@ -10625,7 +10606,7 @@ object Main: TMain
     end
     object Heat_BatchTimeKeeperReport: TAction
       Category = 'Heats'
-      Caption = 'Print ALL Timekeeper Reports...'
+      Caption = 'Print ALL timekeeper reports...'
       ImageIndex = 6
       ImageName = 'AutoBuild'
       OnExecute = Heat_BatchTimeKeeperReportExecute

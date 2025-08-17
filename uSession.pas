@@ -34,11 +34,10 @@ function PK(): integer; // NO CHECKS. RTNS: Primary key.
 function RenumberEvents(DoLocate: Boolean = true): integer;
 function StartDT: TDateTime;
 
-procedure HideLocked(IsChecked: Boolean);
+procedure SetVisibilityOfLocked(IsVisible: Boolean);
 procedure SetEntrantCount();
 procedure SetNomineeCount();
-procedure SetSortIndex(idx: integer);
-procedure ToggleLockState();
+procedure SetSessionStatusID(aSessionStatusID: Integer);
 procedure NewSession();
 
 type
@@ -319,8 +318,8 @@ begin
   result := not CORE.qryEvent.IsEmpty;
 end;
 
-procedure HideLocked(IsChecked: Boolean);
-/// <param name="IsChecked">
+procedure SetVisibilityOfLocked(IsVisible: Boolean);
+/// <param name="IsVisible">
 ///  If true - filters out locked sessions in CORE.qrySession.
 ///  If true - changes indexFieldName to hide locked sessions.
 /// </param>
@@ -337,10 +336,30 @@ begin
   CORE.qrySession.DisableControls;
   try
     ID := uSession.PK;
-    CORE.qrySession.Close;
-    CORE.qrySession.ParamByName('TOGGLE').AsBoolean := IsChecked;
-    CORE.qrySession.Prepare;
-    CORE.qrySession.Open;
+
+    //  Method1....  DEPRECIATED. See commented SQL script in qrySession.
+    //    CORE.qrySession.Close;
+    //    CORE.qrySession.ParamByName('TOGGLE').AsBoolean := IsVisible;
+    //    CORE.qrySession.Prepare;
+    //    CORE.qrySession.Open;
+
+    // working Master-Detail index :CORE.qrySession.IndexName := 'mcSwimClub_DESC';
+
+    // Method2. CHECK Master-Detail is still working.
+    CORE.qrySession.IndexesActive := false;
+
+    try
+      if IsVisible then
+        CORE.qrySession.IndexName := 'idxSortDESCHideLocked'
+      else
+        CORE.qrySession.IndexName := 'idxSortDESCShowLocked';
+      CORE.qrySession.IndexesActive := true;
+    except on E: Exception do
+      begin
+        E.Message := E.Message +sLineBreak+ 'FATAL - Session.IndexName ';
+        raise;
+      end;
+    end;
 
     found := uSession.Locate(ID);
 
@@ -382,13 +401,12 @@ end;
 
 procedure NewSession();
 /// <remarks>
-/// Sorting of session grid handled by caller.
+/// Sorting of session grid handled by active index.
 /// </remarks>
 var
   fld: TField;
   aSessionNum: integer;
 begin
-  if CORE.qrySession.IsEmpty then exit;
   try
     CORE.qrySplitTime.DisableControls;
     CORE.qryWatchTime.DisableControls;
@@ -396,20 +414,26 @@ begin
     CORE.qryHeat.DisableControls();
     CORE.qryEvent.DisableControls();
     CORE.qrySession.DisableControls();
-//    fld := CORE.qrySession.FindField('SessionStatusID');
-//    if Assigned(fld) then fld.ReadOnly := false;
+
+   //  CORE.qrySession.IndexesActive := false; // Is this needed??? check.
+
     try
       CORE.qrySession.Insert;
+      { // handled by OnNewRecord in dmCORE.
       CORE.qrySession.FieldByName('SwimClubID').AsInteger := uSwimClub.PK;
       CORE.qrySession.FieldByName('StartDT').AsDateTime := Now();
       CORE.qrySession.FieldByName('CreatedOn').AsDateTime := Now();
       CORE.qrySession.FieldByName('SessionStatusID').AsInteger := 1; // Open.
+      }
       CORE.qrySession.Post;
     except on E: Exception do
         CORE.qryHeat.Cancel;
     end;
   finally
-//    if Assigned(fld) then fld.ReadOnly := true;
+    // SQLExec - ID of new record.
+    //    CORE.qrySession.IndexesActive := true; // check.
+    // Locate to new record.
+
     CORE.qrySession.EnableControls();
     CORE.qryEvent.ApplyMaster;
     CORE.qryEvent.EnableControls();
@@ -438,52 +462,36 @@ begin
   if (i <> 2) then result := false;
 end;
 
-procedure SetSortIndex(idx: integer);
-begin
-  //  qrySession.Index
-  CORE.qrySession.IndexesActive := false;
-  case idx of
-    1:
-      begin
-        CORE.qrySession.IndexesActive := true;
-        CORE.qrySession.IndexName := 'idxStartDateDESC';
-      end;
-    2:
-      begin
-        CORE.qrySession.IndexesActive := true;
-        CORE.qrySession.IndexName := 'idxStartDateASC';
-      end
-  else
-    begin
-      CORE.qrySession.IndexFieldNames := 'SwimClubID';
-    end;
-  end;
-end;
-
 function StartDT: TDateTime;
 begin
   result := CORE.qrySession.FieldByName('StartDT').AsDateTime;
 end;
 
-procedure ToggleLockState;
+procedure SetSessionStatusID(aSessionStatusID: Integer);
 var
   i: integer;
+  fld: TField;
 begin
-  with CORE.qrySession do
+  if aSessionStatusID in [1,2] then // Check out of bounds.
   begin
-    CORE.qrySession.DisableControls;
-    try
-      i := FieldByName('SessionStatusID').AsInteger;
-      if i = 1 then i := 2 else i := 1; // TOGGLE STATUS
+    with CORE.qrySession do
+    begin
+      CORE.qrySession.DisableControls;
+      fld := CORE.qrySession.FindField('SessionStatusID');
+      if Assigned(fld) and fld.ReadOnly = true then
+        fld.ReadOnly := false;
       try
-        Edit;
-        FieldByName('SessionStatusID').AsInteger := i;
-        Post;
-      except on E: Exception do
-          Cancel;
+        try
+          Edit;
+          FieldByName('SessionStatusID').AsInteger := i;
+          Post;
+        except on E: Exception do
+            Cancel;
+        end;
+      finally
+        if Assigned(fld) then fld.ReadOnly := true;
+        CORE.qrySession.EnableControls;
       end;
-    finally
-      CORE.qrySession.EnableControls;
     end;
   end;
 end;

@@ -18,7 +18,11 @@ type
     imgForm: TVirtualImageList;
     SVGHeatStatus: TSVGIconVirtualImageList;
     SVGHeatStroke: TSVGIconVirtualImageList;
-    SVGHeatControls: TSVGIconVirtualImageList;
+    SVGHeatCntrl: TSVGIconVirtualImageList;
+    SVGSessionCntrl: TSVGIconVirtualImageList;
+    SVGEventCntrl: TSVGIconVirtualImageList;
+    SVGMemberCntrl: TSVGIconVirtualImageList;
+    SVGNominateGrid: TSVGIconVirtualImageList;
   private
     { Private declarations }
   public

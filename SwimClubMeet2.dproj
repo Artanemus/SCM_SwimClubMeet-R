@@ -8,8 +8,8 @@
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Application</AppType>
-        <MainSource>SwimClubMeet.dpr</MainSource>
-        <ProjectName Condition="'$(ProjectName)'==''">SwimClubMeet</ProjectName>
+        <MainSource>SwimClubMeet2.dpr</MainSource>
+        <ProjectName Condition="'$(ProjectName)'==''">SwimClubMeet2</ProjectName>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
         <Base>true</Base>
@@ -58,7 +58,7 @@
         <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
         <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
-        <SanitizedProjectName>SwimClubMeet</SanitizedProjectName>
+        <SanitizedProjectName>SwimClubMeet2</SanitizedProjectName>
         <Custom_Styles>&quot;Windows10 SlateGray|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Windows10SlateGray.vsf&quot;</Custom_Styles>
         <VerInfo_Locale>3081</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
@@ -336,7 +336,6 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="..\SCM_SHARED\uDefines.pas"/>
         <DCCReference Include="..\SCM_SHARED\exeinfo.pas"/>
         <DCCReference Include="..\SCM_SHARED\SCMUtility.pas"/>
         <DCCReference Include="..\SCM_SHARED\UEnvVars.pas"/>
@@ -495,6 +494,11 @@
         </DCCReference>
         <DCCReference Include="uTeam.pas"/>
         <DCCReference Include="uDefines.pas"/>
+        <DCCReference Include="uFrameSession.pas">
+            <Form>FrameSession</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -513,7 +517,7 @@
         <BorlandProject>
             <Delphi.Personality>
                 <Source>
-                    <Source Name="MainSource">SwimClubMeet.dpr</Source>
+                    <Source Name="MainSource">SwimClubMeet2.dpr</Source>
                 </Source>
                 <Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dclemsedge290.bpl">Embarcadero RAD Server Edge Components</Excluded_Packages>
@@ -527,9 +531,9 @@
             </Delphi.Personality>
             <Deployment Version="5">
                 <DeployFile LocalName="Win32\Debug\SwimClubMeet.exe" Configuration="Debug" Class="ProjectOutput"/>
-                <DeployFile LocalName="Win32\Debug\SwimClubMeet.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="Win32\Debug\SwimClubMeet2.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
-                        <RemoteName>SwimClubMeet.exe</RemoteName>
+                        <RemoteName>SwimClubMeet2.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

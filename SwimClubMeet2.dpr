@@ -52,7 +52,6 @@ uses
   rptMembersList in 'MEMBERS\rptMembersList.pas' {MembersList: TDataModule},
   rptHeatReportA in 'REPORTS\rptHeatReportA.pas' {HeatReportA: TDataModule},
   rptHeatReportB in 'REPORTS\rptHeatReportB.pas' {HeatReportB: TDataModule},
-  uDefines in '..\SCM_SHARED\uDefines.pas',
   exeinfo in '..\SCM_SHARED\exeinfo.pas',
   SCMUtility in '..\SCM_SHARED\SCMUtility.pas',
   UEnvVars in '..\SCM_SHARED\UEnvVars.pas',
@@ -103,7 +102,8 @@ uses
   uLane in 'uLane.pas',
   uFrameHeat in 'uFrameHeat.pas' {FrameHeat: TFrame},
   uTeam in 'uTeam.pas',
-  uDefines in 'uDefines.pas';
+  uDefines in 'uDefines.pas',
+  uFrameSession in 'uFrameSession.pas' {FrameSession: TFrame};
 
 {$R *.res}
 

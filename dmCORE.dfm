@@ -26,6 +26,7 @@ object CORE: TCORE
   object qrySession: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     Active = True
+    OnNewRecord = qrySessionNewRecord
     Indexes = <
       item
         Name = 'idxSortDESCHideLocked'

@@ -7,10 +7,11 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, AdvUtil, Vcl.Grids,
   AdvObj, BaseGrid, AdvGrid, DBAdvGrid, Data.DB,
   Vcl.ExtCtrls, Vcl.Buttons, Vcl.WinXCtrls, System.Actions,
-  Vcl.ActnList,
+  Vcl.ActnList, Vcl.StdCtrls, Vcl.WinXPanels,
   uDefines,
   dmSCM,dmCORE, dmIMG,
-  uSwimClub, uSession, uEvent, uHeat, uLane, Vcl.StdCtrls, Vcl.WinXPanels
+  uSwimClub, uSession, uEvent, uHeat, uLane,
+  Vcl.Menus
   ;
 
 type
@@ -19,9 +20,6 @@ type
     ShapeHeatBar1: TShape;
     ShapeHeatBar2: TShape;
     ShapeHeatBar3: TShape;
-    ShapeHeatDot1: TShape;
-    ShapeHeatDot2: TShape;
-    ShapeHeatDot3: TShape;
     spbtnHeatAutoBuild: TSpeedButton;
     spbtnHeatBatchPrintSet: TSpeedButton;
     spbtnHeatDelete: TSpeedButton;
@@ -32,29 +30,46 @@ type
     spbtnHeatTimeKeeper: TSpeedButton;
     spbtnHeatToggleStatus: TSpeedButton;
     spbtnHeatUp: TSpeedButton;
-    actnHeatList: TActionList;
+    actnlistHeat: TActionList;
     actnHeat_MoveUp: TAction;
     actnHeat_MoveDown: TAction;
     actnHeat_ToogleStatus: TAction;
     actnHeat_New: TAction;
     actnHeat_Delete: TAction;
-    actnHeat_AutoBuild: TAction;
-    actnHeat_MarshallSheet: TAction;
-    actnHeat_TimeKeeperSheet: TAction;
-    actnHeat_PrintSheets: TAction;
+    actnHeat_Build: TAction;
+    actnHeat_MarshalSheet: TAction;
+    actnHeat_TimeSheet: TAction;
+    actnHeat_PrintSet: TAction;
     actnHeat_Report: TAction;
     pnlStack: TStackPanel;
     pnlgHeat: TPanel;
-    procedure actnHeat_AutoBuildExecute(Sender: TObject);
+    actnEvent_BuildAllHeats: TAction;
+    actnEvent_PrintAllMarshalSheets: TAction;
+    actnEvent_PrintAllTimeKeeperSheets: TAction;
+    pumenuHeat: TPopupMenu;
+    MoveUp1: TMenuItem;
+    MoveDown1: TMenuItem;
+    oogleHeatStatus1: TMenuItem;
+    NewHeat1: TMenuItem;
+    DeleteHeat1: TMenuItem;
+    AutobuildHeats1: TMenuItem;
+    imekeeperSheet1: TMenuItem;
+    MarshalSheet1: TMenuItem;
+    PrintSet1: TMenuItem;
+    HeatReport1: TMenuItem;
+    N1: TMenuItem;
+    N2: TMenuItem;
+    N3: TMenuItem;
+    procedure actnHeat_BuildExecute(Sender: TObject);
     procedure actnHeat_MoveUpDownExecute(Sender: TObject);
     procedure actnHeat_DefaultUpdate(Sender: TObject);
     procedure actnHeat_DeleteExecute(Sender: TObject);
-    procedure actnHeat_MarshallSheetExecute(Sender: TObject);
+    procedure actnHeat_MarshalSheetExecute(Sender: TObject);
     procedure actnHeat_ReportUpdate(Sender: TObject);
     procedure actnHeat_NewExecute(Sender: TObject);
-    procedure actnHeat_PrintSheetsExecute(Sender: TObject);
+    procedure actnHeat_PrintSetExecute(Sender: TObject);
     procedure actnHeat_ReportExecute(Sender: TObject);
-    procedure actnHeat_TimeKeeperSheetExecute(Sender: TObject);
+    procedure actnHeat_TimeSheetExecute(Sender: TObject);
     procedure actnHeat_ToogleStatusExecute(Sender: TObject);
     procedure gHeatGetDisplText(Sender: TObject; ACol, ARow: Integer; var Value:
         string);
@@ -77,7 +92,7 @@ uses
 
 {$R *.dfm}
 
-procedure TFrameHeat.actnHeat_AutoBuildExecute(Sender: TObject);
+procedure TFrameHeat.actnHeat_BuildExecute(Sender: TObject);
 var
   AutoBuild: TAutoBuildV2;
 	dlg: TAutoBuild_Heats;
@@ -305,7 +320,7 @@ begin
 
 end;
 
-procedure TFrameHeat.actnHeat_MarshallSheetExecute(Sender: TObject);
+procedure TFrameHeat.actnHeat_MarshalSheetExecute(Sender: TObject);
 var
   rptA: TMarshallReportA;
   rptB: TMarshallReportB;
@@ -366,7 +381,7 @@ begin
   end;
 end;
 
-procedure TFrameHeat.actnHeat_PrintSheetsExecute(Sender: TObject);
+procedure TFrameHeat.actnHeat_PrintSetExecute(Sender: TObject);
 // Print Set : Print both the timekeeper and marshall report
 type
   EPrintStatus = (psUserCancelled, psPrinterError, psOK);
@@ -511,7 +526,7 @@ begin
   end;
 end;
 
-procedure TFrameHeat.actnHeat_TimeKeeperSheetExecute(Sender: TObject);
+procedure TFrameHeat.actnHeat_TimeSheetExecute(Sender: TObject);
 var
   rptA: TTimeKeeperReportA;
   rptB: TTimeKeeperReportB;

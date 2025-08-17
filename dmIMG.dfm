@@ -1,6 +1,6 @@
 object IMG: TIMG
   Height = 598
-  Width = 711
+  Width = 1059
   object SVGEventStatus: TSVGIconVirtualImageList
     Images = <
       item
@@ -22,8 +22,8 @@ object IMG: TIMG
     Width = 24
     Height = 24
     Size = 24
-    Left = 480
-    Top = 72
+    Left = 512
+    Top = 184
   end
   object SVGCollection: TSVGIconImageCollection
     SVGIconItems = <
@@ -1293,7 +1293,7 @@ object IMG: TIMG
           '13.17l4.59-4.58L18 10l-6 6l-6-6z"/></svg>'
       end
       item
-        IconName = 'HeatStatusToggle'
+        IconName = 'ToggleStatus'
         SVGText = 
           '<?xml version="1.0" encoding="UTF-8" standalone="no"?>'#10'<svg'#10'   h' +
           'eight="48"'#10'   width="48"'#10'   version="1.1"'#10'   id="svg4"'#10'   sodipo' +
@@ -1618,6 +1618,224 @@ object IMG: TIMG
           'V4H6zm0 6h11.05l-2.725-3.575q-.15-.2-.362-.312T13.5 16H6zm12 2H6' +
           'q-.825 0-1.412-.587T4 20V4q0-.825.588-1.412T6 2h12q.825 0 1.413.' +
           '588T20 4v16q0 .825-.587 1.413T18 22M6 20V4zm0-4v-2z"/></svg>'
+      end
+      item
+        IconName = 'lock'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M18 8h-1V6c0-2' +
+          '.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h1' +
+          '2c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2M9 6c0-1.66 1.34-3 3-3s3 1.34 ' +
+          '3 3v2H9zm9 14H6V10h12zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2s-2 .9-2 2s.' +
+          '9 2 2 2"/></svg>'
+      end
+      item
+        IconName = 'lock-open'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M12 17c1.1 0 2' +
+          '-.9 2-2s-.9-2-2-2s-2 .9-2 2s.9 2 2 2m6-9h-1V6c0-2.76-2.24-5-5-5S' +
+          '7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2H6c-1.1' +
+          ' 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2' +
+          'm0 12H6V10h12z"/></svg>'
+      end
+      item
+        IconName = 'lock-2'
+        SVGText = 
+          '<?xml version="1.0" encoding="UTF-8" standalone="no"?>'#10'<svg'#10'   w' +
+          'idth="24"'#10'   height="24"'#10'   viewBox="0 0 24 24"'#10'   version="1.1"' +
+          #10'   id="svg1"'#10'   sodipodi:docname="mod-lock.svg"'#10'   xml:space="p' +
+          'reserve"'#10'   inkscape:export-filename="lock-open2.svg"'#10'   inkscap' +
+          'e:export-xdpi="96"'#10'   inkscape:export-ydpi="96"'#10'   inkscape:vers' +
+          'ion="1.4 (86a8ad7, 2024-10-11)"'#10'   xmlns:inkscape="http://www.in' +
+          'kscape.org/namespaces/inkscape"'#10'   xmlns:sodipodi="http://sodipo' +
+          'di.sourceforge.net/DTD/sodipodi-0.dtd"'#10'   xmlns="http://www.w3.o' +
+          'rg/2000/svg"'#10'   xmlns:svg="http://www.w3.org/2000/svg"><defs'#10'   ' +
+          '  id="defs1" /><sodipodi:namedview'#10'     id="namedview1"'#10'     pag' +
+          'ecolor="#ffffff"'#10'     bordercolor="#666666"'#10'     borderopacity="' +
+          '1.0"'#10'     inkscape:showpageshadow="2"'#10'     inkscape:pageopacity=' +
+          '"0.0"'#10'     inkscape:pagecheckerboard="0"'#10'     inkscape:deskcolor' +
+          '="#d1d1d1"'#10'     inkscape:zoom="34.294679"'#10'     inkscape:cx="12.3' +
+          '34275"'#10'     inkscape:cy="12.130162"'#10'     inkscape:window-width="' +
+          '2560"'#10'     inkscape:window-height="1377"'#10'     inkscape:window-x=' +
+          '"-8"'#10'     inkscape:window-y="-8"'#10'     inkscape:window-maximized=' +
+          '"1"'#10'     inkscape:current-layer="layer4"><inkscape:page'#10'       x' +
+          '="0"'#10'       y="0"'#10'       width="24"'#10'       height="24"'#10'       id' +
+          '="page2"'#10'       margin="0"'#10'       bleed="0" /></sodipodi:namedvi' +
+          'ew><g'#10'     inkscape:groupmode="layer"'#10'     id="layer3"'#10'     inks' +
+          'cape:label="Original lock-open"'#10'     style="display:none"><path'#10 +
+          '       fill="currentColor"'#10'       d="m 12,17.5 c 1.1,0 2,-0.9 2,' +
+          '-2 0,-1.1 -0.9,-2 -2,-2 -1.1,0 -2,0.9 -2,2 0,1.1 0.9,2 2,2 m 6,-' +
+          '9 h -1 v -2 c 0,-2.76 -2.24,-5 -5,-5 -2.76,0 -5,2.24 -5,5 h 1.9 ' +
+          'c 0,-1.71 1.39,-3.1 3.1,-3.1 1.71,0 3.1,1.39 3.1,3.1 v 2 H 6 c -' +
+          '1.1,0 -2,0.9 -2,2 v 10 c 0,1.1 0.9,2 2,2 h 12 c 1.1,0 2,-0.9 2,-' +
+          '2 v -10 c 0,-1.1 -0.9,-2 -2,-2 m 0,12 H 6 v -10 h 12 z"'#10'       i' +
+          'd="path1-6"'#10'       inkscape:label="org-lock-open"'#10'       style="' +
+          'display:none" /><path'#10'       fill="currentColor"'#10'       d="m 18,' +
+          '8.5 h -1 v -2 c 0,-2.76 -2.24,-5 -5,-5 -2.76,0 -5,2.24 -5,5 v 2 ' +
+          'H 6 c -1.1,0 -2,0.9 -2,2 v 10 c 0,1.1 0.9,2 2,2 h 12 c 1.1,0 2,-' +
+          '0.9 2,-2 v -10 c 0,-1.1 -0.9,-2 -2,-2 m -9,-2 c 0,-1.66 1.34,-3 ' +
+          '3,-3 1.66,0 3,1.34 3,3 v 2 H 9 Z m 9,14 H 6 v -10 h 12 z m -6,-3' +
+          ' c 1.1,0 2,-0.9 2,-2 0,-1.1 -0.9,-2 -2,-2 -1.1,0 -2,0.9 -2,2 0,1' +
+          '.1 0.9,2 2,2"'#10'       id="path1"'#10'       style="display:inline"'#10'  ' +
+          '     inkscape:label="org-lock" /></g><g'#10'     inkscape:groupmode=' +
+          '"layer"'#10'     id="layer4"'#10'     inkscape:label="lock-2"'#10'     style' +
+          '="display:inline"><path'#10'       fill="currentColor"'#10'       d="m 1' +
+          '8,8.9086818 h -1 v -2 c 0,-2.76 -2.24,-5 -5,-5 -2.76,0 -5,2.24 -' +
+          '5,5 v 2 H 6 c -1.1,0 -2,0.9 -2,2.0000002 v 10 c 0,1.1 0.9,2 2,2 ' +
+          'h 12 c 1.1,0 2,-0.9 2,-2 v -10 C 20,9.8086818 19.1,8.9086818 18,' +
+          '8.9086818 m -9,-2 c 0,-1.66 1.34,-3 3,-3 1.66,0 3,1.34 3,3 v 2 H' +
+          ' 9 Z M 18,20.908682 H 6 v -10 h 12 z m -6,-3 c 1.1,0 2,-0.9 2,-2' +
+          ' 0,-1.1 -0.9,-2 -2,-2 -1.1,0 -2,0.9 -2,2 0,1.1 0.9,2 2,2"'#10'      ' +
+          ' id="path1-9"'#10'       style="display:inline"'#10'       inkscape:labe' +
+          'l="lock" /></g><g'#10'     inkscape:groupmode="layer"'#10'     id="layer' +
+          '1"'#10'     inkscape:label="lock-open-2"'#10'     style="display:none"'#10' ' +
+          '    transform="translate(0.00845076,1.0118208)"><path'#10'       fil' +
+          'l="currentColor"'#10'       d="m 12,17 c 1.1,0 2,-0.9 2,-2 0,-1.1 -0' +
+          '.9,-2 -2,-2 -1.1,0 -2,0.9 -2,2 0,1.1 0.9,2 2,2 M 18,8 H 17 15.1 ' +
+          '6 C 4.9,8 4,8.9 4,10 v 10 c 0,1.1 0.9,2 2,2 h 12 c 1.1,0 2,-0.9 ' +
+          '2,-2 V 10 C 20,8.9 19.1,8 18,8 m 0,12 H 6 V 10 h 12 z"'#10'       id' +
+          '="path1-8-1"'#10'       sodipodi:nodetypes="csssccccssssssscccccc"'#10' ' +
+          '      style="display:inline"'#10'       transform="translate(-0.0084' +
+          '5076,-0.10313899)"'#10'       inkscape:label="pathBase" /><path'#10'    ' +
+          '   fill="currentColor"'#10'       d="m 16.446359,9.6541242 1.332213,' +
+          '-1.491713 c 1.838454,-2.0585641 1.659814,-5.2213617 -0.398749,-7' +
+          '.0598157 -2.058565,-1.8384541 -5.221363,-1.65981417 -7.059817,0.' +
+          '39875 l 1.417127,1.2656024 c 1.139043,-1.2754147 3.101672,-1.386' +
+          '2672 4.377086,-0.247225 1.275415,1.1390423 1.386268,3.1016711 0.' +
+          '247226,4.3770859 l -1.332213,1.4917131 z"'#10'       id="path1-8"'#10'  ' +
+          '     sodipodi:nodetypes="cssccsccc"'#10'       style="display:inline' +
+          '"'#10'       inkscape:label="pathRotate" /></g></svg>'#10
+      end
+      item
+        IconName = 'lock-open-2'
+        SVGText = 
+          '<?xml version="1.0" encoding="UTF-8" standalone="no"?>'#10'<svg'#10'   w' +
+          'idth="24"'#10'   height="24"'#10'   viewBox="0 0 24 24"'#10'   version="1.1"' +
+          #10'   id="svg1"'#10'   sodipodi:docname="baseline-lock-open.svg"'#10'   xm' +
+          'l:space="preserve"'#10'   xmlns:inkscape="http://www.inkscape.org/na' +
+          'mespaces/inkscape"'#10'   xmlns:sodipodi="http://sodipodi.sourceforg' +
+          'e.net/DTD/sodipodi-0.dtd"'#10'   xmlns="http://www.w3.org/2000/svg"'#10 +
+          '   xmlns:svg="http://www.w3.org/2000/svg"><defs'#10'     id="defs1" ' +
+          '/><sodipodi:namedview'#10'     id="namedview1"'#10'     pagecolor="#ffff' +
+          'ff"'#10'     bordercolor="#666666"'#10'     borderopacity="1.0"'#10'     ink' +
+          'scape:showpageshadow="2"'#10'     inkscape:pageopacity="0.0"'#10'     in' +
+          'kscape:pagecheckerboard="0"'#10'     inkscape:deskcolor="#d1d1d1"><i' +
+          'nkscape:page'#10'       x="0"'#10'       y="0"'#10'       width="24"'#10'       ' +
+          'height="24"'#10'       id="page2"'#10'       margin="0"'#10'       bleed="0"' +
+          ' /></sodipodi:namedview><g'#10'     inkscape:groupmode="layer"'#10'     ' +
+          'id="layer3"'#10'     inkscape:label="Original lock-open"'#10'     style=' +
+          '"display:none"><path'#10'       fill="currentColor"'#10'       d="m 12,1' +
+          '7.5 c 1.1,0 2,-0.9 2,-2 0,-1.1 -0.9,-2 -2,-2 -1.1,0 -2,0.9 -2,2 ' +
+          '0,1.1 0.9,2 2,2 m 6,-9 h -1 v -2 c 0,-2.76 -2.24,-5 -5,-5 -2.76,' +
+          '0 -5,2.24 -5,5 h 1.9 c 0,-1.71 1.39,-3.1 3.1,-3.1 1.71,0 3.1,1.3' +
+          '9 3.1,3.1 v 2 H 6 c -1.1,0 -2,0.9 -2,2 v 10 c 0,1.1 0.9,2 2,2 h ' +
+          '12 c 1.1,0 2,-0.9 2,-2 v -10 c 0,-1.1 -0.9,-2 -2,-2 m 0,12 H 6 v' +
+          ' -10 h 12 z"'#10'       id="path1-6" /></g><g'#10'     inkscape:groupmod' +
+          'e="layer"'#10'     id="layer4"'#10'     inkscape:label="lock-2"'#10'     sod' +
+          'ipodi:insensitive="true"'#10'     style="display:none"><path'#10'       ' +
+          'fill="currentColor"'#10'       d="m 12,17.908226 c 1.1,0 2,-0.9 2,-2' +
+          ' 0,-1.1 -0.9,-2 -2,-2 -1.1,0 -2,0.9 -2,2 0,1.1 0.9,2 2,2 m 6,-9 ' +
+          'h -1 v -2 c 0,-2.76 -2.24,-5 -5,-5 -2.76,0 -5,2.24 -5,5 h 1.9 c ' +
+          '0,-1.71 1.39,-3.1 3.1,-3.1 1.71,0 3.1,1.39 3.1,3.1 v 2 H 6 c -1.' +
+          '1,0 -2,0.9 -2,2 v 10 c 0,1.1 0.9,2 2,2 h 12 c 1.1,0 2,-0.9 2,-2 ' +
+          'v -10 c 0,-1.1 -0.9,-2 -2,-2 m 0,12 H 6 v -10 h 12 z"'#10'       id=' +
+          '"path1-6-3"'#10'       style="display:inline"'#10'       inkscape:label=' +
+          '"path1-6-3" /></g><g'#10'     inkscape:groupmode="layer"'#10'     id="la' +
+          'yer1"'#10'     inkscape:label="lock-open-2"'#10'     style="display:inli' +
+          'ne"'#10'     transform="translate(0.00845076,1.0118208)"'#10'     sodipo' +
+          'di:insensitive="true"><path'#10'       fill="currentColor"'#10'       d=' +
+          '"m 12,17 c 1.1,0 2,-0.9 2,-2 0,-1.1 -0.9,-2 -2,-2 -1.1,0 -2,0.9 ' +
+          '-2,2 0,1.1 0.9,2 2,2 M 18,8 H 17 15.1 6 C 4.9,8 4,8.9 4,10 v 10 ' +
+          'c 0,1.1 0.9,2 2,2 h 12 c 1.1,0 2,-0.9 2,-2 V 10 C 20,8.9 19.1,8 ' +
+          '18,8 m 0,12 H 6 V 10 h 12 z"'#10'       id="path1-8-1"'#10'       sodipo' +
+          'di:nodetypes="csssccccssssssscccccc"'#10'       style="display:inlin' +
+          'e"'#10'       transform="translate(-0.00845076,-0.10313899)"'#10'       ' +
+          'inkscape:label="pathBase" /><path'#10'       fill="currentColor"'#10'   ' +
+          '    d="m 16.446359,9.6541242 1.332213,-1.491713 c 1.838454,-2.05' +
+          '85641 1.659814,-5.2213617 -0.398749,-7.0598157 -2.058565,-1.8384' +
+          '541 -5.221363,-1.65981417 -7.059817,0.39875 l 1.417127,1.2656024' +
+          ' c 1.139043,-1.2754147 3.101672,-1.3862672 4.377086,-0.247225 1.' +
+          '275415,1.1390423 1.386268,3.1016711 0.247226,4.3770859 l -1.3322' +
+          '13,1.4917131 z"'#10'       id="path1-8"'#10'       sodipodi:nodetypes="c' +
+          'ssccsccc"'#10'       style="display:inline"'#10'       inkscape:label="p' +
+          'athRotate" /></g></svg>'#10
+      end
+      item
+        IconName = 'switch'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M1 20V4h10v4H9' +
+          'V6H3v12h6v-2h2v4zm12 0v-4h2v2h2v2zm6 0v-2h2v-2h2v4zM13 8V4h4v2h-' +
+          '2v2zm8 0V6h-2V4h4v4zM3 18V6zm14-2l-1.4-1.4l1.575-1.6H6v-2h11.175' +
+          'L15.6 9.4L17 8l4 4z"/></svg>'
+      end
+      item
+        IconName = 'swap'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="m7 20l-5-5l5-5' +
+          'l1.4 1.425L5.825 14H13v2H5.825L8.4 18.575zm10-6l-1.4-1.425L18.17' +
+          '5 10H11V8h7.175L15.6 5.425L17 4l5 5z"/></svg>'
+      end
+      item
+        IconName = 'checkbox-blank'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M19 5v14H5V5zm' +
+          '0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1' +
+          '-.9-2-2-2"/></svg>'
+      end
+      item
+        IconName = 'checkbox'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0' +
+          '-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 ' +
+          '16H5V5h14zM17.99 9l-1.41-1.42l-6.59 6.59l-2.58-2.57l-1.42 1.41l4' +
+          ' 3.99z"/></svg>'
+      end
+      item
+        IconName = 'award-star'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="m12 14.475l1.9' +
+          ' 1.15q.275.175.55-.012t.2-.513l-.5-2.175l1.7-1.475q.25-.225.15-.' +
+          '537t-.45-.338l-2.225-.175l-.875-2.05q-.125-.3-.45-.3t-.45.3l-.87' +
+          '5 2.05l-2.225.175q-.35.025-.45.338t.15.537l1.7 1.475l-.5 2.175q-' +
+          '.075.325.2.513t.55.012zM8.65 20H6q-.825 0-1.412-.587T4 18v-2.65L' +
+          '2.075 13.4q-.275-.3-.425-.662T1.5 12t.15-.737t.425-.663L4 8.65V6' +
+          'q0-.825.588-1.412T6 4h2.65l1.95-1.925q.3-.275.663-.425T12 1.5t.7' +
+          '38.15t.662.425L15.35 4H18q.825 0 1.413.588T20 6v2.65l1.925 1.95q' +
+          '.275.3.425.663t.15.737t-.15.738t-.425.662L20 15.35V18q0 .825-.58' +
+          '7 1.413T18 20h-2.65l-1.95 1.925q-.3.275-.662.425T12 22.5t-.737-.' +
+          '15t-.663-.425zm.85-2l2.5 2.5l2.5-2.5H18v-3.5l2.5-2.5L18 9.5V6h-3' +
+          '.5L12 3.5L9.5 6H6v3.5L3.5 12L6 14.5V18zm2.5-6"/></svg>'
+        FixedColor = clAquamarine
+      end
+      item
+        IconName = 'award-sash'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M9 10a3.04 3.0' +
+          '4 0 0 1 3-3a3.04 3.04 0 0 1 3 3a3.04 3.04 0 0 1-3 3a3.04 3.04 0 ' +
+          '0 1-3-3m3 9l4 1v-3.08A7.54 7.54 0 0 1 12 18a7.54 7.54 0 0 1-4-1.' +
+          '08V20m4-16a5.78 5.78 0 0 0-4.24 1.74A5.78 5.78 0 0 0 6 10a5.78 5' +
+          '.78 0 0 0 1.76 4.23A5.78 5.78 0 0 0 12 16a5.78 5.78 0 0 0 4.24-1' +
+          '.77A5.78 5.78 0 0 0 18 10a5.78 5.78 0 0 0-1.76-4.26A5.78 5.78 0 ' +
+          '0 0 12 4m8 6a8 8 0 0 1-.57 2.8A7.8 7.8 0 0 1 18 15.28V23l-6-2l-6' +
+          ' 2v-7.72A7.9 7.9 0 0 1 4 10a7.68 7.68 0 0 1 2.33-5.64A7.73 7.73 ' +
+          '0 0 1 12 2a7.73 7.73 0 0 1 5.67 2.36A7.68 7.68 0 0 1 20 10"/></s' +
+          'vg>'
+      end
+      item
+        IconName = 'award-trophy'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="m15.2 10.7l1.4' +
+          ' 5.3l-4.6-3.8L7.4 16l1.4-5.2l-4.2-3.5L10 7l2-5l2 5l5.4.3zM14 19h' +
+          '-1v-3l-1-1l-1 1v3h-1c-1.1 0-2 .9-2 2v1h8v-1a2 2 0 0 0-2-2"/></sv' +
+          'g>'
       end>
     Left = 480
     Top = 16
@@ -11889,8 +12107,8 @@ object IMG: TIMG
               E5573602F2639A64F10FC4290C70AFC472CB0000000049454E44AE426082}
           end>
       end>
-    Left = 144
-    Top = 200
+    Left = 40
+    Top = 488
   end
   object imgMenu: TVirtualImageList
     Images = <
@@ -12152,8 +12370,8 @@ object IMG: TIMG
     ImageCollection = PNGCollection
     Width = 32
     Height = 32
-    Left = 144
-    Top = 344
+    Left = 184
+    Top = 504
   end
   object imgList3: TVirtualImageList
     Images = <
@@ -12165,8 +12383,8 @@ object IMG: TIMG
     ImageCollection = PNGCollection
     Width = 24
     Height = 24
-    Left = 144
-    Top = 456
+    Left = 328
+    Top = 496
   end
   object imgNominate: TVirtualImageList
     Images = <
@@ -12188,8 +12406,8 @@ object IMG: TIMG
     ImageCollection = PNGCollection
     Width = 40
     Height = 40
-    Left = 144
-    Top = 400
+    Left = 248
+    Top = 496
   end
   object imgForm: TVirtualImageList
     Images = <
@@ -12431,8 +12649,8 @@ object IMG: TIMG
     ImageCollection = PNGCollection
     Width = 48
     Height = 48
-    Left = 144
-    Top = 280
+    Left = 120
+    Top = 496
   end
   object SVGHeatStatus: TSVGIconVirtualImageList
     Images = <
@@ -12460,8 +12678,8 @@ object IMG: TIMG
     Width = 48
     Height = 48
     Size = 48
-    Left = 480
-    Top = 128
+    Left = 368
+    Top = 184
   end
   object SVGHeatStroke: TSVGIconVirtualImageList
     Images = <
@@ -12499,10 +12717,10 @@ object IMG: TIMG
     Width = 48
     Height = 48
     Size = 48
-    Left = 480
-    Top = 200
+    Left = 368
+    Top = 232
   end
-  object SVGHeatControls: TSVGIconVirtualImageList
+  object SVGHeatCntrl: TSVGIconVirtualImageList
     Images = <
       item
         CollectionIndex = 26
@@ -12516,8 +12734,8 @@ object IMG: TIMG
       end
       item
         CollectionIndex = 28
-        CollectionName = 'HeatStatusToggle'
-        Name = 'HeatStatusToggle'
+        CollectionName = 'ToggleStatus'
+        Name = 'ToggleStatus'
       end
       item
         CollectionIndex = 29
@@ -12558,7 +12776,143 @@ object IMG: TIMG
     Width = 48
     Height = 48
     Size = 48
-    Left = 480
-    Top = 264
+    Left = 368
+    Top = 136
+  end
+  object SVGSessionCntrl: TSVGIconVirtualImageList
+    Images = <
+      item
+        CollectionIndex = 0
+        CollectionName = 'EmptyFrame'
+        Name = 'EmptyFrame'
+      end
+      item
+        CollectionIndex = 23
+        CollectionName = 'visible-on'
+        Name = 'visible-on'
+      end
+      item
+        CollectionIndex = 24
+        CollectionName = 'visible-off'
+        Name = 'visible-off'
+      end
+      item
+        CollectionIndex = 29
+        CollectionName = 'new'
+        Name = 'new'
+      end
+      item
+        CollectionIndex = 30
+        CollectionName = 'delete'
+        Name = 'delete'
+      end
+      item
+        CollectionIndex = 36
+        CollectionName = 'report'
+        Name = 'report'
+      end
+      item
+        CollectionIndex = 39
+        CollectionName = 'lock-2'
+        Name = 'lock-2'
+      end
+      item
+        CollectionIndex = 40
+        CollectionName = 'lock-open-2'
+        Name = 'lock-open-2'
+      end>
+    ImageCollection = SVGCollection
+    Width = 48
+    Height = 48
+    Size = 48
+    Left = 120
+    Top = 136
+  end
+  object SVGEventCntrl: TSVGIconVirtualImageList
+    Images = <
+      item
+        CollectionIndex = 22
+        CollectionName = 'grid-off'
+        Name = 'grid-off'
+      end
+      item
+        CollectionIndex = 21
+        CollectionName = 'grid-on'
+        Name = 'grid-on'
+      end
+      item
+        CollectionIndex = 26
+        CollectionName = 'up'
+        Name = 'up'
+      end
+      item
+        CollectionIndex = 27
+        CollectionName = 'down'
+        Name = 'down'
+      end
+      item
+        CollectionIndex = 29
+        CollectionName = 'new'
+        Name = 'new'
+      end
+      item
+        CollectionIndex = 30
+        CollectionName = 'delete'
+        Name = 'delete'
+      end
+      item
+        CollectionIndex = 36
+        CollectionName = 'report'
+        Name = 'report'
+      end>
+    ImageCollection = SVGCollection
+    Width = 48
+    Height = 48
+    Size = 48
+    Left = 248
+    Top = 136
+  end
+  object SVGMemberCntrl: TSVGIconVirtualImageList
+    Images = <
+      item
+        CollectionIndex = 41
+        CollectionName = 'switch'
+        Name = 'switch'
+      end
+      item
+        CollectionIndex = 36
+        CollectionName = 'report'
+        Name = 'report'
+      end>
+    ImageCollection = SVGCollection
+    Width = 48
+    Height = 48
+    Size = 48
+    Left = 640
+    Top = 136
+  end
+  object SVGNominateGrid: TSVGIconVirtualImageList
+    Images = <
+      item
+        CollectionIndex = 43
+        CollectionName = 'checkbox-blank'
+        Name = 'checkbox-blank'
+      end
+      item
+        CollectionIndex = 44
+        CollectionName = 'checkbox'
+        Name = 'checkbox'
+      end
+      item
+        CollectionIndex = 45
+        CollectionName = 'award-star'
+        Name = 'award-star'
+      end>
+    ImageCollection = SVGCollection
+    Width = 24
+    Height = 24
+    Size = 24
+    Left = 768
+    Top = 88
   end
 end
