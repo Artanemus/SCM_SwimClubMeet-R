@@ -1836,6 +1836,48 @@ object IMG: TIMG
           ' 5.3l-4.6-3.8L7.4 16l1.4-5.2l-4.2-3.5L10 7l2-5l2 5l5.4.3zM14 19h' +
           '-1v-3l-1-1l-1 1v3h-1c-1.1 0-2 .9-2 2v1h8v-1a2 2 0 0 0-2-2"/></sv' +
           'g>'
+      end
+      item
+        IconName = 'edit'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="m14.06 9.02l.9' +
+          '2.92L5.92 19H5v-.92zM17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83l3.75 ' +
+          '3.75l1.83-1.83a.996.996 0 0 0 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.' +
+          '71-.29m-3.6 3.19L3 17.25V21h3.75L17.81 9.94z"/></svg>'
+      end
+      item
+        IconName = 'in'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M11 7L9.6 8.4l' +
+          '2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V' +
+          '5c0-1.1-.9-2-2-2h-8v2h8z"/></svg>'
+      end
+      item
+        IconName = 'out'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="m17 7l-1.41 1.' +
+          '41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .' +
+          '9-2 2v14c0 1.1.9 2 2 2h8v-2H4z"/></svg>'
+      end
+      item
+        IconName = 'clone'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M11 17H4a2 2 0' +
+          ' 0 1-2-2V3a2 2 0 0 1 2-2h12v2H4v12h7v-2l4 3l-4 3zm8 4V7H8v6H6V7a' +
+          '2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v' +
+          '-2h2v2z"/></svg>'
+      end
+      item
+        IconName = 'sort'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="m18 21l-4-4h3V' +
+          '7h-3l4-4l4 4h-3v10h3M2 19v-2h10v2M2 13v-2h7v2M2 7V5h4v2z"/></svg' +
+          '>'
       end>
     Left = 480
     Top = 16
@@ -12820,6 +12862,31 @@ object IMG: TIMG
         CollectionIndex = 40
         CollectionName = 'lock-open-2'
         Name = 'lock-open-2'
+      end
+      item
+        CollectionIndex = 48
+        CollectionName = 'edit'
+        Name = 'edit'
+      end
+      item
+        CollectionIndex = 49
+        CollectionName = 'in'
+        Name = 'in'
+      end
+      item
+        CollectionIndex = 50
+        CollectionName = 'out'
+        Name = 'out'
+      end
+      item
+        CollectionIndex = 51
+        CollectionName = 'clone'
+        Name = 'clone'
+      end
+      item
+        CollectionIndex = 52
+        CollectionName = 'sort'
+        Name = 'sort'
       end>
     ImageCollection = SVGCollection
     Width = 48
@@ -12914,5 +12981,76 @@ object IMG: TIMG
     Size = 24
     Left = 768
     Top = 88
+  end
+  object SVGSessPopupMenu: TSVGIconVirtualImageList
+    Images = <
+      item
+        CollectionIndex = 0
+        CollectionName = 'EmptyFrame'
+        Name = 'EmptyFrame'
+      end
+      item
+        CollectionIndex = 23
+        CollectionName = 'visible-on'
+        Name = 'visible-on'
+      end
+      item
+        CollectionIndex = 24
+        CollectionName = 'visible-off'
+        Name = 'visible-off'
+      end
+      item
+        CollectionIndex = 29
+        CollectionName = 'new'
+        Name = 'new'
+      end
+      item
+        CollectionIndex = 30
+        CollectionName = 'delete'
+        Name = 'delete'
+      end
+      item
+        CollectionIndex = 36
+        CollectionName = 'report'
+        Name = 'report'
+      end
+      item
+        CollectionIndex = 39
+        CollectionName = 'lock-2'
+        Name = 'lock-2'
+      end
+      item
+        CollectionIndex = 40
+        CollectionName = 'lock-open-2'
+        Name = 'lock-open-2'
+      end
+      item
+        CollectionIndex = 48
+        CollectionName = 'edit'
+        Name = 'edit'
+      end
+      item
+        CollectionIndex = 49
+        CollectionName = 'in'
+        Name = 'in'
+      end
+      item
+        CollectionIndex = 50
+        CollectionName = 'out'
+        Name = 'out'
+      end
+      item
+        CollectionIndex = 51
+        CollectionName = 'clone'
+        Name = 'clone'
+      end
+      item
+        CollectionIndex = 52
+        CollectionName = 'sort'
+        Name = 'sort'
+      end>
+    ImageCollection = SVGCollection
+    Left = 120
+    Top = 200
   end
 end

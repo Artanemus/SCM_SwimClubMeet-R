@@ -9776,7 +9776,6 @@ object Main: TMain
               end
               item
                 Action = Session_Edit
-                Caption = '&Edit Session ...'
                 ImageIndex = 45
                 ImageName = 'Edit'
               end
@@ -10238,7 +10237,7 @@ object Main: TMain
     end
     object Session_Edit: TAction
       Category = 'Session'
-      Caption = 'Edit Session ...'
+      Caption = 'Edit Session...'
       ImageIndex = 45
       ImageName = 'Edit'
       OnExecute = Session_EditExecute
@@ -10247,7 +10246,7 @@ object Main: TMain
     object Session_Delete: TAction
       Category = 'Session'
       Caption = 'Delete Session...'
-      Hint = 'Delete the current selected session.'
+      Hint = 'Delete the current selected session. (Ready to print.)'
       ImageIndex = 19
       ImageName = 'Delete'
       ShortCut = 16430
@@ -10623,6 +10622,7 @@ object Main: TMain
       Category = 'Session'
       Caption = 'Import Session...'
       Enabled = False
+      Hint = 'Import a JSON file formatted with session data.'
       ImageIndex = 39
       ImageName = 'import'
     end

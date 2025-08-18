@@ -34,11 +34,21 @@ function PK(): integer; // NO CHECKS. RTNS: Primary key.
 function RenumberEvents(DoLocate: Boolean = true): integer;
 function StartDT: TDateTime;
 
+procedure DetailTBLs_DisableCNTRLs;
+procedure DetailTBLs_ApplyMaster;
+procedure DetailTBLs_EnableCNTLs;
 procedure SetVisibilityOfLocked(IsVisible: Boolean);
 procedure SetEntrantCount();
 procedure SetNomineeCount();
 procedure SetSessionStatusID(aSessionStatusID: Integer);
+procedure SortSession();
 procedure NewSession();
+
+//procedure EditSession();
+//procedure ReSyncSession();
+
+
+
 
 type
   T_Session = class
@@ -74,6 +84,23 @@ begin
   inherited;
 end;
 
+function AllEventsAreClosed: Boolean;
+var
+  i: integer;
+  SQL: string;
+  v: variant;
+begin
+  result := false;
+  if not Assigned(SCM) or not SCM.scmConnection.Connected then exit;
+  SQL := '''
+    SELECT COUNT(EventID)
+    FROM [SwimClubMeet2].[dbo].[Event]
+    WHERE [Event].EventStatusID IN [0,1,2] AND [Event].SessionID = :ID;
+    ''';
+  v := SCM.scmConnection.ExecSQLScalar(SQL, [uSession.PK]);
+  if VarIsClear(v) and (v = 0) then result := true;
+end;
+
 function Assert: Boolean;
 begin
   result := false;
@@ -83,28 +110,75 @@ begin
         result := true;
 end;
 
-function RenumberEvents(DoLocate: Boolean = true): integer;
+function CalcNomineeCount(): integer;
 var
-  aEvent: integer;
+  SQL: string;
+  v: variant;
 begin
-  if not Assigned(SCM) or not SCM.IsActive then exit;
-  if CORE.dsHeat.DataSet.IsEmpty then exit;
   result := 0;
-  CORE.qryLane.DisableControls;
-  CORE.qryHeat.DisableControls;
-  try
-    if DoLocate then
-      aEvent := uHeat.PK;
-    SCM.procRenumberEvents.Params[1].Value := uSession.PK;
-    SCM.procRenumberEvents.Prepare;
-    SCM.procRenumberEvents.ExecProc;
-  finally
+  if not Assigned(SCM) or not SCM.scmConnection.Connected then exit;
+  SQL := 'SELECT SwimClubMeet2.dbo.SessionNomineeCount(:ID1);';
+  v := SCM.scmConnection.ExecSQLScalar(SQL, [uSession.PK]);
+  if not VarIsClear(v) and (v > 0) then result := v;
+end;
+
+function CalcEntrantCount(): integer;
+var
+  SQL: string;
+  v: variant;
+begin
+  result := 0;
+  if not Assigned(SCM) or not SCM.scmConnection.Connected then exit;
+  SQL := 'SELECT SwimClubMeet2.dbo.SessionEntrantCount(:ID);';
+  v := SCM.scmConnection.ExecSQLScalar(SQL, [uSession.PK]);
+  if not VarIsClear(v) and (v > 0) then
+    result := v;
+end;
+
+function CalcEventCount: integer;
+var
+  SQL: string;
+  v: variant;
+begin
+  result := 0;
+  if not Assigned(SCM) or not SCM.scmConnection.Connected then exit;
+  SQL := '''
+		SELECT COUNT(EventID) FROM [SwimClubMeet2].[dbo].[Session]
+		INNER JOIN [Event] ON [Session].SessionID = [Event].SessionID
+		WHERE [Session].SessionID = :ID;
+		''';
+  v := SCM.scmConnection.ExecSQLScalar(SQL, [uSession.PK]);
+  if not VarIsClear(v) and (v > 0) then result := v;
+end;
+
+procedure DetailTBLs_DisableCNTRLs;
+begin
+    CORE.qryEvent.DisableControls;
+    CORE.qryHeat.DisableControls;
+    CORE.qryLane.DisableControls;
+    CORE.qryWatchTime.DisableControls;
+    CORE.qrySplitTime.DisableControls;
+    CORE.qryTeam.DisableControls;
+end;
+
+procedure DetailTBLs_ApplyMaster;
+begin
+    CORE.qryEvent.ApplyMaster;
     CORE.qryHeat.ApplyMaster;
-    if DoLocate then
-      uHeat.Locate(aEvent);
+    CORE.qryLane.ApplyMaster;
+    CORE.qryWatchTime.ApplyMaster;
+    CORE.qrySplitTime.ApplyMaster;
+    CORE.qryTeam.ApplyMaster;
+end;
+
+procedure DetailTBLs_EnableCNTLs;
+begin
+    CORE.qryEvent.EnableControls;
     CORE.qryHeat.EnableControls;
     CORE.qryLane.EnableControls;
-  end;
+    CORE.qryWatchTime.EnableControls;
+    CORE.qrySplitTime.EnableControls;
+    CORE.qryTeam.EnableControls;
 end;
 
 function DeleteSession(DoExclude: Boolean = true): boolean;
@@ -186,109 +260,11 @@ begin
   end;
 end;
 
-function AllEventsAreClosed: Boolean;
-var
-  i: integer;
-  SQL: string;
-  v: variant;
-begin
-  result := false;
-  if not Assigned(SCM) or not SCM.scmConnection.Connected then exit;
-  SQL := '''
-    SELECT COUNT(EventID)
-    FROM [SwimClubMeet2].[dbo].[Event]
-    WHERE [Event].EventStatusID IN [0,1,2] AND [Event].SessionID = :ID;
-    ''';
-  v := SCM.scmConnection.ExecSQLScalar(SQL, [uSession.PK]);
-  if VarIsClear(v) and (v = 0) then result := true;
-end;
+procedure
 
 function EntrantCount: integer;
 begin
   result := CORE.qrySession.FieldByName('EntrantCount').AsInteger;
-end;
-
-function CalcEntrantCount(): integer;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := 0;
-  if not Assigned(SCM) or not SCM.scmConnection.Connected then exit;
-  SQL := 'SELECT SwimClubMeet2.dbo.SessionEntrantCount(:ID);';
-  v := SCM.scmConnection.ExecSQLScalar(SQL, [uSession.PK]);
-  if not VarIsClear(v) and (v > 0) then
-    result := v;
-end;
-
-procedure SetEntrantCount;
-begin
-  var i := uSession.CalcEntrantCount;
-  try
-    CORE.qrySession.DisableControls;
-    if CORE.qrySession.FieldByName('EntrantCount').AsInteger <> i then
-    begin
-      try
-        CORE.qrySession.Edit;
-        CORE.qrySession.FieldByName('EntrantCount').AsInteger := i;
-        CORE.qrySession.Post;
-      except on E: Exception do
-          CORE.qrySession.Cancel;
-      end;
-    end;
-  finally
-    CORE.qrySession.EnableControls;
-  end;
-end;
-
-function CalcEventCount: integer;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := 0;
-  if not Assigned(SCM) or not SCM.scmConnection.Connected then exit;
-  SQL := '''
-		SELECT COUNT(EventID) FROM [SwimClubMeet2].[dbo].[Session]
-		INNER JOIN [Event] ON [Session].SessionID = [Event].SessionID
-		WHERE [Session].SessionID = :ID;
-		''';
-  v := SCM.scmConnection.ExecSQLScalar(SQL, [uSession.PK]);
-  if not VarIsClear(v) and (v > 0) then result := v;
-end;
-
-function CalcNomineeCount(): integer;
-var
-  SQL: string;
-  v: variant;
-begin
-  result := 0;
-  if not Assigned(SCM) or not SCM.scmConnection.Connected then exit;
-  SQL := 'SELECT SwimClubMeet2.dbo.SessionNomineeCount(:ID1);';
-  v := SCM.scmConnection.ExecSQLScalar(SQL, [uSession.PK]);
-  if not VarIsClear(v) and (v > 0) then result := v;
-end;
-
-procedure SetNomineeCount();
-begin
-  var i := uSession.CalcNomineeCount;
-  try
-    CORE.qrySession.DisableControls;
-    try
-      CORE.qrySession.Edit;
-      CORE.qrySession.FieldByName('NomineeCount').AsInteger := i;
-      CORE.qrySession.Post;
-    except on E: Exception do
-        CORE.qrySession.Cancel;
-    end;
-  finally
-    CORE.qrySession.EnableControls;
-  end;
-end;
-
-function NomineeCount: integer;
-begin
-  result := CORE.qrySession.FieldByName('NomineeCount').AsInteger;
 end;
 
 function GetSessionID: integer;
@@ -318,6 +294,121 @@ begin
   result := not CORE.qryEvent.IsEmpty;
 end;
 
+function IsEmptyOrLocked: Boolean;
+var
+  i: integer;
+begin
+  result := true;
+  i := CORE.qrySession.FieldByName('SessionStatusID').AsInteger;
+  if (i <> 2) then result := false;
+end;
+
+function IsLocked: Boolean;
+begin
+  result := true;
+  if (CORE.qrySession.FieldByName('SessionStatusID').AsInteger <> 2)
+    then result := false;
+end;
+
+function Locate(SessionID: integer): Boolean;
+var
+  SearchOptions: TLocateOptions;
+begin
+  SearchOptions := [];
+  result := CORE.qrySession.Locate('SessionID', SessionID,
+    SearchOptions);
+end;
+
+function RenumberEvents(DoLocate: Boolean = true): integer;
+var
+  aEvent: integer;
+begin
+  if not Assigned(SCM) or not SCM.IsActive then exit;
+  if CORE.dsHeat.DataSet.IsEmpty then exit;
+  result := 0;
+  CORE.qryLane.DisableControls;
+  CORE.qryHeat.DisableControls;
+  try
+    if DoLocate then
+      aEvent := uHeat.PK;
+    SCM.procRenumberEvents.Params[1].Value := uSession.PK;
+    SCM.procRenumberEvents.Prepare;
+    SCM.procRenumberEvents.ExecProc;
+  finally
+    CORE.qryHeat.ApplyMaster;
+    if DoLocate then
+      uHeat.Locate(aEvent);
+    CORE.qryHeat.EnableControls;
+    CORE.qryLane.EnableControls;
+  end;
+end;
+
+procedure SetEntrantCount;
+begin
+  var i := uSession.CalcEntrantCount;
+  try
+    CORE.qrySession.DisableControls;
+    if CORE.qrySession.FieldByName('EntrantCount').AsInteger <> i then
+    begin
+      try
+        CORE.qrySession.Edit;
+        CORE.qrySession.FieldByName('EntrantCount').AsInteger := i;
+        CORE.qrySession.Post;
+      except on E: Exception do
+          CORE.qrySession.Cancel;
+      end;
+    end;
+  finally
+    CORE.qrySession.EnableControls;
+  end;
+end;
+
+procedure SetNomineeCount();
+begin
+  var i := uSession.CalcNomineeCount;
+  try
+    CORE.qrySession.DisableControls;
+    try
+      CORE.qrySession.Edit;
+      CORE.qrySession.FieldByName('NomineeCount').AsInteger := i;
+      CORE.qrySession.Post;
+    except on E: Exception do
+        CORE.qrySession.Cancel;
+    end;
+  finally
+    CORE.qrySession.EnableControls;
+  end;
+end;
+
+procedure SetSessionStatusID(aSessionStatusID: Integer);
+var
+  i: integer;
+  fld: TField;
+begin
+  if aSessionStatusID in [1,2] then // Check out of bounds.
+  begin
+    with CORE.qrySession do
+    begin
+      CORE.qrySession.DisableControls;
+      fld := CORE.qrySession.FindField('SessionStatusID');
+      if Assigned(fld) and fld.ReadOnly = true then
+        fld.ReadOnly := false;
+      try
+        try
+          Edit;
+          FieldByName('SessionStatusID').AsInteger := i;
+          Post;
+        except on E: Exception do
+            Cancel;
+        end;
+      finally
+        if Assigned(fld) then fld.ReadOnly := true;
+        CORE.qrySession.EnableControls;
+      end;
+    end;
+  end;
+end;
+
 procedure SetVisibilityOfLocked(IsVisible: Boolean);
 /// <param name="IsVisible">
 ///  If true - filters out locked sessions in CORE.qrySession.
@@ -327,7 +418,6 @@ var
 ID: integer;
 found: boolean;
 begin
-  CORE.qryTeamLink.DisableControls;
   CORE.qryTeam.DisableControls;
   CORE.qryLane.DisableControls;
   CORE.qryHeat.DisableControls;
@@ -363,6 +453,14 @@ begin
 
     found := uSession.Locate(ID);
 
+      { toggle visibility of locked sessions
+        if the selected session is no longer visible.. a ONSCROLL event
+        will have occurred in CORE.
+        // if Assigned(Owner) then
+        //    PostMessage(TForm(Owner).Handle, SCM_SESSION_SCROLL, 0, 0);
+
+      }
+
     // ASSERT MASTER-DETAIL STATE.
     CORE.qryEvent.ApplyMaster;
     if found then ; // locate to event?.
@@ -371,7 +469,6 @@ begin
     CORE.qryHeat.ApplyMaster;
     CORE.qryLane.ApplyMaster;
     CORE.qryTeam.ApplyMaster;
-    CORE.qryTeamLink.ApplyMaster;
   finally
     CORE.qrySession.EnableControls;
     CORE.qryEvent.EnableControls;
@@ -379,24 +476,12 @@ begin
     CORE.qryHeat.EnableControls;
     CORE.qryLane.EnableControls;
     CORE.qryTeam.EnableControls;
-    CORE.qryTeamLink.EnableControls;
   end;
 end;
 
-function IsLocked: Boolean;
+function StartDT: TDateTime;
 begin
-  result := true;
-  if (CORE.qrySession.FieldByName('SessionStatusID').AsInteger <> 2)
-    then result := false;
-end;
-
-function Locate(SessionID: integer): Boolean;
-var
-  SearchOptions: TLocateOptions;
-begin
-  SearchOptions := [];
-  result := CORE.qrySession.Locate('SessionID', SessionID,
-    SearchOptions);
+  result := CORE.qrySession.FieldByName('StartDT').AsDateTime;
 end;
 
 procedure NewSession();
@@ -448,52 +533,14 @@ begin
   end;
 end;
 
+function NomineeCount: integer;
+begin
+  result := CORE.qrySession.FieldByName('NomineeCount').AsInteger;
+end;
+
 function PK(): integer;
 begin // NO CHECKS. quick and dirty - primary key result.
   result := CORE.qrySession.FieldByName('SessionID').AsInteger;
-end;
-
-function IsEmptyOrLocked: Boolean;
-var
-  i: integer;
-begin
-  result := true;
-  i := CORE.qrySession.FieldByName('SessionStatusID').AsInteger;
-  if (i <> 2) then result := false;
-end;
-
-function StartDT: TDateTime;
-begin
-  result := CORE.qrySession.FieldByName('StartDT').AsDateTime;
-end;
-
-procedure SetSessionStatusID(aSessionStatusID: Integer);
-var
-  i: integer;
-  fld: TField;
-begin
-  if aSessionStatusID in [1,2] then // Check out of bounds.
-  begin
-    with CORE.qrySession do
-    begin
-      CORE.qrySession.DisableControls;
-      fld := CORE.qrySession.FindField('SessionStatusID');
-      if Assigned(fld) and fld.ReadOnly = true then
-        fld.ReadOnly := false;
-      try
-        try
-          Edit;
-          FieldByName('SessionStatusID').AsInteger := i;
-          Post;
-        except on E: Exception do
-            Cancel;
-        end;
-      finally
-        if Assigned(fld) then fld.ReadOnly := true;
-        CORE.qrySession.EnableControls;
-      end;
-    end;
-  end;
 end;
 
 end.

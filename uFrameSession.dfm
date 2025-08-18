@@ -12,8 +12,6 @@ object FrameSession: TFrameSession
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 233
-    ExplicitHeight = 480
     object gSession: TDBAdvGrid
       Left = 0
       Top = 0
@@ -21,15 +19,23 @@ object FrameSession: TFrameSession
       Height = 548
       Cursor = crDefault
       Align = alClient
+      Color = clWhite
       ColCount = 2
       DrawingStyle = gdsClassic
       FixedColor = clWhite
       RowCount = 2
       FixedRows = 1
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -12
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      Options = [goVertLine, goHorzLine, goRangeSelect, goFixedRowDefAlign]
+      ParentFont = False
       ScrollBars = ssBoth
       TabOrder = 0
-      GridLineColor = 13948116
-      GridFixedLineColor = 11250603
+      GridLineColor = 15987699
+      GridFixedLineColor = 15987699
       HoverRowCells = [hcNormal, hcSelected]
       ActiveCellFont.Charset = DEFAULT_CHARSET
       ActiveCellFont.Color = 4474440
@@ -43,6 +49,7 @@ object FrameSession: TFrameSession
       ControlLook.FixedGradientTo = clWhite
       ControlLook.FixedGradientMirrorFrom = clWhite
       ControlLook.FixedGradientMirrorTo = clWhite
+      ControlLook.FixedGradientHoverFrom = clGray
       ControlLook.FixedGradientHoverTo = clWhite
       ControlLook.FixedGradientHoverMirrorFrom = clWhite
       ControlLook.FixedGradientHoverMirrorTo = clWhite
@@ -88,7 +95,7 @@ object FrameSession: TFrameSession
       FixedColWidth = 20
       FixedRowHeight = 22
       FixedFont.Charset = DEFAULT_CHARSET
-      FixedFont.Color = 3881787
+      FixedFont.Color = clBlack
       FixedFont.Height = -12
       FixedFont.Name = 'Tahoma'
       FixedFont.Style = [fsBold]
@@ -332,7 +339,6 @@ object FrameSession: TFrameSession
         80000001C0000003C0000003E0000007F000000FF800001FFC00003FFF0000FF
         FFC003FF}
       ShowUnicode = False
-      ExplicitLeft = 2
       ColWidths = (
         20
         64)
@@ -355,7 +361,13 @@ object FrameSession: TFrameSession
         Control = ShapeSessBar1
       end
       item
+        Control = spbtnSessEdit
+      end
+      item
         Control = spbtnSessNew
+      end
+      item
+        Control = spbtnSessClone
       end
       item
         Control = spbtnSessDelete
@@ -368,8 +380,6 @@ object FrameSession: TFrameSession
       end>
     HorizontalPositioning = sphpCenter
     TabOrder = 1
-    ExplicitLeft = 386
-    ExplicitHeight = 480
     DesignSize = (
       64
       548)
@@ -409,9 +419,20 @@ object FrameSession: TFrameSession
       Anchors = []
       Brush.Color = 8421631
     end
-    object spbtnSessNew: TSpeedButton
+    object spbtnSessEdit: TSpeedButton
       Left = 8
       Top = 113
+      Width = 48
+      Height = 48
+      Action = actnSess_Edit
+      Images = IMG.SVGSessionCntrl
+      Flat = True
+      Layout = blGlyphTop
+      Margin = 0
+    end
+    object spbtnSessNew: TSpeedButton
+      Left = 8
+      Top = 163
       Width = 48
       Height = 48
       Action = actnSess_New
@@ -421,9 +442,22 @@ object FrameSession: TFrameSession
       Layout = blGlyphTop
       Margin = 0
     end
+    object spbtnSessClone: TSpeedButton
+      Left = 8
+      Top = 213
+      Width = 48
+      Height = 48
+      Action = actnSess_Clone
+      ImageIndex = 11
+      ImageName = 'clone'
+      Images = IMG.SVGSessionCntrl
+      Flat = True
+      Layout = blGlyphTop
+      Margin = 0
+    end
     object spbtnSessDelete: TSpeedButton
       Left = 8
-      Top = 163
+      Top = 263
       Width = 48
       Height = 48
       Action = actnSess_Delete
@@ -435,7 +469,7 @@ object FrameSession: TFrameSession
     object ShapeSessBar2: TShape
       AlignWithMargins = True
       Left = 8
-      Top = 216
+      Top = 316
       Width = 48
       Height = 4
       Margins.Left = 0
@@ -445,7 +479,7 @@ object FrameSession: TFrameSession
     end
     object spbtnSessReport: TSpeedButton
       Left = 8
-      Top = 225
+      Top = 325
       Width = 48
       Height = 48
       Action = actnSess_Report
@@ -462,7 +496,7 @@ object FrameSession: TFrameSession
     object actnSess_Visible: TAction
       Category = 'Session'
       Caption = 'Toggle Visibility'
-      Hint = 'Show, hide the visibility of locked sessions.'
+      Hint = 'Toggle - show, hide the visibility of locked sessions.'
       ImageIndex = 1
       ImageName = 'visible-on'
       OnExecute = actnSess_VisibleExecute
@@ -471,10 +505,19 @@ object FrameSession: TFrameSession
     object actnSess_Lock: TAction
       Category = 'Session'
       Caption = 'Toggle Lock'
-      Hint = 'Lock-Unlock the session.'
+      Hint = 'Toggle - lock-unlock the session.'
       ImageIndex = 6
       ImageName = 'lock-2'
       OnExecute = actnSess_LockExecute
+      OnUpdate = actnSess_DefaultUpdate
+    end
+    object actnSess_Edit: TAction
+      Category = 'Session'
+      Caption = 'Edit Session...'
+      Hint = 'Edit the selected session.'
+      ImageIndex = 8
+      ImageName = 'edit'
+      OnExecute = actnSess_EditExecute
       OnUpdate = actnSess_DefaultUpdate
     end
     object actnSess_New: TAction
@@ -485,6 +528,11 @@ object FrameSession: TFrameSession
       ImageName = 'new'
       OnExecute = actnSess_NewExecute
       OnUpdate = actnSess_NewUpdate
+    end
+    object actnSess_Clone: TAction
+      Category = 'Session'
+      Caption = 'Clone Session...'
+      Hint = 'Duplicate the selected session.'
     end
     object actnSess_Delete: TAction
       Category = 'Session'
@@ -498,15 +546,66 @@ object FrameSession: TFrameSession
     object actnSess_Report: TAction
       Category = 'Session'
       Caption = 'Session Report'
-      Hint = 'Display the session report.'
+      Hint = 'Display the session report. (Ready to print.)'
       ImageIndex = 5
       ImageName = 'report'
       OnExecute = actnSess_ReportExecute
       OnUpdate = actnSess_DefaultUpdate
     end
+    object actnSess_Import: TAction
+      Category = 'Session'
+      Caption = 'Import Session...'
+      Hint = 'Import a JSON file formatted with session data.'
+      ImageIndex = 9
+      ImageName = 'in'
+    end
+    object actnSess_Export: TAction
+      Category = 'Session'
+      Caption = 'Export Session...'
+      Hint = 'Export the session as a JSON file.'
+      ImageIndex = 10
+      ImageName = 'out'
+    end
+    object actnSess_Sort: TAction
+      Category = 'Session'
+      Caption = 'Sort Session...'
+      Hint = 'Sort the session stack in descending order.'
+      ImageIndex = 12
+      ImageName = 'sort'
+      OnExecute = actnSess_SortExecute
+      OnUpdate = actnSess_DefaultUpdate
+    end
   end
   object pumenuSess: TPopupMenu
+    Images = IMG.SVGSessPopupMenu
     Left = 96
     Top = 328
+    object oggleVisibility1: TMenuItem
+      Action = actnSess_Visible
+    end
+    object oggleLock1: TMenuItem
+      Action = actnSess_Lock
+    end
+    object N1: TMenuItem
+      Caption = '-'
+    end
+    object EditSession1: TMenuItem
+      Action = actnSess_Edit
+    end
+    object NewSession1: TMenuItem
+      Action = actnSess_New
+    end
+    object CloneSession1: TMenuItem
+      Action = actnSess_Clone
+    end
+    object DeleteSession1: TMenuItem
+      Action = actnSess_Delete
+    end
+    object N2: TMenuItem
+      Caption = '-'
+    end
+    object SessionReport1: TMenuItem
+      Action = actnSess_Report
+    end
   end
 end

@@ -34,14 +34,32 @@ type
     spbtnSessDelete: TSpeedButton;
     ShapeSessBar2: TShape;
     spbtnSessReport: TSpeedButton;
+    actnSess_Edit: TAction;
+    actnSess_Export: TAction;
+    actnSess_Import: TAction;
+    actnSess_Clone: TAction;
+    actnSess_Sort: TAction;
+    spbtnSessEdit: TSpeedButton;
+    spbtnSessClone: TSpeedButton;
+    oggleVisibility1: TMenuItem;
+    oggleLock1: TMenuItem;
+    EditSession1: TMenuItem;
+    NewSession1: TMenuItem;
+    DeleteSession1: TMenuItem;
+    CloneSession1: TMenuItem;
+    SessionReport1: TMenuItem;
+    N1: TMenuItem;
+    N2: TMenuItem;
     procedure actnSess_VisibleExecute(Sender: TObject);
     procedure actnSess_DefaultUpdate(Sender: TObject);
     procedure actnSess_DeleteExecute(Sender: TObject);
     procedure actnSess_DeleteUpdate(Sender: TObject);
+    procedure actnSess_EditExecute(Sender: TObject);
     procedure actnSess_LockExecute(Sender: TObject);
     procedure actnSess_NewExecute(Sender: TObject);
     procedure actnSess_NewUpdate(Sender: TObject);
     procedure actnSess_ReportExecute(Sender: TObject);
+    procedure actnSess_SortExecute(Sender: TObject);
   private
     { Private declarations }
   public
@@ -53,27 +71,24 @@ implementation
 uses
   dlgNewSession, rptSessionReportB, rptSessionReportA;
 
-type
-  sessAction = (actVisible, actLock, actNew, actDelete, actReport);
-
 {$R *.dfm}
 
 procedure TFrameSession.actnSess_VisibleExecute(Sender: TObject);
 begin
-  with (Sender as TAction) do
-  begin
     gSession.BeginUpdate;
-    Checked := not Checked;
-    if Checked then // hide locked session from view. eye with line
-      TAction(Sender).ImageIndex := 2
-      // DEPRECIATED not required? - spbtnSessVisible.ImageIndex := 2;
-    else  // display locked sessions. plain eye
-      TAction(Sender).ImageIndex := 1;
-      //  DEPRECIATED not required?  - spbtnSessVisible.ImageIndex := 1;
-    uSession.SetVisibilityOfLocked(Checked); // toggle visibility of locked sessions
-
-    gSession.EndUpdate;
-  end;
+    TAction(Sender).Checked := not TAction(Sender).Checked;
+    try
+      if TAction(Sender).Checked then // hide locked session from view. eye with line
+        TAction(Sender).ImageIndex := 2
+        // DEPRECIATED not required? - spbtnSessVisible.ImageIndex := 2;
+      else  // display locked sessions. plain eye
+        TAction(Sender).ImageIndex := 1;
+        //  DEPRECIATED not required?  - spbtnSessVisible.ImageIndex := 1;
+      { uSession handles enable/disable and re-sync of Master-Detail}
+      uSession.SetVisibilityOfLocked(TAction(Sender).Checked);
+    finally
+      gSession.EndUpdate;
+    end;
 end;
 
 procedure TFrameSession.actnSess_DefaultUpdate(Sender: TObject);
@@ -88,9 +103,8 @@ end;
 
 procedure TFrameSession.actnSess_DeleteExecute(Sender: TObject);
 var
-  rtnValue, aSessionID: integer;
+  rtnValue: integer;
 begin
-  aSessionID := CORE.dsSession.DataSet.FieldByName('SessionID').AsInteger;
   if uSession.IsLocked then
   begin
     MessageDlg('A locked session can''t be deleted.', mtInformation,
@@ -118,17 +132,12 @@ begin
   end;
   gSession.BeginUpdate;
   try
-  { D E L E T E  S E S S I O N   D O   N O T   E X C L U D E ! }
-  uSession.DeleteSession(false);
+    { D E L E T E  S E S S I O N   D O   N O T   E X C L U D E ! }
+    { uSession handles enable/disable and re-sync of Master-Detail}
+    uSession.DeleteSession(false);
   finally
     gSession.EndUpdate;
   end;
-
-  { Enable/Disable grids. LParam - delete }
-  // if Assigned(Owner) then
-//    PostMessage(TForm(Owner).Handle, SCM_SESSION_CHANGED, ORD(actDelete), 0);
-
-
 end;
 
 procedure TFrameSession.actnSess_DeleteUpdate(Sender: TObject);
@@ -141,6 +150,30 @@ begin
       and (CORE.qrySession.FieldByName('SessionStatusID').AsInteger <> 2)
         then DoEnable := true;
   TAction(Sender).Enabled := DoEnable;
+end;
+
+procedure TFrameSession.actnSess_EditExecute(Sender: TObject);
+var
+  dlg: TNewSession;
+  DT: TDateTime;
+begin
+  DT := CORE.qrySession.FieldByName('StartDT').AsDateTime;
+  try
+  dlg := TNewSession.CreateWithConnection(self, SCM.scmConnection);
+  dlg.SessionMode := smEditSession;
+  dlg.SessionID := uSession.PK;
+  if IsPositiveResult(dlg.ShowModal) then
+  begin
+    { if the session date has been modified then
+      the session table will need to be resorted.
+    }
+    if DT <> CORE.qrySession.FieldByName('StartDT').AsDateTime then
+      { uSession handles enable/disable and re-sync of Master-Detail}
+      uSession.SortSession();
+  end;
+  finally
+    dlg.Free;
+  end;
 end;
 
 procedure TFrameSession.actnSess_LockExecute(Sender: TObject);
@@ -159,16 +192,13 @@ begin
     begin
       TAction(Sender).ImageIndex := 6;
       //  DEPRECIATED not required?  - spbtnSessLock.ImageIndex := 6;
+
+      { uSession handles enable/disable and re-sync of Master-Detail}
       uSession.SetSessionStatusID(2); // LOCKED.
     end;
     // toggle visibility of locked sessions
     gSession.endUpdate;
   end;
-
-  { Enable/Disable grids. LParam - lock state changed }
-  // if Assigned(Owner) then
-  //  PostMessage(TForm(Owner).Handle, SCM_SESSION_CHANGED, ORD(actLock), 0);
-
 end;
 
 procedure TFrameSession.actnSess_NewExecute(Sender: TObject);
@@ -183,16 +213,12 @@ begin
   begin
     gSession.BeginUpdate;
     try
+      { uSession handles enable/disable and re-sync of Master-Detail}
       uSession.NewSession;
     finally
       dlg.Free;
       gSession.EndUpdate;
     end;
-
-  { LParam - new session. Check - cue-to-record. grid sorted correctly. }
-  // if Assigned(Owner) then
-  //  PostMessage(TForm(Owner).Handle, SCM_SESSION_CHANGED, ORD(actNew), 0);
-
   end;
 end;
 
@@ -229,5 +255,20 @@ begin
     on E: Exception do ShowMessage(E.Message);
   end;
 end;
+
+procedure TFrameSession.actnSess_SortExecute(Sender: TObject);
+var
+  aSessionID: integer;
+begin
+  gSession.BeginUpdate;
+  try
+    uSession.SortSession();
+  finally
+    gSession.EndUpdate;
+  end;
+end;
+
+
+
 
 end.

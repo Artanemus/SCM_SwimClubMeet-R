@@ -10,6 +10,11 @@ const
    SCM_EVENT_UI = WM_USER + 3;
    SCM_HEAT_UI = WM_USER + 4;
    SCM_LANE_UI = WM_USER + 5;
+   SCM_SCROLL_SWIMCLUB  = WM_USER + 6;
+   SCM_SCROLL_SESSION  = WM_USER + 7;
+   SCM_SCROLL_EVENT  = WM_USER + 8;
+   SCM_SCROLL_HEAT  = WM_USER + 9;
+   SCM_SCROLL_LANE  = WM_USER + 10;
 
  type
  scmSendToFileType = (sftPDF, sftXLS, sftHTML, sftIMG, sftNA);
