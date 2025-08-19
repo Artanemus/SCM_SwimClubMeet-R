@@ -1,4 +1,4 @@
-unit uFrameSession;
+unit f_FrameSession;
 
 interface
 
@@ -50,7 +50,6 @@ type
     SessionReport1: TMenuItem;
     N1: TMenuItem;
     N2: TMenuItem;
-    procedure actnSess_VisibleExecute(Sender: TObject);
     procedure actnSess_DefaultUpdate(Sender: TObject);
     procedure actnSess_DeleteExecute(Sender: TObject);
     procedure actnSess_DeleteUpdate(Sender: TObject);
@@ -60,6 +59,7 @@ type
     procedure actnSess_NewUpdate(Sender: TObject);
     procedure actnSess_ReportExecute(Sender: TObject);
     procedure actnSess_SortExecute(Sender: TObject);
+    procedure actnSess_VisibleExecute(Sender: TObject);
   private
     { Private declarations }
   public
@@ -72,6 +72,10 @@ uses
   dlgNewSession, rptSessionReportB, rptSessionReportA;
 
 {$R *.dfm}
+
+procedure TFrameSession.actnSess_CloneExecute(Sender: TObject);
+begin
+end;
 
 procedure TFrameSession.actnSess_VisibleExecute(Sender: TObject);
 begin

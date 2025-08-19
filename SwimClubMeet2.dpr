@@ -100,10 +100,10 @@ uses
   uEvent in 'uEvent.pas',
   uHeat in 'uHeat.pas',
   uLane in 'uLane.pas',
-  uFrameHeat in 'uFrameHeat.pas' {FrameHeat: TFrame},
+  f_FrameHeat in 'uFrameHeat.pas' {FrameHeat: TFrame},
   uTeam in 'uTeam.pas',
   uDefines in 'uDefines.pas',
-  uFrameSession in 'uFrameSession.pas' {FrameSession: TFrame};
+  f_FrameSession in 'uFrameSession.pas' {FrameSession: TFrame};
 
 {$R *.res}
 
