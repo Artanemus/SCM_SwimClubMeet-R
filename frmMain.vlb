@@ -19,9 +19,6 @@ Coordinates=1304,771,125,36
 [Label12]
 Coordinates=962,10,60,58
 
-[Session_ToggleVisible]
-Coordinates=1304,826,145,36
-
 [SCM.qryHeatCount]
 Coordinates=1167,709,126,58
 
@@ -61,9 +58,6 @@ Coordinates=2176,902,93,36
 [lblSessionCaption]
 Coordinates=2411,766,118,58
 
-[Session_ToggleLock]
-Coordinates=1165,1404,134,36
-
 [pumHeat]
 Coordinates=1096,1404,66,36
 
@@ -84,9 +78,6 @@ Coordinates=422,1404,87,36
 
 [dbtxtDebugSession]
 Coordinates=1479,10,126,58
-
-[Session_Delete]
-Coordinates=194,1404,105,36
 
 [Filter1]
 Coordinates=26,1404,51,36
@@ -138,9 +129,6 @@ Coordinates=1534,936,85,36
 
 [SCM.qryRenumberHeats]
 Coordinates=1239,863,157,58
-
-[Session_Sort]
-Coordinates=1534,991,91,36
 
 [NominateRpt1]
 Coordinates=1534,1046,97,36
@@ -282,9 +270,6 @@ Coordinates=1583,1552,114,36
 
 [spbtnEventNew]
 Coordinates=1497,948,104,36
-
-[Session_Report]
-Coordinates=1365,1552,106,36
 
 [SCM_ManageMembers]
 Coordinates=2036,111,149,36
@@ -442,9 +427,6 @@ Coordinates=828,1653,86,36
 [N10]
 Coordinates=730,1653,40,36
 
-[Session_Clone]
-Coordinates=621,1653,101,36
-
 [N5]
 Coordinates=463,1653,40,36
 
@@ -476,9 +458,6 @@ Coordinates=1082,994,129,36
 [spbtnNominateReport]
 Coordinates=1338,994,139,36
 
-[Session_Export]
-Coordinates=2272,441,105,36
-
 [Tools_Divisions]
 Coordinates=2272,496,105,36
 
@@ -488,12 +467,6 @@ Coordinates=2272,551,86,36
 [spbtnEventMoveDown]
 Coordinates=10,994,143,36
 
-[Session_Import]
-Coordinates=2272,606,104,36
-
-[Session_New]
-Coordinates=2272,661,93,36
-
 [Marshall1]
 Coordinates=2272,716,70,36
 
@@ -502,9 +475,6 @@ Coordinates=80,766,60,58
 
 [N9]
 Coordinates=2272,771,40,36
-
-[Session_Edit]
-Coordinates=2272,826,90,36
 
 [spbtnHeatDown]
 Coordinates=939,948,106,36
@@ -553,7 +523,7 @@ Coordinates=1317,562,114,58
 LayerNames=NominateCotrolList
 
 []
-Coordinates=1145,1653,114,36
+Coordinates=2272,606,104,36
 LayerNames=HeatControlList
 
 [dbtxtNominateFullName]

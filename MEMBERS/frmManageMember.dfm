@@ -18,14 +18,13 @@ object ManageMember: TManageMember
   TextHeight = 19
   object Panel1: TPanel
     Left = 0
-    Top = 25
+    Top = 27
     Width = 1334
     Height = 49
     Align = alTop
     BevelEdges = []
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 1363
     object btnInfoFilter: TVirtualImage
       Left = 869
       Top = 6
@@ -120,8 +119,6 @@ object ManageMember: TManageMember
     BevelEdges = []
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 776
-    ExplicitWidth = 1363
     object DBNavigator1: TDBNavigator
       Left = 347
       Top = 9
@@ -138,29 +135,25 @@ object ManageMember: TManageMember
   end
   object PageControl1: TPageControl
     Left = 0
-    Top = 74
+    Top = 76
     Width = 1334
-    Height = 661
+    Height = 659
     ActivePage = TabSheet1
     Align = alClient
     MultiLine = True
     TabHeight = 40
     TabOrder = 2
     TabWidth = 180
-    ExplicitWidth = 1363
-    ExplicitHeight = 702
     object TabSheet1: TTabSheet
       Caption = 'Member'#39's Details 1'
       object Panel7: TPanel
         Left = 0
         Top = 0
         Width = 1326
-        Height = 611
+        Height = 609
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitWidth = 1355
-        ExplicitHeight = 652
         object Label3: TLabel
           Left = 23
           Top = 227
@@ -932,7 +925,7 @@ object ManageMember: TManageMember
         Left = 0
         Top = 0
         Width = 1326
-        Height = 611
+        Height = 609
         Align = alClient
         BorderStyle = bsNone
         DataSource = ManageMemberData.dsMember
@@ -1148,13 +1141,12 @@ object ManageMember: TManageMember
         Left = 873
         Top = 0
         Width = 453
-        Height = 611
+        Height = 609
         Align = alRight
         BevelOuter = bvNone
         Caption = 'pnlDataCheck'
         ShowCaption = False
         TabOrder = 5
-        ExplicitLeft = 902
         object lblDataCheck: TLabel
           AlignWithMargins = True
           Left = 3
@@ -1175,7 +1167,7 @@ object ManageMember: TManageMember
         end
         object DBGrid2: TDBGrid
           Left = 0
-          Top = 328
+          Top = 326
           Width = 453
           Height = 283
           Align = alBottom
@@ -1193,7 +1185,7 @@ object ManageMember: TManageMember
           Left = 0
           Top = 46
           Width = 453
-          Height = 241
+          Height = 239
           Align = alClient
           Caption = 'GridPanel1'
           ColumnCollection = <
@@ -1263,10 +1255,9 @@ object ManageMember: TManageMember
             end>
           ShowCaption = False
           TabOrder = 1
-          ExplicitHeight = 216
           DesignSize = (
             453
-            241)
+            239)
           object btnFirstName: TButton
             Tag = 1
             Left = 45
@@ -1358,13 +1349,12 @@ object ManageMember: TManageMember
         end
         object Panel4: TPanel
           Left = 0
-          Top = 287
+          Top = 285
           Width = 453
           Height = 41
           Align = alBottom
           Caption = 'DESCRIPTION'
           TabOrder = 2
-          ExplicitTop = 262
         end
       end
     end
@@ -1379,7 +1369,6 @@ object ManageMember: TManageMember
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitWidth = 1355
         DesignSize = (
           1326
           41)
@@ -1437,14 +1426,13 @@ object ManageMember: TManageMember
           Caption = 'Print Chart'
           TabOrder = 3
           OnClick = btmPrintChartClick
-          ExplicitLeft = 1223
         end
       end
       object DBChart1: TDBChart
         Left = 0
         Top = 41
         Width = 1326
-        Height = 570
+        Height = 568
         Title.Text.Strings = (
           'TDBChart')
         BottomAxis.ExactDateTime = False
@@ -1456,7 +1444,6 @@ object ManageMember: TManageMember
         OnGetLegendText = DBChart1GetLegendText
         Align = alClient
         TabOrder = 1
-        ExplicitWidth = 1355
         DefaultCanvas = 'TGDIPlusCanvas'
         ColorPaletteIndex = 13
         object Series2: TLineSeries
@@ -1483,7 +1470,7 @@ object ManageMember: TManageMember
     Left = 0
     Top = 0
     Width = 1334
-    Height = 25
+    Height = 27
     UseSystemFont = False
     ActionManager = ActnManagerMember
     Caption = 'Member Menu Bar'
@@ -1499,7 +1486,6 @@ object ManageMember: TManageMember
     Font.Style = []
     HorzMargin = 10
     Spacing = 10
-    ExplicitWidth = 1363
   end
   object ActnManagerMember: TActionManager
     ActionBars = <

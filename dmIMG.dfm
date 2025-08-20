@@ -22,8 +22,8 @@ object IMG: TIMG
     Width = 24
     Height = 24
     Size = 24
-    Left = 512
-    Top = 184
+    Left = 592
+    Top = 224
   end
   object SVGCollection: TSVGIconImageCollection
     SVGIconItems = <
@@ -1878,6 +1878,117 @@ object IMG: TIMG
           ' viewBox="0 0 24 24"><path fill="currentColor" d="m18 21l-4-4h3V' +
           '7h-3l4-4l4 4h-3v10h3M2 19v-2h10v2M2 13v-2h7v2M2 7V5h4v2z"/></svg' +
           '>'
+      end
+      item
+        IconName = 'clear'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M22 3H7c-.69 0' +
+          '-1.23.35-1.59.88L0 12l5.41 8.11c.36.53.9.89 1.59.89h15a2 2 0 0 0' +
+          ' 2-2V5a2 2 0 0 0-2-2m-3 12.59L17.59 17L14 13.41L10.41 17L9 15.59' +
+          'L12.59 12L9 8.41L10.41 7L14 10.59L17.59 7L19 8.41L15.41 12"/></s' +
+          'vg>'
+      end
+      item
+        IconName = 'pick-date'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M9 10H7v2h2zm4' +
+          ' 0h-2v2h2zm4 0h-2v2h2zm2-7h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v14a' +
+          '2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2m0 16H5V8h14z"/></' +
+          'svg>'
+      end
+      item
+        IconName = 'post'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M21 7L9 19l-5.' +
+          '5-5.5l1.41-1.41L9 16.17L19.59 5.59z"/></svg>'
+      end
+      item
+        IconName = 'cancel'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M20 6.91L17.09' +
+          ' 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 ' +
+          '20L20 17.09L14.91 12z"/></svg>'
+      end
+      item
+        IconName = 'post-circle'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.5 2 2 ' +
+          '6.5 2 12s4.5 10 10 10s10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.' +
+          '59-8-8s3.59-8 8-8s8 3.59 8 8s-3.59 8-8 8m4.59-12.42L10 14.17l-2.' +
+          '59-2.58L6 13l4 4l8-8z"/></svg>'
+      end
+      item
+        IconName = 'cancel-circle'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M12 20c-4.41 0' +
+          '-8-3.59-8-8s3.59-8 8-8s8 3.59 8 8s-3.59 8-8 8m0-18C6.47 2 2 6.47' +
+          ' 2 12s4.47 10 10 10s10-4.47 10-10S17.53 2 12 2m2.59 6L12 10.59L9' +
+          '.41 8L8 9.41L10.59 12L8 14.59L9.41 16L12 13.41L14.59 16L16 14.59' +
+          'L13.41 12L16 9.41z"/></svg>'
+      end
+      item
+        IconName = 'post-circle2'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.5 2 2 ' +
+          '6.5 2 12s4.5 10 10 10s10-4.5 10-10S17.5 2 12 2m-2 15l-5-5l1.41-1' +
+          '.41L10 14.17l7.59-7.59L19 8z"/></svg>'
+      end
+      item
+        IconName = 'cancel-circle2'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M12 2c5.53 0 1' +
+          '0 4.47 10 10s-4.47 10-10 10S2 17.53 2 12S6.47 2 12 2m3.59 5L12 1' +
+          '0.59L8.41 7L7 8.41L10.59 12L7 15.59L8.41 17L12 13.41L15.59 17L17' +
+          ' 15.59L13.41 12L17 8.41z"/></svg>'
+      end
+      item
+        IconName = 'today'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M7 10h5v5H7m12' +
+          ' 4H5V8h14m0-5h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2' +
+          'h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2"/></svg>'
+      end
+      item
+        IconName = 'time'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M12 20a8 8 0 0' +
+          ' 0 8-8a8 8 0 0 0-8-8a8 8 0 0 0-8 8a8 8 0 0 0 8 8m0-18a10 10 0 0 ' +
+          '1 10 10a10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.' +
+          '5 5v5.25l4.5 2.67l-.75 1.23L11 13V7z"/></svg>'
+      end
+      item
+        IconName = 'clock'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.5 2 2 ' +
+          '6.5 2 12s4.5 10 10 10s10-4.5 10-10S17.5 2 12 2m2 15l-3-5.2V7h1.5' +
+          'v4.4l2.8 4.9z"/></svg>'
+      end
+      item
+        IconName = 'minus-box'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M17 13H7v-2h10' +
+          'm2-8H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2' +
+          ' 0 0 0-2-2"/></svg>'
+      end
+      item
+        IconName = 'plus-box'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M17 13h-4v4h-2' +
+          'v-4H7v-2h4V7h2v4h4m2-8H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2' +
+          ' 2 0 0 0 2-2V5a2 2 0 0 0-2-2"/></svg>'
       end>
     Left = 480
     Top = 16
@@ -12720,8 +12831,8 @@ object IMG: TIMG
     Width = 48
     Height = 48
     Size = 48
-    Left = 368
-    Top = 184
+    Left = 448
+    Top = 224
   end
   object SVGHeatStroke: TSVGIconVirtualImageList
     Images = <
@@ -12759,8 +12870,8 @@ object IMG: TIMG
     Width = 48
     Height = 48
     Size = 48
-    Left = 368
-    Top = 232
+    Left = 448
+    Top = 272
   end
   object SVGHeatCntrl: TSVGIconVirtualImageList
     Images = <
@@ -12818,8 +12929,8 @@ object IMG: TIMG
     Width = 48
     Height = 48
     Size = 48
-    Left = 368
-    Top = 136
+    Left = 448
+    Top = 176
   end
   object SVGSessionCntrl: TSVGIconVirtualImageList
     Images = <
@@ -12892,8 +13003,8 @@ object IMG: TIMG
     Width = 48
     Height = 48
     Size = 48
-    Left = 120
-    Top = 136
+    Left = 200
+    Top = 176
   end
   object SVGEventCntrl: TSVGIconVirtualImageList
     Images = <
@@ -12936,8 +13047,8 @@ object IMG: TIMG
     Width = 48
     Height = 48
     Size = 48
-    Left = 248
-    Top = 136
+    Left = 328
+    Top = 176
   end
   object SVGMemberCntrl: TSVGIconVirtualImageList
     Images = <
@@ -12955,8 +13066,8 @@ object IMG: TIMG
     Width = 48
     Height = 48
     Size = 48
-    Left = 640
-    Top = 136
+    Left = 720
+    Top = 176
   end
   object SVGNominateGrid: TSVGIconVirtualImageList
     Images = <
@@ -12979,8 +13090,8 @@ object IMG: TIMG
     Width = 24
     Height = 24
     Size = 24
-    Left = 768
-    Top = 88
+    Left = 848
+    Top = 128
   end
   object SVGSessPopupMenu: TSVGIconVirtualImageList
     Images = <
@@ -13050,7 +13161,56 @@ object IMG: TIMG
         Name = 'sort'
       end>
     ImageCollection = SVGCollection
-    Left = 120
-    Top = 200
+    Left = 200
+    Top = 240
+  end
+  object SVGButtons: TSVGIconVirtualImageList
+    Images = <
+      item
+        CollectionIndex = 53
+        CollectionName = 'clear'
+        Name = 'clear'
+      end
+      item
+        CollectionIndex = 54
+        CollectionName = 'pick-date'
+        Name = 'pick-date'
+      end
+      item
+        CollectionIndex = 59
+        CollectionName = 'post-circle2'
+        Name = 'post-circle2'
+      end
+      item
+        CollectionIndex = 60
+        CollectionName = 'cancel-circle2'
+        Name = 'cancel-circle2'
+      end
+      item
+        CollectionIndex = 61
+        CollectionName = 'today'
+        Name = 'today'
+      end
+      item
+        CollectionIndex = 63
+        CollectionName = 'clock'
+        Name = 'clock'
+      end
+      item
+        CollectionIndex = 64
+        CollectionName = 'minus-box'
+        Name = 'minus-box'
+      end
+      item
+        CollectionIndex = 65
+        CollectionName = 'plus-box'
+        Name = 'plus-box'
+      end>
+    ImageCollection = SVGCollection
+    Width = 24
+    Height = 24
+    Size = 24
+    Left = 56
+    Top = 104
   end
 end

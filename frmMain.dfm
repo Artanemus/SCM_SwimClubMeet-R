@@ -2858,10 +2858,11 @@ object Main: TMain
               Top = 0
               Width = 48
               Height = 48
-              Action = Session_ToggleVisible
+              Hint = 'Show, hide the visibility of locked sessions.'
               AllowAllUp = True
               Anchors = []
               GroupIndex = 1
+              Caption = 'Toggle visibility.'
               Flat = True
               Glyph.Data = {
                 36100000424D3610000000000000360000002800000020000000200000000100
@@ -3016,8 +3017,8 @@ object Main: TMain
               Width = 48
               Height = 48
               Hint = 'Lock-Unlock the session.'
-              Action = Session_ToggleLock
               Anchors = []
+              Caption = 'Lock/Unlock'
               Flat = True
               Glyph.Data = {
                 36100000424D3610000000000000360000002800000020000000200000000100
@@ -3158,8 +3159,9 @@ object Main: TMain
               Top = 120
               Width = 48
               Height = 48
-              Action = Session_New
+              Hint = 'Create a new session.'
               Anchors = []
+              Caption = 'New Session...'
               Flat = True
               Glyph.Data = {
                 36100000424D3610000000000000360000002800000020000000200000000100
@@ -3301,8 +3303,9 @@ object Main: TMain
               Top = 168
               Width = 48
               Height = 48
-              Action = Session_Delete
+              Hint = 'Delete the current selected session. (Ready to print.)'
               Anchors = []
+              Caption = 'Delete Session...'
               Flat = True
               Glyph.Data = {
                 36100000424D3610000000000000360000002800000020000000200000000100
@@ -3457,8 +3460,9 @@ object Main: TMain
               Top = 240
               Width = 48
               Height = 48
-              Action = Session_Report
+              Hint = 'Display the session report.'
               Anchors = []
+              Caption = 'Session Report*'
               Flat = True
               Glyph.Data = {
                 36100000424D3610000000000000360000002800000020000000200000000100
@@ -9050,7 +9054,6 @@ object Main: TMain
                 Spacing = 0
                 Layout = blGlyphTop
                 Style = clbkToolButton
-                OnClick = Heat_ToggleStatusExecute
               end
               object Label1: TLabel
                 Left = 12
@@ -9755,69 +9758,7 @@ object Main: TMain
           item
             Items = <
               item
-                Action = Session_ToggleVisible
-                Caption = '&Toggle visibility.'
-                ImageIndex = 23
-                ImageName = 'VisibilityOn'
-              end
-              item
-                Action = Session_ToggleLock
-                Caption = '&Lock/Unlock'
-                ImageIndex = 21
-                ImageName = 'Lock'
-                ShortCut = 16460
-              end
-              item
-                Action = Session_New
-                Caption = '&New Session...'
-                ImageIndex = 20
-                ImageName = 'New'
-                ShortCut = 16429
-              end
-              item
-                Action = Session_Edit
-                ImageIndex = 45
-                ImageName = 'Edit'
-              end
-              item
-                Action = Session_Delete
-                Caption = '&Delete Session...'
-                ImageIndex = 19
-                ImageName = 'Delete'
-                ShortCut = 16430
-              end
-              item
-                Action = Session_Report
-                Caption = '&Session Report*'
-                ImageIndex = 17
-                ImageName = 'Report'
-              end
-              item
                 Caption = '-'
-              end
-              item
-                Action = Session_Export
-                Caption = 'E&xport Session...'
-                ImageIndex = 46
-                ImageName = 'Export'
-              end
-              item
-                Action = Session_Import
-                Caption = '&Import Session...'
-                ImageIndex = 39
-                ImageName = 'import'
-              end
-              item
-                Action = Session_Clone
-                Caption = '&Clone Session...'
-                ImageIndex = 44
-                ImageName = 'clone'
-              end
-              item
-                Action = Session_Sort
-                Caption = 'S&ort'
-                ImageIndex = 8
-                ImageName = 'Sync'
               end>
             Caption = '&Session'
           end
@@ -10205,70 +10146,6 @@ object Main: TMain
       ImageName = 'Exit'
       OnExecute = File_ExitExecute
     end
-    object Session_ToggleVisible: TAction
-      Category = 'Session'
-      Caption = 'Toggle visibility.'
-      GroupIndex = 1
-      Hint = 'Show, hide the visibility of locked sessions.'
-      ImageIndex = 23
-      ImageName = 'VisibilityOn'
-      OnExecute = Session_ToggleVisibleExecute
-      OnUpdate = Session_ToggleVisibleUpdate
-    end
-    object Session_ToggleLock: TAction
-      Category = 'Session'
-      Caption = 'Lock/Unlock'
-      Hint = 'Toggle the session status.'
-      ImageIndex = 21
-      ImageName = 'Lock'
-      ShortCut = 16460
-      OnExecute = Session_ToggleLockExecute
-      OnUpdate = Session_ToggleLockUpdate
-    end
-    object Session_New: TAction
-      Category = 'Session'
-      Caption = 'New Session...'
-      Hint = 'Create a new session.'
-      ImageIndex = 20
-      ImageName = 'New'
-      ShortCut = 16429
-      OnExecute = Session_NewExecute
-      OnUpdate = Session_NewUpdate
-    end
-    object Session_Edit: TAction
-      Category = 'Session'
-      Caption = 'Edit Session...'
-      ImageIndex = 45
-      ImageName = 'Edit'
-      OnExecute = Session_EditExecute
-      OnUpdate = Session_EditUpdate
-    end
-    object Session_Delete: TAction
-      Category = 'Session'
-      Caption = 'Delete Session...'
-      Hint = 'Delete the current selected session. (Ready to print.)'
-      ImageIndex = 19
-      ImageName = 'Delete'
-      ShortCut = 16430
-      OnExecute = Session_DeleteExecute
-      OnUpdate = Session_DeleteUpdate
-    end
-    object Session_Report: TAction
-      Category = 'Session'
-      Caption = 'Session Report*'
-      Hint = 'Display the session report.'
-      ImageIndex = 17
-      ImageName = 'Report'
-      OnExecute = Session_ReportExecute
-      OnUpdate = Session_ReportUpdate
-    end
-    object Session_Export: TAction
-      Category = 'Session'
-      Caption = 'Export Session...'
-      Enabled = False
-      ImageIndex = 46
-      ImageName = 'Export'
-    end
     object Nominate_SortMembers: TAction
       Category = 'Nominate'
       Caption = 'Sort on Name'
@@ -10424,8 +10301,6 @@ object Main: TMain
       ImageIndex = 12
       ImageName = 'Up'
       ShortCut = 16422
-      OnExecute = Heat_MoveUpExecute
-      OnUpdate = Heat_MoveUpUpdate
     end
     object Heat_MoveDown: TAction
       Category = 'Heats'
@@ -10434,8 +10309,6 @@ object Main: TMain
       ImageIndex = 13
       ImageName = 'Down'
       ShortCut = 16424
-      OnExecute = Heat_MoveDownExecute
-      OnUpdate = Heat_MoveDownUpdate
     end
     object Heat_ToggleStatus: TAction
       Category = 'Heats'
@@ -10444,8 +10317,6 @@ object Main: TMain
       ImageIndex = 36
       ImageName = 'HeatStatusToggle'
       ShortCut = 16468
-      OnExecute = Heat_ToggleStatusExecute
-      OnUpdate = Heat_ToggleStatusUpdate
     end
     object Heat_NewRecord: TAction
       Category = 'Heats'
@@ -10454,8 +10325,6 @@ object Main: TMain
       ImageIndex = 20
       ImageName = 'New'
       ShortCut = 16429
-      OnExecute = Heat_NewRecordExecute
-      OnUpdate = Heat_NewRecordUpdate
     end
     object SCM_Refresh: TAction
       Category = 'SCM'
@@ -10473,8 +10342,6 @@ object Main: TMain
       ImageIndex = 19
       ImageName = 'Delete'
       ShortCut = 16430
-      OnExecute = Heat_DeleteExecute
-      OnUpdate = Heat_DeleteUpdate
     end
     object Heat_AutoBuild: TAction
       Category = 'Heats'
@@ -10482,8 +10349,6 @@ object Main: TMain
       Hint = 'Auto-build heats.'
       ImageIndex = 6
       ImageName = 'AutoBuild'
-      OnExecute = Heat_AutoBuildExecute
-      OnUpdate = Heat_AutoBuildUpdate
     end
     object Heat_MarshallReport: TAction
       Category = 'Heats'
@@ -10491,8 +10356,6 @@ object Main: TMain
       Hint = 'Display a marshal'#39's sheet for all heats.'
       ImageIndex = 4
       ImageName = 'Marshall'
-      OnExecute = Heat_MarshallReportExecute
-      OnUpdate = Heat_MarshallReportUpdate
     end
     object Heat_TimeKeeperReport: TAction
       Category = 'Heats'
@@ -10500,8 +10363,6 @@ object Main: TMain
       Hint = 'Display a timekeeper'#39's sheet for the selected heat.'
       ImageIndex = 5
       ImageName = 'TimeKeeper'
-      OnExecute = Heat_TimeKeeperReportExecute
-      OnUpdate = Heat_TimeKeeperReportUpdate
     end
     object Tools_Swimmercategory: TAction
       Category = 'Tools'
@@ -10515,8 +10376,6 @@ object Main: TMain
       Hint = 'Print all sheets (marshall and timekeepers).'
       ImageIndex = 3
       ImageName = 'BatchPrint'
-      OnExecute = Heat_PrintSetExecute
-      OnUpdate = Heat_PrintSetUpdate
     end
     object Heat_Report: TAction
       Category = 'Heats'
@@ -10524,8 +10383,6 @@ object Main: TMain
       Hint = 'Display a heat report.'
       ImageIndex = 17
       ImageName = 'Report'
-      OnExecute = Heat_ReportExecute
-      OnUpdate = Heat_ReportUpdate
     end
     object Tools_House: TAction
       Category = 'Tools'
@@ -10617,30 +10474,6 @@ object Main: TMain
       ImageIndex = 7
       ImageName = 'Cycle'
       Visible = False
-    end
-    object Session_Import: TAction
-      Category = 'Session'
-      Caption = 'Import Session...'
-      Enabled = False
-      Hint = 'Import a JSON file formatted with session data.'
-      ImageIndex = 39
-      ImageName = 'import'
-    end
-    object Session_Clone: TAction
-      Category = 'Session'
-      Caption = 'Clone Session...'
-      ImageIndex = 44
-      ImageName = 'clone'
-      OnExecute = Session_CloneExecute
-      OnUpdate = Session_CloneUpdate
-    end
-    object Session_Sort: TAction
-      Category = 'Session'
-      Caption = 'Sort'
-      ImageIndex = 8
-      ImageName = 'Sync'
-      OnExecute = Session_SortExecute
-      OnUpdate = Session_SortUpdate
     end
     object Tools_Score: TAction
       Category = 'Tools'
@@ -10826,16 +10659,28 @@ object Main: TMain
     Left = 792
     Top = 280
     object DeleteSession1: TMenuItem
-      Action = Session_New
+      Caption = 'New Session...'
+      Hint = 'Create a new session.'
+      ImageIndex = 20
+      ImageName = 'New'
+      ShortCut = 16429
     end
     object EditSession1: TMenuItem
-      Action = Session_Edit
+      Caption = 'Edit Session...'
+      ImageIndex = 45
+      ImageName = 'Edit'
     end
     object CloneSession2: TMenuItem
-      Action = Session_Clone
+      Caption = 'Clone Session...'
+      ImageIndex = 44
+      ImageName = 'clone'
     end
     object NewSession1: TMenuItem
-      Action = Session_Delete
+      Caption = 'Delete Session...'
+      Hint = 'Delete the current selected session. (Ready to print.)'
+      ImageIndex = 19
+      ImageName = 'Delete'
+      ShortCut = 16430
     end
     object N5: TMenuItem
       Caption = '-'
@@ -10844,13 +10689,20 @@ object Main: TMain
       Action = SCM_Refresh
     end
     object oggleSessionStatus1: TMenuItem
-      Action = Session_ToggleLock
+      Caption = 'Lock/Unlock'
+      Hint = 'Toggle the session status.'
+      ImageIndex = 21
+      ImageName = 'Lock'
+      ShortCut = 16460
     end
     object N8: TMenuItem
       Caption = '-'
     end
     object SessionRpt1: TMenuItem
-      Action = Session_Report
+      Caption = 'Session Report*'
+      Hint = 'Display the session report.'
+      ImageIndex = 17
+      ImageName = 'Report'
     end
   end
   object pumEntrant: TPopupMenu

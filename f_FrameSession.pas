@@ -50,6 +50,8 @@ type
     SessionReport1: TMenuItem;
     N1: TMenuItem;
     N2: TMenuItem;
+    actnSess_BatchReport: TAction;
+    procedure actnSess_CloneExecute(Sender: TObject);
     procedure actnSess_DefaultUpdate(Sender: TObject);
     procedure actnSess_DeleteExecute(Sender: TObject);
     procedure actnSess_DeleteUpdate(Sender: TObject);
@@ -69,12 +71,27 @@ type
 implementation
 
 uses
-  dlgNewSession, rptSessionReportB, rptSessionReportA;
+  dlgNewSession, rptSessionReportB, rptSessionReportA, dlgCloneSession;
 
 {$R *.dfm}
 
+
 procedure TFrameSession.actnSess_CloneExecute(Sender: TObject);
+var
+  dlg: TCloneSession;
 begin
+  { TODO -oBSA -cGeneral :  Check abort method. }
+  try
+    dlg := TCloneSession.Create(self);
+    // raises exception if SCM not assigned.
+    if IsPositiveResult(dlg.ShowModal) then
+    begin
+      uSession.DetailTBLs_ApplyMaster;
+    end;
+    dlg.Free;
+  except
+    on E: Exception do ShowMessage(E.Message);
+  end;
 end;
 
 procedure TFrameSession.actnSess_VisibleExecute(Sender: TObject);

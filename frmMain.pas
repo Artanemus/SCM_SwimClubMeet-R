@@ -40,7 +40,7 @@ uses
   frame_INDV, frame_TEAM, SCMHelpers, dmSCM, FireDAC.UI.Intf,
   FireDAC.VCLUI.Error, FireDAC.Stan.Error, FireDAC.Stan.Intf, FireDAC.Comp.UI,
   FireDAC.Stan.Option, FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Phys,
-  FireDAC.Comp.Client, uFrameHeat;
+  FireDAC.Comp.Client, f_FrameSession, f_FrameHeat;
 
 type
 
@@ -215,17 +215,7 @@ type
     SCM_StatusBar: TAction;
     SessionRpt1: TMenuItem;
     SessionWidgets: TRelativePanel;
-    Session_Clone: TAction;
-    Session_Delete: TAction;
-    Session_Edit: TAction;
-    Session_Export: TAction;
     Session_Grid: TDBGrid;
-    Session_Import: TAction;
-    Session_New: TAction;
-    Session_Report: TAction;
-    Session_Sort: TAction;
-    Session_ToggleLock: TAction;
-    Session_ToggleVisible: TAction;
     ShapeBarEv1: TShape;
     ShapeBarEv2: TShape;
     ShapeDotEv1: TShape;
@@ -357,32 +347,12 @@ type
       ARect: TRect; AState: TOwnerDrawState);
     procedure HeatNavigateControlListBeforeDrawItem(AIndex: integer;
       ACanvas: TCanvas; ARect: TRect; AState: TOwnerDrawState);
-    procedure Heat_AutoBuildExecute(Sender: TObject);
-    procedure Heat_AutoBuildUpdate(Sender: TObject);
     procedure Heat_BatchBuildHeatsExecute(Sender: TObject);
     procedure Heat_BatchBuildHeatsUpdate(Sender: TObject);
     procedure Heat_BatchMarshallReportExecute(Sender: TObject);
     procedure Heat_BatchMarshallReportUpdate(Sender: TObject);
     procedure Heat_BatchTimeKeeperReportExecute(Sender: TObject);
     procedure Heat_BatchTimeKeeperReportUpdate(Sender: TObject);
-    procedure Heat_DeleteExecute(Sender: TObject);
-    procedure Heat_DeleteUpdate(Sender: TObject);
-    procedure Heat_MarshallReportExecute(Sender: TObject);
-    procedure Heat_MarshallReportUpdate(Sender: TObject);
-    procedure Heat_MoveDownExecute(Sender: TObject);
-    procedure Heat_MoveDownUpdate(Sender: TObject);
-    procedure Heat_MoveUpExecute(Sender: TObject);
-    procedure Heat_MoveUpUpdate(Sender: TObject);
-    procedure Heat_NewRecordExecute(Sender: TObject);
-    procedure Heat_NewRecordUpdate(Sender: TObject);
-    procedure Heat_PrintSetExecute(Sender: TObject);
-    procedure Heat_PrintSetUpdate(Sender: TObject);
-    procedure Heat_ReportExecute(Sender: TObject);
-    procedure Heat_ReportUpdate(Sender: TObject);
-    procedure Heat_TimeKeeperReportExecute(Sender: TObject);
-    procedure Heat_TimeKeeperReportUpdate(Sender: TObject);
-    procedure Heat_ToggleStatusExecute(Sender: TObject);
-    procedure Heat_ToggleStatusUpdate(Sender: TObject);
     procedure Help_AboutExecute(Sender: TObject);
     procedure Help_LocalHelpExecute(Sender: TObject);
     procedure Help_OnlineHelpExecute(Sender: TObject);
@@ -411,25 +381,8 @@ type
     procedure SCM_RefreshUpdate(Sender: TObject);
     procedure SCM_StatusBarExecute(Sender: TObject);
     procedure SCM_StatusBarUpdate(Sender: TObject);
-    procedure Session_CloneExecute(Sender: TObject);
-    procedure Session_CloneUpdate(Sender: TObject);
-    procedure Session_DeleteExecute(Sender: TObject);
-    procedure Session_DeleteUpdate(Sender: TObject);
-    procedure Session_EditExecute(Sender: TObject);
-    procedure Session_EditUpdate(Sender: TObject);
     procedure Session_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: integer; Column: TColumn; State: TGridDrawState);
-    procedure Session_NewExecute(Sender: TObject);
-    procedure Session_NewUpdate(Sender: TObject);
-    procedure Session_ReportExecute(Sender: TObject);
-    procedure Session_ReportUpdate(Sender: TObject);
-    procedure Session_SortExecute(Sender: TObject);
-    procedure Session_SortUpdate(Sender: TObject);
-    procedure Session_ToggleGridUpdate(Sender: TObject);
-    procedure Session_ToggleLockExecute(Sender: TObject);
-    procedure Session_ToggleLockUpdate(Sender: TObject);
-    procedure Session_ToggleVisibleExecute(Sender: TObject);
-    procedure Session_ToggleVisibleUpdate(Sender: TObject);
     procedure SwimClub_ManageExecute(Sender: TObject);
     procedure SwimClub_ManageUpdate(Sender: TObject);
     procedure SwimClub_SwitchExecute(Sender: TObject);
@@ -501,8 +454,8 @@ type
 //      message SCM_LANEWASCLEANED;
 //    procedure Event_AssertStatusState(var Msg: TMessage);
 //      message SCM_EVENTASSERTSTATUSSTATE;
-//    procedure Event_Scroll(var Msg: TMessage); message SCM_EVENTSCROLL;
-//    procedure Heat_Scroll(var Msg: TMessage); message SCM_HEATSCROLL;
+    procedure Event_Scroll(var Msg: TMessage); message SCM_SCROLL_Event;
+    procedure Heat_Scroll(var Msg: TMessage); message SCM_SCROLL_Heat;
 //    procedure INDV_Scroll(var Msg: TMessage); message SCM_ENTRANTSCROLL;
     // Posted by TCORE.qryMemberQuickPick : AfterScroll
 //    procedure Nominate_Scroll(var Msg: TMessage); message SCM_NOMINATESCROLL;
@@ -510,7 +463,7 @@ type
 //    procedure Session_AssertStatusState(var Msg: TMessage);
 //      message SCM_SESSIONASSERTSTATUSSTATE;
     // windows messages ....
-//    procedure Session_Scroll(var Msg: TMessage); message SCM_SESSIONSCROLL;
+    procedure Session_Scroll(var Msg: TMessage); message SCM_SCROLL_SESSION;
 //    procedure Session_RenumberEvents(var Msg: TMessage); message SCM_RENUMBEREVENTS;
 //    procedure SetTabSheetDisplayState(var Msg: TMessage);
 //      message SCM_TABSHEETDISPLAYSTATE;
@@ -1398,44 +1351,43 @@ begin
   TAction(Sender).Enabled := DoEnable;
 end;
 
-(*
-  procedure TMain.Event_Scroll(var Msg: TMessage);
-  var
-    EnabledState: boolean;
-    aEventType: scmEventType;
+
+procedure TMain.Event_Scroll(var Msg: TMessage);
+var
+  EnabledState: boolean;
+  aEventType: scmEventType;
+begin
+
+  if not AssertConnection then exit;
+  EnabledState := false;
+
+  // is the session is Open?
+  if (CORE.dsSession.DataSet.FieldByName('SessionStatusID').AsInteger = 1) then
   begin
-
-    if not AssertConnection then exit;
-    EnabledState := false;
-
-    // is the session is Open?
-    if (CORE.dsSession.DataSet.FieldByName('SessionStatusID').AsInteger = 1) then
-    begin
-      // Is the heat Open?
-      if (CORE.dsHeat.DataSet.FieldByName('HeatStatusID').AsInteger <> 3) then
-          EnabledState := true;
-    end;
-
-    if PageControl1.ActivePageIndex = 2 then
-      PostMessage(Handle, SCM_TABSHEETDISPLAYSTATE, 3, 0);
-
-
-    // SYNC the enabled state of the INDVTEAM Grids
-    aEventType := uEvent.EventType;
-    if aEventType = etINDV then
-    begin
-      if (INDV.Grid.Enabled <> EnabledState) then
-          INDV.Grid.Enabled := EnabledState;
-    end;
-
-    if aEventType = etTEAM then
-    begin
-      if (TEAM.Grid.Enabled <> EnabledState) then
-          TEAM.Grid.Enabled := EnabledState;
-    end;
-
+    // Is the heat Open?
+    if (CORE.dsHeat.DataSet.FieldByName('HeatStatusID').AsInteger <> 3) then
+        EnabledState := true;
   end;
-*)
+
+//  if PageControl1.ActivePageIndex = 2 then
+//    PostMessage(Handle, SCM_TABSHEETDISPLAYSTATE, 3, 0);
+
+
+  // SYNC the enabled state of the INDVTEAM Grids
+  aEventType := uEvent.EventType;
+  if aEventType = etINDV then
+  begin
+    if (INDV.Grid.Enabled <> EnabledState) then
+        INDV.Grid.Enabled := EnabledState;
+  end;
+
+  if aEventType = etTEAM then
+  begin
+    if (TEAM.Grid.Enabled <> EnabledState) then
+        TEAM.Grid.Enabled := EnabledState;
+  end;
+end;
+
 
 procedure TMain.Event_ToggleGridViewExecute(Sender: TObject);
 var
@@ -2356,113 +2308,6 @@ begin
   *)
 end;
 
-procedure TMain.Heat_AutoBuildExecute(Sender: TObject);
-var
-  AutoBuild: TAutoBuildV2;
-	dlg: TAutoBuild_Heats;
-	dlg2: TCheck_DOB_Gender;
-	success, IsErronous: boolean;
-	EventID, rtnValue: integer;
-	s: string;
-begin
-  // A U T O - B U I L D   R E L A Y   TE A M .
-  if uEvent.EventType = etTEAM then
-  begin
-    Heat_AutoBuildRelayExecute(Sender);
-    exit;
-  end;
-
-  // actn..Update determines if this routine is accessable.
-  EventID := CORE.dsEvent.DataSet.FieldByName('EventID').AsInteger;
-
-  // 'Quick' check if we have nominees to auto-create heats.
-  // This routine is simplified (for expediance), it looks at all
-  // nominees placed and un-placed ... ignoring open,raced,closed heat
-  // status.
-  if not uEvent.HasNominees() then
-	begin
-		s := '''
-			No one has been nominated for this event.
-			Auto-Build Heats was aborted.
-			''';
-		MessageDlg(s, mtError, [mbOK], 0, mbOK);
-    exit;
-  end;
-
-  // -------------------------------------------------------
-  // For BATCH BUILDING the DLG is hidden after first use.
-  // -------------------------------------------------------
-  dlg := TAutoBuild_Heats.Create(self);
-  rtnValue := dlg.ShowModal;
-  // closing the form here ensures prefHeatAlgorithm,
-  // prefUseDefRaceTime, prefSeedMode and prefRaceTimeTopPercent have been
-  // written out to the preference ini file.
-  dlg.Free;
-  if not IsPositiveResult(rtnValue) then exit;
-  // -------------------------------------------------------
-
-  // DISABLE CONTROLS
-	CORE.dsNominee.DataSet.DisableControls;
-	CORE.dsLane.DataSet.DisableControls;
-	CORE.dsHeat.DataSet.DisableControls;
-	// Check for bad DOB and GENDER.
-	dlg2 := TCheck_DOB_Gender.Create(Self);
-	IsErronous := dlg2.CheckExec(SCM.scmConnection, EventID);
-	if IsErronous then dlg.ShowModal;
-	dlg2.Free;
-
-	if not IsErronous then
-	begin
-		// NOTE : cfgBuildHeatsVerboseON := OFF for BATCH Auto-Build Heats
-		AutoBuild := TAutoBuildV2.Create(self);
-		// ALERT : IMPORTANT NOTE ...
-		// ***************************************************************
-		// if TMain's instance of the Heat DataSet isn't sent to Auto-Build
-		// ... unable to delete Heat record. (tbl is locked?)
-		// That is - call via  to CORE.dsDeat.DataSet ...  doesn't work!
-		// ***************************************************************
-		// Verbose OFF for BATCH Auto-Build Heats
-		success := AutoBuild.AutoBuildExecute();
-		if (success) then
-		begin
-			Refresh_Heat;
-			Refresh_IndvTeam;
-			// Requery CORE.qryEvent to update entrant count.
-//			PostMessage(Handle, SCM_UPDATEENTRANTCOUNT, 0, 0);
-			// Set flag for statusbar update.
-//			PostMessage(Handle, SCM_UPDATESTATUSBAR, 0, 0);
-		end;
-		AutoBuild.Free;
-	end;
-
-
-	// ENABLE CONTROLS
-	CORE.dsHeat.DataSet.EnableControls;
-	CORE.dsLane.DataSet.EnableControls;
-	CORE.dsNominee.DataSet.DisableControls;
-
-  if HeatControlList.CanFocus then HeatControlList.SetFocus;
-end;
-
-procedure TMain.Heat_AutoBuildUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  if AssertConnection then
-    // Checks if session is Empty. Then checks if locked..
-    if not uSession.IsLocked then
-      // are there any Events?
-      if not CORE.dsEvent.DataSet.IsEmpty then
-      begin
-        // A distance and stroke is needed before a new heat can be built
-        if not CORE.dsEvent.DataSet.FieldByName('DistanceID').IsNull and
-          not CORE.dsEvent.DataSet.FieldByName('StrokeID').IsNull then
-          DoEnable := true;
-      end;
-  TAction(Sender).Enabled := DoEnable;
-end;
-
 procedure TMain.Heat_BatchBuildHeatsExecute(Sender: TObject);
 var
   success, passed: boolean;
@@ -2637,474 +2482,8 @@ begin
   TAction(Sender).Enabled := DoEnable;
 end;
 
-procedure TMain.Heat_DeleteExecute(Sender: TObject);
-var
-  mr: TModalResult;
-  aHeatID: integer;
-  aEventType: scmEventType;
-  success: Boolean;
-begin
-  // actn.Update dictates if this routine is accessable.
-  aEventType := uEvent.EventType;
-  mr := mrNone;
-
-  // The heat is CLOSED.
-  if uHeat.IsClosed then
-  begin
-    MessageDlg('This heat is CLOSE' + sLineBreak +
-      'The heat can''t be deleted.', mtInformation, [mbOK], 0, mbOK);
-    exit;
-  end;
-  // The heat is RACED
-  if uHeat.IsRaced then
-  begin
-    mr := MessageDlg('WARNING: This heat is RACED.' + sLineBreak +
-      'Racetimes and entrant data will be lost if you delete this heat.' +
-      sLineBreak + 'Do you wish to delete the heat?', mtWarning,
-      [mbYes, mbNo], 0, mbNo);
-    if (mr <> mrYes) then exit;
-  end;
-
-  // Heat status is RACED or OPEN. Final confirmation message.
-  if uHeat.IsRaced then
-  begin
-    if aEventType = etINDV then
-        mr := MessageDlg('Final confirmation:' + sLineBreak +
-        'Delete the RACED heat, all of it''s racetimes and entrant data?',
-        mtConfirmation, [mbYes, mbNo], 0, mbYes)
-    else if aEventType = etTEAM then
-        mr := MessageDlg('Final confirmation:' + sLineBreak +
-        'Delete the RACED heat, all of it''s racetimes and relay team data?',
-        mtConfirmation, [mbYes, mbNo], 0, mbYes);
-  end
-  else
-  begin
-    if aEventType = etINDV then
-        mr := MessageDlg
-        ('Delete the selected heat and all it''s assigned entrants?',
-        mtConfirmation, [mbYes, mbNo], 0, mbYes)
-    else if aEventType = etTEAM then
-        mr := MessageDlg
-        ('Delete the selected heat and all it''s assigned relay teams?',
-        mtConfirmation, [mbYes, mbNo], 0, mbYes);
-  end;
-
-  // d e l e t e   t h e   c u r r e n t   s e l e c t e d   h e a t .
-  // -----------------------------------------------------------------
-  if (mr = mrYes) then
-  begin
-    aHeatID := CORE.dsHeat.DataSet.FieldByName('HeatID').AsInteger;
-    success := uHeat.DeleteHeat(false);
-    if success then
-    begin
-      // Requery CORE.qryEvent to update entrant count.
-//      PostMessage(Handle, SCM_UPDATEENTRANTCOUNT, 0, 0);
-      // Set flag for statusbar update.
-//      PostMessage(Handle, SCM_UPDATESTATUSBAR, 0, 0);
-      // Displays info messages on sidebar and asserts TFrame visibility states.
-//      PostMessage(Handle, SCM_TABSHEETDISPLAYSTATE, 3, 0);
-    end;
-  end;
-end;
-
-procedure TMain.Heat_DeleteUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  if AssertConnection then
-    // Checks if session is Empty. Then checks if locked..
-    if not uSession.IsLocked then
-      // are there any Events?
-      if not CORE.dsEvent.DataSet.IsEmpty then
-        // ILLEGAL EVENT - missing params.
-        if not CORE.dsEvent.DataSet.FieldByName('DistanceID').IsNull and
-          not CORE.dsEvent.DataSet.FieldByName('StrokeID').IsNull then
-          // are there any Heats?
-          if not CORE.dsHeat.DataSet.IsEmpty then DoEnable := true;
-  TAction(Sender).Enabled := DoEnable;
-end;
-
-procedure TMain.Heat_MarshallReportExecute(Sender: TObject);
-var
-  rptA: TMarshallReportA;
-  rptB: TMarshallReportB;
-  rptC: TMarshallReportC;
-  EventID: integer;
-begin
-  if not AssertConnection then exit;
-
-  EventID := CORE.dsEvent.DataSet.FieldByName('EventID').AsInteger;
-  try
-    if ((GetKeyState(VK_CONTROL) and 128) = 128) and
-      ((GetKeyState(VK_SHIFT) and 128) = 128) then
-    begin
-      rptC := TMarshallReportC.Create(self);
-      rptC.Prepare(SCM.scmConnection, EventID);
-      rptC.RunReport;
-      rptC.Free;
-    end
-
-    else if ((GetKeyState(VK_CONTROL) and 128) = 128) then
-    begin
-      rptB := TMarshallReportB.Create(self);
-      rptB.Prepare(SCM.scmConnection, EventID);
-      rptB.RunReport;
-      rptB.Free;
-    end
-    else
-    begin
-      rptA := TMarshallReportA.Create(self);
-      rptA.Prepare(SCM.scmConnection, EventID);
-      rptA.RunReport;
-      rptA.Free;
-    end;
-  except
-    on E: Exception do ShowMessage('Error opening report.');
-  end;
-  if HeatControlList.CanFocus then HeatControlList.SetFocus;
-end;
-
-procedure TMain.Heat_MarshallReportUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  if AssertConnection then
-    // Are there any heats? Note: Locked sessions can be printed.
-    if not CORE.dsHeat.DataSet.IsEmpty then DoEnable := true;
-  TAction(Sender).Enabled := DoEnable;
-end;
-
-procedure TMain.Heat_MoveDownExecute(Sender: TObject);
-var
-  bm: TBookmark;
-  enA, enB: integer;
-  fld: TField;
-begin
-  // TActionUpdate determines if this routine can be called
-  // m o v e   e v e n t   d o w n  .
-  if not AssertConnection then exit;
-  With CORE.dsHeat.DataSet do
-  begin
-    if not SCM.IsLastRecord(CORE.dsHeat.DataSet) then
-    begin
-      DisableControls();
-      try
-        begin
-          bm := Bookmark;
-          enA := FieldByName('HeatNum').AsInteger;
-          enB := 0;
-          fld := CORE.qryHeat.FindField('HeatNum');
-          try
-            begin
-              // 3.10.2020 ensure field is writable
-              if Assigned(fld) then fld.ReadOnly := false;
-              Next();
-              enB := FieldByName('HeatNum').AsInteger;
-              Edit();
-              FieldByName('HeatNum').AsInteger := enA;
-              Post();
-            end;
-          finally
-            Bookmark := bm;
-            Edit();
-            FieldByName('HeatNum').AsInteger := enB;
-            Post();
-            // 3.10.2020
-            if Assigned(fld) then fld.ReadOnly := true;
-          end;
-        end;
-      finally
-        // RE-ORDER and RE-CUE ...
-        Refresh();
-        EnableControls();
-      end;
-    end;
-  end;
-end;
-
-procedure TMain.Heat_MoveDownUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  if AssertConnection then
-    // Checks if session is Empty. Then checks if locked..
-    if not uSession.IsLocked then
-      // By default, heat is assumed to be LOCKED.
-      // This routine asserts the state of heat dataset (connection, active and
-      // not isempty) and if all checks pass, returns the record status.
-      // Not locked if the HeatStatusID <> 3.
-      if not uHeat.IsClosed then DoEnable := true;
-  TAction(Sender).Enabled := DoEnable;
-end;
-
-procedure TMain.Heat_MoveUpExecute(Sender: TObject);
-var
-  bm: TBookmark;
-  enA, enB: integer;
-  fld: TField;
-begin
-  // TActionUpdate determines if this routine can be called
-  // m o v e   e v e n t   u  p  .
-  if not AssertConnection then exit;
-  With CORE.dsHeat.DataSet do
-  begin
-    if not SCM.IsFirstRecord(CORE.dsHeat.DataSet) then
-    begin
-      DisableControls();
-      try
-        begin
-          bm := Bookmark;
-          enA := FieldByName('HeatNum').AsInteger;
-          enB := 0;
-          fld := CORE.qryHeat.FindField('HeatNum');
-          try
-            begin
-              // 3.10.2020 ensure field is writable
-              if Assigned(fld) then fld.ReadOnly := false;
-              Prior();
-              enB := FieldByName('HeatNum').AsInteger;
-              Edit();
-              FieldByName('HeatNum').AsInteger := enA;
-              Post();
-            end;
-          finally
-            Bookmark := bm;
-            Edit();
-            FieldByName('HeatNum').AsInteger := enB;
-            Post();
-            // 3.10.2020
-            if Assigned(fld) then fld.ReadOnly := true;
-          end;
-        end;
-      finally
-        // RE-ORDER and RE-CUE ...
-        Refresh();
-        EnableControls();
-      end;
-    end;
-  end;
-end;
-
-procedure TMain.Heat_MoveUpUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  if AssertConnection then
-    // Checks if session is Empty. Then checks if locked..
-    if not uSession.IsLocked then
-      // By default, heat is assumed to be LOCKED.
-      // This routine asserts the state of heat dataset (connection, active and
-      // not isempty) and if all checks pass, returns the record status.
-      // Not locked if the HeatStatusID <> 3.
-      if not uHeat.IsClosed then DoEnable := true;
-  TAction(Sender).Enabled := DoEnable;
-end;
-
-procedure TMain.Heat_NewRecordExecute(Sender: TObject);
-begin
-  // The event must have DistanceID Assigned!!!
-  if CORE.dsEvent.DataSet.FieldByName('DistanceID').IsNull or
-    CORE.dsEvent.DataSet.FieldByName('StrokeID').IsNull then
-      raise Exception.Create
-      ('Error: The event has not been assigned a distance.');
-  uHeat.NewHeat; // + IndvTeam TDataSet refresh
-//  PostMessage(Handle, SCM_TABSHEETDISPLAYSTATE, 3, 0);
-end;
-
-procedure TMain.Heat_NewRecordUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  if AssertConnection then
-    // Checks if session is Empty. Then checks if locked..
-    if not uSession.IsLocked then
-      // are there any Events?
-      if not CORE.dsEvent.DataSet.IsEmpty then
-      begin
-        // A siatance and stroke is needed before a new heat can be built
-        if not CORE.dsEvent.DataSet.FieldByName('DistanceID').IsNull and
-          not CORE.dsEvent.DataSet.FieldByName('StrokeID').IsNull then
-            DoEnable := true;
-      end;
-  TAction(Sender).Enabled := DoEnable;
-end;
-
-procedure TMain.Heat_PrintSetExecute(Sender: TObject);
-// Print Set : Print both the timekeeper and marshall report
-type
-  EPrintStatus = (psUserCancelled, psPrinterError, psOK);
-var
-  rptMarshall: TMarshallReportA;
-  rptTimeKeeper: TTimeKeeperReportA;
-  printerName, Msg: String;
-  PrintStatus: EPrintStatus;
-  HeatID, EventID: integer;
-begin
-  if not AssertConnection then exit;
-
-  {
-    Looking at the FastReport source code for the TfrxPreviewPages.Print
-    function, it is clear that the OnPrintReport event handler is called
-    after selecting the printer but before the print job executes.
-
-    I put the following code in my OnPrintReport handler:
-
-    PrinterName := frxPrinters.Printers[frxPrinters.PrinterIndex];
-    and PrinterName yielded whatever printer I selected in the FastReport
-    printer selection.
-
-    Once you have that, you can select it later by performing the following:
-
-    frxReport.PrepareReport(True);
-    frxReport.PrintOptions.Printer := PrinterName;
-    frxReport.PrintOptions.ShowDialog := True;
-    frxReport.Print;
-    I have verified that all of this works.
-  }
-
-  PrintStatus := psOK;
-
-  // loop heats
-  // note: select printer dialog is enabled (by default)....
-  rptTimeKeeper := TTimeKeeperReportA.Create(self);
-  CORE.dsHeat.DataSet.First;
-  while not CORE.dsHeat.DataSet.Eof do
-  begin
-    HeatID := CORE.dsHeat.DataSet.FieldByName('HeatID').AsInteger;
-    rptTimeKeeper.Prepare(SCM.scmConnection, HeatID);
-    if rptTimeKeeper.qryReport.Active then
-    begin
-      rptTimeKeeper.frxReport1.PrepareReport;
-      // When frxReportPrint.Print returns false, it is either user cancel
-      // or error in printing. So you need to check Errors.Text is empty
-      // or not, like:
-      if not rptTimeKeeper.frxReport1.Print then
-      begin
-        if rptTimeKeeper.frxReport1.Errors.Text.IsEmpty then
-        begin
-          PrintStatus := psUserCancelled;
-          break;
-        end
-        else
-        begin
-          PrintStatus := psPrinterError;
-          break;
-          // something wrong during printing.
-        end;
-      end;
-    end;
-    rptTimeKeeper.qryReport.Close;
-    // disable select printer dialog ....
-    rptTimeKeeper.frxReport1.PrintOptions.ShowDialog := false;
-    // store printer-name
-    // printerName := rptTimeKeeper.lastPrinterName;
-    CORE.dsHeat.DataSet.Next;
-  end;
-  // Assert close state on 'user cancelled' or 'printer error'.
-  rptTimeKeeper.qryReport.Close;
-
-  // Handle printer errors
-  if (PrintStatus = psPrinterError) then
-  begin
-    // display error message and exit
-    Msg := 'The printer reported an error ...' + sLineBreak;
-    Msg := Msg + rptTimeKeeper.frxReport1.Errors.Text + sLineBreak;
-    Msg := Msg + 'The batch print of marshall and timekeeper reports' +
-      sLineBreak;
-    Msg := Msg + 'will be aborted.' + sLineBreak;
-    MessageDlg(Msg, mtError, [mbOK], 0);
-  end;
-  // finished with instance
-  rptTimeKeeper.Free;
-  // close on errors
-  if (PrintStatus = psPrinterError) or (PrintStatus = psUserCancelled) then
-      exit;
-  // no errors? no user abort? ... go print marshall report.
-  if (PrintStatus = psOK) then
-  begin
-    rptMarshall := TMarshallReportA.Create(self);
-    // disable select printer dialog ....
-    rptMarshall.frxReport1.PrintOptions.ShowDialog := false;
-    // set printer-name
-    rptMarshall.frxReport1.PrintOptions.Printer := printerName;
-    EventID := CORE.dsEvent.DataSet.FieldByName('EventID').AsInteger;
-    rptMarshall.Prepare(SCM.scmConnection, EventID);
-    if rptMarshall.qryReport.Active then
-    begin
-      rptMarshall.frxReport1.PrepareReport;
-      if not rptMarshall.frxReport1.Print then
-      begin
-        if not rptTimeKeeper.frxReport1.Errors.Text.IsEmpty then
-        begin
-          // display printer error message
-          Msg := 'The printer reported an error ...' + sLineBreak;
-          Msg := Msg + rptTimeKeeper.frxReport1.Errors.Text + sLineBreak;
-          Msg := Msg + 'Printing of the marshall report was aborted.' +
-            sLineBreak;
-          MessageDlg(Msg, mtError, [mbOK], 0);
-        end;
-      end;
-    end;
-    rptMarshall.qryReport.Close;
-    rptMarshall.Free;
-  end;
-end;
-
-procedure TMain.Heat_PrintSetUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  if AssertConnection then
-    // Are there any heats? Note: Locked sessions can be printed.
-    if not CORE.dsHeat.DataSet.IsEmpty then DoEnable := true;
-  TAction(Sender).Enabled := DoEnable;
-end;
-
-procedure TMain.Heat_ReportExecute(Sender: TObject);
-var
-  rptA: THeatReportA;
-  rptB: THeatReportB;
-begin
-  try
-    begin
-      if ((GetKeyState(VK_CONTROL) and 128) = 128) then
-      begin
-        rptB := THeatReportB.Create(self);
-        rptB.RunReport;
-        rptB.Free;
-      end
-      else
-      begin
-        rptA := THeatReportA.Create(self);
-        rptA.RunReport;
-        rptA.Free;
-      end;
-    end;
-  except
-    on E: Exception do ShowMessage('Error opening report.');
-  end;
-  if HeatControlList.CanFocus then HeatControlList.SetFocus;
-end;
-
-procedure TMain.Heat_ReportUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  if AssertConnection then
-    // Are there any heats? Note: Locked sessions can be printed.
-    if not CORE.dsHeat.DataSet.IsEmpty then DoEnable := true;
-  TAction(Sender).Enabled := DoEnable;
-end;
 
 
-(*
 procedure TMain.Heat_Scroll(var Msg: TMessage);
 // var
 // DoEnable: boolean;
@@ -3134,7 +2513,7 @@ begin
   if not AssertConnection then     exit;
 
 
-    i := gridHeat.DataSource.DataSet.FieldByName('HeatStatusID').AsInteger;
+//    i := gHeat.DataSource.DataSet.FieldByName('HeatStatusID').AsInteger;
     case i of
       1:
         begin
@@ -3152,102 +2531,7 @@ begin
         end;
     end;
 end;
-*)
 
-procedure TMain.Heat_TimeKeeperReportExecute(Sender: TObject);
-var
-  rptA: TTimeKeeperReportA;
-  rptB: TTimeKeeperReportB;
-  HeatID: integer;
-begin
-  if not AssertConnection then exit;
-  HeatID := CORE.dsHeat.DataSet.FieldByName('HeatID').AsInteger;
-  try
-    if ((GetKeyState(VK_CONTROL) and 128) = 128) then
-    begin
-      // displays stripe lines for cutting. compact. inc. PB.TTB.
-      rptA := TTimeKeeperReportA.Create(self);
-      rptA.Prepare(SCM.scmConnection, HeatID);
-      rptA.RunReport;
-      rptA.Free;
-    end
-    else
-    begin
-      // basic - oversize racetime box. inc. PB.TTB
-      rptB := TTimeKeeperReportB.Create(self);
-      rptB.Prepare(SCM.scmConnection, HeatID);
-      rptB.RunReport;
-      rptB.Free;
-    end;
-  except
-    on E: Exception do ShowMessage('Error opening report.');
-  end;
-  if HeatControlList.CanFocus then HeatControlList.SetFocus;
-end;
-
-procedure TMain.Heat_TimeKeeperReportUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  if AssertConnection then
-    // Are there any heats? Note: Locked sessions can be printed.
-    if not CORE.dsHeat.DataSet.IsEmpty then DoEnable := true;
-  TAction(Sender).Enabled := DoEnable;
-end;
-
-procedure TMain.Heat_ToggleStatusExecute(Sender: TObject);
-var
-  i: integer;
-begin
-  (*
-  uHeat.ToggleStatus;
-  i := gridHeat.DataSource.DataSet.FieldByName('HeatStatusID').AsInteger;
-  case i of
-    2:
-      begin
-        INDV.Grid.Enabled := true;
-        INDV.Grid.Invalidate; // Text color changes - needs a repaint.
-        TEAM.Grid.Enabled := true;
-        TEAM.Grid.Invalidate; // Text color changes - needs a repaint.
-        TEAM.GridEntrant.Invalidate;
-      end;
-    3:
-      begin
-        INDV.Grid.Enabled := false;
-        TEAM.Grid.Enabled := false;
-        TEAM.GridEntrant.Enabled := false;
-      end;
-  else
-    begin
-      INDV.Grid.Enabled := true;
-      TEAM.Grid.Enabled := true;
-      TEAM.GridEntrant.Enabled := true;
-    end;
-  end;
-
-  DisplayHeatStatusMsg(i);
-
-  if HeatControlList.CanFocus then HeatControlList.SetFocus;
-
-  // All the heats have been closed then the event grid will display a tick.
-  PostMessage(Main.Handle, SCM_EVENTASSERTSTATUSSTATE, 0, 0);
-  *)
-
-end;
-
-procedure TMain.Heat_ToggleStatusUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  if AssertConnection then
-    // Checks if session is Empty. Then checks if locked..
-    if not uSession.IsLocked then
-      // are there any heats?
-      if not CORE.dsHeat.DataSet.IsEmpty then DoEnable := true;
-  TAction(Sender).Enabled := DoEnable;
-end;
 
 procedure TMain.Help_AboutExecute(Sender: TObject);
 var
@@ -3853,7 +3137,7 @@ begin
   CORE.dsTeam.DataSet.DisableControls;
 	CORE.dsTeamLink.DataSet.DisableControls;
   // SESSION
-  Session_SortExecute(self);
+//  uSession_Sort;
   // EVENT
   Refresh_Event(true, DoRenumber);
   // NOMINEE + NOMINATE_GRID
@@ -4112,113 +3396,6 @@ begin
       ').' + sLineBreak + 'Check!', mtWarning, [mbOK], 0);
 end;
 
-procedure TMain.Session_CloneExecute(Sender: TObject);
-var
-  dlg: TCloneSession;
-begin
-  { TODO -oBSA -cGeneral :  Check abort method. }
-  try
-    dlg := TCloneSession.Create(self);
-    // raises exception if SCM not assigned.
-    if IsPositiveResult(dlg.ShowModal) then
-    begin
-      SCM_RefreshExecute(self);
-    end;
-    dlg.Free;
-  except
-    on E: Exception do ShowMessage(E.Message);
-  end;
-end;
-
-procedure TMain.Session_CloneUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  if AssertConnection then
-  begin
-    if not CORE.dsSession.DataSet.IsEmpty then DoEnable := true;
-  end;
-  TAction(Sender).Enabled := DoEnable;
-end;
-
-procedure TMain.Session_DeleteExecute(Sender: TObject);
-var
-  rtnValue, aSessionID: integer;
-begin
-  if not AssertConnection then exit;
-  if CORE.dsSession.DataSet.IsEmpty then exit;
-  aSessionID := CORE.dsSession.DataSet.FieldByName('SessionID').AsInteger;
-  if uSession.IsLocked then
-  begin
-    MessageDlg('A locked session can''t be deleted.', mtInformation,
-      [mbOK], 0, mbOK);
-    exit;
-  end;
-  { WARNING #1 }
-  rtnValue := MessageDlg('Delete the selected session?' + sLineBreak +
-    'Including it''s events, nominees, heats, entrants, relays, etc.',
-    mtConfirmation, [mbYes, mbNo], 0, mbNo);
-  // DON'T USE (rtnValue = mrNo) AS IT DOESN'T ACCOUNT FOR OS CLOSE 'X' BTN.
-  // mrCancel=2 mrNo=7 mrYes=6
-  if (rtnValue <> mrYes) then exit;
-  { WARNING #2 }
-  if uSession.HasClosedOrRacedHeats() then
-  begin
-    rtnValue := MessageDlg('The session contains CLOSED and/or RACED heats.' +
-      sLineBreak +
-      'Racetimes and entrant data will be lost if you delete this session.' +
-      sLineBreak + 'Do you wish to delete the session?', mtWarning,
-      [mbYes, mbNo], 0, mbNo);
-    // DON'T USE (results = mrNo) AS IT DOESN'T ACCOUNT FOR OS CLOSE 'X' BTN.
-    // mrCancel=2 mrNo=7 mrYes=6
-    if (rtnValue <> mrYes) then exit;
-  end;
-  { D E L E T E  S E S S I O N   D O   N O T   E X C L U D E ! }
-  uSession.DeleteSession(false);
-  // update the grid views
-  SCM_RefreshExecute(self);
-//  PostMessage(Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);
-end;
-
-procedure TMain.Session_DeleteUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  if AssertConnection then
-  begin
-    if not CORE.dsSession.DataSet.IsEmpty then
-    begin
-      if not uSession.IsLocked then DoEnable := true;
-    end;
-  end;
-  // no connection or no events or event is closed - disable actions
-  TAction(Sender).Enabled := DoEnable;
-end;
-
-procedure TMain.Session_EditExecute(Sender: TObject);
-var
-  dlg: TNewSession;
-begin
-  if not AssertConnection then exit;
-  dlg := TNewSession.CreateWithConnection(self, SCM.scmConnection);
-  dlg.SessionMode := smEditSession;
-  dlg.SessionID := uSession.PK;
-  if IsPositiveResult(dlg.ShowModal) then Session_SortExecute(self);
-  dlg.Free;
-end;
-
-procedure TMain.Session_EditUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  if AssertConnection then
-    if not CORE.dsSession.DataSet.IsEmpty then DoEnable := true;
-  TAction(Sender).Enabled := DoEnable;
-end;
-
 procedure TMain.Session_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
   DataCol: integer; Column: TColumn; State: TGridDrawState);
 var
@@ -4251,212 +3428,45 @@ begin
   else Session_Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 end;
 
-procedure TMain.Session_NewExecute(Sender: TObject);
-var
-  dlg: TNewSession;
+procedure TMain.Session_Scroll(var Msg: TMessage);
 begin
-  { TODO -oBSA -cGeneral : Check overload, methods for insert or edit modes }
-  // Exception raised if connection assigned.
-  dlg := TNewSession.CreateWithConnection(self, SCM.scmConnection);
-  dlg.SessionMode := smNewSession;
-  if IsPositiveResult(dlg.ShowModal) then
+  if AssertConnection then
   begin
-    // ATERNATIVE...
-    // This routine disables all controls across all tables..
-    // SCM_RefreshExecute(self);
+    if (CORE.dsSession.DataSet.FieldByName('SessionStatusID').AsInteger = 2) then
+    begin
+      // Disable grids.
+      // With the exception of the Heat grid. This allows user to browse races,
+      // entrant data and race times. Buttons and menu items will be disabled
+      // via the ActionManager.
+//        gEvent.Enabled := false;
+//        gHeat.Enabled := false;
+//        gLane.Enabled := false;
+//        gTeam.Enabled := false;
+      Nominate_ControlList.Enabled := false;
+    end
+    else
+    begin
+//        gEvent.Enabled := true;
+//        gHeat.Enabled := true;
+//        gLane.Enabled := true;
+//        gTeam.Enabled := true;
+      Nominate_ControlList.Enabled := true;
+    end;
+  end;
 
-    CORE.dsSession.DataSet.DisableControls;
-    CORE.dsSession.DataSet.Close; // Requery,
-    CORE.dsSession.DataSet.Open;
-    CORE.dsSession.DataSet.EnableControls;
-
-    uSession.Locate(dlg.SessionID); // CUE-TO NEW session.
 //    PostMessage(Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);
-  end;
-  dlg.Free;
+
+  // S T A T U S B A R .
+  // Session scroll will change statusbar totals for the session
+  fDoStatusBarUpdate := true; // permits ACTION (flag sets false after update)
+  // SCM_StatusBar.Update;
+  SCM_StatusBar.Execute;
 end;
 
-procedure TMain.Session_NewUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  // only a connection is required to create a new session
-  if AssertConnection then DoEnable := true;
-  TAction(Sender).Enabled := DoEnable;
-end;
 
-(*
-  procedure TMain.Session_RenumberEvents(var Msg: TMessage);
-  begin
-    uSession.RenumberEvents(true); // relocate.
-  end;
-*)
 
-procedure TMain.Session_ReportExecute(Sender: TObject);
-var
-  rpt: TSessionReportA;
-  rpt2: TSessionReportB;
-begin
-  try
-    if ((GetKeyState(VK_CONTROL) AND 128) = 128) then
-    begin
-      rpt2 := TSessionReportB.Create(self);
-      // raises exception if SCM not assigned.
-      rpt2.RunReport;
-      rpt2.Free;
-    end
-    else
-    begin
-      rpt := TSessionReportA.Create(self);
-      // raises exception if SCM not assigned.
-      rpt.RunReport;
-      rpt.Free;
-    end;
-  except
-    on E: Exception do ShowMessage(E.Message);
-  end;
-  if Session_Grid.CanFocus then Session_Grid.SetFocus;
-end;
 
-procedure TMain.Session_ReportUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  if AssertConnection then
-  begin
-    if not CORE.dsSession.DataSet.IsEmpty then
-      // 13.10.2020 : A report can be printed even if the session is locked.
-        DoEnable := true;
-  end;
-  TAction(Sender).Enabled := DoEnable;
-end;
 
-(*
-  procedure TMain.Session_Scroll(var Msg: TMessage);
-  begin
-    if AssertConnection then
-    begin
-      if (CORE.dsSession.DataSet.FieldByName('SessionStatusID').AsInteger = 2) then
-      begin
-        // Disable grids.
-        // With the exception of the Heat grid. This allows user to browse races,
-        // entrant data and race times. Buttons and menu items will be disabled
-        // via the ActionManager.
-        Event_Grid.Enabled := false;
-        INDV.Grid.Enabled := false;
-        Nominate_ControlList.Enabled := false;
-      end
-      else
-      begin
-        Event_Grid.Enabled := true;
-        INDV.Grid.Enabled := true;
-        Nominate_ControlList.Enabled := true;
-      end;
-    end;
-
-    PostMessage(Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);
-
-    // S T A T U S B A R .
-    // Session scroll will change statusbar totals for the session
-    fDoStatusBarUpdate := true; // permits ACTION (flag sets false after update)
-    // SCM_StatusBar.Update;
-    SCM_StatusBar.Execute;
-  end;
-*)
-
-procedure TMain.Session_SortExecute(Sender: TObject);
-var
-  aSessionID: integer;
-begin
-  if AssertConnection then
-  begin
-    aSessionID := uSession.PK;
-    Session_Grid.DataSource.DataSet.Close;
-// ORIGINALLY ... simple refresh : not effective enough.
-//    Session_Grid.DataSource.DataSet.Refresh;
-    Session_Grid.DataSource.DataSet.Open;
-    try
-      uSession.Locate(aSessionID);
-    except
-      on E: Exception do;
-    end;
-  end;
-end;
-
-procedure TMain.Session_SortUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  if AssertConnection then
-    if not CORE.dsSession.DataSet.IsEmpty then DoEnable := true;
-  TAction(Sender).Enabled := DoEnable;
-end;
-
-procedure TMain.Session_ToggleGridUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  if AssertConnection then
-    // the grid can be toggled even if we don't have sessions.
-      DoEnable := true;
-  TAction(Sender).Enabled := DoEnable;
-end;
-
-procedure TMain.Session_ToggleLockExecute(Sender: TObject);
-begin
-  // TAction ...Update determines if this routine is accessable
-//  uSession.ToggleLockState;
-  // Announce status change and enabled/disable grid access.
-//  PostMessage(Main.Handle, SCM_SESSIONSCROLL, 0, 0);
-end;
-
-procedure TMain.Session_ToggleLockUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  // Are we connected?
-  if AssertConnection then
-    if not CORE.dsSession.DataSet.IsEmpty then DoEnable := true;
-  TAction(Sender).Enabled := DoEnable;
-end;
-
-procedure TMain.Session_ToggleVisibleExecute(Sender: TObject);
-begin
-  With (Sender as TAction) do
-  begin
-    Checked := not Checked;
-    if Checked then
-    begin
-      ImageIndex := 22; // hide locked
-      spbtnSessionToggleVisible.ImageIndex := 22;
-    end
-    else
-    begin
-      ImageIndex := 23;
-      // show locked (default)
-      spbtnSessionToggleVisible.ImageIndex := 23;
-    end;
-    // toggle visibility of locked sessions
-    uSession.HideLocked(Checked);
-    if Session_Grid.CanFocus then Session_Grid.SetFocus;
-  end;
-end;
-
-procedure TMain.Session_ToggleVisibleUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  // Are we connected?
-  if AssertConnection then
-    if not CORE.dsSession.DataSet.IsEmpty then DoEnable := true;
-  TAction(Sender).Enabled := DoEnable;
-end;
 
 (*
   procedure TMain.SetTabSheetDisplayState(var Msg: TMessage);

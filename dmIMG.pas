@@ -24,6 +24,7 @@ type
     SVGMemberCntrl: TSVGIconVirtualImageList;
     SVGNominateGrid: TSVGIconVirtualImageList;
     SVGSessPopupMenu: TSVGIconVirtualImageList;
+    SVGButtons: TSVGIconVirtualImageList;
   private
     { Private declarations }
   public

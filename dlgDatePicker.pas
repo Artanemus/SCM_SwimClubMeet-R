@@ -1,4 +1,4 @@
-unit dlgDOBPicker;
+unit dlgDatePicker;
 
 interface
 
@@ -11,6 +11,8 @@ type
   TDOBPicker = class(TForm)
     CalendarView1: TCalendarView;
     btnOk: TButton;
+    btnCancel: TButton;
+    procedure btnCancelClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure CalendarView1DblClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -26,6 +28,11 @@ var
 implementation
 
 {$R *.dfm}
+
+procedure TDOBPicker.btnCancelClick(Sender: TObject);
+begin
+  ModalResult := mrCancel;
+end;
 
 procedure TDOBPicker.btnOkClick(Sender: TObject);
 begin

@@ -10,8 +10,8 @@ uses
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, Data.DB,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.WinXPickers,
   Vcl.Mask, Vcl.DBCtrls, Vcl.ExtCtrls, 
-  dmCORE,
-  uDefines, uSwimClub, uSession;
+  dmCORE, dmIMG,
+  uDefines, uSwimClub, uSession, Vcl.ComCtrls;
 
 type
   scmSessionMode = (smEditSession, smNewSession, swNotGiven);
@@ -24,16 +24,24 @@ type
     Panel2: TPanel;
     btnCancel: TButton;
     btnPost: TButton;
-    DatePicker1: TDatePicker;
-    TimePicker1: TTimePicker;
+    timePickerSess: TTimePicker;
     DBEdit1: TDBEdit;
-    qrySessionDlg: TFDQuery;
-    dsSessionDlg: TDataSource;
+    btnToday: TButton;
+    btnDate: TButton;
+    datePickerSess: TDatePicker;
+    btnNow: TButton;
+    btnPlus: TButton;
+    btnMinus: TButton;
     procedure btnPostClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
+    procedure btnDateClick(Sender: TObject);
+    procedure btnMinusClick(Sender: TObject);
+    procedure btnNowClick(Sender: TObject);
+    procedure btnPlusClick(Sender: TObject);
+    procedure btnTodayClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -48,7 +56,7 @@ implementation
 {$R *.dfm}
 
 uses
-  System.DateUtils;
+  System.DateUtils, dlgDatePicker;
 
 procedure TEditSession.btnCancelClick(Sender: TObject);
 begin
@@ -56,40 +64,76 @@ begin
     ModalResult := mrCancel;
 end;
 
+procedure TEditSession.btnDateClick(Sender: TObject);
+var
+  dlg: TDOBPicker;
+  Rect: TRect;
+  rtn: TModalResult;
+begin
+  dlg := TDOBPicker.Create(Self);
+  dlg.Caption := 'Pick session date ...';
+  dlg.Position := poDesigned;
+  Rect := btnDate.ClientToScreen(btnDate.ClientRect);
+  dlg.Left := Rect.Left;
+  dlg.Top := Rect.Bottom + 1;
+  dlg.CalendarView1.Date := datePickerSess.Date;
+  rtn := dlg.ShowModal;
+  if IsPositiveResult(rtn) then
+    datePickerSess.Date := dlg.CalendarView1.Date;
+  dlg.Free;
+end;
+
+procedure TEditSession.btnMinusClick(Sender: TObject);
+begin
+  TDateTime(timePickerSess.time).IncMinute(-15);
+end;
+
+procedure TEditSession.btnNowClick(Sender: TObject);
+begin
+  TDateTime(timePickerSess.Time).SetTime(Now().GetHour(), 0, 0, 0);
+end;
+
+procedure TEditSession.btnPlusClick(Sender: TObject);
+begin
+  TDateTime(timePickerSess.time).IncMinute(15);
+end;
+
 procedure TEditSession.btnPostClick(Sender: TObject);
 var
   dt: TDateTime;
 begin
-  with CORE.qrySession do
-  begin
-   try
-    if (State = dsEdit) then
-    begin
-      dt := DatePicker1.Date + TimePicker1.Time;
-      if FieldByName('SessionStart').AsDateTime <> dt then
-          FieldByName('SessionStart').AsDateTime := dt;
-
-      if  FieldByName('SessionStatusID').IsNull then    
-        FieldByName('SessionStatusID').AsInteger := 1;      
-      Post; // finalize the changes...
-      ModalResult := mrOk;
-    end;
-    except
-      on E: Exception do
+    // Assert edit mode.
+    // (changing dbo.Session.caption may have triggered edit state.)
+    if CORE.qrySession.State <> dsEdit then CORE.qrySession.Edit;
+    try
+      if (CORE.qrySession.State = dsEdit) then
       begin
-        // ShowMessage('Error saving session: ' + E.Message);
-        CORE.qrySession.Cancel;
+        dt := datePickerSess.Date + timePickerSess.Time;
+        if CORE.qrySession.FieldByName('SessionStart').AsDateTime <> dt then
+          CORE.qrySession.FieldByName('SessionStart').AsDateTime := dt;
+
+        if CORE.qrySession.FieldByName('SessionStatusID').IsNull then
+          CORE.qrySession.FieldByName('SessionStatusID').AsInteger := 1;
+
+        CORE.qrySession.Post; // finalize the changes...
+        ModalResult := mrOk;
       end;
-    finally
+    except on E: Exception do
+      // ShowMessage('Error saving session: ' + E.Message);
+      CORE.qrySession.Cancel;
     end;
-  end;
+end;
+
+procedure TEditSession.btnTodayClick(Sender: TObject);
+begin
+  datePickerSess.Date := Date.Today;
 end;
 
 procedure TEditSession.FormCreate(Sender: TObject);
 begin
   if not Assigned(CORE) then
     raise Exception.Create('Not connected to SwimClubMeet.');
-  if not CORE.qrySession.IsEmpty then 
+  if not CORE.qrySession.IsEmpty then
     CORE.qrySession.Cancel;
 end;
 
@@ -98,6 +142,7 @@ procedure TEditSession.FormKeyDown(Sender: TObject; var Key: Word;
 begin
   if Key = VK_ESCAPE then
   begin
+    // cancel all edits ...
     if CORE.qrySession.State = dsEdit then CORE.qrySession.Cancel;
     Key := 0;
     ModalResult := mrCancel;
@@ -108,19 +153,14 @@ procedure TEditSession.FormShow(Sender: TObject);
 var
   dt: TDateTime;
 begin
-  with dsSessionDlg.DataSet do
-  begin
-    FieldByName('StartDT').IsEmpty then
+    if CORE.qrySession.FieldByName('StartDT').IsNull then
       dt := Now
     else
-      dt := FieldByName('StartDT').AsDateTime;
-    DatePicker1.Date := DateOf(dt);
-    TimePicker1.Time := TimeOf(dt);
-    // - -   e d i t   - -
-    if State <> dsEdit then Edit;
-    if CanFocus then
-      DatePicker1.SetFocus;
-  end;
+      dt := CORE.qrySession.FieldByName('StartDT').AsDateTime;
+
+    datePickerSess.Date := DateOf(dt);
+    timePickerSess.Time := TimeOf(dt);
+    if CanFocus then datePickerSess.SetFocus;
 end;
 
 end.

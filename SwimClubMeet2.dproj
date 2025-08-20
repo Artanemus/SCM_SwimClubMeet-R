@@ -487,17 +487,23 @@
         <DCCReference Include="uEvent.pas"/>
         <DCCReference Include="uHeat.pas"/>
         <DCCReference Include="uLane.pas"/>
+        <DCCReference Include="uTeam.pas"/>
+        <DCCReference Include="uDefines.pas">
+            <Form>$R *.res</Form>
+        </DCCReference>
+        <DCCReference Include="f_FrameSession.pas">
+            <Form>FrameSession</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
         <DCCReference Include="f_FrameHeat.pas">
             <Form>FrameHeat</Form>
             <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
-        <DCCReference Include="uTeam.pas"/>
-        <DCCReference Include="uDefines.pas"/>
-        <DCCReference Include="f_FrameSession.pas">
-            <Form>FrameSession</Form>
+        <DCCReference Include="dlgEditSession.pas">
+            <Form>EditSession</Form>
             <FormType>dfm</FormType>
-            <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>

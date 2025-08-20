@@ -236,7 +236,7 @@ implementation
 {$R *.dfm}
 
 uses SCMUtility, dlgBasicLogin, System.IniFiles, System.UITypes, dlgAbout,
-  dlgDOBPicker, dlgFindMember, dlgGotoMember, dlgGotoMembership,
+  dlgDatePicker, dlgFindMember, dlgGotoMember, dlgGotoMembership,
   System.IOUtils, Winapi.ShellAPI, dlgDeleteMember, Vcl.Themes, rptMemberDetail,
   rptMemberHistory, rptMembersList, rptMembersDetail, rptMembersSummary,
   System.DateUtils, rptMemberChart, rptMemberCheckData;

@@ -533,6 +533,8 @@ object FrameSession: TFrameSession
       Category = 'Session'
       Caption = 'Clone Session...'
       Hint = 'Duplicate the selected session.'
+      OnExecute = actnSess_CloneExecute
+      OnUpdate = actnSess_DefaultUpdate
     end
     object actnSess_Delete: TAction
       Category = 'Session'
@@ -574,6 +576,10 @@ object FrameSession: TFrameSession
       ImageName = 'sort'
       OnExecute = actnSess_SortExecute
       OnUpdate = actnSess_DefaultUpdate
+    end
+    object actnSess_BatchReport: TAction
+      Category = 'Session'
+      Caption = 'Batch Report'
     end
   end
   object pumenuSess: TPopupMenu
