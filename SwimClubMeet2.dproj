@@ -198,9 +198,8 @@
             <Form>ManageMember</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="dlgDOBPicker.pas">
+        <DCCReference Include="dlgDatePicker.pas">
             <Form>DOBPicker</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="MEMBERS\dmManageMemberData.pas">
             <Form>ManageMemberData</Form>
@@ -504,6 +503,11 @@
         <DCCReference Include="dlgEditSession.pas">
             <Form>EditSession</Form>
             <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="f_FrameEvent.pas">
+            <Form>FrameEvent</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>

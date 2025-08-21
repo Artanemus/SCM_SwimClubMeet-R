@@ -10449,24 +10449,18 @@ object Main: TMain
       Caption = 'Build ALL Heats...'
       ImageIndex = 6
       ImageName = 'AutoBuild'
-      OnExecute = Heat_BatchBuildHeatsExecute
-      OnUpdate = Heat_BatchBuildHeatsUpdate
     end
     object Heat_BatchMarshallReport: TAction
       Category = 'Heats'
       Caption = 'Print ALL marshal reports...'
       ImageIndex = 6
       ImageName = 'AutoBuild'
-      OnExecute = Heat_BatchMarshallReportExecute
-      OnUpdate = Heat_BatchMarshallReportUpdate
     end
     object Heat_BatchTimeKeeperReport: TAction
       Category = 'Heats'
       Caption = 'Print ALL timekeeper reports...'
       ImageIndex = 6
       ImageName = 'AutoBuild'
-      OnExecute = Heat_BatchTimeKeeperReportExecute
-      OnUpdate = Heat_BatchTimeKeeperReportUpdate
     end
     object Heat_Renumber: TAction
       Category = 'Heats'

@@ -43,9 +43,6 @@ type
     actnHeat_Report: TAction;
     pnlStack: TStackPanel;
     pnlgHeat: TPanel;
-    actnEvent_BuildAllHeats: TAction;
-    actnEvent_PrintAllMarshalSheets: TAction;
-    actnEvent_PrintAllTimeKeeperSheets: TAction;
     pumenuHeat: TPopupMenu;
     MoveUp1: TMenuItem;
     MoveDown1: TMenuItem;
@@ -247,7 +244,6 @@ begin
   TAction(Sender).Enabled := DoEnable;
   if gHeat.Enabled <> DoEnable then gHeat.Enabled := DoEnable;
 end;
-
 
 procedure TFrameHeat.actnHeat_DeleteExecute(Sender: TObject);
 var
