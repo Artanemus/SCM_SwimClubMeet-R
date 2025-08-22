@@ -1,6 +1,6 @@
 object IMG: TIMG
   Height = 598
-  Width = 1059
+  Width = 1221
   object SVGEventStatus: TSVGIconVirtualImageList
     Images = <
       item
@@ -1989,6 +1989,18 @@ object IMG: TIMG
           ' viewBox="0 0 24 24"><path fill="currentColor" d="M17 13h-4v4h-2' +
           'v-4H7v-2h4V7h2v4h4m2-8H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2' +
           ' 2 0 0 0 2-2V5a2 2 0 0 0-2-2"/></svg>'
+      end
+      item
+        IconName = 'swap'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M12 4c-4.41 0-' +
+          '8 3.59-8 8s3.59 8 8 8s8-3.59 8-8s-3.59-8-8-8M6.5 9L10 5.5L13.5 9' +
+          'H11v4H9V9zm7.5 9.5L10.5 15H13v-4h2v4h2.5z" opacity=".3"/><path f' +
+          'ill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-' +
+          '4.48 10-10S17.52 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8s8 3.5' +
+          '9 8 8s-3.59 8-8 8m-1-7V9h2.5L10 5.5L6.5 9H9v4zm4-2h-2v4h-2.5l3.5' +
+          ' 3.5l3.5-3.5H15z"/></svg>'
       end>
     Left = 480
     Top = 16
@@ -13066,8 +13078,8 @@ object IMG: TIMG
     Width = 48
     Height = 48
     Size = 48
-    Left = 720
-    Top = 176
+    Left = 952
+    Top = 184
   end
   object SVGNominateGrid: TSVGIconVirtualImageList
     Images = <
@@ -13090,7 +13102,7 @@ object IMG: TIMG
     Width = 24
     Height = 24
     Size = 24
-    Left = 848
+    Left = 1080
     Top = 128
   end
   object SVGSessPopupMenu: TSVGIconVirtualImageList
@@ -13212,5 +13224,64 @@ object IMG: TIMG
     Size = 24
     Left = 56
     Top = 104
+  end
+  object SVGLaneCntrl: TSVGIconVirtualImageList
+    Images = <
+      item
+        CollectionIndex = 26
+        CollectionName = 'up'
+        Name = 'up'
+      end
+      item
+        CollectionIndex = 27
+        CollectionName = 'down'
+        Name = 'down'
+      end
+      item
+        CollectionIndex = 48
+        CollectionName = 'edit'
+        Name = 'edit'
+      end
+      item
+        CollectionIndex = 41
+        CollectionName = 'switch'
+        Name = 'switch'
+      end
+      item
+        CollectionIndex = 30
+        CollectionName = 'delete'
+        Name = 'delete'
+      end
+      item
+        CollectionIndex = 31
+        CollectionName = 'delete-forever'
+        Name = 'delete-forever'
+      end
+      item
+        CollectionIndex = 64
+        CollectionName = 'minus-box'
+        Name = 'minus-box'
+      end
+      item
+        CollectionIndex = 65
+        CollectionName = 'plus-box'
+        Name = 'plus-box'
+      end
+      item
+        CollectionIndex = 36
+        CollectionName = 'report'
+        Name = 'report'
+      end
+      item
+        CollectionIndex = 66
+        CollectionName = 'swap'
+        Name = 'swap'
+      end>
+    ImageCollection = SVGCollection
+    Width = 48
+    Height = 48
+    Size = 48
+    Left = 736
+    Top = 176
   end
 end

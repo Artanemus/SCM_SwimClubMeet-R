@@ -455,7 +455,6 @@ object FrameHeat: TFrameHeat
     ParentFont = False
     Spacing = 3
     TabOrder = 1
-    ExplicitLeft = 206
     DesignSize = (
       64
       590)
@@ -716,6 +715,10 @@ object FrameHeat: TFrameHeat
       ImageName = 'report'
       OnExecute = actnHeat_ReportExecute
       OnUpdate = actnHeat_ReportExecute
+    end
+    object actnHeat_RenumberLanes: TAction
+      Category = 'Heat'
+      Caption = 'Renumber Lanes'
     end
   end
   object pumenuHeat: TPopupMenu

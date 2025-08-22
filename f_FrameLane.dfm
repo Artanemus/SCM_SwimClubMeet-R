@@ -1,42 +1,33 @@
-object FrameEvent: TFrameEvent
+object FrameLane: TFrameLane
   Left = 0
   Top = 0
   Width = 640
-  Height = 617
+  Height = 600
   TabOrder = 0
-  object pnlgEvent: TPanel
+  object pnlgLane: TPanel
     Left = 0
     Top = 0
-    Width = 393
-    Height = 617
+    Width = 473
+    Height = 600
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 0
-    object gEvent: TDBAdvGrid
+    object gLane: TDBAdvGrid
       Left = 0
       Top = 0
-      Width = 393
-      Height = 617
+      Width = 473
+      Height = 600
       Cursor = crDefault
       Align = alClient
-      Color = clWhite
       ColCount = 2
       DrawingStyle = gdsClassic
       FixedColor = clWhite
       RowCount = 2
       FixedRows = 1
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clBlack
-      Font.Height = -12
-      Font.Name = 'Segoe UI'
-      Font.Style = []
-      Options = [goVertLine, goHorzLine, goRangeSelect, goFixedRowDefAlign]
-      ParentFont = False
       ScrollBars = ssBoth
       TabOrder = 0
-      OnKeyDown = gEventKeyDown
-      GridLineColor = 15987699
-      GridFixedLineColor = 15987699
+      GridLineColor = 13948116
+      GridFixedLineColor = 11250603
       HoverRowCells = [hcNormal, hcSelected]
       ActiveCellFont.Charset = DEFAULT_CHARSET
       ActiveCellFont.Color = 4474440
@@ -50,7 +41,6 @@ object FrameEvent: TFrameEvent
       ControlLook.FixedGradientTo = clWhite
       ControlLook.FixedGradientMirrorFrom = clWhite
       ControlLook.FixedGradientMirrorTo = clWhite
-      ControlLook.FixedGradientHoverFrom = clGray
       ControlLook.FixedGradientHoverTo = clWhite
       ControlLook.FixedGradientHoverMirrorFrom = clWhite
       ControlLook.FixedGradientHoverMirrorTo = clWhite
@@ -96,7 +86,7 @@ object FrameEvent: TFrameEvent
       FixedColWidth = 20
       FixedRowHeight = 22
       FixedFont.Charset = DEFAULT_CHARSET
-      FixedFont.Color = clBlack
+      FixedFont.Color = 3881787
       FixedFont.Height = -12
       FixedFont.Name = 'Tahoma'
       FixedFont.Style = [fsBold]
@@ -340,6 +330,10 @@ object FrameEvent: TFrameEvent
         80000001C0000003C0000003E0000007F000000FF800001FFC00003FFF0000FF
         FFC003FF}
       ShowUnicode = False
+      ExplicitLeft = -87
+      ExplicitTop = 128
+      ExplicitWidth = 400
+      ExplicitHeight = 250
       ColWidths = (
         20
         64)
@@ -349,118 +343,130 @@ object FrameEvent: TFrameEvent
     Left = 576
     Top = 0
     Width = 64
-    Height = 617
+    Height = 600
     Align = alRight
     ControlCollection = <
       item
-        Control = spbtnEventGrid
+        Control = spbtnLaneUp
       end
       item
-        Control = ShapeEventBar1
+        Control = spbtnLaneDown
       end
       item
-        Control = spbtnEventUp
+        Control = spbtnLaneEdit
       end
       item
-        Control = spbtnEventDown
+        Control = spbtnLane_Swap
       end
       item
-        Control = spbtnEventNew
+        Control = spbtnLaneDelete
       end
       item
-        Control = spbtnEventDelete
+        Control = spbtnLaneDeleteForever
       end
       item
-        Control = ShapeEventBar2
+        Control = ShapeLaneBar1
       end
       item
-        Control = spbtnEventReport
+        Control = spbtnLaneReport
+      end
+      item
+        Control = spbtnLanePlus
+      end
+      item
+        Control = spbtnLaneMinus
       end>
     HorizontalPositioning = sphpCenter
     TabOrder = 1
     DesignSize = (
       64
-      617)
-    object spbtnEventGrid: TSpeedButton
+      600)
+    object spbtnLaneUp: TSpeedButton
       Left = 8
       Top = 1
-      Width = 48
-      Height = 48
-      Action = actnEvent_Grid
-      Anchors = []
-      Images = IMG.SVGEventCntrl
-      Flat = True
-      Layout = blGlyphTop
-      Margin = 0
-    end
-    object ShapeEventBar1: TShape
-      AlignWithMargins = True
-      Left = 8
-      Top = 54
-      Width = 48
-      Height = 4
-      Margins.Left = 0
-      Margins.Right = 0
-      Anchors = []
-      Brush.Color = 8421631
-    end
-    object spbtnEventUp: TSpeedButton
-      Left = 8
-      Top = 63
       Width = 48
       Height = 48
       Margins.Left = 0
       Margins.Right = 0
       Margins.Bottom = 0
-      Action = actnEvent_MoveUp
+      Action = actnLane_MoveUp
       Anchors = []
-      Images = IMG.SVGEventCntrl
+      Images = IMG.SVGLaneCntrl
       Flat = True
       Layout = blGlyphTop
       Margin = 0
       ParentShowHint = False
       ShowHint = True
     end
-    object spbtnEventDown: TSpeedButton
+    object spbtnLaneDown: TSpeedButton
       Left = 8
-      Top = 113
+      Top = 51
       Width = 48
       Height = 48
-      Action = actnEvent_MoveDown
+      Action = actnLane_Movedown
       Anchors = []
-      Images = IMG.SVGEventCntrl
+      Images = IMG.SVGLaneCntrl
       Flat = True
       Layout = blGlyphTop
       Margin = 0
     end
-    object spbtnEventNew: TSpeedButton
+    object spbtnLaneEdit: TSpeedButton
       Left = 8
-      Top = 163
+      Top = 101
       Width = 48
       Height = 48
-      Action = actnEvent_New
+      Margins.Left = 0
+      Margins.Right = 0
+      Margins.Bottom = 0
+      Action = actnLane_Edit
       Anchors = []
-      Images = IMG.SVGEventCntrl
+      Images = IMG.SVGLaneCntrl
+      Flat = True
+      Layout = blGlyphTop
+      Margin = 0
+      ParentShowHint = False
+      ShowHint = True
+    end
+    object spbtnLane_Swap: TSpeedButton
+      Left = 8
+      Top = 151
+      Width = 48
+      Height = 48
+      Action = actnLane_Swap
+      Anchors = []
+      Images = IMG.SVGLaneCntrl
       Flat = True
       Layout = blGlyphTop
       Margin = 0
     end
-    object spbtnEventDelete: TSpeedButton
+    object spbtnLaneDelete: TSpeedButton
       Left = 8
-      Top = 213
+      Top = 201
       Width = 48
       Height = 48
-      Action = actnEvent_Delete
+      Action = actnLane_Delete
       Anchors = []
-      Images = IMG.SVGEventCntrl
+      Images = IMG.SVGLaneCntrl
       Flat = True
       Layout = blGlyphTop
       Margin = 0
     end
-    object ShapeEventBar2: TShape
+    object spbtnLaneDeleteForever: TSpeedButton
+      Left = 8
+      Top = 251
+      Width = 48
+      Height = 48
+      Action = actnLane_DeleteForever
+      Anchors = []
+      Images = IMG.SVGLaneCntrl
+      Flat = True
+      Layout = blGlyphTop
+      Margin = 0
+    end
+    object ShapeLaneBar1: TShape
       AlignWithMargins = True
       Left = 8
-      Top = 266
+      Top = 304
       Width = 48
       Height = 4
       Margins.Left = 0
@@ -468,143 +474,122 @@ object FrameEvent: TFrameEvent
       Anchors = []
       Brush.Color = 8421631
     end
-    object spbtnEventReport: TSpeedButton
+    object spbtnLaneReport: TSpeedButton
       Left = 8
-      Top = 275
+      Top = 313
       Width = 48
       Height = 48
-      Action = actnEvent_Report
+      Action = actnLane_Report
       Anchors = []
-      Images = IMG.SVGEventCntrl
+      Images = IMG.SVGLaneCntrl
       Flat = True
       Layout = blGlyphTop
       Margin = 0
     end
-  end
-  object actnlistEvent: TActionList
-    Images = IMG.SVGEventCntrl
-    Left = 176
-    Top = 152
-    object actnEvent_Grid: TAction
-      Category = 'Event'
-      Caption = 'Toggle Grid Expansion'
-      ImageIndex = 1
-      ImageName = 'grid-on'
-      OnExecute = actnEvent_GridExecute
-      OnUpdate = actnEvent_DefaultUpdate
+    object spbtnLanePlus: TSpeedButton
+      Left = 8
+      Top = 363
+      Width = 48
+      Height = 48
+      Margins.Left = 0
+      Margins.Right = 0
+      Margins.Bottom = 0
+      Action = actnLane_Plus
+      Anchors = []
+      Images = IMG.SVGLaneCntrl
+      Flat = True
+      Layout = blGlyphTop
+      Margin = 0
+      ParentShowHint = False
+      ShowHint = True
     end
-    object actnEvent_MoveUp: TAction
-      Category = 'Event'
+    object spbtnLaneMinus: TSpeedButton
+      Left = 8
+      Top = 413
+      Width = 48
+      Height = 48
+      Margins.Left = 0
+      Margins.Right = 0
+      Margins.Bottom = 0
+      Action = actnLane_Minus
+      Anchors = []
+      Images = IMG.SVGLaneCntrl
+      Flat = True
+      Layout = blGlyphTop
+      Margin = 0
+      ParentShowHint = False
+      ShowHint = True
+    end
+  end
+  object actnlistLane: TActionList
+    Images = IMG.SVGLaneCntrl
+    Left = 256
+    Top = 200
+    object actnLane_MoveUp: TAction
+      Category = 'Lane'
       Caption = 'Move Up'
-      ImageIndex = 2
+      ImageIndex = 0
       ImageName = 'up'
-      OnExecute = actnEvent_MoveUpDownExecute
-      OnUpdate = actnEvent_DefaultUpdate
     end
-    object actnEvent_MoveDown: TAction
-      Category = 'Event'
+    object actnLane_Movedown: TAction
+      Category = 'Lane'
       Caption = 'Move Down'
-      ImageIndex = 3
+      ImageIndex = 1
       ImageName = 'down'
-      OnExecute = actnEvent_MoveUpDownExecute
-      OnUpdate = actnEvent_DefaultUpdate
     end
-    object actnEvent_New: TAction
-      Category = 'Event'
-      Caption = 'New Event'
-      ImageIndex = 4
-      ImageName = 'new'
-      OnUpdate = actnEvent_NewUpdate
+    object actnLane_Edit: TAction
+      Category = 'Lane'
+      Caption = 'Edit...'
+      ImageIndex = 2
+      ImageName = 'edit'
     end
-    object actnEvent_Delete: TAction
-      Category = 'Event'
-      Caption = 'Delete Event'
-      ImageIndex = 5
-      ImageName = 'delete'
-      OnExecute = actnEvent_DeleteExecute
-      OnUpdate = actnEvent_DefaultUpdate
+    object actnLane_Plus: TAction
+      Category = 'Lane'
+      Caption = 'Plus...'
+      ImageIndex = 7
+      ImageName = 'plus-box'
     end
-    object actnEvent_Report: TAction
-      Category = 'Event'
-      Caption = 'Event Report'
+    object actnLane_Minus: TAction
+      Category = 'Lane'
+      Caption = 'Minus...'
       ImageIndex = 6
+      ImageName = 'minus-box'
+    end
+    object actnLane_Delete: TAction
+      Category = 'Lane'
+      Caption = 'Delete...'
+      ImageIndex = 4
+      ImageName = 'delete'
+    end
+    object actnLane_DeleteForever: TAction
+      Category = 'Lane'
+      Caption = 'Delete Forever...'
+      ImageIndex = 5
+      ImageName = 'delete-forever'
+    end
+    object actnLane_Report: TAction
+      Category = 'Lane'
+      Caption = 'Lane Report...'
+      ImageIndex = 8
       ImageName = 'report'
-      OnExecute = actnEvent_ReportExecute
-      OnUpdate = actnEvent_DefaultUpdate
     end
-    object actnEvent_BatchBuildHeats: TAction
-      Category = 'Event'
-      Caption = 'Batch Build Heats'
-      OnExecute = actnEvent_BatchBuildHeatsExecute
+    object actnLane_Empty: TAction
+      Category = 'Lane'
+      Caption = 'Empty Lane'
     end
-    object actnEvents_BatchMarshalSheets: TAction
-      Category = 'Event'
-      Caption = 'Batch Marshal Sheets'
-      OnExecute = actnEvents_BatchMarshalSheetsExecute
+    object actnLane_Strike: TAction
+      Category = 'Lane'
+      Caption = 'Strike Lane'
     end
-    object actnEvents_BatchTimekeeperSheets: TAction
-      Category = 'Event'
-      Caption = 'Batch Timekeeper Sheets'
-      OnExecute = actnEvents_BatchTimekeeperSheetsExecute
-    end
-    object actnEvent_RenumberHeats: TAction
-      Category = 'Event'
-      Caption = 'Renumber Heats'
-      OnExecute = actnEvent_RenumberHeatsExecute
-      OnUpdate = actnEvent_DefaultUpdate
-    end
-    object actnEvent_Schedule: TAction
-      Category = 'Event'
-      Caption = 'Schedule Event'
-      OnExecute = actnEvent_ScheduleExecute
-      OnUpdate = actnEvent_DefaultUpdate
-    end
-    object actnEvent_BuildFinals: TAction
-      Category = 'Event'
-      Caption = 'Build Finals'
-      OnExecute = actnEvent_BuildFinalsExecute
-      OnUpdate = actnEvent_DefaultUpdate
-    end
-    object actnEvent_BuildSemiFinals: TAction
-      Category = 'Event'
-      Caption = 'Build Semi-Finals'
-      OnExecute = actnEvent_BuildSemiFinalsExecute
-      OnUpdate = actnEvent_DefaultUpdate
-    end
-    object actnEvent_BuildQuaterFinals: TAction
-      Category = 'Event'
-      Caption = 'Build Quater Finals'
-      OnExecute = actnEvent_BuildQuaterFinalsExecute
-      OnUpdate = actnEvent_DefaultUpdate
+    object actnLane_Swap: TAction
+      Category = 'Lane'
+      Caption = 'Swap Lanes'
+      ImageIndex = 3
+      ImageName = 'switch'
     end
   end
-  object pumenuEvent: TPopupMenu
-    Images = IMG.SVGEventCntrl
-    Left = 176
-    Top = 232
-    object oggleGridExpansion1: TMenuItem
-      Action = actnEvent_Grid
-    end
-    object N1: TMenuItem
-      Caption = '-'
-    end
-    object MoveUp1: TMenuItem
-      Action = actnEvent_MoveUp
-    end
-    object MoveDown1: TMenuItem
-      Action = actnEvent_MoveDown
-    end
-    object NewEvent1: TMenuItem
-      Action = actnEvent_New
-    end
-    object DeleteEvent1: TMenuItem
-      Action = actnEvent_Delete
-    end
-    object N2: TMenuItem
-      Caption = '-'
-    end
-    object actnEventReport1: TMenuItem
-      Action = actnEvent_Report
-    end
+  object pumenuLane: TPopupMenu
+    Left = 256
+    Top = 288
   end
 end

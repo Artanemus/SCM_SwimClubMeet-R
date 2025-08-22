@@ -148,6 +148,8 @@ begin
   // Not permitted to delete the current event if session is locked.
   if CORE.qrySession.FieldByName('SessionStatusID').AsInteger = 2 then exit;
 
+  CORE.qryEvent.CheckBrowseMode;
+
   CORE.qryHeat.DisableControls;
   try
     // D E L E T E   H E A T S
@@ -230,6 +232,9 @@ end;
 procedure SetEntrantCount();
 begin
   var i := uEvent.CalcEntrantCount;
+
+  CORE.qryEvent.CheckBrowseMode;
+
   try
     CORE.qryEvent.DisableControls;
     if CORE.qryEvent.FieldByName('EntrantCount').AsInteger <> i then
@@ -267,6 +272,9 @@ end;
 procedure SetNomineeCount();
 begin
   var i := uEvent.CalcNomineeCount;
+
+  CORE.qryEvent.CheckBrowseMode;
+
   try
     CORE.qryEvent.DisableControls;
     try
@@ -430,6 +438,9 @@ var
   aEventNum: integer;
 begin
   if CORE.qrySession.IsEmpty then exit;
+
+  CORE.qryEvent.CheckBrowseMode;
+
   try
     aEventNum := uEvent.LastEventNum();
     Inc(aEventNum);
@@ -486,6 +497,10 @@ fld: TField;
 begin
   if uSession.IsLocked() then exit;
   if CORE.qryEvent.IsEmpty then exit;
+  if not aEventStatusID in [1,2] then exit;
+  if (aEventStatusID = CORE.qryEvent.FieldByName('EventStatusID').AsInteger) then exit;
+
+  CORE.qryEvent.CheckBrowseMode;
   try
     fld := CORE.qryEvent.FindField('EventStatusID');
     if Assigned(fld) then fld.ReadOnly := false;

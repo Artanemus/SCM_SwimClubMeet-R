@@ -101,11 +101,14 @@ uses
   uHeat in 'uHeat.pas',
   uLane in 'uLane.pas',
   uTeam in 'uTeam.pas',
-  uDefines in 'uDefines.pas',
+  {$R}
+  {$R}
+  uDefines in 'uDefines.pas' {$R *.res},
   f_FrameSession in 'f_FrameSession.pas' {FrameSession: TFrame},
   f_FrameHeat in 'f_FrameHeat.pas' {FrameHeat: TFrame},
   dlgEditSession in 'dlgEditSession.pas' {EditSession},
-  f_FrameEvent in 'f_FrameEvent.pas' {FrameEvent: TFrame};
+  f_FrameEvent in 'f_FrameEvent.pas' {FrameEvent: TFrame},
+  f_FrameLane in 'f_FrameLane.pas' {FrameLane: TFrame};
 
 {$R *.res}
 

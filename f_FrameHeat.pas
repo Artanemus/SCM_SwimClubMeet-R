@@ -57,6 +57,7 @@ type
     N1: TMenuItem;
     N2: TMenuItem;
     N3: TMenuItem;
+    actnHeat_RenumberLanes: TAction;
     procedure actnHeat_BuildExecute(Sender: TObject);
     procedure actnHeat_MoveUpDownExecute(Sender: TObject);
     procedure actnHeat_DefaultUpdate(Sender: TObject);
@@ -75,7 +76,7 @@ type
     function AssertSCM(): boolean;
     function AssertCORE(): boolean;
   protected
-      procedure Heat_UI(var Msg: TMessage);  message SCM_HEAT_UI;
+      procedure msgScrollHeat(var Msg: TMessage); message SCM_SCROLL_HEAT;
 
   public
     { Public declarations }
@@ -612,10 +613,11 @@ begin
     Value := '';
 end;
 
-procedure TFrameHeat.Heat_UI(var Msg: TMessage);
+procedure TFrameHeat.msgScrollHeat(var Msg: TMessage);
 begin
-  //
-  ;
+  if not AssertCore then     exit;
+  // perform UI changes to gEvent.
+
 end;
 
 end.

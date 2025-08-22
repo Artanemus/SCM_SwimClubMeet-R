@@ -2698,7 +2698,7 @@ object Main: TMain
       Margins.Top = 4
       Margins.Right = 0
       Margins.Bottom = 0
-      ActivePage = TabSheet1
+      ActivePage = TabSheet3
       Align = alClient
       Style = tsFlatButtons
       TabOrder = 0
@@ -2749,7 +2749,6 @@ object Main: TMain
             TitleFont.Height = -16
             TitleFont.Name = 'Segoe UI'
             TitleFont.Style = []
-            OnDrawColumnCell = Session_GridDrawColumnCell
             Columns = <
               item
                 Expanded = False
@@ -3661,8 +3660,6 @@ object Main: TMain
               TitleFont.Height = -16
               TitleFont.Name = 'Segoe UI'
               TitleFont.Style = []
-              OnDrawColumnCell = Event_GridDrawColumnCell
-              OnKeyDown = Event_GridKeyDown
               Columns = <
                 item
                   Expanded = False
@@ -9683,7 +9680,6 @@ object Main: TMain
     Top = 0
     Width = 1344
     Height = 27
-    UseSystemFont = False
     ActionManager = ActionManager1
     Caption = 'ActionMainMenuBar1'
     Color = clMenuBar
@@ -9692,7 +9688,7 @@ object Main: TMain
     ColorMap.BtnSelectedFont = clBlack
     ColorMap.UnusedColor = clWhite
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clBlack
+    Font.Color = clWindowText
     Font.Height = -13
     Font.Name = 'Segoe UI'
     Font.Style = []
@@ -10170,8 +10166,6 @@ object Main: TMain
       Hint = 'Toggle grid. Expand or collapse it'#39's view.'
       ImageIndex = 16
       ImageName = 'GridOn'
-      OnExecute = Event_ToggleGridViewExecute
-      OnUpdate = Event_ToggleGridViewUpdate
     end
     object Event_MoveUp: TAction
       Category = 'Events'
@@ -10180,8 +10174,6 @@ object Main: TMain
       ImageIndex = 12
       ImageName = 'Up'
       ShortCut = 16422
-      OnExecute = Event_MoveUpExecute
-      OnUpdate = Event_MoveUpOrDownUpdate
     end
     object Event_MoveDown: TAction
       Category = 'Events'
@@ -10190,8 +10182,6 @@ object Main: TMain
       ImageIndex = 13
       ImageName = 'Down'
       ShortCut = 16424
-      OnExecute = Event_MoveDownExecute
-      OnUpdate = Event_MoveUpOrDownUpdate
     end
     object Tools_QualifyTimes: TAction
       Category = 'Tools'
@@ -10205,8 +10195,6 @@ object Main: TMain
       ImageIndex = 20
       ImageName = 'New'
       ShortCut = 16429
-      OnExecute = Event_NewRecordExecute
-      OnUpdate = Event_NewRecordUpdate
     end
     object Event_Delete: TAction
       Category = 'Events'
@@ -10215,8 +10203,6 @@ object Main: TMain
       ImageIndex = 19
       ImageName = 'Delete'
       ShortCut = 16430
-      OnExecute = Event_DeleteExecute
-      OnUpdate = Event_DeleteUpdate
     end
     object Event_Report: TAction
       Category = 'Events'
@@ -10224,8 +10210,6 @@ object Main: TMain
       Hint = 'Display the event report.'
       ImageIndex = 17
       ImageName = 'Report'
-      OnExecute = Event_ReportExecute
-      OnUpdate = Event_ReportUpdate
     end
     object Grid_MoveUp: TAction
       Category = 'Grid'
@@ -10416,24 +10400,18 @@ object Main: TMain
       Caption = 'Build event finals ...'
       ImageIndex = 6
       ImageName = 'AutoBuild'
-      OnExecute = Event_BuildFinalsExecute
-      OnUpdate = Event_BuildSCMEventTypeUpdate
     end
     object Event_BuildSemiFinals: TAction
       Category = 'Events'
       Caption = 'Build event semi-finals ...'
       ImageIndex = 6
       ImageName = 'AutoBuild'
-      OnExecute = Event_BuildSemiFinalsExecute
-      OnUpdate = Event_BuildSCMEventTypeUpdate
     end
     object Event_BuildQuarterFinals: TAction
       Category = 'Events'
       Caption = 'Build event quarter-finals ...'
       ImageIndex = 6
       ImageName = 'AutoBuild'
-      OnExecute = Event_BuildQuarterFinalsExecute
-      OnUpdate = Event_BuildSCMEventTypeUpdate
     end
     object Event_Renumber: TAction
       Category = 'Events'
@@ -10441,8 +10419,6 @@ object Main: TMain
       Enabled = False
       ImageIndex = 7
       ImageName = 'Cycle'
-      OnExecute = Event_RenumberExecute
-      OnUpdate = Event_RenumberUpdate
     end
     object Heat_BatchBuildHeats: TAction
       Category = 'Heats'
@@ -10541,8 +10517,6 @@ object Main: TMain
       Hint = 'Auto schedule events. '
       ImageIndex = 47
       ImageName = 'TimeAuto'
-      OnExecute = Event_AutoScheduleExecute
-      OnUpdate = Event_AutoScheduleUpdate
     end
     object SCM_StatusBar: TAction
       Category = 'SCM'

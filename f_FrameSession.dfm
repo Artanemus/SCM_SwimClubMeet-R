@@ -34,6 +34,7 @@ object FrameSession: TFrameSession
       ParentFont = False
       ScrollBars = ssBoth
       TabOrder = 0
+      OnDrawCell = gSessionDrawCell
       GridLineColor = 15987699
       GridFixedLineColor = 15987699
       HoverRowCells = [hcNormal, hcSelected]
@@ -580,6 +581,10 @@ object FrameSession: TFrameSession
     object actnSess_BatchReport: TAction
       Category = 'Session'
       Caption = 'Batch Report'
+    end
+    object actnSess_RenumberEvents: TAction
+      Category = 'Session'
+      Caption = 'Renumber Events'
     end
   end
   object pumenuSess: TPopupMenu

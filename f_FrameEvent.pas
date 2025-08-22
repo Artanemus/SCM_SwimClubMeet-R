@@ -7,8 +7,8 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.Actions,
   System.IOUtils,
   Vcl.ActnList,
-  uDefines,
-  dmSCM, dmCORE, dmIMG, scmUtility,
+  SCMUtility, uDefines,
+  dmSCM, dmCORE, dmIMG,
   uSwimClub, uSession, uEvent, uHeat, uLane,
   Data.DB,
   Vcl.Menus, AdvUtil, Vcl.Buttons, Vcl.WinXPanels, Vcl.Grids, AdvObj, BaseGrid,
@@ -47,16 +47,36 @@ type
     spbtnEventNew: TSpeedButton;
     spbtnEventReport: TSpeedButton;
     spbtnEventUp: TSpeedButton;
+    actnEvent_RenumberHeats: TAction;
+    actnEvent_Schedule: TAction;
+    actnEvent_BuildFinals: TAction;
+    actnEvent_BuildSemiFinals: TAction;
+    actnEvent_BuildQuaterFinals: TAction;
     procedure actnEvents_BatchMarshalSheetsExecute(Sender: TObject);
     procedure actnEvents_BatchTimekeeperSheetsExecute(Sender: TObject);
     procedure actnEvent_BatchBuildHeatsExecute(Sender: TObject);
+    procedure actnEvent_BuildFinalsExecute(Sender: TObject);
+    procedure actnEvent_BuildQuaterFinalsExecute(Sender: TObject);
+    procedure actnEvent_BuildSemiFinalsExecute(Sender: TObject);
     procedure actnEvent_DefaultUpdate(Sender: TObject);
+    procedure actnEvent_DeleteExecute(Sender: TObject);
+    procedure actnEvent_GridExecute(Sender: TObject);
     procedure actnEvent_MoveUpDownExecute(Sender: TObject);
     procedure actnEvent_NewUpdate(Sender: TObject);
+    procedure actnEvent_RenumberHeatsExecute(Sender: TObject);
+    procedure actnEvent_ReportExecute(Sender: TObject);
+    procedure actnEvent_ScheduleExecute(Sender: TObject);
+    procedure gEventKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { Private declarations }
     function AssertCORE(): boolean;
     procedure BatchReport(Sender: TObject;  RptType: scmRptType);
+    procedure Event_BuildSCMEventType(Sender: TObject; EventType: scmEventFinalsType);
+
+    procedure UpdateEventStatus;
+  protected
+    procedure msgScrollEvent(var Msg: TMessage); message SCM_SCROLL_EVENT;
+
   end;
 
 implementation
@@ -64,7 +84,8 @@ implementation
 {$R *.dfm}
 
 uses
-  dlgSelectPrinter, dlgBatchProgress, dmAutoBuildV2;
+  dlgSelectPrinter, dlgBatchProgress, dmAutoBuildV2, rptEventReportB,
+  rptEventReportA, dlgAutoBuild_Finals, dlgAutoSchedule;
 
 procedure TFrameEvent.actnEvents_BatchMarshalSheetsExecute(Sender: TObject);
 begin
@@ -192,6 +213,51 @@ begin
 
 end;
 
+procedure TFrameEvent.actnEvent_BuildFinalsExecute(Sender: TObject);
+begin
+  Event_BuildSCMEventType(Sender, ftFinals);
+end;
+
+procedure TFrameEvent.Event_BuildSCMEventType(Sender: TObject; EventType: scmEventFinalsType);
+var
+  dm: TAutoBuildV2;
+  dlg: TAutoBuild_Finals;
+  success: boolean;
+  EventID, rtnValue: integer;
+begin
+  if not AssertCORE then exit;
+  dlg := TAutoBuild_Finals.Create(self);
+  dlg.TypeOfEvent := EventType;
+  rtnValue := dlg.ShowModal;
+  dlg.Free;
+  if (rtnValue = mrYes) then
+  begin
+    EventID := CORE.dsEvent.DataSet.FieldByName('EventID').AsInteger;
+    dm := TAutoBuildV2(self);
+    success := dm.AutoBuildExecuteExt(EventID, EventType);
+    dm.Free;
+    if (success) then
+    begin
+      gEvent.BeginUpdate;
+      try
+        ; // done.
+      finally
+        gEvent.EndUpdate;
+      end;
+    end;
+  end;
+end;
+
+procedure TFrameEvent.actnEvent_BuildQuaterFinalsExecute(Sender: TObject);
+begin
+  Event_BuildSCMEventType(Sender, ftSemi);
+end;
+
+procedure TFrameEvent.actnEvent_BuildSemiFinalsExecute(Sender: TObject);
+begin
+  Event_BuildSCMEventType(Sender, ftQuarter);
+end;
+
 procedure TFrameEvent.actnEvent_DefaultUpdate(Sender: TObject);
 var
   DoEnable: boolean;
@@ -202,6 +268,124 @@ begin
       if not CORE.qryEvent.IsEmpty then
         DoEnable := true;
   TAction(Sender).Enabled := DoEnable;
+end;
+
+procedure TFrameEvent.actnEvent_DeleteExecute(Sender: TObject);
+var
+  rtnValue, aEventID: integer;
+  SQL: String;
+  HasClosedHeats, HasRacedHeats: boolean;
+begin
+	aEventID := uEvent.PK;
+	HasClosedHeats :=uEvent.HasClosedHeats();
+  HasRacedHeats := uEvent.HasRacedHeats();
+  if HasClosedHeats then
+	begin
+
+		SQL := 'Unable to delete the event ';
+
+    SQL := SQL + CORE.dsEvent.DataSet.FieldByName('ShortCaption').AsString +
+      sLineBreak;
+    SQL := SQL + 'as the event includes ''closed'' heats.';
+    MessageDlg(SQL, mtError, [mbOK], 0, mbOK);
+    exit;
+  end;
+  // 1 .  C o n f i r m   d e l e t i o n (RACED HEATS) .
+  // --------------------------------------------------------
+  if HasRacedHeats then
+  begin
+    rtnValue := MessageDlg('WARNING: This event contains RACED heats.' +
+      sLineBreak +
+      'Racetimes and entrant data will be lost if you delete this event.' +
+      sLineBreak + 'Do you wish to delete the event?', mtWarning,
+      [mbYes, mbNo], 0, mbNo);
+    // DON'T USE (results == mrNo) as it doesn't account for VK_ESCAPE.
+    // mrCancel=2 mrNo=7 mrYes=6
+    if (rtnValue <> mrYes) then exit;
+  end;
+
+  // 2 .  C o n f i r m   d e l e t i o n .
+	// --------------------------------------------------------
+  SQL := 'Delete event?';
+	SQL := SQL + CORE.dsEvent.DataSet.FieldByName('ShortCaption').AsString +
+    sLineBreak;
+  if (HasRacedHeats) then
+      SQL := SQL + 'Including all (open or raced) heats, entrant and nomination data?'
+  else SQL := SQL + 'Including all open heats, entrant and nomination data?';
+  rtnValue := MessageDlg(SQL, mtConfirmation, [mbYes, mbNo], 0, mbYes);
+
+  if (rtnValue = mrYes) then
+  begin
+    gEvent.BeginUpdate;
+		uEvent.DeleteEvent();
+		CORE.qryEvent.EnableControls;
+    gEvent.EndUpdate;
+//    PostMessage(Handle, SCM_TABSHEETDISPLAYSTATE, 1, 0);
+  end;
+
+end;
+
+procedure TFrameEvent.actnEvent_GridExecute(Sender: TObject);
+var
+  fld: TField;
+begin
+  // TActionUpdate determines if this routine can be accessed
+  with (Sender as TAction) do
+  begin
+    // T O G G L E .
+    Checked := not Checked;
+    if Checked then
+    begin
+      ImageIndex := 1;
+      { frmMAIN hides f_FrameSession.
+        f_FrameEvent expands to fill the width of the frmMain's tabsheet1.
+        pnlSessionLeft.Visible := false;
+      }
+    end
+    else
+    begin
+      ImageIndex := 0;
+      // frmMAIN restores the visibility of f_FrameSession.
+    end;
+
+    // makes visible the event caption field used to enter event details
+    try
+      gEvent.BeginUpdate;
+      CORE.qryEvent.DisableControls;
+      // e v e n t   d e s c r i p t i o n ...
+      fld := CORE.qryEvent.FindField('Caption');
+      if Assigned(fld) then fld.Visible := Checked;
+
+      // e v e n t   s c h e d u l e  t i m e ...
+      fld := CORE.qryEvent.FindField('ScheduleDT');
+      if Assigned(fld) then fld.Visible := Checked;
+
+      // INDV or RELAY event type ....
+      // fld := CORE.qryEvent.FindField('luEventType');
+      // if Assigned(fld) then
+      // fld.Visible := Checked;
+
+      // Fields that are always visible in either grid display mode.
+      // n o m i n a t i o n s  ...
+      fld := CORE.qryEvent.FindField('NomineeCount');
+      if Assigned(fld) then
+      begin
+        if Checked then fld.DisplayLabel := 'Nominees'
+        else fld.DisplayLabel := 'Nom#';
+      end;
+      // e n t r a n t s ...
+      fld := CORE.qryEvent.FindField('EntrantCount');
+      if Assigned(fld) then
+      begin
+        if Checked then fld.DisplayLabel := 'Entrants'
+        else fld.DisplayLabel := ' Ent#';
+      end;
+
+    finally
+      CORE.qryEvent.EnableControls;
+      gEvent.EndUpdate;
+    end;
+  end;
 end;
 
 procedure TFrameEvent.actnEvent_MoveUpDownExecute(Sender: TObject);
@@ -265,6 +449,58 @@ begin
     if not uSession.IsEmptyOrLocked then
         DoEnable := true;
   TAction(Sender).Enabled := DoEnable;
+end;
+
+procedure TFrameEvent.actnEvent_RenumberHeatsExecute(Sender: TObject);
+begin
+  uEvent.RenumberHeats();
+end;
+
+procedure TFrameEvent.actnEvent_ReportExecute(Sender: TObject);
+var
+  rptA: TEventReportA;
+  rptB: TEventReportB;
+begin
+  CORE.qryEvent.CheckBrowseMode; // finalize any editing within table
+  try
+    begin
+      if ((GetKeyState(VK_CONTROL) and 128) = 128) then
+      begin
+        rptB := TEventReportB.Create(self);
+        rptB.RunReport;
+        rptB.Free;
+      end
+      else
+      begin
+        rptA := TEventReportA.Create(self);
+        rptA.RunReport;
+        rptA.Free;
+      end;
+    end;
+  except
+    on E: Exception do ShowMessage('Error opening report.');
+  end;
+end;
+
+procedure TFrameEvent.actnEvent_ScheduleExecute(Sender: TObject);
+var
+  dlg: TAutoSchedule;
+  EventID: integer;
+  rtnValue: TModalResult;
+begin
+  if not AssertCORE then exit;
+  CORE.dsEvent.DataSet.DisableControls;
+	EventID := uEvent.PK;
+  dlg := TAutoSchedule.CreateWithConnection(self, SCM.scmConnection);
+	dlg.SessionID := uSession.PK;
+  rtnValue := dlg.ShowModal;
+  dlg.Free;
+  if IsPositiveResult(rtnValue) then
+  begin
+    CORE.dsEvent.DataSet.Refresh;
+		uEvent.Locate(EventID);
+  end;
+  CORE.dsEvent.DataSet.EnableControls;
 end;
 
 function TFrameEvent.AssertCORE: boolean;
@@ -365,5 +601,162 @@ begin
       ').' + sLineBreak + 'Check!', mtWarning, [mbOK], 0);
 end;
 
+procedure TFrameEvent.gEventKeyDown(Sender: TObject; var Key: Word; Shift:
+    TShiftState);
+var
+  dg: TDBAdvGrid;
+  c: char;
+  i: integer;
+begin
+  if (Key = VK_UP) and (ssCtrl in Shift) then
+  begin
+    {
+      Typically, applications do not call the ExecuteAction method. Instead,
+      the action indicated by the Action parameter calls ExecuteAction in response
+      to a user command. It is possible, however, to call ExecuteAction to
+      generate an OnExecute event even though no client control has been triggered.
+
+      ExecuteAction invokes the OnExecute event handler for the action list.
+      It returns True if the event handler handles the action, False otherwise.
+    }
+    actnlistEvent.ExecuteAction(actnEvent_MoveUp);
+    Key := NULL;
+    exit;
+  end;
+  if (Key = VK_DOWN) and (ssCtrl in Shift) then
+  begin
+    actnlistEvent.ExecuteAction(actnEvent_MoveDown);
+    Key := NULL;
+    exit;
+  end;
+
+  {
+    "1"	"FreeStyle"
+    "2"	"BreastStroke"
+    "3"	"BackStroke"
+    "4"	"ButterFly"
+    "5"	"Medley"
+
+    "1"	"25m"	"25"
+    "2"	"50m"	"50"
+    "3"	"100m"	"100"
+    "4"	"200m"	"200"
+    "5"	"400m"	"400"
+    "6"	"1000m"	"1000"
+  }
+
+//  if (Key in [F,B,R,A,U,M]) then
+//  begin
+//
+//  end;
+
+  // Speecial 'speed' keys to set stroke or distance'
+  dg := TDBAdvGrid(Sender);
+  if (dg.SelectedField.FieldName = 'luStroke') then
+  begin
+    c := upcase(char(Key));
+    case (c) of
+      'F': i := 1;
+      'B', 'R': i := 2;
+      'A': i := 3;
+      'U': i := 4;
+      'M': i := 5;
+    else i := 0;
+    end;
+
+    if (i > 0) then
+    begin
+      CORE.dsEvent.DataSet.DisableControls;
+      CORE.dsEvent.DataSet.Edit;
+      CORE.dsEvent.DataSet.FieldByName('StrokeID').AsInteger := i;
+      CORE.dsEvent.DataSet.Post;
+      CORE.dsEvent.DataSet.EnableControls;
+      Key := 0;
+    end;
+  end
+  else if (dg.SelectedField.FieldName = 'luDistance') then
+  begin
+    case char(Key) of
+      '2': i := 1; // 25m
+      '5': i := 2; // 50m
+      '1': i := 3; // 100m
+      '0': i := 4; // 200m
+      '4': i := 5; // 400m
+      // 1000m - there is no shortcut
+    else i := 0;
+    end;
+    if (i > 0) then
+    begin
+      CORE.dsEvent.DataSet.DisableControls;
+      CORE.dsEvent.DataSet.Edit;
+      CORE.dsEvent.DataSet.FieldByName('DistanceID').AsInteger := i;
+      CORE.dsEvent.DataSet.Post;
+      CORE.dsEvent.DataSet.EnableControls;
+      Key := 0;
+    end;
+  end;
+
+end;
+
+
+procedure TFrameEvent.msgScrollEvent(var Msg: TMessage);
+begin
+  if not AssertCORE then exit;
+  // perform UI changes to gEvent.
+end;
+
+procedure TFrameEvent.UpdateEventStatus;
+var
+  AllClosed: boolean;
+  i: integer;
+begin
+  if not AssertCORE then exit;
+  if CORE.qryEvent.IsEmpty then exit;
+  try
+    gEvent.BeginUpdate;
+    AllClosed := uEvent.AllHeatsAreClosed();
+    if AllClosed then i := 2 else i := 1;
+    uEvent.SetEventStatusID(i);
+  finally
+    gEvent.EndUpdate;
+  end;
+end;
+{
+procedure TMain.Event_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
+  DataCol: integer; Column: TColumn; State: TGridDrawState);
+var
+  oField: TField;
+begin
+  if (Column.Field.FieldName = 'EventStatusID') then
+  begin
+    oField := Column.Field;
+    if (oField.value = '2') then
+      // draw a tick if all the heats have been raced...
+        DrawEventStatus(Event_Grid, Rect, Column)
+    else
+      // 17.10.2020 - leave the column blank ...
+        Event_Grid.Canvas.FillRect(Rect);
+  end;
+end;
+
+ procedure TMain.EnableEvent_GridEllipse;
+ var
+ i: integer;
+ col: TColumn;
+ begin
+ for i := 0 to Event_Grid.Columns.Count - 1 do
+ begin
+ col := Event_Grid.Columns.Items[i];
+ if (col.FieldName = 'ScheduleDT') then
+ begin
+ // editing in the this cell isn't allowed - use ellipse button.
+ col.ButtonStyle := cbsEllipsis;
+ Event_Grid.Repaint;
+ break;
+ end;
+ end;
+ end;
+
+}
 
 end.

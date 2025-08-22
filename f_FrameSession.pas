@@ -51,6 +51,7 @@ type
     N1: TMenuItem;
     N2: TMenuItem;
     actnSess_BatchReport: TAction;
+    actnSess_RenumberEvents: TAction;
     procedure actnSess_CloneExecute(Sender: TObject);
     procedure actnSess_DefaultUpdate(Sender: TObject);
     procedure actnSess_DeleteExecute(Sender: TObject);
@@ -62,8 +63,15 @@ type
     procedure actnSess_ReportExecute(Sender: TObject);
     procedure actnSess_SortExecute(Sender: TObject);
     procedure actnSess_VisibleExecute(Sender: TObject);
+    procedure gSessionDrawCell(Sender: TObject; ACol, ARow: LongInt; Rect: TRect;
+        State: TGridDrawState);
   private
     { Private declarations }
+    function AssertCORE(): boolean;
+
+  protected
+    procedure msgScrollSession(var Msg: TMessage); message SCM_SCROLL_SESSION;
+
   public
     { Public declarations }
   end;
@@ -110,6 +118,18 @@ begin
     finally
       gSession.EndUpdate;
     end;
+end;
+
+function TFrameSession.AssertCORE: boolean;
+begin
+  result := false;
+  if Assigned(CORE) and CORE.IsActive then
+    result := true;
+end;
+
+procedure TFrameSession.msgScrollSession(var Msg: TMessage);
+begin
+  if not AssertCORE then exit;
 end;
 
 procedure TFrameSession.actnSess_DefaultUpdate(Sender: TObject);
@@ -289,7 +309,36 @@ begin
   end;
 end;
 
-
-
+procedure TFrameSession.gSessionDrawCell(Sender: TObject; ACol, ARow: LongInt;
+    Rect: TRect; State: TGridDrawState);
+var
+  Size: TSize;
+  topMargin: integer;
+  MyRect: TRect;
+  fSessionClosedBgColor, fSessionClosedFontColor: TColor;
+  txt:string;
+begin
+  // dim the text if the session is closed
+  // DEFAULT DRAWING IS DISABLED ....
+  // a CLOSED SESSION
+  if (gSession.DataSource.DataSet.FieldByName('SessionStatusID') .AsInteger = 2) then
+  begin
+    txt := gSession.DataSource.DataSet.FieldByName('Caption') .AsString;
+    // CLEAR THE CANVAS
+    gSession.Canvas.Brush.Color := fSessionClosedBgColor;
+    gSession.Canvas.Brush.Style := bsSolid;
+    gSession.Canvas.FillRect(Rect);
+    // PRINT THE TEXT
+    gSession.Canvas.Font.Color := fSessionClosedFontColor;
+    Size := gSession.Canvas.TextExtent(txt);
+    topMargin := Round((Rect.Height - Size.Height) / 2);
+    // calculate margins
+    MyRect.Top := Rect.Top + topMargin;
+    MyRect.Left := Rect.Left + topMargin;
+    MyRect.Bottom := Rect.Bottom;
+    MyRect.Right := Rect.Right;
+    gSession.Canvas.TextRect(Rect, Rect.Left, Rect.Top, txt);
+  end;
+end;
 
 end.
