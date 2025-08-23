@@ -1,4 +1,4 @@
-unit dlgCheck_DOB_Gender;
+unit dlgCheckMemberRequisites;
 
 interface
 
@@ -11,7 +11,7 @@ uses
   FireDAC.Comp.Client;
 
 type
-  TCheck_DOB_Gender = class(TForm)
+  TCheckMemberRequisites = class(TForm)
     pnlFooter: TPanel;
     pnlHeader: TPanel;
     pnlBody: TPanel;
@@ -38,18 +38,18 @@ type
 	end;
 
 var
-  Check_DOB_Gender: TCheck_DOB_Gender;
+  CheckMemberRequisites: TCheckMemberRequisites;
 
 implementation
 
 {$R *.dfm}
 
-procedure TCheck_DOB_Gender.btnOKClick(Sender: TObject);
+procedure TCheckMemberRequisites.btnOKClick(Sender: TObject);
 begin
 ModalResult := mrCancel;
 end;
 
-function TCheck_DOB_Gender.CheckExec(aConnection: TFDConnection; aEventID:
+function TCheckMemberRequisites.CheckExec(aConnection: TFDConnection; aEventID:
   integer): boolean;
 begin
   result := false;
@@ -73,7 +73,7 @@ begin
   end;
 end;
 
-procedure TCheck_DOB_Gender.FormKeyDown(Sender: TObject; var Key: Word; Shift:
+procedure TCheckMemberRequisites.FormKeyDown(Sender: TObject; var Key: Word; Shift:
 		TShiftState);
 begin
 if Key = VK_ESCAPE then

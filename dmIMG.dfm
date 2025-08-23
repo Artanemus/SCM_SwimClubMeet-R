@@ -2001,6 +2001,16 @@ object IMG: TIMG
           '4.48 10-10S17.52 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8s8 3.5' +
           '9 8 8s-3.59 8-8 8m-1-7V9h2.5L10 5.5L6.5 9H9v4zm4-2h-2v4h-2.5l3.5' +
           ' 3.5l3.5-3.5H15z"/></svg>'
+      end
+      item
+        IconName = 'search'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M9.5 3A6.5 6.5' +
+          ' 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5l-1.5 1.5l' +
+          '-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16A6.5 6.5 0 0 1 3 9.5A6.' +
+          '5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14S14 12 14 9.5S12 ' +
+          '5 9.5 5"/></svg>'
       end>
     Left = 480
     Top = 16
@@ -13078,8 +13088,8 @@ object IMG: TIMG
     Width = 48
     Height = 48
     Size = 48
-    Left = 952
-    Top = 184
+    Left = 864
+    Top = 176
   end
   object SVGNominateGrid: TSVGIconVirtualImageList
     Images = <

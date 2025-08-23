@@ -84,7 +84,7 @@ type
 
 implementation
 uses
-  SCMUtility, dmAutoBuildV2, dlgAutoBuild_Heats, dlgCheck_DOB_Gender,
+  SCMUtility, dmAutoBuildV2, dlgAutoBuild_Heats, dlgCheckMemberRequisites,
   rptMarshallReportC, rptMarshallReportB, rptMarshallReportA,
   rptTimeKeeperReportB, rptTimeKeeperReportA, rptHeatReportB, rptHeatReportA;
 
@@ -94,7 +94,7 @@ procedure TFrameHeat.actnHeat_BuildExecute(Sender: TObject);
 var
   AutoBuild: TAutoBuildV2;
 	dlg: TAutoBuild_Heats;
-	dlg2: TCheck_DOB_Gender;
+	dlg2: TCheckMemberRequisites;
 	success, IsErronous: boolean;
 	EventID, rtnValue: integer;
 	s: string;
@@ -136,7 +136,7 @@ begin
   if not IsPositiveResult(rtnValue) then exit;
   // -------------------------------------------------------
 	// Check for bad DOB and GENDER.
-	dlg2 := TCheck_DOB_Gender.Create(Self);
+	dlg2 := TCheckMemberRequisites.Create(Self);
 	IsErronous := dlg2.CheckExec(SCM.scmConnection, EventID);
 	if IsErronous then dlg.ShowModal;
 	dlg2.Free;

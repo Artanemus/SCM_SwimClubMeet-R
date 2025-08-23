@@ -1,8 +1,8 @@
-object Check_DOB_Gender: TCheck_DOB_Gender
+object CheckMemberRequisites: TCheckMemberRequisites
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'Check: DOB /Gender'
+  Caption = 'Check: Member requisites - FirstName, LastName, DOB  and Gender'
   ClientHeight = 486
   ClientWidth = 624
   Color = clBtnFace
@@ -23,9 +23,6 @@ object Check_DOB_Gender: TCheck_DOB_Gender
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitLeft = 232
-    ExplicitTop = 224
-    ExplicitWidth = 185
     object btnOK: TButton
       Left = 199
       Top = 5
@@ -67,10 +64,6 @@ object Check_DOB_Gender: TCheck_DOB_Gender
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitLeft = 232
-    ExplicitTop = 224
-    ExplicitWidth = 185
-    ExplicitHeight = 41
     object dbgDOBGender: TDBGrid
       AlignWithMargins = True
       Left = 3

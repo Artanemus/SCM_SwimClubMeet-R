@@ -120,397 +120,318 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
+        <DCCReference Include="..\SCM_SHARED\Vcl.PlatformVclStylesActnCtrls.pas"/>
+        <DCCReference Include="..\VCL_TMS\Advgrid.pas"/>
+        <DCCReference Include="..\VCL_TMS\BaseGrid.pas"/>
+        <DCCReference Include="..\VCL_TMS\DBAdvGrid.pas"/>
+        <DCCReference Include="dmIMG.pas">
+            <Form>IMG</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
         <DCCReference Include="frmMain.pas">
             <Form>Main</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="dlgBootProgress.pas">
-            <Form>BootProgress</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="dlgCloneSession.pas">
-            <Form>CloneSession</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="dlgDivision.pas">
-            <Form>Division</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="dlgHouse.pas">
-            <Form>House</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="dlgNewSession.pas">
-            <Form>NewSession</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="dlgPointsScored.pas">
-            <Form>PointsScored</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="dlgPreferences.pas">
-            <Form>Preferences</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="dmSCM.pas">
             <Form>SCM</Form>
-            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="dmCORE.pas">
+            <Form>CORE</Form>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="dmSCMNom.pas">
             <Form>SCMNom</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\SCM_SHARED\SCMHelpers.pas"/>
+        <DCCReference Include="scmLogin.pas">
+            <Form>Login</Form>
+        </DCCReference>
+        <DCCReference Include="scmSetting.pas"/>
+        <DCCReference Include="..\SCM_SHARED\SCMUtility.pas"/>
+        <DCCReference Include="AUTOBUILD\uABRelayExec.pas"/>
+        <DCCReference Include="uDefines.pas"/>
+        <DCCReference Include="..\SCM_SHARED\UEnvVars.pas"/>
+        <DCCReference Include="uEvent.pas"/>
+        <DCCReference Include="uHeat.pas"/>
+        <DCCReference Include="uLane.pas"/>
+        <DCCReference Include="uSession.pas"/>
+        <DCCReference Include="uSwimClub.pas"/>
+        <DCCReference Include="uTeam.pas"/>
+        <DCCReference Include="..\x-superobject\XSuperJSON.pas"/>
+        <DCCReference Include="..\x-superobject\XSuperObject.pas"/>
+        <DCCReference Include="..\SCM_SHARED\dlgAbout.pas">
+            <Form>About</Form>
+        </DCCReference>
+        <DCCReference Include="AUTOBUILD\dlgABRelay.pas">
+            <Form>ABRelay</Form>
+        </DCCReference>
+        <DCCReference Include="dlgAutoBuild_Batch.pas">
+            <Form>AutoBuildPref</Form>
+        </DCCReference>
+        <DCCReference Include="dlgAutoBuild_Finals.pas">
+            <Form>AutoBuild_Finals</Form>
         </DCCReference>
         <DCCReference Include="dlgAutoBuild_Heats.pas">
             <Form>AutoBuild_Heats</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="dlgQualifyTimes.pas">
-            <Form>QualifyTimes</Form>
-            <FormType>dfm</FormType>
+        <DCCReference Include="TOOLS\dlgAutoSchedule.pas">
+            <Form>AutoSchedule</Form>
         </DCCReference>
-        <DCCReference Include="dlgSwapLanes.pas">
-            <Form>SwapLanes</Form>
-            <FormType>dfm</FormType>
+        <DCCReference Include="dlgBatchProgress.pas">
+            <Form>BatchProgress</Form>
         </DCCReference>
-        <DCCReference Include="dlgSwimmerCategory.pas">
-            <Form>SwimmerCategory</Form>
-            <FormType>dfm</FormType>
+        <DCCReference Include="dlgBootProgress.pas">
+            <Form>BootProgress</Form>
         </DCCReference>
-        <DCCReference Include="MEMBERS\dlgDeleteMember.pas">
-            <Form>DeleteMember</Form>
-            <FormType>dfm</FormType>
+        <DCCReference Include="dlgCheckMemberRequisites.pas">
+            <Form>CheckMemberRequisites</Form>
         </DCCReference>
-        <DCCReference Include="MEMBERS\dlgFindMember.pas">
-            <Form>FindMember</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="MEMBERS\dlgGotoMember.pas">
-            <Form>GotoMember</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="MEMBERS\dlgGotoMembership.pas">
-            <Form>GotoMembership</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="MEMBERS\frmManageMember.pas">
-            <Form>ManageMember</Form>
-            <FormType>dfm</FormType>
+        <DCCReference Include="dlgCloneSession.pas">
+            <Form>CloneSession</Form>
         </DCCReference>
         <DCCReference Include="dlgDatePicker.pas">
             <Form>DOBPicker</Form>
         </DCCReference>
-        <DCCReference Include="MEMBERS\dmManageMemberData.pas">
-            <Form>ManageMemberData</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
+        <DCCReference Include="dlgDCodePicker.pas">
+            <Form>DCodePicker</Form>
         </DCCReference>
-        <DCCReference Include="REPORTS\rptEventReportA.pas">
-            <Form>EventReportA</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
+        <DCCReference Include="MEMBERS\dlgDeleteMember.pas">
+            <Form>DeleteMember</Form>
         </DCCReference>
-        <DCCReference Include="REPORTS\rptEventReportB.pas">
-            <Form>EventReportB</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
+        <DCCReference Include="dlgDivision.pas">
+            <Form>Division</Form>
         </DCCReference>
-        <DCCReference Include="REPORTS\rptMarshallReportA.pas">
-            <Form>MarshallReportA</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="REPORTS\rptMarshallReportB.pas">
-            <Form>MarshallReportB</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="REPORTS\rptNominateReportA.pas">
-            <Form>NominateReportA</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="REPORTS\rptNominateReportB.pas">
-            <Form>NominateReportB</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="REPORTS\rptQTDistStrokeReportA.pas">
-            <Form>QTDistStrokeReportA</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="REPORTS\rptQTMemberReportA.pas">
-            <Form>QTMemberReportA</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="REPORTS\rptQTSessionReportA.pas">
-            <Form>QTSessionReportA</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="REPORTS\rptQTTableReportA.pas">
-            <Form>QTTableReportA</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="REPORTS\rptSessionReportA.pas">
-            <Form>SessionReportA</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="REPORTS\rptSessionReportB.pas">
-            <Form>SessionReportB</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="REPORTS\rptTimeKeeperReportA.pas">
-            <Form>TimeKeeperReportA</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="REPORTS\rptTimeKeeperReportB.pas">
-            <Form>TimeKeeperReportB</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="dlgAutoBuild_Finals.pas">
-            <Form>AutoBuild_Finals</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="dlgSelectPrinter.pas">
-            <Form>SelectPrinter</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="dlgBatchProgress.pas">
-            <Form>BatchProgress</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="dlgAutoBuild_Batch.pas">
-            <Form>AutoBuildPref</Form>
-            <FormType>dfm</FormType>
+        <DCCReference Include="dlgEditSession.pas">
+            <Form>EditSession</Form>
         </DCCReference>
         <DCCReference Include="dlgEntrantPicker.pas">
             <Form>EntrantPicker</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="dlgEntrantPickerCTRL.pas">
             <Form>EntrantPickerCTRL</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="MEMBERS\rptMemberDetail.pas">
-            <Form>MemberDetail</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="MEMBERS\rptMembersSummary.pas">
-            <Form>MembersSummary</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="MEMBERS\rptMembersDetail.pas">
-            <Form>MembersDetail</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="MEMBERS\rptMemberHistory.pas">
-            <Form>MemberHistory</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="MEMBERS\rptMembersList.pas">
-            <Form>MembersList</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="REPORTS\rptHeatReportA.pas">
-            <Form>HeatReportA</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="REPORTS\rptHeatReportB.pas">
-            <Form>HeatReportB</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="..\SCM_SHARED\exeinfo.pas"/>
-        <DCCReference Include="..\SCM_SHARED\SCMUtility.pas"/>
-        <DCCReference Include="..\SCM_SHARED\UEnvVars.pas"/>
-        <DCCReference Include="..\SCM_SHARED\Vcl.PlatformVclStylesActnCtrls.pas"/>
-        <DCCReference Include="..\SCM_SHARED\dlgAbout.pas">
-            <Form>About</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="TOOLS\frmDisqualificationCodes.pas">
-            <Form>DisqualificationCodes</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="TOOLS\dlgAutoSchedule.pas">
-            <Form>AutoSchedule</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="FRAME\frame_TEAM.pas">
-            <Form>frameTEAM</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TFrame</DesignClass>
-        </DCCReference>
-        <DCCReference Include="FRAME\frame_INDV.pas">
-            <Form>frameINDV</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TFrame</DesignClass>
-        </DCCReference>
-        <DCCReference Include="dlgDCodePicker.pas">
-            <Form>DCodePicker</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="FRAME\dlgTeamNameMenu.pas">
-            <Form>TeamNameMenu</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="..\SCM_SHARED\SCMHelpers.pas"/>
-        <DCCReference Include="dmSCMHelper.pas"/>
-        <DCCReference Include="REPORTS\rptQTNotQualified.pas">
-            <Form>QTNotQualified</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="MEMBERS\dlgMemberFilter.pas">
-            <Form>MemberFilter</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="FRAME\dlgTeamNamePicker.pas">
-            <Form>TeamNamePicker</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="REPORTS\rptMarshallReportC.pas">
-            <Form>MarshallReportC</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="FRAME\dlgSplitTimeTEAM.pas">
-            <Form>SplitTimeTEAM</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="FRAME\dlgSplitTimeINDV.pas">
-            <Form>SplitTimeINDV</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="REPORTS\rptMarshallReportA_ALT.pas">
-            <Form>MarshallReportA_ALT</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="MEMBERS\rptMemberChart.pas">
-            <Form>MemberChart</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="dlgSwimClubSwitch.pas">
-            <Form>SwimClubSwitch</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="dlgSwimClubManage.pas">
-            <Form>SwimClubManage</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="MEMBERS\dlgMemberClub.pas">
-            <Form>MemberClub</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="MEMBERS\rptMemberCheckData.pas">
-            <Form>MemberCheckData</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="MEMBERS\dmMemberHouse.pas">
-            <Form>MemberHouse</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="AUTOBUILD\uABRelayExec.pas"/>
-        <DCCReference Include="AUTOBUILD\dmABRelayData.pas">
-            <Form>ABRelayData</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="AUTOBUILD\dlgABRelay.pas">
-            <Form>ABRelay</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="EXPORT\dlgExportSessionJSON.pas">
             <Form>ExportSessionJSON</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="..\x-superobject\XSuperJSON.pas"/>
-        <DCCReference Include="..\x-superobject\XSuperObject.pas"/>
+        <DCCReference Include="MEMBERS\dlgFindMember.pas">
+            <Form>FindMember</Form>
+        </DCCReference>
+        <DCCReference Include="MEMBERS\dlgGotoMember.pas">
+            <Form>GotoMember</Form>
+        </DCCReference>
+        <DCCReference Include="MEMBERS\dlgGotoMembership.pas">
+            <Form>GotoMembership</Form>
+        </DCCReference>
+        <DCCReference Include="dlgHouse.pas">
+            <Form>House</Form>
+        </DCCReference>
         <DCCReference Include="LEADERBOARD\dlgLeaderBoard.pas">
             <Form>LeaderBoard</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="LEADERBOARD\dmLeaderBoardData.pas">
-            <Form>LeaderBoardData</Form>
-            <FormType>dfm</FormType>
+        <DCCReference Include="MEMBERS\dlgMemberClub.pas">
+            <Form>MemberClub</Form>
+        </DCCReference>
+        <DCCReference Include="MEMBERS\dlgMemberFilter.pas">
+            <Form>MemberFilter</Form>
+        </DCCReference>
+        <DCCReference Include="dlgNewSession.pas">
+            <Form>NewSession</Form>
+        </DCCReference>
+        <DCCReference Include="dlgPointsScored.pas">
+            <Form>PointsScored</Form>
+        </DCCReference>
+        <DCCReference Include="dlgPreferences.pas">
+            <Form>Preferences</Form>
+        </DCCReference>
+        <DCCReference Include="dlgQualifyTimes.pas">
+            <Form>QualifyTimes</Form>
+        </DCCReference>
+        <DCCReference Include="dlgSelectPrinter.pas">
+            <Form>SelectPrinter</Form>
+        </DCCReference>
+        <DCCReference Include="FRAME\dlgSplitTimeINDV.pas">
+            <Form>SplitTimeINDV</Form>
+        </DCCReference>
+        <DCCReference Include="FRAME\dlgSplitTimeTEAM.pas">
+            <Form>SplitTimeTEAM</Form>
+        </DCCReference>
+        <DCCReference Include="dlgSwapLanes.pas">
+            <Form>SwapLanes</Form>
+        </DCCReference>
+        <DCCReference Include="dlgSwimClubManage.pas">
+            <Form>SwimClubManage</Form>
+        </DCCReference>
+        <DCCReference Include="dlgSwimClubSwitch.pas">
+            <Form>SwimClubSwitch</Form>
+        </DCCReference>
+        <DCCReference Include="dlgSwimmerCategory.pas">
+            <Form>SwimmerCategory</Form>
+        </DCCReference>
+        <DCCReference Include="FRAME\dlgTeamNameMenu.pas">
+            <Form>TeamNameMenu</Form>
+        </DCCReference>
+        <DCCReference Include="FRAME\dlgTeamNamePicker.pas">
+            <Form>TeamNamePicker</Form>
+        </DCCReference>
+        <DCCReference Include="AUTOBUILD\dmABRelayData.pas">
+            <Form>ABRelayData</Form>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="dmAutoBuildV2.pas">
             <Form>AutoBuildV2</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="dlgCheck_DOB_Gender.pas">
-            <Form>Check_DOB_Gender</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="..\VCL_TMS\Advgrid.pas"/>
-        <DCCReference Include="..\VCL_TMS\DBAdvGrid.pas"/>
-        <DCCReference Include="..\VCL_TMS\BaseGrid.pas"/>
-        <DCCReference Include="dmCORE.pas">
-            <Form>CORE</Form>
-            <FormType>dfm</FormType>
+        <DCCReference Include="LEADERBOARD\dmLeaderBoardData.pas">
+            <Form>LeaderBoardData</Form>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="dmIMG.pas">
-            <Form>IMG</Form>
-            <FormType>dfm</FormType>
+        <DCCReference Include="MEMBERS\dmManageMemberData.pas">
+            <Form>ManageMemberData</Form>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="scmSetting.pas"/>
-        <DCCReference Include="scmLogin.pas">
-            <Form>Login</Form>
-            <FormType>dfm</FormType>
+        <DCCReference Include="MEMBERS\dmMemberHouse.pas">
+            <Form>MemberHouse</Form>
+            <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="uSwimClub.pas"/>
-        <DCCReference Include="uSession.pas"/>
-        <DCCReference Include="uEvent.pas"/>
-        <DCCReference Include="uHeat.pas"/>
-        <DCCReference Include="uLane.pas"/>
-        <DCCReference Include="uTeam.pas"/>
-        <DCCReference Include="uDefines.pas">
-            <Form>$R *.res</Form>
-        </DCCReference>
-        <DCCReference Include="f_FrameSession.pas">
-            <Form>FrameSession</Form>
-            <FormType>dfm</FormType>
+        <DCCReference Include="dmSCMHelper.pas"/>
+        <DCCReference Include="..\SCM_SHARED\exeinfo.pas"/>
+        <DCCReference Include="f_FrameEvent.pas">
+            <Form>FrameEvent</Form>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="f_FrameHeat.pas">
             <Form>FrameHeat</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TFrame</DesignClass>
-        </DCCReference>
-        <DCCReference Include="dlgEditSession.pas">
-            <Form>EditSession</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="f_FrameEvent.pas">
-            <Form>FrameEvent</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="f_FrameLane.pas">
             <Form>FrameLane</Form>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="f_FrameSession.pas">
+            <Form>FrameSession</Form>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="FRAME\frame_INDV.pas">
+            <Form>frameINDV</Form>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="FRAME\frame_TEAM.pas">
+            <Form>frameTEAM</Form>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="TOOLS\frmDisqualificationCodes.pas">
+            <Form>DisqualificationCodes</Form>
+        </DCCReference>
+        <DCCReference Include="MEMBERS\frmManageMember.pas">
+            <Form>ManageMember</Form>
+        </DCCReference>
+        <DCCReference Include="REPORTS\rptEventReportA.pas">
+            <Form>EventReportA</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="REPORTS\rptEventReportB.pas">
+            <Form>EventReportB</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="REPORTS\rptHeatReportA.pas">
+            <Form>HeatReportA</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="REPORTS\rptHeatReportB.pas">
+            <Form>HeatReportB</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="REPORTS\rptMarshallReportA.pas">
+            <Form>MarshallReportA</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="REPORTS\rptMarshallReportA_ALT.pas">
+            <Form>MarshallReportA_ALT</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="REPORTS\rptMarshallReportB.pas">
+            <Form>MarshallReportB</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="REPORTS\rptMarshallReportC.pas">
+            <Form>MarshallReportC</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="MEMBERS\rptMemberChart.pas">
+            <Form>MemberChart</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="MEMBERS\rptMemberCheckData.pas">
+            <Form>MemberCheckData</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="MEMBERS\rptMemberDetail.pas">
+            <Form>MemberDetail</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="MEMBERS\rptMemberHistory.pas">
+            <Form>MemberHistory</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="MEMBERS\rptMembersDetail.pas">
+            <Form>MembersDetail</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="MEMBERS\rptMembersList.pas">
+            <Form>MembersList</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="MEMBERS\rptMembersSummary.pas">
+            <Form>MembersSummary</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="REPORTS\rptNominateReportA.pas">
+            <Form>NominateReportA</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="REPORTS\rptNominateReportB.pas">
+            <Form>NominateReportB</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="REPORTS\rptQTDistStrokeReportA.pas">
+            <Form>QTDistStrokeReportA</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="REPORTS\rptQTMemberReportA.pas">
+            <Form>QTMemberReportA</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="REPORTS\rptQTNotQualified.pas">
+            <Form>QTNotQualified</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="REPORTS\rptQTSessionReportA.pas">
+            <Form>QTSessionReportA</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="REPORTS\rptQTTableReportA.pas">
+            <Form>QTTableReportA</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="REPORTS\rptSessionReportA.pas">
+            <Form>SessionReportA</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="REPORTS\rptSessionReportB.pas">
+            <Form>SessionReportB</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="REPORTS\rptTimeKeeperReportA.pas">
+            <Form>TimeKeeperReportA</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="REPORTS\rptTimeKeeperReportB.pas">
+            <Form>TimeKeeperReportB</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="f_FrameMember.pas">
+            <Form>FrameMember</Form>
             <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>

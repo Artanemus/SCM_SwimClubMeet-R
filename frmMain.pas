@@ -446,7 +446,7 @@ uses
   dlgDBVerInfo, rptHeatReportA, rptHeatReportB, frmDisqualificationCodes,
   dlgAutoSchedule, dlgDCodePicker, dmSCMHelper, rptMarshallReportC,
   dlgSplitTimeTEAM, dlgSplitTimeINDV, dlgSwimClubSwitch, dlgSwimClubManage,
-  dlgABRelay, uABRelayExec, dlgExportSessionJSON, dlgCheck_DOB_Gender, dmIMG,
+  dlgABRelay, uABRelayExec, dlgExportSessionJSON, dlgCheckMemberRequisites, dmIMG,
 	dmCORE, uLane, uHeat, uEvent, uSession, uSwimClub, scmLogin;
 
 procedure TMain.Heat_AutoBuildRelayExecute(Sender: TObject);
@@ -856,6 +856,7 @@ begin
 
 
 	// CREATE IMAGE COLLECTION DATAMODULE.
+  { Project.Forms - Auto-create form IMG has been set.}
 	if not Assigned(IMG) then
 	begin
 		try
