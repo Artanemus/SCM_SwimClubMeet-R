@@ -4,7 +4,7 @@
    width="48"
    version="1.1"
    id="svg4"
-   sodipodi:docname="EmptyFrame.svg"
+   sodipodi:docname="INDV.svg"
    xml:space="preserve"
    inkscape:version="1.4 (86a8ad7, 2024-10-11)"
    inkscape:export-batch-path="Export"
@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      showgrid="false"
-     inkscape:zoom="22.627417"
-     inkscape:cx="27.378291"
-     inkscape:cy="27.577165"
+     inkscape:zoom="7.9999999"
+     inkscape:cx="28.1875"
+     inkscape:cy="11.125"
      inkscape:window-width="2560"
      inkscape:window-height="1377"
      inkscape:window-x="-8"
@@ -43,9 +43,8 @@
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"
        margin="0"
-       bleed="0" /></sodipodi:namedview><circle
-     style="opacity:1;fill:#ff7f2a;fill-opacity:1;stroke:none;stroke-width:1.0214;stroke-linecap:round"
-     id="path1"
-     cx="2.3113837"
-     cy="45.925831"
-     r="0.86167479" /></svg>
+       bleed="0" /></sodipodi:namedview><path
+     d="m 22.98068,45.575339 h -0.852474 v -8.275841 h 0.852474 z m 7.778824,0 h -1.045295 l -3.744797,-6.596434 q -0.142078,-0.24816 -0.233415,-0.519404 h -0.03044 q 0.04059,0.265473 0.04059,1.136918 v 5.97892 h -0.852476 v -8.275841 h 1.106186 l 3.643311,6.492553 q 0.228341,0.403981 0.294307,0.554031 h 0.02029 q -0.05075,-0.357812 -0.05075,-1.217714 v -5.82887 h 0.852474 z m 1.907917,0 v -8.275841 h 2.009403 q 3.84628,0 3.84628,4.034039 0,1.916025 -1.070666,3.081799 -1.065592,1.160003 -2.856803,1.160003 z m 0.852474,-7.398625 v 6.521409 h 1.085889 q 1.430939,0 2.227595,-0.871445 0.796657,-0.871445 0.796657,-2.470056 0,-3.179908 -2.973509,-3.179908 z m 11.589584,-0.877216 -2.694426,8.275841 h -0.938736 l -2.63861,-8.275841 h 0.948886 l 2.014476,6.561807 q 0.09641,0.317414 0.147153,0.732937 h 0.02029 q 0.0406,-0.346269 0.16745,-0.744479 l 2.055072,-6.550265 z"
+     id="text1"
+     style="font-size:30.8956px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI, Normal';text-align:center;text-anchor:middle;stroke:#000000;stroke-width:0.93015"
+     aria-label="INDV" /></svg>

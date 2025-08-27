@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, Vcl.BaseImageCollection,
 	SVGIconImageCollection, System.ImageList, Vcl.ImgList, Vcl.VirtualImageList,
-  SVGIconVirtualImageList, Vcl.ImageCollection;
+  SVGIconVirtualImageList, Vcl.ImageCollection, IconFontsImageCollection;
 
 type
   TIMG = class(TDataModule)
@@ -22,10 +22,14 @@ type
     SVGSessionCntrl: TSVGIconVirtualImageList;
     SVGEventCntrl: TSVGIconVirtualImageList;
     SVGMemberCntrl: TSVGIconVirtualImageList;
-    SVGNominateGrid: TSVGIconVirtualImageList;
     SVGSessPopupMenu: TSVGIconVirtualImageList;
     SVGButtons: TSVGIconVirtualImageList;
     SVGLaneCntrl: TSVGIconVirtualImageList;
+    SVGNominateCheckBox: TSVGIconVirtualImageList;
+    SVGNominateQualified: TSVGIconVirtualImageList;
+    SVGNominateStroke: TSVGIconVirtualImageList;
+    SVGNominateEventType: TSVGIconVirtualImageList;
+    FontsCollection: TIconFontsImageCollection;
   private
     { Private declarations }
   public

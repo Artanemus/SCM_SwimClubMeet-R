@@ -24,7 +24,7 @@ object FrameHeat: TFrameHeat
       DefaultRowHeight = 52
       DrawingStyle = gdsClassic
       FixedColor = clWhite
-      RowCount = 4
+      RowCount = 2
       FixedRows = 1
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clBlack
@@ -382,8 +382,6 @@ object FrameHeat: TFrameHeat
         80)
       RowHeights = (
         0
-        52
-        52
         52)
     end
   end

@@ -4,6 +4,7 @@ object SCM: TSCM
   Width = 1144
   object scmConnection: TFDConnection
     Params.Strings = (
+      'ApplicationName=SwimClubMeet2.exe'
       'ConnectionDef=MSSQL_SwimClubMeet2')
     ConnectedStoredUsage = [auDesignTime]
     Connected = True

@@ -289,61 +289,20 @@ type
     File_ExportSession: TAction;
     actnConnect: TAction;
     procedure ActionManager1Update(Action: TBasicAction; var Handled: boolean);
-    procedure actnAddSlotExecute(Sender: TObject);
-    procedure actnClearSlotExecute(Sender: TObject);
-    procedure actnClearStrikeSlotUpdate(Sender: TObject);
     procedure actnConnectExecute(Sender: TObject);
     procedure actnConnectUpdate(Sender: TObject);
-    procedure actnGridEntrantUpdate(Sender: TObject);
-    procedure actnMoveDownSlotExecute(Sender: TObject);
-    procedure actnMoveUpSlotExecute(Sender: TObject);
-    procedure actnRemoveSlotExecute(Sender: TObject);
-    procedure actnStrikeSlotExecute(Sender: TObject);
     procedure btnClearSearchClick(Sender: TObject);
-    procedure clistCheckBoxClick(Sender: TObject);
     procedure File_ExitExecute(Sender: TObject);
     procedure File_ExportSessionExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure FormMouseWheel(Sender: TObject; Shift: TShiftState;
-      WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
     procedure FormShow(Sender: TObject);
-    procedure Grid_EmptyLaneExecute(Sender: TObject);
-    procedure Grid_EmptyLaneUpdate(Sender: TObject);
-    procedure Grid_MoveDownExecute(Sender: TObject);
-    procedure Grid_MoveDownUpdate(Sender: TObject);
-    procedure Grid_MoveUpExecute(Sender: TObject);
-    procedure Grid_MoveUpUpdate(Sender: TObject);
-    procedure Grid_RenumberExecute(Sender: TObject);
-    procedure Grid_RenumberUpdate(Sender: TObject);
-    procedure Grid_StrikeExecute(Sender: TObject);
-    procedure Grid_StrikeUpdate(Sender: TObject);
-    procedure Grid_SwapLanesExecute(Sender: TObject);
-    procedure Grid_SwapLanesUpdate(Sender: TObject);
-    procedure HeatControlListBeforeDrawItem(AIndex: integer; ACanvas: TCanvas;
-      ARect: TRect; AState: TOwnerDrawState);
-    procedure HeatNavigateControlListBeforeDrawItem(AIndex: integer;
-      ACanvas: TCanvas; ARect: TRect; AState: TOwnerDrawState);
     procedure Help_AboutExecute(Sender: TObject);
     procedure Help_LocalHelpExecute(Sender: TObject);
     procedure Help_OnlineHelpExecute(Sender: TObject);
     procedure Help_OnlineHelpUpdate(Sender: TObject);
     procedure Help_WebsiteExecute(Sender: TObject);
     procedure Help_WebsiteUpdate(Sender: TObject);
-    procedure Nominate_ControlListBeforeDrawItem(AIndex: integer;
-      ACanvas: TCanvas; ARect: TRect; AState: TOwnerDrawState);
-    procedure Nominate_EditChange(Sender: TObject);
-    procedure Nominate_GotoMemberDetailsExecute(Sender: TObject);
-    procedure Nominate_GotoMemberDetailsUpdate(Sender: TObject);
-    procedure Nominate_GridDblClick(Sender: TObject);
-    procedure Nominate_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: integer; Column: TColumn; State: TGridDrawState);
-    procedure Nominate_MemberDetailsExecute(Sender: TObject);
-    procedure Nominate_MemberDetailsUpdate(Sender: TObject);
-    procedure Nominate_ReportExecute(Sender: TObject);
-    procedure Nominate_ReportUpdate(Sender: TObject);
-    procedure Nominate_SortMembersExecute(Sender: TObject);
-    procedure Nominate_SortMembersUpdate(Sender: TObject);
     procedure PageControl1Change(Sender: TObject);
     procedure PageControl1Changing(Sender: TObject; var AllowChange: boolean);
     procedure SCM_ManageMembersExecute(Sender: TObject);
@@ -392,27 +351,14 @@ type
     SCMEventList: TObjectList;
     function AssertConnection(): boolean; // Check connection to MSSQL DATABASE
     procedure Heat_AutoBuildRelayExecute(Sender: TObject);
-    procedure DBGridWndProc(var Msg: TMessage);
-    procedure DrawEventStatus(oGrid: TObject; Rect: TRect; Column: TColumn);
-    // procedure EnableEvent_GridEllipse();
 
     // Miscellaneous - uncatagorized
     procedure GetSCMPreferences();
-    procedure Refresh_Event(DoBookmark: boolean = true;
-      DoRenumber: boolean = false);
-    procedure Refresh_Heat(DoBookmark: boolean = true;
-      DoRenumber: boolean = false);
     // REFRESH
-    procedure Refresh_IndvTeam(DoBookmark: boolean = true;
-      DoRenumber: boolean = false);
-    procedure Refresh_Nominate(DoBookmark: boolean = true);
-    procedure Refresh_TeamEntrant(DoBookmark: boolean = true); // --
-
     // ENTRANT_GRID Toggle column display
     procedure ToggleDCode(DoEnable: boolean);
     procedure ToggleDivisions(SetVisible: boolean);
     procedure ToggleSwimmerCAT(SetVisible: boolean);
-    procedure DisplayHeatStatusMsg(aHeatStatusID: integer);
 
   protected
 
@@ -515,61 +461,6 @@ begin
   end;
 end;
 
-procedure TMain.actnAddSlotExecute(Sender: TObject);
-begin
-  if AssertConnection then TEAM.spbtnAddSlotClick(Sender);
-end;
-
-procedure TMain.actnClearSlotExecute(Sender: TObject);
-var
-  rtnValue, rows: integer;
-	aEventType: scmEventType;
-begin
-	aEventType := uEvent.EventType;
-	if aEventType = etUnknown then exit;
-  rtnValue := MessageDlg('Clear the team entrant?', mtConfirmation,
-    [mbNo, mbYes], 0, mbYes);
-  if (rtnValue = mrYes) then
-  begin
-    rows := TEAM.ClearSlot;
-    if rows > 0 then
-    begin
-      // S T A T U S B A R . Update entrant totals and any other UI elements
-      fDoStatusBarUpdate := true; // permits TACTION StatusBarUpdate
-      SCM_StatusBar.Execute;
-    end;
-  end;
-end;
-
-procedure TMain.actnClearStrikeSlotUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-  aEventType: scmEventType;
-begin
-  DoEnable := false;
-  if AssertConnection then
-		if not uSession.IsEmptyOrLocked then
-      // are there any heats?
-			if not CORE.dsHeat.DataSet.IsEmpty then
-        // is the current heat closed?
-				if not uHeat.IsClosed then
-        begin
-          aEventType := uEvent.EventType;
-          if aEventType = etTEAM then
-          begin
-						if not CORE.dsLane.DataSet.IsEmpty then
-            begin
-//              if not CORE.dsTeamEntrant.DataSet.IsEmpty then
-//                if TEAM.TeamActiveGrid = 2 then
-//                   Need a relay in a lane to be able to clear it....
-//                  if not CORE.dsTeamEntrant.DataSet.FieldByName('MemberID').IsNull
-//                  then DoEnable := true;
-						end;
-          end;
-        end;
-  TAction(Sender).Enabled := DoEnable;
-end;
-
 procedure TMain.actnConnectExecute(Sender: TObject);
 var
   aLoginDlg: TLogin;  // 24/04/2020 uses simple INI access
@@ -624,53 +515,6 @@ begin
       TAction(Sender).Enabled := false;
 end;
 
-procedure TMain.actnGridEntrantUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-  aEventType: scmEventType;
-begin
-  DoEnable := false;
-  if AssertConnection then
-    // Checks if session is Empty. Then checks if locked..
-		if not uSession.IsEmptyOrLocked then
-      // are there any heats?
-			if not CORE.dsHeat.DataSet.IsEmpty then
-        // is the current heat closed?
-				if not uHeat.IsClosed then
-        begin
-          aEventType := uEvent.EventType;
-					if aEventType = etTEAM then
-					begin
-						if not CORE.dsLane.DataSet.IsEmpty then
-						begin
-//							if TEAM.TeamActiveGrid = 2 then
-//								if not CORE.dsTeamEntrant.DataSet.IsEmpty then DoEnable := true;
-						end;
-					end;
-        end;
-  TAction(Sender).Enabled := DoEnable;
-end;
-
-procedure TMain.actnMoveDownSlotExecute(Sender: TObject);
-begin
-  TEAM.SlotMovedOWN(Sender);
-end;
-
-procedure TMain.actnMoveUpSlotExecute(Sender: TObject);
-begin
-  TEAM.SlotMoveUp(Sender);
-end;
-
-procedure TMain.actnRemoveSlotExecute(Sender: TObject);
-begin
-  if AssertConnection then TEAM.spbtnRemoveSlotClick(Sender);
-end;
-
-procedure TMain.actnStrikeSlotExecute(Sender: TObject);
-begin
-  if AssertConnection then TEAM.spbtnTeamEntrantStrikeClick(Sender);
-end;
-
 function TMain.AssertConnection: boolean;
 begin
   result := false;
@@ -688,104 +532,14 @@ begin
   if Nominate_Edit.CanFocus then Nominate_Edit.SetFocus;
 end;
 
-procedure TMain.clistCheckBoxClick(Sender: TObject);
-var
-  MemberID, EventID, EventNum: integer;
-  DoNominate: boolean;
-  nom: TSCMNom;
-begin
-  if not AssertConnection then exit;
-
-  MemberID := CORE.dsNominee.DataSet.FieldByName('MemberID').AsInteger;
-  if (MemberID = 0) then exit;
-
-  // PERFORM THE TOGGLE
-  DoNominate := not DoNominate;
-  // Class to nominate/unnominate safely
-  nom := TSCMNom.CreateWithConnection(self, SCM.scmConnection);
-  if (DoNominate) then nom.NominateMember(MemberID, EventID)
-  else
-    // Returns true if member was unNominated.
-    // May have required that a Lane was emptied of member.
-    // TSCMnom will post message SCM_LANEWASCLEANED
-      nom.UnNominateMember(MemberID, EventID);
-  nom.Free;
-  // CLOSE, SET new PARMS and OPEN the database used by the controllist.
-  // This is needed for images in event Nominate_ControlListBeforeDrawItem
-  SCM.Nominate_UpdateControlList(uSession.PK, MemberID);
-  // locate to the last selected ControlList record.
-  // SCM.Nominate_LocateEventNum(gridEvent.DataSet, EventNum);
-  // paint the member tomatoe red in the nominate_grid
-  Nominate_Grid.Invalidate;
-
-  // Requery CORE.qryEvent to update entrant count.
-//  PostMessage(Handle, SCM_UPDATEENTRANTCOUNT, 0, 0);
-  // Set flag for statusbar update.
-//  PostMessage(Handle, SCM_UPDATESTATUSBAR, 0, 0);
-
-
-end;
-
+(*
 procedure TMain.DBGridWndProc(var Msg: TMessage);
 begin
   if ((Msg.Msg = WM_VSCROLL) and (Msg.WParamLo = SB_THUMBTRACK)) then
       Msg.WParamLo := SB_THUMBPOSITION;
   if Assigned(FOrgDBGridWndProc) then FOrgDBGridWndProc(Msg);
 end;
-
-procedure TMain.DisplayHeatStatusMsg(aHeatStatusID: integer);
-begin
-  case aHeatStatusID of
-    2:
-      begin
-        lblMsgTab3.Caption := 'Heat Raced';
-        lblMsgTab3.Visible := true;
-      end;
-    3:
-      begin
-        lblMsgTab3.Caption := 'Heat Closed';
-        lblMsgTab3.Visible := true;
-      end;
-    else
-      lblMsgTab3.Visible := false;
-  end;
-end;
-
-procedure TMain.DrawEventStatus(oGrid: TObject; Rect: TRect; Column: TColumn);
-var
-  MyRect: TRect;
-  iPos, iFactor: integer;
-  g: TDBGrid;
-begin
-  g := TDBGrid(oGrid);
-  // clear the cell with the current OS brush color?
-  g.Canvas.FillRect(Rect);
-  // calculate margins
-  MyRect.Top := Round((Rect.Bottom - Rect.Top - 11) / 2) + Rect.Top;
-  MyRect.Left := Round((Rect.Right - Rect.Left - 11) / 2) + Rect.Left;
-  MyRect.Bottom := MyRect.Top + 10;
-  MyRect.Right := MyRect.Left + 10;
-
-  iPos := MyRect.Left;
-  iFactor := 1;
-  // DRAW A TICK
-  g.Canvas.Pen.Color := clWebTomato;
-  g.Canvas.MoveTo(iPos + (iFactor * 2), MyRect.Top + 4);
-  g.Canvas.LineTo(iPos + (iFactor * 2), MyRect.Top + 7);
-  g.Canvas.MoveTo(iPos + (iFactor * 3), MyRect.Top + 5);
-  g.Canvas.LineTo(iPos + (iFactor * 3), MyRect.Top + 8);
-  g.Canvas.MoveTo(iPos + (iFactor * 4), MyRect.Top + 6);
-  g.Canvas.LineTo(iPos + (iFactor * 4), MyRect.Top + 9);
-  g.Canvas.MoveTo(iPos + (iFactor * 5), MyRect.Top + 5);
-  g.Canvas.LineTo(iPos + (iFactor * 5), MyRect.Top + 8);
-  g.Canvas.MoveTo(iPos + (iFactor * 6), MyRect.Top + 4);
-  g.Canvas.LineTo(iPos + (iFactor * 6), MyRect.Top + 7);
-  g.Canvas.MoveTo(iPos + (iFactor * 7), MyRect.Top + 3);
-  g.Canvas.LineTo(iPos + (iFactor * 7), MyRect.Top + 6);
-  g.Canvas.MoveTo(iPos + (iFactor * 8), MyRect.Top + 2);
-  g.Canvas.LineTo(iPos + (iFactor * 8), MyRect.Top + 5);
-
-end;
+*)
 
 procedure TMain.File_ExitExecute(Sender: TObject);
 begin
@@ -929,7 +683,7 @@ begin
 
   // For scroll wheel tracking on mouse ...
   FOrgDBGridWndProc := Nominate_Grid.WindowProc;
-  Nominate_Grid.WindowProc := DBGridWndProc;
+//  Nominate_Grid.WindowProc := DBGridWndProc;
 
   // ---------------------------------------------------------
   // S C M   S y s t e m   I n i t i a l i z a t i o n.
@@ -1164,6 +918,7 @@ begin
 
 end;
 
+(*
 procedure TMain.FormMouseWheel(Sender: TObject; Shift: TShiftState;
   WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
 var
@@ -1177,6 +932,8 @@ begin
     Handled := false;
   end;
 end;
+*)
+
 
 procedure TMain.FormShow(Sender: TObject);
 begin
@@ -1289,344 +1046,6 @@ begin
 
 end;
 
-
-procedure TMain.Grid_EmptyLaneExecute(Sender: TObject);
-var
-  rtnValue, rows: integer;
-  aEventType: scmEventType;
-  Msg: string;
-begin
-  aEventType := uEvent.EventType;
-  if aEventType = etUnknown then exit;
-  if aEventType = etINDV then Msg := 'Empty the lane.?'
-  else Msg := 'Clear the team and it''s swimmers.';
-
-  rtnValue := MessageDlg(Msg, mtConfirmation, [mbNo, mbYes], 0, mbYes);
-
-  if (rtnValue = mrYes) then
-  begin
-    if aEventType = etINDV then rows := INDV.ClearLane
-    else rows := TEAM.ClearLane;
-    if rows > 0 then
-    begin
-      // Requery CORE.qryEvent to update entrant count.
-//      PostMessage(Handle, SCM_UPDATEENTRANTCOUNT, 0, 0);
-      // Set flag for statusbar update.
-//      PostMessage(Handle, SCM_UPDATESTATUSBAR, 0, 0);
-    end;
-  end;
-end;
-
-procedure TMain.Grid_EmptyLaneUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-  aEventType: scmEventType;
-begin
-  DoEnable := false;
-  if AssertConnection then
-    // Checks if session is Empty. Then checks if locked..
-    if not uSession.IsLocked then
-      // are there any heats?
-      if not CORE.dsHeat.DataSet.IsEmpty then
-        // is the current heat closed?
-        if not uHeat.IsClosed then
-				begin
-					// BSA V2: do we have lanes?
-					if not CORE.dslane.DataSet.IsEmpty then DoEnable := true;
-				end;
-	TAction(Sender).Enabled := DoEnable;
-end;
-
-procedure TMain.Grid_MoveDownExecute(Sender: TObject);
-var
-	aEventType: scmEventType;
-begin
-	aEventType := uEvent.EventType;
-	if aEventType = etINDV then INDV.GridMoveDown(Sender)
-	else if aEventType = etTEAM then TEAM.GridMoveDown(Sender);
-end;
-
-procedure TMain.Grid_MoveDownUpdate(Sender: TObject);
-var
-	DoEnable: boolean;
-	aEventType: scmEventType;
-begin
-	DoEnable := false;
-	if AssertConnection then
-		// Checks if session is Empty. Then checks if locked..
-		if not uSession.IsLocked then
-			// Are there any heats?
-			if not CORE.dsHeat.DataSet.IsEmpty then
-				// Is the current heat closed?
-				if not uHeat.IsClosed then
-				begin
-					// BSA V2: do we have lanes?
-					if not CORE.dslane.DataSet.IsEmpty then DoEnable := true;
-				end;
-  TAction(Sender).Enabled := DoEnable;
-end;
-
-procedure TMain.Grid_MoveUpExecute(Sender: TObject);
-var
-  aEventType: scmEventType;
-begin
-  aEventType := uEvent.EventType;
-  if aEventType = etINDV then INDV.GridMoveUp(Sender)
-  else if aEventType = etTEAM then TEAM.GridMoveUp(Sender);
-end;
-
-procedure TMain.Grid_MoveUpUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-  aEventType: scmEventType;
-begin
-  DoEnable := false;
-  if AssertConnection then
-    // Checks if session is Empty. Then checks if locked..
-    if not uSession.IsLocked then
-      // are there any heats?
-      if not CORE.dsHeat.DataSet.IsEmpty then
-        // is the current heat closed?
-        if not uHeat.IsClosed then
-        begin
-					// BSA V2: do we have lanes?
-					if not CORE.dslane.DataSet.IsEmpty then DoEnable := true;
-				end;
-  TAction(Sender).Enabled := DoEnable;
-end;
-
-procedure TMain.Grid_RenumberExecute(Sender: TObject);
-var
-  aHeatID, rows: integer;
-begin
-  aHeatID := CORE.dsHeat.DataSet.FieldByName('Heat').AsInteger;
-  rows := uHeat.RenumberLanes(true);
-  if rows > 0 then Refresh; { TODO -oBSA -cGeneral : TEST }
-end;
-
-procedure TMain.Grid_RenumberUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  if AssertConnection then
-    // Checks if session is Empty. Then checks if locked..
-    if not uSession.IsLocked then
-      // are there any heats?
-      if not CORE.dsHeat.DataSet.IsEmpty then
-        // is the current heat closed?
-        if not uHeat.IsClosed then
-          // BSA V2: are there lanes?
-					if not CORE.dsLane.DataSet.IsEmpty then DoEnable := true;
-  TAction(Sender).Enabled := DoEnable;
-end;
-
-procedure TMain.Grid_StrikeExecute(Sender: TObject);
-var
-  rtnValue, rows: integer;
-  aEventType: scmEventType;
-  Msg: string;
-begin
-  aEventType := uEvent.EventType;
-  if aEventType = etUnknown then exit;
-  rows := 0;
-  if aEventType = etINDV then Msg := 'Remove nomination and empty the lane.?'
-  else Msg := 'Remove nominations and clear the team and it''s swimmers.?';
-  rtnValue := MessageDlg(Msg, mtConfirmation, [mbNo, mbYes], 0, mbYes);
-  if (rtnValue = mrYes) then
-  begin
-    if aEventType = etINDV then rows := INDV.StrikeLane
-    else if aEventType = etTEAM then rows := TEAM.StrikeLane;
-    if rows > 0 then
-    begin
-      // Requery CORE.qryEvent to update entrant count.
-//      PostMessage(Handle, SCM_UPDATEENTRANTCOUNT, 0, 0);
-      // Set flag for statusbar update.
-//      PostMessage(Handle, SCM_UPDATESTATUSBAR, 0, 0);
-    end;
-  end;
-end;
-
-procedure TMain.Grid_StrikeUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-  aEventType: scmEventType;
-begin
-  DoEnable := false;
-  if AssertConnection then
-    // Checks if session is Empty. Then checks if locked..
-    if not uSession.IsLocked then
-      // are there any heats?
-      if not CORE.dsHeat.DataSet.IsEmpty then
-        // is the current heat closed?
-        if not uHeat.IsClosed then
-				begin
-					// BSA V2: are there lanes?
-					if not CORE.dsLane.DataSet.IsEmpty then DoEnable := true;
-				end;
-  TAction(Sender).Enabled := DoEnable;
-end;
-
-procedure TMain.Grid_SwapLanesExecute(Sender: TObject);
-var
-  dlg: TSwapLanes;
-  aEventType: scmEventType;
-begin
-  aEventType := uEvent.EventType;
-  if aEventType = etINDV then
-  begin
-    dlg := TSwapLanes.Create(self);
-    if IsPositiveResult(dlg.ShowModal) then Refresh_IndvTeam;
-    dlg.Free;
-  end
-  else if aEventType = etTEAM then
-  begin
-    { TODO -oBSA -cGeneral : Dialogue - Swap relay teams in lanes }
-    { dlg := TSwapLanesTEAM.Create(self);
-      if IsPositiveResult(dlg.ShowModal) then
-      Refresh_Entrant;
-      dlg.Free; }
-  end;
-
-  if INDV.Grid.CanFocus then INDV.Grid.SetFocus
-  else TEAM.Grid.SetFocus;
-end;
-
-procedure TMain.Grid_SwapLanesUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  if AssertConnection then
-    // Checks if session is Empty. Then checks if locked..
-    if not uSession.IsLocked then
-      // are there any heats?
-      if not CORE.dsHeat.DataSet.IsEmpty then
-        // is the current heat closed?
-        if not uHeat.IsClosed then
-					// BSA V2: do we have lanes?
-					if not CORE.dslane.DataSet.IsEmpty then DoEnable := true;
-	TAction(Sender).Enabled := DoEnable;
-end;
-
-
-procedure TMain.HeatControlListBeforeDrawItem(AIndex: integer; ACanvas: TCanvas;
-  ARect: TRect; AState: TOwnerDrawState);
-var
-  i: integer;
-begin
-(*
-  i := gridHeat.DataSet.FieldByName('HeatStatusID').AsInteger;
-  // H E A T   S T A T U S   I N D I C A T O R .
-  case i of
-    1:
-      begin
-        clbtnHeatStatus.ImageIndex := 33;
-      end;
-    2:
-      begin
-        clbtnHeatStatus.ImageIndex := 34;
-      end;
-    3:
-      begin
-        clbtnHeatStatus.ImageIndex := 35;
-      end;
-  end;
-  // S t r o k e   c o l o r   r e f l e c t e d
-  // i n   h e a t   n u m b e r   i c o n .
-  i := gridHeat.DataSet.FieldByName('StrokeID').AsInteger;
-  case i of
-    1:
-      begin
-        vimgHeatNum.ImageIndex := 33; // green circle
-      end;
-    2:
-      begin
-        vimgHeatNum.ImageIndex := 28; // blue circle
-      end;
-    3:
-      begin
-        vimgHeatNum.ImageIndex := 37; // red circle
-
-      end;
-    4:
-      begin
-        vimgHeatNum.ImageIndex := 30; // brown circle
-      end;
-    5:
-      begin
-        vimgHeatNum.ImageIndex := 35; // multicolor circle
-      end
-  else
-    begin
-      // Unknow system stroke : User defined stroke.
-      vimgHeatNum.ImageIndex := 49; // Empty Circle
-    end;
-  end;
-*)
-end;
-
-procedure TMain.HeatNavigateControlListBeforeDrawItem(AIndex: integer;
-  ACanvas: TCanvas; ARect: TRect; AState: TOwnerDrawState);
-var
-  s: string;
-  i, j: integer;
-begin
-(*
-  with gridHeat.DataSet do
-  begin
-    lblHeatNavigatorDistance.Caption := FieldByName('ABREV').AsString;
-    s := FieldByName('luStroke').AsString;
-    i := FieldByName('StrokeID').AsInteger;
-    j := FieldByName('EventTypeID').AsInteger;
-    s := s.SubString(0, 4);
-
-    // RELAY DOT VISIBILITY
-    if (j = 0) or (j = 1) then vimgRelayDot.Visible := false
-    else vimgRelayDot.Visible := true;
-
-    lblHeatStrokeStr.Visible := false;
-    case i of
-      1:
-        begin
-          vimgHeatStroke.ImageIndex := 32; // Fr
-          vimgHeatCircle.ImageIndex := 33; // green circle
-        end;
-      2:
-        begin
-          vimgHeatStroke.ImageIndex := 29; // Br
-          vimgHeatCircle.ImageIndex := 28; // blue circle
-        end;
-      3:
-        begin
-          vimgHeatStroke.ImageIndex := 27; // Ba
-          vimgHeatCircle.ImageIndex := 37; // red circle
-
-        end;
-      4:
-        begin
-          vimgHeatStroke.ImageIndex := 31; // Bu
-          vimgHeatCircle.ImageIndex := 30; // brown circle
-        end;
-      5:
-        begin
-          vimgHeatStroke.ImageIndex := 34; // Me
-          vimgHeatCircle.ImageIndex := 35; // multicolor circle
-        end
-    else
-      begin
-        // Unknow system stroke : User defined stroke.
-        vimgHeatStroke.ImageIndex := 47; // Empty Black Frame
-        vimgHeatCircle.ImageIndex := 49; // Empty Circle
-        lblHeatStrokeStr.Caption := s;
-        lblHeatStrokeStr.Visible := true;
-      end;
-    end;
-  end;
-  *)
-end;
-
-
 procedure TMain.Help_AboutExecute(Sender: TObject);
 var
   dlg: TAbout;
@@ -1693,259 +1112,6 @@ procedure TMain.Help_WebsiteUpdate(Sender: TObject);
 begin
   if fMyInternetConnected then TAction(Sender).Enabled := true
   else TAction(Sender).Enabled := false;
-end;
-
-(*
-  procedure TMain.INDV_Scroll(var Msg: TMessage);
-  var
-    fld: TField;
-    aEventType: scmEventType;
-  begin
-    // messaged by TCORE.qryMemberQuickPickAfterScroll
-    // messaged by TCORE.qryHeatAfterScroll
-    if not AssertConnection then exit;
-    aEventType := uEvent.EventType;
-    if (aEventType = etINDV) and TEAM.Grid.Focused then
-    begin
-      // After moving row re-engage editing for selected fields.
-      fld := INDV.Grid.SelectedField;
-      if Assigned(fld) then
-      begin
-        if (fld.FieldName = 'RaceTime') or (fld.FieldName = 'DCode') or
-          (fld.FieldName = 'FullName') then INDV.Grid.EditorMode := true
-        else INDV.Grid.EditorMode := false;
-      end;
-    end;
-  end;
-*)
-
-procedure TMain.Nominate_ControlListBeforeDrawItem(AIndex: integer;
-  ACanvas: TCanvas; ARect: TRect; AState: TOwnerDrawState);
-var
-  s: string;
-  b: boolean;
-begin
-(*
-  with gridNominee.DataSet do
-  begin
-    clistEventDistStrokeStr.Caption := FieldByName('DistStrokeStr').AsString;
-
-    s := FieldByName('Caption').AsString;
-    if (s = '') then clistEventCaption.Caption := ''
-    else clistEventCaption.Caption := s;
-    b := FieldByName('IsNominated').AsBoolean;
-    if b then clistCheckBox.ImageIndex := 1
-    else clistCheckBox.ImageIndex := 0;
-    b := FieldByName('IsQualified').AsBoolean;
-    if b then vimage.ImageIndex := 24
-    else vimage.ImageIndex := -1;
-  end;
-  *)
-end;
-
-procedure TMain.Nominate_EditChange(Sender: TObject);
-var
-  fs: String;
-begin
-  if not AssertConnection then exit;
-  fs := '';
-  with CORE.dsNominee.DataSet do
-  begin
-    DisableControls;
-    // update filter string ....
-    if (Length(Nominate_Edit.Text) > 0) then
-    begin
-      fs := fs + '[FName] LIKE ' + QuotedStr('%' + Nominate_Edit.Text + '%');
-    end;
-    // assign filter
-    if fs.IsEmpty then Filtered := false
-    else
-    begin
-      Filter := fs;
-      if not Filtered then Filtered := true;
-    end;
-    EnableControls;
-  end;
-end;
-
-procedure TMain.Nominate_GotoMemberDetailsExecute(Sender: TObject);
-var
-  dlg: TManageMember;
-	NomineeID: integer;
-	v: variant;
-	aSQL: string;
-begin
-	// REDUNDANT - tested by Nominate_GotoMemberDetailsUpdate.
-	//  if not AssertConnection then exit;
-	NomineeID := CORE.dsLane.DataSet.FieldByName('NomineeID').AsInteger;
-	aSQL := '''
-		SELECT MemberID FROM SwimClubMeet2.dbo.MemberLink
-		WHERE NomineeID = :ID1
-		''';
-	v := SCM.scmConnection.ExecSQLScalar(aSQL, [NomineeID]);
-	if not VarIsClear(v)  then // NULL or EMPTY.
-	begin
-			try
-				dlg := TManageMember.Create(self);
-				dlg.Prepare(SCM.scmConnection, 1, v);
-				dlg.ShowModal;
-			finally
-				dlg.Free;
-			end;
-	end;
-end;
-
-procedure TMain.Nominate_GotoMemberDetailsUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-	if AssertConnection then // connected to database - tables are active.
-		if (uEvent.EventType() = etINDV) then // individual event.
-			if not CORE.dsLane.DataSet.IsEmpty then // we have lanes.
-				if not CORE.dsLane.DataSet.FieldByName('NomineeID').IsNull then // empty lane
-					DoEnable := true;
-  TAction(Sender).Enabled := DoEnable;
-end;
-
-procedure TMain.Nominate_GridDblClick(Sender: TObject);
-begin
-  Nominate_MemberDetailsExecute(self);
-end;
-
-procedure TMain.Nominate_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
-  DataCol: integer; Column: TColumn; State: TGridDrawState);
-var
-  SQL: String;
-  Count, MemberID, SessionID: integer;
-begin
-  with Sender AS TDBGrid do
-  begin
-    if AssertConnection then
-    begin
-      // Default draw disabled
-      // Has the member been nominated to some events?
-      MemberID := DataSource.DataSet.FieldByName('MemberID').AsInteger;
-      SessionID := uSession.PK;
-      SQL := 'SELECT Count(MemberID) FROM [SwimClubMeet2].[dbo].Nominee ' +
-        sLineBreak + 'INNER JOIN [SwimClubMeet2].[dbo].[Event] ON ' + sLineBreak
-        + '[SwimClubMeet2].[dbo].Nominee.EventID = [SwimClubMeet2].[dbo].[Event].EventID '
-        + sLineBreak + 'WHERE SessionID = :id1 AND MemberID = :id2;';
-      // run scalar function on DB
-      Count := SCM.scmConnection.ExecSQLScalar(SQL, [SessionID, MemberID],
-        [ftInteger, ftInteger]);
-      if (Count > 0) then
-      begin
-        Canvas.Font.Color := clWebTomato;
-      end;
-    end;
-    // DEFAULT cell draaw
-    DefaultDrawColumnCell(Rect, DataCol, Column, State);
-  end;
-end;
-
-procedure TMain.Nominate_MemberDetailsExecute(Sender: TObject);
-var
-  dlg: TManageMember;
-  MemberID: integer;
-begin
-  if not AssertConnection then exit;
-  dlg := TManageMember.Create(self);
-  MemberID := CORE.dsNominee.DataSet.FieldByName('MemberID').AsInteger;
-  try
-    dlg.Prepare(SCM.scmConnection, 1, MemberID);
-    dlg.ShowModal;
-  finally
-    dlg.Free;
-  end;
-end;
-
-procedure TMain.Nominate_MemberDetailsUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  if AssertConnection then
-    // No members listed.
-    if not Nominate_Grid.DataSource.DataSet.IsEmpty then DoEnable := true;
-  TAction(Sender).Enabled := DoEnable;
-end;
-
-procedure TMain.Nominate_ReportExecute(Sender: TObject);
-var
-  rptA: TNominateReportA;
-  rptB: TNominateReportB;
-begin
-  if not AssertConnection then exit;
-  try
-    begin
-      if ((GetKeyState(VK_CONTROL) and 128) = 128) then
-      begin
-        rptA := TNominateReportA.Create(self);
-        rptA.RunReport;
-        rptA.Free;
-      end
-      else
-      begin
-        rptB := TNominateReportB.Create(self);
-        rptB.RunReport;
-        rptB.Free;
-      end;
-    end;
-  except
-    on E: Exception do ShowMessage('Error opening nominatation report.');
-  end;
-  if Nominate_Grid.CanFocus then Nominate_Grid.SetFocus;
-end;
-
-procedure TMain.Nominate_ReportUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  if AssertConnection then
-    // No members listed. Nothing to sort.
-    if not Nominate_Grid.DataSource.DataSet.IsEmpty then DoEnable := true;
-  TAction(Sender).Enabled := DoEnable;
-end;
-
-(*
-  procedure TMain.Nominate_Scroll(var Msg: TMessage);
-  var
-    MemberID: integer;
-    success: boolean;
-  begin
-    if not AssertConnection then exit;
-
-    MemberID := CORE.dsNominee.DataSet.FieldByName('MemberID').AsInteger;
-    success := SCM.Nominate_UpdateControlList(uSession.PK, MemberID);
-
-    if success then Nominate_ControlList.Invalidate;
-  end;
-*)
-
-procedure TMain.Nominate_SortMembersExecute(Sender: TObject);
-var
-  actn: TAction;
-begin
-  // TActionUpdate determines if this procedure can be called.
-  actn := TAction(Sender);
-  actn.Checked := not actn.Checked;
-  SCM.Nominate_SortMembers(actn.Checked);
-  if Nominate_Grid.CanFocus then Nominate_Grid.SetFocus;
-end;
-
-procedure TMain.Nominate_SortMembersUpdate(Sender: TObject);
-var
-  DoEnable: boolean;
-begin
-  DoEnable := false;
-  if AssertConnection then
-    // Checks if session is Empty. Then checks if locked..
-    if not uSession.IsLocked then
-      // No members listed. Nothing to sort.
-      if not Nominate_Grid.DataSource.DataSet.IsEmpty then DoEnable := true;
-  TAction(Sender).Enabled := DoEnable;
 end;
 
 procedure TMain.PageControl1Change(Sender: TObject);
@@ -2018,156 +1184,6 @@ begin
   end;
 end;
 
-procedure TMain.Refresh_Event(DoBookmark: boolean = true;
-  DoRenumber: boolean = false);
-var
-  v: variant;
-begin
-  if not AssertConnection then exit;
-  with CORE.dsEvent.DataSet do
-  begin
-    DisableControls;
-    if Active and not IsEmpty then
-    begin
-      v := FieldByName('EventID').AsVariant;
-    end;
-    Close;
-    Open;
-    if Active then
-    begin
-      if DoRenumber then
-      begin
-				uSession.RenumberEvents(false); // don't relocate
-        Refresh;
-			end;
-      if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
-          uEvent.Locate(v);
-    end;
-    EnableControls;
-  end;
-end;
-
-procedure TMain.Refresh_Heat(DoBookmark: boolean = true;
-  DoRenumber: boolean = false);
-var
-  bm: TBookmark;
-  aHeatID: integer;
-begin
-  if not AssertConnection then exit;
-  bm := nil;
-  with CORE.dsHeat.DataSet do
-  begin
-    DisableControls;
-    if Active and not IsEmpty then bm := GetBookmark;
-    Close;
-    Open;
-    if Active then
-    begin
-      try
-        if Assigned(bm) then GotoBookmark(bm);
-      except
-        on E: Exception do
-      end;
-    end;
-    if DoRenumber then
-    begin
-      aHeatID := uHeat.PK;
-      // DoLocate - don't locate last selected.
-      // DoExclude - disabled. Will renumber/repair even when session is locked.
-      uEvent.RenumberHeats(false); // don't relocate.
-      uHeat.Locate(aHeatID);
-    end;
-    EnableControls;
-  end;
-end;
-
-procedure TMain.Refresh_IndvTeam(DoBookmark: boolean = true;
-  DoRenumber: boolean = false);
-var
-  bm: TBookmark;
-  aHeatID, aLaneID: integer;
-  aEventType: scmEventType;
-begin
-  if not AssertConnection then exit;
-	bm := nil;
-	// BSA V2: major modification done here
-	With CORE.dsLane.DataSet do
-  begin
-    DisableControls;
-    if Active and not IsEmpty then bm := GetBookmark;
-		CORE.qryLane.ApplyMaster;
-		try
-			if Assigned(bm) then GotoBookmark(bm);
-		except
-			on E: Exception do
-		end;
-		if DoRenumber then
-		begin
-			uHeat.RenumberLanes(false);
-			aHeatID := uHeat.PK; // curr heat
-			aEventType := uEvent.EventType;
-
-			aLaneID := uLane.PK; // returns either NomineeID or TeamID.
-      uLane.Locate(aLaneID);
-    end;
-    EnableControls;
-  end;
-end;
-
-
-
-procedure TMain.Refresh_Nominate(DoBookmark: boolean = true);
-var
-  bm: TBookmark;
-begin
-  if not AssertConnection then exit;
-  bm := nil;
-  // Update the CORE.dsQmember's table
-  // (may have changed if the user has been editing the member's table
-  // in the member's dialogue)
-  with CORE.dsNominee.DataSet do
-  begin
-    DisableControls;
-    if Active and not IsEmpty then bm := GetBookmark;
-    Close;
-    Open;
-    if Active then
-    begin
-      try
-        // NOTE: Posts nominate-scroll event - forces a nominate_controllist update.
-        if Assigned(bm) then GotoBookmark(bm);
-      finally;
-      end;
-    end;
-		Nominate_ControlList.ItemCount := SCM.qryNominateEvent.RecordCount;
-    EnableControls;
-  end;
-end;
-
-procedure TMain.Refresh_TeamEntrant(DoBookmark: boolean);
-var
-  bm: TBookmark;
-begin
-  if not AssertConnection then exit;
-	bm := nil;
-  With CORE.dsTeamLink.DataSet do
-	begin
-    DisableControls;
-    if Active and not IsEmpty then bm := GetBookmark;
-    Close;
-    Open;
-    if Active then
-    begin
-      try
-        if Assigned(bm) then GotoBookmark(bm);
-      except
-        on E: Exception do
-      end;
-    end;
-    EnableControls;
-  end;
-end;
-
 procedure TMain.SCM_ManageMembersExecute(Sender: TObject);
 var
   dlg: TManageMember;
@@ -2181,7 +1197,7 @@ begin
     dlg.Free;
   end;
 	// requery on dmSCM members
-  Refresh_Nominate;
+//  Refresh_Nominate;
   // count the number of members in DB prior to PostMessage
   fCountOfMembers := CORE.Members_Count;
   // Assert the 'No Members' Caption in TLabel lblNomWarning
@@ -2219,15 +1235,15 @@ begin
   // SESSION
 //  uSession_Sort;
   // EVENT
-  Refresh_Event(true, DoRenumber);
+//  Refresh_Event(true, DoRenumber);
   // NOMINEE + NOMINATE_GRID
-  Refresh_Nominate;
+//  Refresh_Nominate;
   // HEAT
-  Refresh_Heat(true, DoRenumber);
+//  Refresh_Heat(true, DoRenumber);
   // ENTRANT/TEAM
-  Refresh_IndvTeam(true, DoRenumber);
+//  Refresh_IndvTeam(true, DoRenumber);
   // TEAMENTRANT
-  Refresh_TeamEntrant;
+//  Refresh_TeamEntrant;
 
   CORE.dsSession.DataSet.EnableControls;
   CORE.dsEvent.DataSet.EnableControls;
@@ -2843,7 +1859,7 @@ begin
 
   // deals with some repaint issues if event title is enabled/disabled
   { TODO -oBSA -cGeneral : Call action SCMRefresh? }
-  Refresh_Event();
+//  Refresh_Event();
 
   CORE.qrySwimClub.Refresh();
 end;

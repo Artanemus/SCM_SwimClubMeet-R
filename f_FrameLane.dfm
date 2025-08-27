@@ -7,27 +7,37 @@ object FrameLane: TFrameLane
   object pnlgLane: TPanel
     Left = 0
     Top = 0
-    Width = 473
+    Width = 576
     Height = 600
-    Align = alLeft
+    Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 553
     object gLane: TDBAdvGrid
       Left = 0
       Top = 0
-      Width = 473
+      Width = 576
       Height = 600
       Cursor = crDefault
       Align = alClient
+      Color = clWhite
       ColCount = 2
       DrawingStyle = gdsClassic
       FixedColor = clWhite
       RowCount = 2
       FixedRows = 1
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -12
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      Options = [goVertLine, goHorzLine, goRangeSelect, goFixedRowDefAlign]
+      ParentFont = False
       ScrollBars = ssBoth
       TabOrder = 0
-      GridLineColor = 13948116
-      GridFixedLineColor = 11250603
+      OnDblClick = gLaneDblClick
+      GridLineColor = 15987699
+      GridFixedLineColor = 15987699
       HoverRowCells = [hcNormal, hcSelected]
       ActiveCellFont.Charset = DEFAULT_CHARSET
       ActiveCellFont.Color = 4474440
@@ -41,6 +51,7 @@ object FrameLane: TFrameLane
       ControlLook.FixedGradientTo = clWhite
       ControlLook.FixedGradientMirrorFrom = clWhite
       ControlLook.FixedGradientMirrorTo = clWhite
+      ControlLook.FixedGradientHoverFrom = clGray
       ControlLook.FixedGradientHoverTo = clWhite
       ControlLook.FixedGradientHoverMirrorFrom = clWhite
       ControlLook.FixedGradientHoverMirrorTo = clWhite
@@ -86,7 +97,7 @@ object FrameLane: TFrameLane
       FixedColWidth = 20
       FixedRowHeight = 22
       FixedFont.Charset = DEFAULT_CHARSET
-      FixedFont.Color = 3881787
+      FixedFont.Color = clBlack
       FixedFont.Height = -12
       FixedFont.Name = 'Tahoma'
       FixedFont.Style = [fsBold]
@@ -193,6 +204,7 @@ object FrameLane: TFrameLane
           PrintFont.Style = []
           Width = 64
         end>
+      DataSource = CORE.dsLane
       InvalidPicture.Data = {
         055449636F6E0000010001002020200000000000A81000001600000028000000
         2000000040000000010020000000000000100000000000000000000000000000
@@ -330,10 +342,7 @@ object FrameLane: TFrameLane
         80000001C0000003C0000003E0000007F000000FF800001FFC00003FFF0000FF
         FFC003FF}
       ShowUnicode = False
-      ExplicitLeft = -87
-      ExplicitTop = 128
-      ExplicitWidth = 400
-      ExplicitHeight = 250
+      ExplicitWidth = 473
       ColWidths = (
         20
         64)
@@ -580,12 +589,19 @@ object FrameLane: TFrameLane
     object actnLane_Strike: TAction
       Category = 'Lane'
       Caption = 'Strike Lane'
+      OnUpdate = actnLane_DefaultUpdate
     end
     object actnLane_Swap: TAction
       Category = 'Lane'
       Caption = 'Swap Lanes'
       ImageIndex = 3
       ImageName = 'switch'
+    end
+    object actnLane_MemberGoto: TAction
+      Category = 'Lane'
+      Caption = 'Goto Member'
+      OnExecute = actnLane_MemberGotoExecute
+      OnUpdate = actnLane_MemberGotoUpdate
     end
   end
   object pumenuLane: TPopupMenu

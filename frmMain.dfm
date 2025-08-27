@@ -2677,7 +2677,6 @@ object Main: TMain
   ShowHint = True
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  OnMouseWheel = FormMouseWheel
   OnShow = FormShow
   TextHeight = 21
   object pnlPageControl: TPanel
@@ -2698,7 +2697,7 @@ object Main: TMain
       Margins.Top = 4
       Margins.Right = 0
       Margins.Bottom = 0
-      ActivePage = TabSheet2
+      ActivePage = TabSheet3
       Align = alClient
       Style = tsFlatButtons
       TabOrder = 0
@@ -4838,7 +4837,6 @@ object Main: TMain
                 Margins.Bottom = 0
                 Align = alTop
                 TabOrder = 0
-                OnChange = Nominate_EditChange
               end
               object VirtualImage1: TVirtualImage
                 Left = 0
@@ -4870,8 +4868,6 @@ object Main: TMain
                 TitleFont.Height = -16
                 TitleFont.Name = 'Segoe UI'
                 TitleFont.Style = []
-                OnDrawColumnCell = Nominate_GridDrawColumnCell
-                OnDblClick = Nominate_GridDblClick
                 Columns = <
                   item
                     Expanded = False
@@ -5319,7 +5315,6 @@ object Main: TMain
                 ParentFont = False
                 PopupMenu = pumHeat
                 TabOrder = 0
-                OnBeforeDrawItem = Nominate_ControlListBeforeDrawItem
                 object clistEventDistStrokeStr: TLabel
                   Left = 91
                   Top = 5
@@ -5359,7 +5354,6 @@ object Main: TMain
                   ImageName = 'UnChecked'
                   Layout = blGlyphTop
                   Style = clbkToolButton
-                  OnClick = clistCheckBoxClick
                 end
                 object vimage: TVirtualImage
                   Left = 45
@@ -6261,7 +6255,6 @@ object Main: TMain
                   Margin = 0
                   NumGlyphs = 2
                   Visible = False
-                  OnClick = Grid_RenumberExecute
                 end
                 object lblMsgTab3: TLabel
                   AlignWithMargins = True
@@ -7343,7 +7336,6 @@ object Main: TMain
               ColumnLayout = cltMultiLeftToRight
               ParentColor = False
               TabOrder = 2
-              OnBeforeDrawItem = HeatNavigateControlListBeforeDrawItem
               object ShapeHeatNavBlackLine: TShape
                 Left = 67
                 Top = 29
@@ -9030,7 +9022,6 @@ object Main: TMain
               ParentColor = False
               PopupMenu = pumHeat
               TabOrder = 1
-              OnBeforeDrawItem = HeatControlListBeforeDrawItem
               object vimgHeatNum: TVirtualImage
                 Left = 16
                 Top = 11
@@ -10149,8 +10140,6 @@ object Main: TMain
       Hint = 'Sort on member'#39's name.'
       ImageIndex = 11
       ImageName = 'Switch'
-      OnExecute = Nominate_SortMembersExecute
-      OnUpdate = Nominate_SortMembersUpdate
     end
     object Nominate_Report: TAction
       Category = 'Nominate'
@@ -10158,8 +10147,6 @@ object Main: TMain
       Hint = 'Display a nominee'#39's report.'
       ImageIndex = 17
       ImageName = 'Report'
-      OnExecute = Nominate_ReportExecute
-      OnUpdate = Nominate_ReportUpdate
     end
     object Event_ToggleGridView: TAction
       Category = 'Events'
@@ -10219,8 +10206,6 @@ object Main: TMain
       ImageIndex = 12
       ImageName = 'Up'
       ShortCut = 16422
-      OnExecute = Grid_MoveUpExecute
-      OnUpdate = Grid_MoveUpUpdate
     end
     object Grid_MoveDown: TAction
       Category = 'Grid'
@@ -10229,8 +10214,6 @@ object Main: TMain
       ImageIndex = 13
       ImageName = 'Down'
       ShortCut = 16424
-      OnExecute = Grid_MoveDownExecute
-      OnUpdate = Grid_MoveDownUpdate
     end
     object Grid_SwapLanes: TAction
       Category = 'Grid'
@@ -10238,8 +10221,6 @@ object Main: TMain
       Hint = 'Opens the swap lanes dialogue.'
       ImageIndex = 10
       ImageName = 'Shuffle'
-      OnExecute = Grid_SwapLanesExecute
-      OnUpdate = Grid_SwapLanesUpdate
     end
     object Grid_EmptyLane: TAction
       Category = 'Grid'
@@ -10248,8 +10229,6 @@ object Main: TMain
       ImageIndex = 19
       ImageName = 'Delete'
       ShortCut = 16472
-      OnExecute = Grid_EmptyLaneExecute
-      OnUpdate = Grid_EmptyLaneUpdate
     end
     object Grid_Strike: TAction
       Category = 'Grid'
@@ -10258,8 +10237,6 @@ object Main: TMain
       ImageIndex = 18
       ImageName = 'DeleteForever'
       ShortCut = 16430
-      OnExecute = Grid_StrikeExecute
-      OnUpdate = Grid_StrikeUpdate
     end
     object Nominate_GotoMemberDetails: TAction
       Category = 'Nominate'
@@ -10267,8 +10244,6 @@ object Main: TMain
       Hint = 'Show the selected member'#39's details.'
       ImageIndex = 1
       ImageName = 'Members'
-      OnExecute = Nominate_GotoMemberDetailsExecute
-      OnUpdate = Nominate_GotoMemberDetailsUpdate
     end
     object Grid_Renumber: TAction
       Category = 'Grid'
@@ -10276,8 +10251,6 @@ object Main: TMain
       Hint = 'Sort lane placements. '
       ImageIndex = 37
       ImageName = 'Sort'
-      OnExecute = Grid_RenumberExecute
-      OnUpdate = Grid_RenumberUpdate
     end
     object Heat_MoveUp: TAction
       Category = 'Heats'
@@ -10381,8 +10354,6 @@ object Main: TMain
       Hint = 'Show the selected member'#39's details.'
       ImageIndex = 1
       ImageName = 'Members'
-      OnExecute = Nominate_MemberDetailsExecute
-      OnUpdate = Nominate_MemberDetailsUpdate
     end
     object Nominate_ClearEventNominations: TAction
       Category = 'Nominate'
@@ -10530,48 +10501,36 @@ object Main: TMain
       Hint = 'Clear team entrant from slot.'
       ImageIndex = 19
       ImageName = 'Delete'
-      OnExecute = actnClearSlotExecute
-      OnUpdate = actnClearStrikeSlotUpdate
     end
     object actnStrikeSlot: TAction
       Category = 'Slot'
       Caption = 'Strike Slot'
       ImageIndex = 18
       ImageName = 'DeleteForever'
-      OnExecute = actnStrikeSlotExecute
-      OnUpdate = actnClearStrikeSlotUpdate
     end
     object actnAddSlot: TAction
       Category = 'Slot'
       Caption = 'Add Slot'
       ImageIndex = 48
       ImageName = 'add'
-      OnExecute = actnAddSlotExecute
-      OnUpdate = actnGridEntrantUpdate
     end
     object actnRemoveSlot: TAction
       Category = 'Slot'
       Caption = 'Remove Slot'
       ImageIndex = 49
       ImageName = 'remove'
-      OnExecute = actnRemoveSlotExecute
-      OnUpdate = actnGridEntrantUpdate
     end
     object actnMoveUpSlot: TAction
       Category = 'Slot'
       Caption = 'Move Up'
       ImageIndex = 12
       ImageName = 'Up'
-      OnExecute = actnMoveUpSlotExecute
-      OnUpdate = actnGridEntrantUpdate
     end
     object actnMoveDownSlot: TAction
       Category = 'Slot'
       Caption = 'Move Down'
       ImageIndex = 13
       ImageName = 'Down'
-      OnExecute = actnMoveDownSlotExecute
-      OnUpdate = actnGridEntrantUpdate
     end
     object SwimClub_Switch: TAction
       Category = 'File'
@@ -10696,7 +10655,6 @@ object Main: TMain
       Caption = 'Sort on TTB'
       Hint = 'Sort entrants and repair lanes.'
       Visible = False
-      OnClick = Grid_RenumberExecute
     end
     object N1: TMenuItem
       Caption = '-'

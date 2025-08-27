@@ -620,4 +620,178 @@ begin
 
 end;
 
+
+(*
+procedure TMain.Refresh_Heat(DoBookmark: boolean = true;
+  DoRenumber: boolean = false);
+var
+  bm: TBookmark;
+  aHeatID: integer;
+begin
+  if not AssertConnection then exit;
+  bm := nil;
+  with CORE.dsHeat.DataSet do
+  begin
+    DisableControls;
+    if Active and not IsEmpty then bm := GetBookmark;
+    Close;
+    Open;
+    if Active then
+    begin
+      try
+        if Assigned(bm) then GotoBookmark(bm);
+      except
+        on E: Exception do
+      end;
+    end;
+    if DoRenumber then
+    begin
+      aHeatID := uHeat.PK;
+      // DoLocate - don't locate last selected.
+      // DoExclude - disabled. Will renumber/repair even when session is locked.
+      uEvent.RenumberHeats(false); // don't relocate.
+      uHeat.Locate(aHeatID);
+    end;
+    EnableControls;
+  end;
+end;
+
+procedure TMain.DisplayHeatStatusMsg(aHeatStatusID: integer);
+begin
+  case aHeatStatusID of
+    2:
+      begin
+        lblMsgTab3.Caption := 'Heat Raced';
+        lblMsgTab3.Visible := true;
+      end;
+    3:
+      begin
+        lblMsgTab3.Caption := 'Heat Closed';
+        lblMsgTab3.Visible := true;
+      end;
+    else
+      lblMsgTab3.Visible := false;
+  end;
+end;
+
+procedure TMain.HeatControlListBeforeDrawItem(AIndex: integer; ACanvas: TCanvas;
+  ARect: TRect; AState: TOwnerDrawState);
+var
+  i: integer;
+begin
+
+  i := gridHeat.DataSet.FieldByName('HeatStatusID').AsInteger;
+  // H E A T   S T A T U S   I N D I C A T O R .
+  case i of
+    1:
+      begin
+        clbtnHeatStatus.ImageIndex := 33;
+      end;
+    2:
+      begin
+        clbtnHeatStatus.ImageIndex := 34;
+      end;
+    3:
+      begin
+        clbtnHeatStatus.ImageIndex := 35;
+      end;
+  end;
+  // S t r o k e   c o l o r   r e f l e c t e d
+  // i n   h e a t   n u m b e r   i c o n .
+  i := gridHeat.DataSet.FieldByName('StrokeID').AsInteger;
+  case i of
+    1:
+      begin
+        vimgHeatNum.ImageIndex := 33; // green circle
+      end;
+    2:
+      begin
+        vimgHeatNum.ImageIndex := 28; // blue circle
+      end;
+    3:
+      begin
+        vimgHeatNum.ImageIndex := 37; // red circle
+
+      end;
+    4:
+      begin
+        vimgHeatNum.ImageIndex := 30; // brown circle
+      end;
+    5:
+      begin
+        vimgHeatNum.ImageIndex := 35; // multicolor circle
+      end
+  else
+    begin
+      // Unknow system stroke : User defined stroke.
+      vimgHeatNum.ImageIndex := 49; // Empty Circle
+    end;
+  end;
+
+end;
+
+procedure TMain.HeatNavigateControlListBeforeDrawItem(AIndex: integer;
+  ACanvas: TCanvas; ARect: TRect; AState: TOwnerDrawState);
+var
+  s: string;
+  i, j: integer;
+begin
+
+  with gridHeat.DataSet do
+  begin
+    lblHeatNavigatorDistance.Caption := FieldByName('ABREV').AsString;
+    s := FieldByName('luStroke').AsString;
+    i := FieldByName('StrokeID').AsInteger;
+    j := FieldByName('EventTypeID').AsInteger;
+    s := s.SubString(0, 4);
+
+    // RELAY DOT VISIBILITY
+    if (j = 0) or (j = 1) then vimgRelayDot.Visible := false
+    else vimgRelayDot.Visible := true;
+
+    lblHeatStrokeStr.Visible := false;
+    case i of
+      1:
+        begin
+          vimgHeatStroke.ImageIndex := 32; // Fr
+          vimgHeatCircle.ImageIndex := 33; // green circle
+        end;
+      2:
+        begin
+          vimgHeatStroke.ImageIndex := 29; // Br
+          vimgHeatCircle.ImageIndex := 28; // blue circle
+        end;
+      3:
+        begin
+          vimgHeatStroke.ImageIndex := 27; // Ba
+          vimgHeatCircle.ImageIndex := 37; // red circle
+
+        end;
+      4:
+        begin
+          vimgHeatStroke.ImageIndex := 31; // Bu
+          vimgHeatCircle.ImageIndex := 30; // brown circle
+        end;
+      5:
+        begin
+          vimgHeatStroke.ImageIndex := 34; // Me
+          vimgHeatCircle.ImageIndex := 35; // multicolor circle
+        end
+    else
+      begin
+        // Unknow system stroke : User defined stroke.
+        vimgHeatStroke.ImageIndex := 47; // Empty Black Frame
+        vimgHeatCircle.ImageIndex := 49; // Empty Circle
+        lblHeatStrokeStr.Caption := s;
+        lblHeatStrokeStr.Visible := true;
+      end;
+    end;
+  end;
+
+end;
+
+
+
+*)
+
 end.

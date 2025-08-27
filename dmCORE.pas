@@ -66,16 +66,10 @@ type
     LookUpEventTypeID: TIntegerField;
     qryHeatStrokeID: TIntegerField;
     dsTeamLink: TDataSource;
-    qrySessionSessionID: TFDAutoIncField;
-    qrySessionCaption: TWideStringField;
-    qrySessionStartDT: TSQLTimeStampField;
-    qrySessionEndDT: TSQLTimeStampField;
-    qrySessionCreatedOn: TSQLTimeStampField;
-    qrySessionModifiedOn: TSQLTimeStampField;
-    qrySessionNomineeCount: TIntegerField;
-    qrySessionEntrantCount: TIntegerField;
-    qrySessionSwimClubID: TIntegerField;
-    qrySessionSessionStatusID: TIntegerField;
+    qryMember: TFDQuery;
+    dsMemberLink: TDataSource;
+    dsMember: TDataSource;
+    qryMemberLink: TFDQuery;
 		procedure DataModuleCreate(Sender: TObject);
 		procedure DataModuleDestroy(Sender: TObject);
     procedure qrySessionNewRecord(DataSet: TDataSet);
@@ -344,12 +338,9 @@ begin
 		tblStroke.Open;
 		tblDistance.Open;
 		// Master-Detail core tables.
-
 		qrySwimClub.Open; // Assumption : cued-to first reord ... swimclubID = 1;
-
 		qrySession.Close;
-		// assert correct (default) index. (1 of 3)
-		qrySession.IndexName := 'mcSwimClub_DESC';
+		qrySession.IndexName := 'indxShowAll'; // assert correct (default) index. (1 of 3)
 		// Show all sessions. (joined on SessionStatus)
 		qrySession.ParamByName('TOGGLE').AsBoolean := false;
 		qrySession.Prepare;

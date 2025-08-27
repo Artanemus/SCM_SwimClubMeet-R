@@ -107,7 +107,9 @@ uses
   rptSessionReportB in 'REPORTS\rptSessionReportB.pas' {SessionReportB: TDataModule},
   rptTimeKeeperReportA in 'REPORTS\rptTimeKeeperReportA.pas' {TimeKeeperReportA: TDataModule},
   rptTimeKeeperReportB in 'REPORTS\rptTimeKeeperReportB.pas' {TimeKeeperReportB: TDataModule},
-  f_FrameMember in 'f_FrameMember.pas' {FrameMember: TFrame};
+  f_FrameMember in 'f_FrameMember.pas' {FrameMember: TFrame},
+  f_FrameNominate in 'f_FrameNominate.pas' {FrameNominate: TFrame},
+  f_FrameTeam in 'f_FrameTeam.pas' {FrameTeam2: TFrame};
 
 {$R *.res}
 

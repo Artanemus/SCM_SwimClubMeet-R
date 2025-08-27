@@ -721,6 +721,8 @@ begin
     gEvent.EndUpdate;
   end;
 end;
+
+
 {
 procedure TMain.Event_GridDrawColumnCell(Sender: TObject; const Rect: TRect;
   DataCol: integer; Column: TColumn; State: TGridDrawState);
@@ -758,5 +760,75 @@ end;
  end;
 
 }
+
+(*
+
+procedure TMain.Refresh_Event(DoBookmark: boolean = true;
+  DoRenumber: boolean = false);
+var
+  v: variant;
+begin
+  if not AssertConnection then exit;
+  with CORE.dsEvent.DataSet do
+  begin
+    DisableControls;
+    if Active and not IsEmpty then
+    begin
+      v := FieldByName('EventID').AsVariant;
+    end;
+    Close;
+    Open;
+    if Active then
+    begin
+      if DoRenumber then
+      begin
+				uSession.RenumberEvents(false); // don't relocate
+        Refresh;
+			end;
+      if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then
+          uEvent.Locate(v);
+    end;
+    EnableControls;
+  end;
+end;
+
+procedure TMain.DrawEventStatus(oGrid: TObject; Rect: TRect; Column: TColumn);
+var
+  MyRect: TRect;
+  iPos, iFactor: integer;
+  g: TDBGrid;
+begin
+  g := TDBGrid(oGrid);
+  // clear the cell with the current OS brush color?
+  g.Canvas.FillRect(Rect);
+  // calculate margins
+  MyRect.Top := Round((Rect.Bottom - Rect.Top - 11) / 2) + Rect.Top;
+  MyRect.Left := Round((Rect.Right - Rect.Left - 11) / 2) + Rect.Left;
+  MyRect.Bottom := MyRect.Top + 10;
+  MyRect.Right := MyRect.Left + 10;
+
+  iPos := MyRect.Left;
+  iFactor := 1;
+  // DRAW A TICK
+  g.Canvas.Pen.Color := clWebTomato;
+  g.Canvas.MoveTo(iPos + (iFactor * 2), MyRect.Top + 4);
+  g.Canvas.LineTo(iPos + (iFactor * 2), MyRect.Top + 7);
+  g.Canvas.MoveTo(iPos + (iFactor * 3), MyRect.Top + 5);
+  g.Canvas.LineTo(iPos + (iFactor * 3), MyRect.Top + 8);
+  g.Canvas.MoveTo(iPos + (iFactor * 4), MyRect.Top + 6);
+  g.Canvas.LineTo(iPos + (iFactor * 4), MyRect.Top + 9);
+  g.Canvas.MoveTo(iPos + (iFactor * 5), MyRect.Top + 5);
+  g.Canvas.LineTo(iPos + (iFactor * 5), MyRect.Top + 8);
+  g.Canvas.MoveTo(iPos + (iFactor * 6), MyRect.Top + 4);
+  g.Canvas.LineTo(iPos + (iFactor * 6), MyRect.Top + 7);
+  g.Canvas.MoveTo(iPos + (iFactor * 7), MyRect.Top + 3);
+  g.Canvas.LineTo(iPos + (iFactor * 7), MyRect.Top + 6);
+  g.Canvas.MoveTo(iPos + (iFactor * 8), MyRect.Top + 2);
+  g.Canvas.LineTo(iPos + (iFactor * 8), MyRect.Top + 5);
+
+end;
+
+
+*)
 
 end.

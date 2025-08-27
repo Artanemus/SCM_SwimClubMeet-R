@@ -32,36 +32,30 @@ object IMG: TIMG
         SVGText = 
           '<?xml version="1.0" encoding="UTF-8" standalone="no"?>'#10'<svg'#10'   h' +
           'eight="48"'#10'   width="48"'#10'   version="1.1"'#10'   id="svg4"'#10'   sodipo' +
-          'di:docname="SCMGridIcons.svg"'#10'   xml:space="preserve"'#10'   inkscap' +
-          'e:version="1.4 (86a8ad7, 2024-10-11)"'#10'   inkscape:export-batch-p' +
-          'ath="Export"'#10'   inkscape:export-batch-name="TabSheetHeatsImages"' +
-          #10'   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"' +
-          #10'   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi' +
-          '-0.dtd"'#10'   xmlns="http://www.w3.org/2000/svg"'#10'   xmlns:svg="http' +
-          '://www.w3.org/2000/svg"><defs'#10'     id="defs8" /><sodipodi:namedv' +
-          'iew'#10'     id="namedview6"'#10'     pagecolor="#ffffff"'#10'     bordercol' +
-          'or="#666666"'#10'     borderopacity="1.0"'#10'     inkscape:showpageshad' +
-          'ow="2"'#10'     inkscape:pageopacity="0.0"'#10'     inkscape:pagechecker' +
-          'board="0"'#10'     inkscape:deskcolor="#d1d1d1"'#10'     showgrid="false' +
-          '"'#10'     inkscape:zoom="2.8284271"'#10'     inkscape:cx="268.34702"'#10'  ' +
-          '   inkscape:cy="39.951533"'#10'     inkscape:window-width="2560"'#10'   ' +
-          '  inkscape:window-height="1377"'#10'     inkscape:window-x="-8"'#10'    ' +
-          ' inkscape:window-y="-8"'#10'     inkscape:window-maximized="1"'#10'     ' +
-          'inkscape:current-layer="layer1"'#10'     showguides="true"><inkscape' +
-          ':page'#10'       x="0"'#10'       y="0"'#10'       width="48"'#10'       height=' +
-          '"48"'#10'       id="page535"'#10'       inkscape:label="EmptyFrame"'#10'    ' +
-          '   inkscape:export-filename="..\HeatNavigator\EmptyFrame.png"'#10'  ' +
-          '     inkscape:export-xdpi="96"'#10'       inkscape:export-ydpi="96"'#10 +
-          '       margin="0"'#10'       bleed="0" /></sodipodi:namedview><g'#10'   ' +
-          '  inkscape:groupmode="layer"'#10'     id="layer11"'#10'     inkscape:lab' +
-          'el="EvBu"'#10'     transform="translate(-1160)"><path'#10'       d="m 11' +
-          '65.261,47.04049 q -1.4991,0 -2.6234,-1.152024 -1.1244,-1.152024 ' +
-          '-1.1244,-2.688058 V 4.7995914 q 0,-1.5360326 1.1244,-2.6880571 1' +
-          '.1243,-1.15202462 2.6234,-1.15202462 h 37.4781 q 1.4991,0 2.6235' +
-          ',1.15202462 1.1243,1.1520245 1.1243,2.6880571 V 43.200408 q 0,1.' +
-          '536034 -1.1243,2.688058 -1.1244,1.152024 -2.6235,1.152024 z m 0,' +
-          '-3.840082 h 37.4781 V 4.7995914 h -37.4781 z"'#10'       id="path167' +
-          '7-1-6"'#10'       style="stroke-width:1.26455" /></g></svg>'#10
+          'di:docname="EmptyFrame.svg"'#10'   xml:space="preserve"'#10'   inkscape:' +
+          'version="1.4 (86a8ad7, 2024-10-11)"'#10'   inkscape:export-batch-pat' +
+          'h="Export"'#10'   inkscape:export-batch-name="TabSheetHeatsImages"'#10' ' +
+          '  xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"'#10' ' +
+          '  xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0' +
+          '.dtd"'#10'   xmlns="http://www.w3.org/2000/svg"'#10'   xmlns:svg="http:/' +
+          '/www.w3.org/2000/svg"><defs'#10'     id="defs8" /><sodipodi:namedvie' +
+          'w'#10'     id="namedview6"'#10'     pagecolor="#ffffff"'#10'     bordercolor' +
+          '="#666666"'#10'     borderopacity="1.0"'#10'     inkscape:showpageshadow' +
+          '="2"'#10'     inkscape:pageopacity="0.0"'#10'     inkscape:pagecheckerbo' +
+          'ard="0"'#10'     inkscape:deskcolor="#d1d1d1"'#10'     showgrid="false"'#10 +
+          '     inkscape:zoom="22.627417"'#10'     inkscape:cx="27.378291"'#10'    ' +
+          ' inkscape:cy="27.577165"'#10'     inkscape:window-width="2560"'#10'     ' +
+          'inkscape:window-height="1377"'#10'     inkscape:window-x="-8"'#10'     i' +
+          'nkscape:window-y="-8"'#10'     inkscape:window-maximized="1"'#10'     in' +
+          'kscape:current-layer="svg4"'#10'     showguides="true"><inkscape:pag' +
+          'e'#10'       x="0"'#10'       y="0"'#10'       width="48"'#10'       height="48"' +
+          #10'       id="page535"'#10'       inkscape:label="EmptyFrame"'#10'       i' +
+          'nkscape:export-filename="..\HeatNavigator\EmptyFrame.png"'#10'      ' +
+          ' inkscape:export-xdpi="96"'#10'       inkscape:export-ydpi="96"'#10'    ' +
+          '   margin="0"'#10'       bleed="0" /></sodipodi:namedview><circle'#10'  ' +
+          '   style="opacity:1;fill:#ff7f2a;fill-opacity:1;stroke:none;stro' +
+          'ke-width:1.0214;stroke-linecap:round"'#10'     id="path1"'#10'     cx="2' +
+          '.3113837"'#10'     cy="45.925831"'#10'     r="0.86167479" /></svg>'#10
       end
       item
         IconName = 'EmptyCircle'
@@ -1811,7 +1805,7 @@ object IMG: TIMG
           '7 1.413T18 20h-2.65l-1.95 1.925q-.3.275-.662.425T12 22.5t-.737-.' +
           '15t-.663-.425zm.85-2l2.5 2.5l2.5-2.5H18v-3.5l2.5-2.5L18 9.5V6h-3' +
           '.5L12 3.5L9.5 6H6v3.5L3.5 12L6 14.5V18zm2.5-6"/></svg>'
-        FixedColor = clAquamarine
+        FixedColor = clCadetblue
       end
       item
         IconName = 'award-sash'
@@ -2011,6 +2005,89 @@ object IMG: TIMG
           '-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16A6.5 6.5 0 0 1 3 9.5A6.' +
           '5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14S14 12 14 9.5S12 ' +
           '5 9.5 5"/></svg>'
+      end
+      item
+        IconName = 'baseline-male'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M9.5 11c1.93 0' +
+          ' 3.5 1.57 3.5 3.5S11.43 18 9.5 18S6 16.43 6 14.5S7.57 11 9.5 11m' +
+          '0-2C6.46 9 4 11.46 4 14.5S6.46 20 9.5 20s5.5-2.46 5.5-5.5c0-1.16' +
+          '-.36-2.23-.97-3.12L18 7.42V10h2V4h-6v2h2.58l-3.97 3.97C11.73 9.3' +
+          '6 10.66 9 9.5 9"/></svg>'
+      end
+      item
+        IconName = 'baseline-female'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M17.5 9.5C17.5' +
+          ' 6.46 15.04 4 12 4S6.5 6.46 6.5 9.5c0 2.7 1.94 4.93 4.5 5.4V17H9' +
+          'v2h2v2h2v-2h2v-2h-2v-2.1c2.56-.47 4.5-2.7 4.5-5.4m-9 0C8.5 7.57 ' +
+          '10.07 6 12 6s3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5"/' +
+          '></svg>'
+      end
+      item
+        IconName = 'human-male'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a2 2 0 0 ' +
+          '1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m-1.5 5h3a2 2 0 0' +
+          ' 1 2 2v5.5H14V22h-4v-7.5H8.5V9a2 2 0 0 1 2-2"/></svg>'
+      end
+      item
+        IconName = 'human-female'
+        SVGText = 
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"' +
+          ' viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a2 2 0 0 ' +
+          '1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m-1.5 20v-6h-3l2.' +
+          '59-7.59C10.34 7.59 11.1 7 12 7s1.66.59 1.91 1.41L16.5 16h-3v6z"/' +
+          '></svg>'
+      end
+      item
+        IconName = 'INDV'
+        SVGText = 
+          '<?xml version="1.0" encoding="UTF-8" standalone="no"?>'#10'<svg'#10'   h' +
+          'eight="48"'#10'   width="48"'#10'   version="1.1"'#10'   id="svg4"'#10'   sodipo' +
+          'di:docname="INDV.svg"'#10'   xml:space="preserve"'#10'   inkscape:versio' +
+          'n="1.4 (86a8ad7, 2024-10-11)"'#10'   inkscape:export-batch-path="Exp' +
+          'ort"'#10'   inkscape:export-batch-name="TabSheetHeatsImages"'#10'   xmln' +
+          's:inkscape="http://www.inkscape.org/namespaces/inkscape"'#10'   xmln' +
+          's:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"'#10 +
+          '   xmlns="http://www.w3.org/2000/svg"'#10'   xmlns:svg="http://www.w' +
+          '3.org/2000/svg"><defs'#10'     id="defs8" /><sodipodi:namedview'#10'    ' +
+          ' id="namedview6"'#10'     pagecolor="#ffffff"'#10'     bordercolor="#666' +
+          '666"'#10'     borderopacity="1.0"'#10'     inkscape:showpageshadow="2"'#10' ' +
+          '    inkscape:pageopacity="0.0"'#10'     inkscape:pagecheckerboard="0' +
+          '"'#10'     inkscape:deskcolor="#d1d1d1"'#10'     showgrid="false"'#10'     i' +
+          'nkscape:zoom="7.9999999"'#10'     inkscape:cx="28.1875"'#10'     inkscap' +
+          'e:cy="11.125"'#10'     inkscape:window-width="2560"'#10'     inkscape:wi' +
+          'ndow-height="1377"'#10'     inkscape:window-x="-8"'#10'     inkscape:win' +
+          'dow-y="-8"'#10'     inkscape:window-maximized="1"'#10'     inkscape:curr' +
+          'ent-layer="svg4"'#10'     showguides="true"><inkscape:page'#10'       x=' +
+          '"0"'#10'       y="0"'#10'       width="48"'#10'       height="48"'#10'       id=' +
+          '"page535"'#10'       inkscape:label="EmptyFrame"'#10'       inkscape:exp' +
+          'ort-filename="..\HeatNavigator\EmptyFrame.png"'#10'       inkscape:e' +
+          'xport-xdpi="96"'#10'       inkscape:export-ydpi="96"'#10'       margin="' +
+          '0"'#10'       bleed="0" /></sodipodi:namedview><path'#10'     d="M 9.941' +
+          '5178,24.672985 H 7.4071132 V 3.0400312 h 2.5344046 z m 23.126442' +
+          '2,0 H 29.960297 L 18.82702,7.4299821 Q 18.404619,6.7812952 18.13' +
+          '3076,6.0722653 h -0.09051 q 0.120686,0.6939442 0.120686,2.971891' +
+          '2 V 24.672985 H 15.628842 V 3.0400312 h 3.288692 L 29.749097,20.' +
+          '011491 q 0.678858,1.056002 0.874973,1.448231 h 0.06034 Q 30.5335' +
+          '55,20.524406 30.533555,18.276631 V 3.0400312 h 2.534405 z m 5.67' +
+          '2239,0 V 3.0400312 h 5.973954 q 11.434992,0 11.434992,10.5449338' +
+          ' 0,5.008466 -3.183091,8.055786 -3.168006,3.032234 -8.493273,3.03' +
+          '2234 z M 41.274604,5.333064 v 17.046888 h 3.228349 q 4.254179,0 ' +
+          '6.62264,-2.277947 2.368462,-2.277947 2.368462,-6.456697 0,-8.312' +
+          '244 -8.840245,-8.312244 z M 75.730438,3.0400312 67.719909,24.672' +
+          '985 H 64.929047 L 57.084461,3.0400312 h 2.821034 l 5.98904,17.15' +
+          '24888 q 0.286629,0.829716 0.437486,1.915889 h 0.06034 q 0.120686' +
+          ',-0.905145 0.49783,-1.946061 L 72.999919,3.0400312 Z"'#10'     id="t' +
+          'ext1"'#10'     style="font-size:30.8956px;line-height:1.25;font-fami' +
+          'ly:'#39'Segoe UI'#39';-inkscape-font-specification:'#39'Segoe UI, Normal'#39';te' +
+          'xt-align:center;text-anchor:middle;stroke:#000000;stroke-width:2' +
+          '.593"'#10'     transform="scale(0.57735647,1.7320322)"'#10'     aria-lab' +
+          'el="INDV" /></svg>'#10
       end>
     Left = 480
     Top = 16
@@ -13091,30 +13168,6 @@ object IMG: TIMG
     Left = 864
     Top = 176
   end
-  object SVGNominateGrid: TSVGIconVirtualImageList
-    Images = <
-      item
-        CollectionIndex = 43
-        CollectionName = 'checkbox-blank'
-        Name = 'checkbox-blank'
-      end
-      item
-        CollectionIndex = 44
-        CollectionName = 'checkbox'
-        Name = 'checkbox'
-      end
-      item
-        CollectionIndex = 45
-        CollectionName = 'award-star'
-        Name = 'award-star'
-      end>
-    ImageCollection = SVGCollection
-    Width = 24
-    Height = 24
-    Size = 24
-    Left = 1080
-    Top = 128
-  end
   object SVGSessPopupMenu: TSVGIconVirtualImageList
     Images = <
       item
@@ -13293,5 +13346,124 @@ object IMG: TIMG
     Size = 48
     Left = 736
     Top = 176
+  end
+  object SVGNominateCheckBox: TSVGIconVirtualImageList
+    Images = <
+      item
+        CollectionIndex = 43
+        CollectionName = 'checkbox-blank'
+        Name = 'checkbox-blank'
+      end
+      item
+        CollectionIndex = 44
+        CollectionName = 'checkbox'
+        Name = 'checkbox'
+      end>
+    ImageCollection = SVGCollection
+    Width = 38
+    Height = 38
+    Size = 38
+    Left = 1080
+    Top = 192
+  end
+  object SVGNominateQualified: TSVGIconVirtualImageList
+    Images = <
+      item
+        CollectionIndex = 0
+        CollectionName = 'EmptyFrame'
+        Name = 'EmptyFrame'
+      end
+      item
+        CollectionIndex = 45
+        CollectionName = 'award-star'
+        Name = 'award-star'
+      end>
+    ImageCollection = SVGCollection
+    Width = 38
+    Height = 38
+    Size = 38
+    Left = 1080
+    Top = 256
+  end
+  object SVGNominateStroke: TSVGIconVirtualImageList
+    Images = <
+      item
+        CollectionIndex = 0
+        CollectionName = 'EmptyFrame'
+        Name = 'EmptyFrame'
+      end
+      item
+        CollectionIndex = 5
+        CollectionName = 'StrokeFS'
+        Name = 'StrokeFS'
+      end
+      item
+        CollectionIndex = 6
+        CollectionName = 'StrokeBK'
+        Name = 'StrokeBK'
+      end
+      item
+        CollectionIndex = 7
+        CollectionName = 'StrokeBS'
+        Name = 'StrokeBS'
+      end
+      item
+        CollectionIndex = 8
+        CollectionName = 'StrokeBF'
+        Name = 'StrokeBF'
+      end
+      item
+        CollectionIndex = 9
+        CollectionName = 'StrokeIM'
+        Name = 'StrokeIM'
+      end>
+    ImageCollection = SVGCollection
+    Width = 38
+    Height = 38
+    Size = 38
+    Left = 1080
+    Top = 320
+  end
+  object SVGNominateEventType: TSVGIconVirtualImageList
+    Images = <
+      item
+        CollectionIndex = 0
+        CollectionName = 'EmptyFrame'
+        Name = 'EmptyFrame'
+      end
+      item
+        CollectionIndex = 72
+        CollectionName = 'INDV'
+        Name = 'INDV'
+      end
+      item
+        CollectionIndex = 15
+        CollectionName = 'RELAY_DOT'
+        Name = 'RELAY_DOT'
+      end>
+    ImageCollection = SVGCollection
+    Width = 38
+    Height = 38
+    Size = 38
+    Left = 1080
+    Top = 384
+  end
+  object FontsCollection: TIconFontsImageCollection
+    IconFontItems = <
+      item
+        FontIconDec = 52
+        FontName = 'webdings'
+        FontColor = clCoral
+        IconName = 'RecSelector'
+      end
+      item
+        FontIconDec = 95
+        FontName = 'Wingdings 3'
+        FontColor = clCoral
+        IconName = 'RecSelector2'
+      end>
+    FontName = 'Webdings'
+    Left = 624
+    Top = 16
   end
 end

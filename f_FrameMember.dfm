@@ -3,6 +3,12 @@ object FrameMember: TFrameMember
   Top = 0
   Width = 606
   Height = 761
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -16
+  Font.Name = 'Segoe UI'
+  Font.Style = []
+  ParentFont = False
   TabOrder = 0
   object pnlStack: TStackPanel
     Left = 542
@@ -22,7 +28,6 @@ object FrameMember: TFrameMember
       end>
     HorizontalPositioning = sphpCenter
     TabOrder = 0
-    ExplicitLeft = 576
     DesignSize = (
       64
       761)
@@ -77,8 +82,6 @@ object FrameMember: TFrameMember
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitLeft = 0
-    ExplicitWidth = 417
     object pnlDetail: TPanel
       Left = 0
       Top = 34
@@ -87,10 +90,6 @@ object FrameMember: TFrameMember
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 0
-      ExplicitLeft = -152
-      ExplicitTop = 0
-      ExplicitWidth = 337
-      ExplicitHeight = 761
       object gMember: TDBAdvGrid
         Left = 0
         Top = 0
@@ -98,16 +97,26 @@ object FrameMember: TFrameMember
         Height = 727
         Cursor = crDefault
         Align = alClient
-        ColCount = 2
+        Color = clWhite
+        ColCount = 5
         DrawingStyle = gdsClassic
         FixedColor = clWhite
         RowCount = 2
         FixedRows = 1
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -16
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        Options = [goVertLine, goHorzLine, goRangeSelect, goFixedRowDefAlign]
+        ParentFont = False
         ScrollBars = ssBoth
         TabOrder = 0
-        GridLineColor = 13948116
-        GridFixedLineColor = 11250603
+        OnDblClick = gMemberDblClick
+        GridLineColor = 15987699
+        GridFixedLineColor = 15987699
         HoverRowCells = [hcNormal, hcSelected]
+        OnGetCellColor = gMemberGetCellColor
         ActiveCellFont.Charset = DEFAULT_CHARSET
         ActiveCellFont.Color = 4474440
         ActiveCellFont.Height = -12
@@ -120,6 +129,7 @@ object FrameMember: TFrameMember
         ControlLook.FixedGradientTo = clWhite
         ControlLook.FixedGradientMirrorFrom = clWhite
         ControlLook.FixedGradientMirrorTo = clWhite
+        ControlLook.FixedGradientHoverFrom = clGray
         ControlLook.FixedGradientHoverTo = clWhite
         ControlLook.FixedGradientHoverMirrorFrom = clWhite
         ControlLook.FixedGradientHoverMirrorTo = clWhite
@@ -165,7 +175,7 @@ object FrameMember: TFrameMember
         FixedColWidth = 20
         FixedRowHeight = 22
         FixedFont.Charset = DEFAULT_CHARSET
-        FixedFont.Color = 3881787
+        FixedFont.Color = clBlack
         FixedFont.Height = -12
         FixedFont.Name = 'Tahoma'
         FixedFont.Style = [fsBold]
@@ -218,6 +228,7 @@ object FrameMember: TFrameMember
         SortSettings.HeaderColorTo = clWhite
         SortSettings.HeaderMirrorColor = clWhite
         SortSettings.HeaderMirrorColorTo = clWhite
+        UseFixedFont = False
         Version = '2.5.1.3'
         AutoCreateColumns = True
         AutoRemoveColumns = True
@@ -254,6 +265,8 @@ object FrameMember: TFrameMember
             CheckFalse = 'N'
             CheckTrue = 'Y'
             Color = clWindow
+            EditLength = 45
+            FieldName = 'FName'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -12
@@ -271,7 +284,89 @@ object FrameMember: TFrameMember
             PrintFont.Name = 'Segoe UI'
             PrintFont.Style = []
             Width = 64
+          end
+          item
+            Alignment = taRightJustify
+            Borders = []
+            BorderPen.Color = clSilver
+            ButtonHeight = 18
+            CheckFalse = 'N'
+            CheckTrue = 'Y'
+            Color = clWhite
+            FieldName = 'MemberID'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -12
+            Font.Name = 'Segoe UI'
+            Font.Style = []
+            HeaderFont.Charset = DEFAULT_CHARSET
+            HeaderFont.Color = 3881787
+            HeaderFont.Height = -12
+            HeaderFont.Name = 'Segoe UI'
+            HeaderFont.Style = []
+            PrintBorders = [cbTop, cbLeft, cbRight, cbBottom]
+            PrintFont.Charset = DEFAULT_CHARSET
+            PrintFont.Color = clWindowText
+            PrintFont.Height = -12
+            PrintFont.Name = 'Segoe UI'
+            PrintFont.Style = []
+            Width = 64
+          end
+          item
+            Alignment = taRightJustify
+            Borders = []
+            BorderPen.Color = clSilver
+            ButtonHeight = 18
+            CheckFalse = 'N'
+            CheckTrue = 'Y'
+            Color = clWhite
+            FieldName = 'GenderID'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -12
+            Font.Name = 'Segoe UI'
+            Font.Style = []
+            HeaderFont.Charset = DEFAULT_CHARSET
+            HeaderFont.Color = 3881787
+            HeaderFont.Height = -12
+            HeaderFont.Name = 'Segoe UI'
+            HeaderFont.Style = []
+            PrintBorders = [cbTop, cbLeft, cbRight, cbBottom]
+            PrintFont.Charset = DEFAULT_CHARSET
+            PrintFont.Color = clWindowText
+            PrintFont.Height = -12
+            PrintFont.Name = 'Segoe UI'
+            PrintFont.Style = []
+            Width = 64
+          end
+          item
+            Borders = []
+            BorderPen.Color = clSilver
+            ButtonHeight = 18
+            CheckFalse = 'N'
+            CheckTrue = 'Y'
+            Color = clWhite
+            EditLength = 48
+            FieldName = 'FullName'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -12
+            Font.Name = 'Segoe UI'
+            Font.Style = []
+            HeaderFont.Charset = DEFAULT_CHARSET
+            HeaderFont.Color = 3881787
+            HeaderFont.Height = -12
+            HeaderFont.Name = 'Segoe UI'
+            HeaderFont.Style = []
+            PrintBorders = [cbTop, cbLeft, cbRight, cbBottom]
+            PrintFont.Charset = DEFAULT_CHARSET
+            PrintFont.Color = clWindowText
+            PrintFont.Height = -12
+            PrintFont.Name = 'Segoe UI'
+            PrintFont.Style = []
+            Width = 193
           end>
+        DataSource = CORE.dsMember
         InvalidPicture.Data = {
           055449636F6E0000010001002020200000000000A81000001600000028000000
           2000000040000000010020000000000000100000000000000000000000000000
@@ -409,11 +504,12 @@ object FrameMember: TFrameMember
           80000001C0000003C0000003E0000007F000000FF800001FFC00003FFF0000FF
           FFC003FF}
         ShowUnicode = False
-        ExplicitWidth = 337
-        ExplicitHeight = 761
         ColWidths = (
           20
-          64)
+          64
+          64
+          64
+          193)
       end
     end
     object pnlHeader: TPanel
@@ -424,7 +520,6 @@ object FrameMember: TFrameMember
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitWidth = 521
       object vimgSearch: TVirtualImage
         Left = 380
         Top = 0
@@ -453,10 +548,8 @@ object FrameMember: TFrameMember
         ImageName = 'clear'
         Images = IMG.SVGButtons
         TabOrder = 0
-        ExplicitLeft = 277
-        ExplicitHeight = 32
       end
-      object memberName_Edit: TEdit
+      object edtMemberName: TEdit
         AlignWithMargins = True
         Left = 4
         Top = 0
@@ -468,8 +561,7 @@ object FrameMember: TFrameMember
         Margins.Bottom = 0
         Align = alClient
         TabOrder = 1
-        ExplicitLeft = 40
-        ExplicitWidth = 232
+        OnChange = edtMemberNameChange
         ExplicitHeight = 29
       end
     end
@@ -504,8 +596,6 @@ object FrameMember: TFrameMember
       Visible = False
       WordWrap = True
       StyleElements = [seClient, seBorder]
-      ExplicitLeft = 19
-      ExplicitTop = 24
       ExplicitWidth = 45
       ExplicitHeight = 187
     end
@@ -527,6 +617,14 @@ object FrameMember: TFrameMember
       Hint = 'Create and display a nominee'#39's report.'
       ImageIndex = 1
       ImageName = 'report'
+      OnExecute = actnMemberReportExecute
+      OnUpdate = actnMemberDefaultUpdate
+    end
+    object actnMemberGoto: TAction
+      Category = 'Member'
+      Caption = 'Goto Member'
+      OnExecute = actnMemberGotoExecute
+      OnUpdate = actnMemberDefaultUpdate
     end
   end
   object pumenuMember: TPopupMenu

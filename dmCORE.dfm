@@ -29,26 +29,18 @@ object CORE: TCORE
     OnNewRecord = qrySessionNewRecord
     Indexes = <
       item
-        Name = 'idxSortDESCHideLocked'
-        Fields = 'SwimClubID;SessionStart'
-        DescFields = 'SessionStart'
-        Options = [soDescNullLast]
-        Filter = 'SessionStatusID > 1'
-      end
-      item
-        Name = 'idxSortDESCShowLocked'
-        Fields = 'SwimClubID;SessionStart'
-        DescFields = 'SessionStart'
-        Options = [soDescNullLast]
+        Active = True
+        Name = 'indxHideLocked'
+        Fields = 'SwimClubID'
+        Filter = 'SessionStatusID <> 2'
       end
       item
         Active = True
         Selected = True
-        Name = 'mcSwimClub_DESC'
+        Name = 'indxShowAll'
         Fields = 'SwimClubID'
-        DescFields = 'SwimClubID'
       end>
-    IndexName = 'mcSwimClub_DESC'
+    IndexName = 'indxShowAll'
     MasterSource = dsSwimClub
     MasterFields = 'SwimClubID'
     DetailFields = 'SwimClubID'
@@ -70,6 +62,7 @@ object CORE: TCORE
       '      ,[SwimClubID]'
       '      ,[SessionStatusID]'
       '  FROM [SwimClubMeet2].[dbo].[Session]'
+      '  ORDER BY SessionID DESC;'
       ''
       '/*'
       'DECLARE @Toggle AS BIT'
@@ -108,38 +101,6 @@ object CORE: TCORE
       '*/')
     Left = 176
     Top = 72
-    object qrySessionSessionID: TFDAutoIncField
-      FieldName = 'SessionID'
-      ProviderFlags = [pfInWhere, pfInKey]
-    end
-    object qrySessionCaption: TWideStringField
-      FieldName = 'Caption'
-      Size = 128
-    end
-    object qrySessionStartDT: TSQLTimeStampField
-      FieldName = 'StartDT'
-    end
-    object qrySessionEndDT: TSQLTimeStampField
-      FieldName = 'EndDT'
-    end
-    object qrySessionCreatedOn: TSQLTimeStampField
-      FieldName = 'CreatedOn'
-    end
-    object qrySessionModifiedOn: TSQLTimeStampField
-      FieldName = 'ModifiedOn'
-    end
-    object qrySessionNomineeCount: TIntegerField
-      FieldName = 'NomineeCount'
-    end
-    object qrySessionEntrantCount: TIntegerField
-      FieldName = 'EntrantCount'
-    end
-    object qrySessionSwimClubID: TIntegerField
-      FieldName = 'SwimClubID'
-    end
-    object qrySessionSessionStatusID: TIntegerField
-      FieldName = 'SessionStatusID'
-    end
   end
   object qryEvent: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -147,14 +108,15 @@ object CORE: TCORE
       item
         Active = True
         Selected = True
-        Name = 'mcSession_DESC'
+        Name = 'indxSession_DESC'
         Fields = 'SessionID'
         DescFields = 'SessionID'
       end>
-    IndexName = 'mcSession_DESC'
+    IndexName = 'indxSession_DESC'
     MasterSource = dsSession
     MasterFields = 'SessionID'
     DetailFields = 'SessionID'
+    Connection = SCM.scmConnection
     FormatOptions.AssignedValues = [fvFmtDisplayTime]
     FormatOptions.FmtDisplayTime = 'hh:nn'
     UpdateOptions.UpdateTableName = 'SwimClubMeet2..Event'
@@ -338,12 +300,11 @@ object CORE: TCORE
   end
   object qryHeat: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     Indexes = <
       item
         Active = True
         Selected = True
-        Name = 'mcEvent_DESC'
+        Name = 'indxEvent_DESC'
         Fields = 'EventID'
         DescFields = 'EventID'
       end
@@ -352,7 +313,7 @@ object CORE: TCORE
         Fields = 'EventID;HeatID;HeatNum'
         Options = [soDescNullLast]
       end>
-    IndexName = 'mcEvent_DESC'
+    IndexName = 'indxEvent_DESC'
     MasterFields = 'EventID'
     DetailFields = 'EventID'
     Connection = SCM.scmConnection
@@ -387,10 +348,10 @@ object CORE: TCORE
       
         '  INNER JOIN [dbo].[Event] ON [Heat].[EventID] = [Event].[EventI' +
         'D]'
-      '  WHERE [Heat].[EventID] = 1672'
+      '  -- WHERE [Heat].[EventID] = 1672'
       '  '
       'ORDER BY'
-      '  Heat.HeatNum'
+      '  Heat.HeatNum;'
       '    ')
     Left = 296
     Top = 216
@@ -469,7 +430,8 @@ object CORE: TCORE
       '      ,[LogoType]'
       '      ,[PoolTypeID]'
       '      ,[SwimClubTypeID]'
-      '  FROM [dbo].[SwimClub];'
+      '  FROM [dbo].[SwimClub]'
+      '  ORDER BY [SwimClubID];'
       ''
       ''
       ''
@@ -482,11 +444,11 @@ object CORE: TCORE
       item
         Active = True
         Selected = True
-        Name = 'mcHeat_DESC'
+        Name = 'indxHeat_DESC'
         Fields = 'HeatID'
         DescFields = 'HeatID'
       end>
-    IndexName = 'mcHeat_DESC'
+    IndexName = 'indxHeat_DESC'
     MasterSource = dsHeat
     MasterFields = 'HeatID'
     DetailFields = 'HeatID'
@@ -548,11 +510,11 @@ object CORE: TCORE
       item
         Active = True
         Selected = True
-        Name = 'mcEvent_DESC'
+        Name = 'indxEvent_DESC'
         Fields = 'EventID'
         DescFields = 'EventID'
       end>
-    IndexName = 'mcEvent_DESC'
+    IndexName = 'indxEvent_DESC'
     MasterSource = dsEvent
     MasterFields = 'EventID'
     DetailFields = 'EventID'
@@ -674,11 +636,11 @@ object CORE: TCORE
       item
         Active = True
         Selected = True
-        Name = 'mcLane_DESC'
+        Name = 'indxLane_DESC'
         Fields = 'LaneID'
         DescFields = 'LaneID'
       end>
-    IndexName = 'mcLane_DESC'
+    IndexName = 'indxLane_DESC'
     MasterSource = dsLane
     MasterFields = 'LaneID'
     DetailFields = 'LaneID'
@@ -735,6 +697,7 @@ object CORE: TCORE
   object tblStroke: TFDTable
     ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'StrokeID'
+    Connection = SCM.scmConnection
     ResourceOptions.AssignedValues = [rvEscapeExpand]
     UpdateOptions.UpdateTableName = 'SwimClubMeet2..Stroke'
     UpdateOptions.KeyFields = 'StrokeID'
@@ -745,6 +708,7 @@ object CORE: TCORE
   object tblDistance: TFDTable
     ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'DistanceID'
+    Connection = SCM.scmConnection
     ResourceOptions.AssignedValues = [rvEscapeExpand]
     UpdateOptions.UpdateTableName = 'SwimClubMeet2..Distance'
     UpdateOptions.KeyFields = 'DistanceID'
@@ -766,5 +730,143 @@ object CORE: TCORE
     DataSet = qryTeamLink
     Left = 440
     Top = 592
+  end
+  object qryMember: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    Active = True
+    Indexes = <
+      item
+        Active = True
+        Selected = True
+        Name = 'indxMember'
+        Fields = 'MemberID'
+      end>
+    IndexName = 'indxMember'
+    MasterSource = dsMemberLink
+    MasterFields = 'MemberID'
+    DetailFields = 'MemberID'
+    Connection = SCM.scmConnection
+    UpdateOptions.UpdateTableName = 'SwimClubMeet2.dbo.Member'
+    UpdateOptions.KeyFields = 'MemberID'
+    SQL.Strings = (
+      'DECLARE @Toggle AS BIT;'
+      'DECLARE @SessionStart  AS DATETIME;'
+      ''
+      'SET @SessionStart = :SESSIONSTART;'
+      'SET @Toggle = :TOGGLE;'
+      ''
+      'if @SessionStart IS NULL SET @SessionStart = GetDate();'
+      'IF @Toggle IS NULL SET @Toggle = 1;'
+      'IF @Toggle NOT IN (0, 1) SET @Toggle = 1;'
+      ''
+      'SELECT'
+      'CASE '
+      '    WHEN @Toggle = 0 THEN'
+      #9'   CONCAT ('
+      #9#9#9'   SUBSTRING(CONCAT ('
+      #9#9#9#9#9'   UPPER([LastName])'
+      #9#9#9#9#9'   ,'#39', '#39
+      #9#9#9#9#9'   ,[FirstName]'
+      #9#9#9#9#9'   ), 0, 30)'
+      #9#9#9'   ,'#39' ('#39
+      #9#9#9'   ,dbo.SwimmerAge(@SessionStart, DOB)'
+      #9#9#9'   ,'#39')'#39
+      #9#9#9'   )'
+      '    WHEN @Toggle = 1 THEN'
+      #9'   CONCAT ('
+      #9#9#9'   SUBSTRING(CONCAT ('
+      #9#9#9#9#9'   [FirstName]'
+      #9#9#9#9#9'   ,'#39', '#39
+      #9#9#9#9#9'   ,UPPER([LastName])'
+      #9#9#9#9#9'   ), 0, 30)'
+      #9#9#9'   ,'#39' ('#39
+      #9#9#9'   ,dbo.SwimmerAge(@SessionStart, DOB)'
+      #9#9#9'   ,'#39')'#39
+      #9#9#9'   )  '
+      'END  AS FName'
+      ''
+      ',Member.MemberID'
+      ',Member.GenderID'
+      '        '
+      ',SUBSTRING(CONCAT ('
+      #9#9#9#9#9'   [FirstName]'
+      #9#9#9#9#9'   ,'#39', '#39
+      #9#9#9#9#9'   ,UPPER([LastName])'
+      #9#9#9#9#9'   ), 0, 48) AS FullName'
+      ''
+      'FROM Member'
+      
+        'WHERE (Member.IsArchived <> 1) AND (Member.IsActive = 1) AND (Me' +
+        'mber.IsSwimmer = 1)'
+      'Order by FName;'
+      ''
+      ''
+      ''
+      '/*'
+      'SELECT [MemberID]'
+      '      ,[MembershipNum]'
+      '      ,[MembershipStr]'
+      '      ,[FirstName]'
+      '      ,[MiddleInitial]'
+      '      ,[LastName]'
+      '      ,[RegisterNum]'
+      '      ,[RegisterStr]'
+      '      ,[DOB]'
+      '      ,[IsArchived]'
+      '      ,[IsActive]'
+      '      ,[IsSwimmer]'
+      '      ,[Email]'
+      '      ,[CreatedOn]'
+      '      ,[ArchivedOn]'
+      '      ,[EnableEmailOut]'
+      '      ,[EnableEmailNomineeForm]'
+      '      ,[EnableEmailSessionReport]'
+      '      ,[TAGS]'
+      '      ,[GenderID]'
+      '  FROM [SwimClubMeet2].[dbo].[Member]'
+      '  ORDER BY [LastName]'
+      '*/ ')
+    Left = 840
+    Top = 128
+    ParamData = <
+      item
+        Name = 'SESSIONSTART'
+        DataType = ftDateTime
+        ParamType = ptInput
+        Value = Null
+      end
+      item
+        Name = 'TOGGLE'
+        DataType = ftBytes
+        ParamType = ptInput
+        Value = Null
+      end>
+  end
+  object dsMemberLink: TDataSource
+    DataSet = qryMemberLink
+    Left = 840
+    Top = 72
+  end
+  object dsMember: TDataSource
+    DataSet = qryMember
+    Left = 920
+    Top = 128
+  end
+  object qryMemberLink: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    Active = True
+    MasterSource = dsSwimClub
+    MasterFields = 'SwimClubID'
+    DetailFields = 'SwimClubID'
+    Connection = SCM.scmConnection
+    UpdateOptions.UpdateTableName = 'SwimClubMeet2.dbo.MemberLink'
+    UpdateOptions.KeyFields = 'SwimClubID;MemberID'
+    SQL.Strings = (
+      'SELECT [MemberID]'
+      '      ,[SwimClubID]'
+      '      ,[HouseID]'
+      '  FROM [SwimClubMeet2].[dbo].[MemberLink]')
+    Left = 744
+    Top = 72
   end
 end
