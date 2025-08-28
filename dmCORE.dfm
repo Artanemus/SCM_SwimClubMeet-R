@@ -32,7 +32,7 @@ object CORE: TCORE
         Active = True
         Name = 'indxHideLocked'
         Fields = 'SwimClubID'
-        Filter = 'SessionStatusID <> 2'
+        Filter = 'SessionStatusID = 1'
       end
       item
         Active = True
@@ -45,6 +45,8 @@ object CORE: TCORE
     MasterFields = 'SwimClubID'
     DetailFields = 'SwimClubID'
     Connection = SCM.scmConnection
+    FormatOptions.AssignedValues = [fvFmtDisplayDateTime]
+    FormatOptions.FmtDisplayDateTime = 'YYYY-MM-DD hh:nn'
     UpdateOptions.AssignedValues = [uvEInsert]
     UpdateOptions.UpdateTableName = 'SwimClubMeet2..Session'
     UpdateOptions.KeyFields = 'SessionID'
@@ -52,13 +54,12 @@ object CORE: TCORE
       'USE SwimClubMeet2;'
       ''
       'SELECT [SessionID]'
+      '      ,[SessionDT]'
       '      ,[Caption]'
-      '      ,[StartDT]'
-      '      ,[EndDT]'
-      '      ,[CreatedOn]'
-      '      ,[ModifiedOn]'
       '      ,[NomineeCount]'
       '      ,[EntrantCount]'
+      '      ,[CreatedOn]'
+      '      ,[ModifiedOn]'
       '      ,[SwimClubID]'
       '      ,[SessionStatusID]'
       '  FROM [SwimClubMeet2].[dbo].[Session]'
@@ -104,6 +105,7 @@ object CORE: TCORE
   end
   object qryEvent: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     Indexes = <
       item
         Active = True
@@ -125,33 +127,31 @@ object CORE: TCORE
       'USE SwimClubMeet2;'
       ''
       'SELECT [Event].[EventID]'
-      '     , [Event].[EventNum]'
-      '     , [Event].[Caption]'
-      '     , [Event].[ScheduleDT]'
-      '      ,[Event].[RallyOpenDT]'
-      '      ,[Event].[RallyCloseDT]'
-      '      ,[Event].[OpenDT]'
-      '     , [Event].[CloseDT]'
-      '     , [Event].[SessionID]'
-      '     , [Event].[StrokeID]'
-      '     , [Event].[DistanceID]'
-      '     , [Event].[EventStatusID]'
-      '     , [Event].[RoundID]'
-      '     , [Event].[GenderID]'
-      '     , [Event].[EventCategoryID]'
-      '     , [Event].[ParalympicTypeID]'
+      '      ,[Event].[EventNum]'
+      '      ,[Event].[Caption]'
+      '      ,[StartTime]'
       
-        '     , NomineeCount --, dbo.NomineeCount([Event].[EventID]) AS N' +
-        'omineeCount'
+        '      ,[Event].[NomineeCount]  --, dbo.NomineeCount([Event].[Eve' +
+        'ntID]) AS NomineeCount'
       
-        '     , EntrantCount --, dbo.EntrantCount([Event].[EventID]) AS E' +
-        'ntrantCount'
-      '     , SUBSTRING('
+        '      ,[Event].[EntrantCount]  --, dbo.EntrantCount([Event].[Eve' +
+        'ntID]) AS EntrantCount'
+      '      ,[Event].[SessionID]'
+      '      ,[Event].[StrokeID]'
+      '      ,[Event].[DistanceID]'
+      '      ,[EventStatusID]'
+      '      ,[Event].[RoundID]'
+      '      ,[Event].[GenderID]'
+      '      ,[Event].[EventCategoryID]'
+      '      ,[Event].[ParalympicTypeID]'
+      '      ,[Distance].[EventTypeID]  -- use LookUp value?'
+      '      ,[Distance].[Caption] AS DistanceStr -- use LookUp value?'
+      '      ,[Stroke].[Caption] AS StrokeStr -- use LookUp value?'
+      '      , SUBSTRING('
       
         '       CONCAT('#39'#'#39', Event.EventNum, '#39' - '#39', Distance.Caption, '#39' '#39',' +
         ' Stroke.Caption)'
       '         ,0,24) AS ShortCaption'
-      '     , Distance.EventTypeID'
       'FROM dbo.[Event]'
       '    LEFT OUTER JOIN Stroke'
       '        ON Stroke.StrokeID = Event.StrokeID'
@@ -187,40 +187,20 @@ object CORE: TCORE
       Required = True
       Size = 273
     end
-    object qryEventScheduleDT: TTimeField
-      DisplayLabel = 'SCHED'
-      DisplayWidth = 12
-      FieldName = 'ScheduleDT'
-      Origin = 'ScheduleDT'
+    object qryEventStartTime: TTimeField
+      FieldName = 'StartTime'
+      Origin = 'StartTime'
       DisplayFormat = 'hh:nn'
     end
-    object qryEventRallyOpenDT: TSQLTimeStampField
-      DisplayLabel = 'Rally Begin'
-      DisplayWidth = 12
-      FieldName = 'RallyOpenDT'
-      Origin = 'RallyOpenDT'
-      DisplayFormat = 'hh:nn'
+    object qryEventNomineeCount: TIntegerField
+      FieldName = 'NomineeCount'
+      Origin = 'NomineeCount'
+      ReadOnly = True
     end
-    object qryEventRallyCloseDT: TSQLTimeStampField
-      DisplayLabel = 'Rally End'
-      DisplayWidth = 12
-      FieldName = 'RallyCloseDT'
-      Origin = 'RallyCloseDT'
-      DisplayFormat = 'hh:nn'
-    end
-    object qryEventOpenDT: TSQLTimeStampField
-      DisplayLabel = 'Open'
-      DisplayWidth = 12
-      FieldName = 'OpenDT'
-      Origin = 'OpenDT'
-      DisplayFormat = 'hh:nn'
-    end
-    object qryEventCloseDT: TSQLTimeStampField
-      DisplayLabel = 'Close'
-      DisplayWidth = 12
-      FieldName = 'CloseDT'
-      Origin = 'CloseDT'
-      DisplayFormat = 'hh:nn'
+    object qryEventEntrantCount: TIntegerField
+      FieldName = 'EntrantCount'
+      Origin = 'EntrantCount'
+      ReadOnly = True
     end
     object qryEventSessionID: TIntegerField
       FieldName = 'SessionID'
@@ -254,15 +234,19 @@ object CORE: TCORE
       FieldName = 'EventTypeID'
       Origin = 'EventTypeID'
     end
-    object qryEventNomineeCount: TIntegerField
-      FieldName = 'NomineeCount'
-      Origin = 'NomineeCount'
-      ReadOnly = True
+    object qryEventEventCategoryID: TIntegerField
+      FieldName = 'EventCategoryID'
+      Origin = 'EventCategoryID'
     end
-    object qryEventEntrantCount: TIntegerField
-      FieldName = 'EntrantCount'
-      Origin = 'EntrantCount'
-      ReadOnly = True
+    object qryEventDistanceStr: TWideStringField
+      FieldName = 'DistanceStr'
+      Origin = 'DistanceStr'
+      Size = 128
+    end
+    object qryEventStrokeStr: TWideStringField
+      FieldName = 'StrokeStr'
+      Origin = 'StrokeStr'
+      Size = 128
     end
     object LookUpStroke: TStringField
       DisplayLabel = 'Stroke'
@@ -327,18 +311,13 @@ object CORE: TCORE
       'SELECT [Heat].[HeatID]'
       '      ,[Heat].[HeatNum]'
       '      ,[Heat].[Caption]'
-      '      ,[Heat].[ScheduleDT]'
-      '      ,[Heat].[RallyOpenDT]'
-      '      ,[Heat].[RallyCloseDT]'
-      '      ,[Heat].[OpenDT]'
-      '      ,[Heat].[CloseDT]'
+      '      ,[Heat].[StartTime]'
       '      ,[Heat].[EventID]'
       '      ,[Heat].[HeatTypeID]'
       '      ,[Heat].[HeatStatusID]'
-      '  ,[HeatStatus].[Caption] AS cStatus -- redundant?'
       
-        '  ,[Event].[StrokeID] -- need to paint coloured circle in gridHe' +
-        'at.'
+        '  ,[Event].[StrokeID] -- needed to paint coloured circle in grid' +
+        'Heat.'
       ''
       'FROM'
       '  [SwimClubMeet2].[dbo].[Heat]'
@@ -361,21 +340,6 @@ object CORE: TCORE
       ProviderFlags = [pfInWhere, pfInKey]
       Visible = False
     end
-    object qryHeatEventID: TIntegerField
-      FieldName = 'EventID'
-      Origin = 'EventID'
-      Visible = False
-    end
-    object qryHeatHeatTypeID: TIntegerField
-      FieldName = 'HeatTypeID'
-      Origin = 'HeatTypeID'
-      Visible = False
-    end
-    object qryHeatHeatStatusID: TIntegerField
-      FieldName = 'HeatStatusID'
-      Origin = 'HeatStatusID'
-      Visible = False
-    end
     object qryHeatHeatNum: TIntegerField
       Alignment = taCenter
       DisplayLabel = 'Heat#'
@@ -384,22 +348,33 @@ object CORE: TCORE
       Origin = 'HeatNum'
       ReadOnly = True
     end
-    object qryHeatcStatus: TWideStringField
-      DisplayLabel = 'Status'
-      DisplayWidth = 12
-      FieldName = 'cStatus'
-      Origin = 'cStatus'
-      ReadOnly = True
-      Size = 60
+    object qryHeatHeatStatusID: TIntegerField
+      FieldName = 'HeatStatusID'
+      Origin = 'HeatStatusID'
+      Visible = False
     end
-    object qryHeatCloseDT: TSQLTimeStampField
-      FieldName = 'CloseDT'
-      Origin = 'CloseDT'
+    object qryHeatHeatTypeID: TIntegerField
+      FieldName = 'HeatTypeID'
+      Origin = 'HeatTypeID'
       Visible = False
     end
     object qryHeatStrokeID: TIntegerField
       FieldName = 'StrokeID'
       Origin = 'StrokeID'
+    end
+    object qryHeatEventID: TIntegerField
+      FieldName = 'EventID'
+      Origin = 'EventID'
+      Visible = False
+    end
+    object qryHeatCaption: TWideStringField
+      FieldName = 'Caption'
+      Origin = 'Caption'
+      Size = 128
+    end
+    object qryHeatStartTime: TTimeField
+      FieldName = 'StartTime'
+      Origin = 'StartTime'
     end
   end
   object qrySwimClub: TFDQuery
@@ -707,6 +682,7 @@ object CORE: TCORE
   end
   object tblDistance: TFDTable
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'DistanceID'
     Connection = SCM.scmConnection
     ResourceOptions.AssignedValues = [rvEscapeExpand]

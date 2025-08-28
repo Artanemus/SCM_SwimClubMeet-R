@@ -22,8 +22,8 @@ object IMG: TIMG
     Width = 24
     Height = 24
     Size = 24
-    Left = 592
-    Top = 224
+    Left = 328
+    Top = 240
   end
   object SVGCollection: TSVGIconImageCollection
     SVGIconItems = <

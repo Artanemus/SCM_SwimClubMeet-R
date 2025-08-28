@@ -3,35 +3,37 @@ object FrameEvent: TFrameEvent
   Top = 0
   Width = 640
   Height = 617
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -16
+  Font.Name = 'Segoe UI'
+  Font.Style = []
+  ParentFont = False
   TabOrder = 0
   object pnlgEvent: TPanel
     Left = 0
     Top = 0
-    Width = 393
+    Width = 576
     Height = 617
-    Align = alLeft
+    Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 393
     object gEvent: TDBAdvGrid
       Left = 0
       Top = 0
-      Width = 393
+      Width = 576
       Height = 617
       Cursor = crDefault
       Align = alClient
       Color = clWhite
-      ColCount = 2
+      ColCount = 20
+      DefaultRowHeight = 34
       DrawingStyle = gdsClassic
       FixedColor = clWhite
-      RowCount = 2
+      RowCount = 3
       FixedRows = 1
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clBlack
-      Font.Height = -12
-      Font.Name = 'Segoe UI'
-      Font.Style = []
       Options = [goVertLine, goHorzLine, goRangeSelect, goFixedRowDefAlign]
-      ParentFont = False
       ScrollBars = ssBoth
       TabOrder = 0
       OnKeyDown = gEventKeyDown
@@ -40,8 +42,8 @@ object FrameEvent: TFrameEvent
       HoverRowCells = [hcNormal, hcSelected]
       ActiveCellFont.Charset = DEFAULT_CHARSET
       ActiveCellFont.Color = 4474440
-      ActiveCellFont.Height = -12
-      ActiveCellFont.Name = 'Tahoma'
+      ActiveCellFont.Height = -16
+      ActiveCellFont.Name = 'Segoe UI'
       ActiveCellFont.Style = [fsBold]
       ActiveCellColor = 11565130
       ActiveCellColorTo = 11565130
@@ -94,11 +96,11 @@ object FrameEvent: TFrameEvent
         'Smaller than'
         'Clear')
       FixedColWidth = 20
-      FixedRowHeight = 22
+      FixedRowHeight = 34
       FixedFont.Charset = DEFAULT_CHARSET
       FixedFont.Color = clBlack
-      FixedFont.Height = -12
-      FixedFont.Name = 'Tahoma'
+      FixedFont.Height = -16
+      FixedFont.Name = 'Segoe UI'
       FixedFont.Style = [fsBold]
       FloatFormat = '%.2f'
       HoverButtons.Buttons = <>
@@ -179,12 +181,503 @@ object FrameEvent: TFrameEvent
           Width = 20
         end
         item
+          Alignment = taRightJustify
           Borders = []
           BorderPen.Color = clSilver
           ButtonHeight = 18
           CheckFalse = 'N'
           CheckTrue = 'Y'
           Color = clWindow
+          FieldName = 'EventID'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          HeaderFont.Charset = DEFAULT_CHARSET
+          HeaderFont.Color = 3881787
+          HeaderFont.Height = -12
+          HeaderFont.Name = 'Segoe UI'
+          HeaderFont.Style = []
+          PrintBorders = [cbTop, cbLeft, cbRight, cbBottom]
+          PrintFont.Charset = DEFAULT_CHARSET
+          PrintFont.Color = clWindowText
+          PrintFont.Height = -12
+          PrintFont.Name = 'Segoe UI'
+          PrintFont.Style = []
+          Width = 0
+        end
+        item
+          Alignment = taCenter
+          Borders = []
+          BorderPen.Color = clSilver
+          ButtonHeight = 18
+          CheckFalse = 'N'
+          CheckTrue = 'Y'
+          Color = clWhite
+          FieldName = 'EventNum'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'Segoe UI'
+          Font.Style = [fsBold]
+          Header = '#'
+          HeaderFont.Charset = DEFAULT_CHARSET
+          HeaderFont.Color = 3881787
+          HeaderFont.Height = -21
+          HeaderFont.Name = 'Segoe UI'
+          HeaderFont.Style = [fsBold]
+          HeaderAlignment = taCenter
+          PrintBorders = [cbTop, cbLeft, cbRight, cbBottom]
+          PrintFont.Charset = DEFAULT_CHARSET
+          PrintFont.Color = clWindowText
+          PrintFont.Height = -12
+          PrintFont.Name = 'Segoe UI'
+          PrintFont.Style = []
+          Width = 64
+        end
+        item
+          Borders = []
+          BorderPen.Color = clSilver
+          ButtonHeight = 18
+          CheckFalse = 'N'
+          CheckTrue = 'Y'
+          Color = clWhite
+          EditLength = 20
+          FieldName = 'luDistance'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          HeaderFont.Charset = DEFAULT_CHARSET
+          HeaderFont.Color = 3881787
+          HeaderFont.Height = -12
+          HeaderFont.Name = 'Segoe UI'
+          HeaderFont.Style = []
+          PrintBorders = [cbTop, cbLeft, cbRight, cbBottom]
+          PrintFont.Charset = DEFAULT_CHARSET
+          PrintFont.Color = clWindowText
+          PrintFont.Height = -12
+          PrintFont.Name = 'Segoe UI'
+          PrintFont.Style = []
+          Width = 126
+        end
+        item
+          Borders = []
+          BorderPen.Color = clSilver
+          ButtonHeight = 18
+          CheckFalse = 'N'
+          CheckTrue = 'Y'
+          Color = clWhite
+          EditLength = 20
+          FieldName = 'luStroke'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          HeaderFont.Charset = DEFAULT_CHARSET
+          HeaderFont.Color = 3881787
+          HeaderFont.Height = -12
+          HeaderFont.Name = 'Segoe UI'
+          HeaderFont.Style = []
+          PrintBorders = [cbTop, cbLeft, cbRight, cbBottom]
+          PrintFont.Charset = DEFAULT_CHARSET
+          PrintFont.Color = clWindowText
+          PrintFont.Height = -12
+          PrintFont.Name = 'Segoe UI'
+          PrintFont.Style = []
+          Width = 64
+        end
+        item
+          Alignment = taRightJustify
+          Borders = []
+          BorderPen.Color = clSilver
+          ButtonHeight = 18
+          CheckFalse = 'N'
+          CheckTrue = 'Y'
+          Color = clWhite
+          DataImageField = True
+          FieldName = 'EventStatusID'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          HeaderFont.Charset = DEFAULT_CHARSET
+          HeaderFont.Color = 3881787
+          HeaderFont.Height = -12
+          HeaderFont.Name = 'Segoe UI'
+          HeaderFont.Style = []
+          Images = IMG.SVGEventStatus
+          PrintBorders = [cbTop, cbLeft, cbRight, cbBottom]
+          PrintFont.Charset = DEFAULT_CHARSET
+          PrintFont.Color = clWindowText
+          PrintFont.Height = -12
+          PrintFont.Name = 'Segoe UI'
+          PrintFont.Style = []
+          Width = 64
+        end
+        item
+          Alignment = taRightJustify
+          Borders = []
+          BorderPen.Color = clSilver
+          ButtonHeight = 18
+          CheckFalse = 'N'
+          CheckTrue = 'Y'
+          Color = clWhite
+          FieldName = 'NomineeCount'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          HeaderFont.Charset = DEFAULT_CHARSET
+          HeaderFont.Color = 3881787
+          HeaderFont.Height = -12
+          HeaderFont.Name = 'Segoe UI'
+          HeaderFont.Style = []
+          PrintBorders = [cbTop, cbLeft, cbRight, cbBottom]
+          PrintFont.Charset = DEFAULT_CHARSET
+          PrintFont.Color = clWindowText
+          PrintFont.Height = -12
+          PrintFont.Name = 'Segoe UI'
+          PrintFont.Style = []
+          Width = 64
+        end
+        item
+          Alignment = taRightJustify
+          Borders = []
+          BorderPen.Color = clSilver
+          ButtonHeight = 18
+          CheckFalse = 'N'
+          CheckTrue = 'Y'
+          Color = clWhite
+          FieldName = 'EntrantCount'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          HeaderFont.Charset = DEFAULT_CHARSET
+          HeaderFont.Color = 3881787
+          HeaderFont.Height = -12
+          HeaderFont.Name = 'Segoe UI'
+          HeaderFont.Style = []
+          PrintBorders = [cbTop, cbLeft, cbRight, cbBottom]
+          PrintFont.Charset = DEFAULT_CHARSET
+          PrintFont.Color = clWindowText
+          PrintFont.Height = -12
+          PrintFont.Name = 'Segoe UI'
+          PrintFont.Style = []
+          Width = 64
+        end
+        item
+          Alignment = taRightJustify
+          Borders = []
+          BorderPen.Color = clSilver
+          ButtonHeight = 18
+          CheckFalse = 'N'
+          CheckTrue = 'Y'
+          Color = clWhite
+          FieldName = 'EventTypeID'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          HeaderFont.Charset = DEFAULT_CHARSET
+          HeaderFont.Color = 3881787
+          HeaderFont.Height = -12
+          HeaderFont.Name = 'Segoe UI'
+          HeaderFont.Style = []
+          PrintBorders = [cbTop, cbLeft, cbRight, cbBottom]
+          PrintFont.Charset = DEFAULT_CHARSET
+          PrintFont.Color = clWindowText
+          PrintFont.Height = -12
+          PrintFont.Name = 'Segoe UI'
+          PrintFont.Style = []
+          Width = 64
+        end
+        item
+          Borders = []
+          BorderPen.Color = clSilver
+          ButtonHeight = 18
+          CheckFalse = 'N'
+          CheckTrue = 'Y'
+          Color = clWhite
+          EditLength = 128
+          FieldName = 'Caption'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          HeaderFont.Charset = DEFAULT_CHARSET
+          HeaderFont.Color = 3881787
+          HeaderFont.Height = -12
+          HeaderFont.Name = 'Segoe UI'
+          HeaderFont.Style = []
+          PrintBorders = [cbTop, cbLeft, cbRight, cbBottom]
+          PrintFont.Charset = DEFAULT_CHARSET
+          PrintFont.Color = clWindowText
+          PrintFont.Height = -12
+          PrintFont.Name = 'Segoe UI'
+          PrintFont.Style = []
+          Width = 0
+        end
+        item
+          Borders = []
+          BorderPen.Color = clSilver
+          ButtonHeight = 18
+          CheckFalse = 'N'
+          CheckTrue = 'Y'
+          Color = clWhite
+          EditLength = 273
+          FieldName = 'ShortCaption'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          HeaderFont.Charset = DEFAULT_CHARSET
+          HeaderFont.Color = 3881787
+          HeaderFont.Height = -12
+          HeaderFont.Name = 'Segoe UI'
+          HeaderFont.Style = []
+          PrintBorders = [cbTop, cbLeft, cbRight, cbBottom]
+          PrintFont.Charset = DEFAULT_CHARSET
+          PrintFont.Color = clWindowText
+          PrintFont.Height = -12
+          PrintFont.Name = 'Segoe UI'
+          PrintFont.Style = []
+          Width = 0
+        end
+        item
+          Borders = []
+          BorderPen.Color = clSilver
+          ButtonHeight = 18
+          CheckFalse = 'N'
+          CheckTrue = 'Y'
+          Color = clWhite
+          FieldName = 'StartTime'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          HeaderFont.Charset = DEFAULT_CHARSET
+          HeaderFont.Color = 3881787
+          HeaderFont.Height = -12
+          HeaderFont.Name = 'Segoe UI'
+          HeaderFont.Style = []
+          PrintBorders = [cbTop, cbLeft, cbRight, cbBottom]
+          PrintFont.Charset = DEFAULT_CHARSET
+          PrintFont.Color = clWindowText
+          PrintFont.Height = -12
+          PrintFont.Name = 'Segoe UI'
+          PrintFont.Style = []
+          Width = 0
+        end
+        item
+          Alignment = taRightJustify
+          Borders = []
+          BorderPen.Color = clSilver
+          ButtonHeight = 18
+          CheckFalse = 'N'
+          CheckTrue = 'Y'
+          Color = clWhite
+          FieldName = 'SessionID'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          HeaderFont.Charset = DEFAULT_CHARSET
+          HeaderFont.Color = 3881787
+          HeaderFont.Height = -12
+          HeaderFont.Name = 'Segoe UI'
+          HeaderFont.Style = []
+          PrintBorders = [cbTop, cbLeft, cbRight, cbBottom]
+          PrintFont.Charset = DEFAULT_CHARSET
+          PrintFont.Color = clWindowText
+          PrintFont.Height = -12
+          PrintFont.Name = 'Segoe UI'
+          PrintFont.Style = []
+          Width = 0
+        end
+        item
+          Alignment = taRightJustify
+          Borders = []
+          BorderPen.Color = clSilver
+          ButtonHeight = 18
+          CheckFalse = 'N'
+          CheckTrue = 'Y'
+          Color = clWhite
+          FieldName = 'StrokeID'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          HeaderFont.Charset = DEFAULT_CHARSET
+          HeaderFont.Color = 3881787
+          HeaderFont.Height = -12
+          HeaderFont.Name = 'Segoe UI'
+          HeaderFont.Style = []
+          PrintBorders = [cbTop, cbLeft, cbRight, cbBottom]
+          PrintFont.Charset = DEFAULT_CHARSET
+          PrintFont.Color = clWindowText
+          PrintFont.Height = -12
+          PrintFont.Name = 'Segoe UI'
+          PrintFont.Style = []
+          Width = 0
+        end
+        item
+          Alignment = taRightJustify
+          Borders = []
+          BorderPen.Color = clSilver
+          ButtonHeight = 18
+          CheckFalse = 'N'
+          CheckTrue = 'Y'
+          Color = clWhite
+          FieldName = 'DistanceID'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          HeaderFont.Charset = DEFAULT_CHARSET
+          HeaderFont.Color = 3881787
+          HeaderFont.Height = -12
+          HeaderFont.Name = 'Segoe UI'
+          HeaderFont.Style = []
+          PrintBorders = [cbTop, cbLeft, cbRight, cbBottom]
+          PrintFont.Charset = DEFAULT_CHARSET
+          PrintFont.Color = clWindowText
+          PrintFont.Height = -12
+          PrintFont.Name = 'Segoe UI'
+          PrintFont.Style = []
+          Width = 0
+        end
+        item
+          Alignment = taRightJustify
+          Borders = []
+          BorderPen.Color = clSilver
+          ButtonHeight = 18
+          CheckFalse = 'N'
+          CheckTrue = 'Y'
+          Color = clWhite
+          FieldName = 'RoundID'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          HeaderFont.Charset = DEFAULT_CHARSET
+          HeaderFont.Color = 3881787
+          HeaderFont.Height = -12
+          HeaderFont.Name = 'Segoe UI'
+          HeaderFont.Style = []
+          PrintBorders = [cbTop, cbLeft, cbRight, cbBottom]
+          PrintFont.Charset = DEFAULT_CHARSET
+          PrintFont.Color = clWindowText
+          PrintFont.Height = -12
+          PrintFont.Name = 'Segoe UI'
+          PrintFont.Style = []
+          Width = 0
+        end
+        item
+          Alignment = taRightJustify
+          Borders = []
+          BorderPen.Color = clSilver
+          ButtonHeight = 18
+          CheckFalse = 'N'
+          CheckTrue = 'Y'
+          Color = clWhite
+          FieldName = 'GenderID'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          HeaderFont.Charset = DEFAULT_CHARSET
+          HeaderFont.Color = 3881787
+          HeaderFont.Height = -12
+          HeaderFont.Name = 'Segoe UI'
+          HeaderFont.Style = []
+          PrintBorders = [cbTop, cbLeft, cbRight, cbBottom]
+          PrintFont.Charset = DEFAULT_CHARSET
+          PrintFont.Color = clWindowText
+          PrintFont.Height = -12
+          PrintFont.Name = 'Segoe UI'
+          PrintFont.Style = []
+          Width = 64
+        end
+        item
+          Alignment = taRightJustify
+          Borders = []
+          BorderPen.Color = clSilver
+          ButtonHeight = 18
+          CheckFalse = 'N'
+          CheckTrue = 'Y'
+          Color = clWhite
+          FieldName = 'ParalympicTypeID'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          HeaderFont.Charset = DEFAULT_CHARSET
+          HeaderFont.Color = 3881787
+          HeaderFont.Height = -12
+          HeaderFont.Name = 'Segoe UI'
+          HeaderFont.Style = []
+          PrintBorders = [cbTop, cbLeft, cbRight, cbBottom]
+          PrintFont.Charset = DEFAULT_CHARSET
+          PrintFont.Color = clWindowText
+          PrintFont.Height = -12
+          PrintFont.Name = 'Segoe UI'
+          PrintFont.Style = []
+          Width = 0
+        end
+        item
+          Alignment = taRightJustify
+          Borders = []
+          BorderPen.Color = clSilver
+          ButtonHeight = 18
+          CheckFalse = 'N'
+          CheckTrue = 'Y'
+          Color = clWhite
+          FieldName = 'luEventTypeID'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          HeaderFont.Charset = DEFAULT_CHARSET
+          HeaderFont.Color = 3881787
+          HeaderFont.Height = -12
+          HeaderFont.Name = 'Segoe UI'
+          HeaderFont.Style = []
+          PrintBorders = [cbTop, cbLeft, cbRight, cbBottom]
+          PrintFont.Charset = DEFAULT_CHARSET
+          PrintFont.Color = clWindowText
+          PrintFont.Height = -12
+          PrintFont.Name = 'Segoe UI'
+          PrintFont.Style = []
+          Width = 64
+        end
+        item
+          Alignment = taRightJustify
+          Borders = []
+          BorderPen.Color = clSilver
+          ButtonHeight = 18
+          CheckFalse = 'N'
+          CheckTrue = 'Y'
+          Color = clWhite
+          FieldName = 'EventCategoryID'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -12
@@ -203,6 +696,7 @@ object FrameEvent: TFrameEvent
           PrintFont.Style = []
           Width = 64
         end>
+      DataSource = CORE.dsEvent
       InvalidPicture.Data = {
         055449636F6E0000010001002020200000000000A81000001600000028000000
         2000000040000000010020000000000000100000000000000000000000000000
@@ -340,8 +834,27 @@ object FrameEvent: TFrameEvent
         80000001C0000003C0000003E0000007F000000FF800001FFC00003FFF0000FF
         FFC003FF}
       ShowUnicode = False
+      ExplicitLeft = 2
       ColWidths = (
         20
+        0
+        64
+        126
+        64
+        64
+        64
+        64
+        64
+        0
+        0
+        0
+        0
+        0
+        0
+        0
+        64
+        0
+        64
         64)
     end
   end
