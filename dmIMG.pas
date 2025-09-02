@@ -32,6 +32,7 @@ type
     FontsCollection: TIconFontsImageCollection;
   private
     { Private declarations }
+
   public
     { Public declarations }
   end;

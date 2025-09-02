@@ -25,7 +25,8 @@ object CORE: TCORE
   end
   object qrySession: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
+    BeforePost = qrySessionBeforePost
+    AfterScroll = qrySessionAfterScroll
     OnNewRecord = qrySessionNewRecord
     Indexes = <
       item
@@ -44,7 +45,7 @@ object CORE: TCORE
     MasterSource = dsSwimClub
     MasterFields = 'SwimClubID'
     DetailFields = 'SwimClubID'
-    Connection = SCM.scmConnection
+    Connection = TempConnection
     FormatOptions.AssignedValues = [fvFmtDisplayDateTime]
     FormatOptions.FmtDisplayDateTime = 'YYYY-MM-DD hh:nn'
     UpdateOptions.AssignedValues = [uvEInsert]
@@ -102,10 +103,54 @@ object CORE: TCORE
       '*/')
     Left = 176
     Top = 72
+    object qrySessionSessionID: TFDAutoIncField
+      FieldName = 'SessionID'
+      Origin = 'SessionID'
+      ProviderFlags = [pfInWhere, pfInKey]
+    end
+    object qrySessionSessionDT: TSQLTimeStampField
+      FieldName = 'SessionDT'
+      Origin = 'SessionDT'
+      OnGetText = qrySessionSessionDTGetText
+      OnSetText = qrySessionSessionDTSetText
+      DisplayFormat = 'YYYY-MM-DD hh:nn'
+      EditMask = '!9999-90-00 90:99;1;0'
+    end
+    object qrySessionCaption: TWideStringField
+      FieldName = 'Caption'
+      Origin = 'Caption'
+      Size = 128
+    end
+    object qrySessionNomineeCount: TIntegerField
+      FieldName = 'NomineeCount'
+      Origin = 'NomineeCount'
+    end
+    object qrySessionEntrantCount: TIntegerField
+      FieldName = 'EntrantCount'
+      Origin = 'EntrantCount'
+    end
+    object qrySessionCreatedOn: TSQLTimeStampField
+      FieldName = 'CreatedOn'
+      Origin = 'CreatedOn'
+      DisplayFormat = 'YYYY-MM-DD hh:nn'
+    end
+    object qrySessionModifiedOn: TSQLTimeStampField
+      FieldName = 'ModifiedOn'
+      Origin = 'ModifiedOn'
+      DisplayFormat = 'YYYY-MM-DD hh:nn'
+    end
+    object qrySessionSwimClubID: TIntegerField
+      FieldName = 'SwimClubID'
+      Origin = 'SwimClubID'
+    end
+    object qrySessionSessionStatusID: TIntegerField
+      FieldName = 'SessionStatusID'
+      Origin = 'SessionStatusID'
+    end
   end
   object qryEvent: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
+    AfterScroll = qryEventAfterScroll
     Indexes = <
       item
         Active = True
@@ -118,7 +163,7 @@ object CORE: TCORE
     MasterSource = dsSession
     MasterFields = 'SessionID'
     DetailFields = 'SessionID'
-    Connection = SCM.scmConnection
+    Connection = TempConnection
     FormatOptions.AssignedValues = [fvFmtDisplayTime]
     FormatOptions.FmtDisplayTime = 'hh:nn'
     UpdateOptions.UpdateTableName = 'SwimClubMeet2..Event'
@@ -284,6 +329,7 @@ object CORE: TCORE
   end
   object qryHeat: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    AfterScroll = qryHeatAfterScroll
     Indexes = <
       item
         Active = True
@@ -300,7 +346,7 @@ object CORE: TCORE
     IndexName = 'indxEvent_DESC'
     MasterFields = 'EventID'
     DetailFields = 'EventID'
-    Connection = SCM.scmConnection
+    Connection = TempConnection
     UpdateOptions.AssignedValues = [uvCheckRequired]
     UpdateOptions.CheckRequired = False
     UpdateOptions.UpdateTableName = 'SwimClubMeet2..Heat'
@@ -379,9 +425,9 @@ object CORE: TCORE
   end
   object qrySwimClub: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
+    AfterScroll = qrySwimClubAfterScroll
     IndexFieldNames = 'SwimClubID'
-    Connection = SCM.scmConnection
+    Connection = TempConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet2..SwimClub'
     UpdateOptions.KeyFields = 'SwimClubID'
     SQL.Strings = (
@@ -427,6 +473,7 @@ object CORE: TCORE
     MasterSource = dsHeat
     MasterFields = 'HeatID'
     DetailFields = 'HeatID'
+    Connection = TempConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet2.dbo.Lane'
     UpdateOptions.KeyFields = 'LaneID'
     SQL.Strings = (
@@ -493,6 +540,7 @@ object CORE: TCORE
     MasterSource = dsEvent
     MasterFields = 'EventID'
     DetailFields = 'EventID'
+    Connection = TempConnection
     FormatOptions.AssignedValues = [fvFmtDisplayTime]
     FormatOptions.FmtDisplayTime = 'nn.ss.zzz'
     UpdateOptions.UpdateTableName = 'SwimClubMeet2..Nominee'
@@ -542,6 +590,7 @@ object CORE: TCORE
     MasterSource = dsLane
     MasterFields = 'LaneID'
     DetailFields = 'LaneID'
+    Connection = TempConnection
     FormatOptions.AssignedValues = [fvFmtDisplayDateTime, fvFmtDisplayTime]
     FormatOptions.FmtDisplayTime = 'nn:ss.zzz'
     UpdateOptions.AssignedValues = [uvEInsert, uvCheckRequired]
@@ -592,6 +641,7 @@ object CORE: TCORE
     MasterSource = dsLane
     MasterFields = 'LaneID'
     DetailFields = 'LaneID'
+    Connection = TempConnection
     SQL.Strings = (
       'SELECT [SplitTimeID]'
       '      ,[WatchNum]'
@@ -619,6 +669,7 @@ object CORE: TCORE
     MasterSource = dsLane
     MasterFields = 'LaneID'
     DetailFields = 'LaneID'
+    Connection = TempConnection
     SQL.Strings = (
       ''
       ''
@@ -646,7 +697,7 @@ object CORE: TCORE
         DescFields = 'TeamID'
       end>
     IndexName = 'mcTeam_DESC'
-    Connection = SCM.scmConnection
+    Connection = TempConnection
     SQL.Strings = (
       'DECLARE @TeamID AS INTEGER;'
       'SET @TeamID = :TEAMID;'
@@ -672,7 +723,7 @@ object CORE: TCORE
   object tblStroke: TFDTable
     ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'StrokeID'
-    Connection = SCM.scmConnection
+    Connection = TempConnection
     ResourceOptions.AssignedValues = [rvEscapeExpand]
     UpdateOptions.UpdateTableName = 'SwimClubMeet2..Stroke'
     UpdateOptions.KeyFields = 'StrokeID'
@@ -682,9 +733,8 @@ object CORE: TCORE
   end
   object tblDistance: TFDTable
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'DistanceID'
-    Connection = SCM.scmConnection
+    Connection = TempConnection
     ResourceOptions.AssignedValues = [rvEscapeExpand]
     UpdateOptions.UpdateTableName = 'SwimClubMeet2..Distance'
     UpdateOptions.KeyFields = 'DistanceID'
@@ -709,7 +759,6 @@ object CORE: TCORE
   end
   object qryMember: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     Indexes = <
       item
         Active = True
@@ -721,7 +770,7 @@ object CORE: TCORE
     MasterSource = dsMemberLink
     MasterFields = 'MemberID'
     DetailFields = 'MemberID'
-    Connection = SCM.scmConnection
+    Connection = TempConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet2.dbo.Member'
     UpdateOptions.KeyFields = 'MemberID'
     SQL.Strings = (
@@ -830,11 +879,10 @@ object CORE: TCORE
   end
   object qryMemberLink: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     MasterSource = dsSwimClub
     MasterFields = 'SwimClubID'
     DetailFields = 'SwimClubID'
-    Connection = SCM.scmConnection
+    Connection = TempConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet2.dbo.MemberLink'
     UpdateOptions.KeyFields = 'SwimClubID;MemberID'
     SQL.Strings = (
@@ -844,5 +892,13 @@ object CORE: TCORE
       '  FROM [SwimClubMeet2].[dbo].[MemberLink]')
     Left = 744
     Top = 72
+  end
+  object TempConnection: TFDConnection
+    Params.Strings = (
+      'ConnectionDef=MSSQL_SwimClubMeet2')
+    Connected = True
+    LoginPrompt = False
+    Left = 432
+    Top = 32
   end
 end

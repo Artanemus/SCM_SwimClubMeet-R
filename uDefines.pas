@@ -15,6 +15,7 @@ const
    SCM_SCROLL_EVENT  = WM_USER + 8;
    SCM_SCROLL_HEAT  = WM_USER + 9;
    SCM_SCROLL_LANE  = WM_USER + 10;
+   SCM_CONNECT = WM_USER + 11;
 
  type
  scmSendToFileType = (sftPDF, sftXLS, sftHTML, sftIMG, sftNA);

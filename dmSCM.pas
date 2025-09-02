@@ -283,8 +283,6 @@ begin
   end;
 end;
 
-
-
 procedure TSCM.ActivateTable;
 begin
   // -----------------------------------------------------------
@@ -317,7 +315,6 @@ begin
         'not all essential tables opened successfully!', mtWarning, [mbOK], 0);
   end;
 end;
-
 
 function TSCM.ClearLane(aIndvTeamID: integer; aEventType: scmEventType): integer;
 var
@@ -479,7 +476,6 @@ begin
   if not VarIsNull(v) and not VarIsEmpty(v) and (v > 0) then result := v;
 
 end;
-
 
 function TSCM.CountTEAMNominee: integer;
 begin
@@ -832,7 +828,6 @@ begin
   result := true;
 end;
 
-
 function TSCM.FirstLaneNum(aHeatID: integer): integer;
 var
   SQL: string;
@@ -869,7 +864,6 @@ begin
   v := SCM.scmConnection.ExecSQLScalar(s);
   if not VarIsNull(v) and not VarIsEmpty(v) then result := v;
 end;
-
 
 function TSCM.GetDCodeTypeSCM(): integer;
 var
@@ -1443,7 +1437,6 @@ begin
       PostMessage(TForm(Owner).Handle, SCM_TEAMENTRANTSCROLL, 0, 0);
 end;
 
-
 procedure TSCM.ReadPreferences(IniFileName: string);
 var
   iFile: TIniFile;
@@ -1473,8 +1466,6 @@ begin
 
   iFile.Free;
 end;
-
-
 
 function TSCM.RepairLanes(aHeatID: integer): integer;
 var
@@ -1713,7 +1704,6 @@ begin
   SwapLanes(IDA, IDB, EventType);
   result := true;
 end;
-
 
 function TSCM.TeamSplit_HeatStatusID(aSplitID: integer): integer;
 var

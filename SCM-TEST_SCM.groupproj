@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{9F1597A8-BF76-445A-A40C-BD2828758270}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="SwimClubMeet2.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\SCM_SwimClubMeet_TestTMS\SCM_Test_TMS.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="SwimClubMeet2">
+        <MSBuild Projects="SwimClubMeet2.dproj"/>
+    </Target>
+    <Target Name="SwimClubMeet2:Clean">
+        <MSBuild Projects="SwimClubMeet2.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="SwimClubMeet2:Make">
+        <MSBuild Projects="SwimClubMeet2.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="SCM_Test_TMS">
+        <MSBuild Projects="..\SCM_SwimClubMeet_TestTMS\SCM_Test_TMS.dproj"/>
+    </Target>
+    <Target Name="SCM_Test_TMS:Clean">
+        <MSBuild Projects="..\SCM_SwimClubMeet_TestTMS\SCM_Test_TMS.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="SCM_Test_TMS:Make">
+        <MSBuild Projects="..\SCM_SwimClubMeet_TestTMS\SCM_Test_TMS.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="SwimClubMeet2;SCM_Test_TMS"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="SwimClubMeet2:Clean;SCM_Test_TMS:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="SwimClubMeet2:Make;SCM_Test_TMS:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

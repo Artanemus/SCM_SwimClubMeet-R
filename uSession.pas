@@ -11,9 +11,8 @@ uses
   FireDAC.Comp.Client;
 
 /// <summary>
-///  Only SCM state is asserted.
-///  Only call here if CORE is assigned and IsActive.
-///  ...
+///  Only call here if SCM is assigned and connected...
+///  ... AND CORE is assigned and IsActive.
 /// </summary>
 ///
 function AllEventsAreClosed: Boolean;
@@ -32,7 +31,7 @@ function IsLocked: Boolean;
 function Locate(SessionID: integer): Boolean;
 function PK(): integer; // NO CHECKS. RTNS: Primary key.
 function RenumberEvents(DoLocate: Boolean = true): integer;
-function StartDT: TDateTime;
+function SessionDT: TDateTime;
 
 procedure DetailTBLs_DisableCNTRLs;
 procedure DetailTBLs_ApplyMaster;
@@ -41,9 +40,8 @@ procedure SetVisibilityOfLocked(IsVisible: Boolean);
 procedure SetEntrantCount();
 procedure SetNomineeCount();
 procedure SetSessionStatusID(aSessionStatusID: Integer);
-procedure SortSession();
+//procedure SortSession();
 procedure NewSession();
-
 //procedure EditSession();
 //procedure ReSyncSession();
 
@@ -260,8 +258,6 @@ begin
   end;
 end;
 
-procedure
-
 function EntrantCount: integer;
 begin
   result := CORE.qrySession.FieldByName('EntrantCount').AsInteger;
@@ -411,8 +407,8 @@ end;
 
 procedure SetVisibilityOfLocked(IsVisible: Boolean);
 /// <param name="IsVisible">
-///  If true - filters out locked sessions in CORE.qrySession.
-///  If true - changes indexFieldName to hide locked sessions.
+///  true: show both locked and unlocked sessions.
+///  false: hides locked sessions.
 /// </param>
 var
 ID: integer;
@@ -426,24 +422,13 @@ begin
   CORE.qrySession.DisableControls;
   try
     ID := uSession.PK;
-
-    //  Method1....  DEPRECIATED. See commented SQL script in qrySession.
-    //    CORE.qrySession.Close;
-    //    CORE.qrySession.ParamByName('TOGGLE').AsBoolean := IsVisible;
-    //    CORE.qrySession.Prepare;
-    //    CORE.qrySession.Open;
-
-    // working Master-Detail index :CORE.qrySession.IndexName := 'mcSwimClub_DESC';
-
-    // Method2. CHECK Master-Detail is still working.
-    CORE.qrySession.IndexesActive := false;
-
     try
       if IsVisible then
-        CORE.qrySession.IndexName := 'idxSortDESCHideLocked'
+        CORE.qrySession.IndexName := 'indxShowAll'
       else
-        CORE.qrySession.IndexName := 'idxSortDESCShowLocked';
-      CORE.qrySession.IndexesActive := true;
+        CORE.qrySession.IndexName := 'indxHideLocked';
+      if not CORE.qrySession.IndexesActive then
+        CORE.qrySession.IndexesActive := true;
     except on E: Exception do
       begin
         E.Message := E.Message +sLineBreak+ 'FATAL - Session.IndexName ';
@@ -451,20 +436,8 @@ begin
       end;
     end;
 
-    found := uSession.Locate(ID);
-
-      { toggle visibility of locked sessions
-        if the selected session is no longer visible.. a ONSCROLL event
-        will have occurred in CORE.
-        // if Assigned(Owner) then
-        //    PostMessage(TForm(Owner).Handle, SCM_SESSION_SCROLL, 0, 0);
-
-      }
-
-    // ASSERT MASTER-DETAIL STATE.
+    // Activate Detailed tables
     CORE.qryEvent.ApplyMaster;
-    if found then ; // locate to event?.
-
     CORE.qryNominee.ApplyMaster;
     CORE.qryHeat.ApplyMaster;
     CORE.qryLane.ApplyMaster;
@@ -479,9 +452,9 @@ begin
   end;
 end;
 
-function StartDT: TDateTime;
+function SessionDT: TDateTime;
 begin
-  result := CORE.qrySession.FieldByName('StartDT').AsDateTime;
+  result := CORE.qrySession.FieldByName('SessionDT').AsDateTime;
 end;
 
 procedure NewSession();
@@ -506,7 +479,7 @@ begin
       CORE.qrySession.Insert;
       { // handled by OnNewRecord in dmCORE.
       CORE.qrySession.FieldByName('SwimClubID').AsInteger := uSwimClub.PK;
-      CORE.qrySession.FieldByName('StartDT').AsDateTime := Now();
+      CORE.qrySession.FieldByName('SessionDT').AsDateTime := Now();
       CORE.qrySession.FieldByName('CreatedOn').AsDateTime := Now();
       CORE.qrySession.FieldByName('SessionStatusID').AsInteger := 1; // Open.
       }

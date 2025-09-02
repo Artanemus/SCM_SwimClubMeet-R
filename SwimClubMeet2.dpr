@@ -109,7 +109,8 @@ uses
   rptTimeKeeperReportB in 'REPORTS\rptTimeKeeperReportB.pas' {TimeKeeperReportB: TDataModule},
   f_FrameMember in 'f_FrameMember.pas' {FrameMember: TFrame},
   f_FrameNominate in 'f_FrameNominate.pas' {FrameNominate: TFrame},
-  f_FrameTeam in 'f_FrameTeam.pas' {FrameTeam2: TFrame};
+  f_FrameTeam in 'f_FrameTeam.pas' {FrameTeam2: TFrame},
+  uSettings in 'uSettings.pas';
 
 {$R *.res}
 

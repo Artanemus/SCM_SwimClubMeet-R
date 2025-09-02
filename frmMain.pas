@@ -3,7 +3,7 @@ unit frmMain;
   RUNNING FireDAC Monitor
   RUN FireDAC Monitor tool
   Place TFDMoniRemoteClientLink  onto main form
-  Insert into connection definition (SEE - SCMSimpleConnect.pas)
+  Insert into connection definition
 }
 // {$IFDEF DEBUG}
 // fDBConnection.Params.Add('MonitorBy=Remote');
@@ -40,7 +40,7 @@ uses
   frame_INDV, frame_TEAM, SCMHelpers, dmSCM, FireDAC.UI.Intf,
   FireDAC.VCLUI.Error, FireDAC.Stan.Error, FireDAC.Stan.Intf, FireDAC.Comp.UI,
   FireDAC.Stan.Option, FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Phys,
-  FireDAC.Comp.Client, f_FrameSession, f_FrameHeat;
+  FireDAC.Comp.Client, f_FrameSession, f_FrameHeat, uSettings;
 
 type
 
@@ -288,6 +288,7 @@ type
     SwimClub_Manage: TAction;
     File_ExportSession: TAction;
     actnConnect: TAction;
+    scmFDGUIxErrorDialog: TFDGUIxErrorDialog;
     procedure ActionManager1Update(Action: TBasicAction; var Handled: boolean);
     procedure actnConnectExecute(Sender: TObject);
     procedure actnConnectUpdate(Sender: TObject);
@@ -330,7 +331,6 @@ type
     procedure Tools_SwimmercategoryExecute(Sender: TObject);
     procedure Tools_SwimmercategoryUpdate(Sender: TObject);
   private
-    bootprogress: TBootProgress;
     fFrameBgColor: TColor;
     // TRACK the MemberID of the last known member to have their
     // IsQualified status checked via Nominee_UpdateCheckListBoxQualified();
@@ -345,8 +345,14 @@ type
     fSessionClosedFontColor: TColor;
     // number of members - called OnCreate and after frmManageMembers dialogue
 		fCountOfMembers: integer;
-    fDoLoginOnBoot: boolean;
 		prefEnableDCode: boolean;
+
+    // -----------------------------------------
+    // active params (version 2.)
+    fIsBooting: boolean;
+    // -----------------------------------------
+
+
 
     SCMEventList: TObjectList;
     function AssertConnection(): boolean; // Check connection to MSSQL DATABASE
@@ -355,12 +361,16 @@ type
     // Miscellaneous - uncatagorized
     procedure GetSCMPreferences();
     // REFRESH
+
+    procedure LoadSettings;
+
     // ENTRANT_GRID Toggle column display
     procedure ToggleDCode(DoEnable: boolean);
     procedure ToggleDivisions(SetVisible: boolean);
     procedure ToggleSwimmerCAT(SetVisible: boolean);
 
   protected
+    procedure MSG_Connect(var Msg: TMessage); message SCM_CONNECT;
 
   public
     { Public declarations }
@@ -466,7 +476,7 @@ var
   aLoginDlg: TLogin;  // 24/04/2020 uses simple INI access
   NumOfLanes: integer;
 begin
-  fDoLoginOnBoot := false; // Do Once...
+  fIsBooting := false; // Do Once...
   // -----------------------------------------------------------
   // 02/05/2025 connect - %AppData%\Artanemus\SCM\FDConnectionDefs.ini
   // -----------------------------------------------------------
@@ -561,53 +571,37 @@ procedure TMain.FormCreate(Sender: TObject);
 var
   str: string;
   passed: boolean;
-//  aBasicLogin: TBasicLogin;
-  // 24/04/2020 uses simple INI access
   result: TModalResult;
   hf: NativeUInt;
   col: TColumn;
 begin
-  bootprogress := nil;
   SCMEventList := nil;
-  fDoStatusBarUpdate := false; // false : aborts StatusBar Update procedure.
-  fSCMisInitializing := true;
-  fSessionClosedFontColor := clWebTomato; // Use to custom draw closed session
-  fSessionClosedBgColor := clAppWorkSpace; // Use to custom draw closed session
-  fFrameBgColor := clAppWorkSpace;
-  fMyInternetConnected := true;
-  fCountOfMembers := 0;
-	prefEnableDCode := false;
 
+  fDoStatusBarUpdate := false; // false : aborts StatusBar repaints.
+  fIsBooting := true; // set false OnShow and OnConnect.
 
-	(*
-  // A Class that uses JSON to read and write application configuration
-  Settings := TPrgSetting.Create;
+//  fSCMisInitializing := true;
+//  fSessionClosedFontColor := clWebTomato; // Use to custom draw closed session
+//  fSessionClosedBgColor := clAppWorkSpace; // Use to custom draw closed session
+//  fFrameBgColor := clAppWorkSpace;
+//  fMyInternetConnected := true;
+//  fCountOfMembers := 0;
+//	prefEnableDCode := false;
 
-	{ If settings FILE doesn't exsist in %AppData% - it will be created and
-		default data will be assigned. }
-
-	if Assigned(Settings) then
-  begin
-    LoadSettings;
-    // if true the login DLG will appear on first boot-up.
-    // TForm.FormShow takes care of this.
-    if Settings.DoLoginOnBoot then
-			fDoLoginOnBoot := true;
-	end;
-	*)
+  { A Class that uses JSON to read and write application configuration }
+  Settings := TAppSetting.Create;
+  if Assigned(Settings) then LoadSettings;
 
   try
     SCM := TSCM.Create(self);
   finally
 		if not Assigned(SCM) then
     begin
-			MessageDlg('Error creating SCM!', mtError,  [mbOK], 0);
+			MessageDlg('Error creating SCM data module!', mtError,  [mbOK], 0);
 			Application.Terminate();
     end;
   end;
-
 	if not Assigned(SCM) then exit;
-
 
 	// CREATE IMAGE COLLECTION DATAMODULE.
   { Project.Forms - Auto-create form IMG has been set.}
@@ -629,53 +623,6 @@ begin
         // Handle exception if needed.
     end;
 	end;
-
-	// -----------------------------------------------------------
-  // 24/04/2020 Basic login using simple INI access
-  // to the FireDAC connection definition file
-  // -----------------------------------------------------------
-//  aBasicLogin := TBasicLogin.Create(self);
-//	aBasicLogin.DBName := 'SwimClubMeet2';
-//  aBasicLogin.DBConnection := SCM.scmConnection;
-//  result := aBasicLogin.ShowModal;
-//  aBasicLogin.Free;
-
-  // user has aborted .
-  if (result = mrAbort) or (result = mrCancel) then
-  begin
-    if (SCM.scmConnection.Connected) then SCM.scmConnection.Close;
-    SCM.Free;
-    SCM := nil;
-    Application.Terminate;
-    exit;
-  end;
-
-  bootprogress := TBootProgress.Create(self);
-  bootprogress.Show;
-  Application.ProcessMessages;
-
-  bootprogress.lblProgress.Caption := 'Activating SQL Server tables.';
-  bootprogress.lblProgress.Repaint;
-  Application.ProcessMessages;
-
-  // scmConnectionAfterConnect calls ActivateTables
-  SCM.ActivateTable;
-
-  // then test 'IsActive
-  if not SCM.IsActive then
-  begin
-    MessageDlg('An error occurred during MSSQL table activation.' + sLineBreak +
-      'The application will terminate!', mtError, [mbOK], 0);
-
-    // play it safe and destroy this form
-    FreeAndNil(bootprogress);
-    // note: cleans and destroys SCM
-    Application.Terminate;
-  end;
-
-  bootprogress.lblProgress.Caption := 'Tables Activated ... OK.';
-  bootprogress.lblProgress.Repaint;
-  Application.ProcessMessages;
 
   // NOMINEE -
   // reset last known qualified MemberID to unknown
@@ -707,9 +654,6 @@ begin
   // LEGACY depreciated - left here for reference only.
   // INDV.Grid->DefaultDrawing = false;
 
-  bootprogress.lblProgress.Caption := 'Checking user preferences.';
-  bootprogress.lblProgress.Repaint;
-  Application.ProcessMessages;
 
   // -----------------------------------------------------------------------
   // DO ONCE ... TEST FOR Artanemus\ in USER\APPDATA
@@ -758,18 +702,12 @@ begin
     end;
   end;
 
-  bootprogress.lblProgress.Caption := 'Loading user preferences.';
-  bootprogress.lblProgress.Repaint;
-  Application.ProcessMessages;
 
   // ====================================================================
   // PREFERENCE - SETUP
   if (passed) then GetSCMPreferences();
   // ====================================================================
 
-  bootprogress.lblProgress.Caption := 'Final checks on database integerity.';
-  bootprogress.lblProgress.Repaint;
-  Application.ProcessMessages;
 
   pnlPageControl.Caption := '';
 
@@ -793,9 +731,6 @@ begin
     end;
   end;
 
-  bootprogress.lblProgress.Caption := 'Construct GUI components.';
-  bootprogress.lblProgress.Repaint;
-  Application.ProcessMessages;
 
   // enable hints
   Application.ShowHint := true;
@@ -895,11 +830,8 @@ begin
   // if Assigned(SCM) then
   // SCM.scmConnection.ConnectionIntf.Tracing := false;
 {$ENDIF}
-  if Assigned(bootprogress) then
-  begin
-    bootprogress.Close;
-    bootprogress.Free;
-  end;
+
+
 
   if Assigned(SCMEventList) then
   begin
@@ -937,30 +869,30 @@ end;
 
 procedure TMain.FormShow(Sender: TObject);
 begin
-  if Assigned(bootprogress) then
-  begin
-    bootprogress.Close;
-    bootprogress.Free;
-    bootprogress := nil;
-  end;
+
+  // CONNECT TO DATABASE SERVER: open SwmiClubMeet database.
+  if Assigned(Settings) then
+    if Settings.DoLoginOnBoot and fIsBooting then
+          PostMessage(Self.Handle, SCM_CONNECT, 0 , 0 ) ;
+  fIsBooting := false; // DO ONCE.
 
   // S T A T U S B A R .
-  fDoStatusBarUpdate := true; // flag set false after SCM_StatusBarExecute.
+  fDoStatusBarUpdate := true;
   SCM_StatusBar.Update;
-  SCM_StatusBar.Execute;
+  SCM_StatusBar.Execute; // flag set false
 
   if Session_Grid.CanFocus then Session_Grid.SetFocus;
 
-  INDV.Align := alClient;
-  INDV.Visible := true;
-  TEAM.Align := alClient;
-  TEAM.Visible := false;
+//  INDV.Align := alClient;
+//  INDV.Visible := true;
+//  TEAM.Align := alClient;
+//  TEAM.Visible := false;
 
   { Find the FINA DCode 'alias' for the simplified disqualification. DO ONCE.}
-  INDV.fIsScratchedDCode := SCM.GetIsScratchedDCode;
-  INDV.fIsDisqualifiedDCode := SCM.GetIsDisqualifiedDCode;
-  TEAM.fIsScratchedDCode := SCM.GetIsScratchedDCode;
-	TEAM.fIsDisqualifiedDCode := SCM.GetIsDisqualifiedDCode;
+//  INDV.fIsScratchedDCode := SCM.GetIsScratchedDCode;
+//  INDV.fIsDisqualifiedDCode := SCM.GetIsDisqualifiedDCode;
+//  TEAM.fIsScratchedDCode := SCM.GetIsScratchedDCode;
+//	TEAM.fIsDisqualifiedDCode := SCM.GetIsDisqualifiedDCode;
 
 (*
   	// LOGIN TO THE SCM DB SERVER.
@@ -1112,6 +1044,22 @@ procedure TMain.Help_WebsiteUpdate(Sender: TObject);
 begin
   if fMyInternetConnected then TAction(Sender).Enabled := true
   else TAction(Sender).Enabled := false;
+end;
+
+procedure TMain.LoadSettings;
+begin
+  if not FileExists(Settings.GetDefaultSettingsFilename()) then
+  begin
+    ForceDirectories(Settings.GetSettingsFolder());
+    Settings.SaveToFile();
+  end;
+  Settings.LoadFromFile();
+end;
+
+
+procedure TMain.MSG_Connect(var Msg: TMessage);
+begin
+  ActionManager1.ExecuteAction(actnConnect);
 end;
 
 procedure TMain.PageControl1Change(Sender: TObject);

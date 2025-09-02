@@ -3,12 +3,20 @@ unit dmCORE;
 interface
 
 uses
-  System.SysUtils, System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  System.SysUtils, System.Classes, System.Types, System.StrUtils,
+  System.DateUtils,
+  WinApi.Windows,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, Data.DB,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.BaseImageCollection,
-  SVGIconImageCollection, System.ImageList, Vcl.ImgList, Vcl.VirtualImageList,
-	SVGIconVirtualImageList, FireDAC.UI.Intf, FireDAC.VCLUI.Error, FireDAC.Comp.UI;
+  System.ImageList,
+  Vcl.ImgList, Vcl.VirtualImageList, vcl.Dialogs,
+  FireDAC.UI.Intf, FireDAC.VCLUI.Error, FireDAC.Comp.UI,
+	SVGIconVirtualImageList, SVGIconImageCollection,
+  uSettings, uDefines, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Phys,
+  FireDAC.Phys.MSSQL, FireDAC.Phys.MSSQLDef, FireDAC.VCLUI.Wait
+  ;
 
 type
   TCORE = class(TDataModule)
@@ -69,16 +77,219 @@ type
     qryEventStrokeStr: TWideStringField;
     qryHeatCaption: TWideStringField;
     qryHeatStartTime: TTimeField;
+    qrySessionSessionID: TFDAutoIncField;
+    qrySessionSessionDT: TSQLTimeStampField;
+    qrySessionCaption: TWideStringField;
+    qrySessionNomineeCount: TIntegerField;
+    qrySessionEntrantCount: TIntegerField;
+    qrySessionCreatedOn: TSQLTimeStampField;
+    qrySessionModifiedOn: TSQLTimeStampField;
+    qrySessionSwimClubID: TIntegerField;
+    qrySessionSessionStatusID: TIntegerField;
+    TempConnection: TFDConnection;
 		procedure DataModuleCreate(Sender: TObject);
 		procedure DataModuleDestroy(Sender: TObject);
+    procedure qryEventAfterScroll(DataSet: TDataSet);
+    procedure qryHeatAfterScroll(DataSet: TDataSet);
+    procedure qrySessionAfterScroll(DataSet: TDataSet);
+    procedure qrySessionBeforePost(DataSet: TDataSet);
     procedure qrySessionNewRecord(DataSet: TDataSet);
+    procedure qrySessionSessionDTGetText(Sender: TField; var Text: string;
+        DisplayText: Boolean);
+    procedure qrySessionSessionDTSetText(Sender: TField; const Text: string);
+    procedure qrySwimClubAfterScroll(DataSet: TDataSet);
 	private
     FIsActive: boolean;
+    msgHandle: HWND;  // TForm.dtfrmExec ...   // Both DataModules
+
 	public
 		function ActivateCore(): boolean;
 		function DeActivateCore(): boolean;
     property IsActive: boolean read FIsActive write FIsActive;
+    property MSG_Handle: HWND read msgHandle write msgHandle;  // Both DataModules
 	end;
+
+var
+  CORE: TCORE;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+uses dmSCM;
+
+{$R *.dfm}
+
+function TCORE.ActivateCore: boolean;
+var
+  msg: string;
+begin
+	FIsActive := false;
+	if not Assigned(SCM) or not SCM.scmConnection.Connected then exit;
+	try
+		// MASTER.
+		qrySwimClub.Open;
+    if qrySwimClub.Active then
+    begin
+      qrySwimClub.First;
+      // lookup tables.
+      tblStroke.Open;
+      tblDistance.Open;
+      // DETAILED TABLES.
+      qrySession.IndexName := 'indxShowAll'; // Locked and unlocked sessions.
+      qrySession.Open;
+      qryEvent.Open;
+      qryHeat.Open;
+      qryLane.Open;
+      qryWatchTime.Open;
+      qrySplitTime.open;
+      qryTeam.Open;
+      qryTeamLink.Open;
+      FIsActive := true;
+    end
+    else
+    begin
+      msg := '''
+        Master table [dbo].[SwimClub] failed to open.
+        Unable to activate the core tables!
+        ''';
+      raise Exception.Create('msg');
+    end;
+	except
+		on E: EFDDBEngineException do begin
+			raise;
+		end;
+	end;
+	FIsActive := false;
+end;
+
+procedure TCORE.DataModuleCreate(Sender: TObject);
+begin
+	FIsActive := false;
+end;
+
+procedure TCORE.DataModuleDestroy(Sender: TObject);
+begin
+	// cleanup ...
+end;
+
+function TCORE.DeActivateCore: boolean;
+begin
+	FIsActive := false;
+	// Detailed tables.
+  qrySession.Close;
+	qryEvent.Close;
+	qryHeat.Close;
+	qryLane.Close;
+	qryWatchTime.Close;
+	qrySplitTime.Close;
+	qryTeam.Close;
+	qryTeamLink.Close;
+	// lookup tables.
+	tblStroke.Close;
+	tblDistance.Close;
+  // Master.
+	qrySwimClub.Close;
+end;
+
+procedure TCORE.qryEventAfterScroll(DataSet: TDataSet);
+begin
+  if (msgHandle <> 0) then
+  begin
+    PostMessage(msgHandle, SCM_SCROLL_EVENT, 0,0);
+  end;
+end;
+
+procedure TCORE.qryHeatAfterScroll(DataSet: TDataSet);
+begin
+  if (msgHandle <> 0) then
+  begin
+    PostMessage(msgHandle, SCM_SCROLL_HEAT, 0,0);
+  end;
+end;
+
+procedure TCORE.qrySessionAfterScroll(DataSet: TDataSet);
+begin
+  if (msgHandle <> 0) then
+  begin
+    PostMessage(msgHandle, SCM_SCROLL_SESSION, 0,0);
+  end;
+end;
+
+procedure TCORE.qrySessionBeforePost(DataSet: TDataSet);
+begin
+  if (DataSet.FieldByName('SessionStatusID').IsNull) then
+      DataSet.FieldByName('SessionStatusID').AsInteger := 1;
+end;
+
+procedure TCORE.qrySessionNewRecord(DataSet: TDataSet);
+begin
+  DataSet.FieldByName('SwimClubID').AsInteger :=
+    qrySwimClub.FieldByName('SwimClubID').AsInteger; // Master-Detail
+  DataSet.FieldByName('SessionDT').AsDateTime := Now();
+  DataSet.FieldByName('CreatedOn').AsDateTime := Now();
+  DataSet.FieldByName('SessionStatusID').AsInteger := 1; // Open.
+end;
+
+procedure TCORE.qrySessionSessionDTGetText(Sender: TField; var Text: string;
+    DisplayText: Boolean);
+var
+  fs: TFormatSettings;
+  DT: TDateTime;
+  AHour: Word;
+begin
+  fs.DateSeparator := '-';
+  fs.TimeSeparator := ':';
+  fs.ShortDateFormat := 'yyyy-mm-dd hh:nn';
+  DT := Now;
+  AHour := DT.GetHour;
+  DT.SetTime(AHour, 0, 0, 0);
+
+  if Sender.IsNull then
+  begin
+    Text := Datetostr(DT, fs);
+  end
+  else
+    // which is best ... (will always use ShortDateFormat)
+    // Text := DateTimeToStr(Sender.AsDateTime, fs);
+    // or use this method?
+    // AI answers: FormatDateTime is preferred for custom formats.
+    Text := FormatDateTime('yyyy-mm-dd hh:nn', Sender.AsDateTime, fs);
+end;
+
+procedure TCORE.qrySessionSessionDTSetText(Sender: TField; const Text: string);
+var
+  fs: TFormatSettings;
+  DT: TDateTime;
+begin
+  fs.DateSeparator := '-';
+  fs.TimeSeparator := ':';
+  fs.ShortDateFormat := 'yyyy-mm-dd hh:nn';
+
+  if Text = '' then
+    Sender.Clear
+  else
+  begin
+    try
+      DT := StrToDateTime(Text, fs);
+      Sender.AsDateTime := DT;
+    except
+      on E: EConvertError do
+      begin
+        ShowMessage(E.ClassName + #10 + E.Message);
+      end;
+    end;
+  end;
+end;
+
+procedure TCORE.qrySwimClubAfterScroll(DataSet: TDataSet);
+begin
+  if (msgHandle <> 0) then
+  begin
+    PostMessage(msgHandle, SCM_SCROLL_SWIMCLUB, 0,0);
+  end;
+end;
+
 
 
 (*
@@ -315,88 +526,6 @@ end;
 *)
 
 
-
-
-var
-  CORE: TCORE;
-
-implementation
-
-{%CLASSGROUP 'Vcl.Controls.TControl'}
-
-uses dmSCM;
-
-{$R *.dfm}
-
-function TCORE.ActivateCore: boolean;
-begin
-	FIsActive := false;
-	if not Assigned(SCM) or not SCM.scmConnection.Connected then exit;
-	try
-		// lookup tables.
-		tblStroke.Open;
-		tblDistance.Open;
-		// Master-Detail core tables.
-		qrySwimClub.Open; // Assumption : cued-to first reord ... swimclubID = 1;
-		qrySession.Close;
-		qrySession.IndexName := 'indxShowAll'; // assert correct (default) index. (1 of 3)
-		// Show all sessions. (joined on SessionStatus)
-		qrySession.ParamByName('TOGGLE').AsBoolean := false;
-		qrySession.Prepare;
-		qrySession.Open;
-
-		qryEvent.Open;
-		qryHeat.Open;
-		qryLane.Open;
-		qryWatchTime.Open;
-		qrySplitTime.open;
-		qryTeam.Open;
-		qryTeamLink.Open;
-		FIsActive := true;
-	except
-		on E: EFDDBEngineException do begin
-			raise;
-		end;
-	end;
-	FIsActive := false;
-end;
-
-procedure TCORE.DataModuleCreate(Sender: TObject);
-begin
-	FIsActive := false;
-end;
-
-procedure TCORE.DataModuleDestroy(Sender: TObject);
-begin
-	// cleanup ...
-end;
-
-function TCORE.DeActivateCore: boolean;
-begin
-	FIsActive := false;
-	// lookup tables.
-	tblStroke.Close;
-	tblDistance.Close;
-	qrySwimClub.Close;
-	// Master-Detail core tables.
-	qrySession.Close;
-	qryEvent.Close;
-	qryHeat.Close;
-	qryLane.Close;
-	qryWatchTime.Close;
-	qrySplitTime.Close;
-	qryTeam.Close;
-	qryTeamLink.Close;
-end;
-
-procedure TCORE.qrySessionNewRecord(DataSet: TDataSet);
-begin
-  DataSet.FieldByName('SwimClubID').AsInteger :=
-    qrySwimClub.FieldByName('SwimClubID').AsInteger; // Master-Detail
-  DataSet.FieldByName('StartDT').AsDateTime := Now();
-  DataSet.FieldByName('CreatedOn').AsDateTime := Now();
-  DataSet.FieldByName('SessionStatusID').AsInteger := 1; // Open.
-end;
 
 
 

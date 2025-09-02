@@ -10550,8 +10550,8 @@ object Main: TMain
     end
   end
   object pumHeat: TPopupMenu
-    Left = 888
-    Top = 208
+    Left = 912
+    Top = 200
     object MoveUp2: TMenuItem
       Action = Heat_MoveUp
     end
@@ -10708,5 +10708,11 @@ object Main: TMain
     object NominateRpt1: TMenuItem
       Action = Nominate_Report
     end
+  end
+  object scmFDGUIxErrorDialog: TFDGUIxErrorDialog
+    Provider = 'Forms'
+    Caption = 'SwimClubMeet FireDAC Error'
+    Left = 424
+    Top = 304
   end
 end
