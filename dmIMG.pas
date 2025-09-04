@@ -30,6 +30,7 @@ type
     SVGNominateStroke: TSVGIconVirtualImageList;
     SVGNominateEventType: TSVGIconVirtualImageList;
     FontsCollection: TIconFontsImageCollection;
+    SVGSessGrid: TSVGIconVirtualImageList;
   private
     { Private declarations }
 

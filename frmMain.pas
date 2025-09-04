@@ -288,7 +288,6 @@ type
     SwimClub_Manage: TAction;
     File_ExportSession: TAction;
     actnConnect: TAction;
-    scmFDGUIxErrorDialog: TFDGUIxErrorDialog;
     procedure ActionManager1Update(Action: TBasicAction; var Handled: boolean);
     procedure actnConnectExecute(Sender: TObject);
     procedure actnConnectUpdate(Sender: TObject);

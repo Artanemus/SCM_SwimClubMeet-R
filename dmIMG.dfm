@@ -13466,4 +13466,75 @@ object IMG: TIMG
     Left = 624
     Top = 16
   end
+  object SVGSessGrid: TSVGIconVirtualImageList
+    Images = <
+      item
+        CollectionIndex = 0
+        CollectionName = 'EmptyFrame'
+        Name = 'EmptyFrame'
+      end
+      item
+        CollectionIndex = 23
+        CollectionName = 'visible-on'
+        Name = 'visible-on'
+      end
+      item
+        CollectionIndex = 24
+        CollectionName = 'visible-off'
+        Name = 'visible-off'
+      end
+      item
+        CollectionIndex = 29
+        CollectionName = 'new'
+        Name = 'new'
+      end
+      item
+        CollectionIndex = 30
+        CollectionName = 'delete'
+        Name = 'delete'
+      end
+      item
+        CollectionIndex = 36
+        CollectionName = 'report'
+        Name = 'report'
+      end
+      item
+        CollectionIndex = 39
+        CollectionName = 'lock-2'
+        Name = 'lock-2'
+      end
+      item
+        CollectionIndex = 40
+        CollectionName = 'lock-open-2'
+        Name = 'lock-open-2'
+      end
+      item
+        CollectionIndex = 48
+        CollectionName = 'edit'
+        Name = 'edit'
+      end
+      item
+        CollectionIndex = 49
+        CollectionName = 'in'
+        Name = 'in'
+      end
+      item
+        CollectionIndex = 50
+        CollectionName = 'out'
+        Name = 'out'
+      end
+      item
+        CollectionIndex = 51
+        CollectionName = 'clone'
+        Name = 'clone'
+      end
+      item
+        CollectionIndex = 52
+        CollectionName = 'sort'
+        Name = 'sort'
+      end>
+    ImageCollection = SVGCollection
+    Left = 200
+    Top = 304
+  end
 end

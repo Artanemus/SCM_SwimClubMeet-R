@@ -10709,10 +10709,4 @@ object Main: TMain
       Action = Nominate_Report
     end
   end
-  object scmFDGUIxErrorDialog: TFDGUIxErrorDialog
-    Provider = 'Forms'
-    Caption = 'SwimClubMeet FireDAC Error'
-    Left = 424
-    Top = 304
-  end
 end
