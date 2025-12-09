@@ -2,10 +2,28 @@
 
 ![Hero SwimClubMeet ICON](ASSETS/SwimClubMeet_HeroIcon_100x100.png)
 
-### SwimClubMeet.exe (SCM) is an application that manages you members and runs your club-nights.
+### SwimClubMeet.exe (SCM) is an application that manages you members and runs your club-nights. It's 'extremely simple' to use!
 
 ---
-SCM is a 32bit application written in C++ It's part of an eco system of applications that make up the SwimClubMeet project. 
+It's part of an eco system of applications that make up the SwimClubMeet project. 
+
+- SCM_BuildMeAClub-R
+- SCM_Nominate-R
+- SCM_Marshall-R
+- SCM_TimeKeeper-R
+- SCM_UpdateDataBase-R
+- SCM_Member-R
+- SCM_TimeDrops
+- SCM_DolphinTiming
+- SCM_LeaderBoard
+- SCM_MoreReports
+- SCM_REST (WIP)
+- SCM_Account (TBA)
+- SCM_RoboHelp (Asset builder for help files).
+
+This GitHub repository is Version 1 of SwimClubMeet (Current). It uses the SwimClubMeet MSSQL dataBase version 1.1.5.3.
+
+Version 2 of SwimClubMeet is in development... repository - SCM_SwimClubMeet2. A work in progress, it takes SCM to professional level. 
 
 ![The eco system of SCM](ASSETS/SCM_GroupOfIcons.png)
 
@@ -31,9 +49,9 @@ If you are interested in following a developer's blog and track my progress then
 
 ### CODE
 
-As of version 1.5.5.0, SCM is written in Delphi using Embarcadero's RAD Studio 11.2. FastReport VCL components are used for reporting. Database access is done with FireDAC (included in the enterprise edition). Other than that, no other additional VCL components have been used. All SQL scripts have been written to be compatible with MS SQL EXPRESS 2017 and up. The release version is 32bit due to the limits of FastReport.
+Written in Delphi using Embarcadero's RAD Studio 12.3. FastReport VCL components are used for reporting. Database access is done with FireDAC (included in the enterprise edition). All SQL scripts have been written to be compatible with MS SQL EXPRESS 2017 and up. The release version is 32bit due to the limits of FastReport.
 
-24/03/2023 : To compile this project you must also clone the Artanemus/SCM_SHARED repo.
+To compile this project you must also clone the Artanemus/SCM_SHARED repo.
 
 FYI: Database design was done with ERStudio.
 
