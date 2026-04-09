@@ -23,6 +23,8 @@ It's part of an eco system of applications that make up the SwimClubMeet project
 
 This GitHub repository is Version 1 of SwimClubMeet (Current). It uses the SwimClubMeet MSSQL dataBase version 1.1.5.3.
 
+It supports timing devises TimeDrops and Dolphin Timing System (Support applications - SCM_TimeDrops, SCM_DolphinTiming).
+
 Version 2 of SwimClubMeet is in development... repository - SCM_SwimClubMeet2. A work in progress, it takes SCM to professional level. 
 
 ![The eco system of SCM](ASSETS/SCM_GroupOfIcons.png)
