@@ -25,7 +25,7 @@ This GitHub repository is Version 1 of SwimClubMeet (Current). It uses the SwimC
 
 It supports timing devises TimeDrops and Dolphin Timing System (Support applications - SCM_TimeDrops, SCM_DolphinTiming).
 
-Version 2 of SwimClubMeet is in development... repository - SCM_SwimClubMeet2. A work in progress, it takes SCM to professional level. 
+Version 2 of SwimClubMeet is in development... repository - SCM_SwimClubMeet2. A work in progress, it takes SCM to a new level. 
 
 ![The eco system of SCM](ASSETS/SCM_GroupOfIcons.png)
 
@@ -37,7 +37,7 @@ With the addition of Wi-Fi and Marshal and TimeKeeper support applications, you 
 
 Fix nomination bottle neck by adding more PC's or use the Nominate application for members to self nominate.
 
-SCM uses MS SQLEXPRESS, which is free to use (it is accessible to a wide range of users for both personal and professional purposes). This means you have full ownership of your data. 
+SCM uses MS SQLEXPRESS, which is free to use (it is accessible to a wide range of users for both personal and professional purposes). This means you have full ownership of your data. Another feature, you don't need an internet connection. One less subscription.
 
 Included in the install is **Help for SCM**. It has a handy **Getting Started** section. (Though to be honest, it's a little bit out of date. It's on my to-do-list.)
 
