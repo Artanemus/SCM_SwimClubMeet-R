@@ -39,7 +39,7 @@ Fix nomination bottle neck by adding more PC's or use the Nominate application f
 
 SCM uses MS SQLEXPRESS, which is free to use (it is accessible to a wide range of users for both personal and professional purposes). This means you have full ownership of your data. 
 
-Included in the install is **Help for SCM**. It has a handy **Getting Started** section.
+Included in the install is **Help for SCM**. It has a handy **Getting Started** section. (Though to be honest, it's a little bit out of date. It's on my to-do-list.)
 
 To learn more about SCM view the [github pages](https://artanemus.github.io/index.html).
 
