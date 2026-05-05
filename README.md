@@ -37,7 +37,7 @@ With the addition of Wi-Fi and Marshal and TimeKeeper support applications, you 
 
 Fix nomination bottle neck by adding more PC's or use the Nominate application for members to self nominate.
 
-SCM uses MS SQLEXPRESS. You have full ownership of your data. Use the SCM_BuildMeAClub utility to create your SwimClubMeet database in SQLEXPRESS.
+SCM uses MS SQLEXPRESS, which is free to use (it is accessible to a wide range of users for both personal and professional purposes). This means you have full ownership of your data. 
 
 Included in the install is **Help for SCM**. It has a handy **Getting Started** section.
 
