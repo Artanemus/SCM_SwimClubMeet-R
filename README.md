@@ -29,7 +29,7 @@ Version 2 of SwimClubMeet is in development... repository - SCM_SwimClubMeet2. A
 
 ![The eco system of SCM](ASSETS/SCM_GroupOfIcons.png)
 
-To get started all you need is a laptop and printer.
+To get started all you need is a laptop and printer. Download three applications. MicroSoft's SQLEXPRESS (the database server), SCM_SwimClubMeet-R and SCM_BuildMeAClub-R. Install the database server. Install/run SCM_BuildMeAClub-R to create the SwimClubMeet database. And finally install/run the core application SCM_SwimClubMeet-R. 
 
 SCM lets amateur swimming clubs store member data, create sessions, events, nominate members to events, auto-build heats (and manually), print marshal and timekeeper sheets, record race-times and create session reports. (Currently, over 20 reports can be printed.) And much more.
 
