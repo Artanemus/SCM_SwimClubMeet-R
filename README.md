@@ -23,11 +23,13 @@ It's part of an eco system of applications that make up the SwimClubMeet project
 
 This GitHub repository is Version 1 of SwimClubMeet (Current). It uses the SwimClubMeet MSSQL dataBase version 1.1.5.3.
 
-Version 2 of SwimClubMeet is in development... repository - SCM_SwimClubMeet2. A work in progress, it takes SCM to professional level. 
+It supports timing devises TimeDrops and Dolphin Timing System (Support applications - SCM_TimeDrops, SCM_DolphinTiming).
+
+Version 2 of SwimClubMeet is in development... repository - SCM_SwimClubMeet2. A work in progress, it takes SCM to a new level. 
 
 ![The eco system of SCM](ASSETS/SCM_GroupOfIcons.png)
 
-To get started all you need is a laptop and printer.
+To get started all you need is a laptop and printer. Download three applications. MicroSoft's SQLEXPRESS (the database server), SCM_SwimClubMeet-R and SCM_BuildMeAClub-R. Install the database server. Install/run SCM_BuildMeAClub-R to create the SwimClubMeet database. And finally install/run the core application SCM_SwimClubMeet-R. 
 
 SCM lets amateur swimming clubs store member data, create sessions, events, nominate members to events, auto-build heats (and manually), print marshal and timekeeper sheets, record race-times and create session reports. (Currently, over 20 reports can be printed.) And much more.
 
@@ -35,9 +37,9 @@ With the addition of Wi-Fi and Marshal and TimeKeeper support applications, you 
 
 Fix nomination bottle neck by adding more PC's or use the Nominate application for members to self nominate.
 
-SCM uses MS SQLEXPRESS. You have full ownership of your data. Use the SCM_BuildMeAClub utility to create your SwimClubMeet database in SQLEXPRESS.
+SCM uses MS SQLEXPRESS, which is free to use (it is accessible to a wide range of users for both personal and professional purposes). This means you have full ownership of your data. Another feature, you don't need an internet connection. One less subscription.
 
-Included in the install is **Help for SCM**. It has a handy **Getting Started** section.
+Included in the install is **Help for SCM**. It has a handy **Getting Started** section. (Though to be honest, it's a little bit out of date. It's on my to-do-list.)
 
 To learn more about SCM view the [github pages](https://artanemus.github.io/index.html).
 
